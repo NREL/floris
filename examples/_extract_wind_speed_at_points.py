@@ -74,17 +74,14 @@ elif met_mast_option == 3:
 
 points_z = [30, 90, 150, 250]
 
+# Collect the points
+u_at_points = fi.sample_flow_at_points(points_x, points_y, points_z)
+
 ax[0].scatter(points_x, points_y, color="red", marker="x", label="Met mast")
 ax[0].grid()
 ax[0].set_xlabel("x [m]")
 ax[0].set_ylabel("y [m]")
 ax[0].legend()
-
-# Collect the points
-u_at_points = fi.sample_flow_at_points(points_x = points_x,
-                                        points_y = points_y,
-                                          points_z = points_z)
-
 
 # Plot the velocities
 for z_idx, z in enumerate(points_z):

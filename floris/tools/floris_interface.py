@@ -940,49 +940,28 @@ class FlorisInterface(LoggerBase):
             wind_directions=wind_directions
         )
 
-
         return aep
 
-    def sample_flow_at_points(
-        self,
-        points_x: NDArrayFloat,
-        points_y: NDArrayFloat,
-        points_z: NDArrayFloat,
-    ):
+
+    def sample_flow_at_points(self, x: NDArrayFloat, y: NDArrayFloat, z: NDArrayFloat):
         """
         Extract the wind speed at points in the flow.
 
         Args:
-            points_x (1DArray or list): x-locations of points where
-                flow is desired.
-            points_y (1DArray or list): y-locations of points where
-                flow is desired.
-            points_z (1DArray or list): z-locations of points where
-                flow is desired.
+            x (1DArrayFloat | list): x-locations of points where flow is desired.
+            y (1DArrayFloat | list): y-locations of points where flow is desired.
+            z (1DArrayFloat | list): z-locations of points where flow is desired.
 
         Returns:
-            3DArrayFloat containing wind speed, with dimensions
-               (# of wind directions) x (# of wind speeds) x
-               (# of sample points)
+            3DArrayFloat containing wind speed with dimensions
+            (# of wind directions, # of wind speeds, # of sample points)
         """
 
-        # Check that point_x, point_y, point_z are all the same length
-        if not (
-            len(points_x) == len(points_y)
-            and len(points_x) == len(points_z)
-        ):
-            raise ValueError(
-                "The number of points in each coordinate direction must be the same."
-            )
+        # Check that x, y, z are all the same length
+        if not len(x) == len(y) == len(z):
+            raise ValueError("x, y, and z must be the same size")
 
-        # Confirm calculate wake has been run
-        # if self.floris.state is not State.USED:
-        #     raise RuntimeError(
-        #         "Can't run function `FlorisInterface.sample_flow_at_points` without "
-        #         "first running `FlorisInterface.calculate_wake`."
-        #     )
-
-        return self.floris.solve_for_points(points_x, points_y, points_z)
+        return self.floris.solve_for_points(x, y, z)
 
 
     @property

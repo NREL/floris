@@ -48,11 +48,7 @@ points_y = np.zeros_like(points_x)
 points_z = 90 * np.ones_like(points_x)
 
 # Collect the points
-u_at_points = fi.sample_flow_at_points(
-    points_x = points_x,
-    points_y = points_y,
-    points_z = points_z
-).flatten()
+u_at_points = fi.sample_flow_at_points(points_x, points_y, points_z).flatten()
 
 # Re-collect the turbine powers
 turbine_powers_after_added_points = np.array(fi.get_turbine_powers())/1000.
