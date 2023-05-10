@@ -280,8 +280,8 @@ class Floris(BaseClass):
             wind_speeds=self.flow_field.wind_speeds,
             grid_resolution=1,
             time_series=self.flow_field.time_series,
-            x_center_of_rotation=self.grid.xc_rot,
-            y_center_of_rotation=self.grid.yc_rot
+            x_center_of_rotation=self.grid.x_center_of_rotation,
+            y_center_of_rotation=self.grid.y_center_of_rotation
         )
 
         self.flow_field.initialize_velocity_field(field_grid)
