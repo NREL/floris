@@ -19,7 +19,7 @@ from pathlib import Path
 import yaml
 from attrs import define, field
 
-import floris.logging_manager as logging_manager
+from floris import logging_manager
 from floris.simulation import (
     BaseClass,
     cc_solver,
@@ -31,6 +31,7 @@ from floris.simulation import (
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     Grid,
+    PointsGrid,
     sequential_solver,
     State,
     TurbineGrid,
@@ -113,9 +114,9 @@ class Floris(BaseClass):
                 normal_vector=self.solver["normal_vector"],
                 planar_coordinate=self.solver["planar_coordinate"],
                 grid_resolution=self.solver["flow_field_grid_points"],
+                time_series=self.flow_field.time_series,
                 x1_bounds=self.solver["flow_field_bounds"][0],
                 x2_bounds=self.solver["flow_field_bounds"][1],
-                time_series=self.flow_field.time_series,
             )
         else:
             raise ValueError(
@@ -252,6 +253,42 @@ class Floris(BaseClass):
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+
+    def solve_for_points(self, x, y, z):
+        # Do the calculation with the TurbineGrid for a single wind speed
+        # and wind direction and a 3x3 rotor grid. Then, use the result
+        # to construct the full flow field grid.
+        # This function call should be for a single wind direction and wind speed
+        # since the memory consumption is very large.
+
+        vel_model = self.wake.model_strings["velocity_model"]
+
+        if vel_model in ["cc", "turbopark", "empirical_gauss"]:
+            raise NotImplementedError(
+                "solve_for_points is currently only available with the "+\
+                "gauss and jensen models."
+            )
+
+        # Instantiate the flow_grid
+        field_grid = PointsGrid(
+            points_x=x,
+            points_y=y,
+            points_z=z,
+            turbine_coordinates=self.farm.coordinates,
+            reference_turbine_diameter=self.farm.rotor_diameters,
+            wind_directions=self.flow_field.wind_directions,
+            wind_speeds=self.flow_field.wind_speeds,
+            grid_resolution=1,
+            time_series=self.flow_field.time_series,
+            x_center_of_rotation=self.grid.x_center_of_rotation,
+            y_center_of_rotation=self.grid.y_center_of_rotation
+        )
+
+        self.flow_field.initialize_velocity_field(field_grid)
+
+        full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+
+        return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
 
     def finalize(self):
         # Once the wake calculation is finished, unsort the values to match
