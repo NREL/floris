@@ -274,10 +274,10 @@ class Floris(BaseClass):
 
         vel_model = self.wake.model_strings["velocity_model"]
 
-        if vel_model in ["cc", "turbopark", "empirical_gauss"]:
+        if vel_model in ["cc", "turbopark"]:
             raise NotImplementedError(
                 "solve_for_points is currently only available with the "+\
-                "gauss and jensen models."
+                "gauss, jensen, and empirical_guass models."
             )
 
         # Instantiate the flow_grid
@@ -297,7 +297,10 @@ class Floris(BaseClass):
 
         self.flow_field.initialize_velocity_field(field_grid)
 
-        full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+        if vel_model == "empirical_gauss":
+            full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
+        else:
+            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
         return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
 
