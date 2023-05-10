@@ -272,14 +272,6 @@ class Floris(BaseClass):
         # This function call should be for a single wind direction and wind speed
         # since the memory consumption is very large.
 
-        vel_model = self.wake.model_strings["velocity_model"]
-
-        if vel_model in ["cc", "turbopark"]:
-            raise NotImplementedError(
-                "solve_for_points is currently only available with the "+\
-                "gauss, jensen, and empirical_guass models."
-            )
-
         # Instantiate the flow_grid
         field_grid = PointsGrid(
             points_x=x,
@@ -297,7 +289,14 @@ class Floris(BaseClass):
 
         self.flow_field.initialize_velocity_field(field_grid)
 
-        if vel_model == "empirical_gauss":
+        vel_model = self.wake.model_strings["velocity_model"]
+
+        if vel_model == "cc" or vel_model == "turbopark":
+            raise NotImplementedError(
+                "solve_for_points is currently only available with the "+\
+                "gauss, jensen, and empirical_guass models."
+            )
+        elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
