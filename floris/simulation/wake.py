@@ -22,13 +22,19 @@ from floris.simulation.wake_combination import (
     SOSFS,
 )
 from floris.simulation.wake_deflection import (
+    EmpiricalGaussVelocityDeflection,
     GaussVelocityDeflection,
     JimenezVelocityDeflection,
     NoneVelocityDeflection,
 )
-from floris.simulation.wake_turbulence import CrespoHernandez, NoneWakeTurbulence
+from floris.simulation.wake_turbulence import (
+    CrespoHernandez,
+    NoneWakeTurbulence,
+    WakeInducedMixing,
+)
 from floris.simulation.wake_velocity import (
     CumulativeGaussCurlVelocityDeficit,
+    EmpiricalGaussVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
     NoneVelocityDeficit,
@@ -45,18 +51,21 @@ MODEL_MAP = {
     "deflection_model": {
         "jimenez": JimenezVelocityDeflection,
         "gauss": GaussVelocityDeflection,
-        "none": NoneVelocityDeflection
+        "none": NoneVelocityDeflection,
+        "empirical_gauss": EmpiricalGaussVelocityDeflection
     },
     "turbulence_model": {
         "none": NoneWakeTurbulence,
-        "crespo_hernandez": CrespoHernandez
+        "crespo_hernandez": CrespoHernandez,
+        "wake_induced_mixing": WakeInducedMixing
     },
     "velocity_model": {
         "none": NoneVelocityDeficit,
         "cc": CumulativeGaussCurlVelocityDeficit,
         "gauss": GaussVelocityDeficit,
         "jensen": JensenVelocityDeficit,
-        "turbopark": TurbOParkVelocityDeficit
+        "turbopark": TurbOParkVelocityDeficit,
+        "empirical_gauss": EmpiricalGaussVelocityDeficit
     },
 }
 

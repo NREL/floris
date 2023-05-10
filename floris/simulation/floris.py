@@ -24,11 +24,13 @@ from floris.simulation import (
     BaseClass,
     CubatureGrid,
     cc_solver,
+    empirical_gauss_solver,
     Farm,
     FlowField,
     FlowFieldGrid,
     FlowFieldPlanarGrid,
     full_flow_cc_solver,
+    full_flow_empirical_gauss_solver,
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     Grid,
@@ -212,7 +214,7 @@ class Floris(BaseClass):
         # <<interface>>
         # start = time.time()
 
-        if vel_model in ["gauss", "cc", "turbokpark", "jensen"] and \
+        if vel_model in ["gauss", "cc", "turbopark", "jensen"] and \
             self.farm.correct_cp_ct_for_tilt.any():
             self.logger.warn(
                 "The current model does not account for vertical wake deflection due to " +
@@ -221,21 +223,28 @@ class Floris(BaseClass):
             )
 
         if vel_model=="cc":
-            elapsed_time = cc_solver(
+            cc_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
                 self.wake
             )
         elif vel_model=="turbopark":
-            elapsed_time = turbopark_solver(
+            turbopark_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
+        elif vel_model=="empirical_gauss":
+            empirical_gauss_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
                 self.wake
             )
         else:
-            elapsed_time = sequential_solver(
+            sequential_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
@@ -245,7 +254,7 @@ class Floris(BaseClass):
         # elapsed_time = end - start
 
         self.finalize()
-        return elapsed_time
+        # return elapsed_time
 
     def solve_for_viz(self):
         # Do the calculation with the TurbineGrid for a single wind speed
@@ -262,6 +271,8 @@ class Floris(BaseClass):
             full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="empirical_gauss":
+            full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
@@ -271,14 +282,6 @@ class Floris(BaseClass):
         # to construct the full flow field grid.
         # This function call should be for a single wind direction and wind speed
         # since the memory consumption is very large.
-
-        vel_model = self.wake.model_strings["velocity_model"]
-
-        if vel_model in ["cc", "turbopark", "empirical_gauss"]:
-            raise NotImplementedError(
-                "solve_for_points is currently only available with the "+\
-                "gauss and jensen models."
-            )
 
         # Instantiate the flow_grid
         field_grid = PointsGrid(
@@ -297,7 +300,17 @@ class Floris(BaseClass):
 
         self.flow_field.initialize_velocity_field(field_grid)
 
-        full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+        vel_model = self.wake.model_strings["velocity_model"]
+
+        if vel_model == "cc" or vel_model == "turbopark":
+            raise NotImplementedError(
+                "solve_for_points is currently only available with the "+\
+                "gauss, jensen, and empirical_guass models."
+            )
+        elif vel_model == "empirical_gauss":
+            full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
+        else:
+            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
         return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
 

@@ -399,6 +399,13 @@ class SampleInputs:
                     "bd": 0.0,
                     "kd": 0.05,
                 },
+                "empirical_gauss": {
+                   "horizontal_deflection_gain_D": 3.0,
+                   "vertical_deflection_gain_D": -1,
+                   "deflection_rate": 15,
+                   "mixing_gain_deflection": 0.0,
+                   "yaw_added_mixing_gain": 0.0
+                },
             },
             "wake_velocity_parameters": {
                 "gauss": {
@@ -423,7 +430,14 @@ class SampleInputs:
                 "turbopark": {
                     "A": 0.04,
                     "sigma_max_rel": 4.0
-                }
+                },
+                "empirical_gauss": {
+                    "wake_expansion_rates": [0.01, 0.005],
+                    "breakpoints_D": [10],
+                    "sigma_0_D": 0.28,
+                    "smoothing_length_D": 2.0,
+                    "mixing_gain_velocity": 2.0
+                },
             },
             "wake_turbulence_parameters": {
                 "crespo_hernandez": {
@@ -432,6 +446,9 @@ class SampleInputs:
                     "ai": 0.8,
                     "downstream": -0.32
                 },
+                "wake_induced_mixing": {
+                    "atmospheric_ti_gain": 0.0
+                }
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,

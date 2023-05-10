@@ -171,7 +171,6 @@ def rotor_effective_velocity(
 
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
-
     if isinstance(tilt_angle, list):
         tilt_angle = np.array(tilt_angle)
 

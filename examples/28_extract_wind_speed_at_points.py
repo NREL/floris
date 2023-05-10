@@ -33,13 +33,14 @@ Try different values for met_mast_option to vary the location of the
 met mast within the two-turbine farm.
 """
 
-# Initialize FLORIS with the given input file via FlorisInterface.
-# For basic usage, FlorisInterface provides a simplified and expressive
-# entry point to the simulation routines.
-fi = FlorisInterface("inputs/gch.yaml")
+# User options
+# FLORIS model to use (limited to Gauss/GCH, Jensen, and empirical Gauss)
+floris_model = "gch" # Try "gch", "jensen", "emgauss"
+# Option to try different met mast locations
+met_mast_option = 0 # Try 0, 1, 2, 3
 
-# Choose an option to try different met mast locations
-met_mast_option = 2 # Try 0, 1, 2, 3
+# Instantiate FLORIS model
+fi = FlorisInterface("inputs/"+floris_model+".yaml")
 
 # Set up a two-turbine farm
 D = 126
