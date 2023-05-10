@@ -57,7 +57,7 @@ def plot_turbines(
         color = "k"
 
     coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
-    layout_x, layout_y, _ = rotate_coordinates_rel_west(
+    layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
         np.array([wind_direction]),
         coordinates_array
     )
@@ -114,7 +114,7 @@ def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
         for x, y in list(zip(fi.layout_x, fi.layout_y))
     ])
     wind_direction = fi.floris.flow_field.wind_directions[0]
-    layout_x, layout_y, _ = rotate_coordinates_rel_west(
+    layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
         np.array([wind_direction]),
         coordinates_array
     )

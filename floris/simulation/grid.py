@@ -122,6 +122,8 @@ class Grid(ABC):
             assert type(value[0]) is int
             assert type(value[1]) is int
             assert type(value[2]) is int
+        elif type(self) is PointsGrid:
+            return
         else:
             raise TypeError("`grid_resolution` must be of type int or Iterable(int,)")
 
@@ -148,6 +150,8 @@ class TurbineGrid(Grid):
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
+    x_center_of_rotation: NDArrayFloat = field(init=False)
+    y_center_of_rotation: NDArrayFloat = field(init=False)
     average_method = "cubic-mean"
 
     def __attrs_post_init__(self) -> None:
@@ -208,7 +212,10 @@ class TurbineGrid(Grid):
         # the foot of the turbine where the tower meets the ground.
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array,
+        )
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of
@@ -450,7 +457,10 @@ class FlowFieldGrid(Grid):
         """
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, _, _ = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array
+        )
 
         # Construct the arrays storing the grid points
         eps = 0.01
@@ -509,7 +519,10 @@ class FlowFieldPlanarGrid(Grid):
         Then, create the grid based on this wind-from-left orientation
         """
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
+        x, y, z, _, _ = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array
+        )
 
         max_diameter = np.max(self.reference_turbine_diameter)
 
@@ -621,3 +634,54 @@ class FlowFieldPlanarGrid(Grid):
     #         xoffset * sind(angle) + yoffset * cosd(angle) + center_of_rotation[1]
     #     )
     #     return rotated_x, rotated_y, self.z
+
+@define
+class PointsGrid(Grid):
+    """
+    Args:
+        turbine_coordinates (`list[Vec3]`): The list of turbine coordinates as `Vec3` objects.
+        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Not used for PointsGrid, but
+            required for the `Grid` super-class.
+        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
+            series.
+        points_x (:py:obj:`NDArrayFloat`): Array of x-components for the points in the grid.
+        points_y (:py:obj:`NDArrayFloat`): Array of y-components for the points in the grid.
+        points_z (:py:obj:`NDArrayFloat`): Array of z-components for the points in the grid.
+        x_center_of_rotation (:py:obj:`float`, optional): Component of the centroid of the
+            farm or area of interest. The PointsGrid will be rotated around this center
+            of rotation to account for wind direction changes. If not supplied, the center
+            of rotation will be the centroid of the points in the PointsGrid.
+        y_center_of_rotation (:py:obj:`float`, optional): Component of the centroid of the
+            farm or area of interest. The PointsGrid will be rotated around this center
+            of rotation to account for wind direction changes. If not supplied, the center
+            of rotation will be the centroid of the points in the PointsGrid.
+    """
+    points_x: NDArrayFloat = field(converter=floris_array_converter)
+    points_y: NDArrayFloat = field(converter=floris_array_converter)
+    points_z: NDArrayFloat = field(converter=floris_array_converter)
+    x_center_of_rotation: float | None = field(default=None)
+    y_center_of_rotation: float | None = field(default=None)
+
+    def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
+        self.set_grid()
+
+    def set_grid(self) -> None:
+        """
+        Set points for calculation based on a series of user-supplied coordinates.
+        """
+        point_coordinates = np.array(list(zip(self.points_x, self.points_y, self.points_z)))
+
+        # These are the rotated coordinates of the wind turbines based on the wind direction
+        x, y, z, _, _ = rotate_coordinates_rel_west(
+            self.wind_directions,
+            point_coordinates,
+            x_center_of_rotation=self.x_center_of_rotation,
+            y_center_of_rotation=self.y_center_of_rotation
+        )
+        self.x_sorted = x[:,:,:,None,None]
+        self.y_sorted = y[:,:,:,None,None]
+        self.z_sorted = z[:,:,:,None,None]

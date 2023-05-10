@@ -942,8 +942,27 @@ class FlorisInterface(LoggerBase):
             wind_directions=wind_directions
         )
 
-
         return aep
+
+    def sample_flow_at_points(self, x: NDArrayFloat, y: NDArrayFloat, z: NDArrayFloat):
+        """
+        Extract the wind speed at points in the flow.
+
+        Args:
+            x (1DArrayFloat | list): x-locations of points where flow is desired.
+            y (1DArrayFloat | list): y-locations of points where flow is desired.
+            z (1DArrayFloat | list): z-locations of points where flow is desired.
+
+        Returns:
+            3DArrayFloat containing wind speed with dimensions
+            (# of wind directions, # of wind speeds, # of sample points)
+        """
+
+        # Check that x, y, z are all the same length
+        if not len(x) == len(y) == len(z):
+            raise ValueError("x, y, and z must be the same size")
+
+        return self.floris.solve_for_points(x, y, z)
 
     @property
     def layout_x(self):
@@ -982,7 +1001,6 @@ class FlorisInterface(LoggerBase):
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
-
 
 def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
     if z is not None:
