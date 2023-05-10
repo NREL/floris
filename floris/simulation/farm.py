@@ -341,7 +341,7 @@ class Farm(BaseClass):
         )
         self.tilt_angles = np.take_along_axis(
             self.tilt_angles_sorted,
-            unsorted_indices[:,:,:,0,0],\
+            unsorted_indices[:,:,:,0,0],
             axis=2
         )
         self.hub_heights = np.take_along_axis(
