@@ -39,7 +39,7 @@ met mast within the two-turbine farm.
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Choose an option to try different met mast locations
-met_mast_option = 2 # Try 0, 1, 2, 3
+met_mast_option = 0 # Try 0, 1, 2, 3
 
 # Set up a two-turbine farm
 D = 126
