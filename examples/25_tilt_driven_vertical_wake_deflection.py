@@ -21,12 +21,11 @@ from floris.tools.visualization import visualize_cut_plane
 
 
 """
-This example demonstrates vertical wake deflections due to the tilt
-angle when running with the empirical_gauss model. Note that only the
-empirical_gauss model implements vertical deflections at this time.
-Note that this example uses a possibly unrealisticly high tilt angle
-(15 deg.) to highlight the wake deflection. Moreover, the magnitude of
-vertical deflections due to tilt has not been validated.
+This example demonstrates vertical wake deflections due to the tilt angle when running
+with the Empirical Gauss model. Note that only the Empirical Gauss model implements
+vertical deflections at this time. Also be aware that this example uses a potentially
+unrealistic tilt angle, 15 degrees, to highlight the wake deflection. Moreover, the magnitude
+of vertical deflections due to tilt has not been validated.
 """
 
 # Initialize two FLORIS objects: one with 5 degrees of tilt (fixed across all

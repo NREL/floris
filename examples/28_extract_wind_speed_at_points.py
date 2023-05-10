@@ -37,7 +37,7 @@ met mast within the two-turbine farm.
 # FLORIS model to use (limited to Gauss/GCH, Jensen, and empirical Gauss)
 floris_model = "gch" # Try "gch", "jensen", "emgauss"
 # Option to try different met mast locations
-met_mast_option = 2 # Try 0, 1, 2, 3
+met_mast_option = 0 # Try 0, 1, 2, 3
 
 # Instantiate FLORIS model
 fi = FlorisInterface("inputs/"+floris_model+".yaml")
