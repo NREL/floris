@@ -486,18 +486,30 @@ class FlowFieldPlanarGrid(Grid):
     #         xoffset * sind(angle) + yoffset * cosd(angle) + center_of_rotation[1]
     #     )
     #     return rotated_x, rotated_y, self.z
+
 @define
 class PointsGrid(Grid):
     """
     Args:
-        grid_resolution (`Vec3`): The number of grid points to be created in each direction.
-        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
+        turbine_coordinates (`list[Vec3]`): The list of turbine coordinates as `Vec3` objects.
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int`): The number of points on each turbine
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Not used for PointsGrid, but
+            required for the `Grid` super-class.
+        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
+            series.
+        points_x (:py:obj:`NDArrayFloat`): Array of x-components for the points in the grid.
+        points_y (:py:obj:`NDArrayFloat`): Array of y-components for the points in the grid.
+        points_z (:py:obj:`NDArrayFloat`): Array of z-components for the points in the grid.
+        x_center_of_rotation (): Component fo the centroid of the farm. The grid-points will
+            be rotated around the center of rotation to account for wind direction changes.
+        y_center_of_rotation (): Component fo the centroid of the farm. The grid-points will
+            be rotated around the center of rotation to account for wind direction changes.
     """
-    points_x: NDArrayFloat = field()
-    points_y: NDArrayFloat = field()
-    points_z: NDArrayFloat = field()
+    points_x: NDArrayFloat = field(converter=floris_array_converter)
+    points_y: NDArrayFloat = field(converter=floris_array_converter)
+    points_z: NDArrayFloat = field(converter=floris_array_converter)
     x_center_of_rotation: float | None = field(default=None)
     y_center_of_rotation: float | None = field(default=None)
 
