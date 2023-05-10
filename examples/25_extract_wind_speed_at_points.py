@@ -20,15 +20,17 @@ from floris.tools import FlorisInterface
 
 
 """
-This example demonstrates the use of the `FlorisInterface.sample_flow_at_points` method
-to extract the wind speed information at user-specified locations in the flow.
+This example demonstrates the use of the sample_flow_at_points method of
+FlorisInterface. sample_flow_at_points extracts the wind speed
+information at user-specified locations in the flow.
 
-Specifically, this example gets the wind speed at a single x, y location and four different
-heights over a sweep of wind directions. This mimics the wind speed measurements of a met
-mast across all wind directions (at a fixed free stream wind speed).
+Specifically, this example returns the wind speed at a single x, y
+location and four different heights over a sweep of wind directions.
+This mimics the wind speed measurements of a met mast across all
+wind directions (at a fixed free stream wind speed).
 
-Try different values for met_mast_option to vary the location of the met mast within
-the two-turbine farm.
+Try different values for met_mast_option to vary the location of the
+met mast within the two-turbine farm.
 """
 
 # Initialize FLORIS with the given input file via FlorisInterface.
