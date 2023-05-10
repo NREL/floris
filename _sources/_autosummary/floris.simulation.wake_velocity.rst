@@ -27,6 +27,7 @@ floris.simulation.wake\_velocity
    :recursive:
 
    floris.simulation.wake_velocity.cumulative_gauss_curl
+   floris.simulation.wake_velocity.empirical_gauss
    floris.simulation.wake_velocity.gauss
    floris.simulation.wake_velocity.jensen
    floris.simulation.wake_velocity.none

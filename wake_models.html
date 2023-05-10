@@ -366,6 +366,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -393,8 +398,18 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
         </a>
        </li>
        <li class="toctree-l4">
@@ -531,6 +546,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
@@ -567,6 +587,11 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.wake_turbulence.none
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
@@ -582,6 +607,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">
          floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
         </a>
        </li>
        <li class="toctree-l4">
@@ -1042,11 +1072,45 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="_autosummary/floris.utilities.html">
-     floris.utilities
+    <a class="reference internal" href="_autosummary/floris.turbine_library.html">
+     floris.turbine_library
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
     <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="_autosummary/floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1344,52 +1408,33 @@ title="Print to PDF"
     <nav id="bd-toc-nav" aria-label="Page">
         <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#velocity-deficit">
-   Velocity deficit
+  <a class="reference internal nav-link" href="#jensen-and-jimenez">
+   Jensen and Jimenez
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#jensen">
-     Jensen
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#gauss-and-gch">
-     Gauss and GCH
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#cumulative-curl">
-     Cumulative Curl
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#turbopark">
-     TurbOPark
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#wake-deflection">
-   Wake deflection
+  <a class="reference internal nav-link" href="#gauss-and-gch">
+   Gauss and GCH
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#jimenez">
-     Jimenez
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id7">
-     Gauss and GCH
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#turbulence">
-   Turbulence
+  <a class="reference internal nav-link" href="#empirical-gaussian">
+   Empirical Gaussian
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cumulative-curl">
+   Cumulative Curl
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#turbopark">
+   TurbOPark
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#turbulence-models">
+   Turbulence Models
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
@@ -1400,8 +1445,8 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#wake-combination">
-   Wake combination
+  <a class="reference internal nav-link" href="#wake-combination-models">
+   Wake Combination Models
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
@@ -1441,52 +1486,33 @@ title="Print to PDF"
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#velocity-deficit">
-   Velocity deficit
+  <a class="reference internal nav-link" href="#jensen-and-jimenez">
+   Jensen and Jimenez
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#jensen">
-     Jensen
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#gauss-and-gch">
-     Gauss and GCH
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#cumulative-curl">
-     Cumulative Curl
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#turbopark">
-     TurbOPark
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#wake-deflection">
-   Wake deflection
+  <a class="reference internal nav-link" href="#gauss-and-gch">
+   Gauss and GCH
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#jimenez">
-     Jimenez
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id7">
-     Gauss and GCH
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#turbulence">
-   Turbulence
+  <a class="reference internal nav-link" href="#empirical-gaussian">
+   Empirical Gaussian
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cumulative-curl">
+   Cumulative Curl
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#turbopark">
+   TurbOPark
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#turbulence-models">
+   Turbulence Models
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
@@ -1497,8 +1523,8 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#wake-combination">
-   Wake combination
+  <a class="reference internal nav-link" href="#wake-combination-models">
+   Wake Combination Models
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
@@ -1561,176 +1587,126 @@ to the math formulation, but they are typically more generic.</p>
         G---E
         E---F
     end
-        </div><div class="cell tag_hide-input docutils container">
+        </div><p>The models in FLORIS are typically developed as a combination of velocity deficit and wake
+deflection models, and some also have custom turbulence and combination models. The descriptions
+below use the typical combinations except where indicated. The specific settings can be seen
+in the corresponding input files found in the source code dropdowns.</p>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">floris.tools</span> <span class="kn">import</span> <span class="n">FlorisInterface</span>
 <span class="kn">import</span> <span class="nn">floris.tools.visualization</span> <span class="k">as</span> <span class="nn">wakeviz</span>
+
+<span class="n">NREL5MW_D</span> <span class="o">=</span> <span class="mf">126.0</span>
+
+<span class="k">def</span> <span class="nf">model_plot</span><span class="p">(</span><span class="n">inputfile</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span>
+    <span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">NREL5MW_D</span><span class="p">]),</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">NREL5MW_D</span><span class="p">]))</span>
+    <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">yaw_angles</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">20.0</span>
+    <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span>
+        <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span>
+        <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span>
+    <span class="p">)</span>
+    <span class="n">wakeviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
+    <span class="n">wakeviz</span><span class="o">.</span><span class="n">plot_turbines_with_fi</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<section id="velocity-deficit">
-<h2>Velocity deficit<a class="headerlink" href="#velocity-deficit" title="Permalink to this headline">#</a></h2>
-<p>The velocity deficit models describe the velocity profile behind a wind turbine as a function of
-distance from the turbine plus additional model-specific parameters.</p>
-<section id="jensen">
-<h3>Jensen<a class="headerlink" href="#jensen" title="Permalink to this headline">#</a></h3>
+<section id="jensen-and-jimenez">
+<h2>Jensen and Jimenez<a class="headerlink" href="#jensen-and-jimenez" title="Permalink to this headline">#</a></h2>
 <p>The Jensen model computes the wake velocity deficit based on the classic Jensen/Park model
 <span id="id1">Jensen [<a class="reference internal" href="bibliography.html#id19" title="Niels Otto Jensen. A note on wind generator interaction. Risø National Laboratory, 1983.">1</a>]</span>. It is often refered to as a &quot;top-hat&quot; model because the spanwise
 velocity profile is constant across the wake and abruptly jumps to freestream outside of the
-wake boundary line. The plot below shows the profile of the wake deficit. The grid is
-intentionally coarse to highlight the streamwise linearity of this model. The slope of
-the wake boundary line, or wake expansion, is a user parameter.</p>
-<div class="cell tag_hide-input docutils container">
+wake boundary line. The slope of the wake boundary line, or wake expansion, is a user parameter.</p>
+<p>The Jiménez wake deflection model is derived from <span id="id2">Jiménez <em>et al.</em> [<a class="reference internal" href="bibliography.html#id18" title="Ángel Jiménez, Antonio Crespo, and Emilio Migoya. Application of a les technique to characterize the wake deflection of a wind turbine in yaw. Wind energy, 13(6):559–572, 2010.">2</a>]</span>.</p>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/jensen.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]),</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span>
-    <span class="n">x_resolution</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">plot_turbines_with_fi</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_plot</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/jensen.yaml&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/wake_models_4_0.png" src="_images/wake_models_4_0.png" />
+<img alt="_images/wake_models_3_0.png" src="_images/wake_models_3_0.png" />
 </div>
 </div>
 </section>
 <section id="gauss-and-gch">
-<h3>Gauss and GCH<a class="headerlink" href="#gauss-and-gch" title="Permalink to this headline">#</a></h3>
-<p>The Gaussian velocity model is implemented based on <span id="id2">Bastankhah and Porté-Agel [<a class="reference internal" href="bibliography.html#id4" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">2</a>]</span> and
-<span id="id3">Niayifar and Porté-Agel [<a class="reference internal" href="bibliography.html#id5" title="Amin Niayifar and Fernando Porté-Agel. Analytical modeling of wind farms: a new approach for power prediction. Energies, 9(9):741, 2016.">3</a>]</span>. This model represents the velocity deficity as a gaussian
+<h2>Gauss and GCH<a class="headerlink" href="#gauss-and-gch" title="Permalink to this headline">#</a></h2>
+<p>The Gaussian velocity model is implemented based on <span id="id3">Bastankhah and Porté-Agel [<a class="reference internal" href="bibliography.html#id4" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">3</a>]</span> and
+<span id="id4">Niayifar and Porté-Agel [<a class="reference internal" href="bibliography.html#id5" title="Amin Niayifar and Fernando Porté-Agel. Analytical modeling of wind farms: a new approach for power prediction. Energies, 9(9):741, 2016.">4</a>]</span>. This model represents the velocity deficity as a gaussian
 distribution in the spanwise direction, and the gaussian profile is controlled by user parameters.
 There is a near wake zone and a far wake zone. Both maintain the gaussian profile in the spanwise
 direction, but they have different models for wake recovery.</p>
-<div class="cell tag_hide-input docutils container">
+<p>The Gauss deflection model is a blend of the models described in
+<span id="id5">Bastankhah and Porté-Agel [<a class="reference internal" href="bibliography.html#id4" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">3</a>]</span> and <span id="id6">King <em>et al.</em> [<a class="reference internal" href="bibliography.html#id17" title="Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. Submitted to Wind Energy Science, 2019.">5</a>]</span> for calculating
+the deflection field in turbine wakes.</p>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/gch.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]),</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span>
-    <span class="n">x_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">plot_turbines_with_fi</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_plot</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/gch.yaml&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/wake_models_6_0.png" src="_images/wake_models_6_0.png" />
+<img alt="_images/wake_models_5_0.png" src="_images/wake_models_5_0.png" />
+</div>
+</div>
+</section>
+<section id="empirical-gaussian">
+<h2>Empirical Gaussian<a class="headerlink" href="#empirical-gaussian" title="Permalink to this headline">#</a></h2>
+<p>FLORIS's &quot;empirical&quot; model has the same Gaussian wake shape as other popular FLORIS models.
+However, the models that describe the wake width and deflection have been reorganized to provide
+simpler tuning and data fitting.</p>
+<p>For more information, see <a class="reference internal" href="empirical_gauss_model.html#empirical-gauss-model"><span class="std std-ref">Empirical Gaussian model</span></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_plot</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/emgauss.yaml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/wake_models_7_0.png" src="_images/wake_models_7_0.png" />
 </div>
 </div>
 </section>
 <section id="cumulative-curl">
-<h3>Cumulative Curl<a class="headerlink" href="#cumulative-curl" title="Permalink to this headline">#</a></h3>
-<p>The cumulative curl model is an implementation of the model described in <span id="id4">Bay <em>et al.</em> [<a class="reference internal" href="bibliography.html#id27" title="C. J. Bay, P. Fleming, B. Doekemeijer, J. King, M. Churchfield, and R. Mudafort. Addressing deep array effects and impacts to wake steering with the cumulative-curl wake model. Wind Energy Science Discussions, 2022:1–28, 2022. URL: https://wes.copernicus.org/preprints/wes-2022-17/, doi:10.5194/wes-2022-17.">4</a>]</span>,
-which itself is based on the cumulative model of <span id="id5">Bastankhah <em>et al.</em> [<a class="reference internal" href="bibliography.html#id26" title="Majid Bastankhah, Bridget L. Welch, Luis A. Martínez-Tossas, Jennifer King, and Paul Fleming. Analytical solution for the cumulative wake of wind turbines in wind farms. Journal of Fluid Mechanics, 911:A53, 2021. doi:10.1017/jfm.2020.1037.">5</a>]</span></p>
-<div class="cell tag_hide-input docutils container">
+<h2>Cumulative Curl<a class="headerlink" href="#cumulative-curl" title="Permalink to this headline">#</a></h2>
+<p>The cumulative curl model is an implementation of the model described in <span id="id7">Bay <em>et al.</em> [<a class="reference internal" href="bibliography.html#id27" title="C. J. Bay, P. Fleming, B. Doekemeijer, J. King, M. Churchfield, and R. Mudafort. Addressing deep array effects and impacts to wake steering with the cumulative-curl wake model. Wind Energy Science Discussions, 2022:1–28, 2022. URL: https://wes.copernicus.org/preprints/wes-2022-17/, doi:10.5194/wes-2022-17.">6</a>]</span>,
+which itself is based on the cumulative model of <span id="id8">Bastankhah <em>et al.</em> [<a class="reference internal" href="bibliography.html#id26" title="Majid Bastankhah, Bridget L. Welch, Luis A. Martínez-Tossas, Jennifer King, and Paul Fleming. Analytical solution for the cumulative wake of wind turbines in wind farms. Journal of Fluid Mechanics, 911:A53, 2021. doi:10.1017/jfm.2020.1037.">7</a>]</span></p>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/cc.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]),</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span>
-    <span class="n">x_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">plot_turbines_with_fi</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_plot</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/cc.yaml&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/wake_models_8_0.png" src="_images/wake_models_8_0.png" />
+<img alt="_images/wake_models_9_0.png" src="_images/wake_models_9_0.png" />
 </div>
 </div>
 </section>
 <section id="turbopark">
-<h3>TurbOPark<a class="headerlink" href="#turbopark" title="Permalink to this headline">#</a></h3>
-<p>Model based on the TurbOPark model. For model details see the following references:</p>
+<h2>TurbOPark<a class="headerlink" href="#turbopark" title="Permalink to this headline">#</a></h2>
+<p>TurbOPark is a velocity deficit model. For model details see the following references:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/OrstedRD/TurbOPark">https://github.com/OrstedRD/TurbOPark</a></p></li>
 <li><p><a class="reference external" href="https://github.com/OrstedRD/TurbOPark/blob/main/TurbOPark%20description.pdf">https://github.com/OrstedRD/TurbOPark/blob/main/TurbOPark description.pdf</a></p></li>
 <li><p>Nygaard, Nicolai Gayle, et al. &quot;Modelling cluster wakes and wind farm blockage.&quot; 2020</p></li>
 </ul>
 </section>
-</section>
-<section id="wake-deflection">
-<h2>Wake deflection<a class="headerlink" href="#wake-deflection" title="Permalink to this headline">#</a></h2>
-<p>The deflection models capture the effects of rotor misalignment to the incoming wind by
-computing a shift away from the wake centerline. This class of models are a function of
-the distance from the turbine causing the wake and that turbine's yaw angle in addition
-to other model-specific parameters.</p>
-<section id="jimenez">
-<h3>Jimenez<a class="headerlink" href="#jimenez" title="Permalink to this headline">#</a></h3>
-<p>Jiménez wake deflection model, derived from <span id="id6">Jiménez <em>et al.</em> [<a class="reference internal" href="bibliography.html#id18" title="Ángel Jiménez, Antonio Crespo, and Emilio Migoya. Application of a les technique to characterize the wake deflection of a wind turbine in yaw. Wind energy, 13(6):559–572, 2010.">6</a>]</span>.</p>
-<div class="cell tag_hide-input docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/jensen.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]),</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
-<span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="n">yaw_angles</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">20.0</span>
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span>
-    <span class="n">x_resolution</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
-    <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span>
-<span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">plot_turbines_with_fi</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/wake_models_12_0.png" src="_images/wake_models_12_0.png" />
-</div>
-</div>
-</section>
-<section id="id7">
-<h3>Gauss and GCH<a class="headerlink" href="#id7" title="Permalink to this headline">#</a></h3>
-<p>The Gauss deflection model is a blend of the models described in
-<span id="id8">Bastankhah and Porté-Agel [<a class="reference internal" href="bibliography.html#id4" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">2</a>]</span> and <span id="id9">King <em>et al.</em> [<a class="reference internal" href="bibliography.html#id17" title="Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. Submitted to Wind Energy Science, 2019.">7</a>]</span> for calculating
-the deflection field in turbine wakes.</p>
-<div class="cell tag_hide-input docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/gch.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]),</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
-<span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="n">yaw_angles</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">20.0</span>
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span>
-    <span class="n">x_resolution</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
-    <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span>
-<span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
-<span class="n">wakeviz</span><span class="o">.</span><span class="n">plot_turbines_with_fi</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/wake_models_14_0.png" src="_images/wake_models_14_0.png" />
-</div>
-</div>
-</section>
-</section>
-<section id="turbulence">
-<h2>Turbulence<a class="headerlink" href="#turbulence" title="Permalink to this headline">#</a></h2>
+<section id="turbulence-models">
+<h2>Turbulence Models<a class="headerlink" href="#turbulence-models" title="Permalink to this headline">#</a></h2>
 <section id="crespo-hernandez">
 <h3>Crespo-Hernandez<a class="headerlink" href="#crespo-hernandez" title="Permalink to this headline">#</a></h3>
 <p>CrespoHernandez is a wake-turbulence model that is used to compute additional variability introduced
 to the flow field by operation of a wind turbine. Implementation of the model follows the original
-formulation and limitations outlined in <span id="id10">Crespo and Hernandez [<a class="reference internal" href="bibliography.html#id15" title="A Crespo and J Hernandez. Turbulence characteristics in wind-turbine wakes. Journal of wind engineering and industrial aerodynamics, 61(1):71–85, 1996.">8</a>]</span>.</p>
+formulation and limitations outlined in <span id="id9">Crespo and Hernandez [<a class="reference internal" href="bibliography.html#id15" title="A Crespo and J Hernandez. Turbulence characteristics in wind-turbine wakes. Journal of wind engineering and industrial aerodynamics, 61(1):71–85, 1996.">8</a>]</span>.</p>
 </section>
 </section>
-<section id="wake-combination">
-<h2>Wake combination<a class="headerlink" href="#wake-combination" title="Permalink to this headline">#</a></h2>
+<section id="wake-combination-models">
+<h2>Wake Combination Models<a class="headerlink" href="#wake-combination-models" title="Permalink to this headline">#</a></h2>
 <p>The wakes throughout the flow field need to be combined in a careful manner in order to
 accurately capture their coupled effects. A simple model is to simple add them,
 but this can result in negative velocities a few turbines into the farm. More careful
@@ -1740,7 +1716,7 @@ These descriptions use the Jensen and Jimenez models since they highlight the di
 in the combination models themselves.
 The upper plots show the turbine wakes individually to give a reference for the uncombined wake.
 The lower plots show both turbines along with their wakes combined with the chosen model.</p>
-<div class="cell tag_hide-input docutils container">
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">combination_plot</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">X_UPSTREAM</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -1794,22 +1770,22 @@ The lower plots show both turbines along with their wakes combined with the chos
 <h3>Freestream Linear Superposition (FLS)<a class="headerlink" href="#freestream-linear-superposition-fls" title="Permalink to this headline">#</a></h3>
 <p>FLS uses freestream linear superposition to apply the wake velocity deficits to the freestream
 flow field.</p>
-<div class="cell tag_hide-input docutils container">
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">combination_plot</span><span class="p">(</span><span class="s2">&quot;fls&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/wake_models_19_0.png" src="_images/wake_models_19_0.png" />
-<img alt="_images/wake_models_19_1.png" src="_images/wake_models_19_1.png" />
+<img alt="_images/wake_models_15_0.png" src="_images/wake_models_15_0.png" />
+<img alt="_images/wake_models_15_1.png" src="_images/wake_models_15_1.png" />
 </div>
 </div>
 </section>
 <section id="max">
 <h3>Max<a class="headerlink" href="#max" title="Permalink to this headline">#</a></h3>
 <p>The MAX model incorporates the velocity deficits into the base flow field by selecting the
-maximum of the two for each point. For more information, refer to <span id="id11">Gunn <em>et al.</em> [<a class="reference internal" href="bibliography.html#id16" title="Kester Gunn, Clym Stock-Williams, M Burke, Richard Willden, C Vogel, W Hunter, T Stallard, N Robinson, and SR Schmidt. Limitations to the validity of single wake superposition in wind farm yield assessment. In Journal of Physics: Conference Series, number 1. IOP Publishing: Conference Series, 2016.">9</a>]</span>.</p>
+maximum of the two for each point. For more information, refer to <span id="id10">Gunn <em>et al.</em> [<a class="reference internal" href="bibliography.html#id16" title="Kester Gunn, Clym Stock-Williams, M Burke, Richard Willden, C Vogel, W Hunter, T Stallard, N Robinson, and SR Schmidt. Limitations to the validity of single wake superposition in wind farm yield assessment. In Journal of Physics: Conference Series, number 1. IOP Publishing: Conference Series, 2016.">9</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">combination_plot</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span>
@@ -1817,8 +1793,8 @@ maximum of the two for each point. For more information, refer to <span id="id11
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/wake_models_21_0.png" src="_images/wake_models_21_0.png" />
-<img alt="_images/wake_models_21_1.png" src="_images/wake_models_21_1.png" />
+<img alt="_images/wake_models_17_0.png" src="_images/wake_models_17_0.png" />
+<img alt="_images/wake_models_17_1.png" src="_images/wake_models_17_1.png" />
 </div>
 </div>
 </section>
@@ -1833,8 +1809,8 @@ flow field.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/wake_models_23_0.png" src="_images/wake_models_23_0.png" />
-<img alt="_images/wake_models_23_1.png" src="_images/wake_models_23_1.png" />
+<img alt="_images/wake_models_19_0.png" src="_images/wake_models_19_0.png" />
+<img alt="_images/wake_models_19_1.png" src="_images/wake_models_19_1.png" />
 </div>
 </div>
 </section>

@@ -33,6 +33,8 @@ floris.simulation.grid.TurbineGrid
       ~TurbineGrid.sorted_indices
       ~TurbineGrid.sorted_coord_indices
       ~TurbineGrid.unsorted_indices
+      ~TurbineGrid.x_center_of_rotation
+      ~TurbineGrid.y_center_of_rotation
       ~TurbineGrid.grid_resolution
       ~TurbineGrid.n_turbines
       ~TurbineGrid.n_wind_directions

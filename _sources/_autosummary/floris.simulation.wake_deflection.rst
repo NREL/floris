@@ -26,6 +26,7 @@ floris.simulation.wake\_deflection
    :template: custom-module-template.rst
    :recursive:
 
+   floris.simulation.wake_deflection.empirical_gauss
    floris.simulation.wake_deflection.gauss
    floris.simulation.wake_deflection.jimenez
    floris.simulation.wake_deflection.none

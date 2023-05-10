@@ -28,4 +28,5 @@ floris.simulation.wake\_turbulence
 
    floris.simulation.wake_turbulence.crespo_hernandez
    floris.simulation.wake_turbulence.none
+   floris.simulation.wake_turbulence.wake_induced_mixing
 

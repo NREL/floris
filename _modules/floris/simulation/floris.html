@@ -363,6 +363,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -390,8 +395,18 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
         </a>
        </li>
        <li class="toctree-l4">
@@ -528,6 +543,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
@@ -564,6 +584,11 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.wake_turbulence.none
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
@@ -579,6 +604,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">
          floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
         </a>
        </li>
        <li class="toctree-l4">
@@ -1039,11 +1069,45 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../../_autosummary/floris.utilities.html">
-     floris.utilities
+    <a class="reference internal" href="../../../_autosummary/floris.turbine_library.html">
+     floris.turbine_library
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
     <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../_autosummary/floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1272,18 +1336,21 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="kn">import</span> <span class="nn">floris.logging_manager</span> <span class="k">as</span> <span class="nn">logging_manager</span>
+<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">logging_manager</span>
 <span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseClass</span><span class="p">,</span>
     <span class="n">cc_solver</span><span class="p">,</span>
+    <span class="n">empirical_gauss_solver</span><span class="p">,</span>
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">FlowFieldGrid</span><span class="p">,</span>
     <span class="n">FlowFieldPlanarGrid</span><span class="p">,</span>
     <span class="n">full_flow_cc_solver</span><span class="p">,</span>
+    <span class="n">full_flow_empirical_gauss_solver</span><span class="p">,</span>
     <span class="n">full_flow_sequential_solver</span><span class="p">,</span>
     <span class="n">full_flow_turbopark_solver</span><span class="p">,</span>
     <span class="n">Grid</span><span class="p">,</span>
+    <span class="n">PointsGrid</span><span class="p">,</span>
     <span class="n">sequential_solver</span><span class="p">,</span>
     <span class="n">State</span><span class="p">,</span>
     <span class="n">TurbineGrid</span><span class="p">,</span>
@@ -1366,9 +1433,9 @@ title="Open an issue"
                 <span class="n">normal_vector</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;normal_vector&quot;</span><span class="p">],</span>
                 <span class="n">planar_coordinate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;planar_coordinate&quot;</span><span class="p">],</span>
                 <span class="n">grid_resolution</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;flow_field_grid_points&quot;</span><span class="p">],</span>
+                <span class="n">time_series</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">time_series</span><span class="p">,</span>
                 <span class="n">x1_bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;flow_field_bounds&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
                 <span class="n">x2_bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="s2">&quot;flow_field_bounds&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-                <span class="n">time_series</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">time_series</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1453,7 +1520,7 @@ title="Open an issue"
         <span class="c1"># &lt;&lt;interface&gt;&gt;</span>
         <span class="c1"># start = time.time()</span>
 
-        <span class="k">if</span> <span class="n">vel_model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gauss&quot;</span><span class="p">,</span> <span class="s2">&quot;cc&quot;</span><span class="p">,</span> <span class="s2">&quot;turbokpark&quot;</span><span class="p">,</span> <span class="s2">&quot;jensen&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+        <span class="k">if</span> <span class="n">vel_model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gauss&quot;</span><span class="p">,</span> <span class="s2">&quot;cc&quot;</span><span class="p">,</span> <span class="s2">&quot;turbopark&quot;</span><span class="p">,</span> <span class="s2">&quot;jensen&quot;</span><span class="p">]</span> <span class="ow">and</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;The current model does not account for vertical wake deflection due to &quot;</span> <span class="o">+</span>
@@ -1462,21 +1529,28 @@ title="Open an issue"
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;cc&quot;</span><span class="p">:</span>
-            <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">cc_solver</span><span class="p">(</span>
+            <span class="n">cc_solver</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">wake</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;turbopark&quot;</span><span class="p">:</span>
-            <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">turbopark_solver</span><span class="p">(</span>
+            <span class="n">turbopark_solver</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wake</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">:</span>
+            <span class="n">empirical_gauss_solver</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">wake</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">sequential_solver</span><span class="p">(</span>
+            <span class="n">sequential_solver</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
@@ -1485,8 +1559,8 @@ title="Open an issue"
         <span class="c1"># end = time.time()</span>
         <span class="c1"># elapsed_time = end - start</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">elapsed_time</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span></div>
+        <span class="c1"># return elapsed_time</span>
 
 <div class="viewcode-block" id="Floris.solve_for_viz"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.solve_for_viz">[docs]</a>    <span class="k">def</span> <span class="nf">solve_for_viz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Do the calculation with the TurbineGrid for a single wind speed</span>
@@ -1503,8 +1577,48 @@ title="Open an issue"
             <span class="n">full_flow_cc_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;turbopark&quot;</span><span class="p">:</span>
             <span class="n">full_flow_turbopark_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">vel_model</span><span class="o">==</span><span class="s2">&quot;empirical_gauss&quot;</span><span class="p">:</span>
+            <span class="n">full_flow_empirical_gauss_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">full_flow_sequential_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Floris.solve_for_points"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.solve_for_points">[docs]</a>    <span class="k">def</span> <span class="nf">solve_for_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="c1"># Do the calculation with the TurbineGrid for a single wind speed</span>
+        <span class="c1"># and wind direction and a 3x3 rotor grid. Then, use the result</span>
+        <span class="c1"># to construct the full flow field grid.</span>
+        <span class="c1"># This function call should be for a single wind direction and wind speed</span>
+        <span class="c1"># since the memory consumption is very large.</span>
+
+        <span class="c1"># Instantiate the flow_grid</span>
+        <span class="n">field_grid</span> <span class="o">=</span> <span class="n">PointsGrid</span><span class="p">(</span>
+            <span class="n">points_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">points_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">points_z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+            <span class="n">turbine_coordinates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
+            <span class="n">reference_turbine_diameter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
+            <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+            <span class="n">wind_speeds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
+            <span class="n">grid_resolution</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">time_series</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">time_series</span><span class="p">,</span>
+            <span class="n">x_center_of_rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_center_of_rotation</span><span class="p">,</span>
+            <span class="n">y_center_of_rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y_center_of_rotation</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">initialize_velocity_field</span><span class="p">(</span><span class="n">field_grid</span><span class="p">)</span>
+
+        <span class="n">vel_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;cc&quot;</span> <span class="ow">or</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;turbopark&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;solve_for_points is currently only available with the &quot;</span><span class="o">+</span>\
+                <span class="s2">&quot;gauss, jensen, and empirical_guass models.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;empirical_gauss&quot;</span><span class="p">:</span>
+            <span class="n">full_flow_empirical_gauss_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="n">field_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">full_flow_sequential_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="n">field_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Remove turbine grid dimensions</span></div>
 
 <div class="viewcode-block" id="Floris.finalize"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.floris.Floris.html#floris.simulation.floris.Floris.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Once the wake calculation is finished, unsort the values to match</span>

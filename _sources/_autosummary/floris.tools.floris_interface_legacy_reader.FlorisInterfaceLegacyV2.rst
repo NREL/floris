@@ -34,6 +34,7 @@ floris.tools.floris\_interface\_legacy\_reader.FlorisInterfaceLegacyV2
       ~FlorisInterfaceLegacyV2.get_turbine_layout
       ~FlorisInterfaceLegacyV2.get_turbine_powers
       ~FlorisInterfaceLegacyV2.reinitialize
+      ~FlorisInterfaceLegacyV2.sample_flow_at_points
    
    
 

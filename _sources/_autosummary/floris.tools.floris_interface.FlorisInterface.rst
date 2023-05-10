@@ -34,6 +34,7 @@ floris.tools.floris\_interface.FlorisInterface
       ~FlorisInterface.get_turbine_layout
       ~FlorisInterface.get_turbine_powers
       ~FlorisInterface.reinitialize
+      ~FlorisInterface.sample_flow_at_points
    
    
 

@@ -366,6 +366,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -393,8 +398,18 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
         </a>
        </li>
        <li class="toctree-l4">
@@ -531,6 +546,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
@@ -567,6 +587,11 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.wake_turbulence.none
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
@@ -582,6 +607,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.wake_velocity.cumulative_gauss_curl.html">
          floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
         </a>
        </li>
        <li class="toctree-l4">
@@ -1042,11 +1072,45 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="floris.utilities.html">
-     floris.utilities
+    <a class="reference internal" href="floris.turbine_library.html">
+     floris.turbine_library
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
     <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1336,7 +1400,18 @@ title="Print to PDF"
 </dl>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.solver.full_flow_cc_solver.html#floris.simulation.solver.full_flow_cc_solver" title="floris.simulation.solver.full_flow_cc_solver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">full_flow_cc_solver</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.solver.empirical_gauss_solver.html#floris.simulation.solver.empirical_gauss_solver" title="floris.simulation.solver.empirical_gauss_solver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">empirical_gauss_solver</span></code></a></p></td>
+<td><p>Algorithm: For each turbine, calculate its effect on every downstream turbine.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="floris.simulation.solver.full_flow_cc_solver.html#floris.simulation.solver.full_flow_cc_solver" title="floris.simulation.solver.full_flow_cc_solver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">full_flow_cc_solver</span></code></a></p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">rtype</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.solver.full_flow_empirical_gauss_solver.html#floris.simulation.solver.full_flow_empirical_gauss_solver" title="floris.simulation.solver.full_flow_empirical_gauss_solver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">full_flow_empirical_gauss_solver</span></code></a></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">rtype</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -1414,7 +1489,7 @@ velocity, i.e. affected by the wake</p>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>farm</strong> (<a class="reference internal" href="floris.simulation.farm.Farm.html#floris.simulation.farm.Farm" title="floris.simulation.farm.Farm"><em>floris.simulation.farm.Farm</em></a>) -- </p></li>
 <li><p><strong>flow_field</strong> (<a class="reference internal" href="floris.simulation.flow_field.FlowField.html#floris.simulation.flow_field.FlowField" title="floris.simulation.flow_field.FlowField"><em>floris.simulation.flow_field.FlowField</em></a>) -- </p></li>
-<li><p><strong>flow_field_grid</strong> (<a class="reference internal" href="floris.simulation.grid.FlowFieldGrid.html#floris.simulation.grid.FlowFieldGrid" title="floris.simulation.grid.FlowFieldGrid"><em>floris.simulation.grid.FlowFieldGrid</em></a>) -- </p></li>
+<li><p><strong>flow_field_grid</strong> (<a class="reference internal" href="floris.simulation.grid.FlowFieldGrid.html#floris.simulation.grid.FlowFieldGrid" title="floris.simulation.grid.FlowFieldGrid"><em>floris.simulation.grid.FlowFieldGrid</em></a><em> | </em><a class="reference internal" href="floris.simulation.grid.FlowFieldPlanarGrid.html#floris.simulation.grid.FlowFieldPlanarGrid" title="floris.simulation.grid.FlowFieldPlanarGrid"><em>floris.simulation.grid.FlowFieldPlanarGrid</em></a><em> | </em><a class="reference internal" href="floris.simulation.grid.PointsGrid.html#floris.simulation.grid.PointsGrid" title="floris.simulation.grid.PointsGrid"><em>floris.simulation.grid.PointsGrid</em></a>) -- </p></li>
 <li><p><strong>model_manager</strong> (<a class="reference internal" href="floris.simulation.wake.WakeModelManager.html#floris.simulation.wake.WakeModelManager" title="floris.simulation.wake.WakeModelManager"><em>floris.simulation.wake.WakeModelManager</em></a>) -- </p></li>
 </ul>
 </dd>
@@ -1478,6 +1553,59 @@ velocity, i.e. affected by the wake</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.simulation.solver.full_flow_turbopark_solver">
 <span class="sig-prename descclassname"><span class="pre">floris.simulation.solver.</span></span><span class="sig-name descname"><span class="pre">full_flow_turbopark_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">farm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_field_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/solver.html#full_flow_turbopark_solver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.solver.full_flow_turbopark_solver" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>farm</strong> (<a class="reference internal" href="floris.simulation.farm.Farm.html#floris.simulation.farm.Farm" title="floris.simulation.farm.Farm"><em>floris.simulation.farm.Farm</em></a>) -- </p></li>
+<li><p><strong>flow_field</strong> (<a class="reference internal" href="floris.simulation.flow_field.FlowField.html#floris.simulation.flow_field.FlowField" title="floris.simulation.flow_field.FlowField"><em>floris.simulation.flow_field.FlowField</em></a>) -- </p></li>
+<li><p><strong>flow_field_grid</strong> (<a class="reference internal" href="floris.simulation.grid.FlowFieldGrid.html#floris.simulation.grid.FlowFieldGrid" title="floris.simulation.grid.FlowFieldGrid"><em>floris.simulation.grid.FlowFieldGrid</em></a>) -- </p></li>
+<li><p><strong>model_manager</strong> (<a class="reference internal" href="floris.simulation.wake.WakeModelManager.html#floris.simulation.wake.WakeModelManager" title="floris.simulation.wake.WakeModelManager"><em>floris.simulation.wake.WakeModelManager</em></a>) -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.simulation.solver.empirical_gauss_solver">
+<span class="sig-prename descclassname"><span class="pre">floris.simulation.solver.</span></span><span class="sig-name descname"><span class="pre">empirical_gauss_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">farm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/solver.html#empirical_gauss_solver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.solver.empirical_gauss_solver" title="Permalink to this definition">#</a></dt>
+<dd><p>Algorithm:
+For each turbine, calculate its effect on every downstream turbine.
+For the current turbine, we are calculating the deficit that it adds to downstream turbines.
+Integrate this into the main data structure.
+Move on to the next turbine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>farm</strong> (<a class="reference internal" href="floris.simulation.farm.Farm.html#floris.simulation.farm.Farm" title="floris.simulation.farm.Farm"><em>Farm</em></a>) -- </p></li>
+<li><p><strong>flow_field</strong> (<a class="reference internal" href="floris.simulation.flow_field.FlowField.html#floris.simulation.flow_field.FlowField" title="floris.simulation.flow_field.FlowField"><em>FlowField</em></a>) -- </p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="floris.simulation.grid.TurbineGrid.html#floris.simulation.grid.TurbineGrid" title="floris.simulation.grid.TurbineGrid"><em>TurbineGrid</em></a>) -- </p></li>
+<li><p><strong>model_manager</strong> (<a class="reference internal" href="floris.simulation.wake.WakeModelManager.html#floris.simulation.wake.WakeModelManager" title="floris.simulation.wake.WakeModelManager"><em>WakeModelManager</em></a>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>NotImplementedError</strong> -- Raised if secondary steering is enabled with the EmGauss model.</p></li>
+<li><p><strong>NotImplementedError</strong> -- Raised if transverse velocities is enabled with the EmGauss model.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>wake induced mixing field primarily for use in the full-flow EmGauss solver</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>NDArrayFloat</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.simulation.solver.full_flow_empirical_gauss_solver">
+<span class="sig-prename descclassname"><span class="pre">floris.simulation.solver.</span></span><span class="sig-name descname"><span class="pre">full_flow_empirical_gauss_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">farm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_field_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/solver.html#full_flow_empirical_gauss_solver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.solver.full_flow_empirical_gauss_solver" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>

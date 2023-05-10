@@ -99,6 +99,33 @@ of a turbine layout within FLORIS.
 Demonstrates the definition of a floating turbine and how to enable the effects of tilt
 on Cp and Ct.
 
+### 25_tilt_driven_vertical_wake_deflection.py
+
+This example demonstrates vertical wake deflections due to the tilt angle when running
+with the Empirical Gauss model. Note that only the Empirical Gauss model implements
+vertical deflections at this time. Also be aware that this example uses a potentially
+unrealistic tilt angle, 15 degrees, to highlight the wake deflection. Moreover, the magnitude
+of vertical deflections due to tilt has not been validated.
+
+### 26_empirical_gauss_velocity_deficit_parameters.py
+
+This example illustrates the main parameters of the Empirical Gaussian
+velocity deficit model and their effects on the wind turbine wake.
+
+### 27_empirical_gauss_deflection_parameters.py
+This example illustrates the main parameters of the Empirical Gaussian
+deflection model and their effects on the wind turbine wake.
+
+### 28_extract_wind_speed_at_points.py
+This example demonstrates the use of the `FlorisInterface.sample_flow_at_points` method
+to extract the wind speed information at user-specified locations in the flow.
+
+Specifically, this example gets the wind speed at a single x, y location and four different
+heights over a sweep of wind directions. This mimics the wind speed measurements of a met
+mast across all wind directions (at a fixed free stream wind speed).
+
+Try different values for met_mast_option to vary the location of the met mast within
+the two-turbine farm.
 
 ## Optimization
 

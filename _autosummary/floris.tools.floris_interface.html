@@ -366,6 +366,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -393,8 +398,18 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
         </a>
        </li>
        <li class="toctree-l4">
@@ -531,6 +546,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
@@ -567,6 +587,11 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.wake_turbulence.none
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
@@ -582,6 +607,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.wake_velocity.cumulative_gauss_curl.html">
          floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
         </a>
        </li>
        <li class="toctree-l4">
@@ -1042,11 +1072,45 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="floris.utilities.html">
-     floris.utilities
+    <a class="reference internal" href="floris.turbine_library.html">
+     floris.turbine_library
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
     <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1396,7 +1460,7 @@ number of upstream wakes a turbine is experiencing. Defaults to <em>False</em>.<
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1415,7 +1479,7 @@ the turbine that is yawed.</p>
 Defaults to None.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1426,18 +1490,18 @@ Defaults to None.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wind_speeds</strong> (<em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>wind_directions</strong> (<em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>wind_shear</strong> (<em>float</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>wind_veer</strong> (<em>float</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>reference_wind_height</strong> (<em>float</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>turbulence_intensity</strong> (<em>float</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>air_density</strong> (<em>float</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>layout_x</strong> (<em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>layout_y</strong> (<em>list</em><em>[</em><em>float</em><em>] </em><em>| </em><em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>turbine_type</strong> (<em>list</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>turbine_library_path</strong> (<em>str</em><em> | </em><em>Path</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>solver_settings</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>wind_speeds</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>]</em><em>, </em><em>list</em><em>[</em><em>float</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>wind_directions</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>]</em><em>, </em><em>list</em><em>[</em><em>float</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>wind_shear</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- </p></li>
+<li><p><strong>wind_veer</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- </p></li>
+<li><p><strong>reference_wind_height</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- </p></li>
+<li><p><strong>turbulence_intensity</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- </p></li>
+<li><p><strong>air_density</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- </p></li>
+<li><p><strong>layout_x</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>]</em><em>, </em><em>list</em><em>[</em><em>float</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>layout_y</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>]</em><em>, </em><em>list</em><em>[</em><em>float</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>turbine_type</strong> (<em>Optional</em><em>[</em><em>list</em><em>]</em>) -- </p></li>
+<li><p><strong>turbine_library_path</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>pathlib.Path</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>solver_settings</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>) -- </p></li>
 <li><p><strong>time_series</strong> (<em>bool</em>) -- </p></li>
 </ul>
 </dd>
@@ -1773,6 +1837,25 @@ watt-hours.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.sample_flow_at_points">
+<span class="sig-name descname"><span class="pre">sample_flow_at_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.sample_flow_at_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.sample_flow_at_points" title="Permalink to this definition">#</a></dt>
+<dd><p>Extract the wind speed at points in the flow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>1DArrayFloat</em><em> | </em><em>list</em>) -- x-locations of points where flow is desired.</p></li>
+<li><p><strong>y</strong> (<em>1DArrayFloat</em><em> | </em><em>list</em>) -- y-locations of points where flow is desired.</p></li>
+<li><p><strong>z</strong> (<em>1DArrayFloat</em><em> | </em><em>list</em>) -- z-locations of points where flow is desired.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>3DArrayFloat containing wind speed with dimensions
+(# of wind directions, # of wind speeds, # of sample points)</p>
 </dd>
 </dl>
 </dd></dl>

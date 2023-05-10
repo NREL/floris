@@ -363,6 +363,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -390,8 +395,18 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
         </a>
        </li>
        <li class="toctree-l4">
@@ -528,6 +543,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
@@ -564,6 +584,11 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.wake_turbulence.none
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
@@ -579,6 +604,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">
          floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
         </a>
        </li>
        <li class="toctree-l4">
@@ -1039,11 +1069,45 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="../../../_autosummary/floris.utilities.html">
-     floris.utilities
+    <a class="reference internal" href="../../../_autosummary/floris.turbine_library.html">
+     floris.turbine_library
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
     <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../_autosummary/floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1263,9 +1327,9 @@ title="Open an issue"
 <span class="c1"># License for the specific language governing permissions and limitations under</span>
 <span class="c1"># the License.</span>
 
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -1275,15 +1339,20 @@ title="Open an issue"
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">FlowFieldGrid</span><span class="p">,</span>
+    <span class="n">FlowFieldPlanarGrid</span><span class="p">,</span>
+    <span class="n">PointsGrid</span><span class="p">,</span>
     <span class="n">TurbineGrid</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.turbine</span> <span class="kn">import</span> <span class="n">average_velocity</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.wake</span> <span class="kn">import</span> <span class="n">WakeModelManager</span>
+<span class="kn">from</span> <span class="nn">floris.simulation.wake_deflection.empirical_gauss</span> <span class="kn">import</span> <span class="n">yaw_added_wake_mixing</span>
 <span class="kn">from</span> <span class="nn">floris.simulation.wake_deflection.gauss</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">calculate_transverse_velocity</span><span class="p">,</span>
     <span class="n">wake_added_yaw</span><span class="p">,</span>
     <span class="n">yaw_added_turbulence_mixing</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
+<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">cosd</span>
 
 
 <div class="viewcode-block" id="calculate_area_overlap"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.calculate_area_overlap.html#floris.simulation.solver.calculate_area_overlap">[docs]</a><span class="k">def</span> <span class="nf">calculate_area_overlap</span><span class="p">(</span><span class="n">wake_velocities</span><span class="p">,</span> <span class="n">freestream_velocities</span><span class="p">,</span> <span class="n">y_ngrid</span><span class="p">,</span> <span class="n">z_ngrid</span><span class="p">):</span>
@@ -1501,7 +1570,7 @@ title="Open an issue"
 <div class="viewcode-block" id="full_flow_sequential_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_sequential_solver.html#floris.simulation.solver.full_flow_sequential_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_sequential_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
-    <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span>
+    <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span> <span class="o">|</span> <span class="n">FlowFieldPlanarGrid</span> <span class="o">|</span> <span class="n">PointsGrid</span><span class="p">,</span>
     <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -1523,7 +1592,6 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_coordinates</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
-
 
     <span class="n">turbine_grid</span> <span class="o">=</span> <span class="n">TurbineGrid</span><span class="p">(</span>
         <span class="n">turbine_coordinates</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
@@ -2363,6 +2431,350 @@ title="Open an issue"
     <span class="c1"># flow_field_grid.x = copy.deepcopy(turbine_grid.x)</span>
     <span class="c1"># flow_field_grid.y = copy.deepcopy(turbine_grid.y)</span>
     <span class="c1"># flow_field_grid.z = copy.deepcopy(turbine_grid.z)</span>
+
+
+<div class="viewcode-block" id="empirical_gauss_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.empirical_gauss_solver.html#floris.simulation.solver.empirical_gauss_solver">[docs]</a><span class="k">def</span> <span class="nf">empirical_gauss_solver</span><span class="p">(</span>
+    <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
+    <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Algorithm:</span>
+<span class="sd">    For each turbine, calculate its effect on every downstream turbine.</span>
+<span class="sd">    For the current turbine, we are calculating the deficit that it adds to downstream turbines.</span>
+<span class="sd">    Integrate this into the main data structure.</span>
+<span class="sd">    Move on to the next turbine.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        farm (Farm)</span>
+<span class="sd">        flow_field (FlowField)</span>
+<span class="sd">        grid (TurbineGrid)</span>
+<span class="sd">        model_manager (WakeModelManager)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: Raised if secondary steering is enabled with the EmGauss model.</span>
+<span class="sd">        NotImplementedError: Raised if transverse velocities is enabled with the EmGauss model.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        NDArrayFloat: wake induced mixing field primarily for use in the full-flow EmGauss solver</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="c1"># &lt;&lt;interface&gt;&gt;</span>
+    <span class="n">deflection_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
+    <span class="n">deficit_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
+
+    <span class="c1"># This is u_wake</span>
+    <span class="n">wake_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">)</span>
+    <span class="n">v_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">v_initial_sorted</span><span class="p">)</span>
+    <span class="n">w_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">w_initial_sorted</span><span class="p">)</span>
+
+    <span class="n">x_locs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))[:,:,:,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">downstream_distance_D</span> <span class="o">=</span> <span class="n">x_locs</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">x_locs</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">downstream_distance_D</span> <span class="o">=</span> <span class="n">downstream_distance_D</span> <span class="o">/</span> \
+        <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">downstream_distance_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">downstream_distance_D</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span> <span class="c1"># For ease</span>
+    <span class="n">mixing_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">downstream_distance_D</span><span class="p">)</span>
+    <span class="n">mixing_factor</span><span class="p">[:,:,:,:]</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">turbulence_model</span><span class="o">.</span><span class="n">atmospheric_ti_gain</span><span class="o">*</span>\
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the velocity deficit sequentially from upstream to downstream turbines</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">):</span>
+
+        <span class="c1"># Get the current turbine quantities</span>
+        <span class="n">x_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">x_i</span> <span class="o">=</span> <span class="n">x_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">y_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">y_i</span> <span class="o">=</span> <span class="n">y_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">z_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">z_i</span> <span class="o">=</span> <span class="n">z_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">Ct</span><span class="p">(</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
+            <span class="n">yaw_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
+            <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
+            <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
+            <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
+            <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
+            <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">ct_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction</span><span class="p">(</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
+            <span class="n">yaw_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
+            <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
+            <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
+            <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
+            <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
+            <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
+        <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
+
+        <span class="n">tilt_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">calculate_tilt_for_eff_velocities</span><span class="p">(</span>
+            <span class="n">average_velocity</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">)</span>
+        <span class="p">)[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_secondary_steering</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Secondary steering not available for this model.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_transverse_velocities</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Transverse velocities not used in this model.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_yaw_added_recovery</span><span class="p">:</span>
+            <span class="c1"># Influence of yawing on turbine&#39;s own wake</span>
+            <span class="n">mixing_factor</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">+=</span> \
+                <span class="n">yaw_added_wake_mixing</span><span class="p">(</span>
+                    <span class="n">axial_induction_i</span><span class="p">,</span>
+                    <span class="n">yaw_angle_i</span><span class="p">,</span>
+                    <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">yaw_added_mixing_gain</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Extract total wake induced mixing for turbine i</span>
+        <span class="n">mixing_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+            <span class="n">mixing_factor</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Model calculations</span>
+        <span class="c1"># NOTE: exponential</span>
+        <span class="n">deflection_field_y</span><span class="p">,</span> <span class="n">deflection_field_z</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
+            <span class="n">x_i</span><span class="p">,</span>
+            <span class="n">y_i</span><span class="p">,</span>
+            <span class="n">effective_yaw_i</span><span class="p">,</span>
+            <span class="n">tilt_angle_i</span><span class="p">,</span>
+            <span class="n">mixing_i</span><span class="p">,</span>
+            <span class="n">ct_i</span><span class="p">,</span>
+            <span class="n">rotor_diameter_i</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">deflection_model_args</span>
+        <span class="p">)</span>
+
+        <span class="c1"># NOTE: exponential</span>
+        <span class="n">velocity_deficit</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
+            <span class="n">x_i</span><span class="p">,</span>
+            <span class="n">y_i</span><span class="p">,</span>
+            <span class="n">z_i</span><span class="p">,</span>
+            <span class="n">axial_induction_i</span><span class="p">,</span>
+            <span class="n">deflection_field_y</span><span class="p">,</span>
+            <span class="n">deflection_field_z</span><span class="p">,</span>
+            <span class="n">yaw_angle_i</span><span class="p">,</span>
+            <span class="n">tilt_angle_i</span><span class="p">,</span>
+            <span class="n">mixing_i</span><span class="p">,</span>
+            <span class="n">ct_i</span><span class="p">,</span>
+            <span class="n">hub_height_i</span><span class="p">,</span>
+            <span class="n">rotor_diameter_i</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">deficit_model_args</span>
+        <span class="p">)</span>
+
+        <span class="n">wake_field</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">combination_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
+            <span class="n">wake_field</span><span class="p">,</span>
+            <span class="n">velocity_deficit</span> <span class="o">*</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Calculate wake overlap for wake-added turbulence (WAT)</span>
+        <span class="n">area_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">velocity_deficit</span> <span class="o">*</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>\
+            <span class="o">/</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)</span>
+
+        <span class="c1"># Compute wake induced mixing factor</span>
+        <span class="n">mixing_factor</span><span class="p">[:,:,:,</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> \
+            <span class="n">area_overlap</span> <span class="o">*</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">turbulence_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
+                <span class="n">axial_induction_i</span><span class="p">,</span> <span class="n">downstream_distance_D</span><span class="p">[:,:,:,</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_yaw_added_recovery</span><span class="p">:</span>
+            <span class="n">mixing_factor</span><span class="p">[:,:,:,</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> \
+                <span class="n">area_overlap</span> <span class="o">*</span> <span class="n">yaw_added_wake_mixing</span><span class="p">(</span>
+                <span class="n">axial_induction_i</span><span class="p">,</span>
+                <span class="n">yaw_angle_i</span><span class="p">,</span>
+                <span class="n">downstream_distance_D</span><span class="p">[:,:,:,</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">yaw_added_mixing_gain</span>
+            <span class="p">)</span>
+
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">-</span> <span class="n">wake_field</span>
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
+
+    <span class="k">return</span> <span class="n">mixing_factor</span></div>
+
+<div class="viewcode-block" id="full_flow_empirical_gauss_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_empirical_gauss_solver.html#floris.simulation.solver.full_flow_empirical_gauss_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_empirical_gauss_solver</span><span class="p">(</span>
+    <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
+    <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
+    <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="c1"># Get the flow quantities and turbine performance</span>
+    <span class="n">turbine_grid_farm</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">farm</span><span class="p">)</span>
+    <span class="n">turbine_grid_flow_field</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">flow_field</span><span class="p">)</span>
+
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_map</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_fCts</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_power_interps</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_hub_heights</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_rotor_diameters</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_TSRs</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_pPs</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_pTs</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_density_cp_cts</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_tilt_cp_cts</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_fTilts</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_coordinates</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
+
+    <span class="n">turbine_grid</span> <span class="o">=</span> <span class="n">TurbineGrid</span><span class="p">(</span>
+        <span class="n">turbine_coordinates</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">reference_turbine_diameter</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
+        <span class="n">wind_directions</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+        <span class="n">wind_speeds</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
+        <span class="n">grid_resolution</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">time_series</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">time_series</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">expand_farm_properties</span><span class="p">(</span>
+        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
+        <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
+    <span class="p">)</span>
+    <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">initialize_velocity_field</span><span class="p">(</span><span class="n">turbine_grid</span><span class="p">)</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">)</span>
+    <span class="n">wim_field</span> <span class="o">=</span> <span class="n">empirical_gauss_solver</span><span class="p">(</span>
+        <span class="n">turbine_grid_farm</span><span class="p">,</span>
+        <span class="n">turbine_grid_flow_field</span><span class="p">,</span>
+        <span class="n">turbine_grid</span><span class="p">,</span>
+        <span class="n">model_manager</span>
+    <span class="p">)</span>
+
+    <span class="c1">### Referring to the quantities from above, calculate the wake in the full grid</span>
+
+    <span class="c1"># Use full flow_field here to use the full grid in the wake models</span>
+    <span class="n">deflection_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span>
+        <span class="n">flow_field_grid</span><span class="p">,</span> <span class="n">flow_field</span>
+    <span class="p">)</span>
+    <span class="n">deficit_model_args</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">prepare_function</span><span class="p">(</span><span class="n">flow_field_grid</span><span class="p">,</span> <span class="n">flow_field</span><span class="p">)</span>
+
+    <span class="n">wake_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span><span class="p">)</span>
+    <span class="n">v_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">v_initial_sorted</span><span class="p">)</span>
+    <span class="n">w_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">w_initial_sorted</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the velocity deficit sequentially from upstream to downstream turbines</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">flow_field_grid</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">):</span>
+
+        <span class="c1"># Get the current turbine quantities</span>
+        <span class="n">x_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">x_i</span> <span class="o">=</span> <span class="n">x_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">y_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">y_i</span> <span class="o">=</span> <span class="n">y_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">z_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">z_i</span> <span class="o">=</span> <span class="n">z_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">v_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">Ct</span><span class="p">(</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
+            <span class="n">yaw_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
+            <span class="n">tilt_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
+            <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
+            <span class="n">fCt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
+            <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
+            <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">ct_i</span> <span class="o">=</span> <span class="n">ct_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction</span><span class="p">(</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
+            <span class="n">yaw_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
+            <span class="n">tilt_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
+            <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
+            <span class="n">fCt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
+            <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
+            <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
+        <span class="c1"># get the first index here (0:1)</span>
+        <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">wake_induced_mixing_i</span> <span class="o">=</span> <span class="n">wim_field</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
+        <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
+
+        <span class="n">tilt_angle_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">calculate_tilt_for_eff_velocities</span><span class="p">(</span>
+            <span class="n">average_velocity</span><span class="p">(</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">)</span>
+        <span class="p">)[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_secondary_steering</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Secondary steering not available for this model.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_transverse_velocities</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Transverse velocities not used in this model.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Model calculations</span>
+        <span class="c1"># NOTE: exponential</span>
+        <span class="n">deflection_field_y</span><span class="p">,</span> <span class="n">deflection_field_z</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
+            <span class="n">x_i</span><span class="p">,</span>
+            <span class="n">y_i</span><span class="p">,</span>
+            <span class="n">effective_yaw_i</span><span class="p">,</span>
+            <span class="n">tilt_angle_i</span><span class="p">,</span>
+            <span class="n">wake_induced_mixing_i</span><span class="p">,</span>
+            <span class="n">ct_i</span><span class="p">,</span>
+            <span class="n">rotor_diameter_i</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">deflection_model_args</span>
+        <span class="p">)</span>
+
+        <span class="c1"># NOTE: exponential</span>
+        <span class="n">velocity_deficit</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">velocity_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
+            <span class="n">x_i</span><span class="p">,</span>
+            <span class="n">y_i</span><span class="p">,</span>
+            <span class="n">z_i</span><span class="p">,</span>
+            <span class="n">axial_induction_i</span><span class="p">,</span>
+            <span class="n">deflection_field_y</span><span class="p">,</span>
+            <span class="n">deflection_field_z</span><span class="p">,</span>
+            <span class="n">yaw_angle_i</span><span class="p">,</span>
+            <span class="n">tilt_angle_i</span><span class="p">,</span>
+            <span class="n">wake_induced_mixing_i</span><span class="p">,</span>
+            <span class="n">ct_i</span><span class="p">,</span>
+            <span class="n">hub_height_i</span><span class="p">,</span>
+            <span class="n">rotor_diameter_i</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">deficit_model_args</span>
+        <span class="p">)</span>
+
+        <span class="n">wake_field</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">combination_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
+            <span class="n">wake_field</span><span class="p">,</span>
+            <span class="n">velocity_deficit</span> <span class="o">*</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span>
+        <span class="p">)</span>
+
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">-</span> <span class="n">wake_field</span>
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
+        <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span></div>
 </pre></div>
 
               </div>

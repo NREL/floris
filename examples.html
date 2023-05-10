@@ -366,6 +366,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -393,8 +398,18 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
         </a>
        </li>
        <li class="toctree-l4">
@@ -531,6 +546,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
@@ -567,6 +587,11 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.wake_turbulence.none
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
@@ -582,6 +607,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">
          floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
         </a>
        </li>
        <li class="toctree-l4">
@@ -1042,11 +1072,45 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="_autosummary/floris.utilities.html">
-     floris.utilities
+    <a class="reference internal" href="_autosummary/floris.turbine_library.html">
+     floris.turbine_library
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
     <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="_autosummary/floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1404,6 +1468,26 @@ title="Print to PDF"
      24_floating_turbine_models.py
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tilt-driven-vertical-wake-deflection-py">
+     25_tilt_driven_vertical_wake_deflection.py
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#empirical-gauss-velocity-deficit-parameters-py">
+     26_empirical_gauss_velocity_deficit_parameters.py
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#empirical-gauss-deflection-parameters-py">
+     27_empirical_gauss_deflection_parameters.py
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#extract-wind-speed-at-points-py">
+     28_extract_wind_speed_at_points.py
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -1572,6 +1656,26 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#floating-turbine-models-py">
      24_floating_turbine_models.py
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tilt-driven-vertical-wake-deflection-py">
+     25_tilt_driven_vertical_wake_deflection.py
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#empirical-gauss-velocity-deficit-parameters-py">
+     26_empirical_gauss_velocity_deficit_parameters.py
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#empirical-gauss-deflection-parameters-py">
+     27_empirical_gauss_deflection_parameters.py
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#extract-wind-speed-at-points-py">
+     28_extract_wind_speed_at_points.py
     </a>
    </li>
   </ul>
@@ -1777,6 +1881,34 @@ of a turbine layout within FLORIS.</p>
 <h3>24_floating_turbine_models.py<a class="headerlink" href="#floating-turbine-models-py" title="Permalink to this headline">#</a></h3>
 <p>Demonstrates the definition of a floating turbine and how to enable the effects of tilt
 on Cp and Ct.</p>
+</section>
+<section id="tilt-driven-vertical-wake-deflection-py">
+<h3>25_tilt_driven_vertical_wake_deflection.py<a class="headerlink" href="#tilt-driven-vertical-wake-deflection-py" title="Permalink to this headline">#</a></h3>
+<p>This example demonstrates vertical wake deflections due to the tilt angle when running
+with the Empirical Gauss model. Note that only the Empirical Gauss model implements
+vertical deflections at this time. Also be aware that this example uses a potentially
+unrealistic tilt angle, 15 degrees, to highlight the wake deflection. Moreover, the magnitude
+of vertical deflections due to tilt has not been validated.</p>
+</section>
+<section id="empirical-gauss-velocity-deficit-parameters-py">
+<h3>26_empirical_gauss_velocity_deficit_parameters.py<a class="headerlink" href="#empirical-gauss-velocity-deficit-parameters-py" title="Permalink to this headline">#</a></h3>
+<p>This example illustrates the main parameters of the Empirical Gaussian
+velocity deficit model and their effects on the wind turbine wake.</p>
+</section>
+<section id="empirical-gauss-deflection-parameters-py">
+<h3>27_empirical_gauss_deflection_parameters.py<a class="headerlink" href="#empirical-gauss-deflection-parameters-py" title="Permalink to this headline">#</a></h3>
+<p>This example illustrates the main parameters of the Empirical Gaussian
+deflection model and their effects on the wind turbine wake.</p>
+</section>
+<section id="extract-wind-speed-at-points-py">
+<h3>28_extract_wind_speed_at_points.py<a class="headerlink" href="#extract-wind-speed-at-points-py" title="Permalink to this headline">#</a></h3>
+<p>This example demonstrates the use of the <code class="docutils literal notranslate"><span class="pre">FlorisInterface.sample_flow_at_points</span></code> method
+to extract the wind speed information at user-specified locations in the flow.</p>
+<p>Specifically, this example gets the wind speed at a single x, y location and four different
+heights over a sweep of wind directions. This mimics the wind speed measurements of a met
+mast across all wind directions (at a fixed free stream wind speed).</p>
+<p>Try different values for met_mast_option to vary the location of the met mast within
+the two-turbine farm.</p>
 </section>
 </section>
 <section id="optimization">

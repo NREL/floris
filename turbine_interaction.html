@@ -366,6 +366,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -393,8 +398,18 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
         </a>
        </li>
        <li class="toctree-l4">
@@ -531,6 +546,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
@@ -567,6 +587,11 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.wake_turbulence.none
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 has-children">
@@ -582,6 +607,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">
          floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
         </a>
        </li>
        <li class="toctree-l4">
@@ -1042,11 +1072,45 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="_autosummary/floris.utilities.html">
-     floris.utilities
+    <a class="reference internal" href="_autosummary/floris.turbine_library.html">
+     floris.turbine_library
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
     <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="_autosummary/floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1454,47 +1518,6 @@ basic turbine properties prior to wake modeling.</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="ne">----&gt; </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">floris.turbine_library</span> <span class="kn">import</span> <span class="n">TurbineInterface</span><span class="p">,</span> <span class="n">TurbineLibrary</span>
-
-<span class="n">File</span> <span class="o">~/</span><span class="n">work</span><span class="o">/</span><span class="n">floris</span><span class="o">/</span><span class="n">floris</span><span class="o">/</span><span class="n">floris</span><span class="o">/</span><span class="n">turbine_library</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">floris.turbine_library.turbine_previewer</span> <span class="kn">import</span> <span class="n">TurbineInterface</span><span class="p">,</span> <span class="n">TurbineLibrary</span>
-
-<span class="n">File</span> <span class="o">~/</span><span class="n">work</span><span class="o">/</span><span class="n">floris</span><span class="o">/</span><span class="n">floris</span><span class="o">/</span><span class="n">floris</span><span class="o">/</span><span class="n">turbine_library</span><span class="o">/</span><span class="n">turbine_previewer</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">40</span>
-<span class="g g-Whitespace">     </span><span class="mi">35</span> <span class="n">INTERNAL_LIBRARY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
-<span class="g g-Whitespace">     </span><span class="mi">36</span> <span class="n">DEFAULT_WIND_SPEEDS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">81</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">39</span> <span class="nd">@define</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">40</span> <span class="k">class</span> <span class="nc">TurbineInterface</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">41</span>     <span class="n">turbine</span><span class="p">:</span> <span class="n">Turbine</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">attrs</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="n">Turbine</span><span class="p">))</span>
-<span class="g g-Whitespace">     </span><span class="mi">43</span>     <span class="nd">@classmethod</span>
-<span class="g g-Whitespace">     </span><span class="mi">44</span>     <span class="k">def</span> <span class="nf">from_internal_library</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-
-<span class="nn">File ~/work/floris/floris/floris/turbine_library/turbine_previewer.py:58,</span> in <span class="ni">TurbineInterface</span><span class="nt">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">45</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Loads the turbine definition from a YAML configuration file located in</span>
-<span class="g g-Whitespace">     </span><span class="mi">46</span><span class="sd">     ``floris/floris/turbine_library/``.</span>
-<span class="g g-Whitespace">     </span><span class="mi">47</span><span class="sd"> </span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">     </span><span class="mi">53</span><span class="sd">         (TurbineInterface): Creates a new ``TurbineInterface`` object.</span>
-<span class="g g-Whitespace">     </span><span class="mi">54</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">55</span>     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">turbine</span><span class="o">=</span><span class="n">Turbine</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">load_yaml</span><span class="p">(</span><span class="n">INTERNAL_LIBRARY</span> <span class="o">/</span> <span class="n">file_name</span><span class="p">)))</span>
-<span class="g g-Whitespace">     </span><span class="mi">57</span> <span class="nd">@classmethod</span>
-<span class="ne">---&gt; </span><span class="mi">58</span> <span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">):</span>
-<span class="g g-Whitespace">     </span><span class="mi">59</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Loads the turbine definition from a YAML configuration file.</span>
-<span class="g g-Whitespace">     </span><span class="mi">60</span><span class="sd"> </span>
-<span class="g g-Whitespace">     </span><span class="mi">61</span><span class="sd">     Args:</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">     </span><span class="mi">66</span><span class="sd">         (TurbineInterface): Creates a new ``TurbineInterface`` object.</span>
-<span class="g g-Whitespace">     </span><span class="mi">67</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">68</span>     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">turbine</span><span class="o">=</span><span class="n">Turbine</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">load_yaml</span><span class="p">(</span><span class="n">file_path</span><span class="p">)))</span>
-
-<span class="ne">TypeError</span>: unsupported operand type(s) for |: &#39;type&#39; and &#39;type&#39;
-</pre></div>
-</div>
-</div>
 </div>
 </section>
 <section id="interacting-with-a-single-turbine">
@@ -1579,8 +1602,8 @@ are going to be compared.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW
-iea_10MW
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_10MW
+iea_15MW
 nrel_5MW
 </pre></div>
 </div>
@@ -1601,8 +1624,8 @@ arguments.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW
-iea_10MW
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_10MW
+iea_15MW
 nrel_5MW
 x_20MW
 </pre></div>
@@ -1655,8 +1678,8 @@ other, but here the primary output will be displayed.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>        Turbine | Rotor Diameter (m) | Hub Height (m) | Air Density (ρ)
 -----------------------------------------------------------------------
-       iea_15MW |             242.24 |          150.0 |           1.225
        iea_10MW |             198.00 |          119.0 |           1.225
+       iea_15MW |             242.24 |          150.0 |           1.225
        nrel_5MW |             126.00 |           90.0 |           1.225
          x_20MW |             252.00 |          165.0 |           1.225
 </pre></div>

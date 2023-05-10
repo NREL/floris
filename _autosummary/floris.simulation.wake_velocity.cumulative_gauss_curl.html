@@ -366,6 +366,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -393,8 +398,18 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.solver.full_flow_cc_solver.html">
          floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
         </a>
        </li>
        <li class="toctree-l4">
@@ -531,6 +546,11 @@ const thebe_selector_output = ".output, .cell_output"
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.wake_deflection.gauss.html">
          floris.simulation.wake_deflection.gauss
         </a>
@@ -567,6 +587,11 @@ const thebe_selector_output = ".output, .cell_output"
          floris.simulation.wake_turbulence.none
         </a>
        </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
       </ul>
      </li>
      <li class="toctree-l3 current active has-children">
@@ -582,6 +607,11 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4 current active">
         <a class="current reference internal" href="#">
          floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
         </a>
        </li>
        <li class="toctree-l4">
@@ -1042,11 +1072,45 @@ const thebe_selector_output = ".output, .cell_output"
     </ul>
    </li>
    <li class="toctree-l2 has-children">
-    <a class="reference internal" href="floris.utilities.html">
-     floris.utilities
+    <a class="reference internal" href="floris.turbine_library.html">
+     floris.turbine_library
     </a>
     <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
     <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
      <i class="fas fa-chevron-down">
      </i>
     </label>
@@ -1338,7 +1402,7 @@ title="Print to PDF"
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit.html#floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit" title="floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CumulativeGaussCurlVelocityDeficit</span></code></a></p></td>
-<td><p>The cumulative curl model is an implementation of the model described in <span id="id1">[]</span>, which itself is based on the cumulative model of <span id="id2">[<a class="reference internal" href="../bibliography.html#id26" title="Majid Bastankhah, Bridget L. Welch, Luis A. Martínez-Tossas, Jennifer King, and Paul Fleming. Analytical solution for the cumulative wake of wind turbines in wind farms. Journal of Fluid Mechanics, 911:A53, 2021. doi:10.1017/jfm.2020.1037.">5</a>]</span></p></td>
+<td><p>The cumulative curl model is an implementation of the model described in <span id="id1">[]</span>, which itself is based on the cumulative model of <span id="id2">[<a class="reference internal" href="../bibliography.html#id26" title="Majid Bastankhah, Bridget L. Welch, Luis A. Martínez-Tossas, Jennifer King, and Paul Fleming. Analytical solution for the cumulative wake of wind turbines in wind farms. Journal of Fluid Mechanics, 911:A53, 2021. doi:10.1017/jfm.2020.1037.">7</a>]</span></p></td>
 </tr>
 </tbody>
 </table>
@@ -1347,7 +1411,7 @@ title="Print to PDF"
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.wake_velocity.cumulative_gauss_curl.</span></span><span class="sig-name descname"><span class="pre">CumulativeGaussCurlVelocityDeficit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.179367259</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0118889215</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_s1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0563691592</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_s2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.13290157</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">0.68</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.41</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_mod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/wake_velocity/cumulative_gauss_curl.html#CumulativeGaussCurlVelocityDeficit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit" title="Permalink to this definition">#</a></dt>
 <dd><p>The cumulative curl model is an implementation of the model described in
 <span id="id3">[]</span>, which itself is based on the cumulative model of
-<span id="id4">[<a class="reference internal" href="../bibliography.html#id26" title="Majid Bastankhah, Bridget L. Welch, Luis A. Martínez-Tossas, Jennifer King, and Paul Fleming. Analytical solution for the cumulative wake of wind turbines in wind farms. Journal of Fluid Mechanics, 911:A53, 2021. doi:10.1017/jfm.2020.1037.">5</a>]</span></p>
+<span id="id4">[<a class="reference internal" href="../bibliography.html#id26" title="Majid Bastankhah, Bridget L. Welch, Luis A. Martínez-Tossas, Jennifer King, and Paul Fleming. Analytical solution for the cumulative wake of wind turbines in wind farms. Journal of Fluid Mechanics, 911:A53, 2021. doi:10.1017/jfm.2020.1037.">7</a>]</span></p>
 <p>References:
 .. bibliography:: /references.bib</p>
 <blockquote>
@@ -1468,7 +1532,7 @@ title="Print to PDF"
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit._abc_impl">
-<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit._abc_impl" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#floris.simulation.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit._abc_impl" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
