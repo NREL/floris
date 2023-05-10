@@ -502,10 +502,14 @@ class PointsGrid(Grid):
         points_x (:py:obj:`NDArrayFloat`): Array of x-components for the points in the grid.
         points_y (:py:obj:`NDArrayFloat`): Array of y-components for the points in the grid.
         points_z (:py:obj:`NDArrayFloat`): Array of z-components for the points in the grid.
-        x_center_of_rotation (): Component fo the centroid of the farm. The grid-points will
-            be rotated around the center of rotation to account for wind direction changes.
-        y_center_of_rotation (): Component fo the centroid of the farm. The grid-points will
-            be rotated around the center of rotation to account for wind direction changes.
+        x_center_of_rotation (:py:obj:`float`, optional): Component of the centroid of the
+            farm or area of interest. The PointsGrid will be rotated around this center
+            of rotation to account for wind direction changes. If not supplied, the center
+            of rotation will be the centroid of the points in the PointsGrid.
+        y_center_of_rotation (:py:obj:`float`, optional): Component of the centroid of the
+            farm or area of interest. The PointsGrid will be rotated around this center
+            of rotation to account for wind direction changes. If not supplied, the center
+            of rotation will be the centroid of the points in the PointsGrid.
     """
     points_x: NDArrayFloat = field(converter=floris_array_converter)
     points_y: NDArrayFloat = field(converter=floris_array_converter)
