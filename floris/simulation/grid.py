@@ -299,8 +299,7 @@ class CubatureGrid(Grid):
         x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
 
         # Coefficients
-        N = self.grid_resolution
-        self.cubature_coefficients = self._get_cubature_coefficients(N=N)
+        self.cubature_coefficients = CubatureGrid.get_cubature_coefficients(self.grid_resolution)
 
         # Generate grid points
         yv = np.kron(self.cubature_coefficients["r"], self.cubature_coefficients["q"])
@@ -349,8 +348,11 @@ class CubatureGrid(Grid):
         self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=2)
         self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=2)
 
-    def _get_cubature_coefficients(self, N: int = 3):
-        """Retrieve cubature integration coefficients.
+    @classmethod
+    def get_cubature_coefficients(cls, N: int):
+        """
+        Retrieve cubature integration coefficients. This is a class-method, and therefore
+        the coefficients can be accessed without creating a CubatureGrid instance.
 
         Args:
             N (int): Order of the cubature integration. The total
