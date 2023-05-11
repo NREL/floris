@@ -444,6 +444,7 @@ def cubic_cubature(array, cubature_coefficients, axis=0):
 def average_velocity(
     velocities: NDArrayFloat,
     method: str,
+    ix_filter: NDArrayFilter | Iterable[int] | None = None,
     cubature_coefficients: dict | None = None
 ) -> NDArrayFloat:
     """This property calculates and returns the cube root of the
@@ -464,6 +465,9 @@ def average_velocity(
 
     # The input velocities are expected to be a 5 dimensional array with shape:
     # (# wind directions, # wind speeds, # turbines, grid resolution, grid resolution)
+
+    if ix_filter is not None:
+        velocities = velocities[:, :, ix_filter]
 
     axis = tuple([3 + i for i in range(velocities.ndim - 3)])
     if method == "simple-mean":
