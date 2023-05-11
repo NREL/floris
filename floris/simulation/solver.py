@@ -99,7 +99,7 @@ def sequential_solver(
         average_velocities = average_velocity(
             flow_field.u_sorted,
             method=grid.average_method,
-            cubature_coefficients=grid.cubature_coefficients
+            cubature_weights=grid.cubature_weights
         )
 
         ct_i = Ct(
@@ -491,7 +491,7 @@ def cc_solver(
         turb_avg_vels = average_velocity(
             turb_inflow_field,
             method=grid.average_method,
-            cubature_coefficients=grid.cubature_coefficients
+            cubature_weights=grid.cubature_weights
         )
         turb_Cts = Ct(
             turb_avg_vels,
@@ -523,7 +523,7 @@ def cc_solver(
         different_average = average_velocity(
             flow_field.u_sorted,
             method=grid.average_method,
-            cubature_coefficients=grid.cubature_coefficients
+            cubature_weights=grid.cubature_weights
         )
         axial_induction_i = axial_induction(
             average_velocities=different_average,
@@ -739,7 +739,7 @@ def full_flow_cc_solver(
         turb_avg_vels = average_velocity(
             turbine_grid_flow_field.u_sorted,
             method=turbine_grid.average_method,
-            cubature_coefficients=turbine_grid.cubature_coefficients
+            cubature_weights=turbine_grid.cubature_weights
         )
         turb_Cts = Ct(
             velocities=turb_avg_vels,
@@ -889,7 +889,7 @@ def turbopark_solver(
         average_velocities = average_velocity(
             flow_field.u_sorted,
             method=grid.average_method,
-            cubature_coefficients=grid.cubature_coefficients
+            cubature_weights=grid.cubature_weights
         )
 
         Cts = Ct(
@@ -972,7 +972,7 @@ def turbopark_solver(
                 average_velocities = average_velocity(
                     flow_field.u_sorted,
                     method=grid.average_method,
-                    cubature_coefficients=grid.cubature_coefficients
+                    cubature_weights=grid.cubature_weights
                 )
 
                 yaw_ii = farm.yaw_angles_sorted[:, :, ii:ii+1, None, None]
@@ -1211,7 +1211,7 @@ def empirical_gauss_solver(
         average_velocities = average_velocity(
             flow_field.u_sorted,
             method=grid.average_method,
-            cubature_coefficients=grid.cubature_coefficients
+            cubature_weights=grid.cubature_weights
         )
 
         ct_i = Ct(

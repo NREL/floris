@@ -655,7 +655,7 @@ class FlorisInterface(LoggerBase):
         return average_velocity(
             velocities=self.floris.flow_field.u,
             method=self.floris.grid.average_method,
-            cubature_coefficients=self.floris.grid.cubature_coefficients
+            cubature_weights=self.floris.grid.cubature_weights
         )
 
     @property

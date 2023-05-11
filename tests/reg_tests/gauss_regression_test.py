@@ -274,8 +274,7 @@ def test_regression_tandem(sample_inputs_fixture):
 
     farm_avg_velocities = average_velocity(
         floris.flow_field.u,
-        method="cubic-mean",
-        cubature_coefficients=floris.grid.cubature_coefficients
+        method="cubic-mean"
     )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,

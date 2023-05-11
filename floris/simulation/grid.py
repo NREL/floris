@@ -79,7 +79,7 @@ class Grid(ABC):
     x_sorted: NDArrayFloat = field(init=False)
     y_sorted: NDArrayFloat = field(init=False)
     z_sorted: NDArrayFloat = field(init=False)
-    cubature_coefficients: dict = field(init=False, default=None)
+    cubature_weights: NDArrayFloat = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
@@ -304,15 +304,17 @@ class CubatureGrid(Grid):
         )
 
         # Coefficients
-        self.cubature_coefficients = CubatureGrid.get_cubature_coefficients(self.grid_resolution)
+        cubature_coefficients = CubatureGrid.get_cubature_coefficients(self.grid_resolution)
 
         # Generate grid points
-        yv = np.kron(self.cubature_coefficients["r"], self.cubature_coefficients["q"])
-        zv = np.kron(self.cubature_coefficients["r"], self.cubature_coefficients["t"])
+        yv = np.kron(cubature_coefficients["r"], cubature_coefficients["q"])
+        zv = np.kron(cubature_coefficients["r"], cubature_coefficients["t"])
 
-        # Calculate weighing terms for the grid points
-        self.cubature_coefficients["CUBcoeff"] = \
-            np.kron(self.cubature_coefficients["A"],np.ones((1, N))) * self.cubature_coefficients["B"] / np.pi
+        # Calculate weighting terms for the grid points
+        self.cubature_weights = (
+            np.kron(cubature_coefficients["A"], np.ones((1, self.grid_resolution)))
+            * cubature_coefficients["B"] / np.pi
+        )
 
         # Here, the coordinates are already rotated to the correct orientation for each
         # wind direction
@@ -424,15 +426,13 @@ class CubatureGrid(Grid):
             q = [ 0.1564344650402308690101053, 0.4539904997395467915604084, 0.7071067811865475244008444, 0.8910065241883678623597096, 0.9876883405951377261900402, 0.9876883405951377261900402, 0.8910065241883678623597096, 0.7071067811865475244008444, 0.4539904997395467915604084, 0.1564344650402308690101053]  # noqa: E501
             A = [ 0.0592317212640472718785660, 0.1196571676248416170103229, 0.1422222222222222222222222, 0.1196571676248416170103229, 0.0592317212640472718785660, 0.0592317212640472718785660, 0.1196571676248416170103229, 0.1422222222222222222222222, 0.1196571676248416170103229, 0.0592317212640472718785660]  # noqa: E501
 
-        cubature_coefficients = {
-                "r": np.array(r, dtype=float),
-                "t": np.array(t, dtype=float),
-                "q": np.array(q, dtype=float),
-                "A": np.array(A, dtype=float),
-                "B": np.pi/N,
-            }
-
-        return cubature_coefficients
+        return {
+            "r": np.array(r, dtype=float),
+            "t": np.array(t, dtype=float),
+            "q": np.array(q, dtype=float),
+            "A": np.array(A, dtype=float),
+            "B": np.pi/N,
+        }
 
 @define
 class FlowFieldGrid(Grid):

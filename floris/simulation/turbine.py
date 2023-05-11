@@ -430,14 +430,14 @@ def simple_mean(array, axis=0):
 def cubic_mean(array, axis=0):
     return np.cbrt(np.mean(array ** 3.0, axis=axis))
 
-def simple_cubature(array, cubature_coefficients, axis=0):
-    weights = cubature_coefficients["CUBcoeff"].flatten()
+def simple_cubature(array, cubature_weights, axis=0):
+    weights = cubature_weights.flatten()
     weights = weights * len(weights) / np.sum(weights)
     product = (array * weights[None, None, None, :, None])
     return simple_mean(product, axis)
 
-def cubic_cubature(array, cubature_coefficients, axis=0):
-    weights = cubature_coefficients["CUBcoeff"].flatten()
+def cubic_cubature(array, cubature_weights, axis=0):
+    weights = cubature_weights.flatten()
     weights = weights * len(weights) / np.sum(weights)
     return np.cbrt(np.mean((array**3.0 * weights[None, None, None, :, None]), axis=axis))
 
@@ -445,7 +445,7 @@ def average_velocity(
     velocities: NDArrayFloat,
     method: str,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
-    cubature_coefficients: dict | None = None
+    cubature_weights: dict | None = None
 ) -> NDArrayFloat:
     """This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
@@ -471,16 +471,16 @@ def average_velocity(
 
     axis = tuple([3 + i for i in range(velocities.ndim - 3)])
     if method == "simple-mean":
-        return simple_mean(velocities, axis=axis)
+        return simple_mean(velocities, axis)
 
     elif method == "cubic-mean":
-        return cubic_mean(velocities, axis=axis)
+        return cubic_mean(velocities, axis)
 
     elif method == "simple-cubature":
-        return simple_cubature(velocities, cubature_coefficients=cubature_coefficients, axis=axis)
+        return simple_cubature(velocities, cubature_weights, axis)
 
     elif method == "cubic-cubature":
-        return cubic_cubature(velocities, cubature_coefficients=cubature_coefficients, axis=axis)
+        return cubic_cubature(velocities, cubature_weights, axis)
 
     else:
         raise ValueError("Incorrect method given.")
