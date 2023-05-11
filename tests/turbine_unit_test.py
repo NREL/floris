@@ -180,7 +180,7 @@ def test_average_velocity():
     # TODO: why do we use cube root - mean - cube (like rms) instead of a simple average (np.mean)?
     # Dimensions are (n wind directions, n wind speeds, n turbines, grid x, grid y)
     velocities = np.ones((1, 1, 1, 5, 5))
-    assert average_velocity(velocities) == 1
+    assert average_velocity(velocities, method="cubic-mean") == 1
 
     # Constructs an array of shape 1 x 1 x 2 x 3 x 3 with finrst turbie all 1, second turbine all 2
     velocities = np.stack(
@@ -192,7 +192,10 @@ def test_average_velocity():
     )
 
     # Pull out the first wind speed for the test
-    np.testing.assert_array_equal(average_velocity(velocities)[0, 0], np.array([1, 2]))
+    np.testing.assert_array_equal(
+        average_velocity(velocities, "cubic-mean")[0, 0],
+        np.array([1, 2])
+    )
 
     # Test boolean filter
     ix_filter = [True, False, True, False]
@@ -210,7 +213,7 @@ def test_average_velocity():
         # ),
         axis=2,
     )
-    avg = average_velocity(velocities, ix_filter)
+    avg = average_velocity(velocities, "cubic-mean", ix_filter)
     assert avg.shape == (1, 1, 2)  # 1 wind direction, 1 wind speed, 2 turbines filtered
 
     # Pull out the first wind direction and wind speed for the comparison
@@ -225,7 +228,7 @@ def test_average_velocity():
         [i * np.ones((1, 1, 3, 3)) for i in range(1,5)],
         axis=2,
     )
-    avg = average_velocity(velocities, INDEX_FILTER)
+    avg = average_velocity(velocities, "cubic-mean", INDEX_FILTER)
     assert avg.shape == (1, 1, 2)  # 1 wind direction, 1 wind speed, 2 turbines filtered
 
     # Pull out the first wind direction and wind speed for the comparison
@@ -433,8 +436,8 @@ def test_axial_induction():
 def test_rotor_velocity_yaw_correction():
     N_TURBINES = 4
 
-    wind_speed = average_velocity(10.0 * np.ones((1, 1, 1, 3, 3)))
-    wind_speed_N_TURBINES = average_velocity(10.0 * np.ones((1, 1, N_TURBINES, 3, 3)))
+    wind_speed = average_velocity(10.0 * np.ones((1, 1, 1, 3, 3)), "cubic-mean")
+    wind_speed_N_TURBINES = average_velocity(10.0 * np.ones((1, 1, N_TURBINES, 3, 3)), "cubic-mean")
 
     # Test a single turbine for zero yaw
     yaw_corrected_velocities = _rotor_velocity_yaw_correction(
@@ -472,8 +475,8 @@ def test_rotor_velocity_yaw_correction():
 def test_rotor_velocity_tilt_correction():
     N_TURBINES = 4
 
-    wind_speed = average_velocity(10.0 * np.ones((1, 1, 1, 3, 3)))
-    wind_speed_N_TURBINES = average_velocity(10.0 * np.ones((1, 1, N_TURBINES, 3, 3)))
+    wind_speed = average_velocity(10.0 * np.ones((1, 1, 1, 3, 3)), "cubic-mean")
+    wind_speed_N_TURBINES = average_velocity(10.0 * np.ones((1, 1, N_TURBINES, 3, 3)), "cubic-mean")
 
     turbine_data = SampleInputs().turbine
     turbine_floating_data = SampleInputs().turbine_floating
@@ -541,9 +544,13 @@ def test_compute_tilt_angles_for_floating_turbines():
     N_TURBINES = 4
 
     wind_speed = 25.0
-    rotor_effective_velocities = average_velocity(wind_speed * np.ones((1, 1, 1, 3, 3)))
+    rotor_effective_velocities = average_velocity(
+        wind_speed * np.ones((1, 1, 1, 3, 3)),
+        "cubic-mean"
+    )
     rotor_effective_velocities_N_TURBINES = average_velocity(
-        wind_speed * np.ones((1, 1, N_TURBINES, 3, 3))
+        wind_speed * np.ones((1, 1, N_TURBINES, 3, 3)),
+        "cubic-mean"
     )
 
     turbine_floating_data = SampleInputs().turbine_floating
