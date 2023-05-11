@@ -150,7 +150,7 @@ def sequential_solver(
                 hub_height_i,
                 ct_i,
                 TSR_i,
-                axial_induction_i
+                axial_induction_i,
             )
             effective_yaw_i += added_yaw
 

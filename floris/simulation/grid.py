@@ -76,10 +76,10 @@ class Grid(ABC):
     x: NDArrayFloat = field(init=False, default=[])
     y: NDArrayFloat = field(init=False, default=[])
     z: NDArrayFloat = field(init=False, default=[])
-    cubature_coefficients: dict = field(init=False, default=None)
     x_sorted: NDArrayFloat = field(init=False)
     y_sorted: NDArrayFloat = field(init=False)
     z_sorted: NDArrayFloat = field(init=False)
+    cubature_coefficients: dict = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
@@ -113,7 +113,7 @@ class Grid(ABC):
     def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
         # TODO move this to the grid types and off of the base class
         """Check that grid resolution is given as int or Vec3 with int components."""
-        if isinstance(value, int) and isinstance(self, (TurbineGrid, CubatureGrid)):
+        if isinstance(value, int) and isinstance(self, (TurbineGrid, CubatureGrid, PointsGrid)):
             return
         elif isinstance(value, Iterable) and isinstance(self, FlowFieldPlanarGrid):
             assert type(value[0]) is int
@@ -122,8 +122,6 @@ class Grid(ABC):
             assert type(value[0]) is int
             assert type(value[1]) is int
             assert type(value[2]) is int
-        elif type(self) is PointsGrid:
-            return
         else:
             raise TypeError("`grid_resolution` must be of type int or Iterable(int,)")
 
@@ -355,15 +353,20 @@ class CubatureGrid(Grid):
         """Retrieve cubature integration coefficients.
 
         Args:
-            N (int, optional): Order of the cubature integration. The total
-            number of rotor points will be N^2. Defaults to 3.
+            N (int): Order of the cubature integration. The total
+            number of rotor points will be N^2. Must be an integer in the range [1, 10].
 
         Returns:
             cubature_coefficients (dict): A dictionary containing the cubature
             integration coefficients, "r", "t", "q", "A" and "B".
         """
 
-        if N == 1:
+        if N < 1 and N < 10:
+            raise ValueError(
+                f"Order of cubature integration must be between '1' and '10', given {N}."
+            )
+
+        elif N == 1:
             r = [0.0000000000000000000000000]
             t = [0.0000000000000000000000000]
             q = [1.0000000000000000000000000]
