@@ -117,8 +117,6 @@ class FlorisInterface(LoggerBase):
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         # tilt_angles: NDArrayFloat | list[float] | None = None,
-        # points: NDArrayFloat | list[float] | None = None,
-        # track_n_upstream_wakes: bool = False,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
