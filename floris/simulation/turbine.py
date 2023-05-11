@@ -482,6 +482,9 @@ def average_velocity(
     elif method == "cubic-cubature":
         return cubic_cubature(velocities, cubature_coefficients=cubature_coefficients, axis=axis)
 
+    else:
+        raise ValueError("Incorrect method given.")
+
 @define
 class PowerThrustTable(FromDictMixin):
     """Helper class to convert the dictionary and list-based inputs to a object of arrays.
