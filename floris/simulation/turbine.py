@@ -431,25 +431,15 @@ def cubic_mean(array, axis=0):
     return np.cbrt(np.mean(array ** 3.0, axis=axis))
 
 def simple_cubature(array, cubature_coefficients, axis=0):
-    # A = cubature_coefficients["A"]
-    # B = cubature_coefficients["B"]
-    # n = len(cubature_coefficients["r"])
     weights = cubature_coefficients["CUBcoeff"].flatten()
-    weights = weights * len(weights) / np.sum(weights)  # Originally next step is "sum", but here is "mean", so multiply by vector length
+    weights = weights * len(weights) / np.sum(weights)
     product = (array * weights[None, None, None, :, None])
     return simple_mean(product, axis)
 
 def cubic_cubature(array, cubature_coefficients, axis=0):
-    # A = cubature_coefficients["A"]
-    # B = cubature_coefficients["B"]
-    # n = len(cubature_coefficients["r"])
     weights = cubature_coefficients["CUBcoeff"].flatten()
-    weights = weights * len(weights) / np.sum(weights)  # Originally next step is "sum", but here is "mean", so multiply by vector length
-    # product = (array**3.0 * weights[None, None, None, :, None])
-    # return cubic_mean(product, axis)
+    weights = weights * len(weights) / np.sum(weights)
     return np.cbrt(np.mean((array**3.0 * weights[None, None, None, :, None]), axis=axis))
-    
-
 
 def average_velocity(
     velocities: NDArrayFloat,
@@ -471,8 +461,6 @@ def average_velocity(
     Returns:
         NDArrayFloat: The average velocity across the rotor(s).
     """
-    # Remove all invalid numbers from interpolation
-    # data = np.array(self.velocities)[~np.isnan(self.velocities)]
 
     # The input velocities are expected to be a 5 dimensional array with shape:
     # (# wind directions, # wind speeds, # turbines, grid resolution, grid resolution)
@@ -486,7 +474,7 @@ def average_velocity(
 
     elif method == "simple-cubature":
         return simple_cubature(velocities, cubature_coefficients=cubature_coefficients, axis=axis)
-    
+
     elif method == "cubic-cubature":
         return cubic_cubature(velocities, cubature_coefficients=cubature_coefficients, axis=axis)
 

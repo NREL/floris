@@ -222,23 +222,22 @@ def sequential_solver(
             axial_induction_i
         )
 
-        # # Calculate wake overlap for wake-added turbulence (WAT)
-        # area_overlap = (
-        #     np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4))
-        #     / (grid.grid_resolution * grid.grid_resolution)
-        # )
-        # area_overlap = area_overlap[:, :, :, None, None]
+        # Calculate wake overlap for wake-added turbulence (WAT)
+        area_overlap = (
+            np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4))
+            / (grid.grid_resolution * grid.grid_resolution)
+        )
+        area_overlap = area_overlap[:, :, :, None, None]
 
-        # # Modify wake added turbulence by wake area overlap
-        # downstream_influence_length = 15 * rotor_diameter_i
-        # ti_added = (
-        #     area_overlap
-        #     * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
-        #     * np.array(grid.x_sorted > x_i)
-        #     * np.array(np.abs(y_i - grid.y_sorted) < 2 * rotor_diameter_i)
-        #     * np.array(grid.x_sorted <= downstream_influence_length + x_i)
-        # )
-        ti_added = 0.0
+        # Modify wake added turbulence by wake area overlap
+        downstream_influence_length = 15 * rotor_diameter_i
+        ti_added = (
+            area_overlap
+            * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
+            * np.array(grid.x_sorted > x_i)
+            * np.array(np.abs(y_i - grid.y_sorted) < 2 * rotor_diameter_i)
+            * np.array(grid.x_sorted <= downstream_influence_length + x_i)
+        )
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
