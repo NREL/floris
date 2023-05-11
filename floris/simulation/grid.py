@@ -286,7 +286,9 @@ class CubatureGrid(Grid):
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
-    average_method = "cubic-cubature"
+    x_center_of_rotation: NDArrayFloat = field(init=False)
+    y_center_of_rotation: NDArrayFloat = field(init=False)
+    average_method = "simple-cubature"
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -296,8 +298,11 @@ class CubatureGrid(Grid):
         """
         """
         # These are the rotated coordinates of the wind turbines based on the wind direction
-        x, y, z = rotate_coordinates_rel_west(self.wind_directions, self.turbine_coordinates_array)
-
+        x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
+            self.wind_directions,
+            self.turbine_coordinates_array
+        )
+    
         # Coefficients
         self.cubature_coefficients = CubatureGrid.get_cubature_coefficients(self.grid_resolution)
 
