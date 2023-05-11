@@ -302,7 +302,7 @@ class CubatureGrid(Grid):
             self.wind_directions,
             self.turbine_coordinates_array
         )
-    
+
         # Coefficients
         self.cubature_coefficients = CubatureGrid.get_cubature_coefficients(self.grid_resolution)
 
@@ -330,8 +330,8 @@ class CubatureGrid(Grid):
         _y = y[:, :, :, None, None] * template_grid
         _z = z[:, :, :, None, None] * template_grid
         for ti in range(self.n_turbines):
-            _y[:, :, ti, :, :] += yv[None, None, :, None] * self.reference_turbine_diameter[ti] / 2.0
-            _z[:, :, ti, :, :] += zv[None, None, :, None] * self.reference_turbine_diameter[ti] / 2.0
+            _y[:, :, ti, :, :] += yv[None, None, :, None]*self.reference_turbine_diameter[ti] / 2.0
+            _z[:, :, ti, :, :] += zv[None, None, :, None]*self.reference_turbine_diameter[ti] / 2.0
 
         # Sort the turbines at each wind direction
 

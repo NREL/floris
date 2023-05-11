@@ -22,8 +22,8 @@ from attrs import define, field
 from floris import logging_manager
 from floris.simulation import (
     BaseClass,
-    CubatureGrid,
     cc_solver,
+    CubatureGrid,
     empirical_gauss_solver,
     Farm,
     FlowField,
