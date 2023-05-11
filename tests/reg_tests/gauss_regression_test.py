@@ -274,7 +274,7 @@ def test_regression_tandem(sample_inputs_fixture):
 
     farm_avg_velocities = average_velocity(
         floris.flow_field.u,
-        method="simple-cubature",
+        method="cubic-mean",
         cubature_coefficients=floris.grid.cubature_coefficients
     )
     farm_eff_velocities = rotor_effective_velocity(
@@ -397,8 +397,7 @@ def test_regression_rotation(sample_inputs_fixture):
 
     farm_avg_velocities = average_velocity(
         floris.flow_field.u,
-        method="simple-cubature",
-        cubature_coefficients=floris.grid.cubature_coefficients
+        method="cubic-mean"
     )
 
     t0_270 = farm_avg_velocities[0, 0, 0]  # upstream
@@ -447,8 +446,7 @@ def test_regression_yaw(sample_inputs_fixture):
 
     farm_avg_velocities = average_velocity(
         floris.flow_field.u,
-        method="simple-cubature",
-        cubature_coefficients=floris.grid.cubature_coefficients
+        method="cubic-mean",
     )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
@@ -541,8 +539,7 @@ def test_regression_gch(sample_inputs_fixture):
 
     farm_avg_velocities = average_velocity(
         floris.flow_field.u,
-        method="simple-cubature",
-        cubature_coefficients=floris.grid.cubature_coefficients
+        method="cubic-mean",
     )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
@@ -621,7 +618,6 @@ def test_regression_gch(sample_inputs_fixture):
     n_wind_speeds = floris.flow_field.n_wind_speeds
     n_wind_directions = floris.flow_field.n_wind_directions
 
-    velocities = floris.flow_field.u
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
     ref_tilt_cp_cts = (
@@ -632,13 +628,12 @@ def test_regression_gch(sample_inputs_fixture):
 
     farm_avg_velocities = average_velocity(
         floris.flow_field.u,
-        method="simple-cubature",
-        cubature_coefficients=floris.grid.cubature_coefficients
+        method="cubic-mean",
     )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
         floris.farm.ref_density_cp_cts,
-        velocities,
+        farm_avg_velocities,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -729,8 +724,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
 
     farm_avg_velocities = average_velocity(
         floris.flow_field.u,
-        method="simple-cubature",
-        cubature_coefficients=floris.grid.cubature_coefficients
+        method="cubic-mean",
     )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
@@ -825,8 +819,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
 
     farm_avg_velocities = average_velocity(
         floris.flow_field.u,
-        method="simple-cubature",
-        cubature_coefficients=floris.grid.cubature_coefficients
+        method="cubic-mean",
     )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
@@ -919,15 +912,18 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     floris.steady_state_atmospheric_condition()
 
     # farm_avg_velocities = average_velocity(floris.flow_field.u)
-    velocities = floris.flow_field.u
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
     ref_tilt_cp_cts = np.ones((1, 1, len(X))) * floris.farm.ref_tilt_cp_cts
 
+    farm_avg_velocities = average_velocity(
+        floris.flow_field.u,
+        method="cubic-mean",
+    )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
         floris.farm.ref_density_cp_cts,
-        velocities,
+        farm_avg_velocities,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,

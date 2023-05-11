@@ -85,7 +85,6 @@ def test_calculate_no_wake(sample_inputs_fixture):
     n_wind_speeds = fi.floris.flow_field.n_wind_speeds
     n_wind_directions = fi.floris.flow_field.n_wind_directions
 
-    velocities = fi.floris.flow_field.u
     yaw_angles = fi.floris.farm.yaw_angles
     tilt_angles = fi.floris.farm.tilt_angles
     ref_tilt_cp_cts = (
@@ -95,12 +94,13 @@ def test_calculate_no_wake(sample_inputs_fixture):
     test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
-        velocities,
+        fi.floris.flow_field.u,
+        "cubic-mean"
     )
     farm_eff_velocities = rotor_effective_velocity(
         fi.floris.flow_field.air_density,
         fi.floris.farm.ref_density_cp_cts,
-        velocities,
+        farm_avg_velocities,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -111,7 +111,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         fi.floris.farm.turbine_type_map,
     )
     farm_cts = Ct(
-        velocities,
+        farm_avg_velocities,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -127,7 +127,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         fi.floris.farm.turbine_type_map,
     )
     farm_axial_inductions = axial_induction(
-        velocities,
+        farm_avg_velocities,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
