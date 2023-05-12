@@ -168,7 +168,7 @@ def rotor_effective_velocity(
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
-    cubature_weights: np.array | None = None
+    cubature_weights: NDArrayFloat | None = None
 ) -> NDArrayFloat:
 
     if isinstance(yaw_angle, list):
@@ -284,7 +284,7 @@ def Ct(
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
-    cubature_weights: np.array | None = None
+    cubature_weights: NDArrayFloat | None = None
 ) -> NDArrayFloat:
 
     """Thrust coefficient of a turbine incorporating the yaw angle.
@@ -373,7 +373,7 @@ def axial_induction(
     turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
-    cubature_weights: np.array | None = None
+    cubature_weights: NDArrayFloat | None = None
 ) -> NDArrayFloat:
     """Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
