@@ -33,6 +33,10 @@ class AttrsDemoClass(FromDictMixin):
     x: int = field(converter=int)
     y: float = field(converter=float, default=2.1)
     z: str = field(converter=str, default="z")
+    non_initd: float = field(init=False)
+
+    def __attrs_post_init__(self):
+        self.non_initd = 1.1
 
     liststr: List[str] = field(
         default=["qwerty", "asdf"],
@@ -43,6 +47,13 @@ class AttrsDemoClass(FromDictMixin):
         converter=floris_array_converter,
         # validator=iter_validator(np.ndarray, floris_float_type)
     )
+
+
+def test_as_dict():
+    # Non-initialized attributes should not be exported
+    cls = AttrsDemoClass(w=0, x=1, liststr=["a", "b"])
+    exported_dict = cls.as_dict()
+    assert "non_initd" not in exported_dict
 
 
 def test_FromDictMixin_defaults():

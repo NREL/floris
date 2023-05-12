@@ -39,12 +39,14 @@ import floris.logging_manager
 from .base import BaseClass, BaseModel, State
 from .turbine import average_velocity, axial_induction, Ct, power, rotor_effective_velocity, Turbine
 from .farm import Farm
-from .grid import FlowFieldGrid, FlowFieldPlanarGrid, Grid, TurbineGrid
+from .grid import FlowFieldGrid, FlowFieldPlanarGrid, Grid, PointsGrid, TurbineGrid
 from .flow_field import FlowField
 from .wake import WakeModelManager
 from .solver import (
     cc_solver,
+    empirical_gauss_solver,
     full_flow_cc_solver,
+    full_flow_empirical_gauss_solver,
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     sequential_solver,

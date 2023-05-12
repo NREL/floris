@@ -115,10 +115,7 @@ def cluster_turbines(fi, wind_direction=None, wake_slope=0.30, plot_lines=False)
 
         # Get most downstream turbine
         is_downstream[ii] = not any(
-            [
-                determine_if_in_wake(x_rot_srt[iii], y_rot_srt[iii])
-                for iii in range(n_turbs)
-            ]
+            determine_if_in_wake(x_rot_srt[iii], y_rot_srt[iii]) for iii in range(n_turbs)
         )
         # Determine which turbines are affected by this turbine ('ii')
         affecting_following_turbs = [
@@ -165,7 +162,7 @@ def cluster_turbines(fi, wind_direction=None, wake_slope=0.30, plot_lines=False)
         cj = ci + 1
         merged_column = False
         while cj < len(clusters):
-            if any([y in clusters[ci] for y in clusters[cj]]):
+            if any(y in clusters[ci] for y in clusters[cj]):
                 # Merge
                 clusters[ci] = np.hstack([clusters[ci], clusters[cj]])
                 clusters[ci] = np.array(np.unique(clusters[ci]), dtype=int)

@@ -20,8 +20,8 @@ from floris.simulation import (
     Ct,
     Floris,
     power,
+    rotor_effective_velocity,
 )
-from floris.simulation.turbine import rotor_effective_velocity
 from tests.conftest import (
     assert_results_arrays,
     N_TURBINES,

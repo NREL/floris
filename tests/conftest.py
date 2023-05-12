@@ -13,6 +13,8 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import copy
+
 import numpy as np
 import pytest
 
@@ -20,6 +22,7 @@ from floris.simulation import (
     Floris,
     FlowField,
     FlowFieldGrid,
+    PointsGrid,
     TurbineGrid,
 )
 from floris.utilities import Vec3
@@ -142,6 +145,25 @@ def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=[3,2,2]
+    )
+
+@pytest.fixture
+def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
+    turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES) )
+    points_x = [0.0, 10.0]
+    points_y = [0.0, 0.0]
+    points_z = [1.0, 2.0]
+    return PointsGrid(
+        turbine_coordinates=turbine_coordinates,
+        reference_turbine_diameter=rotor_diameters,
+        wind_directions=np.array(WIND_DIRECTIONS),
+        wind_speeds=np.array(WIND_SPEEDS),
+        grid_resolution=None,
+        time_series=False,
+        points_x=points_x,
+        points_y=points_y,
+        points_z=points_z,
     )
 
 @pytest.fixture
@@ -324,182 +346,20 @@ class SampleInputs:
             "TSR": 8.0
         }
 
-        self.turbine_floating = {
-            "turbine_type": "nrel_5mw",
-            "rotor_diameter": 126.0,
-            "hub_height": 90.0,
-            "pP": 1.88,
-            "pT": 1.88,
-            "generator_efficiency": 1.0,
-            "ref_density_cp_ct": 1.225,
-            "ref_tilt_cp_ct": 5.0,
-            "power_thrust_table": {
-                "power": [
-                    0.000000,
-                    0.000000,
-                    0.178085,
-                    0.289075,
-                    0.349022,
-                    0.384728,
-                    0.406059,
-                    0.420228,
-                    0.428823,
-                    0.433873,
-                    0.436223,
-                    0.436845,
-                    0.436575,
-                    0.436511,
-                    0.436561,
-                    0.436517,
-                    0.435903,
-                    0.434673,
-                    0.433230,
-                    0.430466,
-                    0.378869,
-                    0.335199,
-                    0.297991,
-                    0.266092,
-                    0.238588,
-                    0.214748,
-                    0.193981,
-                    0.175808,
-                    0.159835,
-                    0.145741,
-                    0.133256,
-                    0.122157,
-                    0.112257,
-                    0.103399,
-                    0.095449,
-                    0.088294,
-                    0.081836,
-                    0.075993,
-                    0.070692,
-                    0.065875,
-                    0.061484,
-                    0.057476,
-                    0.053809,
-                    0.050447,
-                    0.047358,
-                    0.044518,
-                    0.041900,
-                    0.039483,
-                ],
-                "thrust": [
-                    0.0,
-                    0.0,
-                    0.99,
-                    0.99,
-                    0.97373036,
-                    0.92826162,
-                    0.89210543,
-                    0.86100905,
-                    0.835423,
-                    0.81237673,
-                    0.79225789,
-                    0.77584769,
-                    0.7629228,
-                    0.76156073,
-                    0.76261984,
-                    0.76169723,
-                    0.75232027,
-                    0.74026851,
-                    0.72987175,
-                    0.70701647,
-                    0.54054532,
-                    0.45509459,
-                    0.39343381,
-                    0.34250785,
-                    0.30487242,
-                    0.27164979,
-                    0.24361964,
-                    0.21973831,
-                    0.19918151,
-                    0.18131868,
-                    0.16537679,
-                    0.15103727,
-                    0.13998636,
-                    0.1289037,
-                    0.11970413,
-                    0.11087113,
-                    0.10339901,
-                    0.09617888,
-                    0.09009926,
-                    0.08395078,
-                    0.0791188,
-                    0.07448356,
-                    0.07050731,
-                    0.06684119,
-                    0.06345518,
-                    0.06032267,
-                    0.05741999,
-                    0.05472609,
-                ],
-                "wind_speed": [
-                    2.0,
-                    2.5,
-                    3.0,
-                    3.5,
-                    4.0,
-                    4.5,
-                    5.0,
-                    5.5,
-                    6.0,
-                    6.5,
-                    7.0,
-                    7.5,
-                    8.0,
-                    8.5,
-                    9.0,
-                    9.5,
-                    10.0,
-                    10.5,
-                    11.0,
-                    11.5,
-                    12.0,
-                    12.5,
-                    13.0,
-                    13.5,
-                    14.0,
-                    14.5,
-                    15.0,
-                    15.5,
-                    16.0,
-                    16.5,
-                    17.0,
-                    17.5,
-                    18.0,
-                    18.5,
-                    19.0,
-                    19.5,
-                    20.0,
-                    20.5,
-                    21.0,
-                    21.5,
-                    22.0,
-                    22.5,
-                    23.0,
-                    23.5,
-                    24.0,
-                    24.5,
-                    25.0,
-                    25.5,
-                ],
-            },
-            "floating_tilt_table": {
-                "tilt": [
-                    5.0,
-                    5.0,
-                    5.0,
-                ],
-                "wind_speeds": [
-                    0.0,
-                    25.0,
-                    50.0,
-                ],
-            },
-            "floating_correct_cp_ct_for_tilt": True,
-            "TSR": 8.0
+        self.turbine_floating = copy.deepcopy(self.turbine)
+        self.turbine_floating["floating_tilt_table"] = {
+            "tilt": [
+                5.0,
+                5.0,
+                5.0,
+            ],
+            "wind_speeds": [
+                0.0,
+                25.0,
+                50.0,
+            ],
         }
+        self.turbine_floating["floating_correct_cp_ct_for_tilt"] = True
 
         self.farm = {
             "layout_x": X_COORDS,
@@ -539,6 +399,13 @@ class SampleInputs:
                     "bd": 0.0,
                     "kd": 0.05,
                 },
+                "empirical_gauss": {
+                   "horizontal_deflection_gain_D": 3.0,
+                   "vertical_deflection_gain_D": -1,
+                   "deflection_rate": 15,
+                   "mixing_gain_deflection": 0.0,
+                   "yaw_added_mixing_gain": 0.0
+                },
             },
             "wake_velocity_parameters": {
                 "gauss": {
@@ -563,7 +430,14 @@ class SampleInputs:
                 "turbopark": {
                     "A": 0.04,
                     "sigma_max_rel": 4.0
-                }
+                },
+                "empirical_gauss": {
+                    "wake_expansion_rates": [0.01, 0.005],
+                    "breakpoints_D": [10],
+                    "sigma_0_D": 0.28,
+                    "smoothing_length_D": 2.0,
+                    "mixing_gain_velocity": 2.0
+                },
             },
             "wake_turbulence_parameters": {
                 "crespo_hernandez": {
@@ -572,6 +446,9 @@ class SampleInputs:
                     "ai": 0.8,
                     "downstream": -0.32
                 },
+                "wake_induced_mixing": {
+                    "atmospheric_ti_gain": 0.0
+                }
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,

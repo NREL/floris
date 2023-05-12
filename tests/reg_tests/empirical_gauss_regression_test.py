@@ -32,8 +32,9 @@ from tests.conftest import (
 
 
 DEBUG = False
-VELOCITY_MODEL = "jensen"
-DEFLECTION_MODEL = "jimenez"
+VELOCITY_MODEL = "empirical_gauss"
+DEFLECTION_MODEL = "empirical_gauss"
+TURBULENCE_MODEL = "wake_induced_mixing"
 
 
 baseline = np.array(
@@ -41,26 +42,26 @@ baseline = np.array(
         # 8 m/s
         [
             [7.9736330, 0.7636044, 1691326.6483808, 0.2568973],
-            [6.1528670, 0.8283770, 769344.9989547, 0.2928630],
-            [5.6590323, 0.8528710, 589128.2717851, 0.3082130],
+            [5.1827276, 0.8807411, 441118.3637433, 0.3273306],
+            [4.9925898, 0.8926413, 385869.8808447, 0.3361718],
         ],
-        # 9 m/s
+        # 9m/s
         [
             [8.9703371, 0.7625570, 2407841.6718785, 0.2563594],
-            [6.9262647, 0.7952248, 1108399.9545223, 0.2737395],
-            [6.5033542, 0.8122418, 911557.7945732, 0.2833446],
+            [5.8355012, 0.8438407, 650343.4078478, 0.3024150],
+            [5.6871296, 0.8514332, 598874.9374620, 0.3072782],
         ],
         # 10 m/s
         [
             [9.9670412, 0.7529384, 3298067.1555604, 0.2514735],
-            [7.7391355, 0.7696661, 1550802.6855981, 0.2600344],
-            [7.3444882, 0.7809516, 1325146.7113373, 0.2659870],
+            [6.5341306, 0.8110034, 925882.5592972, 0.2826313],
+            [6.4005794, 0.8169593, 869713.2904634, 0.2860837],
         ],
         # 11 m/s
         [
             [10.9637454, 0.7306256, 4363191.9880631, 0.2404936],
-            [8.6200527, 0.7618150, 2139354.1087623, 0.2559790],
-            [8.1422116, 0.7625354, 1803890.3447532, 0.2563483],
+            [7.3150380, 0.7819182, 1309551.0796815, 0.2665039],
+            [7.1452486, 0.7874908, 1219637.5477980, 0.2695064],
         ],
     ]
 )
@@ -70,26 +71,26 @@ yawed_baseline = np.array(
         # 8 m/s
         [
             [7.9736330, 0.7606986, 1679924.0721706, 0.2549029],
-            [6.1670027, 0.8277254, 775072.5021192, 0.2924701],
-            [5.6650398, 0.8525636, 591212.2253601, 0.3080128],
+            [5.2892493, 0.8741162, 472289.7835635, 0.3225995],
+            [5.0661805, 0.8879895, 407013.1948403, 0.3326601],
         ],
         # 9 m/s
         [
             [8.9703371, 0.7596552, 2391434.0080674, 0.2543734],
-            [6.9420997, 0.7945877, 1115770.2903095, 0.2733878],
-            [6.5099782, 0.8119752, 914640.8879238, 0.2831909],
+            [5.9548519, 0.8377333, 691744.8624111, 0.2985883],
+            [5.7711008, 0.8471363, 628003.5991427, 0.3045110],
         ],
         # 10 m/s
         [
             [9.9670412, 0.7500732, 3275671.6727516, 0.2495630],
-            [7.7560617, 0.7692286, 1560945.8383104, 0.2598066],
-            [7.3508004, 0.7807445, 1328489.3723384, 0.2658764],
+            [6.6618693, 0.8058635, 985338.0488503, 0.2796954],
+            [6.4905463, 0.8128125, 906166.1389747, 0.2836741],
         ],
         # 11 m/s
         [
             [10.9637454, 0.7278454, 4333842.6695283, 0.2387424],
-            [8.6371187, 0.7618512, 2152434.8973815, 0.2559975],
-            [8.1465243, 0.7625236, 1806824.8092631, 0.2563423],
+            [7.4437653, 0.7776933, 1377719.8294419, 0.2642530],
+            [7.2350472, 0.7845435, 1267191.1878400, 0.2679136],
         ],
     ]
 )
@@ -105,6 +106,7 @@ def test_regression_tandem(sample_inputs_fixture):
     """
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["turbulence_model"] = TURBULENCE_MODEL
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
     floris.initialize_domain()
@@ -225,6 +227,7 @@ def test_regression_rotation(sample_inputs_fixture):
 
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["turbulence_model"] = TURBULENCE_MODEL
     sample_inputs_fixture.floris["farm"]["layout_x"] = [
         0.0,
         0.0,
@@ -268,6 +271,7 @@ def test_regression_yaw(sample_inputs_fixture):
     """
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["turbulence_model"] = TURBULENCE_MODEL
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
@@ -370,6 +374,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     """
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["turbulence_model"] = TURBULENCE_MODEL
     X, Y = np.meshgrid(
         6.0 * 126.0 * np.arange(0, 5, 1),
         6.0 * 126.0 * np.arange(0, 5, 1)
@@ -416,4 +421,5 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,5:10])
     assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,10:15])
     assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,15:20])
-    assert np.allclose(farm_powers[2,0,20], farm_powers[2,0,20:25])
+    assert np.allclose(farm_powers[2,0,20], farm_powers[2,0,0])
+    assert np.allclose(farm_powers[2,0,21], farm_powers[2,0,21:25])
