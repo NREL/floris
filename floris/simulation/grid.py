@@ -282,7 +282,22 @@ class TurbineGrid(Grid):
 @define
 class TurbineCubatureGrid(Grid):
     """
-    #TODO
+    This grid type arranges points throughout the swept area of the rotor based on the cubature
+    of a unit circle. The number of points is set by the user, and then the location of the
+    points and their weighting in integration is automatically set. This type of grid
+    enables a better approximation of the total incoming velocities on the rotor and therefore
+    a more accurate average velocity, thrust coefficient, and axial induction.
+
+    Args:
+        turbine_coordinates (`list[Vec3]`): The list of turbine coordinates as `Vec3` objects.
+        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points to
+            include in the cubature method. This value must be in the range [1, 10], and the
+            corresponding cubature weights are set automatically.
+        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
+            series.
     """
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
