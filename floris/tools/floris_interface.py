@@ -116,9 +116,7 @@ class FlorisInterface(LoggerBase):
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
-        tilt_angles: NDArrayFloat | list[float] | None = None,
-        # points: NDArrayFloat | list[float] | None = None,
-        # track_n_upstream_wakes: bool = False,
+        # tilt_angles: NDArrayFloat | list[float] | None = None,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -127,13 +125,6 @@ class FlorisInterface(LoggerBase):
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
-            tilt_angles (NDArrayFloat | list[float] | None, optional): Turbine tilt angles.
-                Defaults to None.
-            points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
-                coordinates at which the flow field velocity is to be recorded. Defaults
-                to None.
-            track_n_upstream_wakes (bool, optional): When *True*, will keep track of the
-                number of upstream wakes a turbine is experiencing. Defaults to *False*.
         """
 
         if yaw_angles is None:
@@ -146,14 +137,14 @@ class FlorisInterface(LoggerBase):
             )
         self.floris.farm.yaw_angles = yaw_angles
 
-        # TODO is this required?
-        if tilt_angles is not None:
-            self.floris.farm.tilt_angles = tilt_angles
-        else:
-            self.floris.farm.set_tilt_to_ref_tilt(
-                self.floris.flow_field.n_wind_directions,
-                self.floris.flow_field.n_wind_speeds
-            )
+        # # TODO is this required?
+        # if tilt_angles is not None:
+        #     self.floris.farm.tilt_angles = tilt_angles
+        # else:
+        #     self.floris.farm.set_tilt_to_ref_tilt(
+        #         self.floris.flow_field.n_wind_directions,
+        #         self.floris.flow_field.n_wind_speeds
+        #     )
 
         # Initialize solution space
         self.floris.initialize_domain()
