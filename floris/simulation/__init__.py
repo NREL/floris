@@ -40,12 +40,12 @@ from .base import BaseClass, BaseModel, State
 from .turbine import average_velocity, axial_induction, Ct, power, rotor_effective_velocity, Turbine
 from .farm import Farm
 from .grid import (
-    CubatureGrid,
     FlowFieldGrid,
     FlowFieldPlanarGrid,
     Grid,
     PointsGrid,
-    TurbineGrid
+    TurbineGrid,
+    TurbineCubatureGrid
 )
 from .flow_field import FlowField
 from .wake import WakeModelManager

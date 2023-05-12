@@ -23,7 +23,7 @@ from floris import logging_manager
 from floris.simulation import (
     BaseClass,
     cc_solver,
-    CubatureGrid,
+    TurbineCubatureGrid,
     empirical_gauss_solver,
     Farm,
     FlowField,
@@ -99,8 +99,8 @@ class Floris(BaseClass):
                 grid_resolution=self.solver["turbine_grid_points"],
                 time_series=self.flow_field.time_series,
             )
-        elif self.solver["type"] == "cubature_grid":
-            self.grid = CubatureGrid(
+        elif self.solver["type"] == "turbine_cubature_grid":
+            self.grid = TurbineCubatureGrid(
                 turbine_coordinates=self.farm.coordinates,
                 reference_turbine_diameter=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
@@ -137,7 +137,7 @@ class Floris(BaseClass):
                 f"but type given was {self.solver['type']}"
             )
 
-        if isinstance(self.grid, (TurbineGrid, CubatureGrid)):
+        if isinstance(self.grid, (TurbineGrid, TurbineCubatureGrid)):
             self.farm.expand_farm_properties(
                 self.flow_field.n_wind_directions,
                 self.flow_field.n_wind_speeds,

@@ -113,7 +113,7 @@ class Grid(ABC):
     def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
         # TODO move this to the grid types and off of the base class
         """Check that grid resolution is given as int or Vec3 with int components."""
-        if isinstance(value, int) and isinstance(self, (TurbineGrid, CubatureGrid, PointsGrid)):
+        if isinstance(value, int) and isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid)):
             return
         elif isinstance(value, Iterable) and isinstance(self, FlowFieldPlanarGrid):
             assert type(value[0]) is int
@@ -279,7 +279,7 @@ class TurbineGrid(Grid):
         self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=2)
 
 @define
-class CubatureGrid(Grid):
+class TurbineCubatureGrid(Grid):
     """
     #TODO
     """
@@ -304,7 +304,7 @@ class CubatureGrid(Grid):
         )
 
         # Coefficients
-        cubature_coefficients = CubatureGrid.get_cubature_coefficients(self.grid_resolution)
+        cubature_coefficients = TurbineCubatureGrid.get_cubature_coefficients(self.grid_resolution)
 
         # Generate grid points
         yv = np.kron(cubature_coefficients["r"], cubature_coefficients["q"])
@@ -359,7 +359,7 @@ class CubatureGrid(Grid):
     def get_cubature_coefficients(cls, N: int):
         """
         Retrieve cubature integration coefficients. This is a class-method, and therefore
-        the coefficients can be accessed without creating a CubatureGrid instance.
+        the coefficients can be accessed without creating an instance of the class.
 
         Args:
             N (int): Order of the cubature integration. The total
