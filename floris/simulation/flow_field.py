@@ -136,14 +136,7 @@ class FlowField(BaseClass):
         # If heterogeneous flow data is given, the speed ups at the defined
         # grid locations are determined in either 2 or 3 dimensions.
         else:
-            bounds = np.array(
-                list(
-                    zip(
-                        self.het_config['x_locs'],
-                        self.het_config['y_locs'],
-                    )
-                )
-            )
+            bounds = np.array(list(zip(self.het_config['x_locs'], self.het_config['y_locs'])))
             hull = ConvexHull(bounds)
             polygon = Polygon(bounds[hull.vertices])
             path = mpltPath.Path(polygon.boundary.coords)

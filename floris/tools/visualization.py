@@ -85,7 +85,7 @@ def plot_turbines_with_fi(
     from a FLORIS interface object
 
     Args:
-        fi (:py:class:`floris.tools.floris_interface.FlorisIntreface`): FlorisIntreface object.
+        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults to None.
         color (str, optional): Color to plot turbines. Defaults to None.
         wd (list, optional): The wind direction to plot the turbines relative to. Defaults to None.

@@ -182,7 +182,6 @@ class FlorisInterface(LoggerBase):
         self,
         wind_speeds: list[float] | NDArrayFloat | None = None,
         wind_directions: list[float] | NDArrayFloat | None = None,
-        # wind_layout: list[float] | NDArrayFloat | None = None,
         wind_shear: float | None = None,
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
@@ -194,9 +193,6 @@ class FlorisInterface(LoggerBase):
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
         turbine_library_path: str | Path | None = None,
-        # turbine_id: list[str] | None = None,
-        # wtg_id: list[str] | None = None,
-        # with_resolution: float | None = None,
         solver_settings: dict | None = None,
         time_series: bool = False,
         het_config=None,
@@ -241,10 +237,9 @@ class FlorisInterface(LoggerBase):
         ## Wake
         # if wake is not None:
         #     self.floris.wake = wake
-        # if turbulence_intensity is not None:
-        #     pass  # TODO: this should be in the code, but maybe got skipped?
         # if turbulence_kinetic_energy is not None:
         #     pass  # TODO: not needed until GCH
+
         if solver_settings is not None:
             floris_dict["solver"] = solver_settings
 

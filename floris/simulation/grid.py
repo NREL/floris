@@ -83,8 +83,6 @@ class Grid(ABC):
     x_sorted_inertial_frame: NDArrayFloat = field(init=False)
     y_sorted_inertial_frame: NDArrayFloat = field(init=False)
     z_sorted_inertial_frame: NDArrayFloat = field(init=False)
-    x_center_of_rotation: NDArrayFloat = field(init=False)
-    y_center_of_rotation: NDArrayFloat = field(init=False)
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
@@ -252,7 +250,7 @@ class TurbineGrid(Grid):
                 disc_area_radius,
                 self.grid_resolution,
                 dtype=floris_float_type,
-                axis=1,
+                axis=1
             )
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
@@ -472,6 +470,8 @@ class FlowFieldGrid(Grid):
         reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
+    x_center_of_rotation: NDArrayFloat = field(init=False)
+    y_center_of_rotation: NDArrayFloat = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -496,7 +496,7 @@ class FlowFieldGrid(Grid):
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
             self.wind_directions,
-            self.turbine_coordinates_array,
+            self.turbine_coordinates_array
         )
 
         # Construct the arrays storing the grid points
@@ -543,7 +543,8 @@ class FlowFieldPlanarGrid(Grid):
     planar_coordinate: float = field()
     x1_bounds: tuple = field(default=None)
     x2_bounds: tuple = field(default=None)
-
+    x_center_of_rotation: NDArrayFloat = field(init=False)
+    y_center_of_rotation: NDArrayFloat = field(init=False)
     sorted_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
 
@@ -569,7 +570,7 @@ class FlowFieldPlanarGrid(Grid):
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
             self.wind_directions,
-            self.turbine_coordinates_array,
+            self.turbine_coordinates_array
         )
         max_diameter = np.max(self.reference_turbine_diameter)
 

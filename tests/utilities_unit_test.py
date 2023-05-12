@@ -93,7 +93,7 @@ def test_rotate_coordinates_rel_west():
     wind_directions = np.array([270.0])
     x_rotated, y_rotated, z_rotated, _, _ = rotate_coordinates_rel_west(
         wind_directions,
-        coordinates,
+        coordinates
     )
 
     np.testing.assert_array_equal( X_COORDS, x_rotated[0,0] )
@@ -112,7 +112,7 @@ def test_rotate_coordinates_rel_west():
     wind_directions = np.array([360.0])
     x_rotated, y_rotated, z_rotated, _, _ = rotate_coordinates_rel_west(
         wind_directions,
-        coordinates,
+        coordinates
     )
     np.testing.assert_almost_equal( Y_COORDS, x_rotated[0,0] - np.min(x_rotated[0,0]))
     np.testing.assert_almost_equal( X_COORDS, y_rotated[0,0] - np.min(y_rotated[0,0]))
@@ -124,7 +124,7 @@ def test_rotate_coordinates_rel_west():
     wind_directions = np.array([90.0])
     x_rotated, y_rotated, z_rotated, _, _ = rotate_coordinates_rel_west(
         wind_directions,
-        coordinates,
+        coordinates
     )
     np.testing.assert_almost_equal( X_COORDS[-1:-4:-1], x_rotated[0,0] )
     np.testing.assert_almost_equal( Y_COORDS, y_rotated[0,0] )
