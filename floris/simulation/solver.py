@@ -106,6 +106,8 @@ def sequential_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
         # Since we are filtering for the i'th turbine in the Ct function,
         # get the first index here (0:1)
@@ -120,6 +122,8 @@ def sequential_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
@@ -492,6 +496,8 @@ def cc_solver(
             tilt_interp=farm.turbine_fTilts,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
         turb_Cts = turb_Cts[:, :, :, None, None]
         turb_aIs = axial_induction(
@@ -504,6 +510,8 @@ def cc_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
         turb_aIs = turb_aIs[:, :, :, None, None]
 
@@ -520,6 +528,8 @@ def cc_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
 
         axial_induction_i = axial_induction_i[:, :, :, None, None]
@@ -731,6 +741,8 @@ def full_flow_cc_solver(
             tilt_interp=turbine_grid_farm.turbine_fTilts,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            average_method=turbine_grid.average_method,
+            cubature_weights=turbine_grid.cubature_weights
         )
         turb_Cts = turb_Cts[:, :, :, None, None]
 
@@ -744,6 +756,8 @@ def full_flow_cc_solver(
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=turbine_grid.average_method,
+            cubature_weights=turbine_grid.cubature_weights
         )
         axial_induction_i = axial_induction_i[:, :, :, None, None]
 
@@ -823,6 +837,7 @@ def full_flow_cc_solver(
         flow_field.w_sorted += w_wake
     flow_field.u_sorted = flow_field.u_initial_sorted - turb_u_wake
 
+
 def turbopark_solver(
     farm: Farm,
     flow_field: FlowField,
@@ -875,6 +890,8 @@ def turbopark_solver(
             tilt_interp=farm.turbine_fTilts,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
 
         ct_i = Ct(
@@ -887,6 +904,8 @@ def turbopark_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
         # Since we are filtering for the i'th turbine in the Ct function,
         # get the first index here (0:1)
@@ -901,6 +920,8 @@ def turbopark_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
@@ -954,7 +975,9 @@ def turbopark_solver(
                     tilt_interp=farm.turbine_fTilts,
                     correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                     turbine_type_map=farm.turbine_type_map_sorted,
-                    ix_filter=[ii]
+                    ix_filter=[ii],
+                    average_method=grid.average_method,
+                    cubature_weights=grid.cubature_weights
                 )
                 ct_ii = ct_ii[:, :, 0:1, None, None]
                 rotor_diameter_ii = farm.rotor_diameters_sorted[: ,:, ii:ii+1, None, None]
@@ -1186,6 +1209,8 @@ def empirical_gauss_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
         # Since we are filtering for the i'th turbine in the Ct function,
         # get the first index here (0:1)
@@ -1200,6 +1225,8 @@ def empirical_gauss_solver(
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
@@ -1211,9 +1238,13 @@ def empirical_gauss_solver(
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
 
-        tilt_angle_i = farm.calculate_tilt_for_eff_velocities(
-            average_velocity(flow_field.u_sorted)
-        )[:, :, i:i+1, None, None]
+        average_velocities = average_velocity(
+            flow_field.u_sorted,
+            method=grid.average_method,
+            cubature_weights=grid.cubature_weights
+        )
+        tilt_angle_i = farm.calculate_tilt_for_eff_velocities(average_velocities)
+        tilt_angle_i = tilt_angle_i[:, :, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError(
@@ -1297,6 +1328,7 @@ def empirical_gauss_solver(
         flow_field.w_sorted += w_wake
 
     return mixing_factor
+
 
 def full_flow_empirical_gauss_solver(
     farm: Farm,
@@ -1408,9 +1440,13 @@ def full_flow_empirical_gauss_solver(
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
 
-        tilt_angle_i = turbine_grid_farm.calculate_tilt_for_eff_velocities(
-            average_velocity(turbine_grid_flow_field.u_sorted)
-        )[:, :, i:i+1, None, None]
+        average_velocities = average_velocity(
+            turbine_grid_flow_field.u_sorted,
+            method=turbine_grid.average_method,
+            cubature_weights=turbine_grid.cubature_weights
+        )
+        tilt_angle_i = turbine_grid_farm.calculate_tilt_for_eff_velocities(average_velocities)
+        tilt_angle_i = tilt_angle_i[:, :, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError(

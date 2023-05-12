@@ -158,7 +158,9 @@ class Farm(BaseClass):
             _turbine_types *= self.n_turbines
 
         # Map each turbine definition to its index in this list
-        self.turbine_definitions = [turbine_definition_cache[t] for t in _turbine_types]
+        self.turbine_definitions = [
+            copy.deepcopy(turbine_definition_cache[t]) for t in _turbine_types
+        ]
 
     @layout_x.validator
     def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
@@ -189,6 +191,11 @@ class Farm(BaseClass):
         # Sort yaw angles from most upstream to most downstream wind turbine
         self.yaw_angles_sorted = np.take_along_axis(
             self.yaw_angles,
+            sorted_indices[:, :, :, 0, 0],
+            axis=2,
+        )
+        self.tilt_angles_sorted = np.take_along_axis(
+            self.tilt_angles,
             sorted_indices[:, :, :, 0, 0],
             axis=2,
         )
