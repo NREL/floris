@@ -1442,8 +1442,8 @@ def full_flow_empirical_gauss_solver(
 
         average_velocities = average_velocity(
             turbine_grid_flow_field.u_sorted,
-            turbine_grid.average_method,
-            turbine_grid.cubature_weights
+            method=turbine_grid.average_method,
+            cubature_weights=turbine_grid.cubature_weights
         )
         tilt_angle_i = turbine_grid_farm.calculate_tilt_for_eff_velocities(average_velocities)
         tilt_angle_i = tilt_angle_i[:, :, i:i+1, None, None]
