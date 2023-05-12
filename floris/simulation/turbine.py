@@ -464,7 +464,7 @@ def average_velocity(
     velocities: NDArrayFloat,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     method: str = "cubic-mean",
-    cubature_weights: np.array | None = None
+    cubature_weights: NDArrayFloat | None = None
 ) -> NDArrayFloat:
     """This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).

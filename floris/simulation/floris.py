@@ -133,7 +133,7 @@ class Floris(BaseClass):
         else:
             raise ValueError(
                 "Supported solver types are "
-                "[turbine_grid, cubature_grid, flow_field_grid, flow_field_planar_grid], "
+                "[turbine_grid, turbine_cubature_grid, flow_field_grid, flow_field_planar_grid], "
                 f"but type given was {self.solver['type']}"
             )
 
