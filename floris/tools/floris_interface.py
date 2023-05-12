@@ -607,11 +607,9 @@ class FlorisInterface(LoggerBase):
                 "first running `FlorisInterface.calculate_wake`."
             )
 
-        rotor_effective_velocities = self.turbine_effective_velocities
-
         turbine_powers = power(
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
-            rotor_effective_velocities=rotor_effective_velocities,
+            rotor_effective_velocities=self.turbine_effective_velocities,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
@@ -627,6 +625,8 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights,
         )
         return turbine_Cts
 
@@ -640,12 +640,18 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights,
         )
         return turbine_ais
 
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:
-        return average_velocity(velocities=self.floris.flow_field.u)
+        return average_velocity(
+            velocities=self.floris.flow_field.u,
+            method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights
+        )
 
     @property
     def turbine_effective_velocities(self) -> NDArrayFloat:
@@ -661,6 +667,8 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights
         )
         return rotor_effective_velocities
 
@@ -933,7 +941,6 @@ class FlorisInterface(LoggerBase):
 
         return aep
 
-
     def sample_flow_at_points(self, x: NDArrayFloat, y: NDArrayFloat, z: NDArrayFloat):
         """
         Extract the wind speed at points in the flow.
@@ -953,7 +960,6 @@ class FlorisInterface(LoggerBase):
             raise ValueError("x, y, and z must be the same size")
 
         return self.floris.solve_for_points(x, y, z)
-
 
     @property
     def layout_x(self):
@@ -992,7 +998,6 @@ class FlorisInterface(LoggerBase):
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
-
 
 def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
     if z is not None:

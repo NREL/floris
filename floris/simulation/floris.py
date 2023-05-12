@@ -36,6 +36,7 @@ from floris.simulation import (
     PointsGrid,
     sequential_solver,
     State,
+    TurbineCubatureGrid,
     TurbineGrid,
     turbopark_solver,
     WakeModelManager,
@@ -98,6 +99,15 @@ class Floris(BaseClass):
                 grid_resolution=self.solver["turbine_grid_points"],
                 time_series=self.flow_field.time_series,
             )
+        elif self.solver["type"] == "turbine_cubature_grid":
+            self.grid = TurbineCubatureGrid(
+                turbine_coordinates=self.farm.coordinates,
+                reference_turbine_diameter=self.farm.rotor_diameters,
+                wind_directions=self.flow_field.wind_directions,
+                wind_speeds=self.flow_field.wind_speeds,
+                time_series=self.flow_field.time_series,
+                grid_resolution=self.solver["turbine_grid_points"],
+            )
         elif self.solver["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(
                 turbine_coordinates=self.farm.coordinates,
@@ -122,11 +132,12 @@ class Floris(BaseClass):
             )
         else:
             raise ValueError(
-                f"Supported solver types are [turbine_grid, flow_field_grid],"
-                f" but type given was {self.solver['type']}"
+                "Supported solver types are "
+                "[turbine_grid, turbine_cubature_grid, flow_field_grid, flow_field_planar_grid], "
+                f"but type given was {self.solver['type']}"
             )
 
-        if type(self.grid) == TurbineGrid:
+        if isinstance(self.grid, (TurbineGrid, TurbineCubatureGrid)):
             self.farm.expand_farm_properties(
                 self.flow_field.n_wind_directions,
                 self.flow_field.n_wind_speeds,

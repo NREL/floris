@@ -182,9 +182,6 @@ def test_regression_tandem(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    print(test_results[0])
-    print(baseline)
-
     assert_results_arrays(test_results[0], baseline)
 
 
