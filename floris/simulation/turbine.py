@@ -496,12 +496,12 @@ def average_velocity(
         return cubic_mean(velocities, axis)
 
     elif method == "simple-cubature":
-        if cubature_weights in None:
+        if cubature_weights is None:
             raise ValueError("cubature_weights is required for 'simple-cubature' method.")
         return simple_cubature(velocities, cubature_weights, axis)
 
     elif method == "cubic-cubature":
-        if cubature_weights in None:
+        if cubature_weights is None:
             raise ValueError("cubature_weights is required for 'cubic-cubature' method.")
         return cubic_cubature(velocities, cubature_weights, axis)
 
