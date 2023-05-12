@@ -157,7 +157,7 @@ def compute_tilt_angles_for_floating_turbines(
 def rotor_effective_velocity(
     air_density: float,
     ref_density_cp_ct: float,
-    average_velocities: NDArrayFloat,
+    velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
     ref_tilt_cp_ct: NDArrayFloat,
@@ -167,6 +167,8 @@ def rotor_effective_velocity(
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
+    average_method: str = "cubic-mean",
+    cubature_weights: np.array | None = None
 ) -> NDArrayFloat:
 
     if isinstance(yaw_angle, list):
@@ -177,7 +179,7 @@ def rotor_effective_velocity(
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         ix_filter = _filter_convert(ix_filter, yaw_angle)
-        average_velocities = average_velocities[:, :, ix_filter]
+        velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
         ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
@@ -188,6 +190,11 @@ def rotor_effective_velocity(
     # Compute the rotor effective velocity adjusting for air density
     # TODO: This correction is currently split across two functions: this one and `power`, where in
     # `power` the returned power is multiplied by the reference air density
+    average_velocities = average_velocity(
+        velocities,
+        method=average_method,
+        cubature_weights=cubature_weights
+    )
     rotor_effective_velocities = (air_density/ref_density_cp_ct)**(1/3) * average_velocities
 
     # Compute the rotor effective velocity adjusting for yaw settings
@@ -267,7 +274,7 @@ def power(
 
 
 def Ct(
-    average_velocities: NDArrayFloat,
+    velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
     ref_tilt_cp_ct: NDArrayFloat,
@@ -276,6 +283,8 @@ def Ct(
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
+    average_method: str = "cubic-mean",
+    cubature_weights: np.array | None = None
 ) -> NDArrayFloat:
 
     """Thrust coefficient of a turbine incorporating the yaw angle.
@@ -314,12 +323,18 @@ def Ct(
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         ix_filter = _filter_convert(ix_filter, yaw_angle)
-        average_velocities = average_velocities[:, :, ix_filter]
+        velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
         ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, :, ix_filter]
+
+    average_velocities = average_velocity(
+        velocities,
+        method=average_method,
+        cubature_weights=cubature_weights
+    )
 
     # Compute the tilt, if using floating turbines
     old_tilt_angle = copy.deepcopy(tilt_angle)
@@ -348,7 +363,7 @@ def Ct(
 
 
 def axial_induction(
-    average_velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
+    velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     tilt_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     ref_tilt_cp_ct: NDArrayFloat,
@@ -357,6 +372,8 @@ def axial_induction(
     correct_cp_ct_for_tilt: NDArrayBool, # (wind directions, wind speeds, turbines)
     turbine_type_map: NDArrayObject, # (wind directions, 1, turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
+    average_method: str = "cubic-mean",
+    cubature_weights: np.array | None = None
 ) -> NDArrayFloat:
     """Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
@@ -394,7 +411,7 @@ def axial_induction(
 
     # Get Ct first before modifying any data
     thrust_coefficient = Ct(
-        average_velocities,
+        velocities,
         yaw_angle,
         tilt_angle,
         ref_tilt_cp_ct,
@@ -402,7 +419,9 @@ def axial_induction(
         tilt_interp,
         correct_cp_ct_for_tilt,
         turbine_type_map,
-        ix_filter
+        ix_filter,
+        average_method,
+        cubature_weights
     )
 
     # Then, process the input arguments as needed for this function
@@ -443,9 +462,9 @@ def cubic_cubature(array, cubature_weights, axis=0):
 
 def average_velocity(
     velocities: NDArrayFloat,
-    method: str,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
-    cubature_weights: dict | None = None
+    method: str = "cubic-mean",
+    cubature_weights: np.array | None = None
 ) -> NDArrayFloat:
     """This property calculates and returns the cube root of the
     mean cubed velocity in the turbine's rotor swept area (m/s).
@@ -477,9 +496,13 @@ def average_velocity(
         return cubic_mean(velocities, axis)
 
     elif method == "simple-cubature":
+        if cubature_weights in None:
+            raise ValueError("cubature_weights is required for 'simple-cubature' method.")
         return simple_cubature(velocities, cubature_weights, axis)
 
     elif method == "cubic-cubature":
+        if cubature_weights in None:
+            raise ValueError("cubature_weights is required for 'cubic-cubature' method.")
         return cubic_cubature(velocities, cubature_weights, axis)
 
     else:

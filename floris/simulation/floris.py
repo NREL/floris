@@ -23,7 +23,6 @@ from floris import logging_manager
 from floris.simulation import (
     BaseClass,
     cc_solver,
-    TurbineCubatureGrid,
     empirical_gauss_solver,
     Farm,
     FlowField,
@@ -37,6 +36,7 @@ from floris.simulation import (
     PointsGrid,
     sequential_solver,
     State,
+    TurbineCubatureGrid,
     TurbineGrid,
     turbopark_solver,
     WakeModelManager,

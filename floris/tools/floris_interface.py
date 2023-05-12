@@ -626,7 +626,7 @@ class FlorisInterface(LoggerBase):
 
     def get_turbine_Cts(self) -> NDArrayFloat:
         turbine_Cts = Ct(
-            average_velocities=self.turbine_average_velocities,
+            velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
@@ -634,12 +634,14 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights,
         )
         return turbine_Cts
 
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
-            average_velocities=self.turbine_average_velocities,
+            velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
@@ -647,6 +649,8 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights,
         )
         return turbine_ais
 
@@ -663,7 +667,7 @@ class FlorisInterface(LoggerBase):
         rotor_effective_velocities = rotor_effective_velocity(
             air_density=self.floris.flow_field.air_density,
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
-            average_velocities=self.turbine_average_velocities,
+            velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
@@ -672,6 +676,8 @@ class FlorisInterface(LoggerBase):
             tilt_interp=self.floris.farm.turbine_fTilts,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights
         )
         return rotor_effective_velocities
 

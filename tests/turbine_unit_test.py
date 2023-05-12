@@ -193,7 +193,7 @@ def test_average_velocity():
 
     # Pull out the first wind speed for the test
     np.testing.assert_array_equal(
-        average_velocity(velocities, "cubic-mean")[0, 0],
+        average_velocity(velocities, method="cubic-mean")[0, 0],
         np.array([1, 2])
     )
 
@@ -213,7 +213,7 @@ def test_average_velocity():
         # ),
         axis=2,
     )
-    avg = average_velocity(velocities, "cubic-mean", ix_filter)
+    avg = average_velocity(velocities, ix_filter, method="cubic-mean")
     assert avg.shape == (1, 1, 2)  # 1 wind direction, 1 wind speed, 2 turbines filtered
 
     # Pull out the first wind direction and wind speed for the comparison
@@ -228,7 +228,7 @@ def test_average_velocity():
         [i * np.ones((1, 1, 3, 3)) for i in range(1,5)],
         axis=2,
     )
-    avg = average_velocity(velocities, "cubic-mean", INDEX_FILTER)
+    avg = average_velocity(velocities, INDEX_FILTER, method="cubic-mean")
     assert avg.shape == (1, 1, 2)  # 1 wind direction, 1 wind speed, 2 turbines filtered
 
     # Pull out the first wind direction and wind speed for the comparison
@@ -248,9 +248,8 @@ def test_ct():
     # Single turbine
     # yaw angle / fCt are (n wind direction, n wind speed, n turbine)
     wind_speed = 10.0
-    avg_vel = average_velocity(wind_speed * np.ones((1, 1, 1, 3, 3)), method="cubic-mean")
     thrust = Ct(
-        average_velocities=avg_vel,
+        velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
@@ -265,12 +264,8 @@ def test_ct():
 
     # Multiple turbines with index filter
     # 4 turbines with 3 x 3 grid arrays
-    avg_vel = average_velocity(
-        np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,
-        method="cubic-mean"
-    )
     thrusts = Ct(
-        average_velocities=avg_vel,  # 3 x 4 x 4 x 3 x 3
+        velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, N_TURBINES)),
         tilt_angle=np.ones((1, 1, N_TURBINES)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, N_TURBINES)) * 5.0,
@@ -290,9 +285,8 @@ def test_ct():
         )
 
     # Single floating turbine; note that 'tilt_interp' is not set to None
-    avg_vel = average_velocity(wind_speed * np.ones((1, 1, 1, 3, 3)), method="cubic-mean")
     thrust = Ct(
-        average_velocities=avg_vel,
+        velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
@@ -383,9 +377,8 @@ def test_axial_induction():
 
     # Single turbine
     wind_speed = 10.0
-    avg_vel = average_velocity(wind_speed * np.ones((1, 1, 1, 3, 3)), method="cubic-mean")
     ai = axial_induction(
-        average_velocities=avg_vel,
+        velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
@@ -397,12 +390,8 @@ def test_axial_induction():
     np.testing.assert_allclose(ai, baseline_ai)
 
     # Multiple turbines with ix filter
-    avg_vel = average_velocity(
-        np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,
-        method="cubic-mean"
-    )
     ai = axial_induction(
-        average_velocities=avg_vel,  # 3 x 4 x 4 x 3 x 3
+        velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
         yaw_angle=np.zeros((1, 1, N_TURBINES)),
         tilt_angle=np.ones((1, 1, N_TURBINES)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, N_TURBINES)) * 5.0,
@@ -419,9 +408,8 @@ def test_axial_induction():
     np.testing.assert_allclose(ai[0,2], baseline_ai)
 
     # Single floating turbine; note that 'tilt_interp' is not set to None
-    avg_vel = average_velocity(wind_speed * np.ones((1, 1, 1, 3, 3)), method="cubic-mean")
     ai = axial_induction(
-        average_velocities=avg_vel,
+        velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
@@ -436,8 +424,8 @@ def test_axial_induction():
 def test_rotor_velocity_yaw_correction():
     N_TURBINES = 4
 
-    wind_speed = average_velocity(10.0 * np.ones((1, 1, 1, 3, 3)), "cubic-mean")
-    wind_speed_N_TURBINES = average_velocity(10.0 * np.ones((1, 1, N_TURBINES, 3, 3)), "cubic-mean")
+    wind_speed = average_velocity(10.0 * np.ones((1, 1, 1, 3, 3)))
+    wind_speed_N_TURBINES = average_velocity(10.0 * np.ones((1, 1, N_TURBINES, 3, 3)))
 
     # Test a single turbine for zero yaw
     yaw_corrected_velocities = _rotor_velocity_yaw_correction(
@@ -475,8 +463,8 @@ def test_rotor_velocity_yaw_correction():
 def test_rotor_velocity_tilt_correction():
     N_TURBINES = 4
 
-    wind_speed = average_velocity(10.0 * np.ones((1, 1, 1, 3, 3)), "cubic-mean")
-    wind_speed_N_TURBINES = average_velocity(10.0 * np.ones((1, 1, N_TURBINES, 3, 3)), "cubic-mean")
+    wind_speed = average_velocity(10.0 * np.ones((1, 1, 1, 3, 3)))
+    wind_speed_N_TURBINES = average_velocity(10.0 * np.ones((1, 1, N_TURBINES, 3, 3)))
 
     turbine_data = SampleInputs().turbine
     turbine_floating_data = SampleInputs().turbine_floating
@@ -544,13 +532,9 @@ def test_compute_tilt_angles_for_floating_turbines():
     N_TURBINES = 4
 
     wind_speed = 25.0
-    rotor_effective_velocities = average_velocity(
-        wind_speed * np.ones((1, 1, 1, 3, 3)),
-        "cubic-mean"
-    )
+    rotor_effective_velocities = average_velocity(wind_speed * np.ones((1, 1, 1, 3, 3)))
     rotor_effective_velocities_N_TURBINES = average_velocity(
-        wind_speed * np.ones((1, 1, N_TURBINES, 3, 3)),
-        "cubic-mean"
+        wind_speed * np.ones((1, 1, N_TURBINES, 3, 3))
     )
 
     turbine_floating_data = SampleInputs().turbine_floating
