@@ -254,7 +254,7 @@ class FlowField(BaseClass):
     def generate_heterogeneous_wind_map(self):
         """This function creates the heterogeneous interpolant used to calculate heterogeneous
         inflows. The interpolant is for computing wind speed based on an x and y location in the
-        flow field. This is computed using Scipy's LinearNDInterpolator and uses a fill value
+        flow field. This is computed using SciPy's LinearNDInterpolator and uses a fill value
         equal to the freestream for interpolated values outside of the user-defined heterogeneous
         map bounds.
 
@@ -277,7 +277,7 @@ class FlowField(BaseClass):
         z = self.het_config['z_locs']
 
         if z is not None:
-            # Compute the 3-dimensional interpolants for each wind diretion
+            # Compute the 3-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
             in_region = [
@@ -285,7 +285,7 @@ class FlowField(BaseClass):
                 for speed_up in speed_ups
             ]
         else:
-            # Compute the 2-dimensional interpolants for each wind diretion
+            # Compute the 2-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
             in_region = [

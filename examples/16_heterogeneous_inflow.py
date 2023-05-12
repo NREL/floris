@@ -37,7 +37,7 @@ For each case, we are plotting three slices of the resulting flow field:
 
 
 # Initialize FLORIS with the given input file via FlorisInterface.
-# Note that the hetergeneous flow is defined in the input file. The het_config
+# Note that the heterogeneous flow is defined in the input file. The het_config
 # dictionary is defined as below. The speed ups are multipliers of the ambient wind speed,
 # and the x_locs and y_locs are the locations of the speed ups.
 #

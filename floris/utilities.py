@@ -271,12 +271,12 @@ def rotate_coordinates_rel_west(
 
 
 def reverse_rotate_coordinates_rel_west(
-    wind_directions,
-    grid_x,
-    grid_y,
-    grid_z,
-    x_center_of_rotation,
-    y_center_of_rotation
+    wind_directions: NDArrayFloat,
+    grid_x: NDArrayFloat,
+    grid_y: NDArrayFloat,
+    grid_z: NDArrayFloat,
+    x_center_of_rotation: float,
+    y_center_of_rotation: float
 ):
     """
     This function reverses the rotation of the given grid so that the coordinates are aligned with
