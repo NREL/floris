@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools.floris_interface import generate_heterogeneous_wind_map
 from floris.tools.visualization import visualize_cut_plane
 
 
@@ -34,27 +33,24 @@ speed_ups = [[2.0, 1.0, 2.0, 1.0]]
 x_locs = [-300.0, -300.0, 2600.0, 2600.0]
 y_locs = [ -300.0, 300.0, -300.0, 300.0]
 
-# Generate the linear interpolation to be used for the heterogeneous inflow.
-het_map_2d = generate_heterogeneous_wind_map(speed_ups, x_locs, y_locs)
-
 # Initialize FLORIS with the given input file via FlorisInterface.
-# Also, pass the heterogeneous map into the FlorisInterface.
-fi = FlorisInterface("inputs/gch.yaml", het_map=het_map_2d)
+# Note the heterogeneous inflow is defined in the input file.
+fi = FlorisInterface("inputs/gch_heterogeneous_inflow.yaml")
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fi.reinitialize(
     wind_shear=0.0,
     wind_speeds=[8.0],
     wind_directions=[270.],
-    layout_x=[0,0],
-    layout_y=[-300, 300],
+    layout_x=[0, 0],
+    layout_y=[-299., 299.],
 )
 fi.calculate_wake()
 turbine_powers = fi.get_turbine_powers().flatten() / 1000.
 
 # Show the initial results
 print('------------------------------------------')
-print('Given the speedsups and turbine locations, ')
+print('Given the speedups and turbine locations, ')
 print(' the first turbine has an inflow wind speed')
 print(' twice that of the second')
 print(' Wind Speed = 8., Wind Direction = 270.')
@@ -74,9 +70,17 @@ print()
 
 # To change the number of wind directions however it is necessary to make a matching
 # change to the dimensions of the het map
-speed_ups = [[2.0, 1.0, 2.0, 1.0], [2.0, 1.0, 2.0, 1.0] ] # Expand to two wind directions
-het_map_2d = generate_heterogeneous_wind_map(speed_ups, x_locs, y_locs)
-fi.reinitialize(wind_directions=[270., 275.], wind_speeds=[8.], het_map=het_map_2d)
+speed_multipliers = [[2.0, 1.0, 2.0, 1.0], [2.0, 1.0, 2.0, 1.0]] # Expand to two wind directions
+heterogenous_inflow_config = {
+    'speed_multipliers': speed_multipliers,
+    'x': x_locs,
+    'y': y_locs,
+}
+fi.reinitialize(
+    wind_directions=[270.0, 275.0],
+    wind_speeds=[8.0],
+    heterogenous_inflow_config=heterogenous_inflow_config
+)
 fi.calculate_wake()
 turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
 print('With wind directions now set to 270 and 275 deg')

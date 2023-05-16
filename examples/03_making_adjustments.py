@@ -76,7 +76,7 @@ X, Y = np.meshgrid(
     5.0 * fi.floris.farm.rotor_diameters[0][0][0] * np.arange(0, N, 1),
     5.0 * fi.floris.farm.rotor_diameters[0][0][0] * np.arange(0, N, 1),
 )
-fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten(), wind_directions=[360.0])
+fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten(), wind_directions=[270.0])
 horizontal_plane = fi.calculate_horizontal_plane(height=90.0)
 wakeviz.visualize_cut_plane(
     horizontal_plane,

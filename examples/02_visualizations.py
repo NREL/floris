@@ -65,7 +65,7 @@ horizontal_plane = fi.calculate_horizontal_plane(
 y_plane = fi.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
-    crossstream_dist=630.0,
+    crossstream_dist=0.0,
     yaw_angles=np.array([[[25.,0.,0.]]]),
 )
 cross_plane = fi.calculate_cross_plane(

@@ -270,6 +270,65 @@ def rotate_coordinates_rel_west(
         y_center_of_rotation
 
 
+def reverse_rotate_coordinates_rel_west(
+    wind_directions: NDArrayFloat,
+    grid_x: NDArrayFloat,
+    grid_y: NDArrayFloat,
+    grid_z: NDArrayFloat,
+    x_center_of_rotation: float,
+    y_center_of_rotation: float
+):
+    """
+    This function reverses the rotation of the given grid so that the coordinates are aligned with
+    the original wind direction. The rotation happens about the centroid of the coordinates.
+
+    Args:
+        wind_directions (NDArrayFloat): Series of wind directions to base the rotation.
+        coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)
+            so that each element of the array coordinates[i] yields a three-component coordinate.
+        grid_x (NDArrayFloat): X-coordinates to be rotated.
+        grid_y (NDArrayFloat): Y-coordinates to be rotated.
+        grid_z (NDArrayFloat): Z-coordinates to be rotated.
+        x_center_of_rotation (float): The x-coordinate for the rotation center of the
+            input coordinates.
+        y_center_of_rotation (float): The y-coordinate for the rotational center of the
+            input coordinates.
+    """
+    # Calculate the difference in given wind direction from 270 / West
+    # We are rotating in the other direction
+    wind_deviation_from_west = -1.0 * wind_delta(wind_directions)
+
+    # Construct the arrays storing the turbine locations
+    grid_x_reversed = np.zeros_like(grid_x)
+    grid_y_reversed = np.zeros_like(grid_x)
+    grid_z_reversed = np.zeros_like(grid_x)
+    for wii, angle_rotation in enumerate(wind_deviation_from_west):
+        x_rot = grid_x[wii, :, :, :, :]
+        y_rot = grid_y[wii, :, :, :, :]
+        z_rot = grid_z[wii, :, :, :, :]
+
+        # Rotate turbine coordinates about the center
+        x_rot_offset = x_rot - x_center_of_rotation
+        y_rot_offset = y_rot - y_center_of_rotation
+        x = (
+            x_rot_offset * cosd(angle_rotation)
+            - y_rot_offset * sind(angle_rotation)
+            + x_center_of_rotation
+        )
+        y = (
+            x_rot_offset * sind(angle_rotation)
+            + y_rot_offset * cosd(angle_rotation)
+            + y_center_of_rotation
+        )
+        z = z_rot  # Nothing changed in this rotation
+
+        grid_x_reversed[wii, :, :, :, :] = x
+        grid_y_reversed[wii, :, :, :, :] = y
+        grid_z_reversed[wii, :, :, :, :] = z
+
+    return grid_x_reversed, grid_y_reversed, grid_z_reversed
+
+
 class Loader(yaml.SafeLoader):
 
     def __init__(self, stream):
