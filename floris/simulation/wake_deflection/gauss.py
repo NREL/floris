@@ -218,7 +218,6 @@ class GaussVelocityDeflection(BaseModel):
 
         return deflection
 
-
 ## GCH components
 
 def gamma(
@@ -513,7 +512,6 @@ def yaw_added_turbulence_mixing(
     I_mixing = I_total - I_i
 
     return I_mixing[:,:,None,None,None]
-
 
 # def yaw_added_recovery_correction(
 #     self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord

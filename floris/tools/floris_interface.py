@@ -27,6 +27,7 @@ from floris.simulation.turbine import (
     axial_induction,
     Ct,
     power,
+    rotor_effective_velocity,
 )
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
@@ -40,8 +41,8 @@ class FlorisInterface(LoggerBase):
     methods on objects within FLORIS.
 
     Args:
-        configuration (:py:obj:`dict`): The Floris configuration dictarionary, JSON file,
-            or YAML file. The configuration should have the following inputs specified.
+        configuration (:py:obj:`dict`): The Floris configuration dictarionary or YAML file.
+            The configuration should have the following inputs specified.
                 - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
@@ -49,7 +50,7 @@ class FlorisInterface(LoggerBase):
                 - **logging**: See `floris.simulation.floris.Floris` for more details.
     """
 
-    def __init__(self, configuration: dict | str | Path, het_map=None):
+    def __init__(self, configuration: dict | str | Path):
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
@@ -60,12 +61,6 @@ class FlorisInterface(LoggerBase):
 
         else:
             raise TypeError("The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
-
-        # Store the heterogeneous map for use after reinitailization
-        self.het_map = het_map
-        # Assign the heterogeneous map to the flow field
-        # Needed for a direct call to fi.calculate_wake without fi.reinitialize
-        self.floris.flow_field.het_map = het_map
 
         # If ref height is -1, assign the hub height
         if np.abs(self.floris.flow_field.reference_wind_height + 1.0) < 1.0e-6:
@@ -110,13 +105,12 @@ class FlorisInterface(LoggerBase):
 
     def copy(self):
         """Create an independent copy of the current FlorisInterface object"""
-        return FlorisInterface(self.floris.as_dict(), het_map=self.het_map)
+        return FlorisInterface(self.floris.as_dict())
 
     def calculate_wake(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
-        # points: NDArrayFloat | list[float] | None = None,
-        # track_n_upstream_wakes: bool = False,
+        # tilt_angles: NDArrayFloat | list[float] | None = None,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -125,11 +119,6 @@ class FlorisInterface(LoggerBase):
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
-            points: (NDArrayFloat | list[float] | None, optional): The x, y, and z
-                coordinates at which the flow field velocity is to be recorded. Defaults
-                to None.
-            track_n_upstream_wakes (bool, optional): When *True*, will keep track of the
-                number of upstream wakes a turbine is experiencing. Defaults to *False*.
         """
 
         if yaw_angles is None:
@@ -141,6 +130,15 @@ class FlorisInterface(LoggerBase):
                 )
             )
         self.floris.farm.yaw_angles = yaw_angles
+
+        # # TODO is this required?
+        # if tilt_angles is not None:
+        #     self.floris.farm.tilt_angles = tilt_angles
+        # else:
+        #     self.floris.farm.set_tilt_to_ref_tilt(
+        #         self.floris.flow_field.n_wind_directions,
+        #         self.floris.flow_field.n_wind_speeds
+        #     )
 
         # Initialize solution space
         self.floris.initialize_domain()
@@ -184,7 +182,6 @@ class FlorisInterface(LoggerBase):
         self,
         wind_speeds: list[float] | NDArrayFloat | None = None,
         wind_directions: list[float] | NDArrayFloat | None = None,
-        # wind_layout: list[float] | NDArrayFloat | None = None,
         wind_shear: float | None = None,
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
@@ -196,13 +193,9 @@ class FlorisInterface(LoggerBase):
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
         turbine_library_path: str | Path | None = None,
-        # turbine_id: list[str] | None = None,
-        # wtg_id: list[str] | None = None,
-        # with_resolution: float | None = None,
         solver_settings: dict | None = None,
-        time_series: bool | None = False,
-        layout: tuple[list[float], list[float]] | tuple[NDArrayFloat, NDArrayFloat] | None = None,
-        het_map=None,
+        time_series: bool = False,
+        heterogenous_inflow_config=None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -226,17 +219,10 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
-        if het_map is not None:
-            self.het_map = het_map
+        if heterogenous_inflow_config is not None:
+            flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
 
         ## Farm
-        if layout is not None:
-            self.logger.warning(
-                "Use the `layout_x` and `layout_y` parameters in place of `layout` "
-                "because the `layout` parameter will be deprecated in 3.3."
-            )
-            layout_x = layout[0]
-            layout_y = layout[1]
         if layout_x is not None:
             farm_dict["layout_x"] = layout_x
         if layout_y is not None:
@@ -246,18 +232,14 @@ class FlorisInterface(LoggerBase):
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
 
-        if time_series:
-            flow_field_dict["time_series"] = True
-        else:
-            flow_field_dict["time_series"] = False
+        flow_field_dict["time_series"] = time_series
 
         ## Wake
         # if wake is not None:
         #     self.floris.wake = wake
-        # if turbulence_intensity is not None:
-        #     pass  # TODO: this should be in the code, but maybe got skipped?
         # if turbulence_kinetic_energy is not None:
         #     pass  # TODO: not needed until GCH
+
         if solver_settings is not None:
             floris_dict["solver"] = solver_settings
 
@@ -266,8 +248,6 @@ class FlorisInterface(LoggerBase):
 
         # Create a new instance of floris and attach to self
         self.floris = Floris.from_dict(floris_dict)
-        # Re-assign the hetergeneous inflow map to flow field
-        self.floris.flow_field.het_map = self.het_map
 
     def get_plane_of_points(
         self,
@@ -276,7 +256,7 @@ class FlorisInterface(LoggerBase):
     ):
         """
         Calculates velocity values through the
-        :py:meth:`~.FlowField.calculate_wake` method at points in plane
+        :py:meth:`FlorisInterface.calculate_wake` method at points in plane
         specified by inputs.
 
         Args:
@@ -285,14 +265,18 @@ class FlorisInterface(LoggerBase):
             planar_coordinate (float, optional): Value of normal vector
                 to slice through. Defaults to None.
 
-
         Returns:
-            :py:class:`pandas.DataFrame`: containing values of x1, x2, u, v, w
+            :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w
         """
         # Get results vectors
-        x_flat = self.floris.grid.x_sorted[0, 0].flatten()
-        y_flat = self.floris.grid.y_sorted[0, 0].flatten()
-        z_flat = self.floris.grid.z_sorted[0, 0].flatten()
+        if (normal_vector == "z"):
+            x_flat = self.floris.grid.x_sorted_inertial_frame[0, 0].flatten()
+            y_flat = self.floris.grid.y_sorted_inertial_frame[0, 0].flatten()
+            z_flat = self.floris.grid.z_sorted_inertial_frame[0, 0].flatten()
+        else:
+            x_flat = self.floris.grid.x_sorted[0, 0].flatten()
+            y_flat = self.floris.grid.y_sorted[0, 0].flatten()
+            z_flat = self.floris.grid.z_sorted[0, 0].flatten()
         u_flat = self.floris.flow_field.u_sorted[0, 0].flatten()
         v_flat = self.floris.flow_field.v_sorted[0, 0].flatten()
         w_flat = self.floris.flow_field.w_sorted[0, 0].flatten()
@@ -423,7 +407,6 @@ class FlorisInterface(LoggerBase):
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
-        self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake(yaw_angles=current_yaw_angles)
@@ -502,7 +485,6 @@ class FlorisInterface(LoggerBase):
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
-        self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake(yaw_angles=current_yaw_angles)
@@ -581,7 +563,6 @@ class FlorisInterface(LoggerBase):
 
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
-        self.floris.flow_field.het_map = self.het_map
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.calculate_wake(yaw_angles=current_yaw_angles)
@@ -616,11 +597,8 @@ class FlorisInterface(LoggerBase):
             )
 
         turbine_powers = power(
-            air_density=self.floris.flow_field.air_density,
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
-            velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            pP=self.floris.farm.pPs,
+            rotor_effective_velocities=self.turbine_effective_velocities,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
@@ -630,8 +608,14 @@ class FlorisInterface(LoggerBase):
         turbine_Cts = Ct(
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             fCt=self.floris.farm.turbine_fCts,
+            tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights,
         )
         return turbine_Cts
 
@@ -639,14 +623,43 @@ class FlorisInterface(LoggerBase):
         turbine_ais = axial_induction(
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
             fCt=self.floris.farm.turbine_fCts,
+            tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights,
         )
         return turbine_ais
 
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:
-        return average_velocity(velocities=self.floris.flow_field.u)
+        return average_velocity(
+            velocities=self.floris.flow_field.u,
+            method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights
+        )
+
+    @property
+    def turbine_effective_velocities(self) -> NDArrayFloat:
+        rotor_effective_velocities = rotor_effective_velocity(
+            air_density=self.floris.flow_field.air_density,
+            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
+            velocities=self.floris.flow_field.u,
+            yaw_angle=self.floris.farm.yaw_angles,
+            tilt_angle=self.floris.farm.tilt_angles,
+            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
+            pP=self.floris.farm.pPs,
+            pT=self.floris.farm.pTs,
+            tilt_interp=self.floris.farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
+            turbine_type_map=self.floris.farm.turbine_type_map,
+            average_method=self.floris.grid.average_method,
+            cubature_weights=self.floris.grid.cubature_weights
+        )
+        return rotor_effective_velocities
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.floris.flow_field.turbulence_intensity_field
@@ -915,10 +928,27 @@ class FlorisInterface(LoggerBase):
             wind_directions=wind_directions
         )
 
-
         return aep
 
+    def sample_flow_at_points(self, x: NDArrayFloat, y: NDArrayFloat, z: NDArrayFloat):
+        """
+        Extract the wind speed at points in the flow.
 
+        Args:
+            x (1DArrayFloat | list): x-locations of points where flow is desired.
+            y (1DArrayFloat | list): y-locations of points where flow is desired.
+            z (1DArrayFloat | list): z-locations of points where flow is desired.
+
+        Returns:
+            3DArrayFloat containing wind speed with dimensions
+            (# of wind directions, # of wind speeds, # of sample points)
+        """
+
+        # Check that x, y, z are all the same length
+        if not len(x) == len(y) == len(z):
+            raise ValueError("x, y, and z must be the same size")
+
+        return self.floris.solve_for_points(x, y, z)
 
     @property
     def layout_x(self):
@@ -958,34 +988,6 @@ class FlorisInterface(LoggerBase):
         else:
             return xcoords, ycoords
 
-
-def generate_heterogeneous_wind_map(speed_ups, x, y, z=None):
-    if z is not None:
-        # Compute the 3-dimensional interpolants for each wind diretion
-        # Linear interpolation is used for points within the user-defined area of values,
-        # while a nearest-neighbor interpolant is used for points outside that region
-        in_region = [
-            LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=np.nan)
-            for speed_up in speed_ups
-        ]
-        out_region = [
-            NearestNDInterpolator(list(zip(x, y, z)), speed_up)
-            for speed_up in speed_ups
-        ]
-    else:
-        # Compute the 2-dimensional interpolants for each wind diretion
-        # Linear interpolation is used for points within the user-defined area of values,
-        # while a nearest-neighbor interpolant is used for points outside that region
-        in_region = [
-            LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=np.nan)
-            for speed_up in speed_ups
-        ]
-        out_region = [
-            NearestNDInterpolator(list(zip(x, y)), speed_up)
-            for speed_up in speed_ups
-        ]
-
-    return [in_region, out_region]
 
 ## Functionality removed in v3
 

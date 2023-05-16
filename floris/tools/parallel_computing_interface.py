@@ -12,17 +12,15 @@ from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInter
 
 def _load_local_floris_object(
     fi_dict,
-    het_map=None,
     unc_pmfs=None,
     fix_yaw_in_relative_frame=False
 ):
     # Load local FLORIS object
     if unc_pmfs is None:
-        fi = FlorisInterface(fi_dict, het_map=het_map)
+        fi = FlorisInterface(fi_dict)
     else:
         fi = UncertaintyInterface(
             fi_dict,
-            het_map=het_map,
             unc_pmfs=unc_pmfs,
             fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
         )
@@ -217,7 +215,7 @@ class ParallelComputingInterface(LoggerBase):
 
                 # Prepare lightweight data to pass along
                 if isinstance(self.fi, FlorisInterface):
-                    fi_information = (fi_dict_split, self.fi.het_map, None, None)
+                    fi_information = (fi_dict_split, None, None)
                 else:
                     fi_information = (
                         fi_dict_split,
