@@ -81,28 +81,32 @@ class FlowField(BaseClass):
         """Using the validator method to check that the het_config dictionary has the correct
         key-value pairs.
         """
-        if value is not None:
-            # Check that the correct keys are supplied for the het_config dict
-            for k in ["speed_ups", "x_locs", "y_locs"]:
-                if k not in value.keys():
-                    raise ValueError(
-                        "het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
-                        f" with 'z_locs' as optional. Missing '{k}'."
-                    )
-            if "z_locs" not in value:
-                # If only a 2D case, add "None" for the z locations
-                value["z_locs"] = None
+        if value is None:
+            return
+
+        # Check that the correct keys are supplied for the het_config dict
+        for k in ["speed_ups", "x_locs", "y_locs"]:
+            if k not in value.keys():
+                raise ValueError(
+                    "het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
+                    f" with 'z_locs' as optional. Missing '{k}'."
+                )
+        if "z_locs" not in value:
+            # If only a 2D case, add "None" for the z locations
+            value["z_locs"] = None
 
     @het_map.validator
     def het_map_validator(self, instance: attrs.Attribute, value: list | None) -> None:
         """Using this validator to make sure that the het_map has an interpolant defined for
         each wind direction.
         """
-        if value is not None:
-            if self.n_wind_directions!= np.array(value).shape[0]:
-                raise ValueError(
-                    "The het_map's wind direction dimension not equal to number of wind directions."
-                )
+        if value is None:
+            return
+
+        if self.n_wind_directions!= np.array(value).shape[0]:
+            raise ValueError(
+                "The het_map's wind direction dimension not equal to number of wind directions."
+            )
 
 
     def __attrs_post_init__(self) -> None:
