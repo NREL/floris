@@ -27,18 +27,18 @@ farm:
 
 flow_field:
   air_density: 1.225
-  het_config:
-    speed_ups:
+  heterogenous_inflow_config:
+    speed_multipliers:
       - - 2.0
         - 1.0
         - 2.0
         - 1.0
-    x_locs:
+    x:
       - -300.
       - -300.
       - 2600.
       - 2600.
-    y_locs:
+    y:
       - -300.
       - 300.
       - -300.

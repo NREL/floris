@@ -195,7 +195,7 @@ class FlorisInterface(LoggerBase):
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
         time_series: bool = False,
-        het_config=None,
+        heterogenous_inflow_config=None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -219,8 +219,8 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
-        if het_config is not None:
-            flow_field_dict["het_config"] = het_config
+        if heterogenous_inflow_config is not None:
+            flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
 
         ## Farm
         if layout_x is not None:

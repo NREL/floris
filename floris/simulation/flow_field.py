@@ -42,7 +42,7 @@ class FlowField(BaseClass):
     turbulence_intensity: float = field(converter=float)
     reference_wind_height: float = field(converter=float)
     time_series : bool = field(default=False)
-    het_config: dict = field(default=None)
+    heterogenous_inflow_config: dict = field(default=None)
 
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
@@ -76,24 +76,24 @@ class FlowField(BaseClass):
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
-    @het_config.validator
-    def het_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
-        """Using the validator method to check that the het_config dictionary has the correct
-        key-value pairs.
+    @heterogenous_inflow_config.validator
+    def heterogenous_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
+        """Using the validator method to check that the heterogenous_inflow_config dictionary has
+        the correct key-value pairs.
         """
         if value is None:
             return
 
-        # Check that the correct keys are supplied for the het_config dict
-        for k in ["speed_ups", "x_locs", "y_locs"]:
+        # Check that the correct keys are supplied for the heterogenous_inflow_config dict
+        for k in ["speed_multipliers", "x", "y"]:
             if k not in value.keys():
                 raise ValueError(
-                    "het_config must contain entries for 'speeds_ups', 'x_locs', and 'y_locs',"
-                    f" with 'z_locs' as optional. Missing '{k}'."
+                    "heterogenous_inflow_config must contain entries for 'speed_multipliers',"
+                    f"'x', and 'y', with 'z' optional. Missing '{k}'."
                 )
-        if "z_locs" not in value:
+        if "z" not in value:
             # If only a 2D case, add "None" for the z locations
-            value["z_locs"] = None
+            value["z"] = None
 
     @het_map.validator
     def het_map_validator(self, instance: attrs.Attribute, value: list | None) -> None:
@@ -110,7 +110,7 @@ class FlowField(BaseClass):
 
 
     def __attrs_post_init__(self) -> None:
-        if self.het_config is not None:
+        if self.heterogenous_inflow_config is not None:
             self.generate_heterogeneous_wind_map()
 
 
@@ -140,7 +140,10 @@ class FlowField(BaseClass):
         # If heterogeneous flow data is given, the speed ups at the defined
         # grid locations are determined in either 2 or 3 dimensions.
         else:
-            bounds = np.array(list(zip(self.het_config['x_locs'], self.het_config['y_locs'])))
+            bounds = np.array(list(zip(
+                self.heterogenous_inflow_config['x'],
+                self.heterogenous_inflow_config['y']
+            )))
             hull = ConvexHull(bounds)
             polygon = Polygon(bounds[hull.vertices])
             path = mpltPath.Path(polygon.boundary.coords)
@@ -263,38 +266,35 @@ class FlowField(BaseClass):
         map bounds.
 
         Args:
-            het_config (dict): The heterogeneous inflow configuration dictionary.
+            heterogenous_inflow_config (dict): The heterogeneous inflow configuration dictionary.
             The configuration should have the following inputs specified.
-                - **speed_ups** (list): A list of speed up factors that will multiply the specified
-                    freestream wind speed. This 2-dimensional array should have an array of
-                    multiplicative factors defined for each wind direction.
-                - **x_locs** (list): A list of x locations at which the speed up factors are
-                    defined.
-                - **y_locs**: A list of y locations at which the speed up factors are
-                    defined.
-                - **z_locs** (optional): A list of z locations at which the speed up factors are
-                    defined.
+                - **speed_multipliers** (list): A list of speed up factors that will multiply
+                    the specified freestream wind speed. This 2-dimensional array should have an
+                    array of multiplicative factors defined for each wind direction.
+                - **x** (list): A list of x locations at which the speed up factors are defined.
+                - **y**: A list of y locations at which the speed up factors are defined.
+                - **z** (optional): A list of z locations at which the speed up factors are defined.
         """
-        speed_ups = self.het_config['speed_ups']
-        x = self.het_config['x_locs']
-        y = self.het_config['y_locs']
-        z = self.het_config['z_locs']
+        speed_multipliers = self.heterogenous_inflow_config['speed_multipliers']
+        x = self.heterogenous_inflow_config['x']
+        y = self.heterogenous_inflow_config['y']
+        z = self.heterogenous_inflow_config['z']
 
         if z is not None:
             # Compute the 3-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
             in_region = [
-                LinearNDInterpolator(list(zip(x, y, z)), speed_up, fill_value=1.0)
-                for speed_up in speed_ups
+                LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=1.0)
+                for multiplier in speed_multipliers
             ]
         else:
             # Compute the 2-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
             in_region = [
-                LinearNDInterpolator(list(zip(x, y)), speed_up, fill_value=1.0)
-                for speed_up in speed_ups
+                LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=1.0)
+                for multiplier in speed_multipliers
             ]
 
         self.het_map = in_region

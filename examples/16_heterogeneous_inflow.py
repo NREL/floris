@@ -37,15 +37,16 @@ For each case, we are plotting three slices of the resulting flow field:
 
 
 # Initialize FLORIS with the given input file via FlorisInterface.
-# Note that the heterogeneous flow is defined in the input file. The het_config
+# Note that the heterogeneous flow is defined in the input file. The heterogenous_inflow_config
 # dictionary is defined as below. The speed ups are multipliers of the ambient wind speed,
-# and the x_locs and y_locs are the locations of the speed ups.
+# and the x and y are the locations of the speed ups.
 #
-# het_config = {
-#     'speed_ups': [[2.0, 1.0, 2.0, 1.0]],
-#     'x_locs': [-300.0, -300.0, 2600.0, 2600.0],
-#     'y_locs': [ -300.0, 300.0, -300.0, 300.0],
+# heterogenous_inflow_config = {
+#     'speed_multipliers': [[2.0, 1.0, 2.0, 1.0]],
+#     'x': [-300.0, -300.0, 2600.0, 2600.0],
+#     'y': [ -300.0, 300.0, -300.0, 300.0],
 # }
+
 
 fi_2d = FlorisInterface("inputs/gch_heterogeneous_inflow.yaml")
 
@@ -88,24 +89,24 @@ ax_list[2].set_ylabel('z')
 # Define the speed ups of the heterogeneous inflow, and their locations.
 # For the 3-dimensional case, this requires x, y, and z locations.
 # The speed ups are multipliers of the ambient wind speed.
-speed_ups = [[1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0]]
+speed_multipliers = [[1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0]]
 x_locs = [-300.0, -300.0, -300.0, -300.0, 2600.0, 2600.0, 2600.0, 2600.0]
 y_locs = [-300.0, 300.0, -300.0, 300.0, -300.0, 300.0, -300.0, 300.0]
 z_locs = [540.0, 540.0, 0.0, 0.0, 540.0, 540.0, 0.0, 0.0]
 
 # Create the configuration dictionary to be used for the heterogeneous inflow.
-het_config_3d = {
-    'speed_ups': speed_ups,
-    'x_locs': x_locs,
-    'y_locs': y_locs,
-    'z_locs': z_locs,
+heterogenous_inflow_config = {
+    'speed_multipliers': speed_multipliers,
+    'x': x_locs,
+    'y': y_locs,
+    'z': z_locs,
 }
 
 # Initialize FLORIS with the given input file via FlorisInterface.
 # Note that we initialize FLORIS with a homogenous flow input file, but
 # then configure the heterogeneous inflow via the reinitialize method.
 fi_3d = FlorisInterface("inputs/gch.yaml")
-fi_3d.reinitialize(het_config=het_config_3d)
+fi_3d.reinitialize(heterogenous_inflow_config=heterogenous_inflow_config)
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fi_3d.reinitialize(wind_shear=0.0)

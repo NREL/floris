@@ -33,13 +33,6 @@ speed_ups = [[2.0, 1.0, 2.0, 1.0]]
 x_locs = [-300.0, -300.0, 2600.0, 2600.0]
 y_locs = [ -300.0, 300.0, -300.0, 300.0]
 
-# Create the configuration dictionary to be used for the heterogeneous inflow.
-het_config_2d = {
-    'speed_ups': [[2.0, 1.0, 2.0, 1.0]],
-    'x_locs': [-300.0, -300.0, 2600.0, 2600.0],
-    'y_locs': [ -300.0, 300.0, -300.0, 300.0],
-}
-
 # Initialize FLORIS with the given input file via FlorisInterface.
 # Note the heterogeneous inflow is defined in the input file.
 fi = FlorisInterface("inputs/gch_heterogeneous_inflow.yaml")
@@ -77,13 +70,17 @@ print()
 
 # To change the number of wind directions however it is necessary to make a matching
 # change to the dimensions of the het map
-speed_ups = [[2.0, 1.0, 2.0, 1.0], [2.0, 1.0, 2.0, 1.0]] # Expand to two wind directions
-het_config_2d = {
-    'speed_ups': speed_ups,
-    'x_locs': x_locs,
-    'y_locs': y_locs,
+speed_multipliers = [[2.0, 1.0, 2.0, 1.0], [2.0, 1.0, 2.0, 1.0]] # Expand to two wind directions
+heterogenous_inflow_config = {
+    'speed_multipliers': speed_multipliers,
+    'x': x_locs,
+    'y': y_locs,
 }
-fi.reinitialize(wind_directions=[270., 275.], wind_speeds=[8.], het_config=het_config_2d)
+fi.reinitialize(
+    wind_directions=[270.0, 275.0],
+    wind_speeds=[8.0],
+    heterogenous_inflow_config=heterogenous_inflow_config
+)
 fi.calculate_wake()
 turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
 print('With wind directions now set to 270 and 275 deg')
