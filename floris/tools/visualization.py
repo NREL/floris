@@ -40,7 +40,6 @@ def plot_turbines(
     yaw_angles,
     rotor_diameters,
     color: str | None = None,
-    wind_direction: float = 270.0,
 ):
     """
     Plot wind plant layout from turbine locations.
@@ -57,14 +56,7 @@ def plot_turbines(
     if color is None:
         color = "k"
 
-    # Rotate layout to inertial frame for plotting turbines relative to wind direction
-    coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
-    layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
-        np.array([wind_direction]),
-        coordinates_array
-    )
-
-    for x, y, yaw, d in zip(layout_x[0,0], layout_y[0,0], yaw_angles, rotor_diameters):
+    for x, y, yaw, d in zip(layout_x, layout_y, yaw_angles, rotor_diameters):
         R = d / 2.0
         x_0 = x + np.sin(np.deg2rad(yaw)) * R
         x_1 = x - np.sin(np.deg2rad(yaw)) * R
@@ -108,7 +100,6 @@ def plot_turbines_with_fi(
         yaw_angles.flatten(),
         fi.floris.farm.rotor_diameters.flatten(),
         color=color,
-        wind_direction=fi.floris.flow_field.wind_directions[0],
     )
 
 
