@@ -49,9 +49,8 @@ def plot_turbines(
         layout_x (np.array): Wind turbine locations (east-west).
         layout_y (np.array): Wind turbine locations (north-south).
         yaw_angles (np.array): Yaw angles of each wind turbine.
-        D (float): Wind turbine rotor diameter.
-        color (str): Pyplot color option to plot the turbines.
-        wind_direction (float): Wind direction (rotates farm)
+        rotor_diameters (np.array): Wind turbine rotor diameter.
+        color (str): pyplot color option to plot the turbines.
     """
     if color is None:
         color = "k"
