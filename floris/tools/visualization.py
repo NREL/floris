@@ -14,8 +14,8 @@
 from __future__ import annotations
 
 import copy
-from typing import Union
 import warnings
+from typing import Union
 
 import matplotlib as mpl
 import matplotlib.colors as mplcolors
