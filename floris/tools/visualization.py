@@ -76,14 +76,16 @@ def plot_turbines(
 
 def plot_turbines_with_fi(
     fi: FlorisInterface,
-    ax=None,
-    color=None,
-    wd=None,
-    yaw_angles=None,
+    ax: plt.Axes = None,
+    color: str = None,
+    wd: np.ndarray = None,
+    yaw_angles: np.ndarray = None,
 ):
     """
-    Wrapper function to plot turbines which extracts the data
-    from a FLORIS interface object
+    Plot the wind plant layout from turbine locations gotten from a FlorisInterface object.
+    Note that this function automatically uses the first wind direction and first wind speed.
+    Generally, it is most explicit to create a new FlorisInterface with only the single
+    wind condition that should be plotted.
 
     Args:
         fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
@@ -102,14 +104,17 @@ def plot_turbines_with_fi(
     # Rotate yaw angles to inertial frame for plotting turbines relative to wind direction
     yaw_angles = yaw_angles - wind_delta(np.array(wd))
 
-    plot_turbines(
-        ax,
-        fi.layout_x,
-        fi.layout_y,
-        yaw_angles.flatten(),
-        fi.floris.farm.rotor_diameters.flatten(),
-        color=color,
-    )
+    if color is None:
+        color = "k"
+
+    rotor_diameters = fi.floris.farm.rotor_diameters.flatten()
+    for x, y, yaw, d in zip(fi.layout_x, fi.layout_y, yaw_angles[0,0], rotor_diameters):
+        R = d / 2.0
+        x_0 = x + np.sin(np.deg2rad(yaw)) * R
+        x_1 = x - np.sin(np.deg2rad(yaw)) * R
+        y_0 = y - np.cos(np.deg2rad(yaw)) * R
+        y_1 = y + np.cos(np.deg2rad(yaw)) * R
+        ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
 def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
