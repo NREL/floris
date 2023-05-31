@@ -62,26 +62,36 @@ class Farm(BaseClass):
     )
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
+    coordinates: List[Vec3] = field(init=False)
+    turbine_fCts: tuple = field(init=False, default=[])
+    turbine_fTilts: list = field(init=False, default=[])
+
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
+
     tilt_angles: NDArrayFloat = field(init=False)
     tilt_angles_sorted: NDArrayFloat = field(init=False)
-    coordinates: List[Vec3] = field(init=False)
+
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
-    turbine_fCts: tuple = field(init=False, default=[])
+
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
+
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
+
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
+
     pPs: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
+
     pTs: NDArrayFloat = field(init=False, default=[])
     pTs_sorted: NDArrayFloat = field(init=False, default=[])
+
     ref_tilt_cp_cts: NDArrayFloat = field(init=False, default=[])
     ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
+
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
-    turbine_fTilts: list = field(init=False, default=[])
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
