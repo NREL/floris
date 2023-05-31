@@ -75,10 +75,13 @@ class Farm(BaseClass):
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
 
+    turbine_type_map: NDArrayObject = field(init=False, default=[])
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
 
+    rotor_diameters: NDArrayFloat = field(init=False, default=[])
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
 
+    TSRs: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
 
     pPs: NDArrayFloat = field(init=False, default=[])
