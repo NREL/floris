@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import copy
 from typing import Union
+import warnings
 
 import matplotlib as mpl
 import matplotlib.colors as mplcolors
@@ -42,6 +43,8 @@ def plot_turbines(
     color: str | None = None,
 ):
     """
+    This function is deprecated and will be removed in v3.5, use `plot_turbines_with_fi` instead.
+
     Plot wind plant layout from turbine locations.
 
     Args:
@@ -52,6 +55,13 @@ def plot_turbines(
         rotor_diameters (np.array): Wind turbine rotor diameter.
         color (str): pyplot color option to plot the turbines.
     """
+    warnings.warn(
+        "The `plot_turbines` function is deprecated and will be removed in v3.5, "
+        "use `plot_turbines_with_fi` instead.",
+        DeprecationWarning,
+        stacklevel=2  # This prints the calling function and this function in the warning
+    )
+
     if color is None:
         color = "k"
 
