@@ -314,6 +314,8 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=2
         )
+
+        # NOTE: Tilt angles are sorted twice - here and in initialize()
         self.tilt_angles_sorted = np.take_along_axis(
             self.tilt_angles * template_shape,
             sorted_coord_indices,
@@ -378,6 +380,10 @@ class Farm(BaseClass):
             unsorted_indices[:,:,:,0,0],
             axis=2
         )
+        # TODO: do these need to be unsorted? Maybe we should just for completeness...
+        # self.ref_density_cp_cts_sorted = np.take_along_axis(
+        # self.ref_tilt_cp_cts_sorted = np.take_along_axis(
+        # self.correct_cp_ct_for_tilt_sorted = np.take_along_axis(
         self.pPs = np.take_along_axis(
             self.pPs_sorted,
             unsorted_indices[:,:,:,0,0],
