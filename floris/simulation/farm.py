@@ -319,10 +319,9 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=2
         )
-        self.turbine_type_names_sorted = [turb["turbine_type"] for turb in self.turbine_definitions]
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(
-                self.turbine_type_names_sorted * n_wind_directions,
+                [turb["turbine_type"] for turb in self.turbine_definitions] * n_wind_directions,
                 np.shape(sorted_coord_indices)
             ),
             sorted_coord_indices,
