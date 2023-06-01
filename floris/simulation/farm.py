@@ -381,9 +381,21 @@ class Farm(BaseClass):
             axis=2
         )
         # TODO: do these need to be unsorted? Maybe we should just for completeness...
-        # self.ref_density_cp_cts_sorted = np.take_along_axis(
-        # self.ref_tilt_cp_cts_sorted = np.take_along_axis(
-        # self.correct_cp_ct_for_tilt_sorted = np.take_along_axis(
+        self.ref_density_cp_cts = np.take_along_axis(
+            self.ref_density_cp_cts_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        self.ref_tilt_cp_cts = np.take_along_axis(
+            self.ref_tilt_cp_cts_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        self.correct_cp_ct_for_tilt = np.take_along_axis(
+            self.correct_cp_ct_for_tilt_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
         self.pPs = np.take_along_axis(
             self.pPs_sorted,
             unsorted_indices[:,:,:,0,0],
