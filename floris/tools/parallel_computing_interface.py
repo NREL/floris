@@ -72,7 +72,8 @@ class ParallelComputingInterface(LoggerBase):
         max_workers,
         n_wind_direction_splits,
         n_wind_speed_splits=1,
-        use_mpi4py=False,
+        interface="multiprocessing",  # Options are 'multiprocessing', 'mpi4py' or 'concurrent'
+        use_mpi4py=None,
         propagate_flowfield_from_workers=False,
         print_timings=False
     ):
@@ -85,15 +86,27 @@ class ParallelComputingInterface(LoggerBase):
             object or can be an UncertaintyInterface object.
         """
 
-        # Load the correct library
-        if use_mpi4py:
+        # Set defaults for backward compatibility
+        if use_mpi4py is not None:
+            DeprecationWarning("The option 'mpi4py' will be removed in a future version. Please use the option 'interface'.")
+            if use_mpi4py:
+                interface = "mpi4py"
+            else:
+                interface = "multiprocessing"
+        
+        if interface == "mpi4py":
             import mpi4py.futures as mp
             self._PoolExecutor = mp.MPIPoolExecutor
-        else:
+        elif interface == "multiprocessing":
             import multiprocessing as mp
             self._PoolExecutor = mp.Pool
             if max_workers is None:
                 max_workers = mp.cpu_count()
+        elif interface == "concurrent":
+            from concurrent.futures import ProcessPoolExecutor
+            self._PoolExecutor = ProcessPoolExecutor
+        else:
+            raise UserWarning(f"Interface '{interface}' not recognized. Please use 'concurrent', 'multiprocessing' or 'mpi4py'.")
 
         # Initialize floris object and copy common properties
         self.fi = fi.copy()
@@ -114,7 +127,7 @@ class ParallelComputingInterface(LoggerBase):
             np.min([max_workers, self.n_wind_direction_splits * self.n_wind_speed_splits])
         )
         self.propagate_flowfield_from_workers = propagate_flowfield_from_workers
-        self.use_mpi4py = use_mpi4py
+        self.interface = interface
         self.print_timings = print_timings
 
     def copy(self):
@@ -171,7 +184,7 @@ class ParallelComputingInterface(LoggerBase):
             max_workers=self._max_workers,
             n_wind_direction_splits=self._n_wind_direction_splits,
             n_wind_speed_splits=self._n_wind_speed_splits,
-            use_mpi4py=self.use_mpi4py,
+            interface=self.interface,
             propagate_flowfield_from_workers=self.propagate_flowfield_from_workers,
             print_timings=self.print_timings,
         )
@@ -294,7 +307,15 @@ class ParallelComputingInterface(LoggerBase):
         # Perform parallel calculation
         t1 = timerpc()
         with self._PoolExecutor(self.max_workers) as p:
-            out = p.starmap(_get_turbine_powers_serial, multiargs)
+            if (self.interface == "mpi4py") or (self.interface == "multiprocessing"):
+                out = p.starmap(_get_turbine_powers_serial, multiargs)
+            else:
+                out = p.map(
+                    _get_turbine_powers_serial,
+                    [j[0] for j in multiargs],
+                    [j[1] for j in multiargs]
+                )
+                # out = list(out)
         t_execution = timerpc() - t1
 
         # Postprocessing: merge power production (and opt. flow field) from individual runs
@@ -491,7 +512,23 @@ class ParallelComputingInterface(LoggerBase):
         # Optimize yaw angles using parallel processing
         print("Optimizing yaw angles with {:d} workers.".format(self.max_workers))
         with self._PoolExecutor(self.max_workers) as p:
-            df_opt_splits = p.starmap(_optimize_yaw_angles_serial, multiargs)
+            if (self.interface == "mpi4py") or (self.interface == "multiprocessing"):
+                df_opt_splits = p.starmap(_optimize_yaw_angles_serial, multiargs)
+            else:
+                df_opt_splits = p.map(
+                    _optimize_yaw_angles_serial,
+                    [j[0] for j in multiargs],
+                    [j[1] for j in multiargs],
+                    [j[2] for j in multiargs],
+                    [j[3] for j in multiargs],
+                    [j[4] for j in multiargs],
+                    [j[5] for j in multiargs],
+                    [j[6] for j in multiargs],
+                    [j[7] for j in multiargs],
+                    [j[8] for j in multiargs],
+                    [j[9] for j in multiargs],
+                    [j[10] for j in multiargs]
+                )
         t2 = timerpc()
 
         # Combine all solutions from multiprocessing into single dataframe
