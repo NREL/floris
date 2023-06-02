@@ -84,6 +84,22 @@ class ParallelComputingInterface(LoggerBase):
         fi (FlorisInterface or UncertaintyInterface object): Interactive FLORIS object used to
             perform the wake and turbine calculations. Can either be a regular FlorisInterface
             object or can be an UncertaintyInterface object.
+        max_workers (int): Number of parallel workers, typically equal to the number of cores
+            you have on your system or HPC.
+        n_wind_direction_splits (int): Number of sectors to split the wind direction array over.
+            This is typically equal to max_workers, or a multiple of it.
+        n_wind_speed_splits (int): Number of sectors to split the wind speed array over. This is
+            typically 1 or 2. Defaults to 1.
+        interface (str): Parallel computing interface to leverage. Recommended is 'concurrent'
+            or 'multiprocessing' for local (single-system) use, and 'mpi4py' for high performance
+            computing on multiple nodes. Defaults to 'multiprocessing'.
+        use_mpi4py (bool): Deprecated option to enable/disable the usage of 'mpi4py'. This option
+            has been superseded by 'interface'.
+        propagate_flowfield_from_workers (bool): By enabling this, the flow field from every
+            floris object (one for each worker) is exported, combined and sent back to the main
+            module. This is slow so unless it's needed, it's recommended to be disabled. Defaults
+            to False.
+        print_timings (bool): Print the computation time to the console. Defaults to False.
         """
 
         # Set defaults for backward compatibility
