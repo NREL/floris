@@ -9,6 +9,8 @@ from floris.logging_manager import LoggerBase
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInterface
 
+import warnings
+
 
 def _load_local_floris_object(
     fi_dict,
@@ -104,7 +106,7 @@ class ParallelComputingInterface(LoggerBase):
 
         # Set defaults for backward compatibility
         if use_mpi4py is not None:
-            DeprecationWarning("The option 'mpi4py' will be removed in a future version. Please use the option 'interface'.")
+            warnings.warn("The option 'mpi4py' will be removed in a future version. Please use the option 'interface'.")
             if use_mpi4py:
                 interface = "mpi4py"
             else:
