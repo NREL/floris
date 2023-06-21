@@ -72,6 +72,7 @@ class Farm(BaseClass):
     turbine_fCts: tuple = field(init=False, default=[])
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
+    blade_lengths_sorted: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
     pPs: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
@@ -209,6 +210,11 @@ class Farm(BaseClass):
             turb['rotor_diameter'] for turb in self.turbine_definitions
         ])
 
+    def construct_blade_lengths(self):
+        self.blade_lengths = np.array([
+            turb['blade_length'] for turb in self.turbine_definitions
+        ])
+
     def construct_turbine_TSRs(self):
         self.TSRs = np.array([turb['TSR'] for turb in self.turbine_definitions])
 
@@ -268,6 +274,11 @@ class Farm(BaseClass):
         )
         self.rotor_diameters_sorted = np.take_along_axis(
             self.rotor_diameters * template_shape,
+            sorted_coord_indices,
+            axis=2
+        )
+        self.blade_lengths_sorted = np.take_along_axis(
+            self.blade_lengths * template_shape,
             sorted_coord_indices,
             axis=2
         )
@@ -358,6 +369,11 @@ class Farm(BaseClass):
         )
         self.rotor_diameters = np.take_along_axis(
             self.rotor_diameters_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        self.blade_lengths = np.take_along_axis(
+            self.blade_lengths_sorted,
             unsorted_indices[:,:,:,0,0],
             axis=2
         )
