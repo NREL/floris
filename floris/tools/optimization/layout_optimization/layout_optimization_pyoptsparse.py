@@ -19,6 +19,7 @@ from scipy.spatial.distance import cdist
 from shapely.geometry import Point
 
 from .layout_optimization_base import LayoutOptimization
+from .geometric_yaw import geometric_yaw
 
 
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
@@ -32,7 +33,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         optOptions=None,
         timeLimit=None,
         storeHistory='hist.hist',
-        hotStart=None
+        hotStart=None,
+        enable_geometric_yaw=False,
     ):
         super().__init__(fi, boundaries, min_dist=min_dist, freq=freq)
 
@@ -42,6 +44,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self.storeHistory = storeHistory
         self.timeLimit = timeLimit
         self.hotStart = hotStart
+        self.enable_geometric_yaw = enable_geometric_yaw
 
         try:
             import pyoptsparse
@@ -105,10 +108,29 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         # Update turbine map with turbince locations
         self.fi.reinitialize(layout_x = self.x, layout_y = self.y)
 
+        # Compute turbine yaw angles using PJ's geometric code
+        if self.enable_geometric_yaw:
+            yaw_angles = np.zeros(
+                (
+                    self.fi.floris.flow_field.n_wind_directions,
+                    self.fi.floris.flow_field.n_wind_speeds,
+                    self.fi.floris.farm.n_turbines
+                )
+            )
+            for i, wd in enumerate(self.fi.floris.flow_field.wind_directions):
+                yaw_angles[i, :, :] = geometric_yaw(
+                    self.x, 
+                    self.y, 
+                    wd, 
+                    self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"]
+                )
+        else:
+            yaw_angles = None
+
         # Compute the objective function
         funcs = {}
         funcs["obj"] = (
-            -1 * self.fi.get_farm_AEP(self.freq) / self.initial_AEP
+            -1 * self.fi.get_farm_AEP(self.freq, yaw_angles=yaw_angles) / self.initial_AEP
         )
 
         # Compute constraints, if any are defined for the optimization
