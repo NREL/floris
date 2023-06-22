@@ -338,7 +338,9 @@ class YawOptimization:
             / self._normalization_length
         )
 
-    def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None):
+    def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None,
+            heterogeneous_speed_multipliers=None
+        ):
         """
         Calculate the wind farm power production assuming the predefined
         probability distribution (self.unc_options/unc_pmf), with the
@@ -361,6 +363,10 @@ class YawOptimization:
 
         # Ensure format [incompatible with _subset notation]
         yaw_angles = self._unpack_variable(yaw_angles, subset=True)
+
+        if heterogeneous_speed_multipliers is not None:
+            fi_subset.floris.flow_field.heterogenous_inflow_config['speed_multipliers'] = \
+                heterogeneous_speed_multipliers
 
         # # Correct wind direction definition: 270 deg is from left, cw positive
         # wd_array = wrap_360(wd_array)
