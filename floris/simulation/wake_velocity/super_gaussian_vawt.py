@@ -90,12 +90,11 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
         axial_induction_i: np.ndarray,
         deflection_field_i: np.ndarray,
         yaw_angle_i: np.ndarray,
-        tilt_angle_i: np.ndarray,
         turbulence_intensity_i: np.ndarray,
         ct_i: np.ndarray,
         hub_height_i: float,
         rotor_diameter_i: np.ndarray,
-        #blade_length_i: np.ndarray,
+        vawt_blade_length_i: np.ndarray,
         # enforces the use of the below as keyword arguments and adherence to the
         # unpacking of the results from prepare_function()
         *,
@@ -117,8 +116,6 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
             axial_induction_i (np.array): Axial induction factor of the
                 ith turbine (-) [not used].
             yaw_angle_i (np.array): Yaw angle of the ith turbine (deg).
-            tilt_angle_i (np.array): Tilt angle of the ith turbine
-                (deg).
             ct_i (np.array): Thrust coefficient for the ith turbine (-).
             hub_height_i (float): Hub height for the ith turbine (m).
             rotor_diameter_i (np.array): Rotor diameter for the ith

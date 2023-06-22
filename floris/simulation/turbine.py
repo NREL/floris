@@ -587,7 +587,6 @@ class Turbine(BaseClass):
 
     Parameters:
         rotor_diameter (:py:obj: float): The rotor diameter (m).
-        blade_length (:py:obj: float): The blade length (m).
         hub_height (:py:obj: float): The hub height (m).
         pP (:py:obj: float): The cosine exponent relating the yaw
             misalignment angle to power.
@@ -618,7 +617,6 @@ class Turbine(BaseClass):
 
     turbine_type: str = field()
     rotor_diameter: float = field()
-    blade_length: float = field()
     hub_height: float = field()
     pP: float = field()
     pT: float = field()
@@ -629,6 +627,7 @@ class Turbine(BaseClass):
     power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
     floating_tilt_table = field(default=None)
     floating_correct_cp_ct_for_tilt = field(default=None)
+    vawt_blade_length: float = field(default=None)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()

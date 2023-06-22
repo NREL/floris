@@ -132,7 +132,7 @@ def sequential_solver(
         yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
-        #blade_length_i = farm.blade_lengths_sorted[: ,:, i:i+1, None, None]
+        vawt_blade_length_i = farm.vawt_blade_lengths_sorted[: ,:, i:i+1, None, None]
         TSR_i = farm.TSRs_sorted[: ,:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
@@ -205,6 +205,7 @@ def sequential_solver(
             ct_i,
             hub_height_i,
             rotor_diameter_i,
+            vawt_blade_length_i,
             **deficit_model_args
         )
 
@@ -271,6 +272,7 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construct_turbine_power_interps()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_rotor_diameters()
+    turbine_grid_farm.construct_vawt_blade_lengths()
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construct_turbine_pPs()
     turbine_grid_farm.construct_turbine_pTs()
@@ -361,6 +363,7 @@ def full_flow_sequential_solver(
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = turbine_grid_farm.hub_heights_sorted[:, :, i:i+1, None, None]
         rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
+        vawt_blade_length_i = turbine_grid_farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
         TSR_i = turbine_grid_farm.TSRs_sorted[:, :, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
@@ -421,6 +424,7 @@ def full_flow_sequential_solver(
             ct_i,
             hub_height_i,
             rotor_diameter_i,
+            vawt_blade_length_i,
             **deficit_model_args
         )
 
