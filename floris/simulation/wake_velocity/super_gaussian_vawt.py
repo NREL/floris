@@ -154,8 +154,8 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
         # Relative initial wake expansion
         fac = np.sqrt(1 - ct_i)
         beta = 0.5 * (1 + fac) / fac
+
         # Initial wake width
-        # Obs: Change ny nz to have x_tilde
         ny_0 = ay + cy
         nz_0 = az + cz
         eta_0 = 1/ny_0 + 1/nz_0
@@ -171,8 +171,9 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
         ny = ne.evaluate("ay * exp(-by * x_tilde) + cy")
         nz = ne.evaluate("az * exp(-bz * x_tilde_H) + cz")
 
-        # Velocity deficit given by the maximum velocity C at a given streamwise distance,
-        # and two Gaussian shape functions fy and fz
+        # At any streamwise location x behind the turbine, the velocity deficit in the
+        # y-z plane is given by multiplying the maximum deficit C = C(x) with two Gaussian
+        # shape functions fy = fy(y) and fz = fz(z)
         eta = 1 / ny + 1 / nz
         ny_inv = ne.evaluate("1 / ny")
         nz_inv = ne.evaluate("1 / nz")
