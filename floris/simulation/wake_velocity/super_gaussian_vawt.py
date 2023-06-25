@@ -184,7 +184,7 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
             "2 ** (eta - 1) - sqrt(2 ** (2 * eta - 2) - ct_i * ny * nz / fac)"
         )
 
-        fy = ne.evaluate("exp(-y_tilde ** ny / (2 * sigma_y_tilde ** 2))")
-        fz = ne.evaluate("exp(-z_tilde ** nz / (2 * sigma_z_tilde ** 2))")
+        fy = ne.evaluate("exp(-abs(y_tilde) ** ny / (2 * sigma_y_tilde ** 2))")
+        fz = ne.evaluate("exp(-abs(z_tilde) ** nz / (2 * sigma_z_tilde ** 2))")
 
         return ne.evaluate("C * fy * fz * downstream_mask")
