@@ -132,7 +132,6 @@ def sequential_solver(
         yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = farm.hub_heights_sorted[: ,:, i:i+1, None, None]
         rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
-        vawt_blade_length_i = farm.vawt_blade_lengths_sorted[: ,:, i:i+1, None, None]
         TSR_i = farm.TSRs_sorted[: ,:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
@@ -205,7 +204,6 @@ def sequential_solver(
             ct_i,
             hub_height_i,
             rotor_diameter_i,
-            vawt_blade_length_i,
             **deficit_model_args
         )
 
@@ -363,7 +361,6 @@ def full_flow_sequential_solver(
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
         hub_height_i = turbine_grid_farm.hub_heights_sorted[:, :, i:i+1, None, None]
         rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
-        vawt_blade_length_i = turbine_grid_farm.vawt_blade_lengths_sorted[:, :, i:i+1, None, None]
         TSR_i = turbine_grid_farm.TSRs_sorted[:, :, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
@@ -424,7 +421,6 @@ def full_flow_sequential_solver(
             ct_i,
             hub_height_i,
             rotor_diameter_i,
-            vawt_blade_length_i,
             **deficit_model_args
         )
 
@@ -1499,3 +1495,218 @@ def full_flow_empirical_gauss_solver(
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
+
+
+
+def vawt_solver(
+    farm: Farm,
+    flow_field: FlowField,
+    grid: TurbineGrid,
+    model_manager: WakeModelManager
+) -> None:
+    # Algorithm
+    # For each turbine, calculate its effect on every downstream turbine.
+    # For the current turbine, we are calculating the deficit that it adds to downstream turbines.
+    # Integrate this into the main data structure.
+    # Move on to the next turbine.
+    #
+    # Note that no turbulence model has been implmented in this solver.
+
+    # <<interface>>
+    deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field)
+
+    # This is u_wake
+    wake_field = np.zeros_like(flow_field.u_initial_sorted)
+
+    turbine_turbulence_intensity = (
+        flow_field.turbulence_intensity
+        * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
+    )
+
+    # Calculate the velocity deficit sequentially from upstream to downstream turbines
+    for i in range(grid.n_turbines):
+
+        # Get the current turbine quantities
+        x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
+        x_i = x_i[:, :, :, None, None]
+        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
+        y_i = y_i[:, :, :, None, None]
+        z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
+        z_i = z_i[:, :, :, None, None]
+
+        ct_i = Ct(
+            velocities=flow_field.u_sorted,
+            yaw_angle=farm.yaw_angles_sorted,
+            tilt_angle=farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            fCt=farm.turbine_fCts,
+            tilt_interp=farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
+            turbine_type_map=farm.turbine_type_map_sorted,
+            ix_filter=[i],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights
+        )
+        # Since we are filtering for the i'th turbine in the Ct function,
+        # get the first index here (0:1)
+        ct_i = ct_i[:, :, 0:1, None, None]
+
+        turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
+        hub_height_i = farm.hub_heights_sorted[: ,:, i:i+1, None, None]
+        rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
+        vawt_blade_length_i = farm.vawt_blade_lengths_sorted[: ,:, i:i+1, None, None]
+
+        if model_manager.enable_secondary_steering:
+            raise NotImplementedError(
+                "Secondary steering not available for this model.")
+
+        if model_manager.enable_transverse_velocities:
+            raise NotImplementedError(
+                "Transverse velocities not available for this model.")
+
+        if model_manager.enable_yaw_added_recovery:
+            raise NotImplementedError(
+                "Yaw added recovery not available for this model.")
+
+        # Model calculations
+        # NOTE: exponential
+        velocity_deficit = model_manager.velocity_model.function(
+            x_i,
+            y_i,
+            z_i,
+            turbulence_intensity_i,
+            ct_i,
+            hub_height_i,
+            rotor_diameter_i,
+            vawt_blade_length_i,
+            **deficit_model_args
+        )
+
+        wake_field = model_manager.combination_model.function(
+            wake_field,
+            velocity_deficit * flow_field.u_initial_sorted
+        )
+
+        flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
+
+    flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
+    flow_field.turbulence_intensity_field_sorted_avg = np.mean(
+        turbine_turbulence_intensity,
+        axis=(3,4)
+    )[:, :, :, None, None]
+
+
+def full_flow_vawt_solver(
+    farm: Farm,
+    flow_field: FlowField,
+    flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+    model_manager: WakeModelManager
+) -> None:
+
+    # Get the flow quantities and turbine performance
+    turbine_grid_farm = copy.deepcopy(farm)
+    turbine_grid_flow_field = copy.deepcopy(flow_field)
+
+    turbine_grid_farm.construct_turbine_map()
+    turbine_grid_farm.construct_turbine_fCts()
+    turbine_grid_farm.construct_turbine_power_interps()
+    turbine_grid_farm.construct_hub_heights()
+    turbine_grid_farm.construct_rotor_diameters()
+    turbine_grid_farm.construct_vawt_blade_lengths()
+    turbine_grid_farm.construct_turbine_TSRs()
+    turbine_grid_farm.construct_turbine_pPs()
+    turbine_grid_farm.construct_turbine_pTs()
+    turbine_grid_farm.construct_turbine_ref_density_cp_cts()
+    turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
+    turbine_grid_farm.construct_turbine_fTilts()
+    turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
+    turbine_grid_farm.construct_coordinates()
+    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
+
+    turbine_grid = TurbineGrid(
+        turbine_coordinates=turbine_grid_farm.coordinates,
+        reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
+        wind_directions=turbine_grid_flow_field.wind_directions,
+        wind_speeds=turbine_grid_flow_field.wind_speeds,
+        grid_resolution=3,
+        time_series=turbine_grid_flow_field.time_series,
+    )
+    turbine_grid_farm.expand_farm_properties(
+        turbine_grid_flow_field.n_wind_directions,
+        turbine_grid_flow_field.n_wind_speeds,
+        turbine_grid.sorted_coord_indices
+    )
+    turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
+    turbine_grid_farm.initialize(turbine_grid.sorted_indices)
+    vawt_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
+
+    ### Referring to the quantities from above, calculate the wake in the full grid
+
+    # Use full flow_field here to use the full grid in the wake models
+    deficit_model_args = model_manager.velocity_model.prepare_function(
+        flow_field_grid,
+        flow_field
+    )
+
+    wake_field = np.zeros_like(flow_field.u_initial_sorted)
+
+    # Calculate the velocity deficit sequentially from upstream to downstream turbines
+    for i in range(flow_field_grid.n_turbines):
+
+        # Get the current turbine quantities
+        x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
+        x_i = x_i[:, :, :, None, None]
+        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))
+        y_i = y_i[:, :, :, None, None]
+        z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
+        z_i = z_i[:, :, :, None, None]
+
+        ct_i = Ct(
+            velocities=turbine_grid_flow_field.u_sorted,
+            yaw_angle=turbine_grid_farm.yaw_angles_sorted,
+            tilt_angle=turbine_grid_farm.tilt_angles_sorted,
+            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
+            fCt=turbine_grid_farm.turbine_fCts,
+            tilt_interp=turbine_grid_farm.turbine_fTilts,
+            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
+            turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            ix_filter=[i],
+        )
+        # Since we are filtering for the i'th turbine in the Ct function,
+        # get the first index here (0:1)
+        ct_i = ct_i[:, :, 0:1, None, None]
+
+        turbulence_intensity_i = \
+            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, :, i:i+1]
+        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, :, i:i+1, None, None]
+        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
+        vawt_blade_length_i = turbine_grid_farm.vawt_blade_lengths_sorted[:, :, i:i+1, None, None]
+
+        if model_manager.enable_secondary_steering:
+            raise NotImplementedError(
+                "Secondary steering not available for this model.")
+
+        if model_manager.enable_transverse_velocities:
+            raise NotImplementedError(
+                "Transverse velocities not available for this model.")
+
+        # Model calculations
+        # NOTE: exponential
+        velocity_deficit = model_manager.velocity_model.function(
+            x_i,
+            y_i,
+            z_i,
+            turbulence_intensity_i,
+            ct_i,
+            hub_height_i,
+            rotor_diameter_i,
+            vawt_blade_length_i,
+            **deficit_model_args
+        )
+
+        wake_field = model_manager.combination_model.function(
+            wake_field,
+            velocity_deficit * flow_field.u_initial_sorted
+        )
+
+        flow_field.u_sorted = flow_field.u_initial_sorted - wake_field

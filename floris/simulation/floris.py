@@ -32,6 +32,7 @@ from floris.simulation import (
     full_flow_empirical_gauss_solver,
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
+    full_flow_vawt_solver,
     Grid,
     PointsGrid,
     sequential_solver,
@@ -39,6 +40,7 @@ from floris.simulation import (
     TurbineCubatureGrid,
     TurbineGrid,
     turbopark_solver,
+    vawt_solver,
     WakeModelManager,
 )
 from floris.utilities import load_yaml
@@ -215,7 +217,7 @@ class Floris(BaseClass):
         # <<interface>>
         # start = time.time()
 
-        if vel_model in ["gauss", "cc", "turbopark", "jensen"] and \
+        if vel_model in ["gauss", "cc", "turbopark", "jensen", "super_gaussian_vawt"] and \
             self.farm.correct_cp_ct_for_tilt.any():
             self.logger.warn(
                 "The current model does not account for vertical wake deflection due to " +
@@ -239,6 +241,13 @@ class Floris(BaseClass):
             )
         elif vel_model=="empirical_gauss":
             empirical_gauss_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
+        elif vel_model=="super_gaussian_vawt":
+            vawt_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
@@ -274,6 +283,8 @@ class Floris(BaseClass):
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="super_gaussian_vawt":
+            full_flow_vawt_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
@@ -306,10 +317,12 @@ class Floris(BaseClass):
         if vel_model == "cc" or vel_model == "turbopark":
             raise NotImplementedError(
                 "solve_for_points is currently only available with the "+\
-                "gauss, jensen, and empirical_guass models."
+                "gauss, jensen, empirical_guass, and super_gaussian_vawt models."
             )
         elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
+        elif vel_model == "super_gaussian_vawt":
+            full_flow_vawt_solver(self.farm, self.flow_field, field_grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
