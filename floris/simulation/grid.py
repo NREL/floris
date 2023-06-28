@@ -752,9 +752,9 @@ class VelocityProfileGrid(Grid):
     docstr
     """
     direction: str
-    downstream_dists: NDArrayFloat
-    profile_range: NDArrayFloat
-    resolution: float
+    downstream_dists: NDArrayFloat = field(converter=floris_array_converter)
+    profile_range: NDArrayFloat = field(converter=floris_array_converter)
+    resolution: int
     ref_turbine_diameter: float
     x_inertial_start: float
     y_inertial_start: float

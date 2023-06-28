@@ -952,47 +952,103 @@ class FlorisInterface(LoggerBase):
 
     def sample_velocity_deficit_profiles(
             self,
-            direction='y',
-            downstream_dists=None,
-            profile_range=None,
+            direction: NDArrayFloat = 'y',
+            downstream_dists: NDArrayFloat | list = None,
+            profile_range: NDArrayFloat | list = None,
             resolution=100,
-            ref_turbine_diameter=None,
-            x_inertial_start=None,
-            y_inertial_start=None
+            wind_direction: float = None,
+            homogeneous_wind_speed: float = None,
+            ref_rotor_diameter: float = None,
+            x_inertial_start: float = None,
+            y_inertial_start: float = None,
+            reference_height: float = None
             ):
         """
         Extract velocity deficit profiles
 
         Args:
-            x (1DArrayFloat | list): x-locations of points where flow is desired.
-            y (1DArrayFloat | list): y-locations of points where flow is desired.
-            z (1DArrayFloat | list): z-locations of points where flow is desired.
+            downstream_dists: Streamwise location for each velocity profile. Default starting point
+                is at (x, y) = (0, 0).
 
+
+            reference_height: If 'direction' is y, then 'reference_height' defines the height of the
+                xy-plane in which the velocity profiles are sampled. If 'direction' is z, then the
+                velocity is sampled along the vertical direction with the 'profile_range' being
+                relative to the 'reference_height'.
         Returns:
             3DArrayFloat containing wind speed with dimensions
             (# of wind directions, # of wind speeds, # of sample points)
         """
 
-        if downstream_dists is None:
-            downstream_dists = ref_turbine_diameter * np.array([3, 5, 7, 9])
-
-        if profile_range is None:
-            profile_range = ref_turbine_diameter * np.array([-2, 2])
-
         if direction not in ('y', 'z'):
             raise ValueError("'direction' must be either y or z")
 
-        velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
+        if ref_rotor_diameter is None:
+            rotor_diameters = self.floris.farm.rotor_diameters
+            if np.all(rotor_diameters == rotor_diameters[0]):
+                ref_rotor_diameter = rotor_diameters[0]
+            else:
+                raise ValueError(
+                    "'ref_rotor_diameter' needs to be defined manually since there are multiple"
+                    "turbine types."
+                )
+
+        if downstream_dists is None:
+            downstream_dists = ref_rotor_diameter * np.array([3, 5, 7, 9])
+
+        if profile_range is None:
+            profile_range = ref_rotor_diameter * np.array([-2, 2])
+
+        wind_directions_copy = np.array(self.floris.flow_field.wind_directions, copy=True)
+        wind_speeds_copy = np.array(self.floris.flow_field.wind_speeds, copy=True)
+
+        if wind_direction is None:
+            if len(wind_directions_copy) == 1:
+                wind_direction = wind_directions_copy[0]
+            else:
+                raise ValueError(
+                    "Multiple wind directions detected. Specify a single 'wind_direction' for"
+                    "which to sample the velocity profiles."
+                )
+
+        if homogeneous_wind_speed is None:
+            if len(wind_speeds_copy) == 1:
+                homogeneous_wind_speed = wind_speeds_copy[0]
+                # Maybe add info msg that wind_speed is homogeneous
+            else:
+                raise ValueError(
+                    "Multiple wind speeds detected. Specify a single 'homogeneous_wind_speed' for"
+                    "which to sample the velocity profiles."
+                )
+
+        if reference_height is None:
+            reference_height = self.floris.flow_field.reference_wind_height
+
+        print(
             direction,
             downstream_dists,
             profile_range,
             resolution,
-            ref_turbine_diameter,
+            wind_direction,
+            homogeneous_wind_speed,
+            ref_rotor_diameter,
             x_inertial_start,
-            y_inertial_start
+            y_inertial_start,
+            reference_height
         )
 
-        return velocity_deficit_profiles
+
+#        velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
+#            direction,
+#            downstream_dists,
+#            profile_range,
+#            resolution,
+#            ref_turbine_diameter,
+#            x_inertial_start,
+#            y_inertial_start
+#        )
+#
+#        return velocity_deficit_profiles
 
     @property
     def layout_x(self):
