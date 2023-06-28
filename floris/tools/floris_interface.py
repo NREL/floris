@@ -950,6 +950,50 @@ class FlorisInterface(LoggerBase):
 
         return self.floris.solve_for_points(x, y, z)
 
+    def sample_velocity_deficit_profiles(
+            self,
+            direction='y',
+            downstream_dists=None,
+            profile_range=None,
+            resolution=100,
+            ref_turbine_diameter=None,
+            x_inertial_start=None,
+            y_inertial_start=None
+            ):
+        """
+        Extract velocity deficit profiles
+
+        Args:
+            x (1DArrayFloat | list): x-locations of points where flow is desired.
+            y (1DArrayFloat | list): y-locations of points where flow is desired.
+            z (1DArrayFloat | list): z-locations of points where flow is desired.
+
+        Returns:
+            3DArrayFloat containing wind speed with dimensions
+            (# of wind directions, # of wind speeds, # of sample points)
+        """
+
+        if downstream_dists is None:
+            downstream_dists = ref_turbine_diameter * np.array([3, 5, 7, 9])
+
+        if profile_range is None:
+            profile_range = ref_turbine_diameter * np.array([-2, 2])
+
+        if direction not in ('y', 'z'):
+            raise ValueError("'direction' must be either y or z")
+
+        velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
+            direction,
+            downstream_dists,
+            profile_range,
+            resolution,
+            ref_turbine_diameter,
+            x_inertial_start,
+            y_inertial_start
+        )
+
+        return velocity_deficit_profiles
+
     @property
     def layout_x(self):
         """

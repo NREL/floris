@@ -86,6 +86,7 @@ class Grid(ABC):
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
+        print(self.grid_resolution, type(self.grid_resolution))
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
 
     @turbine_coordinates.validator
@@ -118,7 +119,7 @@ class Grid(ABC):
         # TODO move this to the grid types and off of the base class
         """Check that grid resolution is given as int or Vec3 with int components."""
         if isinstance(value, int) and \
-            isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid)):
+            isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid, VelocityProfileGrid)):
             return
         elif isinstance(value, Iterable) and isinstance(self, FlowFieldPlanarGrid):
             assert type(value[0]) is int
@@ -744,3 +745,44 @@ class PointsGrid(Grid):
         self.x_sorted = x[:,:,:,None,None]
         self.y_sorted = y[:,:,:,None,None]
         self.z_sorted = z[:,:,:,None,None]
+
+@define
+class VelocityProfileGrid(Grid):
+    """
+    docstr
+    """
+    direction: str
+    downstream_dists: NDArrayFloat
+    profile_range: NDArrayFloat
+    resolution: float
+    ref_turbine_diameter: float
+    x_inertial_start: float
+    y_inertial_start: float
+    x_center_of_rotation: float | None = field(default=None)
+    y_center_of_rotation: float | None = field(default=None)
+
+    def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
+        self.set_grid()
+
+    def set_grid(self) -> None:
+        """
+        Set points for calculation based on a series of user-supplied coordinates.
+        """
+        print(self.downstream_dists)
+
+#@define
+#class VelocityProfileGrid(Grid):
+##    x_center_of_rotation: float | None = field(default=None)
+##    y_center_of_rotation: float | None = field(default=None)
+#
+#    def __attrs_post_init__(self) -> None:
+#        super().__attrs_post_init__()
+#        self.set_grid()
+#
+#    def set_grid(self) -> None:
+#        """
+#        Set points for calculation based on a series of user-supplied coordinates.
+#        """
+#        print("Hi")
+#       # print(self.x_center_of_rotation)
