@@ -27,7 +27,15 @@ docstr
 fi = FlorisInterface("inputs/gch.yaml")
 fi.reinitialize(layout_x=[0.0], layout_y=[0.0])
 
-fi.sample_velocity_deficit_profiles(direction = 'y', resolution=10, homogeneous_wind_speed=7.0)
+velocity_deficit_profiles = fi.sample_velocity_deficit_profiles(
+    direction = 'y',
+    resolution=10,
+    homogeneous_wind_speed=7.0
+)
+
+print(velocity_deficit_profiles[0])
+print(velocity_deficit_profiles[-1])
+
 
 #horizontal_plane = fi.calculate_horizontal_plane(
 #    x_resolution=200,

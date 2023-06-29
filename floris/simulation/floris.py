@@ -16,6 +16,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
 import yaml
 from attrs import define, field
 
@@ -321,13 +323,14 @@ class Floris(BaseClass):
         downstream_dists,
         profile_range,
         resolution,
+        homogeneous_wind_speed,
         ref_rotor_diameter,
         x_inertial_start,
         y_inertial_start,
         reference_height
         ):
 
-        VelocityProfileGrid(
+        field_grid = VelocityProfileGrid(
             direction=direction,
             downstream_dists=downstream_dists,
             profile_range=profile_range,
@@ -346,7 +349,40 @@ class Floris(BaseClass):
             time_series=self.flow_field.time_series
         )
 
+        self.flow_field.initialize_velocity_field(field_grid)
 
+        vel_model = self.wake.model_strings["velocity_model"]
+
+        if vel_model in ("cc", "turbopark"):
+            raise NotImplementedError(
+                "solve_for_velocity_deficit_profiles is currently only available with the "
+                "gauss, jensen, and empirical_guass models."
+            )
+        elif vel_model == "empirical_gauss":
+            full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
+        else:
+            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+
+        x = np.reshape(field_grid.x_sorted[0,0,:,0,0], (-1, resolution))
+        y = np.reshape(field_grid.y_sorted[0,0,:,0,0], (-1, resolution))
+        z = np.reshape(field_grid.z_sorted[0,0,:,0,0], (-1, resolution))
+        u = np.reshape(self.flow_field.u_sorted[0,0,:,0,0], (-1, resolution))
+        velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
+
+        velocity_deficit_profiles = []
+
+        for i in range(len(downstream_dists)):
+            df = pd.DataFrame(
+                {
+                    "x/D": x[i]/ref_rotor_diameter,
+                    "y/D": y[i]/ref_rotor_diameter,
+                    "z/D": z[i]/ref_rotor_diameter,
+                    "velocity_deficit": velocity_deficit[i]
+                }
+            )
+            velocity_deficit_profiles.append(df)
+
+        return velocity_deficit_profiles
 
     def finalize(self):
         # Once the wake calculation is finished, unsort the values to match

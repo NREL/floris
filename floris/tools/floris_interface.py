@@ -989,7 +989,7 @@ class FlorisInterface(LoggerBase):
                 ref_rotor_diameter = rotor_diameters[0]
             else:
                 raise ValueError(
-                    "'ref_rotor_diameter' needs to be defined manually since there are multiple"
+                    "'ref_rotor_diameter' needs to be defined manually since there are multiple "
                     "turbine types."
                 )
 
@@ -1008,7 +1008,7 @@ class FlorisInterface(LoggerBase):
                 wind_direction = wind_directions_copy[0]
             else:
                 raise ValueError(
-                    "Multiple wind directions detected. Specify a single 'wind_direction' for"
+                    "Multiple wind directions detected. Specify a single 'wind_direction' for "
                     "which to sample the velocity profiles."
                 )
 
@@ -1018,7 +1018,7 @@ class FlorisInterface(LoggerBase):
                 # Maybe add info msg that wind_speed is homogeneous
             else:
                 raise ValueError(
-                    "Multiple wind speeds detected. Specify a single 'homogeneous_wind_speed' for"
+                    "Multiple wind speeds detected. Specify a single 'homogeneous_wind_speed' for "
                     "which to sample the velocity profiles."
                 )
 
@@ -1058,6 +1058,7 @@ class FlorisInterface(LoggerBase):
             downstream_dists,
             profile_range,
             resolution,
+            homogeneous_wind_speed,
             ref_rotor_diameter,
             x_inertial_start,
             y_inertial_start,
@@ -1070,9 +1071,7 @@ class FlorisInterface(LoggerBase):
                 wind_shear=wind_shear_copy
         )
 
-        print(velocity_deficit_profiles) # Placeholder
-
-#        return velocity_deficit_profiles
+        return velocity_deficit_profiles
 
     @property
     def layout_x(self):
