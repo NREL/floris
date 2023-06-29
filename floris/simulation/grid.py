@@ -86,7 +86,6 @@ class Grid(ABC):
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
-        print(self.grid_resolution, type(self.grid_resolution))
         self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
 
     @turbine_coordinates.validator
@@ -755,9 +754,10 @@ class VelocityProfileGrid(Grid):
     downstream_dists: NDArrayFloat = field(converter=floris_array_converter)
     profile_range: NDArrayFloat = field(converter=floris_array_converter)
     resolution: int
-    ref_turbine_diameter: float
+    ref_rotor_diameter: float
     x_inertial_start: float
     y_inertial_start: float
+    reference_height: float
     x_center_of_rotation: float | None = field(default=None)
     y_center_of_rotation: float | None = field(default=None)
 
@@ -769,20 +769,45 @@ class VelocityProfileGrid(Grid):
         """
         Set points for calculation based on a series of user-supplied coordinates.
         """
-        print(self.downstream_dists)
+        res = self.resolution
+        nProfiles = len(self.downstream_dists)
+        # downsteam_dists are defined from the following starting point
+        coordinates_inertial_start = np.array(
+            [[self.x_inertial_start, self.y_inertial_start, self.reference_height]]
+        )
 
-#@define
-#class VelocityProfileGrid(Grid):
-##    x_center_of_rotation: float | None = field(default=None)
-##    y_center_of_rotation: float | None = field(default=None)
-#
-#    def __attrs_post_init__(self) -> None:
-#        super().__attrs_post_init__()
-#        self.set_grid()
-#
-#    def set_grid(self) -> None:
-#        """
-#        Set points for calculation based on a series of user-supplied coordinates.
-#        """
-#        print("Hi")
-#       # print(self.x_center_of_rotation)
+        x_start, y_start, _, _, _ = rotate_coordinates_rel_west(
+            self.wind_directions,
+            coordinates_inertial_start,
+            x_center_of_rotation=self.x_center_of_rotation,
+            y_center_of_rotation=self.y_center_of_rotation
+        )
+        x_start, y_start = x_start[0,0,0], y_start[0,0,0]
+
+        downstream_dists_transpose = np.atleast_2d(self.downstream_dists).T
+        x = (x_start + downstream_dists_transpose) * np.ones((nProfiles, res))
+
+        if self.direction == 'y':
+            y_single_profile = np.linspace(
+                y_start + self.profile_range[0],
+                y_start + self.profile_range[1],
+                res
+            )
+            y = y_single_profile * np.ones((nProfiles, res))
+            z = self.reference_height * np.ones((nProfiles, res))
+        elif self.direction == 'z':
+            z_min_profile = self.reference_height + self.profile_range[0]
+            if z_min_profile <= 0.0:
+                # Arbitrary small value to avoid possible errors at z = 0.0
+                z_min_profile = 0.1
+            z_single_profile = np.linspace(
+                    z_min_profile,
+                    self.reference_height + self.profile_range[1],
+                    res
+            )
+            z = z_single_profile * np.ones((nProfiles, res))
+            y = y_start * np.ones((nProfiles, res))
+
+        self.x_sorted = x.flatten()[None,None,:,None,None]
+        self.y_sorted = y.flatten()[None,None,:,None,None]
+        self.z_sorted = z.flatten()[None,None,:,None,None]

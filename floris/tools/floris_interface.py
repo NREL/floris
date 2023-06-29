@@ -1001,6 +1001,7 @@ class FlorisInterface(LoggerBase):
 
         wind_directions_copy = np.array(self.floris.flow_field.wind_directions, copy=True)
         wind_speeds_copy = np.array(self.floris.flow_field.wind_speeds, copy=True)
+        wind_shear_copy = self.floris.flow_field.wind_shear
 
         if wind_direction is None:
             if len(wind_directions_copy) == 1:
@@ -1021,33 +1022,56 @@ class FlorisInterface(LoggerBase):
                     "which to sample the velocity profiles."
                 )
 
+        if x_inertial_start is None:
+            x_inertial_start = 0.0
+
+        if y_inertial_start is None:
+            y_inertial_start = 0.0
+
         if reference_height is None:
             reference_height = self.floris.flow_field.reference_wind_height
 
-        print(
+        self.reinitialize(
+                wind_directions=[wind_direction],
+                wind_speeds=[homogeneous_wind_speed],
+                wind_shear=0.0
+        )
+
+#        print(
+#            direction,
+#            downstream_dists,
+#            profile_range,
+#            resolution,
+#            wind_direction,
+#            homogeneous_wind_speed,
+#            ref_rotor_diameter,
+#            x_inertial_start,
+#            y_inertial_start,
+#            reference_height,
+#            self.floris.flow_field.wind_directions,
+#            self.floris.flow_field.wind_speeds,
+#            self.floris.flow_field.wind_shear
+#        )
+
+        velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
             direction,
             downstream_dists,
             profile_range,
             resolution,
-            wind_direction,
-            homogeneous_wind_speed,
             ref_rotor_diameter,
             x_inertial_start,
             y_inertial_start,
             reference_height
         )
 
+        self.reinitialize(
+                wind_directions=wind_directions_copy,
+                wind_speeds=wind_speeds_copy,
+                wind_shear=wind_shear_copy
+        )
 
-#        velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
-#            direction,
-#            downstream_dists,
-#            profile_range,
-#            resolution,
-#            ref_turbine_diameter,
-#            x_inertial_start,
-#            y_inertial_start
-#        )
-#
+        print(velocity_deficit_profiles) # Placeholder
+
 #        return velocity_deficit_profiles
 
     @property
