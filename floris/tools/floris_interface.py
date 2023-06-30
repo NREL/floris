@@ -989,8 +989,8 @@ class FlorisInterface(LoggerBase):
                 ref_rotor_diameter = rotor_diameters[0]
             else:
                 raise ValueError(
-                    "'ref_rotor_diameter' needs to be defined manually since there are multiple "
-                    "turbine types."
+                    f"Multiple rotor_diameters detected: {np.unique(rotor_diameters)}. "
+                    "Provide a single 'ref_rotor_diameter'."
                 )
 
         if downstream_dists is None:
@@ -1008,7 +1008,7 @@ class FlorisInterface(LoggerBase):
                 wind_direction = wind_directions_copy[0]
             else:
                 raise ValueError(
-                    "Multiple wind directions detected. Specify a single 'wind_direction' for "
+                    "Multiple wind directions detected. Provide a single 'wind_direction' for "
                     "which to sample the velocity profiles."
                 )
 
@@ -1018,7 +1018,7 @@ class FlorisInterface(LoggerBase):
                 # Maybe add info msg that wind_speed is homogeneous
             else:
                 raise ValueError(
-                    "Multiple wind speeds detected. Specify a single 'homogeneous_wind_speed' for "
+                    "Multiple wind speeds detected. Provide a single 'homogeneous_wind_speed' for "
                     "which to sample the velocity profiles."
                 )
 
@@ -1036,22 +1036,6 @@ class FlorisInterface(LoggerBase):
                 wind_speeds=[homogeneous_wind_speed],
                 wind_shear=0.0
         )
-
-#        print(
-#            direction,
-#            downstream_dists,
-#            profile_range,
-#            resolution,
-#            wind_direction,
-#            homogeneous_wind_speed,
-#            ref_rotor_diameter,
-#            x_inertial_start,
-#            y_inertial_start,
-#            reference_height,
-#            self.floris.flow_field.wind_directions,
-#            self.floris.flow_field.wind_speeds,
-#            self.floris.flow_field.wind_shear
-#        )
 
         velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
             direction,

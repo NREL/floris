@@ -33,9 +33,17 @@ velocity_deficit_profiles = fi.sample_velocity_deficit_profiles(
     homogeneous_wind_speed=7.0
 )
 
-print(velocity_deficit_profiles[0])
-print(velocity_deficit_profiles[-1])
+for df in velocity_deficit_profiles:
+    print(df)
 
+velocity_deficit_profiles = fi.sample_velocity_deficit_profiles(
+    direction = 'z',
+    resolution=10,
+    homogeneous_wind_speed=7.0
+)
+
+for df in velocity_deficit_profiles:
+    print(df)
 
 #horizontal_plane = fi.calculate_horizontal_plane(
 #    x_resolution=200,
