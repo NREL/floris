@@ -952,17 +952,17 @@ class FlorisInterface(LoggerBase):
 
     def sample_velocity_deficit_profiles(
             self,
-            direction: NDArrayFloat = 'y',
+            direction: str = 'y',
             downstream_dists: NDArrayFloat | list = None,
             profile_range: NDArrayFloat | list = None,
-            resolution=100,
+            resolution: int = 100,
             wind_direction: float = None,
             homogeneous_wind_speed: float = None,
             ref_rotor_diameter: float = None,
             x_inertial_start: float = None,
             y_inertial_start: float = None,
             reference_height: float = None
-            ):
+    ) -> list[pd.DataFrame]:
         """
         Extract velocity deficit profiles
 
@@ -1015,7 +1015,12 @@ class FlorisInterface(LoggerBase):
         if homogeneous_wind_speed is None:
             if len(wind_speeds_copy) == 1:
                 homogeneous_wind_speed = wind_speeds_copy[0]
-                # Maybe add info msg that wind_speed is homogeneous
+                self.logger.warning(
+                    "'homogeneous_wind_speed' not provided. Setting it to the single wind speed "
+                    "found in 'wind_speeds'. Note that the inflow is always homogeneous when "
+                    "calculateing the velocity deficit profiles. This is done by temporarily "
+                    "setting 'wind_shear' to 0.0"
+                )
             else:
                 raise ValueError(
                     "Multiple wind speeds detected. Provide a single 'homogeneous_wind_speed' for "

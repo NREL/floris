@@ -771,6 +771,7 @@ class VelocityProfileGrid(Grid):
         """
         res = self.resolution
         nProfiles = len(self.downstream_dists)
+
         # downsteam_dists are defined from the following starting point
         coordinates_inertial_start = np.array(
             [[self.x_inertial_start, self.y_inertial_start, self.reference_height]]

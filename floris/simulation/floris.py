@@ -44,6 +44,7 @@ from floris.simulation import (
     VelocityProfileGrid,
     WakeModelManager,
 )
+from floris.type_dec import NDArrayFloat
 from floris.utilities import load_yaml
 
 
@@ -319,16 +320,16 @@ class Floris(BaseClass):
 
     def solve_for_velocity_deficit_profiles(
         self,
-        direction,
-        downstream_dists,
-        profile_range,
-        resolution,
-        homogeneous_wind_speed,
-        ref_rotor_diameter,
-        x_inertial_start,
-        y_inertial_start,
-        reference_height
-        ):
+        direction: str,
+        downstream_dists: NDArrayFloat | list,
+        profile_range: NDArrayFloat | list,
+        resolution: int,
+        homogeneous_wind_speed: float,
+        ref_rotor_diameter: float,
+        x_inertial_start: float,
+        y_inertial_start: float,
+        reference_height: float
+        ) -> list[pd.DataFrame]:
 
         field_grid = VelocityProfileGrid(
             direction=direction,
@@ -363,15 +364,16 @@ class Floris(BaseClass):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
-        x = np.reshape(field_grid.x_sorted[0,0,:,0,0], (-1, resolution))
-        y = np.reshape(field_grid.y_sorted[0,0,:,0,0], (-1, resolution))
-        z = np.reshape(field_grid.z_sorted[0,0,:,0,0], (-1, resolution))
-        u = np.reshape(self.flow_field.u_sorted[0,0,:,0,0], (-1, resolution))
+        nProfiles = len(downstream_dists)
+        x = np.reshape(field_grid.x_sorted[0,0,:,0,0], (nProfiles, resolution))
+        y = np.reshape(field_grid.y_sorted[0,0,:,0,0], (nProfiles, resolution))
+        z = np.reshape(field_grid.z_sorted[0,0,:,0,0], (nProfiles, resolution))
+        u = np.reshape(self.flow_field.u_sorted[0,0,:,0,0], (nProfiles, resolution))
         velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
 
         velocity_deficit_profiles = []
 
-        for i in range(len(downstream_dists)):
+        for i in range(nProfiles):
             df = pd.DataFrame(
                 {
                     "x/D": x[i]/ref_rotor_diameter,
