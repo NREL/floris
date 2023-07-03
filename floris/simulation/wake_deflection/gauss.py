@@ -199,8 +199,8 @@ class GaussVelocityDeflection(BaseModel):
             )) + x_i
         )
 
-        yR = y - y_i  # noqa: F841
-        xR = x_i  # yR * tand(yaw) + x_i
+        # yR = y - y_i
+        xR = x_i # yR * tand(yaw) + x_i
 
         # yaw parameters (skew angle and distance from centerline)
         # skew angle in radians
@@ -289,7 +289,7 @@ def _calculate_vortex(
     with_decay: bool = False,
     ground: bool = False,
 ):
-    """Calcuatues the V and W parameters for the top, bottom, or wake rotation, with or without a
+    """Calculates the V and W parameters for the top, bottom, or wake rotation, with or without a
     decay, or at the ground boundary positions.
 
     Args:

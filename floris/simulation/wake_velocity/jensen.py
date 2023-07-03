@@ -99,7 +99,7 @@ class JensenVelocityDeficit(BaseModel):
         # Indeces of velocity_deficit corresponding to unwaked turbines will have 0's
         # velocity_deficit = np.zeros(np.shape(flow_field.u_initial))
 
-        rotor_radius = rotor_diameter_i / 2.0  # noqa: F841
+        rotor_radius = rotor_diameter_i / 2.0
 
         """
         dx = x - x_i
@@ -136,12 +136,12 @@ class JensenVelocityDeficit(BaseModel):
         """
 
         # Numexpr - do not change below without corresponding changes above.
-        dx = ne.evaluate("x - x_i")  # noqa: F841
-        dy = ne.evaluate("y - y_i - deflection_field_i")  # noqa: F841
-        dz = ne.evaluate("z - z_i")  # noqa: F841
+        dx = ne.evaluate("x - x_i")
+        dy = ne.evaluate("y - y_i - deflection_field_i")
+        dz = ne.evaluate("z - z_i")
 
-        we = self.we  # noqa: F841
-        NUM_EPS = JensenVelocityDeficit.NUM_EPS  # noqa: F841
+        we = self.we
+        NUM_EPS = JensenVelocityDeficit.NUM_EPS
 
         # C should be 0 at the current turbine and everywhere in front of it
         downstream_mask = ne.evaluate("dx > 0 + NUM_EPS")
@@ -151,7 +151,7 @@ class JensenVelocityDeficit(BaseModel):
         boundary_mask = ne.evaluate("sqrt(dy ** 2 + dz ** 2) < we * dx + rotor_radius")
 
         # Calculate C and fill invalid values with 0
-        c = np.where(  # noqa: F841
+        c = np.where(
             np.logical_and(downstream_mask, boundary_mask),
             ne.evaluate("(rotor_radius / (rotor_radius + we * dx + NUM_EPS)) ** 2"),
             0.0,

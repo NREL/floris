@@ -208,12 +208,14 @@ def sequential_solver(
         )
 
         wake_field = model_manager.combination_model.function(
-            wake_field, velocity_deficit * flow_field.u_initial_sorted
+            wake_field,
+            velocity_deficit * flow_field.u_initial_sorted
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
             ambient_turbulence_intensity,
-            grid.x_sorted, x_i,
+            grid.x_sorted,
+            x_i,
             rotor_diameter_i,
             axial_induction_i,
         )
@@ -385,7 +387,8 @@ def full_flow_sequential_solver(
             y_i,
             effective_yaw_i,
             turbulence_intensity_i,
-            ct_i, rotor_diameter_i,
+            ct_i,
+            rotor_diameter_i,
             **deflection_model_args,
         )
 
@@ -421,7 +424,8 @@ def full_flow_sequential_solver(
         )
 
         wake_field = model_manager.combination_model.function(
-            wake_field, velocity_deficit * flow_field.u_initial_sorted
+            wake_field,
+            velocity_deficit * flow_field.u_initial_sorted
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -447,9 +451,7 @@ def cc_solver(
 
     turbine_turbulence_intensity = (
         flow_field.turbulence_intensity
-        * np.ones(
-            (flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1)
-        )
+        * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
     )
     ambient_turbulence_intensity = flow_field.turbulence_intensity
 
@@ -614,7 +616,11 @@ def cc_solver(
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensity, grid.x_sorted, x_i, rotor_diameter_i, turb_aIs
+            ambient_turbulence_intensity,
+            grid.x_sorted,
+            x_i,
+            rotor_diameter_i,
+            turb_aIs
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
@@ -954,13 +960,13 @@ def turbopark_solver(
                 "and perform a thorough examination of the results."
             )
             for ii in range(i):
-                x_ii = np.mean(grid.x_sorted[:, :, ii : ii + 1], axis=(3, 4))
+                x_ii = np.mean(grid.x_sorted[:, :, ii:ii+1], axis=(3, 4))
                 x_ii = x_ii[:, :, :, None, None]
                 y_ii = np.mean(grid.y_sorted[:, :, ii:ii+1], axis=(3, 4))
                 y_ii = y_ii[:, :, :, None, None]
 
-                yaw_ii = farm.yaw_angles_sorted[:, :, ii : ii + 1, None, None]
-                turbulence_intensity_ii = turbine_turbulence_intensity[:, :, ii : ii + 1]
+                yaw_ii = farm.yaw_angles_sorted[:, :, ii:ii+1, None, None]
+                turbulence_intensity_ii = turbine_turbulence_intensity[:, :, ii:ii+1]
                 ct_ii = Ct(
                     velocities=flow_field.u_sorted,
                     yaw_angle=farm.yaw_angles_sorted,
@@ -975,7 +981,7 @@ def turbopark_solver(
                     cubature_weights=grid.cubature_weights
                 )
                 ct_ii = ct_ii[:, :, 0:1, None, None]
-                rotor_diameter_ii = farm.rotor_diameters_sorted[:, :, ii : ii + 1, None, None]
+                rotor_diameter_ii = farm.rotor_diameters_sorted[:, :, ii:ii+1, None, None]
 
                 deflection_field_ii = model_manager.deflection_model.function(
                     x_ii,
@@ -987,7 +993,7 @@ def turbopark_solver(
                     **deflection_model_args,
                 )
 
-                deflection_field[:, :, ii : ii + 1, :, :] = deflection_field_ii[:, :, i:i+1, :, :]
+                deflection_field[:, :, ii:ii+1, :, :] = deflection_field_ii[:, :, i:i+1, :, :]
 
         if model_manager.enable_transverse_velocities:
             v_wake, w_wake = calculate_transverse_velocity(
@@ -1032,11 +1038,16 @@ def turbopark_solver(
         )
 
         wake_field = model_manager.combination_model.function(
-            wake_field, velocity_deficit * flow_field.u_initial_sorted
+            wake_field,
+            velocity_deficit * flow_field.u_initial_sorted
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensity, grid.x_sorted, x_i, rotor_diameter_i, axial_induction_i
+            ambient_turbulence_intensity,
+            grid.x_sorted,
+            x_i,
+            rotor_diameter_i,
+            axial_induction_i
         )
 
         # TODO: leaving this in for GCH quantities; will need to find another way to

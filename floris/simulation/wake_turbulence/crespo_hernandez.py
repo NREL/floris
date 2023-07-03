@@ -92,7 +92,7 @@ class CrespoHernandez(BaseModel):
             "constant"
             " * axial_induction ** ai"
             " * ambient_TI ** initial"
-            " * ((delta_x) / rotor_diameter) ** downstream"
+            " * (delta_x / rotor_diameter) ** downstream"
         )
         # Mask the 1 values from above with zeros
         return ti * downstream_mask

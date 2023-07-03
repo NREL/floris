@@ -123,6 +123,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         C = 1 - np.sqrt(val)
 
         # Compute deficit for all turbines and mask to keep upstream and overlapping turbines
+        # NOTE self.sigma_max_rel * sigma is an effective wake width
         is_overlapping = (self.sigma_max_rel * sigma) / 2 + rotor_diameter_i / 2 > r_dist
         wtg_overlapping = (x_dist > 0) * is_overlapping
 
@@ -175,7 +176,7 @@ def characteristic_wake_width(x_dist, TI, Cts, A):
     c1 = 1.5
     c2 = 0.8
 
-    alpha = TI * c1  # noqa: F841
+    alpha = TI * c1
     beta = c2 * TI / np.sqrt(Cts)
 
     dw = A * TI / beta * (
