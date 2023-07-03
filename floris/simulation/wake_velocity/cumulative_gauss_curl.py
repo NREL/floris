@@ -193,7 +193,13 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         tmp = a2 - (
             (n * turbine_Ct[:, :, ii:ii+1])
             * cosd(turbine_yaw)
-            / (16.0 * gamma(2 / n) * np.sign(sigma_n) * (np.abs(sigma_n) ** (4 / n)) * (1 - sum_lbda) ** 2)
+            / (
+                16.0
+                * gamma(2 / n)
+                * np.sign(sigma_n)
+                * (np.abs(sigma_n) ** (4 / n))
+                * (1 - sum_lbda) ** 2
+            )
         )
 
         # for some low wind speeds, tmp can become slightly negative, which causes NANs,
