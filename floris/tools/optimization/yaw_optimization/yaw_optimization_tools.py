@@ -108,10 +108,7 @@ def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=F
             return (yt < wake_profile_ub_turbii(xt)) & (yt > wake_profile_lb_turbii(xt))
 
         is_downstream[ii] = not any(
-            [
-                determine_if_in_wake(x_rot_srt[iii], y_rot_srt[iii])
-                for iii in range(n_turbs)
-            ]
+            determine_if_in_wake(x_rot_srt[iii], y_rot_srt[iii]) for iii in range(n_turbs)
         )
 
         if plot_lines:

@@ -1,7 +1,8 @@
 (examples)=
 # Examples Index
 
-The FLORIS software repository includes a set of [examples/](https://github.com/NREL/floris/tree/main/examples)
+The FLORIS software repository includes a set of
+[examples/](https://github.com/NREL/floris/tree/main/examples)
 intended to describe most features as well as provide a starting point
 for various analysis methods. These are generally ordered from simplest
 to most complex. The examples and their content are described below.
@@ -24,7 +25,8 @@ a simulation with a single wind condition, and then creating another
 simulation with multiple wind conditions.
 
 ### 02_visualizations.py
-Create visualizations for x, y, and z planes in the whole farm as well as plots of the grid points on each turbine rotor.
+Create visualizations for x, y, and z planes in the whole farm as well as plots of the grid points
+on each turbine rotor.
 
 ### 03_making_adjustments.py
 Make various changes to an initial configuration and plot results on a single figure.
@@ -47,7 +49,7 @@ Evaluate the individual turbine powers.
   - Broadcasted mathematical operations
 
 ### 06_sweep_wind_conditions.py
-Simulate a wind farm with multiple wind speeds and wind directions
+Simulate a wind farm with multiple wind speeds and wind directions.
 - Setting up a problem considering the vectorization of the calculations
   - Data structures
   - Broadcasted mathematical operations
@@ -60,7 +62,7 @@ a wind farm.
 - Create the frequency information from the wind condition data
 
 ### 08_calc_aep_from_rose_use_class.py
-Do the above but use the included WindRose class
+Do the above but use the included WindRose class.
 
 ### 09_compare_farm_power_with_neighbor.py
 Consider the affects of one wind farm on another wind farm's AEP.
@@ -83,7 +85,7 @@ speedups at locations throughout the farm. Show plots of the
 impact on wind turbine wakes.
 
 ### 16b_heterogenaity_multiple_ws_wd.py
-Illustrate usage of heterogenaity with multiple wind speeds and directions
+Illustrate usage of heterogenaity with multiple wind speeds and directions.
 
 ### 17_multiple_turbine_types.py
 Load an input file that describes a wind farm with two turbines
@@ -91,8 +93,39 @@ of different types and plot the wake profiles.
 
 ### 23_visualize_layout.py
 Use the visualize_layout function to provide diagram visualization
-of a turbine layout within FLORIS
+of a turbine layout within FLORIS.
 
+### 24_floating_turbine_models.py
+Demonstrates the definition of a floating turbine and how to enable the effects of tilt
+on Cp and Ct.
+
+### 25_tilt_driven_vertical_wake_deflection.py
+
+This example demonstrates vertical wake deflections due to the tilt angle when running
+with the Empirical Gauss model. Note that only the Empirical Gauss model implements
+vertical deflections at this time. Also be aware that this example uses a potentially
+unrealistic tilt angle, 15 degrees, to highlight the wake deflection. Moreover, the magnitude
+of vertical deflections due to tilt has not been validated.
+
+### 26_empirical_gauss_velocity_deficit_parameters.py
+
+This example illustrates the main parameters of the Empirical Gaussian
+velocity deficit model and their effects on the wind turbine wake.
+
+### 27_empirical_gauss_deflection_parameters.py
+This example illustrates the main parameters of the Empirical Gaussian
+deflection model and their effects on the wind turbine wake.
+
+### 28_extract_wind_speed_at_points.py
+This example demonstrates the use of the `FlorisInterface.sample_flow_at_points` method
+to extract the wind speed information at user-specified locations in the flow.
+
+Specifically, this example gets the wind speed at a single x, y location and four different
+heights over a sweep of wind directions. This mimics the wind speed measurements of a met
+mast across all wind directions (at a fixed free stream wind speed).
+
+Try different values for met_mast_option to vary the location of the met mast within
+the two-turbine farm.
 
 ## Optimization
 

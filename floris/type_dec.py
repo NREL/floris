@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import copy
 from pathlib import Path
 from typing import (
     Any,
@@ -37,6 +38,7 @@ NDArrayFloat = npt.NDArray[floris_float_type]
 NDArrayInt = npt.NDArray[np.int_]
 NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
+NDArrayBool = npt.NDArray[np.bool_]
 
 
 ### Custom callables for attrs objects and functions
@@ -48,12 +50,12 @@ def floris_array_converter(data: Iterable) -> np.ndarray:
         raise TypeError(e.args[0] + f". Data given: {data}")
     return a
 
-def attr_serializer(inst: type, field: Attribute, value: Any):
+def _attr_serializer(inst: type, field: Attribute, value: Any):
     if isinstance(value, np.ndarray):
         return value.tolist()
     return value
 
-def attr_floris_filter(inst: Attribute, value: Any) -> bool:
+def _attr_floris_filter(inst: Attribute, value: Any) -> bool:
     if inst.init is False:
         return False
     if value is None:
@@ -85,7 +87,6 @@ def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
     )
     return validator
 
-
 def convert_to_path(fn: str | Path) -> Path:
     """Converts an input string or pathlib.Path object to a fully resolved ``pathlib.Path``
     object.
@@ -113,7 +114,7 @@ def convert_to_path(fn: str | Path) -> Path:
 class FromDictMixin:
     """
     A Mixin class to allow for kwargs overloading when a data class doesn't
-    have a specific parameter definied. This allows passing of larger dictionaries
+    have a specific parameter defined. This allows passing of larger dictionaries
     to a data class without throwing an error.
     """
 
@@ -130,6 +131,9 @@ class FromDictMixin:
             cls
                 The `attr`-defined class.
         """
+        # Make a copy of the input dict to prevent any side effects
+        data = copy.deepcopy(data)
+
         # Check for any inputs that aren't part of the class definition
         class_attr_names = [a.name for a in cls.__attrs_attrs__]
         extra_args = [d for d in data if d not in class_attr_names]
@@ -150,20 +154,21 @@ class FromDictMixin:
 
         if undefined:
             raise AttributeError(
-                f"The class defintion for {cls.__name__} "
-                "is missing the following inputs: {undefined}"
+                f"The class definition for {cls.__name__} "
+                f"is missing the following inputs: {undefined}"
             )
         return cls(**kwargs)
 
     def as_dict(self) -> dict:
-        """Creates a JSON and YAML friendly dictionary that can be save for future reloading.
+        """Creates a YAML friendly dictionary that can be saved for future reloading.
         This dictionary will contain only `Python` types that can later be converted to their
-        proper `Turbine` formats.
+        proper formats. See `_attr_floris_filter` for detail on which attributes are
+        removed from the export.
 
         Returns:
-            dict: All key, vaue pais required for class recreation.
+            dict: All key, value pairs required for class recreation.
         """
-        return attrs.asdict(self, filter=attr_floris_filter, value_serializer=attr_serializer)
+        return attrs.asdict(self, filter=_attr_floris_filter, value_serializer=_attr_serializer)
 
 
 # Avoids constant redefinition of the same attr.ib properties for model attributes
