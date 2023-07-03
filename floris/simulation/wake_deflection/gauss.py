@@ -112,7 +112,7 @@ class GaussVelocityDeflection(BaseModel):
         wind_veer
     ):
         # initial velocity deficits
-        uR = (  # noqa: F841
+        uR = (
             freestream_velocity
             * ct_i
             * cosd(tilt)
@@ -221,8 +221,8 @@ class GaussVelocityDeflection(BaseModel):
 
         M0_sqrt = np.sqrt(M0)
         middle_term = np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0))
-        ln_deltaNum = (1.6 + M0_sqrt) * (1.6 * middle_term - M0_sqrt)  # noqa: F841
-        ln_deltaDen = (1.6 - M0_sqrt) * (1.6 * middle_term + M0_sqrt)  # noqa: F841
+        ln_deltaNum = (1.6 + M0_sqrt) * (1.6 * middle_term - M0_sqrt)
+        ln_deltaDen = (1.6 - M0_sqrt) * (1.6 * middle_term + M0_sqrt)
 
         middle_term = ne.evaluate(
             "theta_c0"
@@ -325,10 +325,10 @@ def _calculate_vortex(
         raise ValueError("Inputs to `ground` must be a boolean.")
 
     z_mid = HH if which == "rotation" else (HH + (D if which == "top" else -D) / 2)
-    z = z_i + (z_mid if ground else -z_mid)  # noqa: F841
-    r = ne.evaluate("yLocs ** 2 + z ** 2")  # noqa: F841  # TODO: This is in the paper
+    z = z_i + (z_mid if ground else -z_mid)
+    r = ne.evaluate("yLocs ** 2 + z ** 2")  # TODO: This is (-) in the paper
     # This looks like spanwise decay - it defines the vortex profile in the spanwise directions
-    core_shape = ne.evaluate("1 - exp(-r / (eps ** 2))")  # noqa: F841
+    core_shape = ne.evaluate("1 - exp(-r / (eps ** 2))")
 
     V = ne.evaluate("(Gamma * z) / (2 * pi * r) * core_shape")
     V = V * decay if with_decay else np.mean(V, axis=(3, 4))
@@ -448,7 +448,7 @@ def calculate_transverse_velocity(
     lmda = D / 8
     kappa = 0.41
     lm = kappa * z / (1 + kappa * z / lmda)
-    nu = lm ** 2 * np.abs(dudz_initial)  # noqa: F841
+    nu = lm ** 2 * np.abs(dudz_initial)
 
     decay = ne.evaluate("eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)")  # downstream decay
     yLocs = delta_y + BaseModel.NUM_EPS
