@@ -1,5 +1,6 @@
 # Copyright 2022 Shell
 import copy
+import warnings
 from time import perf_counter as timerpc
 
 import numpy as np
@@ -8,8 +9,6 @@ import pandas as pd
 from floris.logging_manager import LoggerBase
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInterface
-
-import warnings
 
 
 def _load_local_floris_object(
@@ -106,12 +105,15 @@ class ParallelComputingInterface(LoggerBase):
 
         # Set defaults for backward compatibility
         if use_mpi4py is not None:
-            warnings.warn("The option 'mpi4py' will be removed in a future version. Please use the option 'interface'.")
+            warnings.warn(
+                "The option 'mpi4py' will be removed in a future version. "
+                "Please use the option 'interface'."
+            )
             if use_mpi4py:
                 interface = "mpi4py"
             else:
                 interface = "multiprocessing"
-        
+
         if interface == "mpi4py":
             import mpi4py.futures as mp
             self._PoolExecutor = mp.MPIPoolExecutor
@@ -124,7 +126,10 @@ class ParallelComputingInterface(LoggerBase):
             from concurrent.futures import ProcessPoolExecutor
             self._PoolExecutor = ProcessPoolExecutor
         else:
-            raise UserWarning(f"Interface '{interface}' not recognized. Please use 'concurrent', 'multiprocessing' or 'mpi4py'.")
+            raise UserWarning(
+                f"Interface '{interface}' not recognized. "
+                "Please use 'concurrent', 'multiprocessing' or 'mpi4py'."
+            )
 
         # Initialize floris object and copy common properties
         self.fi = fi.copy()
