@@ -770,13 +770,14 @@ class VelocityProfileGrid(Grid):
         Set points for calculation based on a series of user-supplied coordinates.
         """
         res = self.resolution
-        nProfiles = len(self.downstream_dists)
+        nprofiles = len(self.downstream_dists)
 
         # downsteam_dists are defined from the following starting point
         coordinates_inertial_start = np.array(
             [[self.x_inertial_start, self.y_inertial_start, self.reference_height]]
         )
 
+        # Starting point in rotated coordinates
         x_start, y_start, _, _, _ = rotate_coordinates_rel_west(
             self.wind_directions,
             coordinates_inertial_start,
@@ -786,7 +787,7 @@ class VelocityProfileGrid(Grid):
         x_start, y_start = x_start[0,0,0], y_start[0,0,0]
 
         downstream_dists_transpose = np.atleast_2d(self.downstream_dists).T
-        x = (x_start + downstream_dists_transpose) * np.ones((nProfiles, res))
+        x = (x_start + downstream_dists_transpose) * np.ones((nprofiles, res))
 
         if self.direction == 'y':
             y_single_profile = np.linspace(
@@ -794,8 +795,8 @@ class VelocityProfileGrid(Grid):
                 y_start + self.profile_range[1],
                 res
             )
-            y = y_single_profile * np.ones((nProfiles, res))
-            z = self.reference_height * np.ones((nProfiles, res))
+            y = y_single_profile * np.ones((nprofiles, res))
+            z = self.reference_height * np.ones((nprofiles, res))
         elif self.direction == 'z':
             z_min_profile = self.reference_height + self.profile_range[0]
             if z_min_profile <= 0.0:
@@ -806,8 +807,8 @@ class VelocityProfileGrid(Grid):
                     self.reference_height + self.profile_range[1],
                     res
             )
-            z = z_single_profile * np.ones((nProfiles, res))
-            y = y_start * np.ones((nProfiles, res))
+            z = z_single_profile * np.ones((nprofiles, res))
+            y = y_start * np.ones((nprofiles, res))
 
         self.x_sorted = x.flatten()[None,None,:,None,None]
         self.y_sorted = y.flatten()[None,None,:,None,None]

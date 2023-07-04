@@ -364,16 +364,16 @@ class Floris(BaseClass):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
-        nProfiles = len(downstream_dists)
-        x = np.reshape(field_grid.x_sorted[0,0,:,0,0], (nProfiles, resolution))
-        y = np.reshape(field_grid.y_sorted[0,0,:,0,0], (nProfiles, resolution))
-        z = np.reshape(field_grid.z_sorted[0,0,:,0,0], (nProfiles, resolution))
-        u = np.reshape(self.flow_field.u_sorted[0,0,:,0,0], (nProfiles, resolution))
+        nprofiles = len(downstream_dists)
+        x = np.reshape(field_grid.x_sorted[0,0,:,0,0], (nprofiles, resolution))
+        y = np.reshape(field_grid.y_sorted[0,0,:,0,0], (nprofiles, resolution))
+        z = np.reshape(field_grid.z_sorted[0,0,:,0,0], (nprofiles, resolution))
+        u = np.reshape(self.flow_field.u_sorted[0,0,:,0,0], (nprofiles, resolution))
         velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
 
         velocity_deficit_profiles = []
 
-        for i in range(nProfiles):
+        for i in range(nprofiles):
             df = pd.DataFrame(
                 {
                     "x/D": x[i]/ref_rotor_diameter,

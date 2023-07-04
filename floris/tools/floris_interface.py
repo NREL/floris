@@ -984,12 +984,12 @@ class FlorisInterface(LoggerBase):
             raise ValueError("'direction' must be either y or z")
 
         if ref_rotor_diameter is None:
-            rotor_diameters = self.floris.farm.rotor_diameters
-            if np.all(rotor_diameters == rotor_diameters[0]):
-                ref_rotor_diameter = rotor_diameters[0]
+            unique_rotor_diameters = np.unique(self.floris.farm.rotor_diameters)
+            if len(unique_rotor_diameters) == 1:
+                ref_rotor_diameter = unique_rotor_diameters[0]
             else:
                 raise ValueError(
-                    f"Multiple rotor_diameters detected: {np.unique(rotor_diameters)}. "
+                    f"Multiple rotor_diameters detected: {unique_rotor_diameters}. "
                     "Provide a single 'ref_rotor_diameter'."
                 )
 

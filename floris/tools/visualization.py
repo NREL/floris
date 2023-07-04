@@ -17,17 +17,23 @@ import copy
 import warnings
 from typing import Union
 
+import attrs
 import matplotlib as mpl
 import matplotlib.colors as mplcolors
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from attrs import define, field
 from matplotlib import rcParams
 from scipy.spatial import ConvexHull
 
 from floris.simulation import Floris
 from floris.tools.cut_plane import CutPlane
 from floris.tools.floris_interface import FlorisInterface
+from floris.type_dec import (
+    floris_array_converter,
+    NDArrayFloat,
+)
 from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 
@@ -695,3 +701,51 @@ def calculate_horizontal_plane_with_turbines(
         horizontal_plane = CutPlane(df, x_resolution, y_resolution, "z")
 
         return horizontal_plane
+
+@define
+class VelocityProfilesFigure():
+    """
+    docstr
+    """
+    downstream_dists_D: NDArrayFloat = field(converter=floris_array_converter)
+    layout: list[str] = field(default=['y'])
+
+    nrows: int = field(init=False)
+    ncols: int = field(init=False)
+    fig: plt.Figure = field(init=False)
+    axs: np.ndarray | plt.Axes = field(init=False)
+
+    def __attrs_post_init__(self):
+        self.nrows = len(self.layout)
+        self.ncols = len(self.downstream_dists_D)
+        width_per_col = 6.4 / 3
+        height_per_row = 6.4 / 2
+        figsize = [width_per_col * self.ncols, height_per_row * self.nrows]
+        self.fig, axs = plt.subplots(
+            self.nrows,
+            self.ncols,
+            figsize=figsize,
+            layout='tight',
+            sharex='all',
+            sharey='row'
+        )
+
+    @layout.validator
+    def layout_validator(self, instance : attrs.Attribute, value : list[str]) -> None:
+        allowed_layouts = [['y'], ['z'], ['y', 'z'], ['z', 'y']]
+        if value not in allowed_layouts:
+            raise ValueError(f"'layout' must be one of the following: {allowed_layouts}")
+
+
+#def find_velocity_profile_direction(df):
+#    unique_y = np.unique(df['y/D'])
+#    unique_z = np.unique(df['z/D'])
+#    if len(unique_y) == 1:
+#        direction = 'y'
+#    elif len(unique_z) == 1:
+#        direction = 'z'
+#    else:
+#        raise ValueError(
+#            "Velocity profile at"
+#        )
+#
