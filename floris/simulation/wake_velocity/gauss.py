@@ -114,8 +114,8 @@ class GaussVelocityDeficit(BaseModel):
         # zero value.
 
         # This mask defines the near wake; keeps the areas downstream of xR and upstream of x0
-        near_wake_mask = np.array(x > xR + 0.1) * np.array(x < x0)
-        far_wake_mask = np.array(x >= x0)
+        near_wake_mask = (x > xR + 0.1) * (x < x0)
+        far_wake_mask = (x >= x0)
 
         # Compute the velocity deficit in the NEAR WAKE region
         # ONLY If there are points within the near wake boundary
@@ -135,13 +135,13 @@ class GaussVelocityDeficit(BaseModel):
 
             sigma_y = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0)
             sigma_y += near_wake_ramp_up * sigma_y0
-            sigma_y *= np.array(x >= xR)
-            sigma_y += np.ones_like(sigma_y) * np.array(x < xR) * 0.5 * rotor_diameter_i
+            sigma_y *= (x >= xR)
+            sigma_y += np.ones_like(sigma_y) * (x < xR) * 0.5 * rotor_diameter_i
 
             sigma_z = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0)
             sigma_z += near_wake_ramp_up * sigma_z0
-            sigma_z *= np.array(x >= xR)
-            sigma_z += np.ones_like(sigma_z) * np.array(x < xR) * 0.5 * rotor_diameter_i
+            sigma_z *= (x >= xR)
+            sigma_z += np.ones_like(sigma_z) * (x < xR) * 0.5 * rotor_diameter_i
 
             r, C = rC(
                 wind_veer,

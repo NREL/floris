@@ -101,7 +101,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         # subsequent runtime warnings.
         # Here self.NUM_EPS is to avoid precision issues with masking, and is slightly
         # larger than 0.0
-        downstream_mask = np.array(x_i - x >= self.NUM_EPS)
+        downstream_mask = (x_i - x >= self.NUM_EPS)
         x_dist = (x_i - x) * downstream_mask / rotor_diameters
 
         # Radial distance between turbine i and the centerlines of wakes from all
