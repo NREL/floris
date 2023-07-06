@@ -62,26 +62,39 @@ class Farm(BaseClass):
     )
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
+    coordinates: List[Vec3] = field(init=False)
+    turbine_fCts: tuple = field(init=False, default=[])
+    turbine_fTilts: list = field(init=False, default=[])
+
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
+
     tilt_angles: NDArrayFloat = field(init=False)
     tilt_angles_sorted: NDArrayFloat = field(init=False)
-    coordinates: List[Vec3] = field(init=False)
+
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
-    turbine_fCts: tuple = field(init=False, default=[])
+
+    turbine_type_map: NDArrayObject = field(init=False, default=[])
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
+
+    rotor_diameters: NDArrayFloat = field(init=False, default=[])
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
+
+    TSRs: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
+
     pPs: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
+
     pTs: NDArrayFloat = field(init=False, default=[])
     pTs_sorted: NDArrayFloat = field(init=False, default=[])
+
     ref_tilt_cp_cts: NDArrayFloat = field(init=False, default=[])
     ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
+
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
-    turbine_fTilts: list = field(init=False, default=[])
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
@@ -301,15 +314,16 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=2
         )
+
+        # NOTE: Tilt angles are sorted twice - here and in initialize()
         self.tilt_angles_sorted = np.take_along_axis(
             self.tilt_angles * template_shape,
             sorted_coord_indices,
             axis=2
         )
-        self.turbine_type_names_sorted = [turb["turbine_type"] for turb in self.turbine_definitions]
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(
-                self.turbine_type_names_sorted * n_wind_directions,
+                [turb["turbine_type"] for turb in self.turbine_definitions] * n_wind_directions,
                 np.shape(sorted_coord_indices)
             ),
             sorted_coord_indices,
@@ -363,6 +377,22 @@ class Farm(BaseClass):
         )
         self.TSRs = np.take_along_axis(
             self.TSRs_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        # TODO: do these need to be unsorted? Maybe we should just for completeness...
+        self.ref_density_cp_cts = np.take_along_axis(
+            self.ref_density_cp_cts_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        self.ref_tilt_cp_cts = np.take_along_axis(
+            self.ref_tilt_cp_cts_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        self.correct_cp_ct_for_tilt = np.take_along_axis(
+            self.correct_cp_ct_for_tilt_sorted,
             unsorted_indices[:,:,:,0,0],
             axis=2
         )
