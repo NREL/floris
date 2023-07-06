@@ -51,6 +51,13 @@ profiles_fig = VelocityProfilesFigure(
     layout=['z']
 )
 
+
+downstream_dists = D * np.array([3])
+profiles_fig = VelocityProfilesFigure(
+    downstream_dists_D=downstream_dists / D,
+    layout=['y']
+)
+
 plt.show()
 
 

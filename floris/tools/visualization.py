@@ -719,16 +719,25 @@ class VelocityProfilesFigure():
         self.nrows = len(self.layout)
         self.ncols = len(self.downstream_dists_D)
         width_per_col = 6.4 / 3
-        height_per_row = 6.4 / 2
-        figsize = [width_per_col * self.ncols, height_per_row * self.nrows]
+        height_per_row = 7.0 / 2
+        figsize = [0.5 + width_per_col * self.ncols, height_per_row * self.nrows]
         self.fig, axs = plt.subplots(
             self.nrows,
             self.ncols,
             figsize=figsize,
             layout='tight',
-            sharex='all',
+            sharex='col',
             sharey='row'
         )
+        self.axs = np.atleast_2d(axs)
+
+        for ax in self.axs[-1]:
+            ax.set_xlabel(r'$\Delta U / U_\infty$', fontsize=14)
+            ax.tick_params('x', labelsize=14)
+
+        for profile_direction, ax in zip(self.layout, self.axs[:,0]):
+            ax.set_ylabel(f'${profile_direction}/D$', fontsize=14)
+            ax.tick_params('y', labelsize=14)
 
     @layout.validator
     def layout_validator(self, instance : attrs.Attribute, value : list[str]) -> None:
