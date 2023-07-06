@@ -68,6 +68,16 @@ class Floris(BaseClass):
 
     def __attrs_post_init__(self) -> None:
 
+        # Configure logging
+        logging_manager.configure_console_log(
+            self.logging["console"]["enable"],
+            self.logging["console"]["level"],
+        )
+        logging_manager.configure_file_log(
+            self.logging["file"]["enable"],
+            self.logging["file"]["level"],
+        )
+
         self.check_deprecated_inputs()
 
         # Initialize farm quanitities that depend on other objects
@@ -143,16 +153,6 @@ class Floris(BaseClass):
                 self.flow_field.n_wind_speeds,
                 self.grid.sorted_coord_indices
             )
-
-        # Configure logging
-        logging_manager.configure_console_log(
-            self.logging["console"]["enable"],
-            self.logging["console"]["level"],
-        )
-        logging_manager.configure_file_log(
-            self.logging["file"]["enable"],
-            self.logging["file"]["level"],
-        )
 
     def check_deprecated_inputs(self):
         """
