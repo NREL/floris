@@ -155,8 +155,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         sigma_z0 = self.sigma_0_D * rotor_diameter_i * cosd(tilt_angle_i)
 
         # No specific near, far wakes in this model
-        downstream_mask = np.array(x > x_i + 0.1)
-        upstream_mask = np.array(x < x_i - 0.1)
+        downstream_mask = (x > x_i + 0.1)
+        upstream_mask = (x < x_i - 0.1)
 
         # Wake expansion in the lateral (y) and the vertical (z)
         # TODO: could compute shared components in sigma_z, sigma_y
