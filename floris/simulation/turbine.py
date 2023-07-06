@@ -413,13 +413,10 @@ class Turbine(BaseClass):
                     0.0015 * (max(inner_power) - min(inner_power))):
                 inner_power[i] = inner_power[i-1]
 
-
         self.power_interp = interp1d(
             wind_speeds,
             inner_power
         )
-
-
 
         """
         Given an array of wind speeds, this function returns an array of the
