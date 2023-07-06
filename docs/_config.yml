@@ -4,8 +4,8 @@
 title: FLORIS
 author: National Renewable Energy Laboratory
 logo: gch.gif
-copyright: '2022'
-only_build_toc_files: true
+copyright: '2023'
+only_build_toc_files: false
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
@@ -23,7 +23,7 @@ bibtex_bibfiles:
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/nrel/floris
+  url: https://github.com/NREL/floris
   path_to_book: docs
   branch: main
 
@@ -45,6 +45,7 @@ sphinx:
   - 'sphinx_autodoc_typehints'
   - 'sphinxcontrib.autoyaml'
   - 'sphinx.ext.napoleon'       # Formats google and numpy docstring styles
+  - 'sphinxcontrib.mermaid'
   config:
     html_theme: sphinx_book_theme
     templates_path:

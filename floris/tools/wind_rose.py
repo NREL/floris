@@ -1478,6 +1478,7 @@ class WindRose:
         ax.set_theta_direction(-1)
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
+        ax.set_xticks(np.arange(0, 2*np.pi, np.pi/4))
         ax.set_xticklabels(["N", "NE", "E", "SE", "S", "SW", "W", "NW"])
 
         return ax
@@ -1552,6 +1553,7 @@ class WindRose:
         ax.set_theta_direction(-1)
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
+        ax.set_xticks(np.arange(0, 2*np.pi, np.pi/4))
         ax.set_xticklabels(["N", "NE", "E", "SE", "S", "SW", "W", "NW"])
 
         return ax

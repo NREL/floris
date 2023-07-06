@@ -119,6 +119,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "floris/simulation/wake_deflection/jimenez.py" = ["F841"]
 "floris/simulation/wake_velocity/jensen.py" = ["F841"]
 "floris/simulation/wake_velocity/gauss.py" = ["F841"]
+"floris/simulation/wake_velocity/empirical_gauss.py" = ["F841"]
 
 # I001 unsorted-imports: ignore because the import order is meaningful to navigate
 # import dependencies

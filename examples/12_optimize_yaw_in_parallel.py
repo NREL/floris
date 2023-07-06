@@ -67,12 +67,13 @@ if __name__ == "__main__":
     )
 
     # Pour this into a parallel computing interface
+    parallel_interface = "concurrent"
     fi_aep_parallel = ParallelComputingInterface(
         fi=fi_aep,
         max_workers=max_workers,
         n_wind_direction_splits=max_workers,
         n_wind_speed_splits=1,
-        use_mpi4py=False,
+        interface=parallel_interface,
         print_timings=True,
     )
 
@@ -113,7 +114,7 @@ if __name__ == "__main__":
         max_workers=max_workers,
         n_wind_direction_splits=max_workers,
         n_wind_speed_splits=1,
-        use_mpi4py=False,
+        interface=parallel_interface,
         print_timings=True,
     )
 
