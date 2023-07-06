@@ -265,6 +265,8 @@ def power(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
+        if (rotor_effective_velocities < 0.).any():
+            print("Some rotor effective velocities are negative.")
         p += (
             power_interp[turb_type](rotor_effective_velocities)
             * (turbine_type_map == turb_type)
@@ -665,7 +667,9 @@ class Turbine(BaseClass):
         )
         self.power_interp = interp1d(
             wind_speeds,
-            inner_power
+            inner_power,
+            bounds_error=False,
+            fill_value=0
         )
 
         """
