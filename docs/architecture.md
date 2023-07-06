@@ -1,17 +1,29 @@
 
 # Architecture and Design
 
-Two fundamental ideas define the design of the FLORIS software:
+At the outset of the design of the FLORIS software, a few fundamental ideas were identified
+that should continue to guide future design decisions. These characteristics should never
+be violated, and ongoing work should strive to meet these ideas and expand on them as much
+as possible.
 
-- Modularity in wake model formulation
-    - Mathematical formulation should be straightforward to include
+- Modularity in wake model formulation:
+    - New mathematical formulation should be straightforward to incorporate.
     - Requisite solver and grid data structures should not conflict with other existing
-        wake models
-- Management of abstraction
+        wake models.
+- Any new feature or work should not affect an existing feature:
+    - Low level code should be reused as much as possible, but high level code should rarely
+        be repurposed.
+    - It is expected that a new feature will include a new user entry point
+        at the highest level.
+    - Avoid flags and if-statements that allow using one high-level routine for multiple unrelated
+        tasks.
+    - When in doubt, create a new pipeline from the user-level API to the low level implementation
+        and refactor to consolidate, if necessary, afterwards.
+- Management of abstraction:
     - Low level code is opaque but well tested and exercised; it should be very computationally
-        efficient with low algorithmic complexity
+        efficient with low algorithmic complexity.
     - High level code should be expressive and clear even if it results in verbose or less
-        efficient code
+        efficient code.
 
 The FLORIS software consists of two primary high-level packages and a few other low level
 packages. The internal structure and hierarchy is described below.
