@@ -142,7 +142,7 @@ def compute_tilt_angles_for_floating_turbines(
         else:
             tilt_angles += (
                 tilt_interp[turb_type](rotor_effective_velocities)
-                * np.array(turbine_type_map == turb_type)
+                * (turbine_type_map == turb_type)
             )
 
     # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
@@ -273,7 +273,7 @@ def power(
             print("Some rotor effective velocities less than zero!")
         p += (
             power_interp[turb_type](rotor_effective_velocities)
-            * np.array(turbine_type_map == turb_type)
+            * (turbine_type_map == turb_type)
         )
 
     return p * ref_density_cp_ct
@@ -361,7 +361,7 @@ def Ct(
         # type to the main thrust coefficient array
         thrust_coefficient += (
             fCt[turb_type](average_velocities)
-            * np.array(turbine_type_map == turb_type)
+            * (turbine_type_map == turb_type)
         )
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
@@ -671,7 +671,9 @@ class Turbine(BaseClass):
         )
         self.power_interp = interp1d(
             wind_speeds,
-            inner_power
+            inner_power,
+            bounds_error=False,
+            fill_value=0
         )
 
         """

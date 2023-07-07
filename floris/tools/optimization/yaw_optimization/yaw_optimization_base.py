@@ -360,6 +360,9 @@ class YawOptimization:
             yaw_angles = self._yaw_angles_baseline_subset
         if turbine_weights is None:
             turbine_weights = self._turbine_weights_subset
+        if heterogeneous_speed_multipliers is not None:
+            fi_subset.floris.flow_field.\
+                heterogenous_inflow_config['speed_multipliers'] = heterogeneous_speed_multipliers
 
         # Ensure format [incompatible with _subset notation]
         yaw_angles = self._unpack_variable(yaw_angles, subset=True)
