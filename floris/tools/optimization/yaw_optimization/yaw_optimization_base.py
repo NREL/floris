@@ -367,10 +367,6 @@ class YawOptimization:
         # Ensure format [incompatible with _subset notation]
         yaw_angles = self._unpack_variable(yaw_angles, subset=True)
 
-        if heterogeneous_speed_multipliers is not None:
-            fi_subset.floris.flow_field.heterogenous_inflow_config['speed_multipliers'] = \
-                heterogeneous_speed_multipliers
-
         # # Correct wind direction definition: 270 deg is from left, cw positive
         # wd_array = wrap_360(wd_array)
 

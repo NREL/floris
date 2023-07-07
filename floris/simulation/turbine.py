@@ -265,12 +265,6 @@ def power(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        if (rotor_effective_velocities < 0.).any():
-            rotor_effective_velocities = np.maximum(
-                rotor_effective_velocities, 
-                np.zeros_like(rotor_effective_velocities)
-            )
-            print("Some rotor effective velocities less than zero!")
         p += (
             power_interp[turb_type](rotor_effective_velocities)
             * (turbine_type_map == turb_type)
