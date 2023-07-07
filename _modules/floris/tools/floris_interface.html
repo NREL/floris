@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1367,7 +1397,7 @@ title="Open an issue"
 <span class="sd">                - **logging**: See `floris.simulation.floris.Floris` for more details.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">het_map</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">configuration</span> <span class="o">=</span> <span class="n">configuration</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">configuration</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
@@ -1378,12 +1408,6 @@ title="Open an issue"
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The Floris `configuration` must be of type &#39;dict&#39;, &#39;str&#39;, or &#39;Path&#39;.&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Store the heterogeneous map for use after reinitailization</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="n">het_map</span>
-        <span class="c1"># Assign the heterogeneous map to the flow field</span>
-        <span class="c1"># Needed for a direct call to fi.calculate_wake without fi.reinitialize</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="n">het_map</span>
 
         <span class="c1"># If ref height is -1, assign the hub height</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e-6</span><span class="p">:</span>
@@ -1428,14 +1452,12 @@ title="Open an issue"
 
 <div class="viewcode-block" id="FlorisInterface.copy"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an independent copy of the current FlorisInterface object&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span> <span class="n">het_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">het_map</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="FlorisInterface.calculate_wake"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.calculate_wake">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_wake</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">tilt_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># points: NDArrayFloat | list[float] | None = None,</span>
-        <span class="c1"># track_n_upstream_wakes: bool = False,</span>
+        <span class="c1"># tilt_angles: NDArrayFloat | list[float] | None = None,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and</span>
@@ -1444,13 +1466,6 @@ title="Open an issue"
 <span class="sd">        Args:</span>
 <span class="sd">            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.</span>
 <span class="sd">                Defaults to None.</span>
-<span class="sd">            tilt_angles (NDArrayFloat | list[float] | None, optional): Turbine tilt angles.</span>
-<span class="sd">                Defaults to None.</span>
-<span class="sd">            points: (NDArrayFloat | list[float] | None, optional): The x, y, and z</span>
-<span class="sd">                coordinates at which the flow field velocity is to be recorded. Defaults</span>
-<span class="sd">                to None.</span>
-<span class="sd">            track_n_upstream_wakes (bool, optional): When *True*, will keep track of the</span>
-<span class="sd">                number of upstream wakes a turbine is experiencing. Defaults to *False*.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">yaw_angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1463,14 +1478,14 @@ title="Open an issue"
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span>
 
-        <span class="c1"># TODO is this required?</span>
-        <span class="k">if</span> <span class="n">tilt_angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles</span> <span class="o">=</span> <span class="n">tilt_angles</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span>
-            <span class="p">)</span>
+        <span class="c1"># # TODO is this required?</span>
+        <span class="c1"># if tilt_angles is not None:</span>
+        <span class="c1">#     self.floris.farm.tilt_angles = tilt_angles</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     self.floris.farm.set_tilt_to_ref_tilt(</span>
+        <span class="c1">#         self.floris.flow_field.n_wind_directions,</span>
+        <span class="c1">#         self.floris.flow_field.n_wind_speeds</span>
+        <span class="c1">#     )</span>
 
         <span class="c1"># Initialize solution space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">initialize_domain</span><span class="p">()</span>
@@ -1514,7 +1529,6 @@ title="Open an issue"
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">wind_speeds</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">wind_directions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># wind_layout: list[float] | NDArrayFloat | None = None,</span>
         <span class="n">wind_shear</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">wind_veer</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reference_wind_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1526,12 +1540,9 @@ title="Open an issue"
         <span class="n">layout_y</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">turbine_type</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">turbine_library_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># turbine_id: list[str] | None = None,</span>
-        <span class="c1"># wtg_id: list[str] | None = None,</span>
-        <span class="c1"># with_resolution: float | None = None,</span>
         <span class="n">solver_settings</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">het_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">heterogenous_inflow_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># Export the floris object recursively as a dictionary</span>
         <span class="n">floris_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
@@ -1555,8 +1566,8 @@ title="Open an issue"
             <span class="n">flow_field_dict</span><span class="p">[</span><span class="s2">&quot;turbulence_intensity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">turbulence_intensity</span>
         <span class="k">if</span> <span class="n">air_density</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">flow_field_dict</span><span class="p">[</span><span class="s2">&quot;air_density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">air_density</span>
-        <span class="k">if</span> <span class="n">het_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="n">het_map</span>
+        <span class="k">if</span> <span class="n">heterogenous_inflow_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">flow_field_dict</span><span class="p">[</span><span class="s2">&quot;heterogenous_inflow_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">heterogenous_inflow_config</span>
 
         <span class="c1">## Farm</span>
         <span class="k">if</span> <span class="n">layout_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1573,10 +1584,9 @@ title="Open an issue"
         <span class="c1">## Wake</span>
         <span class="c1"># if wake is not None:</span>
         <span class="c1">#     self.floris.wake = wake</span>
-        <span class="c1"># if turbulence_intensity is not None:</span>
-        <span class="c1">#     pass  # TODO: this should be in the code, but maybe got skipped?</span>
         <span class="c1"># if turbulence_kinetic_energy is not None:</span>
         <span class="c1">#     pass  # TODO: not needed until GCH</span>
+
         <span class="k">if</span> <span class="n">solver_settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">floris_dict</span><span class="p">[</span><span class="s2">&quot;solver&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">solver_settings</span>
 
@@ -1584,9 +1594,7 @@ title="Open an issue"
         <span class="n">floris_dict</span><span class="p">[</span><span class="s2">&quot;farm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">farm_dict</span>
 
         <span class="c1"># Create a new instance of floris and attach to self</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span> <span class="o">=</span> <span class="n">Floris</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">floris_dict</span><span class="p">)</span>
-        <span class="c1"># Re-assign the hetergeneous inflow map to flow field</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">het_map</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span> <span class="o">=</span> <span class="n">Floris</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">floris_dict</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FlorisInterface.get_plane_of_points"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_plane_of_points">[docs]</a>    <span class="k">def</span> <span class="nf">get_plane_of_points</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1608,9 +1616,14 @@ title="Open an issue"
 <span class="sd">            :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get results vectors</span>
-        <span class="n">x_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-        <span class="n">y_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-        <span class="n">z_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;z&quot;</span><span class="p">):</span>
+            <span class="n">x_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted_inertial_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">y_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted_inertial_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">z_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted_inertial_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">y_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">z_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="n">u_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="n">v_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="n">w_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -1741,7 +1754,6 @@ title="Open an issue"
 
         <span class="c1"># Reset the fi object back to the turbine grid configuration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span> <span class="o">=</span> <span class="n">Floris</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">floris_dict</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">het_map</span>
 
         <span class="c1"># Run the simulation again for futher postprocessing (i.e. now we can get farm power)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">current_yaw_angles</span><span class="p">)</span>
@@ -1820,7 +1832,6 @@ title="Open an issue"
 
         <span class="c1"># Reset the fi object back to the turbine grid configuration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span> <span class="o">=</span> <span class="n">Floris</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">floris_dict</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">het_map</span>
 
         <span class="c1"># Run the simulation again for futher postprocessing (i.e. now we can get farm power)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">current_yaw_angles</span><span class="p">)</span>
@@ -1899,7 +1910,6 @@ title="Open an issue"
 
         <span class="c1"># Reset the fi object back to the turbine grid configuration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">floris</span> <span class="o">=</span> <span class="n">Floris</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">floris_dict</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">het_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">het_map</span>
 
         <span class="c1"># Run the simulation again for futher postprocessing (i.e. now we can get farm power)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">current_yaw_angles</span><span class="p">)</span>
@@ -1933,11 +1943,9 @@ title="Open an issue"
                 <span class="s2">&quot;first running `FlorisInterface.calculate_wake`.&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_effective_velocities</span>
-
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">power</span><span class="p">(</span>
             <span class="n">ref_density_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_density_cp_cts</span><span class="p">,</span>
-            <span class="n">rotor_effective_velocities</span><span class="o">=</span><span class="n">rotor_effective_velocities</span><span class="p">,</span>
+            <span class="n">rotor_effective_velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">turbine_effective_velocities</span><span class="p">,</span>
             <span class="n">power_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_power_interps</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1953,6 +1961,8 @@ title="Open an issue"
             <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">turbine_Cts</span></div>
 
@@ -1966,12 +1976,18 @@ title="Open an issue"
             <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">turbine_ais</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">turbine_average_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">average_velocity</span><span class="p">(</span><span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">average_velocity</span><span class="p">(</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">turbine_effective_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
@@ -1987,6 +2003,8 @@ title="Open an issue"
             <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">rotor_effective_velocities</span>
 
@@ -2259,7 +2277,6 @@ title="Open an issue"
 
         <span class="k">return</span> <span class="n">aep</span></div>
 
-
 <div class="viewcode-block" id="FlorisInterface.sample_flow_at_points"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.sample_flow_at_points">[docs]</a>    <span class="k">def</span> <span class="nf">sample_flow_at_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Extract the wind speed at points in the flow.</span>
@@ -2279,7 +2296,6 @@ title="Open an issue"
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;x, y, and z must be the same size&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solve_for_points</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span></div>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2318,35 +2334,6 @@ title="Open an issue"
             <span class="k">return</span> <span class="n">xcoords</span><span class="p">,</span> <span class="n">ycoords</span><span class="p">,</span> <span class="n">zcoords</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">xcoords</span><span class="p">,</span> <span class="n">ycoords</span></div></div>
-
-
-<div class="viewcode-block" id="generate_heterogeneous_wind_map"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html#floris.tools.floris_interface.generate_heterogeneous_wind_map">[docs]</a><span class="k">def</span> <span class="nf">generate_heterogeneous_wind_map</span><span class="p">(</span><span class="n">speed_ups</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Compute the 3-dimensional interpolants for each wind diretion</span>
-        <span class="c1"># Linear interpolation is used for points within the user-defined area of values,</span>
-        <span class="c1"># while a nearest-neighbor interpolant is used for points outside that region</span>
-        <span class="n">in_region</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span>
-        <span class="p">]</span>
-        <span class="n">out_region</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">NearestNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span>
-        <span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Compute the 2-dimensional interpolants for each wind diretion</span>
-        <span class="c1"># Linear interpolation is used for points within the user-defined area of values,</span>
-        <span class="c1"># while a nearest-neighbor interpolant is used for points outside that region</span>
-        <span class="n">in_region</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span>
-        <span class="p">]</span>
-        <span class="n">out_region</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">NearestNDInterpolator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span> <span class="n">speed_up</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">speed_up</span> <span class="ow">in</span> <span class="n">speed_ups</span>
-        <span class="p">]</span>
-
-    <span class="k">return</span> <span class="p">[</span><span class="n">in_region</span><span class="p">,</span> <span class="n">out_region</span><span class="p">]</span></div>
 </pre></div>
 
               </div>

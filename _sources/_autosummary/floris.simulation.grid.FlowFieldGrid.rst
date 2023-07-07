@@ -30,6 +30,9 @@ floris.simulation.grid.FlowFieldGrid
 
    .. autosummary::
    
+      ~FlowFieldGrid.x_center_of_rotation
+      ~FlowFieldGrid.y_center_of_rotation
+      ~FlowFieldGrid.cubature_weights
       ~FlowFieldGrid.grid_resolution
       ~FlowFieldGrid.n_turbines
       ~FlowFieldGrid.n_wind_directions
@@ -40,11 +43,11 @@ floris.simulation.grid.FlowFieldGrid
       ~FlowFieldGrid.turbine_coordinates_array
       ~FlowFieldGrid.wind_directions
       ~FlowFieldGrid.wind_speeds
-      ~FlowFieldGrid.x
       ~FlowFieldGrid.x_sorted
-      ~FlowFieldGrid.y
+      ~FlowFieldGrid.x_sorted_inertial_frame
       ~FlowFieldGrid.y_sorted
-      ~FlowFieldGrid.z
+      ~FlowFieldGrid.y_sorted_inertial_frame
       ~FlowFieldGrid.z_sorted
+      ~FlowFieldGrid.z_sorted_inertial_frame
    
    

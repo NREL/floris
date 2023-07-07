@@ -50,8 +50,6 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="floris.simulation.grid" href="floris.simulation.grid.html" />
@@ -371,6 +369,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -465,6 +468,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -472,6 +485,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -730,11 +753,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1014,6 +1032,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1128,6 +1151,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1384,8 +1412,8 @@ title="Print to PDF"
 <h1>floris.simulation.flow_field.FlowField<a class="headerlink" href="#floris-simulation-flow-field-flowfield" title="Permalink to this headline">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.flow_field.</span></span><span class="sig-name descname"><span class="pre">FlowField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_shear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/flow_field.html#FlowField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.flow_field.FlowField" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="floris.type_dec.FromDictMixin.html#floris.type_dec.FromDictMixin" title="floris.type_dec.FromDictMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">floris.type_dec.FromDictMixin</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.flow_field.</span></span><span class="sig-name descname"><span class="pre">FlowField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_shear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogenous_inflow_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/flow_field.html#FlowField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.flow_field.FlowField" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="floris.simulation.base.BaseClass.html#floris.simulation.base.BaseClass" title="floris.simulation.base.BaseClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">floris.simulation.base.BaseClass</span></code></a></p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <colgroup>
@@ -1404,6 +1432,18 @@ title="Print to PDF"
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.from_dict" title="floris.simulation.flow_field.FlowField.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></p></td>
 <td><p>Maps a data dictionary to an <cite>attr</cite>-defined class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.generate_heterogeneous_wind_map" title="floris.simulation.flow_field.FlowField.generate_heterogeneous_wind_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_heterogeneous_wind_map</span></code></a></p></td>
+<td><p>This function creates the heterogeneous interpolant used to calculate heterogeneous inflows.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.get_model_defaults" title="floris.simulation.flow_field.FlowField.get_model_defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_model_defaults</span></code></a></p></td>
+<td><p>Produces a dictionary of the keyword arguments and their defaults.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.het_map_validator" title="floris.simulation.flow_field.FlowField.het_map_validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">het_map_validator</span></code></a></p></td>
+<td><p>Using this validator to make sure that the het_map has an interpolant defined for each wind direction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.heterogenous_config_validator" title="floris.simulation.flow_field.FlowField.heterogenous_config_validator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">heterogenous_config_validator</span></code></a></p></td>
+<td><p>Using the validator method to check that the heterogenous_inflow_config dictionary has the correct key-value pairs.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.initialize_velocity_field" title="floris.simulation.flow_field.FlowField.initialize_velocity_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_velocity_field</span></code></a></p></td>
 <td><p><dl class="field-list simple">
@@ -1452,52 +1492,61 @@ title="Print to PDF"
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.time_series" title="floris.simulation.flow_field.FlowField.time_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_series</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.n_wind_speeds" title="floris.simulation.flow_field.FlowField.n_wind_speeds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_wind_speeds</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.heterogenous_inflow_config" title="floris.simulation.flow_field.FlowField.heterogenous_inflow_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">heterogenous_inflow_config</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.n_wind_directions" title="floris.simulation.flow_field.FlowField.n_wind_directions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_wind_directions</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.n_wind_speeds" title="floris.simulation.flow_field.FlowField.n_wind_speeds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_wind_speeds</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.u_initial_sorted" title="floris.simulation.flow_field.FlowField.u_initial_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_initial_sorted</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.n_wind_directions" title="floris.simulation.flow_field.FlowField.n_wind_directions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_wind_directions</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.v_initial_sorted" title="floris.simulation.flow_field.FlowField.v_initial_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_initial_sorted</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.u_initial_sorted" title="floris.simulation.flow_field.FlowField.u_initial_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_initial_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.w_initial_sorted" title="floris.simulation.flow_field.FlowField.w_initial_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">w_initial_sorted</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.v_initial_sorted" title="floris.simulation.flow_field.FlowField.v_initial_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_initial_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.u_sorted" title="floris.simulation.flow_field.FlowField.u_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_sorted</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.w_initial_sorted" title="floris.simulation.flow_field.FlowField.w_initial_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">w_initial_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.v_sorted" title="floris.simulation.flow_field.FlowField.v_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_sorted</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.u_sorted" title="floris.simulation.flow_field.FlowField.u_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.w_sorted" title="floris.simulation.flow_field.FlowField.w_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">w_sorted</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.v_sorted" title="floris.simulation.flow_field.FlowField.v_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.u" title="floris.simulation.flow_field.FlowField.u"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.w_sorted" title="floris.simulation.flow_field.FlowField.w_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">w_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.v" title="floris.simulation.flow_field.FlowField.v"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.u" title="floris.simulation.flow_field.FlowField.u"><code class="xref py py-obj docutils literal notranslate"><span class="pre">u</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.w" title="floris.simulation.flow_field.FlowField.w"><code class="xref py py-obj docutils literal notranslate"><span class="pre">w</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.v" title="floris.simulation.flow_field.FlowField.v"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.het_map" title="floris.simulation.flow_field.FlowField.het_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">het_map</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.w" title="floris.simulation.flow_field.FlowField.w"><code class="xref py py-obj docutils literal notranslate"><span class="pre">w</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.dudz_initial_sorted" title="floris.simulation.flow_field.FlowField.dudz_initial_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dudz_initial_sorted</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.het_map" title="floris.simulation.flow_field.FlowField.het_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">het_map</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.dudz_initial_sorted" title="floris.simulation.flow_field.FlowField.dudz_initial_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dudz_initial_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field_sorted</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field_sorted_avg</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field_sorted</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg" title="floris.simulation.flow_field.FlowField.turbulence_intensity_field_sorted_avg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbulence_intensity_field_sorted_avg</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.logger" title="floris.simulation.flow_field.FlowField.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.flow_field.FlowField.state" title="floris.simulation.flow_field.FlowField.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -1513,6 +1562,7 @@ title="Print to PDF"
 <li><p><strong>turbulence_intensity</strong> (<em>float</em>) -- </p></li>
 <li><p><strong>reference_wind_height</strong> (<em>float</em>) -- </p></li>
 <li><p><strong>time_series</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>heterogenous_inflow_config</strong> (<em>dict</em>) -- </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1557,6 +1607,11 @@ title="Print to PDF"
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.time_series">
 <span class="sig-name descname"><span class="pre">time_series</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.flow_field.FlowField.time_series" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.heterogenous_inflow_config">
+<span class="sig-name descname"><span class="pre">heterogenous_inflow_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#floris.simulation.flow_field.FlowField.heterogenous_inflow_config" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1674,6 +1729,42 @@ title="Print to PDF"
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.heterogenous_config_validator">
+<span class="sig-name descname"><span class="pre">heterogenous_config_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/flow_field.html#FlowField.heterogenous_config_validator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.flow_field.FlowField.heterogenous_config_validator" title="Permalink to this definition">#</a></dt>
+<dd><p>Using the validator method to check that the heterogenous_inflow_config dictionary has
+the correct key-value pairs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>instance</strong> (<em>attr._make.Attribute</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.het_map_validator">
+<span class="sig-name descname"><span class="pre">het_map_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/flow_field.html#FlowField.het_map_validator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.flow_field.FlowField.het_map_validator" title="Permalink to this definition">#</a></dt>
+<dd><p>Using this validator to make sure that the het_map has an interpolant defined for
+each wind direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>instance</strong> (<em>attr._make.Attribute</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>list</em><em> | </em><em>None</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.initialize_velocity_field">
 <span class="sig-name descname"><span class="pre">initialize_velocity_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/flow_field.html#FlowField.initialize_velocity_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.flow_field.FlowField.initialize_velocity_field" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
@@ -1695,6 +1786,53 @@ title="Print to PDF"
 <dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.calculate_speed_ups">
 <span class="sig-name descname"><span class="pre">calculate_speed_ups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">het_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/flow_field.html#FlowField.calculate_speed_ups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.flow_field.FlowField.calculate_speed_ups" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.generate_heterogeneous_wind_map">
+<span class="sig-name descname"><span class="pre">generate_heterogeneous_wind_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/flow_field.html#FlowField.generate_heterogeneous_wind_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.flow_field.FlowField.generate_heterogeneous_wind_map" title="Permalink to this definition">#</a></dt>
+<dd><p>This function creates the heterogeneous interpolant used to calculate heterogeneous
+inflows. The interpolant is for computing wind speed based on an x and y location in the
+flow field. This is computed using SciPy's LinearNDInterpolator and uses a fill value
+equal to the freestream for interpolated values outside of the user-defined heterogeneous
+map bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>heterogenous_inflow_config</strong> (<em>dict</em>) -- The heterogeneous inflow configuration dictionary.</p></li>
+<li><p><strong>specified.</strong> (<em>The configuration should have the following inputs</em>) -- <ul>
+<li><dl class="simple">
+<dt><strong>speed_multipliers</strong> (list): A list of speed up factors that will multiply</dt><dd><p>the specified freestream wind speed. This 2-dimensional array should have an
+array of multiplicative factors defined for each wind direction.</p>
+</dd>
+</dl>
+</li>
+<li><p><strong>x</strong> (list): A list of x locations at which the speed up factors are defined.</p></li>
+<li><p><strong>y</strong>: A list of y locations at which the speed up factors are defined.</p></li>
+<li><p><strong>z</strong> (optional): A list of z locations at which the speed up factors are defined.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField._get_model_dict">
+<span class="sig-name descname"><span class="pre">_get_model_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#floris.simulation.flow_field.FlowField._get_model_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Convenience method that wraps the <cite>attrs.asdict</cite> method. Returns the object's
+parameters as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The provided or default, if no input provided, model settings as a dictionary.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.as_dict">
@@ -1735,6 +1873,33 @@ The data dictionary to be mapped.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.get_model_defaults">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_model_defaults</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#floris.simulation.flow_field.FlowField.get_model_defaults" title="Permalink to this definition">#</a></dt>
+<dd><p>Produces a dictionary of the keyword arguments and their defaults.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary of keyword argument: default.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.logger">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#floris.simulation.flow_field.FlowField.logger" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.flow_field.FlowField.state">
+<span class="sig-name descname"><span class="pre">state</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#floris.simulation.flow_field.FlowField.state" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

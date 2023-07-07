@@ -24,6 +24,7 @@ floris.tools.visualization
       reverse_cut_plane_x_axis_in_plot
       show_plots
       visualize_cut_plane
+      visualize_heterogeneous_cut_plane
       visualize_quiver
    
    

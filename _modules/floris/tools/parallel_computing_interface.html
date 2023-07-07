@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1317,6 +1347,7 @@ title="Open an issue"
   <h1>Source code for floris.tools.parallel_computing_interface</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2022 Shell</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">perf_counter</span> <span class="k">as</span> <span class="n">timerpc</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1329,17 +1360,15 @@ title="Open an issue"
 
 <div class="viewcode-block" id="_load_local_floris_object"><a class="viewcode-back" href="../../../_autosummary/floris.tools.parallel_computing_interface.html#floris.tools.parallel_computing_interface._load_local_floris_object">[docs]</a><span class="k">def</span> <span class="nf">_load_local_floris_object</span><span class="p">(</span>
     <span class="n">fi_dict</span><span class="p">,</span>
-    <span class="n">het_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">unc_pmfs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">fix_yaw_in_relative_frame</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
     <span class="c1"># Load local FLORIS object</span>
     <span class="k">if</span> <span class="n">unc_pmfs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="n">fi_dict</span><span class="p">,</span> <span class="n">het_map</span><span class="o">=</span><span class="n">het_map</span><span class="p">)</span>
+        <span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="n">fi_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">fi</span> <span class="o">=</span> <span class="n">UncertaintyInterface</span><span class="p">(</span>
             <span class="n">fi_dict</span><span class="p">,</span>
-            <span class="n">het_map</span><span class="o">=</span><span class="n">het_map</span><span class="p">,</span>
             <span class="n">unc_pmfs</span><span class="o">=</span><span class="n">unc_pmfs</span><span class="p">,</span>
             <span class="n">fix_yaw_in_relative_frame</span><span class="o">=</span><span class="n">fix_yaw_in_relative_frame</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1391,7 +1420,8 @@ title="Open an issue"
         <span class="n">max_workers</span><span class="p">,</span>
         <span class="n">n_wind_direction_splits</span><span class="p">,</span>
         <span class="n">n_wind_speed_splits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">use_mpi4py</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">interface</span><span class="o">=</span><span class="s2">&quot;multiprocessing&quot;</span><span class="p">,</span>  <span class="c1"># Options are &#39;multiprocessing&#39;, &#39;mpi4py&#39; or &#39;concurrent&#39;</span>
+        <span class="n">use_mpi4py</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">propagate_flowfield_from_workers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">print_timings</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
@@ -1402,17 +1432,51 @@ title="Open an issue"
 <span class="sd">        fi (FlorisInterface or UncertaintyInterface object): Interactive FLORIS object used to</span>
 <span class="sd">            perform the wake and turbine calculations. Can either be a regular FlorisInterface</span>
 <span class="sd">            object or can be an UncertaintyInterface object.</span>
+<span class="sd">        max_workers (int): Number of parallel workers, typically equal to the number of cores</span>
+<span class="sd">            you have on your system or HPC.</span>
+<span class="sd">        n_wind_direction_splits (int): Number of sectors to split the wind direction array over.</span>
+<span class="sd">            This is typically equal to max_workers, or a multiple of it.</span>
+<span class="sd">        n_wind_speed_splits (int): Number of sectors to split the wind speed array over. This is</span>
+<span class="sd">            typically 1 or 2. Defaults to 1.</span>
+<span class="sd">        interface (str): Parallel computing interface to leverage. Recommended is &#39;concurrent&#39;</span>
+<span class="sd">            or &#39;multiprocessing&#39; for local (single-system) use, and &#39;mpi4py&#39; for high performance</span>
+<span class="sd">            computing on multiple nodes. Defaults to &#39;multiprocessing&#39;.</span>
+<span class="sd">        use_mpi4py (bool): Deprecated option to enable/disable the usage of &#39;mpi4py&#39;. This option</span>
+<span class="sd">            has been superseded by &#39;interface&#39;.</span>
+<span class="sd">        propagate_flowfield_from_workers (bool): By enabling this, the flow field from every</span>
+<span class="sd">            floris object (one for each worker) is exported, combined and sent back to the main</span>
+<span class="sd">            module. This is slow so unless it&#39;s needed, it&#39;s recommended to be disabled. Defaults</span>
+<span class="sd">            to False.</span>
+<span class="sd">        print_timings (bool): Print the computation time to the console. Defaults to False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Load the correct library</span>
-        <span class="k">if</span> <span class="n">use_mpi4py</span><span class="p">:</span>
+        <span class="c1"># Set defaults for backward compatibility</span>
+        <span class="k">if</span> <span class="n">use_mpi4py</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;The option &#39;mpi4py&#39; will be removed in a future version. &quot;</span>
+                <span class="s2">&quot;Please use the option &#39;interface&#39;.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">use_mpi4py</span><span class="p">:</span>
+                <span class="n">interface</span> <span class="o">=</span> <span class="s2">&quot;mpi4py&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">interface</span> <span class="o">=</span> <span class="s2">&quot;multiprocessing&quot;</span>
+
+        <span class="k">if</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;mpi4py&quot;</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">mpi4py.futures</span> <span class="k">as</span> <span class="nn">mp</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">MPIPoolExecutor</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;multiprocessing&quot;</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span>
             <span class="k">if</span> <span class="n">max_workers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">max_workers</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;concurrent&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">ProcessPoolExecutor</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Interface &#39;</span><span class="si">{</span><span class="n">interface</span><span class="si">}</span><span class="s2">&#39; not recognized. &quot;</span>
+                <span class="s2">&quot;Please use &#39;concurrent&#39;, &#39;multiprocessing&#39; or &#39;mpi4py&#39;.&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Initialize floris object and copy common properties</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fi</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1433,7 +1497,7 @@ title="Open an issue"
             <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">max_workers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_direction_splits</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speed_splits</span><span class="p">])</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">propagate_flowfield_from_workers</span> <span class="o">=</span> <span class="n">propagate_flowfield_from_workers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">use_mpi4py</span> <span class="o">=</span> <span class="n">use_mpi4py</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_timings</span> <span class="o">=</span> <span class="n">print_timings</span>
 
 <div class="viewcode-block" id="ParallelComputingInterface.copy"><a class="viewcode-back" href="../../../_autosummary/floris.tools.parallel_computing_interface.ParallelComputingInterface.html#floris.tools.parallel_computing_interface.ParallelComputingInterface.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1490,7 +1554,7 @@ title="Open an issue"
             <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">,</span>
             <span class="n">n_wind_direction_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_wind_direction_splits</span><span class="p">,</span>
             <span class="n">n_wind_speed_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_wind_speed_splits</span><span class="p">,</span>
-            <span class="n">use_mpi4py</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_mpi4py</span><span class="p">,</span>
+            <span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span>
             <span class="n">propagate_flowfield_from_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">propagate_flowfield_from_workers</span><span class="p">,</span>
             <span class="n">print_timings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">print_timings</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -1534,7 +1598,7 @@ title="Open an issue"
 
                 <span class="c1"># Prepare lightweight data to pass along</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="p">,</span> <span class="n">FlorisInterface</span><span class="p">):</span>
-                    <span class="n">fi_information</span> <span class="o">=</span> <span class="p">(</span><span class="n">fi_dict_split</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">het_map</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">fi_information</span> <span class="o">=</span> <span class="p">(</span><span class="n">fi_dict_split</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">fi_information</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">fi_dict_split</span><span class="p">,</span>
@@ -1613,7 +1677,15 @@ title="Open an issue"
         <span class="c1"># Perform parallel calculation</span>
         <span class="n">t1</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">_get_turbine_powers_serial</span><span class="p">,</span> <span class="n">multiargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;mpi4py&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;multiprocessing&quot;</span><span class="p">):</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">_get_turbine_powers_serial</span><span class="p">,</span> <span class="n">multiargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="n">_get_turbine_powers_serial</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="c1"># out = list(out)</span>
         <span class="n">t_execution</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span> <span class="o">-</span> <span class="n">t1</span>
 
         <span class="c1"># Postprocessing: merge power production (and opt. flow field) from individual runs</span>
@@ -1810,7 +1882,23 @@ title="Open an issue"
         <span class="c1"># Optimize yaw angles using parallel processing</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimizing yaw angles with </span><span class="si">{:d}</span><span class="s2"> workers.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="p">))</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-            <span class="n">df_opt_splits</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">_optimize_yaw_angles_serial</span><span class="p">,</span> <span class="n">multiargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;mpi4py&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;multiprocessing&quot;</span><span class="p">):</span>
+                <span class="n">df_opt_splits</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">_optimize_yaw_angles_serial</span><span class="p">,</span> <span class="n">multiargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_opt_splits</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="n">_optimize_yaw_angles_serial</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">]</span>
+                <span class="p">)</span>
         <span class="n">t2</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
 
         <span class="c1"># Combine all solutions from multiprocessing into single dataframe</span>

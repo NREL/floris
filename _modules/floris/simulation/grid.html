@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1345,7 +1375,11 @@ title="Open an issue"
     <span class="n">NDArrayFloat</span><span class="p">,</span>
     <span class="n">NDArrayInt</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">,</span> <span class="n">Vec3</span>
+<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">reverse_rotate_coordinates_rel_west</span><span class="p">,</span>
+    <span class="n">rotate_coordinates_rel_west</span><span class="p">,</span>
+    <span class="n">Vec3</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="Grid"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.grid.Grid.html#floris.simulation.grid.Grid">[docs]</a><span class="nd">@define</span>
@@ -1390,12 +1424,13 @@ title="Open an issue"
     <span class="n">n_wind_speeds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">n_wind_directions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">turbine_coordinates_array</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">x</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
-    <span class="n">y</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
-    <span class="n">z</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
     <span class="n">x_sorted</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">y_sorted</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">z_sorted</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">x_sorted_inertial_frame</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">y_sorted_inertial_frame</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">z_sorted_inertial_frame</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_coordinates_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">elements</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_coordinates</span><span class="p">])</span>
@@ -1429,17 +1464,16 @@ title="Open an issue"
     <span class="k">def</span> <span class="nf">grid_resolution_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># TODO move this to the grid types and off of the base class</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that grid resolution is given as int or Vec3 with int components.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="n">TurbineGrid</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="n">TurbineGrid</span><span class="p">,</span> <span class="n">TurbineCubatureGrid</span><span class="p">,</span> <span class="n">PointsGrid</span><span class="p">)):</span>
             <span class="k">return</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="n">FlowFieldPlanarGrid</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FlowFieldPlanarGrid</span><span class="p">):</span>
             <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">int</span>
             <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">int</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="n">FlowFieldGrid</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FlowFieldGrid</span><span class="p">):</span>
             <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">int</span>
             <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">int</span>
             <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">int</span>
-        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="n">PointsGrid</span><span class="p">:</span>
-            <span class="k">return</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`grid_resolution` must be of type int or Iterable(int,)&quot;</span><span class="p">)</span></div>
 
@@ -1468,6 +1502,7 @@ title="Open an issue"
     <span class="n">unsorted_indices</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">x_center_of_rotation</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">y_center_of_rotation</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">average_method</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span>
 
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__attrs_post_init__</span><span class="p">()</span>
@@ -1591,9 +1626,187 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">_z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
+        <span class="c1"># Now calculate grid coordinates in original frame (from 270 deg perspective)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_sorted_inertial_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_sorted_inertial_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted_inertial_frame</span> <span class="o">=</span> \
+            <span class="n">reverse_rotate_coordinates_rel_west</span><span class="p">(</span>
+                <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+                <span class="n">grid_x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+                <span class="n">grid_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+                <span class="n">grid_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+                <span class="n">x_center_of_rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_center_of_rotation</span><span class="p">,</span>
+                <span class="n">y_center_of_rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_center_of_rotation</span><span class="p">,</span>
+            <span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="TurbineCubatureGrid"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html#floris.simulation.grid.TurbineCubatureGrid">[docs]</a><span class="nd">@define</span>
+<span class="k">class</span> <span class="nc">TurbineCubatureGrid</span><span class="p">(</span><span class="n">Grid</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This grid type arranges points throughout the swept area of the rotor based on the cubature</span>
+<span class="sd">    of a unit circle. The number of points is set by the user, and then the location of the</span>
+<span class="sd">    points and their weighting in integration is automatically set. This type of grid</span>
+<span class="sd">    enables a better approximation of the total incoming velocities on the rotor and therefore</span>
+<span class="sd">    a more accurate average velocity, thrust coefficient, and axial induction.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        turbine_coordinates (`list[Vec3]`): The list of turbine coordinates as `Vec3` objects.</span>
+<span class="sd">        reference_turbine_diameter (:py:obj:`float`): The reference turbine&#39;s rotor diameter.</span>
+<span class="sd">        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.</span>
+<span class="sd">        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.</span>
+<span class="sd">        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points to</span>
+<span class="sd">            include in the cubature method. This value must be in the range [1, 10], and the</span>
+<span class="sd">            corresponding cubature weights are set automatically.</span>
+<span class="sd">        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time</span>
+<span class="sd">            series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">sorted_coord_indices</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">unsorted_indices</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">x_center_of_rotation</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">y_center_of_rotation</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">average_method</span> <span class="o">=</span> <span class="s2">&quot;simple-cubature&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__attrs_post_init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_grid</span><span class="p">()</span>
+
+<div class="viewcode-block" id="TurbineCubatureGrid.set_grid"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html#floris.simulation.grid.TurbineCubatureGrid.set_grid">[docs]</a>    <span class="k">def</span> <span class="nf">set_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># These are the rotated coordinates of the wind turbines based on the wind direction</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_center_of_rotation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_center_of_rotation</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">turbine_coordinates_array</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Coefficients</span>
+        <span class="n">cubature_coefficients</span> <span class="o">=</span> <span class="n">TurbineCubatureGrid</span><span class="o">.</span><span class="n">get_cubature_coefficients</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)</span>
+
+        <span class="c1"># Generate grid points</span>
+        <span class="n">yv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">cubature_coefficients</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">],</span> <span class="n">cubature_coefficients</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">])</span>
+        <span class="n">zv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">cubature_coefficients</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">],</span> <span class="n">cubature_coefficients</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">])</span>
+
+        <span class="c1"># Calculate weighting terms for the grid points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cubature_weights</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">cubature_coefficients</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_resolution</span><span class="p">)))</span>
+            <span class="o">*</span> <span class="n">cubature_coefficients</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Here, the coordinates are already rotated to the correct orientation for each</span>
+        <span class="c1"># wind direction</span>
+        <span class="n">template_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">yv</span><span class="p">),</span>  <span class="c1"># Number of coordinates</span>
+                <span class="mi">1</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">floris_float_type</span>
+        <span class="p">)</span>
+        <span class="n">_x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">template_grid</span>
+        <span class="n">_y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">template_grid</span>
+        <span class="n">_z</span> <span class="o">=</span> <span class="n">z</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">template_grid</span>
+        <span class="k">for</span> <span class="n">ti</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_turbines</span><span class="p">):</span>
+            <span class="n">_y</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ti</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">yv</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">reference_turbine_diameter</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">_z</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ti</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="n">zv</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">reference_turbine_diameter</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+        <span class="c1"># Sort the turbines at each wind direction</span>
+
+        <span class="c1"># Get the sorted indices for the x coordinates. These are the indices</span>
+        <span class="c1"># to sort the turbines from upstream to downstream for all wind directions.</span>
+        <span class="c1"># Also, store the indices to sort them back for when the calculation finishes.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">_x</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sorted_coord_indices</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unsorted_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Put the turbine coordinates into the final arrays in their sorted order</span>
+        <span class="c1"># These are the coordinates that should be used within the internal calculations</span>
+        <span class="c1"># such as the wake models and the solvers.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">_z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TurbineCubatureGrid.get_cubature_coefficients"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html#floris.simulation.grid.TurbineCubatureGrid.get_cubature_coefficients">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_cubature_coefficients</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve cubature integration coefficients. This is a class-method, and therefore</span>
+<span class="sd">        the coefficients can be accessed without creating an instance of the class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            N (int): Order of the cubature integration. The total</span>
+<span class="sd">            number of rotor points will be N^2. Must be an integer in the range [1, 10].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            cubature_coefficients (dict): A dictionary containing the cubature</span>
+<span class="sd">            integration coefficients, &quot;r&quot;, &quot;t&quot;, &quot;q&quot;, &quot;A&quot; and &quot;B&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Order of cubature integration must be between &#39;1&#39; and &#39;10&#39;, given </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0000000000000000000000000</span><span class="p">]</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0000000000000000000000000</span><span class="p">]</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0000000000000000000000000</span><span class="p">]</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0000000000000000000000000</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">]</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">]</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">]</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.5000000000000000000000000</span><span class="p">,</span> <span class="mf">0.5000000000000000000000000</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.8164965809277260327324280</span><span class="p">,</span> <span class="mf">0.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.8164965809277260327324280</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.8660254037844386467637232</span><span class="p">,</span> <span class="mf">0.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.8660254037844386467637232</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.5000000000000000000000000</span><span class="p">,</span> <span class="mf">1.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.5000000000000000000000000</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.3750000000000000000000000</span><span class="p">,</span> <span class="mf">0.2500000000000000000000000</span><span class="p">,</span> <span class="mf">0.3750000000000000000000000</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.8880738339771152621607646</span><span class="p">,</span><span class="o">-</span><span class="mf">0.4597008433809830609776340</span><span class="p">,</span> <span class="mf">0.4597008433809830609776340</span><span class="p">,</span> <span class="mf">0.8880738339771152621607646</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9238795325112867561281832</span><span class="p">,</span><span class="o">-</span><span class="mf">0.3826834323650897717284600</span><span class="p">,</span> <span class="mf">0.3826834323650897717284600</span><span class="p">,</span> <span class="mf">0.9238795325112867561281832</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.3826834323650897717284600</span><span class="p">,</span> <span class="mf">0.9238795325112867561281832</span><span class="p">,</span> <span class="mf">0.9238795325112867561281832</span><span class="p">,</span> <span class="mf">0.3826834323650897717284600</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.2500000000000000000000000</span><span class="p">,</span> <span class="mf">0.2500000000000000000000000</span><span class="p">,</span> <span class="mf">0.2500000000000000000000000</span><span class="p">,</span> <span class="mf">0.2500000000000000000000000</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9192110607898045793726291</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5958615826865180525340234</span><span class="p">,</span> <span class="mf">0.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.5958615826865180525340234</span><span class="p">,</span> <span class="mf">0.9192110607898045793726291</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9510565162951535721164393</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5877852522924731291687060</span><span class="p">,</span> <span class="mf">0.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.5877852522924731291687060</span><span class="p">,</span> <span class="mf">0.9510565162951535721164393</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.3090169943749474241022934</span><span class="p">,</span> <span class="mf">0.8090169943749474241022934</span><span class="p">,</span> <span class="mf">1.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.8090169943749474241022934</span><span class="p">,</span> <span class="mf">0.3090169943749474241022934</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.1882015313502336375250377</span><span class="p">,</span> <span class="mf">0.2562429130942108069194067</span><span class="p">,</span> <span class="mf">0.1111111111111111111111111</span><span class="p">,</span> <span class="mf">0.2562429130942108069194067</span><span class="p">,</span> <span class="mf">0.1882015313502336375250377</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9419651451198933233901941</span><span class="p">,</span><span class="o">-</span><span class="mf">0.7071067811865475244008444</span><span class="p">,</span><span class="o">-</span><span class="mf">0.3357106870197288066698994</span><span class="p">,</span> <span class="mf">0.3357106870197288066698994</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.9419651451198933233901941</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9659258262890682867497432</span><span class="p">,</span><span class="o">-</span><span class="mf">0.7071067811865475244008444</span><span class="p">,</span><span class="o">-</span><span class="mf">0.2588190451025207623488988</span><span class="p">,</span> <span class="mf">0.2588190451025207623488988</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.9659258262890682867497432</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.2588190451025207623488988</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.9659258262890682867497432</span><span class="p">,</span> <span class="mf">0.9659258262890682867497432</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.2588190451025207623488988</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.1388888888888888888888889</span><span class="p">,</span> <span class="mf">0.2222222222222222222222222</span><span class="p">,</span> <span class="mf">0.1388888888888888888888889</span><span class="p">,</span> <span class="mf">0.1388888888888888888888889</span><span class="p">,</span> <span class="mf">0.2222222222222222222222222</span><span class="p">,</span> <span class="mf">0.1388888888888888888888889</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9546790248493448767148503</span><span class="p">,</span><span class="o">-</span><span class="mf">0.7684615381131740734708478</span><span class="p">,</span><span class="o">-</span><span class="mf">0.4608042298407784190147371</span><span class="p">,</span> <span class="mf">0.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.4608042298407784190147371</span><span class="p">,</span> <span class="mf">0.7684615381131740734708478</span><span class="p">,</span> <span class="mf">0.9546790248493448767148503</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9749279121818236070181317</span><span class="p">,</span><span class="o">-</span><span class="mf">0.7818314824680298087084445</span><span class="p">,</span><span class="o">-</span><span class="mf">0.4338837391175581204757683</span><span class="p">,</span> <span class="mf">0.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.4338837391175581204757683</span><span class="p">,</span> <span class="mf">0.7818314824680298087084445</span><span class="p">,</span> <span class="mf">0.9749279121818236070181317</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.2225209339563144042889026</span><span class="p">,</span> <span class="mf">0.6234898018587335305250049</span><span class="p">,</span> <span class="mf">0.9009688679024191262361023</span><span class="p">,</span> <span class="mf">1.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.9009688679024191262361023</span><span class="p">,</span> <span class="mf">0.6234898018587335305250049</span><span class="p">,</span> <span class="mf">0.2225209339563144042889026</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.1102311055883841876377392</span><span class="p">,</span> <span class="mf">0.1940967344215859403901162</span><span class="p">,</span> <span class="mf">0.1644221599900298719721446</span><span class="p">,</span> <span class="mf">0.0625000000000000000000000</span><span class="p">,</span> <span class="mf">0.1644221599900298719721446</span><span class="p">,</span> <span class="mf">0.1940967344215859403901162</span><span class="p">,</span> <span class="mf">0.1102311055883841876377392</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9646596061808674528345806</span><span class="p">,</span><span class="o">-</span><span class="mf">0.8185294874300058668603761</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5744645143153507855310459</span><span class="p">,</span><span class="o">-</span><span class="mf">0.2634992299855422962484895</span><span class="p">,</span> <span class="mf">0.2634992299855422962484895</span><span class="p">,</span> <span class="mf">0.5744645143153507855310459</span><span class="p">,</span> <span class="mf">0.8185294874300058668603761</span><span class="p">,</span> <span class="mf">0.9646596061808674528345806</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9807852804032304491261822</span><span class="p">,</span><span class="o">-</span><span class="mf">0.8314696123025452370787884</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5555702330196022247428308</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1950903220161282678482849</span><span class="p">,</span> <span class="mf">0.1950903220161282678482849</span><span class="p">,</span> <span class="mf">0.5555702330196022247428308</span><span class="p">,</span> <span class="mf">0.8314696123025452370787884</span><span class="p">,</span> <span class="mf">0.9807852804032304491261822</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.1950903220161282678482849</span><span class="p">,</span> <span class="mf">0.5555702330196022247428308</span><span class="p">,</span> <span class="mf">0.8314696123025452370787884</span><span class="p">,</span> <span class="mf">0.9807852804032304491261822</span><span class="p">,</span> <span class="mf">0.9807852804032304491261822</span><span class="p">,</span> <span class="mf">0.8314696123025452370787884</span><span class="p">,</span> <span class="mf">0.5555702330196022247428308</span><span class="p">,</span> <span class="mf">0.1950903220161282678482849</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.0869637112843634643432660</span><span class="p">,</span> <span class="mf">0.1630362887156365356567340</span><span class="p">,</span> <span class="mf">0.1630362887156365356567340</span><span class="p">,</span> <span class="mf">0.0869637112843634643432660</span><span class="p">,</span> <span class="mf">0.0869637112843634643432660</span><span class="p">,</span> <span class="mf">0.1630362887156365356567340</span><span class="p">,</span> <span class="mf">0.1630362887156365356567340</span><span class="p">,</span> <span class="mf">0.0869637112843634643432660</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9710282199223060261836893</span><span class="p">,</span><span class="o">-</span><span class="mf">0.8503863747508400503582112</span><span class="p">,</span><span class="o">-</span><span class="mf">0.6452980455813291706201889</span><span class="p">,</span><span class="o">-</span><span class="mf">0.3738447061866471744516959</span><span class="p">,</span> <span class="mf">0.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.3738447061866471744516959</span><span class="p">,</span> <span class="mf">0.6452980455813291706201889</span><span class="p">,</span> <span class="mf">0.8503863747508400503582112</span><span class="p">,</span> <span class="mf">0.9710282199223060261836893</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9848077530122080593667430</span><span class="p">,</span><span class="o">-</span><span class="mf">0.8660254037844386467637232</span><span class="p">,</span><span class="o">-</span><span class="mf">0.6427876096865393263226434</span><span class="p">,</span><span class="o">-</span><span class="mf">0.3420201433256687330440996</span><span class="p">,</span> <span class="mf">0.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.3420201433256687330440996</span><span class="p">,</span> <span class="mf">0.6427876096865393263226434</span><span class="p">,</span> <span class="mf">0.8660254037844386467637232</span><span class="p">,</span> <span class="mf">0.9848077530122080593667430</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.1736481776669303488517166</span><span class="p">,</span> <span class="mf">0.5000000000000000000000000</span><span class="p">,</span> <span class="mf">0.7660444431189780352023927</span><span class="p">,</span> <span class="mf">0.9396926207859083840541093</span><span class="p">,</span> <span class="mf">1.0000000000000000000000000</span><span class="p">,</span> <span class="mf">0.9396926207859083840541093</span><span class="p">,</span> <span class="mf">0.7660444431189780352023927</span><span class="p">,</span> <span class="mf">0.5000000000000000000000000</span><span class="p">,</span> <span class="mf">0.1736481776669303488517166</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.0718567803956129706617061</span><span class="p">,</span> <span class="mf">0.1406780075747310300960863</span><span class="p">,</span> <span class="mf">0.1559132614878706270409275</span><span class="p">,</span> <span class="mf">0.1115519505417853722012801</span><span class="p">,</span> <span class="mf">0.0400000000000000000000000</span><span class="p">,</span> <span class="mf">0.1115519505417853722012801</span><span class="p">,</span> <span class="mf">0.1559132614878706270409275</span><span class="p">,</span> <span class="mf">0.1406780075747310300960863</span><span class="p">,</span> <span class="mf">0.0718567803956129706617061</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">elif</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9762632447087885713212574</span><span class="p">,</span><span class="o">-</span><span class="mf">0.8770602345636481685478274</span><span class="p">,</span><span class="o">-</span><span class="mf">0.7071067811865475244008444</span><span class="p">,</span><span class="o">-</span><span class="mf">0.4803804169063914437972190</span><span class="p">,</span><span class="o">-</span><span class="mf">0.2165873427295972057980989</span><span class="p">,</span> <span class="mf">0.2165873427295972057980989</span><span class="p">,</span> <span class="mf">0.4803804169063914437972190</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.8770602345636481685478274</span><span class="p">,</span> <span class="mf">0.9762632447087885713212574</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9876883405951377261900402</span><span class="p">,</span><span class="o">-</span><span class="mf">0.8910065241883678623597096</span><span class="p">,</span><span class="o">-</span><span class="mf">0.7071067811865475244008444</span><span class="p">,</span><span class="o">-</span><span class="mf">0.4539904997395467915604084</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1564344650402308690101053</span><span class="p">,</span> <span class="mf">0.1564344650402308690101053</span><span class="p">,</span> <span class="mf">0.4539904997395467915604084</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.8910065241883678623597096</span><span class="p">,</span> <span class="mf">0.9876883405951377261900402</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.1564344650402308690101053</span><span class="p">,</span> <span class="mf">0.4539904997395467915604084</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.8910065241883678623597096</span><span class="p">,</span> <span class="mf">0.9876883405951377261900402</span><span class="p">,</span> <span class="mf">0.9876883405951377261900402</span><span class="p">,</span> <span class="mf">0.8910065241883678623597096</span><span class="p">,</span> <span class="mf">0.7071067811865475244008444</span><span class="p">,</span> <span class="mf">0.4539904997395467915604084</span><span class="p">,</span> <span class="mf">0.1564344650402308690101053</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.0592317212640472718785660</span><span class="p">,</span> <span class="mf">0.1196571676248416170103229</span><span class="p">,</span> <span class="mf">0.1422222222222222222222222</span><span class="p">,</span> <span class="mf">0.1196571676248416170103229</span><span class="p">,</span> <span class="mf">0.0592317212640472718785660</span><span class="p">,</span> <span class="mf">0.0592317212640472718785660</span><span class="p">,</span> <span class="mf">0.1196571676248416170103229</span><span class="p">,</span> <span class="mf">0.1422222222222222222222222</span><span class="p">,</span> <span class="mf">0.1196571676248416170103229</span><span class="p">,</span> <span class="mf">0.0592317212640472718785660</span><span class="p">]</span>  <span class="c1"># noqa: E501</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+            <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+            <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+            <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+            <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">N</span><span class="p">,</span>
+        <span class="p">}</span></div></div>
 
 <div class="viewcode-block" id="FlowFieldGrid"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.grid.FlowFieldGrid.html#floris.simulation.grid.FlowFieldGrid">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">FlowFieldGrid</span><span class="p">(</span><span class="n">Grid</span><span class="p">):</span>
@@ -1604,6 +1817,8 @@ title="Open an issue"
 <span class="sd">        reference_turbine_diameter (:py:obj:`float`): The reference turbine&#39;s rotor diameter.</span>
 <span class="sd">        grid_resolution (:py:obj:`int`): The number of points on each turbine</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_center_of_rotation</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">y_center_of_rotation</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__attrs_post_init__</span><span class="p">()</span>
@@ -1626,7 +1841,7 @@ title="Open an issue"
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># These are the rotated coordinates of the wind turbines based on the wind direction</span>
-        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_center_of_rotation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_center_of_rotation</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">turbine_coordinates_array</span>
         <span class="p">)</span>
@@ -1649,7 +1864,18 @@ title="Open an issue"
 
         <span class="bp">self</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">=</span> <span class="n">x_points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">=</span> <span class="n">y_points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span> <span class="o">=</span> <span class="n">z_points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span> <span class="o">=</span> <span class="n">z_points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="c1"># Now calculate grid coordinates in original frame (from 270 deg perspective)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_sorted_inertial_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_sorted_inertial_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted_inertial_frame</span> <span class="o">=</span> \
+            <span class="n">reverse_rotate_coordinates_rel_west</span><span class="p">(</span>
+                <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+                <span class="n">grid_x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+                <span class="n">grid_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+                <span class="n">grid_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+                <span class="n">x_center_of_rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_center_of_rotation</span><span class="p">,</span>
+                <span class="n">y_center_of_rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_center_of_rotation</span><span class="p">,</span>
+            <span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="FlowFieldPlanarGrid"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.grid.FlowFieldPlanarGrid.html#floris.simulation.grid.FlowFieldPlanarGrid">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">FlowFieldPlanarGrid</span><span class="p">(</span><span class="n">Grid</span><span class="p">):</span>
@@ -1664,7 +1890,8 @@ title="Open an issue"
     <span class="n">planar_coordinate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">x1_bounds</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">x2_bounds</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
+    <span class="n">x_center_of_rotation</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">y_center_of_rotation</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">unsorted_indices</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -1688,11 +1915,10 @@ title="Open an issue"
 <span class="sd">        Then, create the grid based on this wind-from-left orientation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># These are the rotated coordinates of the wind turbines based on the wind direction</span>
-        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_center_of_rotation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_center_of_rotation</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">turbine_coordinates_array</span>
         <span class="p">)</span>
-
         <span class="n">max_diameter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference_turbine_diameter</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span>  <span class="c1"># Rules of thumb for horizontal plane</span>
@@ -1752,57 +1978,18 @@ title="Open an issue"
 
             <span class="bp">self</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">=</span> <span class="n">x_points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">=</span> <span class="n">y_points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span> <span class="o">=</span> <span class="n">z_points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span> <span class="o">=</span> <span class="n">z_points</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
 
-        <span class="c1"># self.sorted_indices = self.x.argsort(axis=2)</span>
-        <span class="c1"># self.unsorted_indices = self.sorted_indices.argsort(axis=2)</span>
-
-        <span class="c1"># Put the turbines into the final arrays in their sorted order</span>
-        <span class="c1"># self.x = np.take_along_axis(self.x, self.sorted_indices, axis=2)</span>
-        <span class="c1"># self.y = np.take_along_axis(self.y, self.sorted_indices, axis=2)</span>
-        <span class="c1"># self.z = np.take_along_axis(self.z, self.sorted_indices, axis=2)</span>
-
-    <span class="c1"># def finalize(self):</span>
-        <span class="c1"># sorted_indices = self.x.argsort(axis=2)</span>
-        <span class="c1"># unsorted_indices = sorted_indices.argsort(axis=2)</span>
-
-        <span class="c1"># # print(self.x)</span>
-
-        <span class="c1"># x_coordinates, y_coordinates, _ = self.turbine_coordinates_array.T</span>
-
-        <span class="c1"># x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2</span>
-        <span class="c1"># y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2</span>
-        <span class="c1"># # print(x_center_of_rotation)</span>
-        <span class="c1"># # print(y_center_of_rotation)</span>
-        <span class="c1"># # lkj</span>
-
-        <span class="c1"># self.x = np.take_along_axis(self.x, self.unsorted_indices, axis=2)</span>
-        <span class="c1"># self.y = np.take_along_axis(self.y, self.unsorted_indices, axis=2)</span>
-        <span class="c1"># self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)</span>
-        <span class="c1"># # print(self.x)</span>
-
-        <span class="c1"># self.x, self.y, self.z = self._rotated_grid(</span>
-        <span class="c1">#     -1 * self.wind_directions,</span>
-        <span class="c1">#     (x_center_of_rotation, y_center_of_rotation)</span>
-        <span class="c1"># )</span>
-        <span class="c1"># TODO figure out how to un-rotate grid for plotting after it has been solved</span>
-        <span class="c1"># pass</span>
-
-    <span class="c1"># def _rotated_grid(self, angle, center_of_rotation):</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     Rotate the discrete flow field grid.</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     angle = ((angle - 270) % 360 + 360) % 360</span>
-    <span class="c1">#     # angle = np.reshape(angle, (len(angle), 1, 1))</span>
-    <span class="c1">#     xoffset = self.x - center_of_rotation[0]</span>
-    <span class="c1">#     yoffset = self.y - center_of_rotation[1]</span>
-    <span class="c1">#     rotated_x = (</span>
-    <span class="c1">#         xoffset * cosd(angle) - yoffset * sind(angle) + center_of_rotation[0]</span>
-    <span class="c1">#     )</span>
-    <span class="c1">#     rotated_y = (</span>
-    <span class="c1">#         xoffset * sind(angle) + yoffset * cosd(angle) + center_of_rotation[1]</span>
-    <span class="c1">#     )</span>
-    <span class="c1">#     return rotated_x, rotated_y, self.z</span>
+        <span class="c1"># Now calculate grid coordinates in original frame (from 270 deg perspective)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_sorted_inertial_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_sorted_inertial_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_sorted_inertial_frame</span> <span class="o">=</span> \
+            <span class="n">reverse_rotate_coordinates_rel_west</span><span class="p">(</span>
+                <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+                <span class="n">grid_x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
+                <span class="n">grid_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">,</span>
+                <span class="n">grid_z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">,</span>
+                <span class="n">x_center_of_rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_center_of_rotation</span><span class="p">,</span>
+                <span class="n">y_center_of_rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_center_of_rotation</span><span class="p">,</span>
+            <span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="PointsGrid"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.grid.PointsGrid.html#floris.simulation.grid.PointsGrid">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">PointsGrid</span><span class="p">(</span><span class="n">Grid</span><span class="p">):</span>

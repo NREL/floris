@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1459,7 +1489,7 @@ title="Open an issue"
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tilt_angles</span> <span class="o">+=</span> <span class="p">(</span>
                 <span class="n">tilt_interp</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">rotor_effective_velocities</span><span class="p">)</span>
-                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+                <span class="o">*</span> <span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
             <span class="p">)</span>
 
     <span class="c1"># TODO: Not sure if this is the best way to do this? Basically replaces the initialized</span>
@@ -1484,6 +1514,8 @@ title="Open an issue"
     <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="n">NDArrayBool</span><span class="p">,</span>
     <span class="n">turbine_type_map</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
     <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+    <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">yaw_angle</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -1505,10 +1537,12 @@ title="Open an issue"
     <span class="c1"># Compute the rotor effective velocity adjusting for air density</span>
     <span class="c1"># TODO: This correction is currently split across two functions: this one and `power`, where in</span>
     <span class="c1"># `power` the returned power is multiplied by the reference air density</span>
-    <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">((</span><span class="n">air_density</span><span class="o">/</span><span class="n">ref_density_cp_ct</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span>
-        <span class="o">*</span> <span class="n">average_velocity</span><span class="p">(</span><span class="n">velocities</span><span class="p">)</span>
+    <span class="n">average_velocities</span> <span class="o">=</span> <span class="n">average_velocity</span><span class="p">(</span>
+        <span class="n">velocities</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
+        <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span>
     <span class="p">)</span>
+    <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="p">(</span><span class="n">air_density</span><span class="o">/</span><span class="n">ref_density_cp_ct</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">average_velocities</span>
 
     <span class="c1"># Compute the rotor effective velocity adjusting for yaw settings</span>
     <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="n">_rotor_velocity_yaw_correction</span><span class="p">(</span>
@@ -1580,7 +1614,7 @@ title="Open an issue"
         <span class="c1"># type to the main thrust coefficient array</span>
         <span class="n">p</span> <span class="o">+=</span> <span class="p">(</span>
             <span class="n">power_interp</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">rotor_effective_velocities</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">p</span> <span class="o">*</span> <span class="n">ref_density_cp_ct</span></div>
@@ -1596,6 +1630,8 @@ title="Open an issue"
     <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="n">NDArrayBool</span><span class="p">,</span>
     <span class="n">turbine_type_map</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
     <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayFilter</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+    <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Thrust coefficient of a turbine incorporating the yaw angle.</span>
@@ -1641,7 +1677,11 @@ title="Open an issue"
         <span class="n">turbine_type_map</span> <span class="o">=</span> <span class="n">turbine_type_map</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
         <span class="n">correct_cp_ct_for_tilt</span> <span class="o">=</span> <span class="n">correct_cp_ct_for_tilt</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
 
-    <span class="n">average_velocities</span> <span class="o">=</span> <span class="n">average_velocity</span><span class="p">(</span><span class="n">velocities</span><span class="p">)</span>
+    <span class="n">average_velocities</span> <span class="o">=</span> <span class="n">average_velocity</span><span class="p">(</span>
+        <span class="n">velocities</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
+        <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span>
+    <span class="p">)</span>
 
     <span class="c1"># Compute the tilt, if using floating turbines</span>
     <span class="n">old_tilt_angle</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">tilt_angle</span><span class="p">)</span>
@@ -1662,7 +1702,7 @@ title="Open an issue"
         <span class="c1"># type to the main thrust coefficient array</span>
         <span class="n">thrust_coefficient</span> <span class="o">+=</span> <span class="p">(</span>
             <span class="n">fCt</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">average_velocities</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="n">thrust_coefficient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">thrust_coefficient</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.9999</span><span class="p">)</span>
     <span class="n">effective_thrust</span> <span class="o">=</span> <span class="n">thrust_coefficient</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw_angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">tilt_angle</span> <span class="o">-</span> <span class="n">ref_tilt_cp_ct</span><span class="p">)</span>
@@ -1679,6 +1719,8 @@ title="Open an issue"
     <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="n">NDArrayBool</span><span class="p">,</span> <span class="c1"># (wind directions, wind speeds, turbines)</span>
     <span class="n">turbine_type_map</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span> <span class="c1"># (wind directions, 1, turbines)</span>
     <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayFilter</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+    <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Axial induction factor of the turbine incorporating</span>
 <span class="sd">    the thrust coefficient and yaw angle.</span>
@@ -1724,7 +1766,9 @@ title="Open an issue"
         <span class="n">tilt_interp</span><span class="p">,</span>
         <span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
         <span class="n">turbine_type_map</span><span class="p">,</span>
-        <span class="n">ix_filter</span>
+        <span class="n">ix_filter</span><span class="p">,</span>
+        <span class="n">average_method</span><span class="p">,</span>
+        <span class="n">cubature_weights</span>
     <span class="p">)</span>
 
     <span class="c1"># Then, process the input arguments as needed for this function</span>
@@ -1746,9 +1790,28 @@ title="Open an issue"
     <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="simple_mean"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html#floris.simulation.turbine.simple_mean">[docs]</a><span class="k">def</span> <span class="nf">simple_mean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="cubic_mean"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.cubic_mean.html#floris.simulation.turbine.cubic_mean">[docs]</a><span class="k">def</span> <span class="nf">cubic_mean</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">array</span> <span class="o">**</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="simple_cubature"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html#floris.simulation.turbine.simple_cubature">[docs]</a><span class="k">def</span> <span class="nf">simple_cubature</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">cubature_weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">cubature_weights</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">product</span> <span class="o">=</span> <span class="p">(</span><span class="n">array</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">simple_mean</span><span class="p">(</span><span class="n">product</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="cubic_cubature"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.cubic_cubature.html#floris.simulation.turbine.cubic_cubature">[docs]</a><span class="k">def</span> <span class="nf">cubic_cubature</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">cubature_weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">cubature_weights</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">array</span><span class="o">**</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">))</span></div>
+
 <div class="viewcode-block" id="average_velocity"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.average_velocity.html#floris.simulation.turbine.average_velocity">[docs]</a><span class="k">def</span> <span class="nf">average_velocity</span><span class="p">(</span>
     <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
-    <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayFilter</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayFilter</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+    <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This property calculates and returns the cube root of the</span>
 <span class="sd">    mean cubed velocity in the turbine&#39;s rotor swept area (m/s).</span>
@@ -1765,17 +1828,32 @@ title="Open an issue"
 <span class="sd">    Returns:</span>
 <span class="sd">        NDArrayFloat: The average velocity across the rotor(s).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Remove all invalid numbers from interpolation</span>
-    <span class="c1"># data = np.array(self.velocities)[~np.isnan(self.velocities)]</span>
 
     <span class="c1"># The input velocities are expected to be a 5 dimensional array with shape:</span>
     <span class="c1"># (# wind directions, # wind speeds, # turbines, grid resolution, grid resolution)</span>
 
     <span class="k">if</span> <span class="n">ix_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">velocities</span> <span class="o">=</span> <span class="n">velocities</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
-    <span class="n">axis</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">3</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">velocities</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)])</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">velocities</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">))</span></div>
 
+    <span class="n">axis</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">3</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">velocities</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)])</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;simple-mean&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">simple_mean</span><span class="p">(</span><span class="n">velocities</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cubic_mean</span><span class="p">(</span><span class="n">velocities</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;simple-cubature&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cubature_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cubature_weights is required for &#39;simple-cubature&#39; method.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">simple_cubature</span><span class="p">(</span><span class="n">velocities</span><span class="p">,</span> <span class="n">cubature_weights</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;cubic-cubature&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cubature_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cubature_weights is required for &#39;cubic-cubature&#39; method.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cubic_cubature</span><span class="p">(</span><span class="n">velocities</span><span class="p">,</span> <span class="n">cubature_weights</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incorrect method given.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PowerThrustTable"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html#floris.simulation.turbine.PowerThrustTable">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">PowerThrustTable</span><span class="p">(</span><span class="n">FromDictMixin</span><span class="p">):</span>

@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1331,6 +1361,7 @@ title="Open an issue"
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
@@ -1339,11 +1370,12 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">ConvexHull</span>
 
 <span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">Floris</span>
 <span class="kn">from</span> <span class="nn">floris.tools.cut_plane</span> <span class="kn">import</span> <span class="n">CutPlane</span>
 <span class="kn">from</span> <span class="nn">floris.tools.floris_interface</span> <span class="kn">import</span> <span class="n">FlorisInterface</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">rotate_coordinates_rel_west</span>
+<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">,</span> <span class="n">wind_delta</span>
 
 
 <div class="viewcode-block" id="show_plots"><a class="viewcode-back" href="../../../_autosummary/floris.tools.visualization.show_plots.html#floris.tools.visualization.show_plots">[docs]</a><span class="k">def</span> <span class="nf">show_plots</span><span class="p">():</span>
@@ -1356,9 +1388,10 @@ title="Open an issue"
     <span class="n">yaw_angles</span><span class="p">,</span>
     <span class="n">rotor_diameters</span><span class="p">,</span>
     <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">wind_direction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">270.0</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is deprecated and will be removed in v3.5, use `plot_turbines_with_fi` instead.</span>
+
 <span class="sd">    Plot wind plant layout from turbine locations.</span>
 
 <span class="sd">    Args:</span>
@@ -1366,20 +1399,20 @@ title="Open an issue"
 <span class="sd">        layout_x (np.array): Wind turbine locations (east-west).</span>
 <span class="sd">        layout_y (np.array): Wind turbine locations (north-south).</span>
 <span class="sd">        yaw_angles (np.array): Yaw angles of each wind turbine.</span>
-<span class="sd">        D (float): Wind turbine rotor diameter.</span>
-<span class="sd">        color (str): Pyplot color option to plot the turbines.</span>
-<span class="sd">        wind_direction (float): Wind direction (rotates farm)</span>
+<span class="sd">        rotor_diameters (np.array): Wind turbine rotor diameter.</span>
+<span class="sd">        color (str): pyplot color option to plot the turbines.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;The `plot_turbines` function is deprecated and will be removed in v3.5, &quot;</span>
+        <span class="s2">&quot;use `plot_turbines_with_fi` instead.&quot;</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>  <span class="c1"># This prints the calling function and this function in the warning</span>
+    <span class="p">)</span>
+
     <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
 
-    <span class="n">coordinates_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">))])</span>
-    <span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">wind_direction</span><span class="p">]),</span>
-        <span class="n">coordinates_array</span>
-    <span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yaw</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">layout_x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">layout_y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">yaw_angles</span><span class="p">,</span> <span class="n">rotor_diameters</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yaw</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="p">,</span> <span class="n">rotor_diameters</span><span class="p">):</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="n">x_0</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">yaw</span><span class="p">))</span> <span class="o">*</span> <span class="n">R</span>
         <span class="n">x_1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">yaw</span><span class="p">))</span> <span class="o">*</span> <span class="n">R</span>
@@ -1388,30 +1421,47 @@ title="Open an issue"
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x_0</span><span class="p">,</span> <span class="n">x_1</span><span class="p">],</span> <span class="p">[</span><span class="n">y_0</span><span class="p">,</span> <span class="n">y_1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="plot_turbines_with_fi"><a class="viewcode-back" href="../../../_autosummary/floris.tools.visualization.plot_turbines_with_fi.html#floris.tools.visualization.plot_turbines_with_fi">[docs]</a><span class="k">def</span> <span class="nf">plot_turbines_with_fi</span><span class="p">(</span><span class="n">fi</span><span class="p">:</span> <span class="n">FlorisInterface</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_turbines_with_fi"><a class="viewcode-back" href="../../../_autosummary/floris.tools.visualization.plot_turbines_with_fi.html#floris.tools.visualization.plot_turbines_with_fi">[docs]</a><span class="k">def</span> <span class="nf">plot_turbines_with_fi</span><span class="p">(</span>
+    <span class="n">fi</span><span class="p">:</span> <span class="n">FlorisInterface</span><span class="p">,</span>
+    <span class="n">ax</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">wd</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Wrapper function to plot turbines which extracts the data</span>
-<span class="sd">    from a FLORIS interface object</span>
+<span class="sd">    Plot the wind plant layout from turbine locations gotten from a FlorisInterface object.</span>
+<span class="sd">    Note that this function automatically uses the first wind direction and first wind speed.</span>
+<span class="sd">    Generally, it is most explicit to create a new FlorisInterface with only the single</span>
+<span class="sd">    wind condition that should be plotted.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        fi (:py:class:`floris.tools.flow_data.FlowData`):</span>
-<span class="sd">                FlowData object.</span>
-<span class="sd">        ax (:py:class:`matplotlib.pyplot.axes`): figure axes.</span>
-<span class="sd">        color (str, optional): Color to plot turbines</span>
+<span class="sd">        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.</span>
+<span class="sd">        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults to None.</span>
+<span class="sd">        color (str, optional): Color to plot turbines. Defaults to None.</span>
+<span class="sd">        wd (list, optional): The wind direction to plot the turbines relative to. Defaults to None.</span>
+<span class="sd">        yaw_angles (NDArray, optional): The yaw angles for the turbines. Defaults to None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">yaw_angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span>
-    <span class="n">plot_turbines</span><span class="p">(</span>
-        <span class="n">ax</span><span class="p">,</span>
-        <span class="n">fi</span><span class="o">.</span><span class="n">layout_x</span><span class="p">,</span>
-        <span class="n">fi</span><span class="o">.</span><span class="n">layout_y</span><span class="p">,</span>
-        <span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-        <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-        <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
-        <span class="n">wind_direction</span><span class="o">=</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">wd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wd</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Rotate yaw angles to inertial frame for plotting turbines relative to wind direction</span>
+    <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span> <span class="o">-</span> <span class="n">wind_delta</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wd</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+
+    <span class="n">rotor_diameters</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">yaw</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">fi</span><span class="o">.</span><span class="n">layout_y</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">rotor_diameters</span><span class="p">):</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">x_0</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">yaw</span><span class="p">))</span> <span class="o">*</span> <span class="n">R</span>
+        <span class="n">x_1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">yaw</span><span class="p">))</span> <span class="o">*</span> <span class="n">R</span>
+        <span class="n">y_0</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">yaw</span><span class="p">))</span> <span class="o">*</span> <span class="n">R</span>
+        <span class="n">y_1</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">yaw</span><span class="p">))</span> <span class="o">*</span> <span class="n">R</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x_0</span><span class="p">,</span> <span class="n">x_1</span><span class="p">],</span> <span class="p">[</span><span class="n">y_0</span><span class="p">,</span> <span class="n">y_1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="add_turbine_id_labels"><a class="viewcode-back" href="../../../_autosummary/floris.tools.visualization.add_turbine_id_labels.html#floris.tools.visualization.add_turbine_id_labels">[docs]</a><span class="k">def</span> <span class="nf">add_turbine_id_labels</span><span class="p">(</span><span class="n">fi</span><span class="p">:</span> <span class="n">FlorisInterface</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1426,6 +1476,8 @@ title="Open an issue"
 <span class="sd">        fi (FlorisInterface): Simulation object to get the layout and index information.</span>
 <span class="sd">        ax (plt.Axes): Axes object to add the labels.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Rotate layout to inertial frame for plotting turbines relative to wind direction</span>
     <span class="n">coordinates_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
         <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">fi</span><span class="o">.</span><span class="n">layout_y</span><span class="p">))</span>
@@ -1465,15 +1517,18 @@ title="Open an issue"
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
-    <span class="c1"># Reshape UMesh internally</span>
-    <span class="n">x1_mesh</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">x2_mesh</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">u_mesh</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">Zm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">u_mesh</span><span class="p">),</span> <span class="n">u_mesh</span><span class="p">)</span>
     <span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;contour.negative_linestyle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;solid&quot;</span>
 
     <span class="c1"># Plot the cut-through</span>
-    <span class="n">contours</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x1_mesh</span><span class="p">,</span> <span class="n">x2_mesh</span><span class="p">,</span> <span class="n">Zm</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">contours</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">tricontour</span><span class="p">(</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+        <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span>
+        <span class="n">extend</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">contours</span><span class="p">,</span> <span class="n">contours</span><span class="o">.</span><span class="n">levels</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
 
@@ -1489,6 +1544,7 @@ title="Open an issue"
     <span class="n">max_speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;coolwarm&quot;</span><span class="p">,</span>
     <span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">clevels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">color_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span>
@@ -1499,14 +1555,24 @@ title="Open an issue"
 <span class="sd">    Args:</span>
 <span class="sd">        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D</span>
 <span class="sd">            plane through wind plant.</span>
-<span class="sd">        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults</span>
+<span class="sd">        ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes. Defaults</span>
 <span class="sd">            to None.</span>
+<span class="sd">        vel_component (str, optional): The velocity component that the cut plane is</span>
+<span class="sd">            perpendicular to.</span>
 <span class="sd">        min_speed (float, optional): Minimum value of wind speed for</span>
 <span class="sd">            contours. Defaults to None.</span>
 <span class="sd">        max_speed (float, optional): Maximum value of wind speed for</span>
 <span class="sd">            contours. Defaults to None.</span>
 <span class="sd">        cmap (str, optional): Colormap specifier. Defaults to</span>
 <span class="sd">            &#39;coolwarm&#39;.</span>
+<span class="sd">        levels (np.array, optional): Contour levels for line contour plot.</span>
+<span class="sd">            Defaults to None.</span>
+<span class="sd">        clevels (np.array, optional): Contour levels for tricontourf plot.</span>
+<span class="sd">            Defaults to None.</span>
+<span class="sd">        color_bar (Boolean, optional): Flag to include a color bar on the plot.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        title (str, optional): User-supplied title for the plot. Defaults to &quot;&quot;.</span>
+<span class="sd">        **kwargs: Additional parameters to pass to line contour plot.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.</span>
@@ -1514,39 +1580,40 @@ title="Open an issue"
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
     <span class="k">if</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;u&#39;</span><span class="p">:</span>
-        <span class="n">vel_mesh</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
         <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;v&#39;</span><span class="p">:</span>
-        <span class="n">vel_mesh</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
         <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;w&#39;</span><span class="p">:</span>
-        <span class="n">vel_mesh</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
         <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
-    <span class="c1"># Reshape to 2d for plotting</span>
-    <span class="n">x1_mesh</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">x2_mesh</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">Zm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vel_mesh</span><span class="p">),</span> <span class="n">vel_mesh</span><span class="p">)</span>
+    <span class="c1"># Allow separate number of levels for tricontourf and for line_contour</span>
+    <span class="k">if</span> <span class="n">clevels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">clevels</span> <span class="o">=</span> <span class="n">levels</span>
 
     <span class="c1"># Plot the cut-through</span>
-    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span>
-        <span class="n">x1_mesh</span><span class="p">,</span>
-        <span class="n">x2_mesh</span><span class="p">,</span>
-        <span class="n">Zm</span><span class="p">,</span>
-        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">tricontourf</span><span class="p">(</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
         <span class="n">vmin</span><span class="o">=</span><span class="n">min_speed</span><span class="p">,</span>
         <span class="n">vmax</span><span class="o">=</span><span class="n">max_speed</span><span class="p">,</span>
-        <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
+        <span class="n">levels</span><span class="o">=</span><span class="n">clevels</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">extend</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Add line contour</span>
@@ -1559,6 +1626,137 @@ title="Open an issue"
         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">color_bar</span><span class="p">:</span>
+        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;m/s&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set the title</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+    <span class="c1"># Make equal axis</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">im</span></div>
+
+
+<div class="viewcode-block" id="visualize_heterogeneous_cut_plane"><a class="viewcode-back" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html#floris.tools.visualization.visualize_heterogeneous_cut_plane">[docs]</a><span class="k">def</span> <span class="nf">visualize_heterogeneous_cut_plane</span><span class="p">(</span>
+    <span class="n">cut_plane</span><span class="p">,</span>
+    <span class="n">fi</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">vel_component</span><span class="o">=</span><span class="s1">&#39;u&#39;</span><span class="p">,</span>
+    <span class="n">min_speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;coolwarm&quot;</span><span class="p">,</span>
+    <span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">clevels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">color_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">plot_het_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate pseudocolor mesh plot of the heterogeneous cut_plane.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D</span>
+<span class="sd">            plane through wind plant.</span>
+<span class="sd">        fi (:py:class:`~.tools.floris_interface.FlorisInterface`): FlorisInterface object.</span>
+<span class="sd">        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults</span>
+<span class="sd">            to None.</span>
+<span class="sd">        vel_component (str, optional): The velocity component that the cut plane is</span>
+<span class="sd">            perpendicular to.</span>
+<span class="sd">        min_speed (float, optional): Minimum value of wind speed for</span>
+<span class="sd">            contours. Defaults to None.</span>
+<span class="sd">        max_speed (float, optional): Maximum value of wind speed for</span>
+<span class="sd">            contours. Defaults to None.</span>
+<span class="sd">        cmap (str, optional): Colormap specifier. Defaults to</span>
+<span class="sd">            &#39;coolwarm&#39;.</span>
+<span class="sd">        levels (np.array, optional): Contour levels for line contour plot.</span>
+<span class="sd">            Defaults to None.</span>
+<span class="sd">        clevels (np.array, optional): Contour levels for tricontourf plot.</span>
+<span class="sd">            Defaults to None.</span>
+<span class="sd">        color_bar (Boolean, optional): Flag to include a color bar on the plot.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        title (str, optional): User-supplied title for the plot. Defaults to &quot;&quot;.</span>
+<span class="sd">        plot_het_bonds (boolean, optional): Flag to include the user-defined bounds of the</span>
+<span class="sd">            heterogeneous wind speed area. Defaults to True.</span>
+<span class="sd">        **kwargs: Additional parameters to pass to line contour plot.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;u&#39;</span><span class="p">:</span>
+        <span class="c1"># vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
+        <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;v&#39;</span><span class="p">:</span>
+        <span class="c1"># vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
+        <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;w&#39;</span><span class="p">:</span>
+        <span class="c1"># vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
+        <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="c1"># Allow separate number of levels for tricontourf and for line_contour</span>
+    <span class="k">if</span> <span class="n">clevels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">clevels</span> <span class="o">=</span> <span class="n">levels</span>
+
+    <span class="c1"># Plot the cut-through</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">tricontourf</span><span class="p">(</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span>
+        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=</span><span class="n">min_speed</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="n">max_speed</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="n">clevels</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">extend</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Add line contour</span>
+    <span class="n">line_contour_cut_plane</span><span class="p">(</span>
+        <span class="n">cut_plane</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+        <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+        <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Plot the user-defined heterogeneous flow area</span>
+    <span class="k">if</span> <span class="n">plot_het_bounds</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span>
+                    <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogenous_inflow_config</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span>
+                    <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogenous_inflow_config</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">hull</span> <span class="o">=</span> <span class="n">ConvexHull</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">points</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">points</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;k--&#39;</span><span class="p">,</span>
+            <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;ko&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;defined heterogeneous bounds&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>

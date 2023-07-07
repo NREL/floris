@@ -34,8 +34,11 @@ floris.simulation.grid.FlowFieldPlanarGrid
       ~FlowFieldPlanarGrid.planar_coordinate
       ~FlowFieldPlanarGrid.x1_bounds
       ~FlowFieldPlanarGrid.x2_bounds
+      ~FlowFieldPlanarGrid.x_center_of_rotation
+      ~FlowFieldPlanarGrid.y_center_of_rotation
       ~FlowFieldPlanarGrid.sorted_indices
       ~FlowFieldPlanarGrid.unsorted_indices
+      ~FlowFieldPlanarGrid.cubature_weights
       ~FlowFieldPlanarGrid.grid_resolution
       ~FlowFieldPlanarGrid.n_turbines
       ~FlowFieldPlanarGrid.n_wind_directions
@@ -46,11 +49,11 @@ floris.simulation.grid.FlowFieldPlanarGrid
       ~FlowFieldPlanarGrid.turbine_coordinates_array
       ~FlowFieldPlanarGrid.wind_directions
       ~FlowFieldPlanarGrid.wind_speeds
-      ~FlowFieldPlanarGrid.x
       ~FlowFieldPlanarGrid.x_sorted
-      ~FlowFieldPlanarGrid.y
+      ~FlowFieldPlanarGrid.x_sorted_inertial_frame
       ~FlowFieldPlanarGrid.y_sorted
-      ~FlowFieldPlanarGrid.z
+      ~FlowFieldPlanarGrid.y_sorted_inertial_frame
       ~FlowFieldPlanarGrid.z_sorted
+      ~FlowFieldPlanarGrid.z_sorted_inertial_frame
    
    

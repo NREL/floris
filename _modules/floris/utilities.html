@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1585,6 +1615,65 @@ title="Open an issue"
     <span class="n">z_coord_rotated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">wind_deviation_from_west</span><span class="p">)</span> <span class="o">*</span> <span class="n">z_coordinates</span>
     <span class="k">return</span> <span class="n">x_coord_rotated</span><span class="p">,</span> <span class="n">y_coord_rotated</span><span class="p">,</span> <span class="n">z_coord_rotated</span><span class="p">,</span> <span class="n">x_center_of_rotation</span><span class="p">,</span> \
         <span class="n">y_center_of_rotation</span></div>
+
+
+<div class="viewcode-block" id="reverse_rotate_coordinates_rel_west"><a class="viewcode-back" href="../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html#floris.utilities.reverse_rotate_coordinates_rel_west">[docs]</a><span class="k">def</span> <span class="nf">reverse_rotate_coordinates_rel_west</span><span class="p">(</span>
+    <span class="n">wind_directions</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">grid_x</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">grid_y</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">grid_z</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">x_center_of_rotation</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">y_center_of_rotation</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function reverses the rotation of the given grid so that the coordinates are aligned with</span>
+<span class="sd">    the original wind direction. The rotation happens about the centroid of the coordinates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        wind_directions (NDArrayFloat): Series of wind directions to base the rotation.</span>
+<span class="sd">        coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)</span>
+<span class="sd">            so that each element of the array coordinates[i] yields a three-component coordinate.</span>
+<span class="sd">        grid_x (NDArrayFloat): X-coordinates to be rotated.</span>
+<span class="sd">        grid_y (NDArrayFloat): Y-coordinates to be rotated.</span>
+<span class="sd">        grid_z (NDArrayFloat): Z-coordinates to be rotated.</span>
+<span class="sd">        x_center_of_rotation (float): The x-coordinate for the rotation center of the</span>
+<span class="sd">            input coordinates.</span>
+<span class="sd">        y_center_of_rotation (float): The y-coordinate for the rotational center of the</span>
+<span class="sd">            input coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate the difference in given wind direction from 270 / West</span>
+    <span class="c1"># We are rotating in the other direction</span>
+    <span class="n">wind_deviation_from_west</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">wind_delta</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">)</span>
+
+    <span class="c1"># Construct the arrays storing the turbine locations</span>
+    <span class="n">grid_x_reversed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">grid_x</span><span class="p">)</span>
+    <span class="n">grid_y_reversed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">grid_x</span><span class="p">)</span>
+    <span class="n">grid_z_reversed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">grid_x</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">wii</span><span class="p">,</span> <span class="n">angle_rotation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">wind_deviation_from_west</span><span class="p">):</span>
+        <span class="n">x_rot</span> <span class="o">=</span> <span class="n">grid_x</span><span class="p">[</span><span class="n">wii</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">y_rot</span> <span class="o">=</span> <span class="n">grid_y</span><span class="p">[</span><span class="n">wii</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">z_rot</span> <span class="o">=</span> <span class="n">grid_z</span><span class="p">[</span><span class="n">wii</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="c1"># Rotate turbine coordinates about the center</span>
+        <span class="n">x_rot_offset</span> <span class="o">=</span> <span class="n">x_rot</span> <span class="o">-</span> <span class="n">x_center_of_rotation</span>
+        <span class="n">y_rot_offset</span> <span class="o">=</span> <span class="n">y_rot</span> <span class="o">-</span> <span class="n">y_center_of_rotation</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">x_rot_offset</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">angle_rotation</span><span class="p">)</span>
+            <span class="o">-</span> <span class="n">y_rot_offset</span> <span class="o">*</span> <span class="n">sind</span><span class="p">(</span><span class="n">angle_rotation</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">x_center_of_rotation</span>
+        <span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">x_rot_offset</span> <span class="o">*</span> <span class="n">sind</span><span class="p">(</span><span class="n">angle_rotation</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">y_rot_offset</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">angle_rotation</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">y_center_of_rotation</span>
+        <span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">z_rot</span>  <span class="c1"># Nothing changed in this rotation</span>
+
+        <span class="n">grid_x_reversed</span><span class="p">[</span><span class="n">wii</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">grid_y_reversed</span><span class="p">[</span><span class="n">wii</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">grid_z_reversed</span><span class="p">[</span><span class="n">wii</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">z</span>
+
+    <span class="k">return</span> <span class="n">grid_x_reversed</span><span class="p">,</span> <span class="n">grid_y_reversed</span><span class="p">,</span> <span class="n">grid_z_reversed</span></div>
 
 
 <div class="viewcode-block" id="Loader"><a class="viewcode-back" href="../../_autosummary/floris.utilities.Loader.html#floris.utilities.Loader">[docs]</a><span class="k">class</span> <span class="nc">Loader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>

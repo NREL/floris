@@ -50,11 +50,9 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="floris.simulation.grid.TurbineGrid" href="floris.simulation.grid.TurbineGrid.html" />
+    <link rel="next" title="floris.simulation.grid.TurbineCubatureGrid" href="floris.simulation.grid.TurbineCubatureGrid.html" />
     <link rel="prev" title="floris.simulation.grid.Grid" href="floris.simulation.grid.Grid.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
@@ -371,6 +369,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -465,6 +468,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -472,6 +485,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -730,11 +753,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1014,6 +1032,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1128,6 +1151,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1460,52 +1488,55 @@ of rotation will be the centroid of the points in the PointsGrid.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.y_center_of_rotation" title="floris.simulation.grid.PointsGrid.y_center_of_rotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y_center_of_rotation</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.grid_resolution" title="floris.simulation.grid.PointsGrid.grid_resolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grid_resolution</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.cubature_weights" title="floris.simulation.grid.PointsGrid.cubature_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cubature_weights</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.n_turbines" title="floris.simulation.grid.PointsGrid.n_turbines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_turbines</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.grid_resolution" title="floris.simulation.grid.PointsGrid.grid_resolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grid_resolution</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.n_wind_directions" title="floris.simulation.grid.PointsGrid.n_wind_directions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_wind_directions</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.n_turbines" title="floris.simulation.grid.PointsGrid.n_turbines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_turbines</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.n_wind_speeds" title="floris.simulation.grid.PointsGrid.n_wind_speeds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_wind_speeds</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.n_wind_directions" title="floris.simulation.grid.PointsGrid.n_wind_directions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_wind_directions</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.reference_turbine_diameter" title="floris.simulation.grid.PointsGrid.reference_turbine_diameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_turbine_diameter</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.n_wind_speeds" title="floris.simulation.grid.PointsGrid.n_wind_speeds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_wind_speeds</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.time_series" title="floris.simulation.grid.PointsGrid.time_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_series</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.reference_turbine_diameter" title="floris.simulation.grid.PointsGrid.reference_turbine_diameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_turbine_diameter</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.turbine_coordinates" title="floris.simulation.grid.PointsGrid.turbine_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_coordinates</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.time_series" title="floris.simulation.grid.PointsGrid.time_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_series</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.turbine_coordinates_array" title="floris.simulation.grid.PointsGrid.turbine_coordinates_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_coordinates_array</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.turbine_coordinates" title="floris.simulation.grid.PointsGrid.turbine_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_coordinates</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.wind_directions" title="floris.simulation.grid.PointsGrid.wind_directions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_directions</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.turbine_coordinates_array" title="floris.simulation.grid.PointsGrid.turbine_coordinates_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_coordinates_array</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.wind_speeds" title="floris.simulation.grid.PointsGrid.wind_speeds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_speeds</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.wind_directions" title="floris.simulation.grid.PointsGrid.wind_directions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_directions</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.x" title="floris.simulation.grid.PointsGrid.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.wind_speeds" title="floris.simulation.grid.PointsGrid.wind_speeds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_speeds</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.x_sorted" title="floris.simulation.grid.PointsGrid.x_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.y" title="floris.simulation.grid.PointsGrid.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.x_sorted_inertial_frame" title="floris.simulation.grid.PointsGrid.x_sorted_inertial_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x_sorted_inertial_frame</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.y_sorted" title="floris.simulation.grid.PointsGrid.y_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.z" title="floris.simulation.grid.PointsGrid.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.y_sorted_inertial_frame" title="floris.simulation.grid.PointsGrid.y_sorted_inertial_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y_sorted_inertial_frame</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.z_sorted" title="floris.simulation.grid.PointsGrid.z_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z_sorted</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.grid.PointsGrid.z_sorted_inertial_frame" title="floris.simulation.grid.PointsGrid.z_sorted_inertial_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z_sorted_inertial_frame</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -1568,6 +1599,11 @@ attribute up to date.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.cubature_weights">
+<span class="sig-name descname"><span class="pre">cubature_weights</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.cubature_weights" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.grid_resolution">
@@ -1671,18 +1707,13 @@ attribute up to date.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.x">
-<span class="sig-name descname"><span class="pre">x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.x" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.x_sorted">
 <span class="sig-name descname"><span class="pre">x_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.x_sorted" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.y">
-<span class="sig-name descname"><span class="pre">y</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.y" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.x_sorted_inertial_frame">
+<span class="sig-name descname"><span class="pre">x_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.x_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1691,13 +1722,18 @@ attribute up to date.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.z">
-<span class="sig-name descname"><span class="pre">z</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.z" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.y_sorted_inertial_frame">
+<span class="sig-name descname"><span class="pre">y_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.y_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.z_sorted">
 <span class="sig-name descname"><span class="pre">z_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.z_sorted" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.z_sorted_inertial_frame">
+<span class="sig-name descname"><span class="pre">z_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.z_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1738,10 +1774,10 @@ attribute up to date.</p>
             <p class="prev-next-title">floris.simulation.grid.Grid</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="floris.simulation.grid.TurbineGrid.html" title="next page">
+    <a class='right-next' id="next-link" href="floris.simulation.grid.TurbineCubatureGrid.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">floris.simulation.grid.TurbineGrid</p>
+        <p class="prev-next-title">floris.simulation.grid.TurbineCubatureGrid</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

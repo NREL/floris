@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1423,6 +1453,8 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function,</span>
         <span class="c1"># get the first index here (0:1)</span>
@@ -1437,15 +1469,17 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
         <span class="c1"># get the first index here (0:1)</span>
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">turbulence_intensity_i</span> <span class="o">=</span> <span class="n">turbine_turbulence_intensity</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
         <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
@@ -1461,7 +1495,7 @@ title="Open an issue"
                 <span class="n">hub_height_i</span><span class="p">,</span>
                 <span class="n">ct_i</span><span class="p">,</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
-                <span class="n">axial_induction_i</span>
+                <span class="n">axial_induction_i</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">added_yaw</span>
 
@@ -1474,7 +1508,7 @@ title="Open an issue"
             <span class="n">turbulence_intensity_i</span><span class="p">,</span>
             <span class="n">ct_i</span><span class="p">,</span>
             <span class="n">rotor_diameter_i</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deflection_model_args</span>
+            <span class="o">**</span><span class="n">deflection_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_transverse_velocities</span><span class="p">:</span>
@@ -1490,7 +1524,7 @@ title="Open an issue"
                 <span class="n">yaw_angle_i</span><span class="p">,</span>
                 <span class="n">ct_i</span><span class="p">,</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
-                <span class="n">axial_induction_i</span>
+                <span class="n">axial_induction_i</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_yaw_added_recovery</span><span class="p">:</span>
@@ -1517,7 +1551,7 @@ title="Open an issue"
             <span class="n">ct_i</span><span class="p">,</span>
             <span class="n">hub_height_i</span><span class="p">,</span>
             <span class="n">rotor_diameter_i</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deficit_model_args</span>
+            <span class="o">**</span><span class="n">deficit_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">wake_field</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">combination_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
@@ -1530,7 +1564,7 @@ title="Open an issue"
             <span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">,</span>
             <span class="n">x_i</span><span class="p">,</span>
             <span class="n">rotor_diameter_i</span><span class="p">,</span>
-            <span class="n">axial_induction_i</span>
+            <span class="n">axial_induction_i</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Calculate wake overlap for wake-added turbulence (WAT)</span>
@@ -1545,9 +1579,9 @@ title="Open an issue"
         <span class="n">ti_added</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">area_overlap</span>
             <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">wake_added_turbulence_intensity</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_i</span> <span class="o">-</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;=</span> <span class="n">downstream_influence_length</span> <span class="o">+</span> <span class="n">x_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_i</span> <span class="o">-</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;=</span> <span class="n">downstream_influence_length</span> <span class="o">+</span> <span class="n">x_i</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># Combine turbine TIs with WAT</span>
@@ -1604,7 +1638,7 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">expand_farm_properties</span><span class="p">(</span>
         <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
         <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
-        <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
+        <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">initialize_velocity_field</span><span class="p">(</span><span class="n">turbine_grid</span><span class="p">)</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">)</span>
@@ -1689,7 +1723,7 @@ title="Open an issue"
                 <span class="n">hub_height_i</span><span class="p">,</span>
                 <span class="n">ct_i</span><span class="p">,</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
-                <span class="n">axial_induction_i</span>
+                <span class="n">axial_induction_i</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">added_yaw</span>
 
@@ -1702,7 +1736,7 @@ title="Open an issue"
             <span class="n">turbulence_intensity_i</span><span class="p">,</span>
             <span class="n">ct_i</span><span class="p">,</span>
             <span class="n">rotor_diameter_i</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deflection_model_args</span>
+            <span class="o">**</span><span class="n">deflection_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_transverse_velocities</span><span class="p">:</span>
@@ -1718,7 +1752,7 @@ title="Open an issue"
                 <span class="n">yaw_angle_i</span><span class="p">,</span>
                 <span class="n">ct_i</span><span class="p">,</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
-                <span class="n">axial_induction_i</span>
+                <span class="n">axial_induction_i</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># NOTE: exponential</span>
@@ -1733,7 +1767,7 @@ title="Open an issue"
             <span class="n">ct_i</span><span class="p">,</span>
             <span class="n">hub_height_i</span><span class="p">,</span>
             <span class="n">rotor_diameter_i</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deficit_model_args</span>
+            <span class="o">**</span><span class="n">deficit_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">wake_field</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">combination_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
@@ -1789,10 +1823,10 @@ title="Open an issue"
         <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">mask2</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;</span> <span class="n">x_i</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span> <span class="o">-</span> <span class="mf">0.01</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">&lt;</span> <span class="n">y_i</span> <span class="o">+</span> <span class="mf">0.51</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">&gt;</span> <span class="n">y_i</span> <span class="o">-</span> <span class="mf">0.51</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;</span> <span class="n">x_i</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span> <span class="o">-</span> <span class="mf">0.01</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">&lt;</span> <span class="n">y_i</span> <span class="o">+</span> <span class="mf">0.51</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span> <span class="o">&gt;</span> <span class="n">y_i</span> <span class="o">-</span> <span class="mf">0.51</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">turb_inflow_field</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">turb_inflow_field</span> <span class="o">*</span> <span class="o">~</span><span class="n">mask2</span>
@@ -1809,6 +1843,8 @@ title="Open an issue"
             <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="n">turb_Cts</span> <span class="o">=</span> <span class="n">turb_Cts</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">turb_aIs</span> <span class="o">=</span> <span class="n">axial_induction</span><span class="p">(</span>
@@ -1821,6 +1857,8 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="n">turb_aIs</span> <span class="o">=</span> <span class="n">turb_aIs</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
@@ -1837,14 +1875,16 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
 
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">turbulence_intensity_i</span> <span class="o">=</span> <span class="n">turbine_turbulence_intensity</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
         <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
@@ -1874,7 +1914,7 @@ title="Open an issue"
             <span class="n">turbulence_intensity_i</span><span class="p">,</span>
             <span class="n">turb_Cts</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
             <span class="n">rotor_diameter_i</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deflection_model_args</span>
+            <span class="o">**</span><span class="n">deflection_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_transverse_velocities</span><span class="p">:</span>
@@ -1891,7 +1931,7 @@ title="Open an issue"
                 <span class="n">turb_Cts</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
                 <span class="n">axial_induction_i</span><span class="p">,</span>
-                <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span>
+                <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_yaw_added_recovery</span><span class="p">:</span>
@@ -1919,7 +1959,7 @@ title="Open an issue"
             <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
             <span class="n">turb_u_wake</span><span class="p">,</span>
             <span class="n">Ctmp</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deficit_model_args</span>
+            <span class="o">**</span><span class="n">deficit_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">wake_added_turbulence_intensity</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">turbulence_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
@@ -1942,16 +1982,17 @@ title="Open an issue"
         <span class="n">ti_added</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">area_overlap</span>
             <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">wake_added_turbulence_intensity</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_i</span> <span class="o">-</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;=</span> <span class="n">downstream_influence_length</span> <span class="o">+</span> <span class="n">x_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_i</span> <span class="o">-</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;=</span> <span class="n">downstream_influence_length</span> <span class="o">+</span> <span class="n">x_i</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># Combine turbine TIs with WAT</span>
         <span class="n">turbine_turbulence_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">ti_added</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ambient_turbulence_intensity</span> <span class="o">**</span> <span class="mi">2</span> <span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ti_added</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ambient_turbulence_intensity</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
             <span class="n">turbine_turbulence_intensity</span>
         <span class="p">)</span>
+
         <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
     <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">turb_inflow_field</span>
@@ -1967,7 +2008,7 @@ title="Open an issue"
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span>
-    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span>
+    <span class="n">model_manager</span><span class="p">:</span> <span class="n">WakeModelManager</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Get the flow quantities and turbine performance</span>
     <span class="n">turbine_grid_farm</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">farm</span><span class="p">)</span>
@@ -1999,7 +2040,7 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">expand_farm_properties</span><span class="p">(</span>
         <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span>
         <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">,</span>
-        <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span>
+        <span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_coord_indices</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">initialize_velocity_field</span><span class="p">(</span><span class="n">turbine_grid</span><span class="p">)</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">)</span>
@@ -2048,6 +2089,8 @@ title="Open an issue"
             <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="n">turb_Cts</span> <span class="o">=</span> <span class="n">turb_Cts</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
@@ -2061,15 +2104,17 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">turbulence_intensity_i</span> <span class="o">=</span> \
             <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
         <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
@@ -2086,7 +2131,7 @@ title="Open an issue"
                 <span class="n">turb_Cts</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
                 <span class="n">axial_induction_i</span><span class="p">,</span>
-                <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span>
+                <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">added_yaw</span>
 
@@ -2099,7 +2144,7 @@ title="Open an issue"
             <span class="n">turbulence_intensity_i</span><span class="p">,</span>
             <span class="n">turb_Cts</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
             <span class="n">rotor_diameter_i</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deflection_model_args</span>
+            <span class="o">**</span><span class="n">deflection_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_transverse_velocities</span><span class="p">:</span>
@@ -2116,7 +2161,7 @@ title="Open an issue"
                 <span class="n">turb_Cts</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
                 <span class="n">axial_induction_i</span><span class="p">,</span>
-                <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span>
+                <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># NOTE: exponential</span>
@@ -2133,12 +2178,13 @@ title="Open an issue"
             <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
             <span class="n">turb_u_wake</span><span class="p">,</span>
             <span class="n">Ctmp</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deficit_model_args</span>
+            <span class="o">**</span><span class="n">deficit_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">flow_field</span><span class="o">.</span><span class="n">v_sorted</span> <span class="o">+=</span> <span class="n">v_wake</span>
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
     <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span> <span class="o">=</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">u_initial_sorted</span> <span class="o">-</span> <span class="n">turb_u_wake</span></div>
+
 
 <div class="viewcode-block" id="turbopark_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.turbopark_solver.html#floris.simulation.solver.turbopark_solver">[docs]</a><span class="k">def</span> <span class="nf">turbopark_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
@@ -2192,6 +2238,8 @@ title="Open an issue"
             <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
 
         <span class="n">ct_i</span> <span class="o">=</span> <span class="n">Ct</span><span class="p">(</span>
@@ -2204,6 +2252,8 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function,</span>
         <span class="c1"># get the first index here (0:1)</span>
@@ -2218,15 +2268,17 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
         <span class="c1"># get the first index here (0:1)</span>
         <span class="n">axial_induction_i</span> <span class="o">=</span> <span class="n">axial_induction_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
         <span class="n">turbulence_intensity_i</span> <span class="o">=</span> <span class="n">turbine_turbulence_intensity</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">yaw_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">hub_height_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">hub_heights_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">rotor_diameter_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">TSR_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">TSRs_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
         <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
@@ -2242,7 +2294,7 @@ title="Open an issue"
                 <span class="n">hub_height_i</span><span class="p">,</span>
                 <span class="n">ct_i</span><span class="p">,</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
-                <span class="n">axial_induction_i</span>
+                <span class="n">axial_induction_i</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">added_yaw</span>
 
@@ -2271,10 +2323,12 @@ title="Open an issue"
                     <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
                     <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
                     <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
-                    <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+                    <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
+                    <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+                    <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
                 <span class="p">)</span>
                 <span class="n">ct_ii</span> <span class="o">=</span> <span class="n">ct_ii</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-                <span class="n">rotor_diameter_ii</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:</span> <span class="p">,:,</span> <span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="n">rotor_diameter_ii</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
                 <span class="n">deflection_field_ii</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">deflection_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
                     <span class="n">x_ii</span><span class="p">,</span>
@@ -2283,10 +2337,10 @@ title="Open an issue"
                     <span class="n">turbulence_intensity_ii</span><span class="p">,</span>
                     <span class="n">ct_ii</span><span class="p">,</span>
                     <span class="n">rotor_diameter_ii</span><span class="p">,</span>
-                    <span class="o">**</span><span class="n">deflection_model_args</span>
+                    <span class="o">**</span><span class="n">deflection_model_args</span><span class="p">,</span>
                 <span class="p">)</span>
 
-                <span class="n">deflection_field</span><span class="p">[:,:,</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">deflection_field_ii</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:,:]</span>
+                <span class="n">deflection_field</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">deflection_field_ii</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_transverse_velocities</span><span class="p">:</span>
             <span class="n">v_wake</span><span class="p">,</span> <span class="n">w_wake</span> <span class="o">=</span> <span class="n">calculate_transverse_velocity</span><span class="p">(</span>
@@ -2301,7 +2355,7 @@ title="Open an issue"
                 <span class="n">yaw_angle_i</span><span class="p">,</span>
                 <span class="n">ct_i</span><span class="p">,</span>
                 <span class="n">TSR_i</span><span class="p">,</span>
-                <span class="n">axial_induction_i</span>
+                <span class="n">axial_induction_i</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_yaw_added_recovery</span><span class="p">:</span>
@@ -2327,7 +2381,7 @@ title="Open an issue"
             <span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters_sorted</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
             <span class="n">i</span><span class="p">,</span>
             <span class="n">deflection_field</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">deficit_model_args</span>
+            <span class="o">**</span><span class="n">deficit_model_args</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">wake_field</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">combination_model</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
@@ -2358,9 +2412,9 @@ title="Open an issue"
         <span class="n">ti_added</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">area_overlap</span>
             <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">wake_added_turbulence_intensity</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_i</span> <span class="o">-</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
-            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;=</span> <span class="n">downstream_influence_length</span> <span class="o">+</span> <span class="n">x_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&gt;</span> <span class="n">x_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_i</span> <span class="o">-</span> <span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rotor_diameter_i</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span> <span class="o">&lt;=</span> <span class="n">downstream_influence_length</span> <span class="o">+</span> <span class="n">x_i</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># Combine turbine TIs with WAT</span>
@@ -2404,7 +2458,6 @@ title="Open an issue"
     <span class="c1"># turbine_grid_farm.construct_turbine_TSRs()</span>
     <span class="c1"># turbine_grid_farm.construc_turbine_pPs()</span>
     <span class="c1"># turbine_grid_farm.construct_coordinates()</span>
-
 
     <span class="c1"># turbine_grid = TurbineGrid(</span>
     <span class="c1">#     turbine_coordinates=turbine_grid_farm.coordinates,</span>
@@ -2503,6 +2556,8 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="c1"># Since we are filtering for the i&#39;th turbine in the Ct function,</span>
         <span class="c1"># get the first index here (0:1)</span>
@@ -2517,6 +2572,8 @@ title="Open an issue"
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
         <span class="c1"># Since we are filtering for the i&#39;th turbine in the axial induction function,</span>
         <span class="c1"># get the first index here (0:1)</span>
@@ -2528,9 +2585,13 @@ title="Open an issue"
         <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
         <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
 
-        <span class="n">tilt_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">calculate_tilt_for_eff_velocities</span><span class="p">(</span>
-            <span class="n">average_velocity</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">)</span>
-        <span class="p">)[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">average_velocities</span> <span class="o">=</span> <span class="n">average_velocity</span><span class="p">(</span>
+            <span class="n">flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">cubature_weights</span>
+        <span class="p">)</span>
+        <span class="n">tilt_angle_i</span> <span class="o">=</span> <span class="n">farm</span><span class="o">.</span><span class="n">calculate_tilt_for_eff_velocities</span><span class="p">(</span><span class="n">average_velocities</span><span class="p">)</span>
+        <span class="n">tilt_angle_i</span> <span class="o">=</span> <span class="n">tilt_angle_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_secondary_steering</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
@@ -2614,6 +2675,7 @@ title="Open an issue"
         <span class="n">flow_field</span><span class="o">.</span><span class="n">w_sorted</span> <span class="o">+=</span> <span class="n">w_wake</span>
 
     <span class="k">return</span> <span class="n">mixing_factor</span></div>
+
 
 <div class="viewcode-block" id="full_flow_empirical_gauss_solver"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.solver.full_flow_empirical_gauss_solver.html#floris.simulation.solver.full_flow_empirical_gauss_solver">[docs]</a><span class="k">def</span> <span class="nf">full_flow_empirical_gauss_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
@@ -2725,9 +2787,13 @@ title="Open an issue"
         <span class="n">effective_yaw_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">yaw_angle_i</span><span class="p">)</span>
         <span class="n">effective_yaw_i</span> <span class="o">+=</span> <span class="n">yaw_angle_i</span>
 
-        <span class="n">tilt_angle_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">calculate_tilt_for_eff_velocities</span><span class="p">(</span>
-            <span class="n">average_velocity</span><span class="p">(</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">)</span>
-        <span class="p">)[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">average_velocities</span> <span class="o">=</span> <span class="n">average_velocity</span><span class="p">(</span>
+            <span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">cubature_weights</span>
+        <span class="p">)</span>
+        <span class="n">tilt_angle_i</span> <span class="o">=</span> <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">calculate_tilt_for_eff_velocities</span><span class="p">(</span><span class="n">average_velocities</span><span class="p">)</span>
+        <span class="n">tilt_angle_i</span> <span class="o">=</span> <span class="n">tilt_angle_i</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">enable_secondary_steering</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>

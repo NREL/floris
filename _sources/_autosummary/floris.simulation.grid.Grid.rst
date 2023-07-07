@@ -40,11 +40,12 @@ floris.simulation.grid.Grid
       ~Grid.n_wind_speeds
       ~Grid.n_wind_directions
       ~Grid.turbine_coordinates_array
-      ~Grid.x
-      ~Grid.y
-      ~Grid.z
       ~Grid.x_sorted
       ~Grid.y_sorted
       ~Grid.z_sorted
+      ~Grid.x_sorted_inertial_frame
+      ~Grid.y_sorted_inertial_frame
+      ~Grid.z_sorted_inertial_frame
+      ~Grid.cubature_weights
    
    

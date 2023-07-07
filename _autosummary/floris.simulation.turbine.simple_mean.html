@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>floris.tools.floris_interface.generate_heterogeneous_wind_map &#8212; FLORIS</title>
+    <title>floris.simulation.turbine.simple_mean &#8212; FLORIS</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -50,12 +50,10 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="floris.tools.floris_interface.FlorisInterface" href="floris.tools.floris_interface.FlorisInterface.html" />
-    <link rel="prev" title="floris.tools.floris_interface" href="floris.tools.floris_interface.html" />
+    <link rel="next" title="floris.simulation.turbine.PowerThrustTable" href="floris.simulation.turbine.PowerThrustTable.html" />
+    <link rel="prev" title="floris.simulation.turbine.simple_cubature" href="floris.simulation.turbine.simple_cubature.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="python">
     
@@ -252,16 +250,16 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 has-children">
+   <li class="toctree-l2 current active has-children">
     <a class="reference internal" href="floris.simulation.html">
      floris.simulation
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
     <label for="toctree-checkbox-3">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul>
+    <ul class="current">
      <li class="toctree-l3 has-children">
       <a class="reference internal" href="floris.simulation.base.html">
        floris.simulation.base
@@ -371,6 +369,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -434,16 +437,16 @@ const thebe_selector_output = ".output, .cell_output"
        </li>
       </ul>
      </li>
-     <li class="toctree-l3 has-children">
+     <li class="toctree-l3 current active has-children">
       <a class="reference internal" href="floris.simulation.turbine.html">
        floris.simulation.turbine
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+      <input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
       <label for="toctree-checkbox-10">
        <i class="fas fa-chevron-down">
        </i>
       </label>
-      <ul>
+      <ul class="current">
        <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.Ct.html">
          floris.simulation.turbine.Ct
@@ -465,6 +468,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -472,6 +485,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4 current active">
+        <a class="current reference internal" href="#">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -638,16 +661,16 @@ const thebe_selector_output = ".output, .cell_output"
      </li>
     </ul>
    </li>
-   <li class="toctree-l2 current active has-children">
+   <li class="toctree-l2 has-children">
     <a class="reference internal" href="floris.tools.html">
      floris.tools
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/>
+    <input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/>
     <label for="toctree-checkbox-16">
      <i class="fas fa-chevron-down">
      </i>
     </label>
-    <ul class="current">
+    <ul>
      <li class="toctree-l3 has-children">
       <a class="reference internal" href="floris.tools.cut_plane.html">
        floris.tools.cut_plane
@@ -720,21 +743,16 @@ const thebe_selector_output = ".output, .cell_output"
        </li>
       </ul>
      </li>
-     <li class="toctree-l3 current active has-children">
+     <li class="toctree-l3 has-children">
       <a class="reference internal" href="floris.tools.floris_interface.html">
        floris.tools.floris_interface
       </a>
-      <input checked="" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/>
+      <input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/>
       <label for="toctree-checkbox-18">
        <i class="fas fa-chevron-down">
        </i>
       </label>
-      <ul class="current">
-       <li class="toctree-l4 current active">
-        <a class="current reference internal" href="#">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
+      <ul>
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1014,6 +1032,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1128,6 +1151,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1274,7 +1302,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.simulation.turbine.simple_mean.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1291,7 +1319,7 @@ title="Open an issue"
       </li>
       
       <li>
-        <a href="https://github.com/NREL/floris/edit/main/docs/_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.rst"
+        <a href="https://github.com/NREL/floris/edit/main/docs/_autosummary/floris.simulation.turbine.simple_mean.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1319,7 +1347,7 @@ title="Edit this page"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../_sources/_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.rst"
+        <a href="../_sources/_autosummary/floris.simulation.turbine.simple_mean.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -1368,7 +1396,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>floris.tools.floris_interface.generate_heterogeneous_wind_map</h1>
+                <h1>floris.simulation.turbine.simple_mean</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -1380,11 +1408,11 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="floris-tools-floris-interface-generate-heterogeneous-wind-map">
-<h1>floris.tools.floris_interface.generate_heterogeneous_wind_map<a class="headerlink" href="#floris-tools-floris-interface-generate-heterogeneous-wind-map" title="Permalink to this headline">#</a></h1>
+  <section id="floris-simulation-turbine-simple-mean">
+<h1>floris.simulation.turbine.simple_mean<a class="headerlink" href="#floris-simulation-turbine-simple-mean" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="floris.tools.floris_interface.generate_heterogeneous_wind_map">
-<span class="sig-prename descclassname"><span class="pre">floris.tools.floris_interface.</span></span><span class="sig-name descname"><span class="pre">generate_heterogeneous_wind_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">speed_ups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#generate_heterogeneous_wind_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.generate_heterogeneous_wind_map" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.turbine.simple_mean">
+<span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">simple_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#simple_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.simple_mean" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -1416,17 +1444,17 @@ title="Print to PDF"
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="floris.tools.floris_interface.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="floris.simulation.turbine.simple_cubature.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">floris.tools.floris_interface</p>
+            <p class="prev-next-title">floris.simulation.turbine.simple_cubature</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="floris.tools.floris_interface.FlorisInterface.html" title="next page">
+    <a class='right-next' id="next-link" href="floris.simulation.turbine.PowerThrustTable.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">floris.tools.floris_interface.FlorisInterface</p>
+        <p class="prev-next-title">floris.simulation.turbine.PowerThrustTable</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

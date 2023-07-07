@@ -35,6 +35,7 @@ floris.simulation.grid.PointsGrid
       ~PointsGrid.points_z
       ~PointsGrid.x_center_of_rotation
       ~PointsGrid.y_center_of_rotation
+      ~PointsGrid.cubature_weights
       ~PointsGrid.grid_resolution
       ~PointsGrid.n_turbines
       ~PointsGrid.n_wind_directions
@@ -45,11 +46,11 @@ floris.simulation.grid.PointsGrid
       ~PointsGrid.turbine_coordinates_array
       ~PointsGrid.wind_directions
       ~PointsGrid.wind_speeds
-      ~PointsGrid.x
       ~PointsGrid.x_sorted
-      ~PointsGrid.y
+      ~PointsGrid.x_sorted_inertial_frame
       ~PointsGrid.y_sorted
-      ~PointsGrid.z
+      ~PointsGrid.y_sorted_inertial_frame
       ~PointsGrid.z_sorted
+      ~PointsGrid.z_sorted_inertial_frame
    
    

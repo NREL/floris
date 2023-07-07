@@ -20,6 +20,10 @@ floris.simulation.flow\_field.FlowField
       ~FlowField.calculate_speed_ups
       ~FlowField.finalize
       ~FlowField.from_dict
+      ~FlowField.generate_heterogeneous_wind_map
+      ~FlowField.get_model_defaults
+      ~FlowField.het_map_validator
+      ~FlowField.heterogenous_config_validator
       ~FlowField.initialize_velocity_field
       ~FlowField.wind_directions_validator
       ~FlowField.wind_speeds_validator
@@ -40,6 +44,7 @@ floris.simulation.flow\_field.FlowField
       ~FlowField.turbulence_intensity
       ~FlowField.reference_wind_height
       ~FlowField.time_series
+      ~FlowField.heterogenous_inflow_config
       ~FlowField.n_wind_speeds
       ~FlowField.n_wind_directions
       ~FlowField.u_initial_sorted
@@ -56,5 +61,7 @@ floris.simulation.flow\_field.FlowField
       ~FlowField.turbulence_intensity_field
       ~FlowField.turbulence_intensity_field_sorted
       ~FlowField.turbulence_intensity_field_sorted_avg
+      ~FlowField.logger
+      ~FlowField.state
    
    

@@ -35,6 +35,8 @@ floris.simulation.grid.TurbineGrid
       ~TurbineGrid.unsorted_indices
       ~TurbineGrid.x_center_of_rotation
       ~TurbineGrid.y_center_of_rotation
+      ~TurbineGrid.average_method
+      ~TurbineGrid.cubature_weights
       ~TurbineGrid.grid_resolution
       ~TurbineGrid.n_turbines
       ~TurbineGrid.n_wind_directions
@@ -45,11 +47,11 @@ floris.simulation.grid.TurbineGrid
       ~TurbineGrid.turbine_coordinates_array
       ~TurbineGrid.wind_directions
       ~TurbineGrid.wind_speeds
-      ~TurbineGrid.x
       ~TurbineGrid.x_sorted
-      ~TurbineGrid.y
+      ~TurbineGrid.x_sorted_inertial_frame
       ~TurbineGrid.y_sorted
-      ~TurbineGrid.z
+      ~TurbineGrid.y_sorted_inertial_frame
       ~TurbineGrid.z_sorted
+      ~TurbineGrid.z_sorted_inertial_frame
    
    

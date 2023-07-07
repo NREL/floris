@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1412,58 +1442,58 @@ title="Open an issue"
         <span class="n">turbine_yaw</span> <span class="o">=</span> <span class="n">yaw_i</span>
 
         <span class="c1"># TODO Should this be cbrt? This is done to match v2</span>
-        <span class="n">turb_avg_vels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_i</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span>
-        <span class="n">turb_avg_vels</span> <span class="o">=</span> <span class="n">turb_avg_vels</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">turb_avg_vels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u_i</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)))</span>
+        <span class="n">turb_avg_vels</span> <span class="o">=</span> <span class="n">turb_avg_vels</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">delta_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x_i</span>
 
         <span class="n">sigma_n</span> <span class="o">=</span> <span class="n">wake_expansion</span><span class="p">(</span>
             <span class="n">delta_x</span><span class="p">,</span>
-            <span class="n">turbine_Ct</span><span class="p">[:,:,</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
-            <span class="n">turbine_ti</span><span class="p">[:,:,</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
-            <span class="n">turbine_diameter</span><span class="p">[:,:,</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">turbine_Ct</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">turbine_ti</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">turbine_diameter</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">a_s</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">b_s</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c_s1</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c_s2</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">x_i_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-        <span class="n">x_i_loc</span> <span class="o">=</span> <span class="n">x_i_loc</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">x_i_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">x_i_loc</span> <span class="o">=</span> <span class="n">x_i_loc</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
-        <span class="n">y_i_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-        <span class="n">y_i_loc</span> <span class="o">=</span> <span class="n">y_i_loc</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">y_i_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">y_i_loc</span> <span class="o">=</span> <span class="n">y_i_loc</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
-        <span class="n">z_i_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">z_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-        <span class="n">z_i_loc</span> <span class="o">=</span> <span class="n">z_i_loc</span><span class="p">[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">z_i_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">z_i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">z_i_loc</span> <span class="o">=</span> <span class="n">z_i_loc</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
-        <span class="n">x_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">x_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">y_loc</span> <span class="o">=</span> <span class="n">y</span>
-        <span class="n">y_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">y_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
-        <span class="n">z_loc</span> <span class="o">=</span> <span class="n">z</span> <span class="c1"># np.mean(z, axis=(3,4))</span>
-        <span class="n">z_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))[:,:,:,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">z_loc</span> <span class="o">=</span> <span class="n">z</span>  <span class="c1"># np.mean(z, axis=(3,4))</span>
+        <span class="n">z_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">sum_lbda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">u_initial</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ii</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">x_coord_m</span> <span class="o">=</span> <span class="n">x_coord</span><span class="p">[:,:,</span><span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">y_coord_m</span> <span class="o">=</span> <span class="n">y_coord</span><span class="p">[:,:,</span><span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">z_coord_m</span> <span class="o">=</span> <span class="n">z_coord</span><span class="p">[:,:,</span><span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">x_coord_m</span> <span class="o">=</span> <span class="n">x_coord</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">y_coord_m</span> <span class="o">=</span> <span class="n">y_coord</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">z_coord_m</span> <span class="o">=</span> <span class="n">z_coord</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="c1"># For computing crossplanes, we don&#39;t need to compute downstream</span>
             <span class="c1"># turbines from out crossplane position.</span>
-            <span class="k">if</span> <span class="n">x_coord</span><span class="p">[:,:,</span><span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">x_coord</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">break</span>
 
             <span class="n">delta_x_m</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x_coord_m</span>
 
             <span class="n">sigma_i</span> <span class="o">=</span> <span class="n">wake_expansion</span><span class="p">(</span>
                 <span class="n">delta_x_m</span><span class="p">,</span>
-                <span class="n">turbine_Ct</span><span class="p">[:,:,</span><span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
-                <span class="n">turbine_ti</span><span class="p">[:,:,</span><span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
-                <span class="n">turbine_diameter</span><span class="p">[:,:,</span><span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">turbine_Ct</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">turbine_ti</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">turbine_diameter</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">m</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">a_s</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">b_s</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">c_s1</span><span class="p">,</span>
@@ -1508,7 +1538,7 @@ title="Open an issue"
 
         <span class="c1"># based on Blondel model, modified to include cumulative effects</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">-</span> <span class="p">(</span>
-            <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">turbine_Ct</span><span class="p">[:,:,</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+            <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">turbine_Ct</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
             <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">turbine_yaw</span><span class="p">)</span>
             <span class="o">/</span> <span class="p">(</span>
                 <span class="mf">16.0</span>
@@ -1521,7 +1551,7 @@ title="Open an issue"
 
         <span class="c1"># for some low wind speeds, tmp can become slightly negative, which causes NANs,</span>
         <span class="c1"># so replace the slightly negative values with zeros</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="n">C</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
 
@@ -1535,13 +1565,10 @@ title="Open an issue"
         <span class="c1"># add turbines together</span>
         <span class="n">velDef</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">r_tilde</span> <span class="o">**</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma_n</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
 
-        <span class="n">velDef</span> <span class="o">=</span> <span class="n">velDef</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xR</span> <span class="o">&gt;=</span> <span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">velDef</span> <span class="o">=</span> <span class="n">velDef</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xR</span> <span class="o">&gt;=</span> <span class="mf">0.1</span><span class="p">)</span>
 
         <span class="n">turb_u_wake</span> <span class="o">=</span> <span class="n">turb_u_wake</span> <span class="o">+</span> <span class="n">turb_avg_vels</span> <span class="o">*</span> <span class="n">velDef</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">turb_u_wake</span><span class="p">,</span>
-            <span class="n">Ctmp</span><span class="p">,</span>
-        <span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">turb_u_wake</span><span class="p">,</span> <span class="n">Ctmp</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="wake_expansion"><a class="viewcode-back" href="../../../../_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.wake_expansion.html#floris.simulation.wake_velocity.cumulative_gauss_curl.wake_expansion">[docs]</a><span class="k">def</span> <span class="nf">wake_expansion</span><span class="p">(</span>

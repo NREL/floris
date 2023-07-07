@@ -50,8 +50,6 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="floris.simulation.turbine.average_velocity" href="floris.simulation.turbine.average_velocity.html" />
@@ -371,6 +369,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -465,6 +468,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -472,6 +485,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -730,11 +753,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1014,6 +1032,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1128,6 +1151,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1384,7 +1412,7 @@ title="Print to PDF"
 <h1>floris.simulation.turbine.Ct<a class="headerlink" href="#floris-simulation-turbine-ct" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Ct">
-<span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">Ct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fCt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_interp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ix_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#Ct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.Ct" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">Ct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fCt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_interp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ix_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cubature_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#Ct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.Ct" title="Permalink to this definition">#</a></dt>
 <dd><p>Thrust coefficient of a turbine incorporating the yaw angle.
 The value is interpolated from the coefficient of thrust vs
 wind speed table using the rotor swept area average velocity.</p>
@@ -1408,6 +1436,8 @@ for each turbine.</p></li>
 <li><p><strong>ix_filter</strong> (<em>NDArrayFilter</em><em> | </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) -- The boolean array, or
 integer indices as an iterable of array to filter out before calculation.
 Defaults to None.</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>cubature_weights</strong> (<em>Optional</em><em>[</em><em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

@@ -49,7 +49,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
-    <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -368,6 +368,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
          floris.simulation.grid.TurbineGrid
         </a>
@@ -462,6 +467,16 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.power.html">
          floris.simulation.turbine.power
         </a>
@@ -469,6 +484,16 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
          floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
         </a>
        </li>
        <li class="toctree-l4">
@@ -727,11 +752,6 @@ const thebe_selector_output = ".output, .cell_output"
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.generate_heterogeneous_wind_map.html">
-         floris.tools.floris_interface.generate_heterogeneous_wind_map
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
          floris.tools.floris_interface.FlorisInterface
@@ -1011,6 +1031,11 @@ const thebe_selector_output = ".output, .cell_output"
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="../../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
          floris.tools.visualization.visualize_quiver
         </a>
@@ -1125,6 +1150,11 @@ const thebe_selector_output = ".output, .cell_output"
      <li class="toctree-l3">
       <a class="reference internal" href="../../../../_autosummary/floris.utilities.pshape.html">
        floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
       </a>
      </li>
      <li class="toctree-l3">
@@ -1329,6 +1359,7 @@ title="Open an issue"
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
+<span class="kn">import</span> <span class="nn">numexpr</span> <span class="k">as</span> <span class="nn">ne</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
 
@@ -1372,6 +1403,7 @@ title="Open an issue"
 <span class="sd">            :filter: docname in docnames</span>
 <span class="sd">            :keyprefix: cht-</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">initial</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
     <span class="n">constant</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
     <span class="n">ai</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
@@ -1389,24 +1421,28 @@ title="Open an issue"
         <span class="n">axial_induction</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Replace zeros and negatives with 1 to prevent nans/infs</span>
-        <span class="n">delta_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_i</span><span class="p">)</span>
+        <span class="n">delta_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x_i</span>
 
         <span class="c1"># TODO: ensure that these fudge factors are needed for different rotations</span>
-        <span class="n">upstream_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">delta_x</span> <span class="o">&lt;=</span> <span class="mf">0.1</span><span class="p">)</span>
-        <span class="n">downstream_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">delta_x</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">upstream_mask</span> <span class="o">=</span> <span class="n">delta_x</span> <span class="o">&lt;=</span> <span class="mf">0.1</span>
+        <span class="n">downstream_mask</span> <span class="o">=</span> <span class="n">delta_x</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.1</span>
 
         <span class="c1">#        Keep downstream components          Set upstream to 1.0</span>
-        <span class="n">delta_x</span> <span class="o">=</span> <span class="n">delta_x</span> <span class="o">*</span> <span class="n">downstream_mask</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">delta_x</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">upstream_mask</span><span class="p">)</span>
+        <span class="n">delta_x</span> <span class="o">=</span> <span class="n">delta_x</span> <span class="o">*</span> <span class="n">downstream_mask</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">delta_x</span><span class="p">)</span> <span class="o">*</span> <span class="n">upstream_mask</span>
 
         <span class="c1"># turbulence intensity calculation based on Crespo et. al.</span>
-        <span class="n">ti</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">constant</span>
-        <span class="o">*</span> <span class="n">axial_induction</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">ai</span>
-        <span class="o">*</span> <span class="n">ambient_TI</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span>
-        <span class="o">*</span> <span class="p">((</span><span class="n">delta_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">rotor_diameter</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">downstream</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span>
+        <span class="n">ai</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ai</span>
+        <span class="n">initial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span>
+        <span class="n">downstream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">downstream</span>
+        <span class="n">ti</span> <span class="o">=</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+            <span class="s2">&quot;constant&quot;</span>
+            <span class="s2">&quot; * axial_induction ** ai&quot;</span>
+            <span class="s2">&quot; * ambient_TI ** initial&quot;</span>
+            <span class="s2">&quot; * (delta_x / rotor_diameter) ** downstream&quot;</span>
         <span class="p">)</span>
         <span class="c1"># Mask the 1 values from above with zeros</span>
-        <span class="k">return</span> <span class="n">ti</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">downstream_mask</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">ti</span> <span class="o">*</span> <span class="n">downstream_mask</span></div></div>
 </pre></div>
 
               </div>

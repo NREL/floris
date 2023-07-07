@@ -56,16 +56,20 @@ floris.simulation.farm.Farm
       ~Farm.turbine_type
       ~Farm.turbine_library_path
       ~Farm.turbine_definitions
+      ~Farm.coordinates
+      ~Farm.turbine_fCts
+      ~Farm.turbine_fTilts
       ~Farm.yaw_angles
       ~Farm.yaw_angles_sorted
       ~Farm.tilt_angles
       ~Farm.tilt_angles_sorted
-      ~Farm.coordinates
       ~Farm.hub_heights
       ~Farm.hub_heights_sorted
-      ~Farm.turbine_fCts
+      ~Farm.turbine_type_map
       ~Farm.turbine_type_map_sorted
+      ~Farm.rotor_diameters
       ~Farm.rotor_diameters_sorted
+      ~Farm.TSRs
       ~Farm.TSRs_sorted
       ~Farm.pPs
       ~Farm.pPs_sorted
@@ -75,7 +79,6 @@ floris.simulation.farm.Farm
       ~Farm.ref_tilt_cp_cts_sorted
       ~Farm.correct_cp_ct_for_tilt
       ~Farm.correct_cp_ct_for_tilt_sorted
-      ~Farm.turbine_fTilts
       ~Farm.logger
       ~Farm.n_turbines
       ~Farm.state

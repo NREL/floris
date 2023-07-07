@@ -9,14 +9,6 @@ floris.tools.floris\_interface
 
    
    
-   .. rubric:: Functions
-
-   .. autosummary::
-      :toctree:
-      :nosignatures:
-   
-      generate_heterogeneous_wind_map
-   
    
 
    
