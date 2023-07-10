@@ -598,7 +598,7 @@ class FlorisInterface(LoggerBase):
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.
         if (self.turbine_effective_velocities < 0.).any():
-            print("WARNING: Some rotor effective velocities are negative.")
+            self.logger.warning("WARNING: Some rotor effective velocities are negative.")
 
         turbine_powers = power(
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
