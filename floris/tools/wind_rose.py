@@ -701,6 +701,7 @@ class WindRose:
 
         return self.df
 
+
     def read_wind_rose_csv(
         self,
         filename
