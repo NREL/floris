@@ -12,6 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from pathlib import Path
 from typing import List
 
 import numpy as np
@@ -19,6 +20,7 @@ import pytest
 from attrs import define, field
 
 from floris.type_dec import (
+    convert_to_path,
     floris_array_converter,
     FromDictMixin,
     iter_validator,
@@ -31,6 +33,10 @@ class AttrsDemoClass(FromDictMixin):
     x: int = field(converter=int)
     y: float = field(converter=float, default=2.1)
     z: str = field(converter=str, default="z")
+    non_initd: float = field(init=False)
+
+    def __attrs_post_init__(self):
+        self.non_initd = 1.1
 
     liststr: List[str] = field(
         default=["qwerty", "asdf"],
@@ -41,6 +47,13 @@ class AttrsDemoClass(FromDictMixin):
         converter=floris_array_converter,
         # validator=iter_validator(np.ndarray, floris_float_type)
     )
+
+
+def test_as_dict():
+    # Non-initialized attributes should not be exported
+    cls = AttrsDemoClass(w=0, x=1, liststr=["a", "b"])
+    exported_dict = cls.as_dict()
+    assert "non_initd" not in exported_dict
 
 
 def test_FromDictMixin_defaults():
@@ -114,3 +127,36 @@ def test_attrs_array_converter():
     # Test converstion on reset
     cls.array = array_input
     np.testing.assert_allclose(test_array, cls.array)
+
+
+def test_convert_to_path():
+    # Test that a string works
+    str_input = "../tests"
+    test_str_input = convert_to_path(str_input)
+    assert isinstance(test_str_input, Path)
+
+    # Test that a pathlib.Path works
+    path_input = Path("../tests")
+    test_path_input = convert_to_path(path_input)
+    assert isinstance(test_path_input, Path)
+
+    # Test that both of those inputs are the same
+    assert test_str_input == test_path_input
+
+    # Test that a non-existent folder also works even though it's a valid data type
+    str_input = "tests"
+    test_str_input = convert_to_path(str_input)
+    assert isinstance(test_str_input, Path)
+
+    # Test that invalid data types fail
+    with pytest.raises(TypeError):
+        convert_to_path(1)
+
+    with pytest.raises(TypeError):
+        convert_to_path(1.2)
+
+    with pytest.raises(TypeError):
+        convert_to_path({"one": 1})
+
+    with pytest.raises(TypeError):
+        convert_to_path(["a", 1])

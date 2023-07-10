@@ -17,4 +17,5 @@ more users will interface with the software.
    floris.simulation
    floris.tools
    floris.type_dec
+   floris.turbine_library
    floris.utilities

@@ -42,6 +42,7 @@ class TurbOParkVelocityDeficit(BaseModel):
     Nygaard, Nicolai Gayle, et al. "Modelling cluster wakes and wind farm blockage."
     Journal of Physics: Conference Series. Vol. 1618. No. 6. IOP Publishing, 2020.
     """
+
     A: float = field(default=0.04)
     sigma_max_rel: float = field(default=4.0)
     overlap_gauss_interp: RegularGridInterpolator = field(init=False)
@@ -100,7 +101,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         # subsequent runtime warnings.
         # Here self.NUM_EPS is to avoid precision issues with masking, and is slightly
         # larger than 0.0
-        downstream_mask = np.array(x_i - x >= self.NUM_EPS)
+        downstream_mask = (x_i - x >= self.NUM_EPS)
         x_dist = (x_i - x) * downstream_mask / rotor_diameters
 
         # Radial distance between turbine i and the centerlines of wakes from all
@@ -108,7 +109,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         r_dist = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z) ** 2)
         r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - (-z)) ** 2)
 
-        Cts[:,:,i:,:,:] = 0.00001
+        Cts[:, :, i:, :, :] = 0.00001
 
         # Characteristic wake widths from all turbines relative to turbine i
         dw = characteristic_wake_width(x_dist, ambient_turbulence_intensity, Cts, self.A)
@@ -122,10 +123,9 @@ class TurbOParkVelocityDeficit(BaseModel):
         C = 1 - np.sqrt(val)
 
         # Compute deficit for all turbines and mask to keep upstream and overlapping turbines
-        effective_width = self.sigma_max_rel * sigma
-        is_overlapping = effective_width / 2 + rotor_diameter_i / 2 > r_dist
-
-        wtg_overlapping = np.array(x_dist > 0) * is_overlapping
+        # NOTE self.sigma_max_rel * sigma is an effective wake width
+        is_overlapping = (self.sigma_max_rel * sigma) / 2 + rotor_diameter_i / 2 > r_dist
+        wtg_overlapping = (x_dist > 0) * is_overlapping
 
         delta_real = np.empty(np.shape(u_initial)) * np.nan
         delta_image = np.empty(np.shape(u_initial)) * np.nan
@@ -139,7 +139,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         )
         delta = np.concatenate((delta_real, delta_image), axis=2)
 
-        delta_total[:, :, i, :, :] = np.sqrt(np.sum(np.nan_to_num(delta)**2, axis=2))
+        delta_total[:, :, i, :, :] = np.sqrt(np.sum(np.nan_to_num(delta) ** 2, axis=2))
 
         return delta_total
 

@@ -14,16 +14,19 @@
 
 
 import copy
+import warnings
 from time import perf_counter as timerpc
 
 import numpy as np
 import pandas as pd
 
+from floris.logging_manager import LoggerBase
+
 # from .yaw_optimizer_scipy import YawOptimizationScipy
 from .yaw_optimization_base import YawOptimization
 
 
-class YawOptimizationSR(YawOptimization):
+class YawOptimizationSR(YawOptimization, LoggerBase):
     def __init__(
         self,
         fi,
@@ -127,7 +130,11 @@ class YawOptimizationSR(YawOptimization):
         if use_memory:
             idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).all(axis=1)
             farm_powers[idx, :] = farm_power_opt_subset[idx, :]
-            print(f"Skipping {np.sum(idx)}/{len(idx)} calculations: already in memory.")
+            if self.print_progress:
+                self.logger.info(
+                    "Skipping {:d}/{:d} calculations: already in memory.".format(
+                        np.sum(idx), len(idx))
+                )
         else:
             idx = np.zeros(yaw_angles_subset.shape[0], dtype=bool)
 
@@ -218,6 +225,8 @@ class YawOptimizationSR(YawOptimization):
         Find the yaw angles that maximize the power production for every wind direction,
         wind speed and turbulence intensity.
         """
+        self.print_progress = print_progress
+
         # For each pass, from front to back
         ii = 0
         for Nii in range(len(self.Ny_passes)):
@@ -225,7 +234,7 @@ class YawOptimizationSR(YawOptimization):
             for turbine_depth in range(self.nturbs):
                 p = 100.0 * ii / (len(self.Ny_passes) * self.nturbs)
                 ii += 1
-                if print_progress:
+                if self.print_progress:
                     print(
                         f"[Serial Refine] Processing pass={Nii}, "
                         f"turbine_depth={turbine_depth} ({p:.1f}%)"
@@ -240,8 +249,17 @@ class YawOptimizationSR(YawOptimization):
                 # Evaluate grid of yaw angles, get farm powers and find optimal solutions
                 farm_powers = self._process_evaluation_grid()
 
+                # If farm powers contains any nans, then issue a warning
+                if np.any(np.isnan(farm_powers)):
+                    err_msg = (
+                        "NaNs found in farm powers during SerialRefine "
+                        "optimization routine. Proceeding to maximize over yaw "
+                        "settings that produce valid powers."
+                    )
+                    self.logger.warning(err_msg, stack_info=True)
+
                 # Find optimal solutions in new evaluation grid
-                args_opt = np.expand_dims(np.argmax(farm_powers, axis=0), axis=0)
+                args_opt = np.expand_dims(np.nanargmax(farm_powers, axis=0), axis=0)
                 farm_powers_opt_new = np.squeeze(
                     np.take_along_axis(farm_powers, args_opt, axis=0),
                     axis=0,

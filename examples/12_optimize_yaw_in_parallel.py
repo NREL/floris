@@ -32,7 +32,7 @@ def load_floris():
     # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
     # Specify wind farm layout and update in the floris object
-    N = 5  # number of turbines per row and per column
+    N = 4  # number of turbines per row and per column
     X, Y = np.meshgrid(
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # Load a FLORIS object for AEP calculations
     fi_aep = load_floris()
     wind_directions = np.arange(0.0, 360.0, 1.0)
-    wind_speeds=np.arange(1.0, 30.0, 1.0)
+    wind_speeds = np.arange(1.0, 25.0, 1.0)
     fi_aep.reinitialize(
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
@@ -67,12 +67,13 @@ if __name__ == "__main__":
     )
 
     # Pour this into a parallel computing interface
+    parallel_interface = "concurrent"
     fi_aep_parallel = ParallelComputingInterface(
         fi=fi_aep,
         max_workers=max_workers,
         n_wind_direction_splits=max_workers,
         n_wind_speed_splits=1,
-        use_mpi4py=False,
+        interface=parallel_interface,
         print_timings=True,
     )
 
@@ -113,7 +114,7 @@ if __name__ == "__main__":
         max_workers=max_workers,
         n_wind_direction_splits=max_workers,
         n_wind_speed_splits=1,
-        use_mpi4py=False,
+        interface=parallel_interface,
         print_timings=True,
     )
 

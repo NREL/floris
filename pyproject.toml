@@ -89,6 +89,7 @@ unfixable = []
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
+    "floris/version.py",
     ".bzr",
     ".direnv",
     ".eggs",
@@ -116,8 +117,11 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 [tool.ruff.per-file-ignores]
 # F841 unused-variable: ignore since this file uses numexpr and many variables look unused
 "floris/simulation/wake_deflection/jimenez.py" = ["F841"]
+"floris/simulation/wake_turbulence/crespo_hernandez.py" = ["F841"]
+"floris/simulation/wake_deflection/gauss.py" = ["F841"]
 "floris/simulation/wake_velocity/jensen.py" = ["F841"]
 "floris/simulation/wake_velocity/gauss.py" = ["F841"]
+"floris/simulation/wake_velocity/empirical_gauss.py" = ["F841"]
 
 # I001 unsorted-imports: ignore because the import order is meaningful to navigate
 # import dependencies
@@ -126,8 +130,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # FIXME
 "floris/tools/interface_utilities.py" = ["F821"]
 "floris/tools/wind_rose.py" = ["F821"]
-
-
 
 [tool.ruff.isort]
 combine-as-imports = true
@@ -159,6 +161,7 @@ use_parentheses = true
 lines_after_imports = 2
 line_length = 100
 order_by_type = false
+split_on_trailing_comma = true
 
 # length_sort = true
 # case_sensitive: False
