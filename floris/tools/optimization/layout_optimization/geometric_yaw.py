@@ -1,8 +1,16 @@
 import numpy as np
 from floris.utilities import rotate_coordinates_rel_west
 
+# Geometric wake steering yaw angle selection for fast coupled 
+# layout and yaw optimization. For details, see
+# https://wes.copernicus.org/preprints/wes-2023-1/
 
-def process_layout(turbine_x,turbine_y,rotor_diameter,spread=0.1):
+def _process_layout(
+    turbine_x,
+    turbine_y,
+    rotor_diameter,
+    spread=0.1
+):
     """
     returns the distance from each turbine to the nearest downstream waked turbine
     normalized by the rotor diameter. Right now "waked" is determind by a Jensen-like
@@ -15,8 +23,12 @@ def process_layout(turbine_x,turbine_y,rotor_diameter,spread=0.1):
     spread=0.1: Jensen alpha wake spread value
     """
     nturbs = len(turbine_x)
+
+    # Intialize storage
     dx = np.zeros(nturbs) + 1E10
     dy = np.zeros(nturbs)
+
+    # TODO: Can this be simplified/loops removed?
     for waking_index in range(nturbs):
         for waked_index in range(nturbs):
             if turbine_x[waked_index] > turbine_x[waking_index]:
@@ -31,19 +43,29 @@ def process_layout(turbine_x,turbine_y,rotor_diameter,spread=0.1):
     return dx/rotor_diameter, dy/rotor_diameter
 
 
-def get_yaw_angles(x, y, left_x, top_left_y, right_x, top_right_y, top_left_yaw,
-                   top_right_yaw, bottom_left_yaw, bottom_right_yaw):
+def _get_yaw_angles(
+    x,
+    y,
+    left_x,
+    top_left_y,
+    right_x,
+    top_right_y,
+    top_left_yaw,
+    top_right_yaw,
+    bottom_left_yaw,
+    bottom_right_yaw
+):
     """
     _______2,5___________________________4,6
     |.......................................
     |......1,7...........................3,8
     |.......................................
     ________________________________________
-
-    I realize this is kind of a mess and needs to be clarified/cleaned up. As it is now:
     
-    x and y: dx and dy to the nearest downstream turbine in rotor diameteters with turbines rotated so wind is coming left to right
-    left_x: where we start the trapezoid...now that I think about it this should just be assumed as 0
+    x and y: dx and dy to the nearest downstream turbine in rotor diameteters with 
+        turbines rotated so wind is coming left to right
+    left_x: where we start the trapezoid...now that I think about it this should 
+        just be assumed as 0
     top_left_y: trapezoid top left coord
     right_x: where to stop the trapezoid. Basically, to max coord after which the upstream turbine won't yaw
     top_right_y: trapezoid top right coord
@@ -94,10 +116,10 @@ def geometric_yaw(turbine_x, turbine_y, wind_direction, rotor_diameter,
     turbine_coordinates_array[:,1] = turbine_y[:]
     
     rotated_x, rotated_y, _, _, _ = rotate_coordinates_rel_west(np.array([wind_direction]), turbine_coordinates_array)
-    processed_x, processed_y = process_layout(rotated_x[0][0],rotated_y[0][0],rotor_diameter)
+    processed_x, processed_y = _process_layout(rotated_x[0][0],rotated_y[0][0],rotor_diameter)
     yaw_array = np.zeros(nturbs)
     for i in range(nturbs):
-        yaw_array[i] = get_yaw_angles(processed_x[i], processed_y[i], left_x, top_left_y, right_x, top_right_y, top_left_yaw,
+        yaw_array[i] = _get_yaw_angles(processed_x[i], processed_y[i], left_x, top_left_y, right_x, top_right_y, top_left_yaw,
                     top_right_yaw, bottom_left_yaw, bottom_right_yaw)
 
     return yaw_array
