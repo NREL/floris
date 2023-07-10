@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import copy
+import warnings
 from typing import Union
 
 import matplotlib as mpl
@@ -22,11 +23,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib import rcParams
+from scipy.spatial import ConvexHull
 
 from floris.simulation import Floris
 from floris.tools.cut_plane import CutPlane
 from floris.tools.floris_interface import FlorisInterface
-from floris.utilities import rotate_coordinates_rel_west
+from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 
 def show_plots():
@@ -39,9 +41,10 @@ def plot_turbines(
     yaw_angles,
     rotor_diameters,
     color: str | None = None,
-    wind_direction: float = 270.0
 ):
     """
+    This function is deprecated and will be removed in v3.5, use `plot_turbines_with_fi` instead.
+
     Plot wind plant layout from turbine locations.
 
     Args:
@@ -49,20 +52,20 @@ def plot_turbines(
         layout_x (np.array): Wind turbine locations (east-west).
         layout_y (np.array): Wind turbine locations (north-south).
         yaw_angles (np.array): Yaw angles of each wind turbine.
-        D (float): Wind turbine rotor diameter.
-        color (str): Pyplot color option to plot the turbines.
-        wind_direction (float): Wind direction (rotates farm)
+        rotor_diameters (np.array): Wind turbine rotor diameter.
+        color (str): pyplot color option to plot the turbines.
     """
+    warnings.warn(
+        "The `plot_turbines` function is deprecated and will be removed in v3.5, "
+        "use `plot_turbines_with_fi` instead.",
+        DeprecationWarning,
+        stacklevel=2  # This prints the calling function and this function in the warning
+    )
+
     if color is None:
         color = "k"
 
-    coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
-    layout_x, layout_y, _ = rotate_coordinates_rel_west(
-        np.array([wind_direction]),
-        coordinates_array
-    )
-
-    for x, y, yaw, d in zip(layout_x[0,0], layout_y[0,0], yaw_angles, rotor_diameters):
+    for x, y, yaw, d in zip(layout_x, layout_y, yaw_angles, rotor_diameters):
         R = d / 2.0
         x_0 = x + np.sin(np.deg2rad(yaw)) * R
         x_1 = x - np.sin(np.deg2rad(yaw)) * R
@@ -71,30 +74,47 @@ def plot_turbines(
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
-def plot_turbines_with_fi(fi: FlorisInterface, ax=None, color=None, yaw_angles=None):
+def plot_turbines_with_fi(
+    fi: FlorisInterface,
+    ax: plt.Axes = None,
+    color: str = None,
+    wd: np.ndarray = None,
+    yaw_angles: np.ndarray = None,
+):
     """
-    Wrapper function to plot turbines which extracts the data
-    from a FLORIS interface object
+    Plot the wind plant layout from turbine locations gotten from a FlorisInterface object.
+    Note that this function automatically uses the first wind direction and first wind speed.
+    Generally, it is most explicit to create a new FlorisInterface with only the single
+    wind condition that should be plotted.
 
     Args:
-        fi (:py:class:`floris.tools.flow_data.FlowData`):
-                FlowData object.
-        ax (:py:class:`matplotlib.pyplot.axes`): figure axes.
-        color (str, optional): Color to plot turbines
+        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults to None.
+        color (str, optional): Color to plot turbines. Defaults to None.
+        wd (list, optional): The wind direction to plot the turbines relative to. Defaults to None.
+        yaw_angles (NDArray, optional): The yaw angles for the turbines. Defaults to None.
     """
     if not ax:
         fig, ax = plt.subplots()
     if yaw_angles is None:
         yaw_angles = fi.floris.farm.yaw_angles
-    plot_turbines(
-        ax,
-        fi.layout_x,
-        fi.layout_y,
-        yaw_angles[0, 0],
-        fi.floris.farm.rotor_diameters[0, 0],
-        color=color,
-        wind_direction=fi.floris.flow_field.wind_directions[0],
-    )
+    if wd is None:
+        wd = fi.floris.flow_field.wind_directions[0]
+
+    # Rotate yaw angles to inertial frame for plotting turbines relative to wind direction
+    yaw_angles = yaw_angles - wind_delta(np.array(wd))
+
+    if color is None:
+        color = "k"
+
+    rotor_diameters = fi.floris.farm.rotor_diameters.flatten()
+    for x, y, yaw, d in zip(fi.layout_x, fi.layout_y, yaw_angles[0,0], rotor_diameters):
+        R = d / 2.0
+        x_0 = x + np.sin(np.deg2rad(yaw)) * R
+        x_1 = x - np.sin(np.deg2rad(yaw)) * R
+        y_0 = y - np.cos(np.deg2rad(yaw)) * R
+        y_1 = y + np.cos(np.deg2rad(yaw)) * R
+        ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
 def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
@@ -109,12 +129,14 @@ def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
         fi (FlorisInterface): Simulation object to get the layout and index information.
         ax (plt.Axes): Axes object to add the labels.
     """
+
+    # Rotate layout to inertial frame for plotting turbines relative to wind direction
     coordinates_array = np.array([
         [x, y, 0.0]
         for x, y in list(zip(fi.layout_x, fi.layout_y))
     ])
     wind_direction = fi.floris.flow_field.wind_directions[0]
-    layout_x, layout_y, _ = rotate_coordinates_rel_west(
+    layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
         np.array([wind_direction]),
         coordinates_array
     )
@@ -148,15 +170,18 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
     if not ax:
         fig, ax = plt.subplots()
 
-    # Reshape UMesh internally
-    x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    x2_mesh = cut_plane.df.x2.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    u_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    Zm = np.ma.masked_where(np.isnan(u_mesh), u_mesh)
     rcParams["contour.negative_linestyle"] = "solid"
 
     # Plot the cut-through
-    contours = ax.contour(x1_mesh, x2_mesh, Zm, levels=levels, colors=colors, **kwargs)
+    contours = ax.tricontour(
+        cut_plane.df.x1,
+        cut_plane.df.x2,
+        cut_plane.df.u,
+        levels=levels,
+        colors=colors,
+        extend="both",
+        **kwargs,
+    )
 
     ax.clabel(contours, contours.levels, inline=True, fontsize=10, colors="black")
 
@@ -172,6 +197,7 @@ def visualize_cut_plane(
     max_speed=None,
     cmap="coolwarm",
     levels=None,
+    clevels=None,
     color_bar=False,
     title="",
     **kwargs
@@ -182,14 +208,24 @@ def visualize_cut_plane(
     Args:
         cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
             plane through wind plant.
-        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
+        ax (:py:class:`matplotlib.pyplot.axes`, optional): Figure axes. Defaults
             to None.
+        vel_component (str, optional): The velocity component that the cut plane is
+            perpendicular to.
         min_speed (float, optional): Minimum value of wind speed for
             contours. Defaults to None.
         max_speed (float, optional): Maximum value of wind speed for
             contours. Defaults to None.
         cmap (str, optional): Colormap specifier. Defaults to
             'coolwarm'.
+        levels (np.array, optional): Contour levels for line contour plot.
+            Defaults to None.
+        clevels (np.array, optional): Contour levels for tricontourf plot.
+            Defaults to None.
+        color_bar (Boolean, optional): Flag to include a color bar on the plot.
+            Defaults to False.
+        title (str, optional): User-supplied title for the plot. Defaults to "".
+        **kwargs: Additional parameters to pass to line contour plot.
 
     Returns:
         im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
@@ -197,39 +233,40 @@ def visualize_cut_plane(
 
     if not ax:
         fig, ax = plt.subplots()
+
     if vel_component=='u':
-        vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        # vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if min_speed is None:
             min_speed = cut_plane.df.u.min()
         if max_speed is None:
             max_speed = cut_plane.df.u.max()
     elif vel_component=='v':
-        vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        # vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if min_speed is None:
             min_speed = cut_plane.df.v.min()
         if max_speed is None:
             max_speed = cut_plane.df.v.max()
     elif vel_component=='w':
-        vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        # vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
         if min_speed is None:
             min_speed = cut_plane.df.w.min()
         if max_speed is None:
             max_speed = cut_plane.df.w.max()
 
-    # Reshape to 2d for plotting
-    x1_mesh = cut_plane.df.x1.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    x2_mesh = cut_plane.df.x2.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-    Zm = np.ma.masked_where(np.isnan(vel_mesh), vel_mesh)
+    # Allow separate number of levels for tricontourf and for line_contour
+    if clevels is None:
+        clevels = levels
 
     # Plot the cut-through
-    im = ax.pcolormesh(
-        x1_mesh,
-        x2_mesh,
-        Zm,
-        cmap=cmap,
+    im = ax.tricontourf(
+        cut_plane.df.x1,
+        cut_plane.df.x2,
+        cut_plane.df.u,
         vmin=min_speed,
         vmax=max_speed,
-        shading="nearest"
+        levels=clevels,
+        cmap=cmap,
+        extend="both",
     )
 
     # Add line contour
@@ -242,6 +279,137 @@ def visualize_cut_plane(
         alpha=0.3,
         **kwargs
     )
+
+    if cut_plane.normal_vector == "x":
+        ax.invert_xaxis()
+
+    if color_bar:
+        cbar = plt.colorbar(im, ax=ax)
+        cbar.set_label('m/s')
+
+    # Set the title
+    ax.set_title(title)
+
+    # Make equal axis
+    ax.set_aspect("equal")
+
+    return im
+
+
+def visualize_heterogeneous_cut_plane(
+    cut_plane,
+    fi,
+    ax=None,
+    vel_component='u',
+    min_speed=None,
+    max_speed=None,
+    cmap="coolwarm",
+    levels=None,
+    clevels=None,
+    color_bar=False,
+    title="",
+    plot_het_bounds=True,
+    **kwargs
+):
+    """
+    Generate pseudocolor mesh plot of the heterogeneous cut_plane.
+
+    Args:
+        cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
+            plane through wind plant.
+        fi (:py:class:`~.tools.floris_interface.FlorisInterface`): FlorisInterface object.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
+            to None.
+        vel_component (str, optional): The velocity component that the cut plane is
+            perpendicular to.
+        min_speed (float, optional): Minimum value of wind speed for
+            contours. Defaults to None.
+        max_speed (float, optional): Maximum value of wind speed for
+            contours. Defaults to None.
+        cmap (str, optional): Colormap specifier. Defaults to
+            'coolwarm'.
+        levels (np.array, optional): Contour levels for line contour plot.
+            Defaults to None.
+        clevels (np.array, optional): Contour levels for tricontourf plot.
+            Defaults to None.
+        color_bar (Boolean, optional): Flag to include a color bar on the plot.
+            Defaults to False.
+        title (str, optional): User-supplied title for the plot. Defaults to "".
+        plot_het_bonds (boolean, optional): Flag to include the user-defined bounds of the
+            heterogeneous wind speed area. Defaults to True.
+        **kwargs: Additional parameters to pass to line contour plot.
+
+    Returns:
+        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
+    """
+
+    if not ax:
+        fig, ax = plt.subplots()
+    if vel_component=='u':
+        # vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if min_speed is None:
+            min_speed = cut_plane.df.u.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.u.max()
+    elif vel_component=='v':
+        # vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if min_speed is None:
+            min_speed = cut_plane.df.v.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.v.max()
+    elif vel_component=='w':
+        # vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
+        if min_speed is None:
+            min_speed = cut_plane.df.w.min()
+        if max_speed is None:
+            max_speed = cut_plane.df.w.max()
+
+    # Allow separate number of levels for tricontourf and for line_contour
+    if clevels is None:
+        clevels = levels
+
+    # Plot the cut-through
+    im = ax.tricontourf(
+        cut_plane.df.x1,
+        cut_plane.df.x2,
+        cut_plane.df.u,
+        vmin=min_speed,
+        vmax=max_speed,
+        levels=clevels,
+        cmap=cmap,
+        extend="both",
+    )
+
+    # Add line contour
+    line_contour_cut_plane(
+        cut_plane,
+        ax=ax,
+        levels=levels,
+        colors="b",
+        linewidths=0.8,
+        alpha=0.3,
+        **kwargs
+    )
+
+    # Plot the user-defined heterogeneous flow area
+    if plot_het_bounds:
+        points = np.array(
+            list(
+                zip(
+                    fi.floris.flow_field.heterogenous_inflow_config['x'],
+                    fi.floris.flow_field.heterogenous_inflow_config['y'],
+                )
+            )
+        )
+        hull = ConvexHull(points)
+        h = ax.plot(
+            points[np.append(hull.vertices, hull.vertices[0]),0],
+            points[np.append(hull.vertices, hull.vertices[0]), 1],
+            'k--',
+            lw=2,
+        )
+        ax.plot(points[hull.vertices,0], points[hull.vertices,1], 'ko')
+        ax.legend(h, ["defined heterogeneous bounds"], loc=1)
 
     if cut_plane.normal_vector == "x":
         ax.invert_xaxis()

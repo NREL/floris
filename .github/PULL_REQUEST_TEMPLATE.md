@@ -68,7 +68,6 @@ __ For NREL use __
 Release checklist:
 - Update the version in
     - [ ] README.md
-    - [ ] docs/index.md
     - [ ] floris/VERSION
 - [ ] Verify docs builds correctly
 - [ ] Create a tag in the NREL/FLORIS repository

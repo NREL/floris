@@ -39,7 +39,7 @@ wake:
     combination_model: sosfs
     deflection_model: gauss
     turbulence_model: crespo_hernandez
-    velocity_model: cc
+    velocity_model: gauss
 
   enable_secondary_steering: true
   enable_yaw_added_recovery: true
