@@ -141,10 +141,19 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
         if not np.all(idx):
             # Now calculate farm powers for conditions we haven't yet evaluated previously
             start_time = timerpc()
+            if (hasattr(self.fi.floris.flow_field, 'heterogenous_inflow_config') and
+                self.fi.floris.flow_field.heterogenous_inflow_config is not None):
+                het_sm_orig = np.array(
+                    self.fi.floris.flow_field.heterogenous_inflow_config['speed_multipliers']
+                )
+                het_sm = np.tile(het_sm_orig, (Ny, 1))[~idx, :]
+            else:
+                het_sm = None
             farm_powers[~idx, :] = self._calculate_farm_power(
                 wd_array=wd_array_subset[~idx],
                 turbine_weights=turbine_weights_subset[~idx, :, :],
                 yaw_angles=yaw_angles_subset[~idx, :, :],
+                heterogeneous_speed_multipliers=het_sm
             )
             self.time_spent_in_floris += (timerpc() - start_time)
 

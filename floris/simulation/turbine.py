@@ -665,7 +665,9 @@ class Turbine(BaseClass):
         )
         self.power_interp = interp1d(
             wind_speeds,
-            inner_power
+            inner_power,
+            bounds_error=False,
+            fill_value=0
         )
 
         """

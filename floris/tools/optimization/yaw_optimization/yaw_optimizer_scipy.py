@@ -108,6 +108,16 @@ class YawOptimizationScipy(YawOptimization):
                 yaw_template = np.tile(yaw_template, (1, 1, 1))
                 turbine_weights = np.tile(turbine_weights, (1, 1, 1))
 
+                # Handle heterogeneous inflow, if there is one
+                if (hasattr(self.fi.floris.flow_field, 'heterogenous_inflow_config') and
+                    self.fi.floris.flow_field.heterogenous_inflow_config is not None):
+                    het_sm_orig = np.array(
+                        self.fi.floris.flow_field.heterogenous_inflow_config['speed_multipliers']
+                    )
+                    het_sm = het_sm_orig[nwdi,:].reshape(1,-1)
+                else:
+                    het_sm = None
+
                 # Define cost function
                 def cost(x):
                     x_full = np.array(yaw_template, copy=True)
@@ -116,7 +126,8 @@ class YawOptimizationScipy(YawOptimization):
                         - 1.0 * self._calculate_farm_power(
                             yaw_angles=x_full,
                             wd_array=[wd],
-                            turbine_weights=turbine_weights
+                            turbine_weights=turbine_weights,
+                            heterogeneous_speed_multipliers=het_sm
                         )[0, 0] / J0
                     )
 
