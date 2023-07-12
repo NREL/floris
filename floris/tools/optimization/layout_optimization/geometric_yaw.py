@@ -28,17 +28,35 @@ def _process_layout(
     dx = np.zeros(nturbs) + 1E10
     dy = np.zeros(nturbs)
 
-    # TODO: Can this be simplified/loops removed?
-    for waking_index in range(nturbs):
-        for waked_index in range(nturbs):
-            if turbine_x[waked_index] > turbine_x[waking_index]:
-                r = spread*(turbine_x[waked_index]-turbine_x[waking_index]) + rotor_diameter/2.0
-                if abs(turbine_y[waked_index]-turbine_y[waking_index]) < (r+rotor_diameter/2.0):
-                    if (turbine_x[waked_index] - turbine_x[waking_index]) < dx[waking_index]:
-                        dx[waking_index] = turbine_x[waked_index] - turbine_x[waking_index]
-                        dy[waking_index] = turbine_y[waked_index]- turbine_y[waking_index]
-        if dx[waking_index] == 1E10:
-            dx[waking_index] = 0.0
+    # for waking_index in range(nturbs):
+    #     for waked_index in range(nturbs):
+    #         if turbine_x[waked_index] > turbine_x[waking_index]:
+    #             r = spread*(turbine_x[waked_index]-turbine_x[waking_index]) + rotor_diameter/2.0
+    #             if abs(turbine_y[waked_index]-turbine_y[waking_index]) < (r+rotor_diameter/2.0):
+    #                 if (turbine_x[waked_index] - turbine_x[waking_index]) < dx[waking_index]:
+    #                     dx[waking_index] = turbine_x[waked_index] - turbine_x[waking_index]
+    #                     dy[waking_index] = turbine_y[waked_index]- turbine_y[waking_index]
+    #     if dx[waking_index] == 1E10:
+    #         dx[waking_index] = 0.0
+
+    # Compute distances
+    x_dists = turbine_x.reshape(-1,1).T - turbine_x.reshape(-1,1)
+    y_dists = turbine_y.reshape(-1,1).T - turbine_y.reshape(-1,1)
+    
+    # Check within Jensen model spread 
+    # Also remove diagonal elements
+    in_Jensen_wake = (abs(y_dists) < spread * x_dists + rotor_diameter)
+    x_dists[~in_Jensen_wake] = np.inf
+    x_dists = x_dists + np.diag(np.inf*np.ones(len(turbine_x)))
+
+    # Get minimums (and arguments to select the correct y values also)
+    dx = x_dists.min(axis=1)
+    dy = y_dists[range(len(turbine_x)), x_dists.argmin(axis=1)]
+    
+    # Handle last turbine downstream
+    furthest_ds_turb_idx = np.where(dx == np.inf)[0]
+    dx[furthest_ds_turb_idx] = 0.
+    dy[furthest_ds_turb_idx] = 0.
 
     return dx/rotor_diameter, dy/rotor_diameter
 
@@ -92,12 +110,6 @@ def _get_yaw_angles(
             else:
                 return yaw
 
-
-# def geometric_yaw(turbine_x, turbine_y, wind_direction, rotor_diameter,
-#                   left_x=5.4938,top_left_y=0.7972,
-#                   right_x=18.05744,top_right_y=0.8551,
-#                   top_left_yaw=27.3063,top_right_yaw=0.4695,
-#                   bottom_left_yaw=28.9070,bottom_right_yaw=0.7895):
 def geometric_yaw(turbine_x, turbine_y, wind_direction, rotor_diameter,
                   left_x=0.0,top_left_y=1.0,
                   right_x=25.0,top_right_y=1.0,
@@ -118,7 +130,7 @@ def geometric_yaw(turbine_x, turbine_y, wind_direction, rotor_diameter,
     rotated_x, rotated_y, _, _, _ = rotate_coordinates_rel_west(np.array([wind_direction]), turbine_coordinates_array)
     processed_x, processed_y = _process_layout(rotated_x[0][0],rotated_y[0][0],rotor_diameter)
     yaw_array = np.zeros(nturbs)
-    for i in range(nturbs):
+    for i in range(nturbs-1):
         yaw_array[i] = _get_yaw_angles(processed_x[i], processed_y[i], left_x, top_left_y, right_x, top_right_y, top_left_yaw,
                     top_right_yaw, bottom_left_yaw, bottom_right_yaw)
 
@@ -136,10 +148,3 @@ if __name__=="__main__":
     yaw_angles = geometric_yaw(turbine_x, turbine_y, wind_direction, rotor_diameter)
 
     print("yaw angles: ", yaw_angles)
-    from plotting_functions import plot_turbines
-    import matplotlib.pyplot as plt
-
-    plot_turbines(turbine_x, turbine_y, rotor_diameter/2.0, nums=True)
-    plt.axis("equal")
-    plt.show()
-    
