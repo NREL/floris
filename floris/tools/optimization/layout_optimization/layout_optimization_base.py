@@ -15,14 +15,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString, Polygon
+from .geometric_yaw import geometric_yaw
 
 from ....logging_manager import LoggerBase
 
 
 class LayoutOptimization(LoggerBase):
-    def __init__(self, fi, boundaries, min_dist=None, freq=None):
+    def __init__(self, fi, boundaries, min_dist=None, freq=None, enable_geometric_yaw=False):
         self.fi = fi.copy()
         self.boundaries = boundaries
+        self.enable_geometric_yaw = enable_geometric_yaw
 
         self._boundary_polygon = Polygon(self.boundaries)
         self._boundary_line = LineString(self.boundaries)
@@ -58,6 +60,29 @@ class LayoutOptimization(LoggerBase):
 
     def _unnorm(self, val, x1, x2):
         return np.array(val) * (x2 - x1) + x1
+
+    def _get_geoyaw_angles(self):
+        if self.enable_geometric_yaw:
+            # Declare storage
+            yaw_angles = np.zeros(
+                (
+                    self.fi.floris.flow_field.n_wind_directions,
+                    self.fi.floris.flow_field.n_wind_speeds,
+                    self.fi.floris.farm.n_turbines
+                )
+            )
+            # Compute geometric yaw angle for each wind direction
+            for i, wd in enumerate(self.fi.floris.flow_field.wind_directions):
+                yaw_angles[i, :, :] = geometric_yaw(
+                    self.x, 
+                    self.y, 
+                    wd, 
+                    self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"]
+                )
+        else:
+            yaw_angles = None
+
+        return yaw_angles
 
     # Public methods
 
@@ -95,7 +120,6 @@ class LayoutOptimization(LoggerBase):
                     [verts[i][0], verts[i + 1][0]], [verts[i][1], verts[i + 1][1]], "b"
                 )
 
-        plt.show()
 
     ###########################################################################
     # Properties
