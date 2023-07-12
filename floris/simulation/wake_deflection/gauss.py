@@ -257,6 +257,7 @@ def wake_added_yaw(
     ct_i,
     tip_speed_ratio,
     axial_induction_i,
+    wind_shear,
     scale=1.0,
 ):
     """
@@ -284,7 +285,7 @@ def wake_added_yaw(
     eps_gain = 0.2
     eps = eps_gain * D  # Use set value
 
-    vel_top = ((HH + D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
+    vel_top = ((HH + D / 2) / HH) ** wind_shear * np.ones((1, 1, 1, 1, 1))
     Gamma_top = gamma(
         D,
         vel_top,
@@ -293,7 +294,7 @@ def wake_added_yaw(
         scale,
     )
 
-    vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
+    vel_bottom = ((HH - D / 2) / HH) ** wind_shear * np.ones((1, 1, 1, 1, 1))
     Gamma_bottom = -1 * gamma(
         D,
         vel_bottom,
@@ -359,6 +360,7 @@ def calculate_transverse_velocity(
     ct_i,
     tsr_i,
     axial_induction_i,
+    wind_shear,
     scale=1.0,
 ):
     """
@@ -379,8 +381,7 @@ def calculate_transverse_velocity(
     eps_gain = 0.2
     eps = eps_gain * D  # Use set value
 
-    # TODO: wind sheer is hard-coded here but should be connected to the input
-    vel_top = ((HH + D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
+    vel_top = ((HH + D / 2) / HH) ** wind_shear * np.ones((1, 1, 1, 1, 1))
     Gamma_top = sind(yaw) * cosd(yaw) * gamma(
         D,
         vel_top,
@@ -389,7 +390,7 @@ def calculate_transverse_velocity(
         scale,
     )
 
-    vel_bottom = ((HH - D / 2) / HH) ** 0.12 * np.ones((1, 1, 1, 1, 1))
+    vel_bottom = ((HH - D / 2) / HH) ** wind_shear * np.ones((1, 1, 1, 1, 1))
     Gamma_bottom = -1 * sind(yaw) * cosd(yaw) * gamma(
         D,
         vel_bottom,
@@ -514,43 +515,3 @@ def yaw_added_turbulence_mixing(
     I_mixing = I_total - I_i
 
     return I_mixing[:, :, None, None, None]
-
-# def yaw_added_recovery_correction(
-#     self, U_local, U, W, x_locations, y_locations, turbine, turbine_coord
-# ):
-#         """
-#         This method corrects the U-component velocities when yaw added recovery
-#         is enabled. For more details on how the velocities are changed, see [1].
-#         # TODO add reference to 1
-
-#         Args:
-#             U_local (np.array): U-component velocities across the flow field.
-#             U (np.array): U-component velocity deficits across the flow field.
-#             W (np.array): W-component velocity deficits across the flow field.
-#             x_locations (np.array): Streamwise locations in wake.
-#             y_locations (np.array): Spanwise locations in wake.
-#             turbine (:py:class:`floris.simulation.turbine.Turbine`):
-#                 Turbine object.
-#             turbine_coord (:py:obj:`floris.simulation.turbine_map.TurbineMap.coords`):
-#                 Spatial coordinates of wind turbine.
-
-#         Returns:
-#             np.array: U-component velocity deficits across the flow field.
-#         """
-#         # compute the velocity without modification
-#         U1 = U_local - U
-
-#         # set dimensions
-#         D = turbine.rotor_diameter
-#         xLocs = x_locations - turbine_coord.x1
-#         ky = self.ka * turbine.turbulence_intensity + self.kb
-#         U2 = (np.mean(W) * xLocs) / ((ky * xLocs + D / 2))
-#         U_total = U1 + np.nan_to_num(U2)
-
-#         # turn it back into a deficit
-#         U = U_local - U_total
-
-#         # zero out anything before the turbine
-#         U[x_locations < turbine_coord.x1] = 0
-
-#         return U

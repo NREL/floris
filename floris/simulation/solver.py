@@ -149,6 +149,7 @@ def sequential_solver(
                 ct_i,
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
             )
             effective_yaw_i += added_yaw
 
@@ -178,6 +179,7 @@ def sequential_solver(
                 ct_i,
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
             )
 
         if model_manager.enable_yaw_added_recovery:
@@ -377,6 +379,7 @@ def full_flow_sequential_solver(
                 ct_i,
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
             )
             effective_yaw_i += added_yaw
 
@@ -406,6 +409,7 @@ def full_flow_sequential_solver(
                 ct_i,
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
             )
 
         # NOTE: exponential
@@ -554,6 +558,7 @@ def cc_solver(
                 turb_Cts[:, :, i:i+1],
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
                 scale=2.0,
             )
             effective_yaw_i += added_yaw
@@ -584,6 +589,7 @@ def cc_solver(
                 turb_Cts[:, :, i:i+1],
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
                 scale=2.0,
             )
 
@@ -784,6 +790,7 @@ def full_flow_cc_solver(
                 turb_Cts[:, :, i:i+1],
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
                 scale=2.0,
             )
             effective_yaw_i += added_yaw
@@ -814,6 +821,7 @@ def full_flow_cc_solver(
                 turb_Cts[:, :, i:i+1],
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
                 scale=2.0,
             )
 
@@ -948,6 +956,7 @@ def turbopark_solver(
                 ct_i,
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
             )
             effective_yaw_i += added_yaw
 
@@ -1009,6 +1018,7 @@ def turbopark_solver(
                 ct_i,
                 TSR_i,
                 axial_induction_i,
+                flow_field.wind_shear,
             )
 
         if model_manager.enable_yaw_added_recovery:
