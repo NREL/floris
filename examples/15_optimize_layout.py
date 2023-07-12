@@ -85,3 +85,5 @@ print(
     f'from {base_aep:.1f} MWh to {opt_aep:.1f} MWh'
 )
 layout_opt.plot_layout_opt_results()
+
+plt.show()
