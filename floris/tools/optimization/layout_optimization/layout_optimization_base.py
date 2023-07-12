@@ -82,6 +82,9 @@ class LayoutOptimization(LoggerBase):
         else:
             yaw_angles = None
 
+        # Store for possible access after layout optimization is complete
+        self.yaw_angles = yaw_angles 
+
         return yaw_angles
 
     # Public methods

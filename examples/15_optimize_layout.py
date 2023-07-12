@@ -38,6 +38,11 @@ which makes sense in order to maximize the energy production by minimizing wake 
 file_dir = os.path.dirname(os.path.abspath(__file__))
 fi = FlorisInterface('inputs/gch.yaml')
 
+# OPTIONAL: include geometric yaw angle method in the layout optimization.
+# Uses geometric relationship to determine approximate optimal wake steering
+# angles for each step of the layout optimization procedure.
+enable_geometric_yaw = False
+
 # Setup 72 wind directions with a random wind speed and frequency distribution
 wind_directions = np.arange(0, 360.0, 5.0)
 np.random.seed(1)
@@ -65,7 +70,12 @@ layout_y = [0, 4 * D, 0, 4 * D]
 fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
 # Setup the optimization problem
-layout_opt = LayoutOptimizationScipy(fi, boundaries, freq=freq)
+layout_opt = LayoutOptimizationScipy(
+    fi,
+    boundaries,
+    freq=freq,
+    enable_geometric_yaw=enable_geometric_yaw
+)
 
 # Run the optimization
 sol = layout_opt.optimize()
@@ -86,5 +96,13 @@ print(
     f'from {base_aep:.1f} MWh to {opt_aep:.1f} MWh'
 )
 layout_opt.plot_layout_opt_results()
+
+if enable_geometric_yaw:
+    goematric_yaw_angles = layout_opt.yaw_angles
+    print(
+        'Turbine geometric yaw angles for wind direction {0:.2f} '.format(wind_directions[1])\
+        +' and wind speed {0:.2f} m/s:'.format(wind_speeds[0]),
+        layout_opt.yaw_angles[1,0,:]
+    )
 
 plt.show()
