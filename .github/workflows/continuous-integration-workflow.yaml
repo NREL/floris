@@ -8,9 +8,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.9]
+        python-version: ["3.8", "3.9", "3.10"]
         os: [ubuntu-latest] #, macos-latest, windows-latest]
       fail-fast: False
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
     - uses: actions/checkout@v3
@@ -38,8 +40,9 @@ jobs:
         pip install pytest-cov
         pytest --cov=./ --cov-report=xml tests/ --ignore tests/reg_tests --ignore tests/timing.py --ignore tests/profiling.py
     - name: Upload coverage to Codecov
+      if: ${{ env.CODECOV_TOKEN }}  # Don't attempt to upload if the codecov token is not configured
       uses: codecov/codecov-action@v3
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+        token: ${{ env.CODECOV_TOKEN }}
         files: ./coverage.xml
         fail_ci_if_error: true

@@ -12,15 +12,20 @@ parts:
   - caption: User Reference
     chapters:
     - file: floris_101
-    - file: input_reference
+    - file: floating_wind_turbine
+    - file: turbine_interaction
+    - file: input_reference_main
+    - file: input_reference_turbine
     - file: examples
 
   - caption: Theory and Background
     chapters:
-    - file: reference
+    - file: wake_models
+    - file: bibliography
 
   - caption: Developer Reference
     chapters:
     - file: dev_guide
+    - file: architecture
     - file: code_quality
     - file: api_docs

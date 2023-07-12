@@ -14,6 +14,7 @@
 
 
 import copy
+import warnings
 from time import perf_counter as timerpc
 
 import numpy as np
@@ -129,17 +130,30 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
         if use_memory:
             idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).all(axis=1)
             farm_powers[idx, :] = farm_power_opt_subset[idx, :]
-            print(f"Skipping {np.sum(idx)}/{len(idx)} calculations: already in memory.")
+            if self.print_progress:
+                self.logger.info(
+                    "Skipping {:d}/{:d} calculations: already in memory.".format(
+                        np.sum(idx), len(idx))
+                )
         else:
             idx = np.zeros(yaw_angles_subset.shape[0], dtype=bool)
 
         if not np.all(idx):
             # Now calculate farm powers for conditions we haven't yet evaluated previously
             start_time = timerpc()
+            if (hasattr(self.fi.floris.flow_field, 'heterogenous_inflow_config') and
+                self.fi.floris.flow_field.heterogenous_inflow_config is not None):
+                het_sm_orig = np.array(
+                    self.fi.floris.flow_field.heterogenous_inflow_config['speed_multipliers']
+                )
+                het_sm = np.tile(het_sm_orig, (Ny, 1))[~idx, :]
+            else:
+                het_sm = None
             farm_powers[~idx, :] = self._calculate_farm_power(
                 wd_array=wd_array_subset[~idx],
                 turbine_weights=turbine_weights_subset[~idx, :, :],
                 yaw_angles=yaw_angles_subset[~idx, :, :],
+                heterogeneous_speed_multipliers=het_sm
             )
             self.time_spent_in_floris += (timerpc() - start_time)
 
@@ -220,6 +234,8 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
         Find the yaw angles that maximize the power production for every wind direction,
         wind speed and turbulence intensity.
         """
+        self.print_progress = print_progress
+
         # For each pass, from front to back
         ii = 0
         for Nii in range(len(self.Ny_passes)):
@@ -227,7 +243,7 @@ class YawOptimizationSR(YawOptimization, LoggerBase):
             for turbine_depth in range(self.nturbs):
                 p = 100.0 * ii / (len(self.Ny_passes) * self.nturbs)
                 ii += 1
-                if print_progress:
+                if self.print_progress:
                     print(
                         f"[Serial Refine] Processing pass={Nii}, "
                         f"turbine_depth={turbine_depth} ({p:.1f}%)"

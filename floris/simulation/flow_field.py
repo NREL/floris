@@ -15,19 +15,25 @@
 from __future__ import annotations
 
 import attrs
+import matplotlib.path as mpltPath
 import numpy as np
 from attrs import define, field
+from scipy.interpolate import LinearNDInterpolator
+from scipy.spatial import ConvexHull
+from shapely.geometry import Polygon
 
-from floris.simulation import Grid
+from floris.simulation import (
+    BaseClass,
+    Grid,
+)
 from floris.type_dec import (
     floris_array_converter,
-    FromDictMixin,
     NDArrayFloat,
 )
 
 
 @define
-class FlowField(FromDictMixin):
+class FlowField(BaseClass):
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_veer: float = field(converter=float)
@@ -36,6 +42,7 @@ class FlowField(FromDictMixin):
     turbulence_intensity: float = field(converter=float)
     reference_wind_height: float = field(converter=float)
     time_series : bool = field(default=False)
+    heterogenous_inflow_config: dict = field(default=None)
 
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
@@ -69,6 +76,44 @@ class FlowField(FromDictMixin):
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
+    @heterogenous_inflow_config.validator
+    def heterogenous_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
+        """Using the validator method to check that the heterogenous_inflow_config dictionary has
+        the correct key-value pairs.
+        """
+        if value is None:
+            return
+
+        # Check that the correct keys are supplied for the heterogenous_inflow_config dict
+        for k in ["speed_multipliers", "x", "y"]:
+            if k not in value.keys():
+                raise ValueError(
+                    "heterogenous_inflow_config must contain entries for 'speed_multipliers',"
+                    f"'x', and 'y', with 'z' optional. Missing '{k}'."
+                )
+        if "z" not in value:
+            # If only a 2D case, add "None" for the z locations
+            value["z"] = None
+
+    @het_map.validator
+    def het_map_validator(self, instance: attrs.Attribute, value: list | None) -> None:
+        """Using this validator to make sure that the het_map has an interpolant defined for
+        each wind direction.
+        """
+        if value is None:
+            return
+
+        if self.n_wind_directions!= np.array(value).shape[0]:
+            raise ValueError(
+                "The het_map's wind direction dimension not equal to number of wind directions."
+            )
+
+
+    def __attrs_post_init__(self) -> None:
+        if self.heterogenous_inflow_config is not None:
+            self.generate_heterogeneous_wind_map()
+
+
     def initialize_velocity_field(self, grid: Grid) -> None:
 
         # Create an initial wind profile as a function of height. The values here will
@@ -95,17 +140,40 @@ class FlowField(FromDictMixin):
         # If heterogeneous flow data is given, the speed ups at the defined
         # grid locations are determined in either 2 or 3 dimensions.
         else:
-            if len(self.het_map[0][0].points[0]) == 2:
-                speed_ups = self.calculate_speed_ups(
-                    self.het_map,
-                    grid.x_sorted,
-                    grid.y_sorted
+            bounds = np.array(list(zip(
+                self.heterogenous_inflow_config['x'],
+                self.heterogenous_inflow_config['y']
+            )))
+            hull = ConvexHull(bounds)
+            polygon = Polygon(bounds[hull.vertices])
+            path = mpltPath.Path(polygon.boundary.coords)
+            points = np.column_stack(
+                (
+                    grid.x_sorted_inertial_frame.flatten(),
+                    grid.y_sorted_inertial_frame.flatten(),
                 )
-            elif len(self.het_map[0][0].points[0]) == 3:
+            )
+            inside = path.contains_points(points)
+            if not np.all(inside):
+                self.logger.warning(
+                    "The calculated flow field contains points outside of the the user-defined "
+                    "heterogeneous inflow bounds. For these points, the interpolated value has "
+                    "been filled with the freestream wind speed. If this is not the desired "
+                    "behavior, the user will need to expand the heterogeneous inflow bounds to "
+                    "fully cover the calculated flow field area."
+                )
+
+            if len(self.het_map[0].points[0]) == 2:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
-                    grid.x_sorted,
-                    grid.y_sorted,
+                    grid.x_sorted_inertial_frame,
+                    grid.y_sorted_inertial_frame
+                )
+            elif len(self.het_map[0].points[0]) == 3:
+                speed_ups = self.calculate_speed_ups(
+                    self.het_map,
+                    grid.x_sorted_inertial_frame,
+                    grid.y_sorted_inertial_frame,
                     grid.z_sorted
                 )
 
@@ -172,61 +240,61 @@ class FlowField(FromDictMixin):
         )
 
     def calculate_speed_ups(self, het_map, x, y, z=None):
-
-        # Check that the het maps wd dimension matches
-        if self.n_wind_directions!= np.array(het_map).shape[1]:
-            raise ValueError(
-                "het_map's wind direction dimension not equal to number of wind directions"
-            )
-
         if z is not None:
-            # Calculate the 3-dimensional speed ups; reshape is needed as the generator
+            # Calculate the 3-dimensional speed ups; squeeze is needed as the generator
             # adds an extra dimension
-            speed_ups = np.reshape(
-                [
-                    het_map[0][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:], z[i:i+1,:,:,:,:])
-                    for i in range(len(het_map[0]))
-                ],
-                np.shape(x)
+            speed_ups = np.squeeze(
+                [het_map[i](x[i:i+1], y[i:i+1], z[i:i+1]) for i in range( len(het_map))],
+                axis=1,
             )
-
-            # If there are any points requested outside the user-defined area, use the
-            # nearest-neighbor interplonat to determine those speed up values
-            if np.isnan(speed_ups).any():
-                idx_nan = np.where(np.isnan(speed_ups))
-                speed_ups_out_of_region = np.reshape(
-                    [
-                        het_map[1][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:], z[i:i+1,:,:,:,:])
-                        for i in range(len(het_map[1]))
-                    ],
-                    np.shape(x)
-                )
-
-                speed_ups[idx_nan] = speed_ups_out_of_region[idx_nan]
 
         else:
-            # Calculate the 2-dimensional speed ups; reshape is needed as the generator
+            # Calculate the 2-dimensional speed ups; squeeze is needed as the generator
             # adds an extra dimension
-            speed_ups = np.reshape(
-                [
-                    het_map[0][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:])
-                    for i in range(len(het_map[0]))
-                ],
-                np.shape(x)
+            speed_ups = np.squeeze(
+                [het_map[i](x[i:i+1], y[i:i+1]) for i in range(len(het_map))],
+                axis=1,
             )
 
-            # If there are any points requested outside the user-defined area, use the
-            # nearest-neighbor interplonat to determine those speed up values
-            if np.isnan(speed_ups).any():
-                idx_nan = np.where(np.isnan(speed_ups))
-                speed_ups_out_of_region = np.reshape(
-                    [
-                        het_map[1][i](x[i:i+1,:,:,:,:], y[i:i+1,:,:,:,:])
-                        for i in range(len(het_map[1]))
-                    ],
-                    np.shape(x)
-                )
-
-                speed_ups[idx_nan] = speed_ups_out_of_region[idx_nan]
-
         return speed_ups
+
+    def generate_heterogeneous_wind_map(self):
+        """This function creates the heterogeneous interpolant used to calculate heterogeneous
+        inflows. The interpolant is for computing wind speed based on an x and y location in the
+        flow field. This is computed using SciPy's LinearNDInterpolator and uses a fill value
+        equal to the freestream for interpolated values outside of the user-defined heterogeneous
+        map bounds.
+
+        Args:
+            heterogenous_inflow_config (dict): The heterogeneous inflow configuration dictionary.
+            The configuration should have the following inputs specified.
+                - **speed_multipliers** (list): A list of speed up factors that will multiply
+                    the specified freestream wind speed. This 2-dimensional array should have an
+                    array of multiplicative factors defined for each wind direction.
+                - **x** (list): A list of x locations at which the speed up factors are defined.
+                - **y**: A list of y locations at which the speed up factors are defined.
+                - **z** (optional): A list of z locations at which the speed up factors are defined.
+        """
+        speed_multipliers = self.heterogenous_inflow_config['speed_multipliers']
+        x = self.heterogenous_inflow_config['x']
+        y = self.heterogenous_inflow_config['y']
+        z = self.heterogenous_inflow_config['z']
+
+        if z is not None:
+            # Compute the 3-dimensional interpolants for each wind direction
+            # Linear interpolation is used for points within the user-defined area of values,
+            # while the freestream wind speed is used for points outside that region
+            in_region = [
+                LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=1.0)
+                for multiplier in speed_multipliers
+            ]
+        else:
+            # Compute the 2-dimensional interpolants for each wind direction
+            # Linear interpolation is used for points within the user-defined area of values,
+            # while the freestream wind speed is used for points outside that region
+            in_region = [
+                LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=1.0)
+                for multiplier in speed_multipliers
+            ]
+
+        self.het_map = in_region

@@ -45,13 +45,17 @@ REQUIRED = [
 ]
 
 # What packages are optional?
-# To use: pip install -e ".[develop]" or pip install "floris[develop]"
+# To use:
+#   pip install -e ".[docs,develop]"    install both sets of extras in editable install
+#   pip install -e ".[develop]"         installs only developer packages in editable install
+#   pip install "floris[develop]"       installs developer packages in non-editable install
 EXTRAS = {
     "docs": {
-        "jupyter-book",
+        "jupyter-book<=0.13.3",
         "sphinx-book-theme",
         "sphinx-autodoc-typehints",
         "sphinxcontrib-autoyaml",
+        "sphinxcontrib.mermaid",
     },
     "develop": {
         "pytest",
