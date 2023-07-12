@@ -19,7 +19,6 @@ from scipy.spatial.distance import cdist
 from shapely.geometry import Point
 
 from .layout_optimization_base import LayoutOptimization
-from .geometric_yaw import geometric_yaw
 
 
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
@@ -36,7 +35,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         hotStart=None,
         enable_geometric_yaw=False,
     ):
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq)
+        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq, 
+                         enable_geometric_yaw=enable_geometric_yaw)
 
         self.x0 = self._norm(self.fi.layout_x, self.xmin, self.xmax)
         self.y0 = self._norm(self.fi.layout_y, self.ymin, self.ymax)
@@ -108,24 +108,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         # Update turbine map with turbince locations
         self.fi.reinitialize(layout_x = self.x, layout_y = self.y)
 
-        # Compute turbine yaw angles using PJ's geometric code
-        if self.enable_geometric_yaw:
-            yaw_angles = np.zeros(
-                (
-                    self.fi.floris.flow_field.n_wind_directions,
-                    self.fi.floris.flow_field.n_wind_speeds,
-                    self.fi.floris.farm.n_turbines
-                )
-            )
-            for i, wd in enumerate(self.fi.floris.flow_field.wind_directions):
-                yaw_angles[i, :, :] = geometric_yaw(
-                    self.x, 
-                    self.y, 
-                    wd, 
-                    self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"]
-                )
-        else:
-            yaw_angles = None
+        # Compute turbine yaw angles using PJ's geometric code (if enabled)
+        yaw_angles = self._get_geoyaw_angles()
 
         # Compute the objective function
         funcs = {}
