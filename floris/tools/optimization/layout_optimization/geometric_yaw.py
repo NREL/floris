@@ -1,7 +1,7 @@
 import numpy as np
 from floris.utilities import rotate_coordinates_rel_west
 
-# Geometric wake steering yaw angle selection for fast coupled 
+# Geometric wake steering yaw angle selection for fast coupled
 # layout and yaw optimization. For details, see
 # https://wes.copernicus.org/preprints/wes-2023-1/
 
@@ -42,8 +42,8 @@ def _process_layout(
     # Compute distances
     x_dists = turbine_x.reshape(-1,1).T - turbine_x.reshape(-1,1)
     y_dists = turbine_y.reshape(-1,1).T - turbine_y.reshape(-1,1)
-    
-    # Check within Jensen model spread 
+
+    # Check within Jensen model spread
     # Also remove diagonal elements
     in_Jensen_wake = (abs(y_dists) < spread * x_dists + rotor_diameter)
     x_dists[~in_Jensen_wake] = np.inf
@@ -52,7 +52,7 @@ def _process_layout(
     # Get minimums (and arguments to select the correct y values also)
     dx = x_dists.min(axis=1)
     dy = y_dists[range(len(turbine_x)), x_dists.argmin(axis=1)]
-    
+
     # Handle last turbine downstream
     furthest_ds_turb_idx = np.where(dx == np.inf)[0]
     dx[furthest_ds_turb_idx] = 0.
@@ -79,19 +79,18 @@ def _get_yaw_angles(
     |......1,7...........................3,8
     |.......................................
     ________________________________________
-    
-    x and y: dx and dy to the nearest downstream turbine in rotor diameteters with 
+
+    x and y: dx and dy to the nearest downstream turbine in rotor diameteters with
         turbines rotated so wind is coming left to right
-    left_x: where we start the trapezoid...now that I think about it this should 
-        just be assumed as 0
+    left_x: where we start the trapezoid. Should be left as 0.
     top_left_y: trapezoid top left coord
-    right_x: where to stop the trapezoid. Basically, to max coord after which the upstream turbine won't yaw
+    right_x: where to stop the trapezoid downstream.
+        Max coord after which the upstream turbine won't yaw.
     top_right_y: trapezoid top right coord
     top_left_yaw: yaw angle associated with top left point
     top_right_yaw: yaw angle associated with top right point
     bottom_left_yaw: yaw angle associated with bottom left point
     bottom_right_yaw: yaw angle associated with bottom right point
-
     """
 
     if x <= 0:
@@ -110,35 +109,66 @@ def _get_yaw_angles(
             else:
                 return yaw
 
-def geometric_yaw(turbine_x, turbine_y, wind_direction, rotor_diameter,
-                  left_x=0.0,top_left_y=1.0,
-                  right_x=25.0,top_right_y=1.0,
-                  top_left_yaw=30.0,top_right_yaw=0.0,
-                  bottom_left_yaw=30.0,bottom_right_yaw=0.0):
+def geometric_yaw(
+    turbine_x,
+    turbine_y,
+    wind_direction,
+    rotor_diameter,
+    left_x=0.0,
+    top_left_y=1.0,
+    right_x=25.0,
+    top_right_y=1.0,
+    top_left_yaw=30.0,
+    top_right_yaw=0.0,
+    bottom_left_yaw=30.0,
+    bottom_right_yaw=0.0
+):
     """
     turbine_x: unrotated x turbine coords
     turbine_y: unrotated y turbine coords
     wind_direction: float, degrees
     rotor_diameter: float
+    left_x: where we start the trapezoid. Should be left as 0.
+    top_left_y: trapezoid top left coord
+    right_x: where to stop the trapezoid downstream.
+        Max coord after which the upstream turbine won't yaw.
+    top_right_y: trapezoid top right coord
+    top_left_yaw: yaw angle associated with top left point
+    top_right_yaw: yaw angle associated with top right point
+    bottom_left_yaw: yaw angle associated with bottom left point
+    bottom_right_yaw: yaw angle associated with bottom right point
     """
 
     nturbs = len(turbine_x)
     turbine_coordinates_array = np.zeros((nturbs,3))
     turbine_coordinates_array[:,0] = turbine_x[:]
     turbine_coordinates_array[:,1] = turbine_y[:]
-    
-    rotated_x, rotated_y, _, _, _ = rotate_coordinates_rel_west(np.array([wind_direction]), turbine_coordinates_array)
+
+    rotated_x, rotated_y, _, _, _ = rotate_coordinates_rel_west(
+        np.array([wind_direction]),
+        turbine_coordinates_array
+    )
     processed_x, processed_y = _process_layout(rotated_x[0][0],rotated_y[0][0],rotor_diameter)
     yaw_array = np.zeros(nturbs)
     for i in range(nturbs-1):
-        yaw_array[i] = _get_yaw_angles(processed_x[i], processed_y[i], left_x, top_left_y, right_x, top_right_y, top_left_yaw,
-                    top_right_yaw, bottom_left_yaw, bottom_right_yaw)
+        yaw_array[i] = _get_yaw_angles(
+            processed_x[i],
+            processed_y[i],
+            left_x,
+            top_left_y,
+            right_x,
+            top_right_y,
+            top_left_yaw,
+            top_right_yaw,
+            bottom_left_yaw,
+            bottom_right_yaw
+        )
 
     return yaw_array
 
 
 if __name__=="__main__":
-    
+
     # check that it is returning values
     turbine_x = np.array([0,700,1400,2100])
     turbine_y = np.array([0,50,0,-100])
