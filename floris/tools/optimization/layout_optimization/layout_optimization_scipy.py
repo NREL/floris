@@ -54,7 +54,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
             optOptions (dict, optional): Dicitonary for setting the
                 optimization options. Defaults to None.
         """
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq, 
+        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq,
                     enable_geometric_yaw=enable_geometric_yaw)
 
         self.boundaries_norm = [
@@ -110,7 +110,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self._change_coordinates(locs_unnorm)
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
-        return (-1 * self.fi.get_farm_AEP(self.freq, yaw_angles=yaw_angles) / 
+        return (-1 * self.fi.get_farm_AEP(self.freq, yaw_angles=yaw_angles) /
                 self.initial_AEP)
 
     def _change_coordinates(self, locs):

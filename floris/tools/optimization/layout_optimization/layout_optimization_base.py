@@ -74,9 +74,9 @@ class LayoutOptimization(LoggerBase):
             # Compute geometric yaw angle for each wind direction
             for i, wd in enumerate(self.fi.floris.flow_field.wind_directions):
                 yaw_angles[i, :, :] = geometric_yaw(
-                    self.x, 
-                    self.y, 
-                    wd, 
+                    self.x,
+                    self.y,
+                    wd,
                     self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"]
                 )
         else:

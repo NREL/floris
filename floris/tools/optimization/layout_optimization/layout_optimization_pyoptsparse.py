@@ -35,7 +35,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         hotStart=None,
         enable_geometric_yaw=False,
     ):
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq, 
+        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq,
                          enable_geometric_yaw=enable_geometric_yaw)
 
         self.x0 = self._norm(self.fi.layout_x, self.xmin, self.xmax)
