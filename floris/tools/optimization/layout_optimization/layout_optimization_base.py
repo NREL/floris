@@ -15,8 +15,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString, Polygon
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric\
-    import YawOptimizationGeometric
+
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
+    YawOptimizationGeometric,
+)
 
 from ....logging_manager import LoggerBase
 

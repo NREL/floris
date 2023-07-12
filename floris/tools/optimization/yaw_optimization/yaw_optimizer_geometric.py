@@ -17,6 +17,7 @@ import numpy as np
 from scipy.optimize import minimize
 
 from floris.utilities import rotate_coordinates_rel_west
+
 from .yaw_optimization_base import YawOptimization
 
 
