@@ -16,6 +16,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString, Polygon
 from .geometric_yaw import geometric_yaw
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric\
+    import YawOptimizationGeometric
 
 from ....logging_manager import LoggerBase
 
@@ -50,6 +52,13 @@ class LayoutOptimization(LoggerBase):
         else:
             self.freq = freq
 
+        # Establish geometric yaw class
+        self.yaw_opt = YawOptimizationGeometric(
+            fi,
+            minimum_yaw_angle=-30.0,
+            maximum_yaw_angle=30.0
+        )
+
         self.initial_AEP = fi.get_farm_AEP(self.freq)
 
     def __str__(self):
@@ -63,29 +72,28 @@ class LayoutOptimization(LoggerBase):
 
     def _get_geoyaw_angles(self):
         if self.enable_geometric_yaw:
-            # Declare storage
-            yaw_angles = np.zeros(
-                (
-                    self.fi.floris.flow_field.n_wind_directions,
-                    self.fi.floris.flow_field.n_wind_speeds,
-                    self.fi.floris.farm.n_turbines
-                )
-            )
-            # Compute geometric yaw angle for each wind direction
-            for i, wd in enumerate(self.fi.floris.flow_field.wind_directions):
-                yaw_angles[i, :, :] = geometric_yaw(
-                    self.x,
-                    self.y,
-                    wd,
-                    self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"]
-                )
+            # # Declare storage
+            # yaw_angles = np.zeros(
+            #     (
+            #         self.fi.floris.flow_field.n_wind_directions,
+            #         self.fi.floris.flow_field.n_wind_speeds,
+            #         self.fi.floris.farm.n_turbines
+            #     )
+            # )
+            # # Compute geometric yaw angle for each wind direction
+            # for i, wd in enumerate(self.fi.floris.flow_field.wind_directions):
+            #     yaw_angles[i, :, :] = geometric_yaw(
+            #         self.x,
+            #         self.y,
+            #         wd,
+            #         self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"]
+            #     )
+            df_opt = self.yaw_opt.optimize()
+            self.yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
         else:
-            yaw_angles = None
+            self.yaw_angles = None
 
-        # Store for possible access after layout optimization is complete
-        self.yaw_angles = yaw_angles
-
-        return yaw_angles
+        return self.yaw_angles
 
     # Public methods
 

@@ -464,6 +464,9 @@ class YawOptimization:
 
     def _unreduce_variable(self, variable):
         # Check if needed to un-reduce at all, if not, return directly
+        if variable is None:
+            return variable
+
         if not self.exploit_layout_symmetry:
             return variable
 
