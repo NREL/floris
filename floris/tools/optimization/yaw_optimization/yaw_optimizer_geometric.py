@@ -24,7 +24,7 @@ class YawOptimizationGeometric(YawOptimization):
     """
     YawOptimizationGeometric is a subclass of
     :py:class:`floris.tools.optimization.general_library.YawOptimization` that is
-    used to provide a rough estimate of optimal yaw angles based purely on the 
+    used to provide a rough estimate of optimal yaw angles based purely on the
     wind farm geometry. Main use case is for coupled layout and yaw optimization.
     """
 
@@ -36,7 +36,7 @@ class YawOptimizationGeometric(YawOptimization):
         exploit_layout_symmetry=True,
     ):
         """
-        Instantiate YawOptimizationGeometric object with a FlorisInterface 
+        Instantiate YawOptimizationGeometric object with a FlorisInterface
         object assign parameter values.
         """
 
@@ -59,7 +59,7 @@ class YawOptimizationGeometric(YawOptimization):
         """
         # Loop through every WD individually. WS ignored!
         wd_array = self.fi_subset.floris.flow_field.wind_directions
-        
+
         for nwdi, wd in enumerate(wd_array):
             self._yaw_angles_opt_subset[nwdi, :, :] = geometric_yaw(
                 self.fi_subset.layout_x,
@@ -151,7 +151,7 @@ def _process_layout(
     rotor_diameter: turbine rotor diameter (float)
     spread=0.1: Jensen alpha wake spread value
     """
-    nturbs = len(turbine_x)
+    len(turbine_x)
 
     # # Intialize storage
     # dx = np.zeros(nturbs) + 1E10

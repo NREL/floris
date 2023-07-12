@@ -527,8 +527,10 @@ class YawOptimization:
                 "wind_speed": wind_speed * np.ones(num_wind_directions),
                 "turbulence_intensity": ti * np.ones(num_wind_directions),
                 "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
-                "farm_power_opt": None if self.farm_power_opt is None else self.farm_power_opt[:, ii],
-                "farm_power_baseline": None if self.farm_power_baseline is None else self.farm_power_baseline[:, ii],
+                "farm_power_opt": None if self.farm_power_opt is None \
+                                       else self.farm_power_opt[:, ii],
+                "farm_power_baseline": None if self.farm_power_baseline is None \
+                                            else self.farm_power_baseline[:, ii],
             }))
         df_opt = pd.concat(df_list, axis=0)
 
