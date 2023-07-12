@@ -390,6 +390,9 @@ class YawOptimization:
             P = self._calculate_farm_power(self._yaw_angles_baseline_subset)
             self._farm_power_baseline_subset = P
             self.farm_power_baseline = self._unreduce_variable(P)
+        else:
+            self._farm_power_baseline_subset = None
+            self.farm_power_baseline = None
 
     def _derive_layout_symmetry(self):
         """Derive symmetry lines in the wind farm layout and use that
@@ -521,8 +524,8 @@ class YawOptimization:
                 "wind_speed": wind_speed * np.ones(num_wind_directions),
                 "turbulence_intensity": ti * np.ones(num_wind_directions),
                 "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
-                "farm_power_opt": self.farm_power_opt[:, ii],
-                "farm_power_baseline": self.farm_power_baseline[:, ii],
+                "farm_power_opt": None if self.farm_power_opt is None else self.farm_power_opt[:, ii],
+                "farm_power_baseline": None if self.farm_power_baseline is None else self.farm_power_baseline[:, ii],
             }))
         df_opt = pd.concat(df_list, axis=0)
 
