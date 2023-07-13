@@ -253,9 +253,7 @@ class SequentialSolver(Solver):
             rotor_diameter_i = farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
             TSR_i = farm.TSRs_sorted[:, :, i:i+1, None, None]
 
-            effective_yaw_i = np.zeros_like(yaw_angle_i)
-            effective_yaw_i += yaw_angle_i
-
+            effective_yaw_i = yaw_angle_i
             if self.model_manager.enable_secondary_steering:
                 effective_yaw_i += wake_added_yaw(
                     u_i,
@@ -493,9 +491,9 @@ class CCSolver(Solver):
 
             # TODO: Should the solve and full flow solver actually use two different intensity fields
             if full_flow:
-                turbulence_intensity_i = flow_field.turbulence_intensity_field[:, :, i:i+1]
-            else:
                 turbulence_intensity_i = flow_field.turbulence_intensity_field_sorted_avg[:, :, i:i+1]
+            else:
+                turbulence_intensity_i = flow_field.turbulence_intensity_field[:, :, i:i+1]
             yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
             hub_height_i = farm.hub_heights_sorted[:, :, i:i+1, None, None]
             rotor_diameter_i = farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
