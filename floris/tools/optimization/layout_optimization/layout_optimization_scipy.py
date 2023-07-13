@@ -77,10 +77,12 @@ class LayoutOptimizationScipy(LayoutOptimization):
             self._set_opt_bounds()
         if solver is not None:
             self.solver = solver
+
+        default_optOptions = {"maxiter": 100, "disp": True, "iprint": 2, "ftol": 1e-9, "eps":0.01}
         if optOptions is not None:
-            self.optOptions = optOptions
+            self.optOptions = {**default_optOptions, **optOptions}
         else:
-            self.optOptions = {"maxiter": 100, "disp": True, "iprint": 2, "ftol": 1e-9, "eps":0.01}
+            self.optOptions = default_optOptions
 
         self._generate_constraints()
 
