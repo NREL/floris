@@ -102,7 +102,7 @@ class Solver:
         *,
         full_flow: bool = False,
         farm: Farm = None,
-        flow_field: FlowFieldGrid = None,
+        flow_field: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid = None,
         grid: TurbineGrid | FlowFieldGrid = None
     ) -> None:
         # TODO: Update with the new logger functionality that is on its way
@@ -118,21 +118,23 @@ class Solver:
         if not isinstance(self.grid, FlowFieldGrid):
             raise TypeError("Cannot run `full_flow_solve` with a `TurbineGrid` object, reinitialize with the input to `grid` being a  `FlowFieldGrid` object.")  # noqa: E501
 
-        # TODO: Why are we making copies of the originals, and then never using the original,
-        # can we just use the originally provided values and get on with the calculating?
         farm = copy.deepcopy(self.farm)
         flow_field = copy.deepcopy(self.flow_field)
 
         farm.construct_turbine_map()
         farm.construct_turbine_fCts()
-        farm.construct_turbine_fCps()
         farm.construct_turbine_power_interps()
         farm.construct_hub_heights()
         farm.construct_rotor_diameters()
         farm.construct_turbine_TSRs()
-        farm.construc_turbine_pPs()
-        farm.construc_turbine_ref_density_cp_cts()
+        farm.construct_turbine_pPs()
+        farm.construct_turbine_pTs()
+        farm.construct_turbine_ref_density_cp_cts()
+        farm.construct_turbine_ref_tilt_cp_cts()
+        farm.construct_turbine_fTilts()
+        farm.construct_turbine_correct_cp_ct_for_tilt()
         farm.construct_coordinates()
+        farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
         turbine_grid = TurbineGrid(
             turbine_coordinates=farm.coordinates,
@@ -158,7 +160,7 @@ class SequentialSolver(Solver):
         self,
         *,
         full_flow: bool = False,
-        farm: Farm,
+        farm: Farm | None = None,
         flow_field: FlowFieldGrid = None,
         grid: TurbineGrid | FlowFieldGrid = None
     ) -> None:
@@ -215,20 +217,37 @@ class SequentialSolver(Solver):
             ct_i = Ct(
                 velocities=flow_field.u_sorted,
                 yaw_angle=farm.yaw_angles_sorted,
+                tilt_angle=farm.tilt_angles_sorted,
+                ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
                 fCt=farm.turbine_fCts,
+                tilt_interp=farm.turbine_fTilts,
+                correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                 turbine_type_map=farm.turbine_type_map_sorted,
                 ix_filter=[i],
+                average_method=grid.average_method,
+                cubature_weights=grid.cubature_weights,
             )[:, :, 0:1, None, None]
 
             # Since we are filtering for the ith turbine in the axial induction function, get the first index here (0:1)
             axial_induction_i = axial_induction(
                 velocities=flow_field.u_sorted,
                 yaw_angle=farm.yaw_angles_sorted,
+                tilt_angle=farm.tilt_angles_sorted,
+                ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
                 fCt=farm.turbine_fCts,
+                tilt_interp=farm.turbine_fTilts,
+                correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                 turbine_type_map=farm.turbine_type_map_sorted,
                 ix_filter=[i],
+                average_method=grid.average_method,
+                cubature_weights=grid.cubature_weights,
             )[:, :, 0:1, None, None]
-            turbulence_intensity_i = flow_field.turbulence_intensity_field[:, :, i:i+1]
+
+            # TODO: Should the solve and full flow solver actually use two different intensity fields
+            if full_flow:
+                turbulence_intensity_i = flow_field.turbulence_intensity_field[:, :, i:i+1]
+            else:
+                turbulence_intensity_i = flow_field.turbulence_intensity_field_sorted_avg[:, :, i:i+1]
             yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
             hub_height_i = farm.hub_heights_sorted[:, :, i:i+1, None, None]
             rotor_diameter_i = farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
@@ -248,7 +267,8 @@ class SequentialSolver(Solver):
                     hub_height_i,
                     ct_i,
                     TSR_i,
-                    axial_induction_i
+                    axial_induction_i,
+                    flow_field.wind_shear,
                 )
 
             deflection_field = self.model_manager.deflection_model.function(
@@ -274,7 +294,8 @@ class SequentialSolver(Solver):
                     yaw_angle_i,
                     ct_i,
                     TSR_i,
-                    axial_induction_i
+                    axial_induction_i,
+                    flow_field.wind_shear,
                 )
             if not full_flow:
                 if self.model_manager.enable_yaw_added_recovery:
@@ -328,9 +349,9 @@ class SequentialSolver(Solver):
                 ti_added = (
                     area_overlap
                     * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
-                    * np.array(grid.x_sorted > x_i)
-                    * np.array(np.abs(y_i - grid.y_sorted) < 2 * rotor_diameter_i)
-                    * np.array(grid.x_sorted <= downstream_influence_length + x_i)
+                    * (grid.x_sorted > x_i)
+                    * (np.abs(y_i - grid.y_sorted) < 2 * rotor_diameter_i)
+                    * (grid.x_sorted <= downstream_influence_length + x_i)
                 )
 
                 # Combine turbine TIs with WAT
@@ -344,7 +365,8 @@ class SequentialSolver(Solver):
             flow_field.w_sorted += w_wake
 
         if not full_flow:
-            flow_field.turbulence_intensity_field = _expansion_mean(turbine_turbulence_intensity)
+            flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
+            flow_field.flow_field.turbulence_intensity_field_sorted_avg = _expansion_mean(turbine_turbulence_intensity)
 
 
 @define(auto_attribs=True)
@@ -414,11 +436,12 @@ class CCSolver(Solver):
             v_i = flow_field.v_sorted[:, :, i:i+1]
 
             if not full_flow:
+                rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
                 mask = (
                     (grid.x_sorted < x_i + 0.01)
                     * (grid.x_sorted > x_i - 0.01)
-                    * (grid.y_sorted < y_i + 0.51 * 126.0)
-                    * (grid.y_sorted > y_i - 0.51 * 126.0)
+                    * (grid.y_sorted < y_i + 0.51 * rotor_diameter_i)
+                    * (grid.y_sorted > y_i - 0.51 * rotor_diameter_i)
                 )
                 turbine_inflow_field *= ~mask + (flow_field.u_initial_sorted - turb_u_wake) * mask
 
@@ -426,30 +449,52 @@ class CCSolver(Solver):
 
             turb_avg_vels = average_velocity(turbine_inflow_field)
             turb_Cts = Ct(
-                turb_avg_vels,
-                farm.yaw_angles_sorted,
-                farm.turbine_fCts,
+                velocities=turb_avg_vels,
+                yaw_angle=farm.yaw_angles_sorted,
+                tilt_angle=farm.tilt_angles_sorted,
+                ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+                fCt=farm.turbine_fCts,
+                tilt_interp=farm.turbine_fTilts,
+                correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                 turbine_type_map=farm.turbine_type_map_sorted,
+                average_method=grid.average_method,
+                cubature_weights=grid.cubature_weights,
             )[:, :, :, None, None]
 
             if not full_flow:
                 turb_aIs = axial_induction(
-                    turb_avg_vels,
-                    farm.yaw_angles_sorted,
-                    farm.turbine_fCts,
+                    velocities=turb_avg_vels,
+                    yaw_angle=farm.yaw_angles_sorted,
+                    tilt_angle=farm.tilt_angles_sorted,
+                    ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+                    fCt=farm.turbine_fCts,
+                    tilt_interp=farm.turbine_fTilts,
+                    correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                     turbine_type_map=farm.turbine_type_map_sorted,
                     ix_filter=[i],
+                    average_method=grid.average_method,
+                    cubature_weights=grid.cubature_weights,
                 )[:, :, :, None, None]
 
             axial_induction_i = axial_induction(
                 velocities=flow_field.u_sorted,
                 yaw_angle=farm.yaw_angles_sorted,
+                tilt_angle=farm.tilt_angles_sorted,
+                ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
                 fCt=farm.turbine_fCts,
+                tilt_interp=farm.turbine_fTilts,
+                correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                 turbine_type_map=farm.turbine_type_map_sorted,
                 ix_filter=[i],
+                average_method=grid.average_method,
+                cubature_weights=grid.cubature_weights,
             )[:, :, :, None, None]
 
-            turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
+            # TODO: Should the solve and full flow solver actually use two different intensity fields
+            if full_flow:
+                turbulence_intensity_i = flow_field.turbulence_intensity_field[:, :, i:i+1]
+            else:
+                turbulence_intensity_i = flow_field.turbulence_intensity_field_sorted_avg[:, :, i:i+1]
             yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
             hub_height_i = farm.hub_heights_sorted[:, :, i:i+1, None, None]
             rotor_diameter_i = farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
@@ -468,6 +513,7 @@ class CCSolver(Solver):
                     turb_Cts[:, :, i:i+1],
                     TSR_i,
                     axial_induction_i,
+                    flow_field.wind_shear,
                     scale=scale_factor,
                 )
 
@@ -497,6 +543,7 @@ class CCSolver(Solver):
                     turb_Cts[:, :, i:i+1],
                     TSR_i,
                     axial_induction_i,
+                    flow_field.wind_shear,
                     scale=scale_factor,
                 )
 
@@ -650,26 +697,44 @@ class TurbOParkSolver(Solver):
             Cts = Ct(
                 velocities=flow_field.u_sorted,
                 yaw_angle=farm.yaw_angles_sorted,
+                tilt_angle=farm.tilt_angles_sorted,
+                ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
                 fCt=farm.turbine_fCts,
+                tilt_interp=farm.turbine_fTilts,
+                correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                 turbine_type_map=farm.turbine_type_map_sorted,
+                average_method=grid.average_method,
+                cubature_weights=grid.cubature_weights,
             )
 
             # Since we are filtering for the ith turbine in the Ct function, get the first index here (0:1)
             ct_i = Ct(
                 velocities=flow_field.u_sorted,
                 yaw_angle=farm.yaw_angles_sorted,
+                tilt_angle=farm.tilt_angles_sorted,
+                ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
                 fCt=farm.turbine_fCts,
+                tilt_interp=farm.turbine_fTilts,
+                correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                 turbine_type_map=farm.turbine_type_map_sorted,
                 ix_filter=[i],
+                average_method=grid.average_method,
+                cubature_weights=grid.cubature_weights,
             )[:, :, 0:1, None, None]
 
             # Since we are filtering for the ith turbine in the axial induction function, get the first index here (0:1)
             axial_induction_i = axial_induction(
                 velocities=flow_field.u_sorted,
                 yaw_angle=farm.yaw_angles_sorted,
+                tilt_angle=farm.tilt_angles_sorted,
+                ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
                 fCt=farm.turbine_fCts,
+                tilt_interp=farm.turbine_fTilts,
+                correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                 turbine_type_map=farm.turbine_type_map_sorted,
                 ix_filter=[i],
+                average_method=grid.average_method,
+                cubature_weights=grid.cubature_weights,
             )[:, :, 0:1, None, None]
 
             turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
@@ -692,7 +757,8 @@ class TurbOParkSolver(Solver):
                     hub_height_i,
                     ct_i,
                     TSR_i,
-                    axial_induction_i
+                    axial_induction_i,
+                    flow_field.wind_shear,
                 )
 
             # Model calculations
@@ -708,9 +774,15 @@ class TurbOParkSolver(Solver):
                     ct_ii = Ct(
                         velocities=flow_field.u_sorted,
                         yaw_angle=farm.yaw_angles_sorted,
+                        tilt_angle=farm.tilt_angles_sorted,
+                        ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
                         fCt=farm.turbine_fCts,
+                        tilt_interp=farm.turbine_fTilts,
+                        correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                         turbine_type_map=farm.turbine_type_map_sorted,
-                        ix_filter=[ii]
+                        ix_filter=[ii],
+                        average_method=grid.average_method,
+                        cubature_weights=grid.cubature_weights,
                     )[:, :, 0:1, None, None]
                     rotor_diameter_ii = farm.rotor_diameters_sorted[:, :, ii:ii+1, None, None]
 
@@ -739,7 +811,8 @@ class TurbOParkSolver(Solver):
                     yaw_angle_i,
                     ct_i,
                     TSR_i,
-                    axial_induction_i
+                    axial_induction_i,
+                    flow_field.wind_shear,
                 )
 
             if self.model_manager.enable_yaw_added_recovery:
@@ -808,7 +881,8 @@ class TurbOParkSolver(Solver):
             flow_field.v_sorted += v_wake
             flow_field.w_sorted += w_wake
 
-        flow_field.turbulence_intensity_field = _expansion_mean(turbine_turbulence_intensity)
+        flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
+        flow_field.flow_field.turbulence_intensity_field_sorted_avg = _expansion_mean(turbine_turbulence_intensity)
 
 # Turn off flake8 for the original code
 # flake8: noqa
