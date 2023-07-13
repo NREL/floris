@@ -38,7 +38,6 @@ from floris.simulation.wake_deflection.gauss import (
     yaw_added_turbulence_mixing,
 )
 from floris.type_dec import NDArrayFloat
-from floris.utilities import cosd
 
 
 def _expansion_mean(x: NDArrayFloat) -> NDArrayFloat:
@@ -90,7 +89,7 @@ class Solver:
     flow_field: FlowField = field(converter=copy.deepcopy, validator=attrs.validators.instance_of(Farm))
     grid: TurbineGrid | FlowFieldGrid = field(
         converter=copy.deepcopy,
-        validator=attrs.validators.instance_of((FlowFieldGrid, TurbineGrid))
+        validator=attrs.validators.instance_of((FlowFieldGrid, TurbineGrid)),
     )
     model_manager: WakeModelManager = field(
         converter=copy.deepcopy, validator=attrs.validators.instance_of(WakeModelManager)
@@ -101,9 +100,9 @@ class Solver:
         self,
         *,
         full_flow: bool = False,
-        farm: Farm = None,
-        flow_field: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid = None,
-        grid: TurbineGrid | FlowFieldGrid = None
+        farm: Farm | None = None,
+        flow_field: FlowFieldGrid | None = None,
+        grid: TurbineGrid | FlowFieldGrid | None = None,
     ) -> None:
         # TODO: Update with the new logger functionality that is on its way
         pass
@@ -162,7 +161,7 @@ class SequentialSolver(Solver):
         full_flow: bool = False,
         farm: Farm | None = None,
         flow_field: FlowFieldGrid = None,
-        grid: TurbineGrid | FlowFieldGrid = None
+        grid: TurbineGrid | FlowFieldGrid = None,
     ) -> None:
         """Runs the sequential sover methodology, or full flow sequential solver methodology for a
         wind farm.
@@ -278,7 +277,7 @@ class SequentialSolver(Solver):
                 turbulence_intensity_i,
                 ct_i,
                 rotor_diameter_i,
-                **deflection_model_args
+                **deflection_model_args,
             )
 
             if self.model_manager.enable_transverse_velocities:
@@ -321,12 +320,12 @@ class SequentialSolver(Solver):
                 ct_i,
                 hub_height_i,
                 rotor_diameter_i,
-                **deficit_model_args
+                **deficit_model_args,
             )
 
             wake_field = self.model_manager.combination_model.function(
                 wake_field,
-                velocity_deficit * flow_field.u_initial_sorted
+                velocity_deficit * flow_field.u_initial_sorted,
             )
 
             if not full_flow:
@@ -335,7 +334,7 @@ class SequentialSolver(Solver):
                     grid.x_sorted,
                     x_i,
                     rotor_diameter_i,
-                    axial_induction_i
+                    axial_induction_i,
                 )
 
                 # Calculate wake overlap for wake-added turbulence (WAT)
@@ -357,7 +356,7 @@ class SequentialSolver(Solver):
                 # Combine turbine TIs with WAT
                 turbine_turbulence_intensity = np.maximum(
                     np.sqrt(ti_added ** 2 + ambient_turbulence_intensity ** 2),
-                    turbine_turbulence_intensity
+                    turbine_turbulence_intensity,
                 )
 
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -419,7 +418,7 @@ class CCSolver(Solver):
         turbine_inflow_field = copy.deepcopy(flow_field.u_initial_sorted)
         turbine_turbulence_intensity = np.full(
             (flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1),
-            flow_field.turbulence_intensity
+            flow_field.turbulence_intensity,
         )
         ambient_turbulence_intensity = flow_field.turbulence_intensity
 
@@ -526,7 +525,7 @@ class CCSolver(Solver):
                 turbulence_intensity_i,
                 turb_Cts[:, :, i:i+1],
                 rotor_diameter_i,
-                **deflection_model_args
+                **deflection_model_args,
             )
 
             if self.model_manager.enable_transverse_velocities:
@@ -575,7 +574,7 @@ class CCSolver(Solver):
                 farm.rotor_diameters_sorted[:, :, :, None, None],
                 turb_u_wake,
                 Ctmp,
-                **deficit_model_args
+                **deficit_model_args,
             )
 
             if not full_flow:
@@ -584,7 +583,7 @@ class CCSolver(Solver):
                     grid.x_sorted,
                     x_i,
                     rotor_diameter_i,
-                    turb_aIs
+                    turb_aIs,
                 )
 
                 # Calculate wake overlap for wake-added turbulence (WAT)
@@ -607,7 +606,7 @@ class CCSolver(Solver):
                 # Combine turbine TIs with WAT
                 turbine_turbulence_intensity = np.maximum(
                     np.sqrt(ti_added ** 2 + ambient_turbulence_intensity ** 2),
-                    turbine_turbulence_intensity
+                    turbine_turbulence_intensity,
                 )
 
             flow_field.v_sorted += v_wake
@@ -632,7 +631,7 @@ class TurbOParkSolver(Solver):
         full_flow: bool = False,
         farm: Farm = None,
         flow_field: FlowField = None,
-        grid: TurbineGrid | FlowFieldGrid = None
+        grid: TurbineGrid | FlowFieldGrid = None,
     ) -> None:
         """Runs the TurbOPark sover methodology, or full flow TurbOPark solver methodology for a
         wind farm.
@@ -680,7 +679,7 @@ class TurbOParkSolver(Solver):
 
         turbine_turbulence_intensity = np.full(
             (flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1),
-            flow_field.turbulence_intensity
+            flow_field.turbulence_intensity,
         )
         ambient_turbulence_intensity = flow_field.turbulence_intensity
 
@@ -793,7 +792,7 @@ class TurbOParkSolver(Solver):
                         turbulence_intensity_ii,
                         ct_ii,
                         rotor_diameter_ii,
-                        **deflection_model_args
+                        **deflection_model_args,
                     )
 
                     deflection_field[:, :, ii:ii+1, :, :] = deflection_field_ii[:, :, i:i+1, :, :]
@@ -837,7 +836,7 @@ class TurbOParkSolver(Solver):
                 farm.rotor_diameters_sorted[:, :, :, None, None],
                 i,
                 deflection_field,
-                **deficit_model_args
+                **deficit_model_args,
             )
 
             wake_field = self.model_manager.combination_model.function(
@@ -850,7 +849,7 @@ class TurbOParkSolver(Solver):
                 grid.x_sorted,
                 x_i,
                 rotor_diameter_i,
-                axial_induction_i
+                axial_induction_i,
             )
 
             # TODO: leaving this in for GCH quantities; will need to find another way to compute area_overlap
@@ -874,7 +873,7 @@ class TurbOParkSolver(Solver):
             # Combine turbine TIs with WAT
             turbine_turbulence_intensity = np.maximum(
                 np.sqrt(ti_added ** 2 + ambient_turbulence_intensity ** 2),
-                turbine_turbulence_intensity
+                turbine_turbulence_intensity,
             )
 
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
