@@ -160,8 +160,8 @@ class SequentialSolver(Solver):
         *,
         full_flow: bool = False,
         farm: Farm | None = None,
-        flow_field: FlowFieldGrid = None,
-        grid: TurbineGrid | FlowFieldGrid = None,
+        flow_field: FlowField = None,
+        grid: TurbineGrid | FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid = None,
     ) -> None:
         """Runs the sequential sover methodology, or full flow sequential solver methodology for a
         wind farm.
@@ -174,11 +174,12 @@ class SequentialSolver(Solver):
                 Defaults to None.
             flow_field (FlowField, optional): Allows for a non-initialized `flow_field` object to be
                 used. It should be noted that this functionality is intended for use with
-                `full_flow_solve`.Defaults to None.
+                `full_flow_solve`. Defaults to None.
             grid (TurbineGrid | FlowFieldGrid, optional): Allows for a non-initialized `grid` object
                 to be used. It should be noted that this functionality is intended for use with
-                `full_flow_solve`, which computes over a `TurbineGrid`, then a `FlowFieldGrid`.
-                Defaults to None.
+                `full_flow_solve`, which computes over a `TurbineGrid`, then a `FlowFieldGrid`. If
+                `full_flow=True`, then `grid` should be one of `FlowFieldGrid`, `FlowFieldPlanarGrid`,
+                or `PointsGrid`. Defaults to None.
         """
         if farm is None:
             farm = self.farm
@@ -392,8 +393,9 @@ class CCSolver(Solver):
                 `full_flow_solve`.Defaults to None.
             grid (TurbineGrid | FlowFieldGrid, optional): Allows for a non-initialized `grid` object
                 to be used. It should be noted that this functionality is intended for use with
-                `full_flow_solve`, which computes over a `TurbineGrid`, then a `FlowFieldGrid`.
-                Defaults to None.
+                `full_flow_solve`, which computes over a `TurbineGrid`, then a `FlowFieldGrid`. If
+                `full_flow=False`, this should be a `TurbineGrid`, and if `full_flow=True`, this
+                should be a `FlowFieldGrid`. Defaults to None.
         """
         if farm is None:
             farm = self.farm
@@ -647,8 +649,9 @@ class TurbOParkSolver(Solver):
                 `full_flow_solve`.Defaults to None.
             grid (TurbineGrid | FlowFieldGrid, optional): Allows for a non-initialized `grid` object
                 to be used. It should be noted that this functionality is intended for use with
-                `full_flow_solve`, which computes over a `TurbineGrid`, then a `FlowFieldGrid`.
-                Defaults to None.
+                `full_flow_solve`, which computes over a `TurbineGrid`, then a `FlowFieldGrid`. If
+                `full_flow=False`, this should be a `TurbineGrid`, and if `full_flow=True`, this
+                should be a `FlowFieldGrid`. Defaults to None.
         """
         # Algorithm
         # For each turbine, calculate its effect on every downstream turbine.
