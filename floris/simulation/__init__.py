@@ -58,6 +58,9 @@ from .solver import (
     full_flow_turbopark_solver,
     sequential_solver,
     turbopark_solver,
+    SequentialSolver,
+    CCSolver,
+    TurbOParkSolver
 )
 from .floris import Floris
 

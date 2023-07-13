@@ -86,7 +86,7 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
 @define(auto_attribs=True)
 class Solver:
     farm: Farm = field(converter=copy.deepcopy, validator=attrs.validators.instance_of(Farm))
-    flow_field: FlowField = field(converter=copy.deepcopy, validator=attrs.validators.instance_of(Farm))
+    flow_field: FlowField = field(converter=copy.deepcopy, validator=attrs.validators.instance_of(FlowField))
     grid: TurbineGrid | FlowFieldGrid = field(
         converter=copy.deepcopy,
         validator=attrs.validators.instance_of((FlowFieldGrid, TurbineGrid)),
@@ -245,9 +245,9 @@ class SequentialSolver(Solver):
 
             # TODO: Should the solve and full flow solver actually use two different intensity fields
             if full_flow:
-                turbulence_intensity_i = flow_field.turbulence_intensity_field[:, :, i:i+1]
-            else:
                 turbulence_intensity_i = flow_field.turbulence_intensity_field_sorted_avg[:, :, i:i+1]
+            else:
+                turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
             yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
             hub_height_i = farm.hub_heights_sorted[:, :, i:i+1, None, None]
             rotor_diameter_i = farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
@@ -366,7 +366,7 @@ class SequentialSolver(Solver):
 
         if not full_flow:
             flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
-            flow_field.flow_field.turbulence_intensity_field_sorted_avg = _expansion_mean(turbine_turbulence_intensity)
+            flow_field.turbulence_intensity_field_sorted_avg = _expansion_mean(turbine_turbulence_intensity)
 
 
 @define(auto_attribs=True)
@@ -884,7 +884,7 @@ class TurbOParkSolver(Solver):
             flow_field.w_sorted += w_wake
 
         flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
-        flow_field.flow_field.turbulence_intensity_field_sorted_avg = _expansion_mean(turbine_turbulence_intensity)
+        flow_field.turbulence_intensity_field_sorted_avg = _expansion_mean(turbine_turbulence_intensity)
 
 # Turn off flake8 for the original code
 # flake8: noqa

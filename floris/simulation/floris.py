@@ -35,6 +35,7 @@ from floris.simulation import (
     Grid,
     PointsGrid,
     sequential_solver,
+    SequentialSolver,
     State,
     TurbineCubatureGrid,
     TurbineGrid,
@@ -244,12 +245,14 @@ class Floris(BaseClass):
                 self.wake
             )
         else:
-            sequential_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+            # sequential_solver(
+            #     self.farm,
+            #     self.flow_field,
+            #     self.grid,
+            #     self.wake
+            # )
+            solver = SequentialSolver(self.farm, self.flow_field, self.grid, self.wake)
+            solver.solve()
         # end = time.time()
         # elapsed_time = end - start
 
@@ -274,7 +277,9 @@ class Floris(BaseClass):
         elif vel_model=="empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
-            full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+            # full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+            solver = SequentialSolver(self.farm, self.flow_field, self.grid, self.wake)
+            solver.solve(full_flow=True)
 
     def solve_for_points(self, x, y, z):
         # Do the calculation with the TurbineGrid for a single wind speed
@@ -310,7 +315,9 @@ class Floris(BaseClass):
         elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
         else:
-            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+            # full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+            solver = SequentialSolver(self.farm, self.flow_field, self.grid, self.wake)
+            solver.solve(full_flow=True)
 
         return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
 
