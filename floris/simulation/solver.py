@@ -253,7 +253,7 @@ class SequentialSolver(Solver):
             rotor_diameter_i = farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
             TSR_i = farm.TSRs_sorted[:, :, i:i+1, None, None]
 
-            effective_yaw_i = yaw_angle_i
+            effective_yaw_i = yaw_angle_i.copy()
             if self.model_manager.enable_secondary_steering:
                 effective_yaw_i += wake_added_yaw(
                     u_i,
@@ -883,6 +883,21 @@ class TurbOParkSolver(Solver):
 
         flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
         flow_field.turbulence_intensity_field_sorted_avg = _expansion_mean(turbine_turbulence_intensity)
+
+
+@define(auto_attribs=True)
+class EmpiricalGaussSolver(Solver):
+
+    def solve(
+        self,
+        *,
+        full_flow: bool = False,
+        farm: Farm = None,
+        flow_field: FlowField = None,
+        grid: TurbineGrid | FlowFieldGrid = None,
+    ) -> None:
+        ...
+
 
 # Turn off flake8 for the original code
 # flake8: noqa

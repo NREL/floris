@@ -51,7 +51,9 @@ from .flow_field import FlowField
 from .wake import WakeModelManager
 from .solver import (
     cc_solver,
+    CCSolver,
     empirical_gauss_solver,
+    EmpiricalGaussSolver,
     full_flow_cc_solver,
     full_flow_empirical_gauss_solver,
     full_flow_sequential_solver,
@@ -59,8 +61,7 @@ from .solver import (
     sequential_solver,
     turbopark_solver,
     SequentialSolver,
-    CCSolver,
-    TurbOParkSolver
+    TurbOParkSolver,
 )
 from .floris import Floris
 
