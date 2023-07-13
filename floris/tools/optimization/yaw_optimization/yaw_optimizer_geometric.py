@@ -67,8 +67,10 @@ class YawOptimizationGeometric(YawOptimization):
                 self.fi_subset.layout_y,
                 wd,
                 self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"],
-                top_left_yaw=self.maximum_yaw_angle[0,0,0],
-                bottom_left_yaw=-self.minimum_yaw_angle[0,0,0]
+                top_left_yaw_upper=self.maximum_yaw_angle[0,0,0],
+                bottom_left_yaw_upper=self.maximum_yaw_angle[0,0,0],
+                top_left_yaw_lower=self.minimum_yaw_angle[0,0,0],
+                bottom_left_yaw_lower=self.minimum_yaw_angle[0,0,0]
             )
 
         # Finalize optimization, i.e., retrieve full solutions
@@ -86,10 +88,14 @@ def geometric_yaw(
     top_left_y=1.0,
     right_x=25.0,
     top_right_y=1.0,
-    top_left_yaw=30.0,
-    top_right_yaw=0.0,
-    bottom_left_yaw=30.0,
-    bottom_right_yaw=0.0
+    top_left_yaw_upper=30.0,
+    top_right_yaw_upper=0.0,
+    bottom_left_yaw_upper=30.0,
+    bottom_right_yaw_upper=0.0,
+    top_left_yaw_lower=-30.0,
+    top_right_yaw_lower=0.0,
+    bottom_left_yaw_lower=-30.0,
+    bottom_right_yaw_lower=0.0
 ):
     """
     turbine_x: unrotated x turbine coords
@@ -101,10 +107,14 @@ def geometric_yaw(
     right_x: where to stop the trapezoid downstream.
         Max coord after which the upstream turbine won't yaw.
     top_right_y: trapezoid top right coord
-    top_left_yaw: yaw angle associated with top left point
-    top_right_yaw: yaw angle associated with top right point
-    bottom_left_yaw: yaw angle associated with bottom left point
-    bottom_right_yaw: yaw angle associated with bottom right point
+    top_left_yaw_upper: yaw angle associated with top left point (upper trapezoid)
+    top_right_yaw_upper: yaw angle associated with top right point
+    bottom_left_yaw_upper: yaw angle associated with bottom left point
+    bottom_right_yaw_upper: yaw angle associated with bottom right point
+    top_left_yaw_lower: yaw angle associated with top left point (lower trapezoid)
+    top_right_yaw_lower: yaw angle associated with top right point
+    bottom_left_yaw_lower: yaw angle associated with bottom left point
+    bottom_right_yaw_lower: yaw angle associated with bottom right point
     """
 
     nturbs = len(turbine_x)
@@ -127,10 +137,14 @@ def geometric_yaw(
             top_left_y,
             right_x,
             top_right_y,
-            top_left_yaw,
-            top_right_yaw,
-            bottom_left_yaw,
-            bottom_right_yaw
+            top_left_yaw_upper,
+            top_right_yaw_upper,
+            bottom_left_yaw_upper,
+            bottom_right_yaw_upper,
+            top_left_yaw_lower,
+            top_right_yaw_lower,
+            bottom_left_yaw_lower,
+            bottom_right_yaw_lower
         )
 
     return yaw_array
@@ -202,10 +216,14 @@ def _get_yaw_angles(
     top_left_y,
     right_x,
     top_right_y,
-    top_left_yaw,
-    top_right_yaw,
-    bottom_left_yaw,
-    bottom_right_yaw
+    top_left_yaw_upper,
+    top_right_yaw_upper,
+    bottom_left_yaw_upper,
+    bottom_right_yaw_upper,
+    top_left_yaw_lower,
+    top_right_yaw_lower,
+    bottom_left_yaw_lower,
+    bottom_right_yaw_lower
 ):
     """
     _______2,5___________________________4,6
@@ -221,24 +239,30 @@ def _get_yaw_angles(
     right_x: where to stop the trapezoid downstream.
         Max coord after which the upstream turbine won't yaw.
     top_right_y: trapezoid top right coord
-    top_left_yaw: yaw angle associated with top left point
-    top_right_yaw: yaw angle associated with top right point
-    bottom_left_yaw: yaw angle associated with bottom left point
-    bottom_right_yaw: yaw angle associated with bottom right point
+    top_left_yaw_upper: yaw angle associated with top left point (upper trapezoid)
+    top_right_yaw_upper: yaw angle associated with top right point
+    bottom_left_yaw_upper: yaw angle associated with bottom left point
+    bottom_right_yaw_upper: yaw angle associated with bottom right point
+    top_left_yaw_lower: yaw angle associated with top left point (lower trapezoid)
+    top_right_yaw_lower: yaw angle associated with top right point
+    bottom_left_yaw_lower: yaw angle associated with bottom left point
+    bottom_right_yaw_lower: yaw angle associated with bottom right point
     """
 
     if x <= 0:
         return 0.0
     else:
         dx = (x-left_x)/(right_x-left_x)
+        if dx >= 1.0:
+            return 0.0
         edge_y = top_left_y + (top_right_y-top_left_y)*dx
         if abs(y) > edge_y:
             return 0.0
-        else:
-            top_yaw = top_left_yaw + (top_right_yaw-top_left_yaw)*dx
-            bottom_yaw = bottom_left_yaw + (bottom_right_yaw-bottom_left_yaw)*dx
-            yaw = bottom_yaw + (top_yaw-bottom_yaw)*abs(y)/edge_y
-            if y < 0:
-                return -yaw
-            else:
-                return yaw
+        elif y >= -0.01: # Tolerance to handle numerical issues
+            top_yaw = top_left_yaw_upper + (top_right_yaw_upper-top_left_yaw_upper)*dx
+            bottom_yaw = bottom_left_yaw_upper + (bottom_right_yaw_upper-bottom_left_yaw_upper)*dx
+            return bottom_yaw + (top_yaw-bottom_yaw)*abs(y)/edge_y
+        elif y < -0.01:
+            top_yaw = top_left_yaw_lower + (top_right_yaw_lower-top_left_yaw_lower)*dx
+            bottom_yaw = bottom_left_yaw_lower + (bottom_right_yaw_lower-bottom_left_yaw_lower)*dx
+            return bottom_yaw + (top_yaw-bottom_yaw)*abs(y)/edge_y
