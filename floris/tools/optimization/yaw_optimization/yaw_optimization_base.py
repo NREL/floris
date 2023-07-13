@@ -19,10 +19,12 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
+from floris.logging_manager import LoggerBase
+
 from .yaw_optimization_tools import derive_downstream_turbines, find_layout_symmetry
 
 
-class YawOptimization:
+class YawOptimization(LoggerBase):
     """
     YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.
     Optimization` that is used to optimize the yaw angles of all turbines in a Floris
@@ -176,7 +178,17 @@ class YawOptimization:
         self.normalize_variables = normalize_control_variables
         self.calc_baseline_power = calc_baseline_power
         self.exclude_downstream_turbines = exclude_downstream_turbines
-        self.exploit_layout_symmetry = exploit_layout_symmetry
+
+        # Check if exploit_layout_symmetry is being used with heterogeneous inflow
+        if exploit_layout_symmetry and fi.floris.flow_field.heterogenous_inflow_config != None:
+            err_msg = (
+                "Layout symmetry cannot be exploited with heterogeneous inflows. "
+                "Setting exploit_layout_symmetry to False."
+            )
+            self.logger.warning(err_msg, stack_info=True)
+            self.exploit_layout_symmetry = False
+        else:
+            self.exploit_layout_symmetry = exploit_layout_symmetry
 
         # Prepare for optimization and calculate baseline powers (if applic.)
         self._initialize()
