@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import attrs
 import yaml
 from attrs import define, field
 
@@ -69,7 +70,13 @@ class Floris(BaseClass):
     floris_version: str = field(converter=str)
 
     grid: Grid = field(init=False)
-    solve: SequentialSolver | CCSolver | TurbOParkSolver | EmpiricalGaussSolver = field(init=False)
+    solve: SequentialSolver | CCSolver | TurbOParkSolver | EmpiricalGaussSolver = field(
+        default=None,
+        init=False,
+        validator=attrs.validators.instance_of(
+            (SequentialSolver, CCSolver, TurbOParkSolver, EmpiricalGaussSolver, type(None))
+        )
+    )
 
     def __attrs_post_init__(self) -> None:
 
