@@ -434,7 +434,9 @@ class CCSolver(Solver):
             u_i = turbine_inflow_field[:, :, i:i+1]
             v_i = flow_field.v_sorted[:, :, i:i+1]
 
-            if not full_flow:
+            if full_flow:
+                turbine_inflow_field = flow_field.u_sorted
+            else:
                 rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
                 mask = (
                     (grid.x_sorted < x_i + 0.01)
@@ -443,8 +445,6 @@ class CCSolver(Solver):
                     * (grid.y_sorted > y_i - 0.51 * rotor_diameter_i)
                 )
                 turbine_inflow_field *= ~mask + (flow_field.u_initial_sorted - turb_u_wake) * mask
-
-            turbine_inflow_field = flow_field.u_sorted if full_flow else turbine_inflow_field
 
             turb_avg_vels = average_velocity(turbine_inflow_field)
             turb_Cts = Ct(
@@ -493,7 +493,7 @@ class CCSolver(Solver):
             if full_flow:
                 turbulence_intensity_i = flow_field.turbulence_intensity_field_sorted_avg[:, :, i:i+1]
             else:
-                turbulence_intensity_i = flow_field.turbulence_intensity_field[:, :, i:i+1]
+                turbulence_intensity_i = turbine_turbulence_intensity[:, :, i:i+1]
             yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
             hub_height_i = farm.hub_heights_sorted[:, :, i:i+1, None, None]
             rotor_diameter_i = farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
@@ -546,9 +546,7 @@ class CCSolver(Solver):
                     scale=scale_factor,
                 )
 
-            if full_flow:
-                turbine_turbulence_intensity = flow_field.turbulence_intensity_field
-            else:
+            if not full_flow:
                 if self.model_manager.enable_yaw_added_recovery:
                     I_mixing = yaw_added_turbulence_mixing(
                         u_i,
@@ -561,6 +559,10 @@ class CCSolver(Solver):
                     turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
 
             # NOTE: exponential
+            if full_flow:
+                ti = turbine_grid_flow_field.turbulence_intensity_field_sorted_avg
+            else:
+                ti = turbine_turbulence_intensity
             turb_u_wake, Ctmp = self.model_manager.velocity_model.function(
                 i,
                 x_i,
@@ -569,7 +571,7 @@ class CCSolver(Solver):
                 u_i,
                 deflection_field,
                 yaw_angle_i,
-                turbine_turbulence_intensity,
+                ti,
                 turb_Cts,
                 farm.rotor_diameters_sorted[:, :, :, None, None],
                 turb_u_wake,
@@ -615,6 +617,7 @@ class CCSolver(Solver):
         flow_field.u_sorted = flow_field.u_initial_sorted - turb_u_wake if full_flow else turbine_inflow_field
 
         if not full_flow:
+            flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
             flow_field.turbulence_intensity_field = _expansion_mean(turbine_turbulence_intensity)
 
 
