@@ -85,14 +85,13 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
 
 @define(auto_attribs=True)
 class Solver:
-    farm: Farm = field(converter=copy.deepcopy, validator=attrs.validators.instance_of(Farm))
-    flow_field: FlowField = field(converter=copy.deepcopy, validator=attrs.validators.instance_of(FlowField))
+    farm: Farm = field(validator=attrs.validators.instance_of(Farm))
+    flow_field: FlowField = field(validator=attrs.validators.instance_of(FlowField))
     grid: TurbineGrid | FlowFieldGrid = field(
-        converter=copy.deepcopy,
         validator=attrs.validators.instance_of((FlowFieldGrid, TurbineGrid)),
     )
     model_manager: WakeModelManager = field(
-        converter=copy.deepcopy, validator=attrs.validators.instance_of(WakeModelManager)
+        validator=attrs.validators.instance_of(WakeModelManager)
     )
 
     @abstractmethod
@@ -922,9 +921,6 @@ class EmpiricalGaussSolver(Solver):
             flow_field = self.flow_field
         if grid is None:
             grid = self.grid
-
-        gch_gain = 1.0
-        scale_factor = 2.0
 
         # <<interface>>
         deflection_model_args = self.model_manager.deflection_model.prepare_function(grid, flow_field)
