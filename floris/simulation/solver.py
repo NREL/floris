@@ -87,8 +87,8 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
 class Solver:
     farm: Farm = field(validator=attrs.validators.instance_of(Farm))
     flow_field: FlowField = field(validator=attrs.validators.instance_of(FlowField))
-    grid: TurbineGrid | FlowFieldGrid = field(
-        validator=attrs.validators.instance_of((FlowFieldGrid, TurbineGrid)),
+    grid: TurbineGrid | FlowFieldGrid | FlowFieldPlanarGrid = field(
+        validator=attrs.validators.instance_of((FlowFieldGrid, TurbineGrid, FlowFieldPlanarGrid)),
     )
     model_manager: WakeModelManager = field(
         validator=attrs.validators.instance_of(WakeModelManager)
