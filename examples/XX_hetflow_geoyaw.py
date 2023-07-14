@@ -25,14 +25,14 @@ from floris.tools.optimization.layout_optimization.layout_optimization_scipy imp
 
 
 """
-This example shows a layout optimization using the geometric yaw option. It 
-combines elements of examples 15 (layout optimization) and 16 (heterogeneous 
-inflow) for demonstrative purposes. If you haven't yet run those examples, 
+This example shows a layout optimization using the geometric yaw option. It
+combines elements of examples 15 (layout optimization) and 16 (heterogeneous
+inflow) for demonstrative purposes. If you haven't yet run those examples,
 we recommend you try them first.
 
-Heterogeneity in the inflow provides the necessary driver for coupled yaw 
-and layout optimization to be worthwhile. First, a layout optimization is 
-run without coupled yaw optimization; then a coupled optimization is run to 
+Heterogeneity in the inflow provides the necessary driver for coupled yaw
+and layout optimization to be worthwhile. First, a layout optimization is
+run without coupled yaw optimization; then a coupled optimization is run to
 show the benefits of coupled optimization when flows are heterogeneous.
 """
 
@@ -42,6 +42,7 @@ fi = FlorisInterface('inputs/gch.yaml')
 
 # Setup 72 wind directions and 1 wind speed with uniform probability
 wind_directions = np.arange(0, 360.0, 5.0)
+n_wds = len(wind_directions)
 wind_speeds = [8.0]
 # Shape frequency distribution to match number of wind directions and wind speeds
 freq = np.ones((len(wind_directions), len(wind_speeds)))
@@ -49,7 +50,7 @@ freq = freq / freq.sum()
 
 # The boundaries for the turbines, specified as vertices
 D = 126.0 # rotor diameter for the NREL 5MW
-size_D = 4
+size_D = 8
 boundaries = [
     (0.0, 0.0),
     (0.0, size_D * D),
@@ -60,13 +61,13 @@ boundaries = [
 
 # Set turbine locations to 4 turbines at corners of the rectangle
 # (optimal without flow heterogeneity)
-layout_x = [0.1, 0.1, size_D * D-0.1, size_D * D-0.1]
-layout_y = [0.1, size_D * D-0.1, 0.1, size_D * D-0.1]
+layout_x = [0.1, 0.1, 0.5*size_D * D-0.1, 0.5*size_D * D-0.1]
+layout_y = [0.1, 0.5*size_D * D-0.1, 0.1, 0.5*size_D * D-0.1]
 
 # Generate exaggerated heterogeneous inflow (same for all wind directions)
-speed_multipliers = np.repeat(np.array([0.5, 1.0, 1.0, 1.0])[None,:], len(wind_directions), axis=0)
-x_locs = [-0.1 * size_D * D, -0.1 * size_D * D, 1.1 * size_D * D, 1.1 * size_D * D]
-y_locs = [-0.1 * size_D * D, 1.1 * size_D * D, -0.1 * size_D * D, 1.1 * size_D * D]
+speed_multipliers = np.repeat(np.array([0.5, 0.5, 0.5, 0.5, 1.0])[None,:], n_wds, axis=0)
+x_locs = [-0.1*size_D*D, -0.1*size_D*D, 1.1*size_D*D, 1.1*size_D*D, 0.55*size_D*D]
+y_locs = [-0.1*size_D*D, 1.1*size_D*D, -0.1*size_D*D, 1.1*size_D*D, 0.55*size_D*D]
 z_locs = [540.0, 540.0, 0.0, 0.0, 540.0, 540.0, 0.0, 0.0]
 
 # Create the configuration dictionary to be used for the heterogeneous inflow.
@@ -85,11 +86,13 @@ fi.reinitialize(
 )
 
 # Setup and solve the layout optimization problem without heterogeneity
+maxiter = 100
 layout_opt = LayoutOptimizationScipy(
     fi,
     boundaries,
     freq=freq,
-    min_dist=2*D
+    min_dist=2*D,
+    optOptions={"maxiter":maxiter}
 )
 
 # Run the optimization
@@ -113,9 +116,10 @@ print(
 )
 layout_opt.plot_layout_opt_results()
 ax = plt.gca()
-ax.imshow(np.reshape(speed_multipliers[0], (2,2)), cmap="coolwarm", origin="lower", 
-          extent=(x_locs[0], x_locs[-1], y_locs[0], y_locs[-1]), 
-          interpolation="bilinear")
+ax.tricontourf(x_locs, y_locs, speed_multipliers[0], cmap="coolwarm")
+# ax.imshow(np.reshape(speed_multipliers[0], (2,2)), cmap="coolwarm", origin="lower",
+#           extent=(x_locs[0], x_locs[-1], y_locs[0], y_locs[-1]),
+#           interpolation="bilinear")
 ax.set_title("Geometric yaw disabled")
 
 
@@ -126,8 +130,9 @@ layout_opt = LayoutOptimizationScipy(
     fi,
     boundaries,
     freq=freq,
-    min_dist=0,#2*D,
-    enable_geometric_yaw=True
+    min_dist=2*D,
+    enable_geometric_yaw=True,
+    optOptions={"maxiter":maxiter}
 )
 
 # Run the optimization
@@ -159,8 +164,9 @@ print(
     f'{layout_opt.yaw_angles[1,0,:]}'
 )
 
-ax.imshow(np.reshape(speed_multipliers[0], (2,2)), cmap="coolwarm", origin="lower", 
-          extent=(x_locs[0], x_locs[-1], y_locs[0], y_locs[-1]), 
-          interpolation="bilinear")
+#ax.imshow(np.reshape(speed_multipliers[0], (2,2)), cmap="coolwarm", origin="lower",
+#          extent=(x_locs.min(), x_locs.max(), y_locs.min(), y_locs.max()),
+#          interpolation="bilinear")
+ax.tricontourf(x_locs, y_locs, speed_multipliers[0], cmap="coolwarm")
 
 plt.show()

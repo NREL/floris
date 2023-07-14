@@ -180,7 +180,7 @@ class YawOptimization(LoggerBase):
         self.exclude_downstream_turbines = exclude_downstream_turbines
 
         # Check if exploit_layout_symmetry is being used with heterogeneous inflow
-        if exploit_layout_symmetry and fi.floris.flow_field.heterogenous_inflow_config != None:
+        if exploit_layout_symmetry and fi.floris.flow_field.heterogenous_inflow_config is not None:
             err_msg = (
                 "Layout symmetry cannot be exploited with heterogeneous inflows. "
                 "Setting exploit_layout_symmetry to False."
