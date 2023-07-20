@@ -1018,7 +1018,7 @@ class FlorisInterface(LoggerBase):
                 self.logger.warning(
                     "'homogeneous_wind_speed' not provided. Setting it to the single wind speed "
                     "found in 'wind_speeds'. Note that the inflow is always homogeneous when "
-                    "calculateing the velocity deficit profiles. This is done by temporarily "
+                    "calculating the velocity deficit profiles. This is done by temporarily "
                     "setting 'wind_shear' to 0.0"
                 )
             else:

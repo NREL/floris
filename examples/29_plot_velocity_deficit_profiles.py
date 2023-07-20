@@ -29,54 +29,34 @@ fi = FlorisInterface("inputs/gch.yaml")
 fi.reinitialize(layout_x=[0.0], layout_y=[0.0])
 
 downstream_dists = D * np.array([3, 5, 7])
+homogeneous_wind_speed = 8.0
 
-velocity_deficit_profiles = fi.sample_velocity_deficit_profiles(
-    direction = 'y',
+velocity_deficit_profiles_y = fi.sample_velocity_deficit_profiles(
+    direction='y',
     downstream_dists=downstream_dists,
-    resolution=10,
-    homogeneous_wind_speed=7.0
+    homogeneous_wind_speed=homogeneous_wind_speed
 )
-
-#for df in velocity_deficit_profiles:
-#    print(df)
+# Same range as y-profiles for an easier comparison
+profile_range_z = D * np.array([0, 4]) - 90.0
+velocity_deficit_profiles_z = fi.sample_velocity_deficit_profiles(
+    direction='z',
+    downstream_dists=downstream_dists,
+    profile_range=profile_range_z,
+    homogeneous_wind_speed=homogeneous_wind_speed
+)
 
 profiles_fig = VelocityProfilesFigure(
     downstream_dists_D=downstream_dists / D,
     layout=['y', 'z']
 )
-
-downstream_dists = D * np.array([1, 3, 5, 7, 9])
-profiles_fig = VelocityProfilesFigure(
-    downstream_dists_D=downstream_dists / D,
-    layout=['z']
+profiles_fig.add_profiles(
+    velocity_deficit_profiles_y + velocity_deficit_profiles_z,
+    color='k'
 )
-
-
-downstream_dists = D * np.array([3])
-profiles_fig = VelocityProfilesFigure(
-    downstream_dists_D=downstream_dists / D,
-    layout=['y']
-)
+margin = 0.05
+profiles_fig.set_xlim([0.0 - margin, 0.6 + margin])
+profiles_fig.add_ref_lines_y_D([-0.5, 0.5])
+ref_lines_z_D = 90.0 / D + np.array([-0.5, 0.5])
+profiles_fig.add_ref_lines_z_D(ref_lines_z_D)
 
 plt.show()
-
-
-#velocity_deficit_profiles = fi.sample_velocity_deficit_profiles(
-#    direction = 'z',
-
-#    resolution=10,
-#    homogeneous_wind_speed=7.0
-#)
-#
-#for df in velocity_deficit_profiles:
-#    print(df)
-
-#horizontal_plane = fi.calculate_horizontal_plane(
-#    x_resolution=200,
-#    y_resolution=100,
-#    height=90.0,
-#)
-#
-#wakeviz.visualize_cut_plane(horizontal_plane, title="Horizontal plane")
-#
-#wakeviz.show_plots()
