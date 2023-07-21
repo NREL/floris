@@ -709,6 +709,8 @@ class VelocityProfilesFigure():
     """
     downstream_dists_D: NDArrayFloat = field(converter=floris_array_converter)
     layout: list[str] = field(default=['y'])
+    width_per_col: float = field(default=2.07)
+    height_per_row: float = field(default=3.0)
 
     nrows: int = field(init=False)
     ncols: int = field(init=False)
@@ -718,9 +720,7 @@ class VelocityProfilesFigure():
     def __attrs_post_init__(self):
         self.nrows = len(self.layout)
         self.ncols = len(self.downstream_dists_D)
-        width_per_col = 6.4 / 3
-        height_per_row = 7.0 / 2
-        figsize = [0.5 + width_per_col * self.ncols, height_per_row * self.nrows]
+        figsize = [0.7 + self.width_per_col * self.ncols, 1.0 + self.height_per_row * self.nrows]
         self.fig, axs = plt.subplots(
             self.nrows,
             self.ncols,
@@ -756,7 +756,9 @@ class VelocityProfilesFigure():
 
     def match_profile_to_axes(self, df):
         x_D = np.unique(df['x/D'])
-        if len(x_D) > 1:
+        if len(x_D) == 1:
+            x_D = x_D[0]
+        else:
             raise ValueError(
                 "The streamwise location x/D must be constant for each velocity profile."
             )
@@ -769,7 +771,7 @@ class VelocityProfilesFigure():
             profile_direction = 'y'
         else:
             raise ValueError(
-                "Velocity deficit profile at x/D = {x_D} is neither in the cross-stream (y)"
+                f"Velocity deficit profile at x/D = {x_D} is neither in the cross-stream (y) "
                 "nor the vertical (z) direction."
             )
         row = self.layout.index(profile_direction)
@@ -793,23 +795,21 @@ class VelocityProfilesFigure():
             ax.set_xlim(xlim)
 
     def add_ref_lines_y_D(self, ref_lines, **kwargs):
-        try:
-            row_y = self.layout.index('y')
-        except Exception:
-            print(
+        if 'y' not in self.layout:
+            raise Exception(
                 "Could not add reference lines to cross-stream (y) velocity profiles. No "
                 "such profiles exist in the figure."
             )
+        row_y = self.layout.index('y')
         self.add_ref_lines(ref_lines, row_y, **kwargs)
 
     def add_ref_lines_z_D(self, ref_lines, **kwargs):
-        try:
-            row_z = self.layout.index('z')
-        except Exception:
-            print(
+        if 'z' not in self.layout:
+            raise Exception(
                 "Could not add reference lines to vertical (z) velocity profiles. No "
                 "such profiles exist in the figure."
             )
+        row_z = self.layout.index('z')
         self.add_ref_lines(ref_lines, row_z, **kwargs)
 
     def add_ref_lines(self, ref_lines, row, **kwargs):
