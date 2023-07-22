@@ -211,11 +211,13 @@ class Farm(BaseClass):
         ])
 
     def construct_vawt_blade_lengths(self):
+        vawt_blade_lengths = []
         for turb in self.turbine_definitions:
             try:
-                self.vawt_blade_lengths = turb['vawt_blade_length']
+                 vawt_blade_lengths.append(turb['vawt_blade_length'])
             except KeyError:
-                self.vawt_blade_lengths = 0.0
+                vawt_blade_lengths.append(0.0)
+        self.vawt_blade_lengths = np.array(vawt_blade_lengths)
 
     def construct_turbine_TSRs(self):
         self.TSRs = np.array([turb['TSR'] for turb in self.turbine_definitions])

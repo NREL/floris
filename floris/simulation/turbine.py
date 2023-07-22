@@ -627,7 +627,7 @@ class Turbine(BaseClass):
     power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
     floating_tilt_table = field(default=None)
     floating_correct_cp_ct_for_tilt = field(default=None)
-    vawt_blade_length = field(default=None)
+    vawt_blade_length: float = field(default=0.0)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
