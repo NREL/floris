@@ -816,7 +816,7 @@ class VelocityProfilesFigure():
         default_params = {
                 'linestyle': (0, (4, 2)),
                 'color': 'k',
-                'linewidth': 1.2
+                'linewidth': 1.1
         }
         for key in default_params:
             if key not in kwargs:

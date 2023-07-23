@@ -60,8 +60,8 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
             :style: unsrt
             :filter: docname in docnames
     """
-    wake_expansion_coeff_y: float = field(default=0.50)
-    wake_expansion_coeff_z: float = field(default=0.50)
+    wake_expansion_coeff_y: float = field(default=0.45)
+    wake_expansion_coeff_z: float = field(default=0.45)
     ay: float = field(default=0.95)
     az: float = field(default=4.5)
     by: float = field(default=0.35)

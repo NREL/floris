@@ -371,10 +371,12 @@ class Floris(BaseClass):
         if vel_model in ("cc", "turbopark"):
             raise NotImplementedError(
                 "solve_for_velocity_deficit_profiles is currently only available with the "
-                "gauss, jensen, and empirical_guass models."
+                "gauss, jensen, empirical_guass, and super_gaussian_vawt models."
             )
         elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
+        elif vel_model == "super_gaussian_vawt":
+            full_flow_vawt_solver(self.farm, self.flow_field, field_grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
