@@ -721,15 +721,15 @@ class VelocityProfilesFigure():
         self.nrows = len(self.layout)
         self.ncols = len(self.downstream_dists_D)
         figsize = [0.7 + self.width_per_col * self.ncols, 1.0 + self.height_per_row * self.nrows]
-        self.fig, axs = plt.subplots(
+        self.fig, self.axs = plt.subplots(
             self.nrows,
             self.ncols,
             figsize=figsize,
             layout='tight',
             sharex='col',
-            sharey='row'
+            sharey='row',
+            squeeze=False
         )
-        self.axs = np.atleast_2d(axs)
 
         for ax in self.axs[-1]:
             ax.set_xlabel(r'$\Delta U / U_\infty$', fontsize=14)
@@ -788,7 +788,7 @@ class VelocityProfilesFigure():
                 "values with which the instance of the VelocityProfilesFigure was initialized: "
                 f"{self.downstream_dists_D}"
             )
-        return self.axs[row][col], profile_direction
+        return self.axs[row,col], profile_direction
 
     def set_xlim(self, xlim):
         for ax in self.axs[-1]:
@@ -816,7 +816,7 @@ class VelocityProfilesFigure():
         default_params = {
                 'linestyle': (0, (4, 2)),
                 'color': 'k',
-                'linewidth': 1.2
+                'linewidth': 1.1
         }
         for key in default_params:
             if key not in kwargs:
