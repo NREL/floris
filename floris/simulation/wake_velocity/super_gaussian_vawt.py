@@ -171,7 +171,7 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
         # At any streamwise location x behind the turbine, the velocity deficit in the
         # y-z plane is given by multiplying the maximum deficit C = C(x) with two Gaussian
         # shape functions fy = fy(y) and fz = fz(z)
-        eta = 1 / ny + 1 / nz
+        eta = ne.evaluate("1 / ny + 1 / nz")
         ny_inv = ne.evaluate("1 / ny")
         nz_inv = ne.evaluate("1 / nz")
         gamma_y, gamma_z = gamma(ny_inv), gamma(nz_inv)

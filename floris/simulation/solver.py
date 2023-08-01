@@ -1513,7 +1513,8 @@ def vawt_solver(
     # Integrate this into the main data structure.
     # Move on to the next turbine.
     #
-    # Note that no turbulence model has been implmented in this solver.
+    # Note that no turbulence model has been implemented in this solver. This means that all
+    # turbines percieve a fixed turbulence intensity of flow_field.turbulence_intensity
 
     # <<interface>>
     deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field)
