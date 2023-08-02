@@ -54,7 +54,7 @@ fi = FlorisInterface("inputs/gch.yaml")
 # Note this visualization grid created within the calculate_horizontal_plane function will be reset
 # to what existed previously at the end of the function
 
-# Eventually shut down second turbines
+# Eventually shut off the second turbine
 turbines_off = np.array([[[False, False, False]]])
 # turbines_off = np.array([[[False, True, False]]])
 
