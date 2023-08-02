@@ -365,6 +365,7 @@ class FlorisInterface(LoggerBase):
         y_bounds=None,
         wd=None,
         ws=None,
+        turbines_off=None,
         yaw_angles=None,
     ):
         """
@@ -396,6 +397,7 @@ class FlorisInterface(LoggerBase):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_turbines_off = self.floris.farm.turbines_off
         current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
@@ -409,6 +411,8 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
 
         # TODO this has to be done here as it seems to be lost with reinitialize
+        if turbines_off is not None:
+            self.floris.farm.turbines_off = turbines_off
         if yaw_angles is not None:
             self.floris.farm.yaw_angles = yaw_angles
 
@@ -435,7 +439,8 @@ class FlorisInterface(LoggerBase):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.calculate_wake(
+            turbines_off=current_turbines_off, yaw_angles=current_yaw_angles)
 
         return horizontal_plane
 
@@ -448,6 +453,7 @@ class FlorisInterface(LoggerBase):
         z_bounds=None,
         wd=None,
         ws=None,
+        turbines_off=None,
         yaw_angles=None,
     ):
         """
@@ -479,6 +485,7 @@ class FlorisInterface(LoggerBase):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_turbines_off = self.floris.farm.turbines_off
         current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
@@ -492,6 +499,8 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
 
         # TODO this has to be done here as it seems to be lost with reinitialize
+        if turbines_off is not None:
+            self.floris.farm.turbines_off = turbines_off
         if yaw_angles is not None:
             self.floris.farm.yaw_angles = yaw_angles
 
@@ -513,7 +522,8 @@ class FlorisInterface(LoggerBase):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.calculate_wake(
+            turbines_off=current_turbines_off, yaw_angles=current_yaw_angles)
 
         return cross_plane
 
@@ -526,6 +536,7 @@ class FlorisInterface(LoggerBase):
         z_bounds=None,
         wd=None,
         ws=None,
+        turbines_off=None,
         yaw_angles=None,
     ):
         """
@@ -557,6 +568,7 @@ class FlorisInterface(LoggerBase):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
+        current_turbines_off = self.floris.farm.turbines_off
         current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
@@ -570,6 +582,8 @@ class FlorisInterface(LoggerBase):
         self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
 
         # TODO this has to be done here as it seems to be lost with reinitialize
+        if turbines_off is not None:
+            self.floris.farm.turbines_off = turbines_off
         if yaw_angles is not None:
             self.floris.farm.yaw_angles = yaw_angles
 
@@ -591,7 +605,8 @@ class FlorisInterface(LoggerBase):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.calculate_wake(
+            turbines_off=current_turbines_off, yaw_angles=current_yaw_angles)
 
         return y_plane
 
@@ -853,6 +868,7 @@ class FlorisInterface(LoggerBase):
         if cut_out_wind_speed is not None:
             conditions_to_evaluate = conditions_to_evaluate & (wind_speeds < cut_out_wind_speed)
 
+        # TODO: integrate turbines_off argument?
         # Evaluate the conditions in floris
         if np.any(conditions_to_evaluate):
             wind_speeds_subset = wind_speeds[conditions_to_evaluate]

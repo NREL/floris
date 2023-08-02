@@ -575,6 +575,7 @@ def calculate_horizontal_plane_with_turbines(
     y_bounds=None,
     wd=None,
     ws=None,
+    turbines_off=None,
     yaw_angles=None,
 ) -> CutPlane:
         """
@@ -599,6 +600,7 @@ def calculate_horizontal_plane_with_turbines(
             y_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
             wd (float, optional): Wind direction setting. Defaults to None.
             ws (float, optional): Wind speed setting. Defaults to None.
+            turbines_off (np.ndarray, optional): turbines off, default to None.
             yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.
 
         Returns:
@@ -618,9 +620,16 @@ def calculate_horizontal_plane_with_turbines(
         # Set the ws and wd
         fi.reinitialize(wind_directions=wd, wind_speeds=ws)
 
+        # Re-set turbines off
+        if turbines_off is not None:
+            fi.floris.farm.turbines_off = turbines_off
         # Re-set yaw angles
         if yaw_angles is not None:
             fi.floris.farm.yaw_angles = yaw_angles
+
+        # Now place the turbines_off back into turbines_off
+        # to be sure not None
+        turbines_off = fi.floris.farm.turbines_off
 
         # Now place the yaw_angles back into yaw_angles
         # to be sure not None
@@ -634,6 +643,7 @@ def calculate_horizontal_plane_with_turbines(
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
+        turbines_off = np.append(turbines_off, np.zeros([len(wd), len(ws), 1]), axis=2).astype(bool)
         yaw_angles = np.append(yaw_angles, np.zeros([len(wd), len(ws), 1]), axis=2)
 
         # Get a grid of points test test
@@ -667,7 +677,7 @@ def calculate_horizontal_plane_with_turbines(
                 layout_x_test[-1] = x
                 layout_y_test[-1] = y
                 fi.reinitialize(layout_x = layout_x_test, layout_y = layout_y_test)
-                fi.calculate_wake(yaw_angles=yaw_angles)
+                fi.calculate_wake(turbines_off=turbines_off, yaw_angles=yaw_angles)
 
                 # Get the velocity of that test turbines central point
                 center_point = int(np.floor(fi.floris.flow_field.u[0,0,-1].shape[0] / 2.0))
