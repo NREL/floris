@@ -127,6 +127,9 @@ mast across all wind directions (at a fixed free stream wind speed).
 Try different values for met_mast_option to vary the location of the met mast within
 the two-turbine farm.
 
+### 29_turbines_off.py
+This example demonstrates how to shut off some turbines during a simulation.
+
 ## Optimization
 
 These examples demonstrate use of the optimization routines
