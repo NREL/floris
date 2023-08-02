@@ -275,6 +275,7 @@ def power(
 
 def Ct(
     velocities: NDArrayFloat,
+    turbines_off: NDArrayBool,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
     ref_tilt_cp_ct: NDArrayFloat,
@@ -294,6 +295,7 @@ def Ct(
     Args:
         velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at
             a turbine.
+        turbines_off (NDArrayBool[wd, ws, turbines]): True for turbines shut down.
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
         tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
         ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
@@ -314,6 +316,9 @@ def Ct(
         NDArrayFloat: Coefficient of thrust for each requested turbine.
     """
 
+    if isinstance(turbines_off, list):
+        turbines_off = np.array(turbines_off)
+
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
@@ -324,6 +329,7 @@ def Ct(
     if ix_filter is not None:
         ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
+        turbines_off = turbines_off[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
         ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
@@ -359,11 +365,16 @@ def Ct(
         )
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
+
+    # Set effective thrust closed to 0.0 for shut down turbines
+    effective_thrust[turbines_off] = 0.001
+
     return effective_thrust
 
 
 def axial_induction(
     velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
+    turbines_off: NDArrayBool,
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     tilt_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     ref_tilt_cp_ct: NDArrayFloat,
@@ -381,6 +392,7 @@ def axial_induction(
     Args:
         velocities (NDArrayFloat): The velocity field at each turbine; should be shape:
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
+        turbines_off (NDArrayBool[wd, ws, turbines]): True for turbines shut down.
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
         tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
         ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
@@ -412,6 +424,7 @@ def axial_induction(
     # Get Ct first before modifying any data
     thrust_coefficient = Ct(
         velocities,
+        turbines_off,
         yaw_angle,
         tilt_angle,
         ref_tilt_cp_ct,

@@ -140,6 +140,7 @@ class TurbineInterface:
         shape = (1, wind_speeds.size, 1)
         ct_curve = Ct(
             velocities=wind_speeds.reshape(shape),
+            turbines_off=np.zeros(shape).astype(bool),
             yaw_angle=np.zeros(shape),
             tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
             ref_tilt_cp_ct=np.full(shape, self.turbine.ref_tilt_cp_ct),

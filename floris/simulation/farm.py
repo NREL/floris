@@ -30,6 +30,7 @@ from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
     iter_validator,
+    NDArrayBool,
     NDArrayFloat,
     NDArrayObject,
 )
@@ -65,6 +66,9 @@ class Farm(BaseClass):
     coordinates: List[Vec3] = field(init=False)
     turbine_fCts: tuple = field(init=False, default=[])
     turbine_fTilts: list = field(init=False, default=[])
+
+    turbines_off: NDArrayBool = field(init=False)
+    turbines_off_sorted: NDArrayBool = field(init=False)
 
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
@@ -201,7 +205,12 @@ class Farm(BaseClass):
             raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
 
     def initialize(self, sorted_indices):
-        # Sort yaw angles from most upstream to most downstream wind turbine
+        # Sort data from most upstream to most downstream wind turbine
+        self.turbines_off_sorted = np.take_along_axis(
+            self.turbines_off,
+            sorted_indices[:, :, :, 0, 0],
+            axis=2,
+        )
         self.yaw_angles_sorted = np.take_along_axis(
             self.yaw_angles,
             sorted_indices[:, :, :, 0, 0],
@@ -330,6 +339,10 @@ class Farm(BaseClass):
             axis=2
         )
 
+    def set_turbines_off(self, n_wind_directions: int, n_wind_speeds: int):
+        self.turbines_off = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines)).astype(bool)
+        self.turbines_off_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines)).astype(bool)
+
     def set_yaw_angles(self, n_wind_directions: int, n_wind_speeds: int):
         # TODO Is this just for initializing yaw angles to zero?
         self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
@@ -355,6 +368,11 @@ class Farm(BaseClass):
         return tilt_angles
 
     def finalize(self, unsorted_indices):
+        self.turbines_off = np.take_along_axis(
+            self.turbines_off_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
         self.yaw_angles = np.take_along_axis(
             self.yaw_angles_sorted,
             unsorted_indices[:,:,:,0,0],

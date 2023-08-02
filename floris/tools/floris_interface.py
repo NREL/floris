@@ -30,7 +30,7 @@ from floris.simulation.turbine import (
     rotor_effective_velocity,
 )
 from floris.tools.cut_plane import CutPlane
-from floris.type_dec import NDArrayFloat
+from floris.type_dec import NDArrayFloat, NDArrayBool
 
 
 class FlorisInterface(LoggerBase):
@@ -109,6 +109,7 @@ class FlorisInterface(LoggerBase):
 
     def calculate_wake(
         self,
+        turbines_off: NDArrayBool | list[bool] | None = None,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         # tilt_angles: NDArrayFloat | list[float] | None = None,
     ) -> None:
@@ -117,9 +118,21 @@ class FlorisInterface(LoggerBase):
         :py:meth:`~.FlowField.calculate_wake` methods.
 
         Args:
+            turbines_off (NDArrayBool | list[bool] | None, optional): Turbines shut down.
+                Defaults to None.
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
         """
+
+        if turbines_off is None:
+            turbines_off = np.zeros(
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    self.floris.farm.n_turbines
+                )
+            ).astype(bool)
+        self.floris.farm.turbines_off = turbines_off
 
         if yaw_angles is None:
             yaw_angles = np.zeros(
@@ -148,6 +161,7 @@ class FlorisInterface(LoggerBase):
 
     def calculate_no_wake(
         self,
+        turbines_off: NDArrayBool | list[bool] | None = None,
         yaw_angles: NDArrayFloat | list[float] | None = None,
     ) -> None:
         """
@@ -158,9 +172,21 @@ class FlorisInterface(LoggerBase):
         the turbine that is yawed.
 
         Args:
+            turbines_off (NDArrayBool | None, optional): Turbines shut down.
+                Defaults to None.
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
         """
+
+        if turbines_off is None:
+            turbines_off = np.zeros(
+                (
+                    self.floris.flow_field.n_wind_directions,
+                    self.floris.flow_field.n_wind_speeds,
+                    self.floris.farm.n_turbines
+                )
+            ).astype(bool)
+        self.floris.farm.turbines_off = turbines_off
 
         if yaw_angles is None:
             yaw_angles = np.zeros(
@@ -602,11 +628,16 @@ class FlorisInterface(LoggerBase):
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
         )
+
+        # No power for turbines off
+        turbine_powers[self.floris.farm.turbines_off] = 0.0
+
         return turbine_powers
 
     def get_turbine_Cts(self) -> NDArrayFloat:
         turbine_Cts = Ct(
             velocities=self.floris.flow_field.u,
+            turbines_off=self.floris.farm.turbines_off,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
@@ -622,6 +653,7 @@ class FlorisInterface(LoggerBase):
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.floris.flow_field.u,
+            turbines_off=self.floris.farm.turbines_off,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
             ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
