@@ -1685,7 +1685,9 @@ title="Open an issue"
             <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_length</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="YawOptimization._calculate_farm_power"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization._calculate_farm_power">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wd_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="YawOptimization._calculate_farm_power"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization._calculate_farm_power">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wd_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">heterogeneous_speed_multipliers</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the wind farm power production assuming the predefined</span>
 <span class="sd">        probability distribution (self.unc_options/unc_pmf), with the</span>
@@ -1705,6 +1707,9 @@ title="Open an issue"
             <span class="n">yaw_angles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yaw_angles_baseline_subset</span>
         <span class="k">if</span> <span class="n">turbine_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">turbine_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_weights_subset</span>
+        <span class="k">if</span> <span class="n">heterogeneous_speed_multipliers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fi_subset</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span>\
+                <span class="n">heterogenous_inflow_config</span><span class="p">[</span><span class="s1">&#39;speed_multipliers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">heterogeneous_speed_multipliers</span>
 
         <span class="c1"># Ensure format [incompatible with _subset notation]</span>
         <span class="n">yaw_angles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_variable</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

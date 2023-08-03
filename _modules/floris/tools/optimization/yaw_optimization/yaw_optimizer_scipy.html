@@ -1455,6 +1455,16 @@ title="Open an issue"
                 <span class="n">yaw_template</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">yaw_template</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="n">turbine_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">turbine_weights</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
+                <span class="c1"># Handle heterogeneous inflow, if there is one</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="s1">&#39;heterogenous_inflow_config&#39;</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogenous_inflow_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="n">het_sm_orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogenous_inflow_config</span><span class="p">[</span><span class="s1">&#39;speed_multipliers&#39;</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="n">het_sm</span> <span class="o">=</span> <span class="n">het_sm_orig</span><span class="p">[</span><span class="n">nwdi</span><span class="p">,:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">het_sm</span> <span class="o">=</span> <span class="kc">None</span>
+
                 <span class="c1"># Define cost function</span>
                 <span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
                     <span class="n">x_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">yaw_template</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1463,7 +1473,8 @@ title="Open an issue"
                         <span class="o">-</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_farm_power</span><span class="p">(</span>
                             <span class="n">yaw_angles</span><span class="o">=</span><span class="n">x_full</span><span class="p">,</span>
                             <span class="n">wd_array</span><span class="o">=</span><span class="p">[</span><span class="n">wd</span><span class="p">],</span>
-                            <span class="n">turbine_weights</span><span class="o">=</span><span class="n">turbine_weights</span>
+                            <span class="n">turbine_weights</span><span class="o">=</span><span class="n">turbine_weights</span><span class="p">,</span>
+                            <span class="n">heterogeneous_speed_multipliers</span><span class="o">=</span><span class="n">het_sm</span>
                         <span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">J0</span>
                     <span class="p">)</span>
 

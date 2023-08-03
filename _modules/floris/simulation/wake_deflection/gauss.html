@@ -1604,6 +1604,7 @@ title="Open an issue"
     <span class="n">ct_i</span><span class="p">,</span>
     <span class="n">tip_speed_ratio</span><span class="p">,</span>
     <span class="n">axial_induction_i</span><span class="p">,</span>
+    <span class="n">wind_shear</span><span class="p">,</span>
     <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1631,7 +1632,7 @@ title="Open an issue"
     <span class="n">eps_gain</span> <span class="o">=</span> <span class="mf">0.2</span>
     <span class="n">eps</span> <span class="o">=</span> <span class="n">eps_gain</span> <span class="o">*</span> <span class="n">D</span>  <span class="c1"># Use set value</span>
 
-    <span class="n">vel_top</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">vel_top</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="n">wind_shear</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">Gamma_top</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">(</span>
         <span class="n">D</span><span class="p">,</span>
         <span class="n">vel_top</span><span class="p">,</span>
@@ -1640,7 +1641,7 @@ title="Open an issue"
         <span class="n">scale</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">vel_bottom</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">vel_bottom</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="n">wind_shear</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">Gamma_bottom</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span>
         <span class="n">D</span><span class="p">,</span>
         <span class="n">vel_bottom</span><span class="p">,</span>
@@ -1706,6 +1707,7 @@ title="Open an issue"
     <span class="n">ct_i</span><span class="p">,</span>
     <span class="n">tsr_i</span><span class="p">,</span>
     <span class="n">axial_induction_i</span><span class="p">,</span>
+    <span class="n">wind_shear</span><span class="p">,</span>
     <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1726,8 +1728,7 @@ title="Open an issue"
     <span class="n">eps_gain</span> <span class="o">=</span> <span class="mf">0.2</span>
     <span class="n">eps</span> <span class="o">=</span> <span class="n">eps_gain</span> <span class="o">*</span> <span class="n">D</span>  <span class="c1"># Use set value</span>
 
-    <span class="c1"># TODO: wind sheer is hard-coded here but should be connected to the input</span>
-    <span class="n">vel_top</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">vel_top</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">+</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="n">wind_shear</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">Gamma_top</span> <span class="o">=</span> <span class="n">sind</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span>
         <span class="n">D</span><span class="p">,</span>
         <span class="n">vel_top</span><span class="p">,</span>
@@ -1736,7 +1737,7 @@ title="Open an issue"
         <span class="n">scale</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">vel_bottom</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.12</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">vel_bottom</span> <span class="o">=</span> <span class="p">((</span><span class="n">HH</span> <span class="o">-</span> <span class="n">D</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">HH</span><span class="p">)</span> <span class="o">**</span> <span class="n">wind_shear</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">Gamma_bottom</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">sind</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">yaw</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span>
         <span class="n">D</span><span class="p">,</span>
         <span class="n">vel_bottom</span><span class="p">,</span>

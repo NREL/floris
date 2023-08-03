@@ -2012,7 +2012,9 @@ title="Open an issue"
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">power_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
             <span class="n">wind_speeds</span><span class="p">,</span>
-            <span class="n">inner_power</span>
+            <span class="n">inner_power</span><span class="p">,</span>
+            <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span>
         <span class="p">)</span>
 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

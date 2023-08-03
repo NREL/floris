@@ -1942,6 +1942,10 @@ title="Open an issue"
                 <span class="s2">&quot;Can&#39;t run function `FlorisInterface.get_turbine_powers` without &quot;</span>
                 <span class="s2">&quot;first running `FlorisInterface.calculate_wake`.&quot;</span>
             <span class="p">)</span>
+        <span class="c1"># Check for negative velocities, which could indicate bad model</span>
+        <span class="c1"># parameters or turbines very closely spaced.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turbine_effective_velocities</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Some rotor effective velocities are negative.&quot;</span><span class="p">)</span>
 
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">power</span><span class="p">(</span>
             <span class="n">ref_density_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_density_cp_cts</span><span class="p">,</span>
