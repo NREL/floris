@@ -127,6 +127,14 @@ mast across all wind directions (at a fixed free stream wind speed).
 Try different values for met_mast_option to vary the location of the met mast within
 the two-turbine farm.
 
+### 29_floating_vs_fixedbottom_farm.py
+
+Compares a fixed-bottom wind farm (with a gridded layout) to a floating 
+wind farm with the same layout. Includes:
+- Turbine-by-turbine power comparison for a single wind speed and direction
+- Flow visualizations for a single wind speed and direction
+- AEP calculations based on an example wind rose.
+
 ## Optimization
 
 These examples demonstrate use of the optimization routines
