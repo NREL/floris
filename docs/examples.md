@@ -129,7 +129,7 @@ the two-turbine farm.
 
 ### 29_floating_vs_fixedbottom_farm.py
 
-Compares a fixed-bottom wind farm (with a gridded layout) to a floating 
+Compares a fixed-bottom wind farm (with a gridded layout) to a floating
 wind farm with the same layout. Includes:
 - Turbine-by-turbine power comparison for a single wind speed and direction
 - Flow visualizations for a single wind speed and direction
