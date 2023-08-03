@@ -291,6 +291,8 @@ def Ct(
     """Thrust coefficient of a turbine incorporating the yaw angle.
     The value is interpolated from the coefficient of thrust vs
     wind speed table using the rotor swept area average velocity.
+    Additionally, set some turbine Ct's to a negligible value if
+    given in user inputs.
 
     Args:
         velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at
