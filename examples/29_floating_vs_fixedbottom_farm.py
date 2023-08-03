@@ -17,7 +17,9 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
 
+import floris.tools.visualization as wakeviz
 from floris.tools import FlorisInterface
+
 
 """
 This example demonstrates the impact of floating on turbine power and thurst
@@ -80,10 +82,40 @@ ax.set_ylabel("y coordinate [m]")
 ax.set_title("Power increase due to floating for each turbine.")
 plt.colorbar(sc, label="Increase (kW)")
 
-print("Power increase from floating over farm: {0:.2f} kW".\
+print("Power increase from floating over farm (10m/s, 270deg winds): {0:.2f} kW".\
       format(power_difference.sum()/1000))
 
-# Visualize flows
+# Visualize flows (see also 02_visualizations.py)
+horizontal_planes = []
+y_planes = []
+for fi in [fi_fixed, fi_floating]:
+    horizontal_planes.append(
+        fi.calculate_horizontal_plane(
+            x_resolution=200,
+            y_resolution=100,
+            height=90.0,
+        )
+    )
+    y_planes.append(
+        fi.calculate_y_plane(
+            x_resolution=200,
+            z_resolution=100,
+            crossstream_dist=0.0,
+        )
+    )
+
+# Create the plots
+fig, ax_list = plt.subplots(2, 1, figsize=(10, 8))
+ax_list = ax_list.flatten()
+wakeviz.visualize_cut_plane(horizontal_planes[0], ax=ax_list[0], title="Horizontal")
+wakeviz.visualize_cut_plane(y_planes[0], ax=ax_list[1], title="Streamwise profile")
+fig.suptitle("Fixed-bottom farm")
+
+fig, ax_list = plt.subplots(2, 1, figsize=(10, 8))
+ax_list = ax_list.flatten()
+wakeviz.visualize_cut_plane(horizontal_planes[1], ax=ax_list[0], title="Horizontal")
+wakeviz.visualize_cut_plane(y_planes[1], ax=ax_list[1], title="Streamwise profile")
+fig.suptitle("Floating farm")
 
 # Compute AEP (see 07_calc_aep_from_rose.py for details)
 df_wr = pd.read_csv("inputs/wind_rose.csv")
