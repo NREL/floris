@@ -118,7 +118,7 @@ class Grid(ABC):
         # TODO move this to the grid types and off of the base class
         """Check that grid resolution is given as int or Vec3 with int components."""
         if isinstance(value, int) and \
-            isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid, VelocityProfileGrid)):
+            isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid, LinesGrid)):
             return
         elif isinstance(value, Iterable) and isinstance(self, FlowFieldPlanarGrid):
             assert type(value[0]) is int
@@ -746,31 +746,62 @@ class PointsGrid(Grid):
         self.z_sorted = z[:,:,:,None,None]
 
 @define
-class VelocityProfileGrid(Grid):
+class LinesGrid(Grid):
     """
-    docstr
+    Create a grid of parallel lines. For each specified downstream distance of a
+    starting point, a line is created in either the cross-stream (y) or the vertical
+    direction (z).
+
+    Args:
+        direction: Direction of the lines. Either `y` or `z`.
+        downstream_dists: A list/array of streamwise locations for where to create the lines.
+        line_range: Determines the extent of the lines. The range is defined about a point
+            which lies some distance directly downstream of the starting point. `line_range`
+            is a two-element list/array. For example, if `direction` is y and `line_range` is
+            [-2 * D, 2 * D], then for every downstream distance, a line will be created
+            at some reference height for y_start - 2 * D <= y <= y_start + 2 * D, where D is
+            the turbine diameter and `y_start` is the y-coordinate of the starting point in
+            rotated coordinates.
+        resolution: Number of points in each line.
+        x_inertial_start: x-coordinate of starting point in the inertial coordinate system.
+        y_inertial_start: y-coordinate of starting point in the inertial coordinate system.
+        reference_height: If `direction` is y, then `reference_height` defines the height of the
+            xy-plane in which the lines are created. If `direction` is z, then each line is
+            created in the vertical direction with the `line_range` being relative to the
+            `reference_height`.
+        x_center_of_rotation: The x-coordinate of the center of rotation around which the
+            starting point is rotated to account for wind direction changes. If not supplied,
+            the center of rotation will be the same as the starting point.
+        y_center_of_rotation: The y-coordinate of the center of rotation around which the
+            starting point is rotated to account for wind direction changes. If not supplied,
+            the center of rotation will be the same as the starting point.
+        See :py:class:`floris.simulation.grid.Grid` for super arguments.
     """
     direction: str
     downstream_dists: NDArrayFloat = field(converter=floris_array_converter)
-    profile_range: NDArrayFloat = field(converter=floris_array_converter)
+    line_range: NDArrayFloat = field(converter=floris_array_converter)
     resolution: int
-    ref_rotor_diameter: float
     x_inertial_start: float
     y_inertial_start: float
     reference_height: float
-    x_center_of_rotation: float | None = field(default=None)
-    y_center_of_rotation: float | None = field(default=None)
+    x_center_of_rotation: float = field(default=None)
+    y_center_of_rotation: float = field(default=None)
+
+    x_start: float = field(init=False)
+    y_start: float = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
+        if len(self.wind_directions) > 1:
+            raise NotImplementedError(
+                "LinesGrid currently only works for a single wind direction."
+            )
+
         self.set_grid()
 
     def set_grid(self) -> None:
-        """
-        Set points for calculation based on a series of user-supplied coordinates.
-        """
         res = self.resolution
-        nprofiles = len(self.downstream_dists)
+        n_lines = len(self.downstream_dists)
 
         # downsteam_dists are defined from the following starting point
         coordinates_inertial_start = np.array(
@@ -778,38 +809,35 @@ class VelocityProfileGrid(Grid):
         )
 
         # Starting point in rotated coordinates
-        x_start, y_start, _, _, _ = rotate_coordinates_rel_west(
+        self.x_start, self.y_start, _, _, _ = rotate_coordinates_rel_west(
             self.wind_directions,
             coordinates_inertial_start,
             x_center_of_rotation=self.x_center_of_rotation,
-            y_center_of_rotation=self.y_center_of_rotation
+            y_center_of_rotation=self.y_center_of_rotation,
         )
-        x_start, y_start = x_start[0,0,0], y_start[0,0,0]
+        self.x_start, self.y_start = self.x_start[0, 0, 0], self.y_start[0, 0, 0]
 
         downstream_dists_transpose = np.atleast_2d(self.downstream_dists).T
-        x = (x_start + downstream_dists_transpose) * np.ones((nprofiles, res))
+        # The x-coordinate is fixed for every line (every row in  `x`)
+        x = (self.x_start + downstream_dists_transpose) * np.ones((n_lines, res))
 
         if self.direction == 'y':
-            y_single_profile = np.linspace(
-                y_start + self.profile_range[0],
-                y_start + self.profile_range[1],
-                res
+            y_single_line = np.linspace(
+                self.y_start + self.line_range[0],
+                self.y_start + self.line_range[1],
+                res,
             )
-            y = y_single_profile * np.ones((nprofiles, res))
-            z = self.reference_height * np.ones((nprofiles, res))
+            y = y_single_line * np.ones((n_lines, res))
+            z = self.reference_height * np.ones((n_lines, res))
         elif self.direction == 'z':
-            z_min_profile = self.reference_height + self.profile_range[0]
-            if z_min_profile <= 0.0:
-                # Arbitrary small value to avoid possible errors at z = 0.0
-                z_min_profile = 0.1
-            z_single_profile = np.linspace(
-                    z_min_profile,
-                    self.reference_height + self.profile_range[1],
-                    res
+            z_single_line = np.linspace(
+                self.reference_height + self.line_range[0],
+                self.reference_height + self.line_range[1],
+                res,
             )
-            z = z_single_profile * np.ones((nprofiles, res))
-            y = y_start * np.ones((nprofiles, res))
+            z = z_single_line * np.ones((n_lines, res))
+            y = self.y_start * np.ones((n_lines, res))
 
-        self.x_sorted = x.flatten()[None,None,:,None,None]
-        self.y_sorted = y.flatten()[None,None,:,None,None]
-        self.z_sorted = z.flatten()[None,None,:,None,None]
+        self.x_sorted = x.flatten()[None, None, :, None, None]
+        self.y_sorted = y.flatten()[None, None, :, None, None]
+        self.z_sorted = z.flatten()[None, None, :, None, None]

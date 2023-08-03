@@ -44,7 +44,7 @@ from .grid import (
     FlowFieldPlanarGrid,
     Grid,
     PointsGrid,
-    VelocityProfileGrid,
+    LinesGrid,
     TurbineGrid,
     TurbineCubatureGrid
 )

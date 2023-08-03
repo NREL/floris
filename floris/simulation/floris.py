@@ -35,13 +35,13 @@ from floris.simulation import (
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     Grid,
+    LinesGrid,
     PointsGrid,
     sequential_solver,
     State,
     TurbineCubatureGrid,
     TurbineGrid,
     turbopark_solver,
-    VelocityProfileGrid,
     WakeModelManager,
 )
 from floris.type_dec import NDArrayFloat
@@ -328,15 +328,20 @@ class Floris(BaseClass):
         ref_rotor_diameter: float,
         x_inertial_start: float,
         y_inertial_start: float,
-        reference_height: float
-        ) -> list[pd.DataFrame]:
+        reference_height: float,
+    ) -> list[pd.DataFrame]:
+        """
+        Extract velocity deficit profiles. See
+        :py:meth:`~floris.tools.floris_interface.FlorisInterface.sample_velocity_deficit_profiles`
+        for more details.
+        """
 
-        field_grid = VelocityProfileGrid(
+        # Create a grid that contains coordinates for all the sample points in all profiles
+        field_grid = LinesGrid(
             direction=direction,
             downstream_dists=downstream_dists,
-            profile_range=profile_range,
+            line_range=profile_range,
             resolution=resolution,
-            ref_rotor_diameter=ref_rotor_diameter,
             x_inertial_start=x_inertial_start,
             y_inertial_start=y_inertial_start,
             reference_height=reference_height,
@@ -347,14 +352,14 @@ class Floris(BaseClass):
             grid_resolution=1,
             wind_directions=self.flow_field.wind_directions,
             wind_speeds=self.flow_field.wind_speeds,
-            time_series=self.flow_field.time_series
+            time_series=self.flow_field.time_series,
         )
 
         self.flow_field.initialize_velocity_field(field_grid)
 
         vel_model = self.wake.model_strings["velocity_model"]
 
-        if vel_model in ("cc", "turbopark"):
+        if vel_model in ["cc", "turbopark"]:
             raise NotImplementedError(
                 "solve_for_velocity_deficit_profiles is currently only available with the "
                 "gauss, jensen, and empirical_guass models."
@@ -364,22 +369,31 @@ class Floris(BaseClass):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
-        nprofiles = len(downstream_dists)
-        x = np.reshape(field_grid.x_sorted[0,0,:,0,0], (nprofiles, resolution))
-        y = np.reshape(field_grid.y_sorted[0,0,:,0,0], (nprofiles, resolution))
-        z = np.reshape(field_grid.z_sorted[0,0,:,0,0], (nprofiles, resolution))
-        u = np.reshape(self.flow_field.u_sorted[0,0,:,0,0], (nprofiles, resolution))
+        n_profiles = len(downstream_dists)
+        x_relative_start = np.reshape(
+            field_grid.x_sorted[0, 0, :, 0, 0] - field_grid.x_start,
+            (n_profiles, resolution),
+        )
+        y_relative_start = np.reshape(
+            field_grid.y_sorted[0, 0, :, 0, 0] - field_grid.y_start,
+            (n_profiles, resolution),
+        )
+        z_relative_start = np.reshape(
+            field_grid.z_sorted[0, 0, :, 0, 0] - reference_height,
+            (n_profiles, resolution),
+        )
+        u = np.reshape(self.flow_field.u_sorted[0, 0, :, 0, 0], (n_profiles, resolution))
         velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
 
         velocity_deficit_profiles = []
 
-        for i in range(nprofiles):
+        for i in range(n_profiles):
             df = pd.DataFrame(
                 {
-                    "x/D": x[i]/ref_rotor_diameter,
-                    "y/D": y[i]/ref_rotor_diameter,
-                    "z/D": z[i]/ref_rotor_diameter,
-                    "velocity_deficit": velocity_deficit[i]
+                    "x/D": x_relative_start[i]/ref_rotor_diameter,
+                    "y/D": y_relative_start[i]/ref_rotor_diameter,
+                    "z/D": z_relative_start[i]/ref_rotor_diameter,
+                    "velocity_deficit": velocity_deficit[i],
                 }
             )
             velocity_deficit_profiles.append(df)

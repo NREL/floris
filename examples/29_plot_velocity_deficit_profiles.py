@@ -25,13 +25,12 @@ from floris.tools.visualization import VelocityProfilesFigure
 docstr
 """
 
-def get_profiles(direction, profile_range=None, resolution=100):
+def get_profiles(direction, resolution=100):
     return fi.sample_velocity_deficit_profiles(
         direction=direction,
         downstream_dists=downstream_dists,
-        profile_range=profile_range,
         resolution=resolution,
-        homogeneous_wind_speed=homogeneous_wind_speed
+        homogeneous_wind_speed=homogeneous_wind_speed,
     )
 
 if __name__ == '__main__':
@@ -43,9 +42,11 @@ if __name__ == '__main__':
     downstream_dists = D * np.array([3, 5, 7])
     homogeneous_wind_speed = 8.0
 
-    # Same range as y-profiles for an easier comparison
-    profile_range_z = D * np.array([0, 4]) - hub_height
-    profiles = get_profiles('y') + get_profiles('z', profile_range_z)
+    # Velocity deficit profiles can be obtained in either the cross-stream (y)
+    # or the vertical direction (z). The default profile_range is [-2 * D, 2 * D] with
+    # the default origin being (x, y, z) = (0.0, 0.0, reference_wind_height).
+    # TODO: Explain difference between starting point and coordinates seen in fig
+    profiles = get_profiles('y') + get_profiles('z')
 
     profiles_fig = VelocityProfilesFigure(
         downstream_dists_D=downstream_dists / D,
@@ -54,19 +55,18 @@ if __name__ == '__main__':
     profiles_fig.add_profiles(profiles, color='k')
 
     # Change velocity model to jensen, get the velocity deficit profiles,
-    # and plot them
+    # and add them to the figure
     floris_dict = fi.floris.as_dict()
     floris_dict['wake']['model_strings']['velocity_model'] = 'jensen'
     fi = FlorisInterface(floris_dict)
     profiles_y = get_profiles('y', resolution=400)
-    profiles_z = get_profiles('z', profile_range_z, resolution=400)
+    profiles_z = get_profiles('z', resolution=400)
     profiles_fig.add_profiles(profiles_y + profiles_z, color='r')
 
     margin = 0.05
     profiles_fig.set_xlim([0.0 - margin, 0.6 + margin])
-    profiles_fig.add_ref_lines_y_D([-0.5, 0.5])
-    ref_lines_z_D = hub_height / D + np.array([-0.5, 0.5])
-    profiles_fig.add_ref_lines_z_D(ref_lines_z_D)
+    profiles_fig.add_ref_lines_y([-0.5, 0.5])
+    profiles_fig.add_ref_lines_z([-0.5, 0.5])
 
     profiles_fig.axs[0,0].legend(['gauss', 'jensen'], fontsize=11)
     profiles_fig.fig.suptitle(
@@ -74,8 +74,10 @@ if __name__ == '__main__':
         fontsize=14
     )
 
-    # Profiles are independent of wind direction for a single turbine.
-    # This is because x is always in the streamwise direction
+    # Show that profiles are independent of the wind direction for a single turbine.
+    # This is because x is always in the streamwise direction.
+    # Also show that the coordinates x / D, y / D and z / D returned by
+    # sample_velocity_deficit_profiles are relative to the starting point mentioned above.
     fi = FlorisInterface("inputs/gch.yaml")
     fi.reinitialize(layout_x=[0.0], layout_y=[0.0])
     downstream_dists = D * np.array([3])
@@ -86,8 +88,15 @@ if __name__ == '__main__':
     )
     profiles_fig.add_profiles(profiles, color='k')
 
-    fi.reinitialize(wind_directions=[315.0])
-    profiles = get_profiles('y', resolution=21)
+    fi.reinitialize(wind_directions=[315.0], layout_x=[D], layout_y=[D])
+    profiles = fi.sample_velocity_deficit_profiles(
+        direction='y',
+        downstream_dists=downstream_dists,
+        resolution=21,
+        homogeneous_wind_speed=homogeneous_wind_speed,
+        x_inertial_start=D,
+        y_inertial_start=D,
+    )
     profiles_fig.add_profiles(
         profiles,
         linestyle='None',
@@ -96,6 +105,6 @@ if __name__ == '__main__':
         markerfacecolor='None',
         markeredgewidth=1.3
     )
-    profiles_fig.axs[0,0].legend(['WD = 270 deg', 'WD = 315 deg'])
+    profiles_fig.axs[0,0].legend(['WD = 270 deg', 'WD = 315 deg,\nand turbine\nmoved'])
 
     plt.show()

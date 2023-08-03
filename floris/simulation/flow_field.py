@@ -127,11 +127,15 @@ class FlowField(BaseClass):
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
         wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
-        dwind_profile_plane = (
-            self.wind_shear
-            * (1 / self.reference_wind_height) ** self.wind_shear
-            * (grid.z_sorted) ** (self.wind_shear - 1)
-        )
+        if self.wind_shear == 0.0:
+            # Avoid division by zero at z = 0.0 when wind_shear = 0.0
+            dwind_profile_plane = np.zeros_like(grid.z_sorted)
+        else:
+            dwind_profile_plane = (
+                self.wind_shear
+                * (1 / self.reference_wind_height) ** self.wind_shear
+                * (grid.z_sorted) ** (self.wind_shear - 1)
+            )
 
         # If no hetergeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:

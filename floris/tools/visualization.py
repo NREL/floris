@@ -705,30 +705,43 @@ def calculate_horizontal_plane_with_turbines(
 @define
 class VelocityProfilesFigure():
     """
-    docstr
+    Create a figure which displays velocity deficit profiles at several downstream
+    locations of a turbine.
+
+    Args:
+        downstream_dists_D: A list/array of streamwise locations at which the velocity deficit
+            profiles have been sampled. The locations should be normalized by the turbine
+            diameter D.
+        layout: A one- or two-element list defining the direction of the profiles and in which
+            order the directions are plotted. For example, ['y', 'z'] initializes a figure where
+            y-profiles are expected on the top row of Axes in the figure, and z-profiles are
+            expected on the bottom row.
+        ax_width: Roughly the width of each Axes.
+        ax_height: Roughly the height of each Axes.
+
     """
     downstream_dists_D: NDArrayFloat = field(converter=floris_array_converter)
     layout: list[str] = field(default=['y'])
-    width_per_col: float = field(default=2.07)
-    height_per_row: float = field(default=3.0)
+    ax_width: float = field(default=2.07)
+    ax_height: float = field(default=3.0)
 
-    nrows: int = field(init=False)
-    ncols: int = field(init=False)
+    n_rows: int = field(init=False)
+    n_cols: int = field(init=False)
     fig: plt.Figure = field(init=False)
-    axs: np.ndarray | plt.Axes = field(init=False)
+    axs: np.ndarray = field(init=False)
 
-    def __attrs_post_init__(self):
-        self.nrows = len(self.layout)
-        self.ncols = len(self.downstream_dists_D)
-        figsize = [0.7 + self.width_per_col * self.ncols, 1.0 + self.height_per_row * self.nrows]
+    def __attrs_post_init__(self) -> None:
+        self.n_rows = len(self.layout)
+        self.n_cols = len(self.downstream_dists_D)
+        figsize = [0.7 + self.ax_width * self.n_cols, 1.0 + self.ax_height * self.n_rows]
         self.fig, self.axs = plt.subplots(
-            self.nrows,
-            self.ncols,
+            self.n_rows,
+            self.n_cols,
             figsize=figsize,
             layout='tight',
             sharex='col',
             sharey='row',
-            squeeze=False
+            squeeze=False,
         )
 
         for ax in self.axs[-1]:
@@ -738,7 +751,7 @@ class VelocityProfilesFigure():
         for ax, x_D in zip(self.axs[0], self.downstream_dists_D):
             ax.set_title(f'$x/D = {x_D:.1f}$', fontsize=14)
 
-        for profile_direction, ax in zip(self.layout, self.axs[:,0]):
+        for ax, profile_direction in zip(self.axs[:,0], self.layout):
             ax.set_ylabel(f'${profile_direction}/D$', fontsize=14)
             ax.tick_params('y', labelsize=14)
 
@@ -746,15 +759,26 @@ class VelocityProfilesFigure():
     def layout_validator(self, instance : attrs.Attribute, value : list[str]) -> None:
         allowed_layouts = [['y'], ['z'], ['y', 'z'], ['z', 'y']]
         if value not in allowed_layouts:
-            raise ValueError(f"'layout' must be one of the following: {allowed_layouts}")
+            raise ValueError(f"'layout' must be one of the following: {allowed_layouts}.")
 
-    def add_profiles(self, velocity_deficit_profiles, **kwargs):
+    def add_profiles(
+        self,
+        velocity_deficit_profiles: list[pd.DataFrame],
+        **kwargs
+    ) -> None:
+        """
+        Add a list of velocity deficit profiles to the figure. Each profile is represented
+        as a pandas DataFrame. `kwargs` are passed to `ax.plot`.
+        """
         for df in velocity_deficit_profiles:
             ax, profile_direction = self.match_profile_to_axes(df)
             profile_direction_D = f'{profile_direction}/D'
             ax.plot(df['velocity_deficit'], df[profile_direction_D], **kwargs)
 
-    def match_profile_to_axes(self, df):
+    def match_profile_to_axes(
+        self,
+        df: pd.DataFrame,
+    ) -> tuple[plt.Axes, str]:
         x_D = np.unique(df['x/D'])
         if len(x_D) == 1:
             x_D = x_D[0]
@@ -777,7 +801,7 @@ class VelocityProfilesFigure():
         row = self.layout.index(profile_direction)
 
         col = None
-        for i in range(self.ncols):
+        for i in range(self.n_cols):
             if np.abs(x_D - self.downstream_dists_D[i]) < 0.001:
                 col = i
                 break
@@ -785,34 +809,66 @@ class VelocityProfilesFigure():
             raise ValueError(
                 "Could not add a velocity deficit profile at downstream distance "
                 f"x/D = {x_D}. The downstream distance must be one of the following "
-                "values with which the instance of the VelocityProfilesFigure was initialized: "
-                f"{self.downstream_dists_D}"
+                "values with which this VelocityProfilesFigure object was initialized: "
+                f"{self.downstream_dists_D}."
             )
         return self.axs[row,col], profile_direction
 
-    def set_xlim(self, xlim):
+    def set_xlim(
+        self,
+        xlim: list[float] | NDArrayFloat,
+    ) -> None:
         for ax in self.axs[-1]:
             ax.set_xlim(xlim)
 
-    def add_ref_lines_y_D(self, ref_lines, **kwargs):
+    def add_ref_lines_y(
+        self,
+        ref_lines_y_D: list[float] | NDArrayFloat,
+        **kwargs
+    ) -> None:
+        """
+        Add reference lines to the VelocityProfilesFigure which go along the XAxis.
+        Commonly used to show the extent of the turbine.
+        Args:
+            ref_lines_y_D: A list of y-coordinates normalized by the turbine diameter D.
+                One coordinate per reference line.
+            **kwargs: Additional parameters to pass to `ax.plot`.
+        """
         if 'y' not in self.layout:
             raise Exception(
                 "Could not add reference lines to cross-stream (y) velocity profiles. No "
                 "such profiles exist in the figure."
             )
         row_y = self.layout.index('y')
-        self.add_ref_lines(ref_lines, row_y, **kwargs)
+        self.add_ref_lines(ref_lines_y_D, row_y, **kwargs)
 
-    def add_ref_lines_z_D(self, ref_lines, **kwargs):
+    def add_ref_lines_z(
+        self,
+        ref_lines_z_D: list[float] | NDArrayFloat,
+        **kwargs
+    ) -> None:
+        """
+        Add reference lines to the VelocityProfilesFigure which go along the XAxis.
+        Commonly used to show the extent of the turbine.
+        Args:
+            ref_lines_z_D: A list of z-coordinates normalized by the turbine diameter D.
+                One coordinate per reference line.
+            **kwargs: Additional parameters to pass to `ax.plot`.
+        """
         if 'z' not in self.layout:
             raise Exception(
                 "Could not add reference lines to vertical (z) velocity profiles. No "
                 "such profiles exist in the figure."
             )
         row_z = self.layout.index('z')
-        self.add_ref_lines(ref_lines, row_z, **kwargs)
+        self.add_ref_lines(ref_lines_z_D, row_z, **kwargs)
 
-    def add_ref_lines(self, ref_lines, row, **kwargs):
+    def add_ref_lines(
+        self,
+        ref_lines_D: list[float] | NDArrayFloat,
+        row: int,
+        **kwargs
+    ) -> None:
         default_params = {
                 'linestyle': (0, (4, 2)),
                 'color': 'k',
@@ -823,5 +879,5 @@ class VelocityProfilesFigure():
                 kwargs[key] = default_params[key]
 
         for ax in self.axs[row]:
-            for coordinate in ref_lines:
+            for coordinate in ref_lines_D:
                 ax.plot([0.0, 1.0], [coordinate, coordinate], **kwargs)
