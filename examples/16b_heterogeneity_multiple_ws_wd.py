@@ -29,7 +29,7 @@ when multiple wind speeds and direction are considered.
 # Define the speed ups of the heterogeneous inflow, and their locations.
 # For the 2-dimensional case, this requires x and y locations.
 # The speed ups are multipliers of the ambient wind speed.
-speed_ups = [[2.0, 1.0, 2.0, 1.0]]
+speed_ups = [[[2.0, 1.0, 2.0, 1.0]]]  # Has the shape (n_wind_directions, n_wind_speeds, n_points)
 x_locs = [-300.0, -300.0, 2600.0, 2600.0]
 y_locs = [ -300.0, 300.0, -300.0, 300.0]
 
@@ -58,19 +58,20 @@ print(f'T0: {turbine_powers[0]:.1f} kW')
 print(f'T1: {turbine_powers[1]:.1f} kW')
 print()
 
-# Since het maps are assigned for each wind direciton, it's allowable to change
-# the number of wind speeds
-fi.reinitialize(wind_speeds=[4, 8])
-fi.calculate_wake()
-turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
-print('With wind speeds now set to 4 and 8 m/s')
-print(f'T0: {turbine_powers[:, :, 0].flatten()} kW')
-print(f'T1: {turbine_powers[:, :, 1].flatten()} kW')
-print()
-
 # To change the number of wind directions however it is necessary to make a matching
 # change to the dimensions of the het map
-speed_multipliers = [[2.0, 1.0, 2.0, 1.0], [2.0, 1.0, 2.0, 1.0]] # Expand to two wind directions
+speed_multipliers = [
+    [
+        [2.0, 1.0, 2.0, 1.0],  # Wind direction 270, Wind speed 7.0, four locations (x,y)
+        [2.0, 1.0, 2.0, 1.0],  # Wind direction 270, Wind speed 8.0, four locations (x,y)
+        [2.0, 1.0, 2.0, 1.0],  # Wind direction 270, Wind speed 9.0, four locations (x,y)
+    ],
+    [
+        [2.0, 1.0, 2.0, 1.0],  # Wind direction 275, Wind speed 7.0, four locations (x,y)
+        [2.0, 1.0, 2.0, 1.0],  # Wind direction 275, Wind speed 8.0, four locations (x,y)
+        [2.0, 1.0, 2.0, 1.0],  # Wind direction 275, Wind speed 9.0, four locations (x,y)
+    ],
+]
 heterogenous_inflow_config = {
     'speed_multipliers': speed_multipliers,
     'x': x_locs,
@@ -78,7 +79,7 @@ heterogenous_inflow_config = {
 }
 fi.reinitialize(
     wind_directions=[270.0, 275.0],
-    wind_speeds=[8.0],
+    wind_speeds=[7.0, 8.0, 9.0],
     heterogenous_inflow_config=heterogenous_inflow_config
 )
 fi.calculate_wake()

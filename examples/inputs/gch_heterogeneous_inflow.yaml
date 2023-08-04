@@ -29,10 +29,10 @@ flow_field:
   air_density: 1.225
   heterogenous_inflow_config:
     speed_multipliers:
-      - - 2.0
-        - 1.0
-        - 2.0
-        - 1.0
+      - - - 2.0
+          - 1.0
+          - 2.0
+          - 1.0
     x:
       - -300.
       - -300.
