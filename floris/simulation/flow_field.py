@@ -254,7 +254,8 @@ class FlowField(BaseClass):
             # adds an extra dimension
             for wdii in range(n_wind_directions):
                 for wsii in range(n_wind_speeds):
-                    speed_ups[wdii, wsii] = het_map[wdii][wsii](x[wdii, wsii], y[wdii, wsii], z[wdii, wsii])
+                    speed_ups[wdii, wsii] = \
+                        het_map[wdii][wsii](x[wdii, wsii], y[wdii, wsii], z[wdii, wsii])
 
         else:
             # Calculate the 2-dimensional speed ups; squeeze is needed as the generator
