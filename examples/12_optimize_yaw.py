@@ -85,7 +85,7 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
     yaw_angles_floris = interpolant(X, Y)
 
     # Calculate FLORIS for every WD and WS combination and get the farm power
-    fi.calculate_wake(yaw_angles_floris)
+    fi.calculate_wake(yaw_angles=yaw_angles_floris)
     farm_power_array = fi.get_farm_power()
 
     # Now map FLORIS solutions to dataframe
