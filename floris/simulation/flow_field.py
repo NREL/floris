@@ -108,6 +108,11 @@ class FlowField(BaseClass):
                 "The het_map's wind direction dimension not equal to number of wind directions."
             )
 
+        if self.n_wind_speeds!= np.array(value).shape[1]:
+            raise ValueError(
+                "The het_map's wind speed dimension not equal to number of wind speeds."
+            )
+
 
     def __attrs_post_init__(self) -> None:
         if self.heterogenous_inflow_config is not None:
