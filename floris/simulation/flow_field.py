@@ -163,13 +163,13 @@ class FlowField(BaseClass):
                     "fully cover the calculated flow field area."
                 )
 
-            if len(self.het_map[0].points[0]) == 2:
+            if len(self.het_map[0][0].points[0]) == 2:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
                     grid.x_sorted_inertial_frame,
                     grid.y_sorted_inertial_frame
                 )
-            elif len(self.het_map[0].points[0]) == 3:
+            elif len(self.het_map[0][0].points[0]) == 3:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
                     grid.x_sorted_inertial_frame,
@@ -240,21 +240,23 @@ class FlowField(BaseClass):
         )
 
     def calculate_speed_ups(self, het_map, x, y, z=None):
+        speed_ups = np.ones_like(x)
+        n_wind_directions = np.shape(x)[0]
+        n_wind_speeds = np.shape(x)[1]
+
         if z is not None:
             # Calculate the 3-dimensional speed ups; squeeze is needed as the generator
             # adds an extra dimension
-            speed_ups = np.squeeze(
-                [het_map[i](x[i:i+1], y[i:i+1], z[i:i+1]) for i in range( len(het_map))],
-                axis=1,
-            )
+            for wdii in range(n_wind_directions):
+                for wsii in range(n_wind_speeds):
+                    speed_ups[wdii, wsii] = het_map[wdii][wsii](x[wdii, wsii], y[wdii, wsii], z[wdii, wsii])
 
         else:
             # Calculate the 2-dimensional speed ups; squeeze is needed as the generator
             # adds an extra dimension
-            speed_ups = np.squeeze(
-                [het_map[i](x[i:i+1], y[i:i+1]) for i in range(len(het_map))],
-                axis=1,
-            )
+            for wdii in range(n_wind_directions):
+                for wsii in range(n_wind_speeds):
+                    speed_ups[wdii, wsii] = het_map[wdii][wsii](x[wdii, wsii], y[wdii, wsii])
 
         return speed_ups
 
@@ -275,7 +277,7 @@ class FlowField(BaseClass):
                 - **y**: A list of y locations at which the speed up factors are defined.
                 - **z** (optional): A list of z locations at which the speed up factors are defined.
         """
-        speed_multipliers = self.heterogenous_inflow_config['speed_multipliers']
+        all_multipliers = self.heterogenous_inflow_config['speed_multipliers']
         x = self.heterogenous_inflow_config['x']
         y = self.heterogenous_inflow_config['y']
         z = self.heterogenous_inflow_config['z']
@@ -285,16 +287,22 @@ class FlowField(BaseClass):
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
             in_region = [
-                LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=1.0)
-                for multiplier in speed_multipliers
+                [
+                    LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=1.0)
+                    for multiplier in single_winddirection_multipliers
+                ]
+                for single_winddirection_multipliers in all_multipliers
             ]
         else:
             # Compute the 2-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
             in_region = [
-                LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=1.0)
-                for multiplier in speed_multipliers
+                [
+                    LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=1.0)
+                    for multiplier in single_winddirection_multipliers
+                ]
+                for single_winddirection_multipliers in all_multipliers
             ]
 
         self.het_map = in_region
