@@ -30,7 +30,7 @@ from floris.simulation.turbine import (
     rotor_effective_velocity,
 )
 from floris.tools.cut_plane import CutPlane
-from floris.type_dec import NDArrayFloat, NDArrayBool
+from floris.type_dec import NDArrayBool, NDArrayFloat
 
 
 class FlorisInterface(LoggerBase):
