@@ -86,6 +86,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
     n_wind_directions = fi.floris.flow_field.n_wind_directions
 
     velocities = fi.floris.flow_field.u
+    turbines_off = fi.floris.farm.turbines_off
     yaw_angles = fi.floris.farm.yaw_angles
     tilt_angles = fi.floris.farm.tilt_angles
     ref_tilt_cp_cts = (
@@ -112,6 +113,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
     )
     farm_cts = Ct(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -128,6 +130,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,

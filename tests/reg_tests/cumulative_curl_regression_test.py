@@ -173,6 +173,7 @@ def test_regression_tandem(sample_inputs_fixture):
     n_wind_directions = floris.flow_field.n_wind_directions
 
     velocities = floris.flow_field.u
+    turbines_off = floris.farm.turbines_off
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
     ref_tilt_cp_cts = (
@@ -199,6 +200,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_cts = Ct(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -215,6 +217,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -329,6 +332,9 @@ def test_regression_yaw(sample_inputs_fixture):
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
+    turbines_off = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES)).astype(bool)
+    floris.farm.turbines_off = turbines_off
+
     yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
@@ -341,6 +347,7 @@ def test_regression_yaw(sample_inputs_fixture):
     n_wind_directions = floris.flow_field.n_wind_directions
 
     velocities = floris.flow_field.u
+    turbines_off = floris.farm.turbines_off
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
     ref_tilt_cp_cts = (
@@ -367,6 +374,7 @@ def test_regression_yaw(sample_inputs_fixture):
     )
     farm_cts = Ct(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -383,6 +391,7 @@ def test_regression_yaw(sample_inputs_fixture):
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -425,6 +434,9 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
+    turbines_off = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES)).astype(bool)
+    floris.farm.turbines_off = turbines_off
+
     yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
@@ -437,6 +449,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     n_wind_directions = floris.flow_field.n_wind_directions
 
     velocities = floris.flow_field.u
+    turbines_off = floris.farm.turbines_off
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
     ref_tilt_cp_cts = (
@@ -463,6 +476,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     )
     farm_cts = Ct(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -479,6 +493,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -520,6 +535,9 @@ def test_regression_secondary_steering(sample_inputs_fixture):
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
+    turbines_off = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES)).astype(bool)
+    floris.farm.turbines_off = turbines_off
+
     yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
@@ -533,6 +551,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
 
     velocities = floris.flow_field.u
     yaw_angles = floris.farm.yaw_angles
+    turbines_off = floris.farm.turbines_off
     tilt_angles = floris.farm.tilt_angles
     ref_tilt_cp_cts = (
         np.ones((n_wind_directions, n_wind_speeds, n_turbines))
@@ -558,6 +577,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
     )
     farm_cts = Ct(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,
@@ -574,6 +594,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        turbines_off,
         yaw_angles,
         tilt_angles,
         ref_tilt_cp_cts,

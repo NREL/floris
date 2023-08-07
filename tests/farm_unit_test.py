@@ -50,6 +50,7 @@ def test_farm_init_homogenous_turbines():
 
     farm.construct_hub_heights()
     farm.construct_coordinates()
+    farm.set_turbines_off(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
 
     # Check initial values
@@ -63,6 +64,7 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     farm.construct_hub_heights()
     farm.construct_coordinates()
     farm.construct_turbine_ref_tilt_cp_cts()
+    farm.set_turbines_off(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     farm.set_tilt_to_ref_tilt(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     dict1 = farm.as_dict()
@@ -71,6 +73,7 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     new_farm.construct_hub_heights()
     new_farm.construct_coordinates()
     new_farm.construct_turbine_ref_tilt_cp_cts()
+    new_farm.set_turbines_off(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     new_farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     new_farm.set_tilt_to_ref_tilt(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     dict2 = new_farm.as_dict()
