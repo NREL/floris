@@ -29,31 +29,14 @@ from floris.simulation import (
 @define
 class SuperGaussianVAWTVelocityDeficit(BaseModel):
     """
-    The Empirical Gauss velocity model has a Gaussian profile
-    (see :cite:`bastankhah2016experimental` and
-    :cite:`King2019Controls`) throughout and expands in a (smoothed)
-    piecewise linear fashion.
+    This is a super-Gaussian wake velocity model for Vertical Axis Wind Turbines (VAWTs).
+    The model is based on :cite:`ouro2021theoretical` and allows the wake to have
+    different characteristics in the cross-stream and vertical direction. The initial
+    wake shape is closely related to the turbine cross section, which is:
+    turbine diameter * length of the vertical turbine blades.
 
-    parameter_dictionary (dict): Model-specific parameters.
-        Default values are used when a parameter is not included
-        in `parameter_dictionary`. Possible key-value pairs include:
-
-            -   **wake_expansion_rates** (*list*): List of expansion
-                rates for the Gaussian wake width. Must be of length 1
-                or greater.
-            -   **breakpoints_D** (*list*): List of downstream
-                locations, specified in terms of rotor diameters, where
-                the expansion rates go into effect. Must be one element
-                shorter than wake_expansion_rates. May be empty.
-            -   **sigma_0_D** (*float*): Initial width of the Gaussian
-                wake at the turbine location, specified as a multiplier
-                of the rotor diameter.
-            -   **smoothing_length_D** (*float*): Distance over which
-                the corners in the piece-wise linear wake expansion rate
-                are smoothed (specified as a multiplier of the rotor
-                diameter).
-            -   **mixing_gain_deflection** (*float*): Gain to set the
-                increase in wake expansion due to wake-induced mixing.
+    Parameters:
+        wake_expansion_coeff_y:
 
     References:
         .. bibliography:: /references.bib
@@ -101,42 +84,13 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
         z: np.ndarray,
         wind_veer: float
     ) -> None:
-        """
-        Calculates the velocity deficits in the wake.
-
-        Args:
-            x_i (np.array): Streamwise direction grid coordinates of
-                the ith turbine (m).
-            y_i (np.array): Cross stream direction grid coordinates of
-                the ith turbine (m).
-            z_i (np.array): Vertical direction grid coordinates of
-                the ith turbine (m) [not used].
-            axial_induction_i (np.array): Axial induction factor of the
-                ith turbine (-) [not used].
-            yaw_angle_i (np.array): Yaw angle of the ith turbine (deg).
-            ct_i (np.array): Thrust coefficient for the ith turbine (-).
-            hub_height_i (float): Hub height for the ith turbine (m).
-            rotor_diameter_i (np.array): Rotor diameter for the ith
-                turbine (m).
-
-            x (np.array): Streamwise direction grid coordinates of the
-                flow field domain (m).
-            y (np.array): Cross stream direction grid coordinates of the
-                flow field domain (m).
-            z (np.array): Vertical direction grid coordinates of the
-                flow field domain (m).
-            wind_veer (np.array): Wind veer (deg).
-
-        Returns:
-            np.array: Velocity deficits (-).
-        """
 
         # Model parameters need to be unpacked for use in Numexpr
         ay, by, cy = self.ay, self.by, self.cy
         az, bz, cz = self.az, self.bz, self.cz
 
         # No specific near or far wakes in this model
-        downstream_mask = np.array(x > x_i + 0.1)
+        downstream_mask = (x > x_i + 0.1)
 
         # Nondimensional coordinates. Is z_i always equal to hub_height_i?
         x_tilde =   ne.evaluate("downstream_mask * (x - x_i) / rotor_diameter_i")
