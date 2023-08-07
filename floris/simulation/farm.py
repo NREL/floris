@@ -340,8 +340,10 @@ class Farm(BaseClass):
         )
 
     def set_turbines_off(self, n_wind_directions: int, n_wind_speeds: int):
-        self.turbines_off = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines)).astype(bool)
-        self.turbines_off_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines)).astype(bool)
+        self.turbines_off = np.zeros(
+            (n_wind_directions, n_wind_speeds, self.n_turbines)).astype(bool)
+        self.turbines_off_sorted = np.zeros(
+            (n_wind_directions, n_wind_speeds, self.n_turbines)).astype(bool)
 
     def set_yaw_angles(self, n_wind_directions: int, n_wind_speeds: int):
         # TODO Is this just for initializing yaw angles to zero?
