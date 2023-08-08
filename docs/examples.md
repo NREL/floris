@@ -97,7 +97,11 @@ of a turbine layout within FLORIS.
 
 ### 24_floating_turbine_models.py
 Demonstrates the definition of a floating turbine and how to enable the effects of tilt
-on Cp and Ct.
+on Cp and Ct. 
+
+For further examples on floating wind turbines, see also examples
+25 (vertical wake deflection by a forced tilt angle) and 29 (comparison between 
+a fixed-bottom and floating wind farm).
 
 ### 25_tilt_driven_vertical_wake_deflection.py
 
@@ -106,6 +110,10 @@ with the Empirical Gauss model. Note that only the Empirical Gauss model impleme
 vertical deflections at this time. Also be aware that this example uses a potentially
 unrealistic tilt angle, 15 degrees, to highlight the wake deflection. Moreover, the magnitude
 of vertical deflections due to tilt has not been validated.
+
+For further examples on floating wind turbines, see also examples
+24 (effects of tilt on turbine power and thrust coefficients) and 29 
+(comparison between a fixed-bottom and floating wind farm).
 
 ### 26_empirical_gauss_velocity_deficit_parameters.py
 
@@ -134,6 +142,10 @@ wind farm with the same layout. Includes:
 - Turbine-by-turbine power comparison for a single wind speed and direction
 - Flow visualizations for a single wind speed and direction
 - AEP calculations based on an example wind rose.
+
+For further examples on floating wind turbines, see also examples
+24 (effects of tilt on turbine power and thrust coefficients) and 25 
+(vertical wake deflection by a forced tilt angle).
 
 ## Optimization
 
