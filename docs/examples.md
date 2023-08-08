@@ -100,7 +100,7 @@ Demonstrates the definition of a floating turbine and how to enable the effects 
 on Cp and Ct. 
 
 For further examples on floating wind turbines, see also examples
-25 (vertical wake deflection by a forced tilt angle) and 29 (comparison between 
+25 (vertical wake deflection by a forced tilt angle) and 29 (comparison between
 a fixed-bottom and floating wind farm).
 
 ### 25_tilt_driven_vertical_wake_deflection.py
@@ -112,7 +112,7 @@ unrealistic tilt angle, 15 degrees, to highlight the wake deflection. Moreover, 
 of vertical deflections due to tilt has not been validated.
 
 For further examples on floating wind turbines, see also examples
-24 (effects of tilt on turbine power and thrust coefficients) and 29 
+24 (effects of tilt on turbine power and thrust coefficients) and 29
 (comparison between a fixed-bottom and floating wind farm).
 
 ### 26_empirical_gauss_velocity_deficit_parameters.py
@@ -144,7 +144,7 @@ wind farm with the same layout. Includes:
 - AEP calculations based on an example wind rose.
 
 For further examples on floating wind turbines, see also examples
-24 (effects of tilt on turbine power and thrust coefficients) and 25 
+24 (effects of tilt on turbine power and thrust coefficients) and 25
 (vertical wake deflection by a forced tilt angle).
 
 ## Optimization
