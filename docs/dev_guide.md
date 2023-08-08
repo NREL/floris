@@ -216,7 +216,7 @@ compiling, a file should be located at ``docs/_build/html/index.html``.
 This file can be opened in any browser.
 
 ```bash
-pip install -e .["docs"]
+pip install -e ".[docs]"
 jupyter-book build docs/
 
 # Lots of output to the terminal here...

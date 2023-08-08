@@ -10,7 +10,9 @@ have been reorganized to provide simpler tuning and data fitting.
 
 The velocity deficit at a point $(x, y, z)$ in the wake follows a Gaussian
 curve, i.e.,
+
 $$ \frac{u}{U_\infty} = 1 - Ce^{-\frac{(y-\delta_y)^2}{2\sigma_y^2} -\frac{(z-z_h-\delta_z)^2}{2\sigma_z^2}} $$
+
 where the $(x, y, z)$ origin is at the turbine location (at ground level).
 The terms $C$, $\sigma_y$, $\sigma_z$, $\delta_y$, and $\delta_z$ all depend
 on the downstream location $x$.

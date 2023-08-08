@@ -636,6 +636,10 @@ class FlorisInterface(LoggerBase):
                 "Can't run function `FlorisInterface.get_turbine_powers` without "
                 "first running `FlorisInterface.calculate_wake`."
             )
+        # Check for negative velocities, which could indicate bad model
+        # parameters or turbines very closely spaced.
+        if (self.turbine_effective_velocities < 0.).any():
+            self.logger.warning("Some rotor effective velocities are negative.")
 
         turbine_powers = power(
             ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
@@ -1035,15 +1039,3 @@ class FlorisInterface(LoggerBase):
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
-
-
-## Functionality removed in v3
-
-def set_rotor_diameter(self, rotor_diameter):
-    """
-    This function has been replaced and no longer works correctly, assigning an error
-    """
-    raise Exception(
-        "FlorinInterface.set_rotor_diameter has been removed in favor of "
-        "FlorinInterface.change_turbine. See examples/change_turbine/."
-    )
