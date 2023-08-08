@@ -16,7 +16,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.visualization as wakeviz
 from floris.tools import FlorisInterface
 from floris.tools.visualization import VelocityProfilesFigure
 
@@ -49,9 +48,9 @@ if __name__ == '__main__':
     downstream_dists = D * np.array([3, 5, 7])
     homogeneous_wind_speed = 8.0
 
-    # Below, `get_profiles('y')` returns three velocity deficit profiles sampled along
-    # three lines that are all parallel to the y-axis (cross-stream direction). The
-    # streamwise location of each line in given in `downstream_dists`.
+    # Below, `get_profiles('y')` returns three velocity deficit profiles. These are sampled along
+    # three corresponding lines that are all parallel to the y-axis (cross-stream direction).
+    # The streamwise location of each line is given in `downstream_dists`.
     # Similarly, `get_profiles('z')` samples profiles in the vertical direction (z) at the
     # same streamwise locations.
     profiles = get_profiles('y') + get_profiles('z')
@@ -89,14 +88,16 @@ if __name__ == '__main__':
     )
 
     # Second part of example:
-    # Case 1: Show that, if we have a single turbine, the profiles are independent of
+    # Case 1: Show that, if we have a single turbine, then the profiles are independent of
     # the wind direction. This is because x is defined to be in the streamwise direction
     # in sample_velocity_deficit_profiles and VelocityProfilesFigure.
     # Case 2: Show that the coordinates x/D, y/D and z/D returned by
     # sample_velocity_deficit_profiles are relative to the sampling starting point.
+    # By default, this starting point is at (0.0, 0.0, fi.floris.flow_field.reference_wind_height)
+    # in inertial coordinates.
     downstream_dists = D * np.array([3])
     for case in [1, 2]:
-        # Reference
+        # The first added profile is a reference
         fi = FlorisInterface("inputs/gch.yaml")
         fi.reinitialize(layout_x=[0.0], layout_y=[0.0])
         profiles = get_profiles('y', resolution=400)
@@ -112,7 +113,7 @@ if __name__ == '__main__':
             # Change wind direction compared to reference
             wind_directions = [315.0]
             layout_x, layout_y = [0.0], [0.0]
-            # This is the default starting point in sample_velocity_deficit_profiles
+            # Same as the default starting point but specified for completeness
             x_inertial_start, y_inertial_start = 0.0, 0.0
         elif case == 2:
             # Change turbine location compared to reference. Then, set the sampling starting
@@ -122,6 +123,7 @@ if __name__ == '__main__':
             layout_x, layout_y = [D], [D]
             x_inertial_start, y_inertial_start = D, D
 
+        # Plot a second profile to show that it is equivalent to the reference
         fi.reinitialize(wind_directions=wind_directions, layout_x=layout_x, layout_y=layout_y)
         profiles = fi.sample_velocity_deficit_profiles(
             direction='y',
