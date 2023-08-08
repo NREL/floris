@@ -31,13 +31,19 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
     """
     This is a super-Gaussian wake velocity model for Vertical Axis Wind Turbines (VAWTs).
     The model is based on :cite:`ouro2021theoretical` and allows the wake to have
-    different characteristics in the cross-stream and vertical direction. The initial
+    different characteristics in the cross-stream (y) and vertical direction (z). The initial
     wake shape is closely related to the turbine cross section, which is:
     turbine diameter * length of the vertical turbine blades.
 
     Parameters:
-        wake_expansion_coeff_y:
-
+        wake_expansion_coeff_y: The wake expands linearly in y with a rate of
+            wake_expansion_coeff_y * turbulence_intensity_i.
+        wake_expansion_coeff_z: The wake expands linearly in z with a rate of
+            wake_expansion_coeff_z * turbulence_intensity_i.
+        ay, by, cy: Parameters that control how the shape function exponent `ny` evolves
+            in the streamwise direction.
+        az, bz, cz: Parameters that control how the shape function exponent `nz` evolves
+            in the streamwise direction.
     References:
         .. bibliography:: /references.bib
             :style: unsrt
@@ -102,28 +108,27 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
         ky_star = self.wake_expansion_coeff_y * turbulence_intensity_i
         kz_star = self.wake_expansion_coeff_z * turbulence_intensity_i
 
-        # Relative initial wake expansion
+        # `beta` is the initial wake expansion relative to the turbine cross-section
         fac = np.sqrt(1 - ct_i)
         beta = 0.5 * (1 + fac) / fac
 
-        # Initial wake width
+        # Characteristic nondimensional wake width at x - x_i = 0
         ny_0 = ay + cy
         nz_0 = az + cz
         eta_0 = 1/ny_0 + 1/nz_0
         epsilon = beta * ny_0 * nz_0 / (2 ** (2 * eta_0 + 2) * gamma(1 / ny_0) * gamma(1 / nz_0))
         epsilon **= 1 / (2 * eta_0)
-        epsilon_y, epsilon_z = epsilon, epsilon
 
-        # Characteristic wake widths grow linearly in the streamwise direction
-        sigma_y_tilde = ne.evaluate("ky_star * x_tilde + epsilon_y")
-        sigma_z_tilde = ne.evaluate("kz_star * x_tilde_H + epsilon_z")
+        # Characteristic nondimensional wake widths grow linearly in the streamwise direction
+        sigma_y_tilde = ne.evaluate("ky_star * x_tilde + epsilon")
+        sigma_z_tilde = ne.evaluate("kz_star * x_tilde_H + epsilon")
 
-        # Gaussian exponents which determine the wake shape
+        # Eponents which determine the wake shape
         ny = ne.evaluate("ay * exp(-by * x_tilde) + cy")
         nz = ne.evaluate("az * exp(-bz * x_tilde_H) + cz")
 
         # At any streamwise location x behind the turbine, the velocity deficit in the
-        # y-z plane is given by multiplying the maximum deficit C = C(x) with two Gaussian
+        # yz-plane is given by multiplying the maximum deficit C = C(x) with two super-Gaussian
         # shape functions fy = fy(y) and fz = fz(z)
         eta = ne.evaluate("1 / ny + 1 / nz")
         ny_inv = ne.evaluate("1 / ny")
