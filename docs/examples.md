@@ -97,7 +97,7 @@ of a turbine layout within FLORIS.
 
 ### 24_floating_turbine_models.py
 Demonstrates the definition of a floating turbine and how to enable the effects of tilt
-on Cp and Ct. 
+on Cp and Ct.
 
 For further examples on floating wind turbines, see also examples
 25 (vertical wake deflection by a forced tilt angle) and 29 (comparison between
