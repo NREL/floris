@@ -40,7 +40,7 @@ show the benefits of coupled optimization when flows are heterogeneous.
 file_dir = os.path.dirname(os.path.abspath(__file__))
 fi = FlorisInterface('inputs/gch.yaml')
 
-# Setup 2 wind directions (due east and due west) 
+# Setup 2 wind directions (due east and due west)
 # and 1 wind speed with uniform probability
 wind_directions = [270., 90.]
 n_wds = len(wind_directions)

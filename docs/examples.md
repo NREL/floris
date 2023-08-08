@@ -84,8 +84,19 @@ Define non-uniform (heterogeneous) atmospheric conditions by specifying
 speedups at locations throughout the farm. Show plots of the
 impact on wind turbine wakes.
 
-### 16b_heterogenaity_multiple_ws_wd.py
-Illustrate usage of heterogenaity with multiple wind speeds and directions.
+### 16b_heterogeneity_multiple_ws_wd.py
+Illustrate usage of heterogeneity with multiple wind speeds and directions.
+
+## 16c_optimize_layout_with_heterogeneity.py
+This example shows a layout optimization using the geometric yaw option. It
+combines elements of examples 15 (layout optimization) and 16 (heterogeneous
+inflow) for demonstrative purposes. If you haven't yet run those examples,
+we recommend you try them first.
+
+Heterogeneity in the inflow provides the necessary driver for coupled yaw
+and layout optimization to be worthwhile. First, a layout optimization is
+run without coupled yaw optimization; then a coupled optimization is run to
+show the benefits of coupled optimization when flows are heterogeneous.
 
 ### 17_multiple_turbine_types.py
 Load an input file that describes a wind farm with two turbines
