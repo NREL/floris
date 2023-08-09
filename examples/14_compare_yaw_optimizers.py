@@ -28,19 +28,19 @@ from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptim
 """
 This example compares the SciPy-based yaw optimizer with the new Serial-Refine optimizer.
 
-It also compares the Geometric Yaw optimizer, note this is not a true optimizer, but
-rather a method to find the optimal yaw angles based on the wind farm geometry.  It's
-main use case is for coupled layout and yaw optimization.
-see floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric.py and the paper online
-at https://wes.copernicus.org/preprints/wes-2023-1/
-
-
 First, we initialize our Floris Interface, and then generate a 3 turbine wind farm.
 Next, we create two yaw optimization objects, `yaw_opt_sr` and `yaw_opt_scipy` for the
 Serial-Refine and SciPy methods, respectively.
 We then perform the optimization using both methods.
 Finally, we compare the time it took to find the optimal angles and plot the optimal yaw angles
 and resulting wind farm powers.
+
+The example now also compares the Geometric Yaw optimizer, which is fast
+a method to find approximately optimal yaw angles based on the wind farm geometry. Its
+main use case is for coupled layout and yaw optimization.
+see floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric.py and the paper online
+at https://wes.copernicus.org/preprints/wes-2023-1/. See also example 16c.
+
 """
 
 # Load the default example floris object
