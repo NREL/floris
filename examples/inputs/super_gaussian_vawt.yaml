@@ -1,0 +1,53 @@
+name: Super-Gaussian VAWT
+description: Single vertical-axis wind turbine using super-Gaussian model
+floris_version: v3.4
+logging:
+  console:
+    enable: true
+    level: WARNING
+  file:
+    enable: false
+    level: WARNING
+solver:
+  type: turbine_grid
+  turbine_grid_points: 3
+farm:
+  layout_x:
+  - 0.0
+  layout_y:
+  - 0.0
+  turbine_type:
+  - !include 'turbine_files/t1_long_blades_vawt.yaml'
+flow_field:
+  air_density: 1.225
+  reference_wind_height: -1
+  turbulence_intensity: 0.091
+  wind_directions:
+  - 270.0
+  wind_shear: 0.0
+  wind_speeds:
+  - 7.0
+  wind_veer: 0.0
+wake:
+  model_strings:
+    combination_model: fls
+    deflection_model: none
+    turbulence_model: none
+    velocity_model: super_gaussian_vawt
+  enable_secondary_steering: false
+  enable_yaw_added_recovery: false
+  enable_transverse_velocities: false
+  wake_deflection_parameters:
+    none:
+  wake_velocity_parameters:
+    super_gaussian_vawt:
+      wake_expansion_coeff_y: 0.50
+      wake_expansion_coeff_z: 0.50
+      ay: 0.95
+      az: 4.5
+      by: 0.35
+      bz: 0.70
+      cy: 2.4
+      cz: 2.4
+  wake_turbulence_parameters:
+    none:

@@ -33,7 +33,7 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
     The model is based on :cite:`ouro2021theoretical` and allows the wake to have
     different characteristics in the cross-stream (y) and vertical direction (z). The initial
     wake shape is closely related to the turbine cross section, which is:
-    turbine diameter * length of the vertical turbine blades.
+        rotor diameter * length of the vertical turbine blades.
 
     Parameters:
         wake_expansion_coeff_y: The wake expands linearly in y with a rate of

@@ -1,0 +1,28 @@
+# This is a vertical-axis wind turbine (VAWT).
+turbine_type: 't1_vawt_200kW'
+generator_efficiency: 1.0
+hub_height: 40.0
+# Cosine exponent for power loss due to yaw misalignment. Assume that this value
+# doesn't matter for VAWTs since they cannot have yaw.
+pP: 1.88
+# Cosine exponent for power loss due to tilt. Placeholder value.
+pT: 1.88
+# The overall geometry of a VAWT is characterized by the rotor diameter and
+# the length of the vertical turbine blades.
+rotor_diameter: 26.0
+vawt_blade_length: 24.0
+TSR: 3.8
+ref_density_cp_ct: 1.225
+ref_tilt_cp_ct: 0.0
+# Cp and Ct are assumed to be constant. This may be valid if the inflow velocity is close
+# to the turbine's rated wind speed.
+power_thrust_table:
+  power:
+    - 0.33
+    - 0.33
+  thrust:
+    - 0.64
+    - 0.64
+  wind_speed:
+    - 0.0
+    - 50.0
