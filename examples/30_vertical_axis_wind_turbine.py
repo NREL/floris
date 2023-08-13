@@ -24,16 +24,22 @@ from floris.tools.visualization import VelocityProfilesFigure, visualize_cut_pla
 
 
 """
-This example shows a characteristic wake of a vertical-axis wind turbine (VAWT). The super-Gaussian
-velocity model with default coefficients is used, which allows the wake to have different
-characteristics in the cross-stream (y) and vertical direction (z). The initial wake shape
-is closely related to the turbine cross section, which is:
+This example shows a characteristic wake of a vertical-axis wind turbine (VAWT). It is based
+on case 3 in :cite:``abkar2019theoretical. The super-Gaussian velocity model with default
+coefficients is used, which allows the wake to have differenti characteristics in the
+cross-stream (y) and vertical direction (z). The initial wake shape is closely related to
+the turbine cross section, which is:
     rotor diameter * length of the vertical turbine blades.
 When plotting the velocity deficit profiles, we use the following definition:
     velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
         , where u is the wake velocity obtained when the incoming wind speed is the
         same at all heights and equal to `homogeneous_wind_speed`.
 See example 29 for more details about how to sample and plot these kinds of profiles.
+
+References:
+    .. bibliography:: /references.bib
+        :style: unsrt
+        :filter: docname in docnames
 """
 
 D = 26.0 # Rotor diameter
