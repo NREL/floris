@@ -24,6 +24,7 @@ from floris.simulation import (
     BaseClass,
     State,
     Turbine,
+    VerticalAxisTurbine,
 )
 from floris.simulation.turbine import compute_tilt_angles_for_floating_turbines
 from floris.type_dec import (
@@ -244,7 +245,17 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
+        self.turbine_map = []
+        for turb in self.turbine_definitions:
+            try:
+                is_vertical_axis_turbine = turb['is_vertical_axis_turbine']
+            except KeyError:
+                is_vertical_axis_turbine = False
+
+            if is_vertical_axis_turbine:
+                self.turbine_map.append(VerticalAxisTurbine.from_dict(turb))
+            else:
+                self.turbine_map.append(Turbine.from_dict(turb))
 
     def construct_turbine_fCts(self):
         self.turbine_fCts = {

@@ -627,6 +627,9 @@ class Turbine(BaseClass):
     power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
     floating_tilt_table = field(default=None)
     floating_correct_cp_ct_for_tilt = field(default=None)
+    # Placeholder attributes for a vertical-axis wind turbine. If using such a turbine,
+    # please instantiate a VerticalAxisTurbine instead of a Turbine.
+    is_vertical_axis_turbine = field(default=False)
     vawt_blade_length: float = field(default=0.0)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
@@ -728,6 +731,171 @@ class Turbine(BaseClass):
         `rotor_diameter`, `rotor_radius` and `rotor_area`.
         """
         self.rotor_radius = (value / np.pi) ** 0.5
+
+    @floating_tilt_table.validator
+    def check_floating_tilt_table(self, instance: attrs.Attribute, value: Any) -> None:
+        """
+        Check that if the tile/wind_speed table is defined, that the tilt and
+        wind_speed arrays are the same length so that the interpolation will work.
+        """
+        if self.floating_tilt_table is not None:
+            if (
+                len(self.floating_tilt_table["tilt"])
+                != len(self.floating_tilt_table["wind_speeds"])
+            ):
+                raise ValueError(
+                    "tilt and wind_speeds must be the same length for the interpolation to work."
+                )
+
+    @floating_correct_cp_ct_for_tilt.validator
+    def check_for_cp_ct_correct_flag_if_floating(
+        self,
+        instance: attrs.Attribute,
+        value: Any
+    ) -> None:
+        """
+        Check that the boolean flag exists for correcting Cp/Ct for tilt
+        if a tile/wind_speed table is also defined.
+        """
+        if self.floating_tilt_table is not None:
+            if self.floating_correct_cp_ct_for_tilt is None:
+                raise ValueError(
+                    "If a floating tilt/wind_speed table is defined, the boolean flag"
+                    "floating_correct_cp_ct_for_tilt must also be defined."
+                )
+
+@define
+class VerticalAxisTurbine(BaseClass):
+    """
+    Turbine is a class containing objects pertaining to the individual
+    turbines.
+
+    Turbine is a model class representing a particular wind turbine. It
+    is largely a container of data and parameters, but also contains
+    methods to probe properties for output.
+
+    Parameters:
+        rotor_diameter (:py:obj: float): The rotor diameter (m).
+        hub_height (:py:obj: float): The hub height (m).
+        pP (:py:obj: float): The cosine exponent relating the yaw
+            misalignment angle to power.
+        pT (:py:obj: float): The cosine exponent relating the rotor
+            tilt angle to power.
+        generator_efficiency (:py:obj: float): The generator
+            efficiency factor used to scale the power production.
+        ref_density_cp_ct (:py:obj: float): The density at which the provided
+            cp and ct is defined
+        power_thrust_table (PowerThrustTable): A dictionary containing the
+            following key-value pairs:
+
+            power (:py:obj: List[float]): The coefficient of power at
+                different wind speeds.
+            thrust (:py:obj: List[float]): The coefficient of thrust
+                at different wind speeds.
+            wind_speed (:py:obj: List[float]): The wind speeds for
+                which the power and thrust values are provided (m/s).
+    """
+
+    turbine_type: str = field()
+    rotor_diameter: float = field()
+    vawt_blade_length: float = field()
+    hub_height: float = field()
+    pP: float = field() # Remove if possible
+    pT: float = field()
+    TSR: float = field()
+    generator_efficiency: float = field()
+    ref_density_cp_ct: float = field()
+    ref_tilt_cp_ct: float = field()
+    power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
+    floating_tilt_table = field(default=None)
+    floating_correct_cp_ct_for_tilt = field(default=None)
+    is_vertical_axis_turbine = field(default=True)
+
+    # Initialized in the post_init function
+    rotor_radius: float = field(init=False)
+    turbine_yz_cross_section_area: float = field(init=False)
+    fCp_interp: interp1d = field(init=False)
+    fCt_interp: interp1d = field(init=False)
+    power_interp: interp1d = field(init=False)
+    tilt_interp: interp1d = field(init=False)
+
+    def __attrs_post_init__(self) -> None:
+
+        # Post-init initialization for the power curve interpolation functions
+        wind_speeds = self.power_thrust_table.wind_speed
+        self.fCp_interp = interp1d(
+            wind_speeds,
+            self.power_thrust_table.power,
+            fill_value=(0.0, 1.0),
+            bounds_error=False,
+        )
+        inner_power = (
+            0.5 * self.turbine_yz_cross_section_area
+            * self.fCp_interp(wind_speeds)
+            * self.generator_efficiency
+            * wind_speeds ** 3
+        )
+        self.power_interp = interp1d(
+            wind_speeds,
+            inner_power
+        )
+
+        """
+        Given an array of wind speeds, this function returns an array of the
+        interpolated thrust coefficients from the power / thrust table used
+        to define the Turbine. The values are bound by the range of the input
+        values. Any requested wind speeds outside of the range of input wind
+        speeds are assigned Ct of 0.0001 or 0.9999.
+
+        The fill_value arguments sets (upper, lower) bounds for any values
+        outside of the input range.
+        """
+        self.fCt_interp = interp1d(
+            wind_speeds,
+            self.power_thrust_table.thrust,
+            fill_value=(0.0001, 0.9999),
+            bounds_error=False,
+        )
+
+        # If defined, create a tilt interpolation function for floating turbines.
+        # fill_value currently set to apply the min or max tilt angles if outside
+        # of the interpolation range.
+        if self.floating_tilt_table is not None:
+            self.floating_tilt_table = TiltTable.from_dict(self.floating_tilt_table)
+            self.fTilt_interp = interp1d(
+                self.floating_tilt_table.wind_speeds,
+                self.floating_tilt_table.tilt,
+                fill_value=(0.0, self.floating_tilt_table.tilt[-1]),
+                bounds_error=False,
+            )
+            self.tilt_interp = self.fTilt_interp
+            self.correct_cp_ct_for_tilt = self.floating_correct_cp_ct_for_tilt
+        else:
+            self.fTilt_interp = None
+            self.tilt_interp = None
+            self.correct_cp_ct_for_tilt = False
+
+    @rotor_diameter.validator
+    def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:
+        """Resets the `turbine_yz_cross_section_area` and `rotor_radius` attributes."""
+        self.turbine_yz_cross_section_area = self.rotor_diameter * self.vawt_blade_length
+        # Temporarily turn off validators to avoid infinite recursion
+        with attrs.validators.disabled():
+            # Reset the value
+            self.rotor_radius = value / 2.0
+
+    @rotor_radius.validator
+    def reset_rotor_radius_dependencies(self, instance: attrs.Attribute, value: float) -> None:
+        """
+        Resets the `rotor_diameter` attribute to trigger the recalculation of
+        `turbine_yz_cross_section_area`.
+        """
+        self.rotor_diameter = value * 2.0
+
+    @vawt_blade_length.validator
+    def reset_vawt_blade_length_dependencies(self, instance: attrs.Attribute, value: float) -> None:
+        """Resets the `turbine_yz_cross_section_area` attribute."""
+        self.turbine_yz_cross_section_area = self.rotor_diameter * self.vawt_blade_length
 
     @floating_tilt_table.validator
     def check_floating_tilt_table(self, instance: attrs.Attribute, value: Any) -> None:
