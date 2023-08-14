@@ -16,10 +16,14 @@
 # INCLUDE HET MAPS (Actually I think happens automatically)
 # INCLUDE LOGGING
 # Allow multiple zones
+# Update probability distribution handling
+# STRETCH: allow parallelization within a node for flow evaluations,
+# similar to how the ParallelInterface handles wake steering optimization
+# (possibly future work)
 
 
 
-import random
+from numpy import random
 from multiprocessing import Pool
 from time import perf_counter as timerpc
 
@@ -107,7 +111,7 @@ def _gen_dist_based_init(
     # Return the layout
     return layout_x, layout_y
 
-class LayoutOptimizationRandom(LayoutOptimization):
+class LayoutOptimizationRandomSearch(LayoutOptimization):
     def __init__(
         self,
         fi,
@@ -115,6 +119,7 @@ class LayoutOptimizationRandom(LayoutOptimization):
         min_dist=None,
         freq=None,
         min_dist_D=None,
+        distance_pmf=None,
         n_particles=4,
         seconds_per_iteration=60.,
         total_optimization_seconds = 600.,
@@ -140,6 +145,12 @@ class LayoutOptimizationRandom(LayoutOptimization):
             min_dist_D (float, optional): The minimum distance to be maintained
                 between turbines during the optimization, specified as a multiple
                 of the rotor diameter.
+            distance_pmf (dict, optional): Probability mass function describing the
+                length of steps in the random search. Specified as a dictionary with 
+                keys "d" (array of step distances, specified in meters) and "p" 
+                (array of probability of occurence, should sum to 1). Defaults to 
+                uniform probability between 0.5D and 2D, with some extra mass
+                to encourage large changes. 
             n_particles (int, optional): The number of particles to use in the
                 optimization. Defaults to 4.
             seconds_per_iteration (float, optional): The number of seconds to
@@ -204,6 +215,9 @@ class LayoutOptimizationRandom(LayoutOptimization):
         # Save min_dist_D
         self.min_dist_D = self.min_dist / self.D
 
+        # Process and save the step distribution
+        self._process_dist_pmf(distance_pmf)
+
         # Store the fi_dict
         self.fi_dict = self.fi.floris.as_dict()
 
@@ -260,6 +274,36 @@ class LayoutOptimizationRandom(LayoutOptimization):
         print(f"Number of particles = {self.n_particles}")
         print(f"Seconds per iteration = {self.seconds_per_iteration}")
         print(f"Initial AEP = {self.aep_initial} [GWh]")
+
+    def _process_dist_pmf(self, dist_pmf):
+        """
+        Check validity of pmf and assign default if none provided.
+        """
+        if dist_pmf is None:
+            jump_dist = np.min([self.xmax-self.xmin, self.ymax-self.ymin])/2
+            jump_prob = 0.05
+
+            d = np.append(np.linspace(0.5*self.D, 2.0*self.D, 151), jump_dist)
+            p = np.append((1-jump_prob)/len(d)*np.ones(len(d)-1), jump_prob)
+            p = p / p.sum()
+            dist_pmf = {"d":d, "p":p}
+
+        # Check correct keys are provided
+        if not all(k in dist_pmf for k in ("d", "p")):
+            raise KeyError("distance_pmf must contains keys \"d\" (step distance)"+\
+                " and \"p\" (probability of occurance).")
+        
+        # Check entries are in the correct form
+        if not hasattr(dist_pmf["d"], "__len__") or not hasattr(dist_pmf["d"], "__len__")\
+            or len(dist_pmf["d"]) != len(dist_pmf["p"]):
+            raise TypeError("distance_pmf entries should be numpy arrays or lists"+\
+                " of equal length.")
+
+        if np.sum(dist_pmf["p"]) != 1:
+            print("Probability mass function does not sum to 1. Normalizing.")
+            dist_pmf["p"] = np.array(dist_pmf["p"]) / np.array(dist_pmf["p"]).sum()
+
+        self.distance_pmf = dist_pmf
 
     def _evaluate_opt_step(self):
 
@@ -386,13 +430,9 @@ class LayoutOptimizationRandom(LayoutOptimization):
                     self.y_candidate[i, :],
                     self.fi_dict,
                     self.freq,
-                    self.D,
                     self.min_dist,
                     self._boundary_polygon,
-                    self.xmin,
-                    self.xmax,
-                    self.ymin,
-                    self.ymax)
+                    self.distance_pmf)
                     for i in range(self.n_particles)
             ]
 
@@ -423,19 +463,17 @@ class LayoutOptimizationRandom(LayoutOptimization):
 
 
 
-def _single_particle_opt(seconds_per_iteration,
-                         initial_aep,
-                         layout_x,
-                         layout_y,
-                         fi_dict,
-                         freq,
-                         D,
-                         min_dist,
-                        poly_outer, # Polygon of outer boundary
-                        min_x,
-                        max_x,
-                        min_y,
-                        max_y):
+def _single_particle_opt(
+    seconds_per_iteration,
+    initial_aep,
+    layout_x,
+    layout_y,
+    fi_dict,
+    freq,
+    min_dist,
+    poly_outer, # Polygon of outer boundary (how generic is this? How do we support multiple zones?)
+    dist_pmf
+):
 
     # Initialize the optimization time
     single_opt_start_time = timerpc()
@@ -460,25 +498,15 @@ def _single_particle_opt(seconds_per_iteration,
                 # Randomly select a turbine to nudge
                 tr = random.randint(0,num_turbines-1)
 
-                # Randomly select a direction to nudge in
-                rand_dir = np.radians(random.randint(0,360))
+                # Randomly select a direction to nudge in (uniform direction)
+                rand_dir = np.random.uniform(low=0.0, high=2*np.pi)
 
-                # Randomly select a distance to travel
-                rand_dist = D * random.randint(50,200) / 100.0
+                # Randomly select a distance to travel according to pmf
+                rand_dist = np.random.choice(dist_pmf["d"], p=dist_pmf["p"])
 
             # Get a new test point
             test_x = layout_x[tr] + np.cos(rand_dir) * rand_dist
             test_y = layout_y[tr] + np.sin(rand_dir) * rand_dist
-
-            # If getting a new test point, let's add some probability new point is a random location
-            if get_new_point:
-                if random.randint(0,20) == 5:
-                    random_point = True
-                    test_x = float(random.randint(int(min_x),int(max_x)))
-                    test_y = float(random.randint(int(min_y),int(max_y)))
-                    while not test_point_in_bounds(test_x, test_y, poly_outer):
-                        test_x = float(random.randint(int(min_x),int(max_x)))
-                        test_y = float(random.randint(int(min_y),int(max_y)))
 
             # In bounds?
             if not test_point_in_bounds(test_x, test_y, poly_outer):
