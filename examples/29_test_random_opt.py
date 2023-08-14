@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import gamma
 
 from floris.tools import FlorisInterface
-from floris.tools.optimization.layout_optimization.layout_optimization_random import (
-    LayoutOptimizationRandom,
+from floris.tools.optimization.layout_optimization.layout_optimization_random_search import (
+    LayoutOptimizationRandomSearch,
 )
 
 
@@ -39,13 +40,22 @@ if __name__ == '__main__':
     fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
     # Perform the optimization
-    layout_opt = LayoutOptimizationRandom(fi,
-                                        boundaries,
-                                            freq=freq,
-                                            min_dist_D=5.,
-                                            seconds_per_iteration=10,
-                                            total_optimization_seconds=60.)
+    distance_pmf = None
+    #distance_pmf = {"d": [100, 1000], "p": [0.8, 0.2]}
+    #p = gamma.pdf(np.linspace(0, 900, 91), 15, scale=20); p = p/p.sum()
+    #distance_pmf = {"d": np.linspace(100, 1000, 91), "p": p}
+    
+    layout_opt = LayoutOptimizationRandomSearch(
+        fi,
+        boundaries,
+        freq=freq,
+        min_dist_D=5.,
+        seconds_per_iteration=10,
+        total_optimization_seconds=60.,
+        distance_pmf=distance_pmf
+    )
     layout_opt.describe()
+    layout_opt.plot_distance_pmf()
 
     layout_opt.optimize()
 

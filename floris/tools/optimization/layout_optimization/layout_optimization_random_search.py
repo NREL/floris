@@ -305,6 +305,21 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
         self.distance_pmf = dist_pmf
 
+    def plot_distance_pmf(self, ax=None):
+        """
+        Tool to check the used distance pmf.
+        """
+
+        if ax is None:
+            fig, ax = plt.subplots(1,1)
+        
+        ax.stem(self.distance_pmf["d"], self.distance_pmf["p"])
+        ax.grid(True)
+        ax.set_xlabel("Step distance [m]")
+        ax.set_ylabel("Probability")
+
+        return ax
+
     def _evaluate_opt_step(self):
 
         # Sort the candidate layouts by AEP
