@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Iterable
 
 import numpy as np
 import pandas as pd
@@ -79,15 +80,28 @@ class FlorisInterface(LoggerBase):
             )
             self.logger.warning(err_msg, stack_info=True)
 
-        # Check the turbine_grid_points is reasonable
+        # Check that turbine_grid_points is reasonable
         if self.floris.solver["type"] == "turbine_grid":
-            if self.floris.solver["turbine_grid_points"] > 3:
-                self.logger.error(
-                    f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} "
-                    "which is larger than the recommended value of less than or equal to 3. "
-                    "High amounts of turbine grid points reduce the computational performance "
-                    "but have a small change on accuracy."
-                )
+            ngrid = self.floris.solver["turbine_grid_points"]
+            if np.any(np.array(ngrid) > 3):
+                if isinstance(ngrid, int) or \
+                    (isinstance(ngrid, Iterable) and len(np.array(ngrid)) == 1):
+                    self.logger.error(
+                        f"`turbine_grid_points` is {ngrid} (which is an alias for grid resolution "
+                        f"{self.floris.grid.grid_resolution} in the cross-stream and vertical "
+                        "direction respectively). This is larger then the recommended value of "
+                        "less than or equal to 3 in each direction. High amounts of turbine grid "
+                        "points reduce the computational performance but have a small change on "
+                        "accuracy."
+                    )
+                else:
+                    self.logger.error(
+                        f"`turbine_grid_points` is {ngrid}. This is larger then the recommended "
+                        "value of less than or equal to 3 in each direction. High amounts of "
+                        "turbine grid points reduce the computational performance but have a small "
+                        "change on accuracy."
+                    )
+
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
     def assign_hub_height_to_ref_height(self):

@@ -84,6 +84,7 @@ class Farm(BaseClass):
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
     turbine_fTilts: list = field(init=False, default=[])
+    is_vertical_axis_turbine: list[bool] = field(init=False, default=[])
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
@@ -256,6 +257,14 @@ class Farm(BaseClass):
                 self.turbine_map.append(VerticalAxisTurbine.from_dict(turb))
             else:
                 self.turbine_map.append(Turbine.from_dict(turb))
+
+    def construct_is_vertical_axis_turbine(self):
+        self.is_vertical_axis_turbine = []
+        for turb in self.turbine_definitions:
+            try:
+                self.is_vertical_axis_turbine.append(turb['is_vertical_axis_turbine'])
+            except KeyError:
+                self.is_vertical_axis_turbine.append(False)
 
     def construct_turbine_fCts(self):
         self.turbine_fCts = {

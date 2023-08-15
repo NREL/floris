@@ -118,7 +118,7 @@ class Grid(ABC):
         # TODO move this to the grid types and off of the base class
         """Check that grid resolution is given as int or Vec3 with int components."""
         if isinstance(value, int) and \
-            isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid, LinesGrid)):
+            isinstance(self, (TurbineCubatureGrid, PointsGrid, LinesGrid)):
             return
         elif isinstance(value, Iterable) and isinstance(self, FlowFieldPlanarGrid):
             assert type(value[0]) is int
@@ -127,6 +127,22 @@ class Grid(ABC):
             assert type(value[0]) is int
             assert type(value[1]) is int
             assert type(value[2]) is int
+        elif isinstance(self, TurbineGrid):
+            # Always store `grid_resolution` as an Iterable(int,) of length 2 when using the
+            # TurbineGrid class. This is the resolution in the cross-stream and vertical direction
+            # respectively.
+            if isinstance(value, int):
+                self.grid_resolution = [value, value]
+            elif isinstance(value, Iterable) and len(value) == 1:
+                assert type(value[0]) is int
+                self.grid_resolution = [value[0], value[0]]
+            elif isinstance(value, Iterable) and len(value) == 2:
+                assert type(value[0]) is int
+                assert type(value[1]) is int
+            else:
+                raise ValueError(
+                    '`grid_resolution` must be of type int or Iterable(int,) of length 1 or 2.'
+                )
         else:
             raise TypeError("`grid_resolution` must be of type int or Iterable(int,)")
 
@@ -150,6 +166,8 @@ class TurbineGrid(Grid):
             series.
     """
     # TODO: describe these and the differences between `sorted_indices` and `sorted_coord_indices`
+    is_vertical_axis_turbine: np.ndarray = field(converter=np.array)
+    vawt_blade_lengths: NDArrayFloat = field()
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
@@ -225,43 +243,68 @@ class TurbineGrid(Grid):
         #         the rotor radius.
         #         Defaults to 0.5.
 
-        # Create the data for the turbine grids
-        radius_ratio = 0.5
-        disc_area_radius = radius_ratio * self.reference_turbine_diameter / 2
+        width_ratio = 0.5
+        height_ratio = 0.5
+
+        # Use a square area for traditional horisontal-axis turbines and a rectangular area
+        # for vertical-axis turbines
+        width = width_ratio * self.reference_turbine_diameter
+        height  = self.vawt_blade_lengths * self.is_vertical_axis_turbine
+        height += self.reference_turbine_diameter * np.invert(self.is_vertical_axis_turbine)
+        height *= height_ratio
+
         template_grid = np.ones(
             (
                 self.n_wind_directions,
                 self.n_wind_speeds,
                 self.n_turbines,
-                self.grid_resolution,
-                self.grid_resolution,
+                self.grid_resolution[0],
+                self.grid_resolution[1],
             ),
             dtype=floris_float_type
         )
-        # Calculate the radial distance from the center of the turbine rotor.
-        # If a grid resolution of 1 is selected, create a disc_grid of zeros, as
-        # np.linspace would just return the starting value of -1 * disc_area_radius
-        # which would place the point below the center of the rotor.
-        if self.grid_resolution == 1:
-            disc_grid = np.zeros((np.shape(disc_area_radius)[0], 1 ))
+
+        # Conceptually, each turbine's grid can be seen as a meshgrid of a coordinate vector in
+        # `cross_stream_vecs` and a coordinate vector in `vertical_vecs`. These variables store one
+        # vector per turbine, since the turbine diameters or vawt blade lenths may be different.
+        if self.grid_resolution[0] == 1:
+         # If the first grid resolution is 1, then let each coordinate vector in `cross_stream_vecs`
+         # be [0.0], as np.linspace would just return the starting value of -width / 2 which would
+         # place the grid point(s) to the side of the center of the turbine.
+            cross_stream_vecs = np.zeros((self.n_turbines, 1))
         else:
-            disc_grid = np.linspace(
-                -1 * disc_area_radius,
-                disc_area_radius,
-                self.grid_resolution,
+            cross_stream_vecs = np.linspace(
+                -width / 2,
+                width / 2,
+                self.grid_resolution[0],
                 dtype=floris_float_type,
-                axis=1
+                axis=1,
             )
+
+        if self.grid_resolution[1] == 1:
+         # If the second grid resolution is 1, then let each coordinate vector in `vertical_vecs`
+         # be [0.0], as np.linspace would just return the starting value of -height / 2 which would
+         # place the grid point(s) below the center of the turbine.
+            vertical_vecs = np.zeros((self.n_turbines, 1))
+        else:
+            vertical_vecs = np.linspace(
+                -height / 2,
+                height / 2,
+                self.grid_resolution[1],
+                dtype=floris_float_type,
+                axis=1,
+            )
+
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
         _x = x[:, :, :, None, None] * template_grid
 
         ones_grid = np.ones(
-            (self.n_turbines, self.grid_resolution, self.grid_resolution),
+            (self.n_turbines, self.grid_resolution[0], self.grid_resolution[1]),
             dtype=floris_float_type
         )
-        _y = y[:, :, :, None, None] + template_grid * ( disc_grid[None, None, :, :, None])
-        _z = z[:, :, :, None, None] + template_grid * ( disc_grid[:, None, :] * ones_grid )
+        _y = y[:, :, :, None, None] + template_grid * ( cross_stream_vecs[None, None, :, :, None])
+        _z = z[:, :, :, None, None] + template_grid * ( vertical_vecs[:, None, :] * ones_grid )
 
         # Sort the turbines at each wind direction
 

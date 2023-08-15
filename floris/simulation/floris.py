@@ -91,6 +91,7 @@ class Floris(BaseClass):
         self.farm.construct_turbine_fTilts()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
         self.farm.construct_coordinates()
+        self.farm.construct_is_vertical_axis_turbine()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
         self.farm.set_tilt_to_ref_tilt(
             self.flow_field.n_wind_directions,
@@ -105,6 +106,8 @@ class Floris(BaseClass):
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["turbine_grid_points"],
                 time_series=self.flow_field.time_series,
+                is_vertical_axis_turbine=self.farm.is_vertical_axis_turbine,
+                vawt_blade_lengths=self.farm.vawt_blade_lengths,
             )
         elif self.solver["type"] == "turbine_cubature_grid":
             self.grid = TurbineCubatureGrid(
