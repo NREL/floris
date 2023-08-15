@@ -1523,6 +1523,11 @@ title="Print to PDF"
      28_extract_wind_speed_at_points.py
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#floating-vs-fixedbottom-farm-py">
+     29_floating_vs_fixedbottom_farm.py
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -1718,6 +1723,11 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#extract-wind-speed-at-points-py">
      28_extract_wind_speed_at_points.py
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#floating-vs-fixedbottom-farm-py">
+     29_floating_vs_fixedbottom_farm.py
     </a>
    </li>
   </ul>
@@ -1934,6 +1944,9 @@ of a turbine layout within FLORIS.</p>
 <h3>24_floating_turbine_models.py<a class="headerlink" href="#floating-turbine-models-py" title="Permalink to this headline">#</a></h3>
 <p>Demonstrates the definition of a floating turbine and how to enable the effects of tilt
 on Cp and Ct.</p>
+<p>For further examples on floating wind turbines, see also examples
+25 (vertical wake deflection by a forced tilt angle) and 29 (comparison between
+a fixed-bottom and floating wind farm).</p>
 </section>
 <section id="tilt-driven-vertical-wake-deflection-py">
 <h3>25_tilt_driven_vertical_wake_deflection.py<a class="headerlink" href="#tilt-driven-vertical-wake-deflection-py" title="Permalink to this headline">#</a></h3>
@@ -1942,6 +1955,9 @@ with the Empirical Gauss model. Note that only the Empirical Gauss model impleme
 vertical deflections at this time. Also be aware that this example uses a potentially
 unrealistic tilt angle, 15 degrees, to highlight the wake deflection. Moreover, the magnitude
 of vertical deflections due to tilt has not been validated.</p>
+<p>For further examples on floating wind turbines, see also examples
+24 (effects of tilt on turbine power and thrust coefficients) and 29
+(comparison between a fixed-bottom and floating wind farm).</p>
 </section>
 <section id="empirical-gauss-velocity-deficit-parameters-py">
 <h3>26_empirical_gauss_velocity_deficit_parameters.py<a class="headerlink" href="#empirical-gauss-velocity-deficit-parameters-py" title="Permalink to this headline">#</a></h3>
@@ -1962,6 +1978,19 @@ heights over a sweep of wind directions. This mimics the wind speed measurements
 mast across all wind directions (at a fixed free stream wind speed).</p>
 <p>Try different values for met_mast_option to vary the location of the met mast within
 the two-turbine farm.</p>
+</section>
+<section id="floating-vs-fixedbottom-farm-py">
+<h3>29_floating_vs_fixedbottom_farm.py<a class="headerlink" href="#floating-vs-fixedbottom-farm-py" title="Permalink to this headline">#</a></h3>
+<p>Compares a fixed-bottom wind farm (with a gridded layout) to a floating
+wind farm with the same layout. Includes:</p>
+<ul class="simple">
+<li><p>Turbine-by-turbine power comparison for a single wind speed and direction</p></li>
+<li><p>Flow visualizations for a single wind speed and direction</p></li>
+<li><p>AEP calculations based on an example wind rose.</p></li>
+</ul>
+<p>For further examples on floating wind turbines, see also examples
+24 (effects of tilt on turbine power and thrust coefficients) and 25
+(vertical wake deflection by a forced tilt angle).</p>
 </section>
 </section>
 <section id="optimization">
