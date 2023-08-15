@@ -641,8 +641,6 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         plt.grid()
         plt.tick_params(which="both", labelsize=fontsize)
 
-        plt.show()
-
     def space_constraint(self, x, y, min_dist, rho=500):
         # Calculate distances between turbines
         locs = np.vstack((x, y)).T
