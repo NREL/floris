@@ -353,6 +353,7 @@ class TurbineCubatureGrid(Grid):
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
     """
+    is_vertical_axis_turbine: np.ndarray = field(converter=np.array)
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
     unsorted_indices: NDArrayInt = field(init=False)
@@ -362,6 +363,10 @@ class TurbineCubatureGrid(Grid):
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
+        if np.any(self.is_vertical_axis_turbine):
+            raise NotImplementedError(
+                '`TurbineCubatureGrid` does not support vertical-axis turbines.'
+            )
         self.set_grid()
 
     def set_grid(self) -> None:

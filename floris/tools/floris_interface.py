@@ -104,6 +104,12 @@ class FlorisInterface(LoggerBase):
 
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
+        if len(np.unique(self.floris.farm.is_vertical_axis_turbine)) == 2:
+            raise NotImplementedError(
+                'There is currently no solver that supports a mix of horisontal-axis turbines '
+                'and vertical-axis turbines in the same farm.'
+            )
+
     def assign_hub_height_to_ref_height(self):
 
         # Confirm can do this operation

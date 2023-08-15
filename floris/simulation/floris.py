@@ -117,6 +117,7 @@ class Floris(BaseClass):
                 wind_speeds=self.flow_field.wind_speeds,
                 time_series=self.flow_field.time_series,
                 grid_resolution=self.solver["turbine_grid_points"],
+                is_vertical_axis_turbine=self.farm.is_vertical_axis_turbine,
             )
         elif self.solver["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(

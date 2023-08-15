@@ -279,6 +279,7 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
+    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
@@ -288,6 +289,8 @@ def full_flow_sequential_solver(
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
         time_series=turbine_grid_flow_field.time_series,
+        is_vertical_axis_turbine=turbine_grid_farm.is_vertical_axis_turbine,
+        vawt_blade_lengths=turbine_grid_farm.vawt_blade_lengths,
     )
     turbine_grid_farm.expand_farm_properties(
         turbine_grid_flow_field.n_wind_directions,
@@ -681,6 +684,7 @@ def full_flow_cc_solver(
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
+    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
@@ -690,6 +694,8 @@ def full_flow_cc_solver(
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
         time_series=turbine_grid_flow_field.time_series,
+        is_vertical_axis_turbine=turbine_grid_farm.is_vertical_axis_turbine,
+        vawt_blade_lengths=turbine_grid_farm.vawt_blade_lengths,
     )
     turbine_grid_farm.expand_farm_properties(
         turbine_grid_flow_field.n_wind_directions,
@@ -1113,6 +1119,7 @@ def full_flow_turbopark_solver(
     # turbine_grid_farm.construct_turbine_TSRs()
     # turbine_grid_farm.construc_turbine_pPs()
     # turbine_grid_farm.construct_coordinates()
+    # turbine_grid_farm.construct_is_vertical_axis_turbine()
 
 
     # turbine_grid = TurbineGrid(
@@ -1121,6 +1128,9 @@ def full_flow_turbopark_solver(
     #     wind_directions=turbine_grid_flow_field.wind_directions,
     #     wind_speeds=turbine_grid_flow_field.wind_speeds,
     #     grid_resolution=11,
+    #     is_vertical_axis_turbine=turbine_grid_farm.is_vertical_axis_turbine,
+    #     vawt_blade_lengths=turbine_grid_farm.vawt_blade_lengths,
+
     # )
     # turbine_grid_farm.expand_farm_properties(
     #     turbine_grid_flow_field.n_wind_directions,
@@ -1358,6 +1368,7 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
+    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
@@ -1367,6 +1378,8 @@ def full_flow_empirical_gauss_solver(
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
         time_series=turbine_grid_flow_field.time_series,
+        is_vertical_axis_turbine=turbine_grid_farm.is_vertical_axis_turbine,
+        vawt_blade_lengths=turbine_grid_farm.vawt_blade_lengths,
     )
     turbine_grid_farm.expand_farm_properties(
         turbine_grid_flow_field.n_wind_directions,
@@ -1625,6 +1638,7 @@ def full_flow_vawt_solver(
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
+    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
@@ -1634,6 +1648,8 @@ def full_flow_vawt_solver(
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
         time_series=turbine_grid_flow_field.time_series,
+        is_vertical_axis_turbine=turbine_grid_farm.is_vertical_axis_turbine,
+        vawt_blade_lengths=turbine_grid_farm.vawt_blade_lengths,
     )
     turbine_grid_farm.expand_farm_properties(
         turbine_grid_flow_field.n_wind_directions,
