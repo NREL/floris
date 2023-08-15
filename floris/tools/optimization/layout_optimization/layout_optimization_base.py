@@ -75,22 +75,6 @@ class LayoutOptimization(LoggerBase):
 
     def _get_geoyaw_angles(self):
         if self.enable_geometric_yaw:
-            # # Declare storage
-            # yaw_angles = np.zeros(
-            #     (
-            #         self.fi.floris.flow_field.n_wind_directions,
-            #         self.fi.floris.flow_field.n_wind_speeds,
-            #         self.fi.floris.farm.n_turbines
-            #     )
-            # )
-            # # Compute geometric yaw angle for each wind direction
-            # for i, wd in enumerate(self.fi.floris.flow_field.wind_directions):
-            #     yaw_angles[i, :, :] = geometric_yaw(
-            #         self.x,
-            #         self.y,
-            #         wd,
-            #         self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"]
-            #     )
             df_opt = self.yaw_opt.optimize()
             self.yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
         else:
