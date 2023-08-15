@@ -223,7 +223,7 @@ def sequential_solver(
         # Calculate wake overlap for wake-added turbulence (WAT)
         area_overlap = (
             np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4))
-            / (grid.grid_resolution * grid.grid_resolution)
+            / (grid.grid_resolution[0] * grid.grid_resolution[1])
         )
         area_overlap = area_overlap[:, :, :, None, None]
 
@@ -630,7 +630,7 @@ def cc_solver(
         # Calculate wake overlap for wake-added turbulence (WAT)
         area_overlap = 1 - (
             np.sum(turb_u_wake <= 0.05, axis=(3, 4))
-            / (grid.grid_resolution * grid.grid_resolution)
+            / (grid.grid_resolution[0] * grid.grid_resolution[1])
         )
         area_overlap = area_overlap[:, :, :, None, None]
 
@@ -1063,7 +1063,7 @@ def turbopark_solver(
         # Calculate wake overlap for wake-added turbulence (WAT)
         area_overlap = (
             np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4))
-            / (grid.grid_resolution * grid.grid_resolution)
+            / (grid.grid_resolution[0] * grid.grid_resolution[1])
         )
         area_overlap = area_overlap[:, :, :, None, None]
 
@@ -1320,7 +1320,7 @@ def empirical_gauss_solver(
 
         # Calculate wake overlap for wake-added turbulence (WAT)
         area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4))\
-            / (grid.grid_resolution * grid.grid_resolution)
+            / (grid.grid_resolution[0] * grid.grid_resolution[1])
 
         # Compute wake induced mixing factor
         mixing_factor[:,:,:,i] += \

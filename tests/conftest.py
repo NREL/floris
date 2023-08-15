@@ -104,6 +104,8 @@ N_TURBINES = len(X_COORDS)
 ROTOR_DIAMETER = 126.0
 TURBINE_GRID_RESOLUTION = 2
 TIME_SERIES = False
+IS_VERTICAL_AXIS_TURBINE = np.full(N_TURBINES, False)
+VAWT_BLADE_LENGTHS = np.zeros(N_TURBINES)
 
 
 ## Unit test fixtures
@@ -132,7 +134,9 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
         wind_directions=np.array(WIND_DIRECTIONS),
         wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=TURBINE_GRID_RESOLUTION,
-        time_series=TIME_SERIES
+        time_series=TIME_SERIES,
+        is_vertical_axis_turbine=IS_VERTICAL_AXIS_TURBINE,
+        vawt_blade_lengths=VAWT_BLADE_LENGTHS,
     )
 
 @pytest.fixture

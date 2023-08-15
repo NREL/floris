@@ -36,8 +36,8 @@ def test_initialize_velocity_field(flow_field_fixture, turbine_grid_fixture: Tur
     assert np.shape(flow_field_fixture.u_sorted)[0] == flow_field_fixture.n_wind_directions
     assert np.shape(flow_field_fixture.u_sorted)[1] == flow_field_fixture.n_wind_speeds
     assert np.shape(flow_field_fixture.u_sorted)[2] == N_TURBINES
-    assert np.shape(flow_field_fixture.u_sorted)[3] == turbine_grid_fixture.grid_resolution
-    assert np.shape(flow_field_fixture.u_sorted)[4] == turbine_grid_fixture.grid_resolution
+    assert np.shape(flow_field_fixture.u_sorted)[3] == turbine_grid_fixture.grid_resolution[0]
+    assert np.shape(flow_field_fixture.u_sorted)[4] == turbine_grid_fixture.grid_resolution[1]
 
     # Check that the wind speed profile was created correctly. By setting the shear
     # exponent to 1.0 above, the shear profile is a linear function of height and

@@ -800,7 +800,7 @@ class VerticalAxisTurbine(BaseClass):
     rotor_diameter: float = field()
     vawt_blade_length: float = field()
     hub_height: float = field()
-    pP: float = field() # Remove if possible
+    pP: float = field()
     pT: float = field()
     TSR: float = field()
     generator_efficiency: float = field()
