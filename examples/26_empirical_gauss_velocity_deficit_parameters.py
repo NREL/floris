@@ -42,7 +42,7 @@ def generate_wake_visualization(fi: FlorisInterface, title=None):
     # Using the FlorisInterface functions, get 2D slices.
     x_bounds = [-500, 3000]
     y_bounds = [-250, 250]
-    z_bounds = [0, 500]
+    z_bounds = [0.001, 500]
     cross_plane_locations = [10, 1200, 2500]
     horizontal_plane_location = 90.0
     streamwise_plane_location = 0.0
