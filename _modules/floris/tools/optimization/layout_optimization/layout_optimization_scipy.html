@@ -1378,6 +1378,7 @@ title="Open an issue"
         <span class="n">min_dist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">solver</span><span class="o">=</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span>
         <span class="n">optOptions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">enable_geometric_yaw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        _summary_</span>
@@ -1400,7 +1401,8 @@ title="Open an issue"
 <span class="sd">            optOptions (dict, optional): Dicitonary for setting the</span>
 <span class="sd">                optimization options. Defaults to None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                    <span class="n">enable_geometric_yaw</span><span class="o">=</span><span class="n">enable_geometric_yaw</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">boundaries_norm</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">[</span>
@@ -1422,10 +1424,12 @@ title="Open an issue"
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_opt_bounds</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">solver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">solver</span>
+
+        <span class="n">default_optOptions</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;disp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;iprint&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;ftol&quot;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">:</span><span class="mf">0.01</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">optOptions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">optOptions</span> <span class="o">=</span> <span class="n">optOptions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optOptions</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_optOptions</span><span class="p">,</span> <span class="o">**</span><span class="n">optOptions</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">optOptions</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;disp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;iprint&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;ftol&quot;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">:</span><span class="mf">0.01</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optOptions</span> <span class="o">=</span> <span class="n">default_optOptions</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_generate_constraints</span><span class="p">()</span>
 
@@ -1453,12 +1457,19 @@ title="Open an issue"
             <span class="k">for</span> <span class="n">valy</span> <span class="ow">in</span> <span class="n">locs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span> <span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span><span class="p">]</span>
         <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_change_coordinates</span><span class="p">(</span><span class="n">locs_unnorm</span><span class="p">)</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_AEP</span></div>
+        <span class="c1"># Compute turbine yaw angles using PJ&#39;s geometric code (if enabled)</span>
+        <span class="n">yaw_angles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_geoyaw_angles</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span> <span class="o">/</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_AEP</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LayoutOptimizationScipy._change_coordinates"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_scipy.LayoutOptimizationScipy.html#floris.tools.optimization.layout_optimization.layout_optimization_scipy.LayoutOptimizationScipy._change_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">_change_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locs</span><span class="p">):</span>
         <span class="c1"># Parse the layout coordinates</span>
         <span class="n">layout_x</span> <span class="o">=</span> <span class="n">locs</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span><span class="p">]</span>
         <span class="n">layout_y</span> <span class="o">=</span> <span class="n">locs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span> <span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span><span class="p">]</span>
+
+        <span class="c1"># Store on object for use in geoyaw code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">layout_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">layout_y</span>
 
         <span class="c1"># Update the turbine map in floris</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">layout_y</span><span class="p">)</span></div>

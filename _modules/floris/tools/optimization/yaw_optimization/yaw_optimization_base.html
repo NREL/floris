@@ -1366,10 +1366,12 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
+<span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggerBase</span>
+
 <span class="kn">from</span> <span class="nn">.yaw_optimization_tools</span> <span class="kn">import</span> <span class="n">derive_downstream_turbines</span><span class="p">,</span> <span class="n">find_layout_symmetry</span>
 
 
-<div class="viewcode-block" id="YawOptimization"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization">[docs]</a><span class="k">class</span> <span class="nc">YawOptimization</span><span class="p">:</span>
+<div class="viewcode-block" id="YawOptimization"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization">[docs]</a><span class="k">class</span> <span class="nc">YawOptimization</span><span class="p">(</span><span class="n">LoggerBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.</span>
 <span class="sd">    Optimization` that is used to optimize the yaw angles of all turbines in a Floris</span>
@@ -1523,7 +1525,17 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">normalize_variables</span> <span class="o">=</span> <span class="n">normalize_control_variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calc_baseline_power</span> <span class="o">=</span> <span class="n">calc_baseline_power</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exclude_downstream_turbines</span> <span class="o">=</span> <span class="n">exclude_downstream_turbines</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">exploit_layout_symmetry</span> <span class="o">=</span> <span class="n">exploit_layout_symmetry</span>
+
+        <span class="c1"># Check if exploit_layout_symmetry is being used with heterogeneous inflow</span>
+        <span class="k">if</span> <span class="n">exploit_layout_symmetry</span> <span class="ow">and</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogenous_inflow_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Layout symmetry cannot be exploited with heterogeneous inflows. &quot;</span>
+                <span class="s2">&quot;Setting exploit_layout_symmetry to False.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">err_msg</span><span class="p">,</span> <span class="n">stack_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exploit_layout_symmetry</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exploit_layout_symmetry</span> <span class="o">=</span> <span class="n">exploit_layout_symmetry</span>
 
         <span class="c1"># Prepare for optimization and calculate baseline powers (if applic.)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
@@ -1736,7 +1748,10 @@ title="Open an issue"
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_baseline_power</span><span class="p">:</span>
             <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_yaw_angles_baseline_subset</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_farm_power_baseline_subset</span> <span class="o">=</span> <span class="n">P</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_baseline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unreduce_variable</span><span class="p">(</span><span class="n">P</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_baseline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unreduce_variable</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_farm_power_baseline_subset</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_baseline</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="YawOptimization._derive_layout_symmetry"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization._derive_layout_symmetry">[docs]</a>    <span class="k">def</span> <span class="nf">_derive_layout_symmetry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Derive symmetry lines in the wind farm layout and use that</span>
@@ -1808,6 +1823,9 @@ title="Open an issue"
 
 <div class="viewcode-block" id="YawOptimization._unreduce_variable"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.html#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization._unreduce_variable">[docs]</a>    <span class="k">def</span> <span class="nf">_unreduce_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
         <span class="c1"># Check if needed to un-reduce at all, if not, return directly</span>
+        <span class="k">if</span> <span class="n">variable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">variable</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exploit_layout_symmetry</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">variable</span>
 
@@ -1868,8 +1886,10 @@ title="Open an issue"
                 <span class="s2">&quot;wind_speed&quot;</span><span class="p">:</span> <span class="n">wind_speed</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_wind_directions</span><span class="p">),</span>
                 <span class="s2">&quot;turbulence_intensity&quot;</span><span class="p">:</span> <span class="n">ti</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_wind_directions</span><span class="p">),</span>
                 <span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_opt</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">,</span> <span class="p">:]),</span>
-                <span class="s2">&quot;farm_power_opt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_opt</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">],</span>
-                <span class="s2">&quot;farm_power_baseline&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_baseline</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">],</span>
+                <span class="s2">&quot;farm_power_opt&quot;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_opt</span> <span class="ow">is</span> <span class="kc">None</span> \
+                                       <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_opt</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">],</span>
+                <span class="s2">&quot;farm_power_baseline&quot;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_baseline</span> <span class="ow">is</span> <span class="kc">None</span> \
+                                            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_baseline</span><span class="p">[:,</span> <span class="n">ii</span><span class="p">],</span>
             <span class="p">}))</span>
         <span class="n">df_opt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 

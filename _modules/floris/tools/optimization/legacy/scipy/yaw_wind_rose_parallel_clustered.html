@@ -1,0 +1,2039 @@
+
+<!DOCTYPE html>
+
+<html lang="python">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered &#8212; FLORIS</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/clipboard.min.js"></script>
+    <script src="../../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../../../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../../../../_static/sphinx-thebe.js"></script>
+    <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="python">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-L8RGXZCW3F"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-L8RGXZCW3F');
+                </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../../_static/gch.gif" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">FLORIS</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../../intro.html">
+                    FLORIS Wake Modeling & Wind Farm Controls
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../installation.html">
+   Installation
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  User Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../floris_101.html">
+   Background and Concepts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../floating_wind_turbine.html">
+   Floating Wind Turbine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../turbine_interaction.html">
+   Turbine Library Interface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../input_reference_main.html">
+   Main Input File Reference
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../input_reference_turbine.html">
+   Turbine Input File Reference
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../examples.html">
+   Examples Index
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory and Background
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../wake_models.html">
+   Wake Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../bibliography.html">
+   Bibliography
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Developer Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../dev_guide.html">
+   Developer's Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../architecture.html">
+   Architecture and Design
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../code_quality.html">
+   Code Quality
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../../../../api_docs.html">
+   API Documentation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../../../_autosummary/floris.logging_manager.html">
+     floris.logging_manager
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.logging_manager.configure_console_log.html">
+       floris.logging_manager.configure_console_log
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.logging_manager.configure_file_log.html">
+       floris.logging_manager.configure_file_log
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.logging_manager.LoggerBase.html">
+       floris.logging_manager.LoggerBase
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.logging_manager.TracebackInfoFilter.html">
+       floris.logging_manager.TracebackInfoFilter
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.html">
+     floris.simulation
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.base.html">
+       floris.simulation.base
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.base.BaseClass.html">
+         floris.simulation.base.BaseClass
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.base.BaseModel.html">
+         floris.simulation.base.BaseModel
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.base.State.html">
+         floris.simulation.base.State
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.farm.html">
+       floris.simulation.farm
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.farm.Farm.html">
+         floris.simulation.farm.Farm
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.floris.html">
+       floris.simulation.floris
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.floris.Floris.html">
+         floris.simulation.floris.Floris
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.flow_field.html">
+       floris.simulation.flow_field
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+      <label for="toctree-checkbox-7">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.flow_field.FlowField.html">
+         floris.simulation.flow_field.FlowField
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.grid.html">
+       floris.simulation.grid
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+      <label for="toctree-checkbox-8">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.grid.FlowFieldGrid.html">
+         floris.simulation.grid.FlowFieldGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.grid.FlowFieldPlanarGrid.html">
+         floris.simulation.grid.FlowFieldPlanarGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.grid.Grid.html">
+         floris.simulation.grid.Grid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.grid.PointsGrid.html">
+         floris.simulation.grid.PointsGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.grid.TurbineCubatureGrid.html">
+         floris.simulation.grid.TurbineCubatureGrid
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.grid.TurbineGrid.html">
+         floris.simulation.grid.TurbineGrid
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.html">
+       floris.simulation.solver
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+      <label for="toctree-checkbox-9">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.calculate_area_overlap.html">
+         floris.simulation.solver.calculate_area_overlap
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.cc_solver.html">
+         floris.simulation.solver.cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.empirical_gauss_solver.html">
+         floris.simulation.solver.empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.full_flow_cc_solver.html">
+         floris.simulation.solver.full_flow_cc_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.full_flow_empirical_gauss_solver.html">
+         floris.simulation.solver.full_flow_empirical_gauss_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.full_flow_sequential_solver.html">
+         floris.simulation.solver.full_flow_sequential_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.full_flow_turbopark_solver.html">
+         floris.simulation.solver.full_flow_turbopark_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.sequential_solver.html">
+         floris.simulation.solver.sequential_solver
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.solver.turbopark_solver.html">
+         floris.simulation.solver.turbopark_solver
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.html">
+       floris.simulation.turbine
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+      <label for="toctree-checkbox-10">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.Ct.html">
+         floris.simulation.turbine.Ct
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.average_velocity.html">
+         floris.simulation.turbine.average_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.axial_induction.html">
+         floris.simulation.turbine.axial_induction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html">
+         floris.simulation.turbine.compute_tilt_angles_for_floating_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.cubic_cubature.html">
+         floris.simulation.turbine.cubic_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.cubic_mean.html">
+         floris.simulation.turbine.cubic_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.power.html">
+         floris.simulation.turbine.power
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">
+         floris.simulation.turbine.rotor_effective_velocity
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.simple_cubature.html">
+         floris.simulation.turbine.simple_cubature
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.simple_mean.html">
+         floris.simulation.turbine.simple_mean
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">
+         floris.simulation.turbine.PowerThrustTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.TiltTable.html">
+         floris.simulation.turbine.TiltTable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.turbine.Turbine.html">
+         floris.simulation.turbine.Turbine
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake.html">
+       floris.simulation.wake
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+      <label for="toctree-checkbox-11">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake.WakeModelManager.html">
+         floris.simulation.wake.WakeModelManager
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_combination.html">
+       floris.simulation.wake_combination
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+      <label for="toctree-checkbox-12">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_combination.fls.html">
+         floris.simulation.wake_combination.fls
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_combination.max.html">
+         floris.simulation.wake_combination.max
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_combination.sosfs.html">
+         floris.simulation.wake_combination.sosfs
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_deflection.html">
+       floris.simulation.wake_deflection
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+      <label for="toctree-checkbox-13">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_deflection.empirical_gauss.html">
+         floris.simulation.wake_deflection.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_deflection.gauss.html">
+         floris.simulation.wake_deflection.gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_deflection.jimenez.html">
+         floris.simulation.wake_deflection.jimenez
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_deflection.none.html">
+         floris.simulation.wake_deflection.none
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_turbulence.html">
+       floris.simulation.wake_turbulence
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/>
+      <label for="toctree-checkbox-14">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_turbulence.crespo_hernandez.html">
+         floris.simulation.wake_turbulence.crespo_hernandez
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_turbulence.none.html">
+         floris.simulation.wake_turbulence.none
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_turbulence.wake_induced_mixing.html">
+         floris.simulation.wake_turbulence.wake_induced_mixing
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_velocity.html">
+       floris.simulation.wake_velocity
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/>
+      <label for="toctree-checkbox-15">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">
+         floris.simulation.wake_velocity.cumulative_gauss_curl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_velocity.empirical_gauss.html">
+         floris.simulation.wake_velocity.empirical_gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_velocity.gauss.html">
+         floris.simulation.wake_velocity.gauss
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_velocity.jensen.html">
+         floris.simulation.wake_velocity.jensen
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_velocity.none.html">
+         floris.simulation.wake_velocity.none
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.simulation.wake_velocity.turbopark.html">
+         floris.simulation.wake_velocity.turbopark
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../../../_autosummary/floris.tools.html">
+     floris.tools
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/>
+    <label for="toctree-checkbox-16">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.html">
+       floris.tools.cut_plane
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/>
+      <label for="toctree-checkbox-17">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.calculate_power.html">
+         floris.tools.cut_plane.calculate_power
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.calculate_wind_speed.html">
+         floris.tools.cut_plane.calculate_wind_speed
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.change_resolution.html">
+         floris.tools.cut_plane.change_resolution
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.get_plane_from_flow_data.html">
+         floris.tools.cut_plane.get_plane_from_flow_data
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.get_power_profile.html">
+         floris.tools.cut_plane.get_power_profile
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.interpolate_onto_array.html">
+         floris.tools.cut_plane.interpolate_onto_array
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.nudge_outward.html">
+         floris.tools.cut_plane.nudge_outward
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.project_onto.html">
+         floris.tools.cut_plane.project_onto
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.rescale_axis.html">
+         floris.tools.cut_plane.rescale_axis
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.set_origin.html">
+         floris.tools.cut_plane.set_origin
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.wind_speed_profile.html">
+         floris.tools.cut_plane.wind_speed_profile
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.cut_plane.CutPlane.html">
+         floris.tools.cut_plane.CutPlane
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.floris_interface.html">
+       floris.tools.floris_interface
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/>
+      <label for="toctree-checkbox-18">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html">
+         floris.tools.floris_interface.FlorisInterface
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.floris_interface_legacy_reader.html">
+       floris.tools.floris_interface_legacy_reader
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/>
+      <label for="toctree-checkbox-19">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2.html">
+         floris.tools.floris_interface_legacy_reader.FlorisInterfaceLegacyV2
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.interface_utilities.html">
+       floris.tools.interface_utilities
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/>
+      <label for="toctree-checkbox-20">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.interface_utilities.get_params.html">
+         floris.tools.interface_utilities.get_params
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.interface_utilities.get_prop_values.html">
+         floris.tools.interface_utilities.get_prop_values
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.interface_utilities.get_props_subset.html">
+         floris.tools.interface_utilities.get_props_subset
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.interface_utilities.print_prop_docs.html">
+         floris.tools.interface_utilities.print_prop_docs
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.interface_utilities.print_props.html">
+         floris.tools.interface_utilities.print_props
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.interface_utilities.set_params.html">
+         floris.tools.interface_utilities.set_params
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.interface_utilities.show_params.html">
+         floris.tools.interface_utilities.show_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.layout_functions.html">
+       floris.tools.layout_functions
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/>
+      <label for="toctree-checkbox-21">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.layout_functions.label_line.html">
+         floris.tools.layout_functions.label_line
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.layout_functions.set_direction.html">
+         floris.tools.layout_functions.set_direction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.layout_functions.turbineDist.html">
+         floris.tools.layout_functions.turbineDist
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.layout_functions.visualize_layout.html">
+         floris.tools.layout_functions.visualize_layout
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.layout_functions.wakeAngle.html">
+         floris.tools.layout_functions.wakeAngle
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.optimization.html">
+       floris.tools.optimization
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/>
+      <label for="toctree-checkbox-22">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.optimization.layout_optimization.html">
+         floris.tools.optimization.layout_optimization
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.optimization.legacy.html">
+         floris.tools.optimization.legacy
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.optimization.other.html">
+         floris.tools.optimization.other
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.optimization.yaw_optimization.html">
+         floris.tools.optimization.yaw_optimization
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.parallel_computing_interface.html">
+       floris.tools.parallel_computing_interface
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/>
+      <label for="toctree-checkbox-23">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.parallel_computing_interface.ParallelComputingInterface.html">
+         floris.tools.parallel_computing_interface.ParallelComputingInterface
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.power_rose.html">
+       floris.tools.power_rose
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/>
+      <label for="toctree-checkbox-24">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.power_rose.PowerRose.html">
+         floris.tools.power_rose.PowerRose
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.rews.html">
+       floris.tools.rews
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/>
+      <label for="toctree-checkbox-25">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.rews.compute_rews.html">
+         floris.tools.rews.compute_rews
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.rews.determine_rews_weights.html">
+         floris.tools.rews.determine_rews_weights
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.rews.log_law_interpolate.html">
+         floris.tools.rews.log_law_interpolate
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.rews.rews_from_df.html">
+         floris.tools.rews.rews_from_df
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.uncertainty_interface.html">
+       floris.tools.uncertainty_interface
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
+      <label for="toctree-checkbox-26">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.uncertainty_interface.UncertaintyInterface.html">
+         floris.tools.uncertainty_interface.UncertaintyInterface
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.html">
+       floris.tools.visualization
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/>
+      <label for="toctree-checkbox-27">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.add_turbine_id_labels.html">
+         floris.tools.visualization.add_turbine_id_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.calculate_horizontal_plane_with_turbines.html">
+         floris.tools.visualization.calculate_horizontal_plane_with_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.line_contour_cut_plane.html">
+         floris.tools.visualization.line_contour_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.plot_rotor_values.html">
+         floris.tools.visualization.plot_rotor_values
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.plot_turbines.html">
+         floris.tools.visualization.plot_turbines
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.plot_turbines_with_fi.html">
+         floris.tools.visualization.plot_turbines_with_fi
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.reverse_cut_plane_x_axis_in_plot.html">
+         floris.tools.visualization.reverse_cut_plane_x_axis_in_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.show_plots.html">
+         floris.tools.visualization.show_plots
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.visualize_cut_plane.html">
+         floris.tools.visualization.visualize_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">
+         floris.tools.visualization.visualize_heterogeneous_cut_plane
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.visualization.visualize_quiver.html">
+         floris.tools.visualization.visualize_quiver
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.tools.wind_rose.html">
+       floris.tools.wind_rose
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" type="checkbox"/>
+      <label for="toctree-checkbox-28">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.tools.wind_rose.WindRose.html">
+         floris.tools.wind_rose.WindRose
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../../../_autosummary/floris.type_dec.html">
+     floris.type_dec
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/>
+    <label for="toctree-checkbox-29">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.type_dec.convert_to_path.html">
+       floris.type_dec.convert_to_path
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.type_dec.floris_array_converter.html">
+       floris.type_dec.floris_array_converter
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.type_dec.iter_validator.html">
+       floris.type_dec.iter_validator
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.type_dec.FromDictMixin.html">
+       floris.type_dec.FromDictMixin
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../../../_autosummary/floris.turbine_library.html">
+     floris.turbine_library
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
+    <label for="toctree-checkbox-30">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.turbine_library.turbine_previewer.html">
+       floris.turbine_library.turbine_previewer
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+      <label for="toctree-checkbox-31">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineInterface.html">
+         floris.turbine_library.turbine_previewer.TurbineInterface
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../../../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">
+         floris.turbine_library.turbine_previewer.TurbineLibrary
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.html">
+     floris.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+    <label for="toctree-checkbox-32">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.cosd.html">
+       floris.utilities.cosd
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.load_yaml.html">
+       floris.utilities.load_yaml
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.pshape.html">
+       floris.utilities.pshape
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.reverse_rotate_coordinates_rel_west.html">
+       floris.utilities.reverse_rotate_coordinates_rel_west
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.rotate_coordinates_rel_west.html">
+       floris.utilities.rotate_coordinates_rel_west
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.round_nearest.html">
+       floris.utilities.round_nearest
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.round_nearest_2_or_5.html">
+       floris.utilities.round_nearest_2_or_5
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.sind.html">
+       floris.utilities.sind
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.tand.html">
+       floris.utilities.tand
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.wind_delta.html">
+       floris.utilities.wind_delta
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.wrap_180.html">
+       floris.utilities.wrap_180
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.wrap_360.html">
+       floris.utilities.wrap_360
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.Loader.html">
+       floris.utilities.Loader
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../../../../_autosummary/floris.utilities.Vec3.html">
+       floris.utilities.Vec3
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/NREL/floris"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_modules/floris/tools/optimization/legacy/scipy/yaw_wind_rose_parallel_clustered.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2021 NREL</span>
+
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</span>
+<span class="c1"># use this file except in compliance with the License. You may obtain a copy of</span>
+<span class="c1"># the License at http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT</span>
+<span class="c1"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
+<span class="c1"># License for the specific language governing permissions and limitations under</span>
+<span class="c1"># the License.</span>
+
+<span class="c1"># See https://floris.readthedocs.io for documentation</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">repeat</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">from</span> <span class="nn">....logging_manager</span> <span class="kn">import</span> <span class="n">LoggerBase</span>
+<span class="kn">from</span> <span class="nn">.yaw_wind_rose_clustered</span> <span class="kn">import</span> <span class="n">YawOptimizationWindRoseClustered</span>
+
+
+<div class="viewcode-block" id="YawOptimizationWindRoseParallelClustered"><a class="viewcode-back" href="../../../../../../_autosummary/floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered.html#floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered">[docs]</a><span class="k">class</span> <span class="nc">YawOptimizationWindRoseParallelClustered</span><span class="p">(</span><span class="n">YawOptimizationWindRoseClustered</span><span class="p">,</span> <span class="n">LoggerBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    YawOptimizationWindRoseClustered is a subclass of</span>
+<span class="sd">    :py:class:`~.tools.optimizationscipy.YawOptimizationWindRoseClustered` that</span>
+<span class="sd">    is used to perform optimizations of the yaw angles of all turbines in a</span>
+<span class="sd">    Floris Farm for multiple sets of inflow conditions (combinations of wind</span>
+<span class="sd">    speed, wind direction, and optionally turbulence intensity) using the scipy</span>
+<span class="sd">    optimize package. This class additionally facilitates the clusterization of</span>
+<span class="sd">    the turbines into seperate subsets (clusters) in which the turbines witin</span>
+<span class="sd">    each subset exclusively interact with one another and have no impact on turbines</span>
+<span class="sd">    in other clusters. This may significantly reduce the computational</span>
+<span class="sd">    burden at no loss in performance (assuming the turbine clusters are truly</span>
+<span class="sd">    independent). This class additionally facilitates parallel optimization</span>
+<span class="sd">    using the MPIPoolExecutor method of the mpi4py.futures module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fi</span><span class="p">,</span>
+        <span class="n">wd</span><span class="p">,</span>
+        <span class="n">ws</span><span class="p">,</span>
+        <span class="n">ti</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">minimum_yaw_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">maximum_yaw_angle</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span>
+        <span class="n">minimum_ws</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+        <span class="n">maximum_ws</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span>
+        <span class="n">yaw_angles_baseline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">x0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">bnds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">opt_method</span><span class="o">=</span><span class="s2">&quot;SLSQP&quot;</span><span class="p">,</span>
+        <span class="n">opt_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">include_unc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">unc_pmfs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">unc_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude_downstream_turbines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">clustering_wake_slope</span><span class="o">=</span><span class="mf">0.30</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate YawOptimizationWindRoseParallel object with a</span>
+<span class="sd">        FlorisInterface object and assign parameter values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fi (:py:class:`~.tools.floris_interface.FlorisInterface`):</span>
+<span class="sd">                Interface used to interact with the Floris object.</span>
+<span class="sd">            wd (iterable) : The wind directions for which the yaw angles are</span>
+<span class="sd">                optimized (deg).</span>
+<span class="sd">            ws (iterable): The wind speeds for which the yaw angles are</span>
+<span class="sd">                optimized (m/s).</span>
+<span class="sd">            ti (iterable, optional): An optional list of turbulence intensity</span>
+<span class="sd">                values for which the yaw angles are optimized. If not</span>
+<span class="sd">                specified, the current TI value in the Floris object will be</span>
+<span class="sd">                used for all optimizations. Defaults to None.</span>
+<span class="sd">            minimum_yaw_angle (float, optional): Minimum constraint on yaw</span>
+<span class="sd">                angle (deg). This value will be ignored if bnds is also</span>
+<span class="sd">                specified. Defaults to 0.0.</span>
+<span class="sd">            maximum_yaw_angle (float, optional): Maximum constraint on yaw</span>
+<span class="sd">                angle (deg). This value will be ignored if bnds is also</span>
+<span class="sd">                specified. Defaults to 25.0.</span>
+<span class="sd">            minimum_ws (float, optional): Minimum wind speed at which</span>
+<span class="sd">                optimization is performed (m/s). Assumes zero power generated</span>
+<span class="sd">                below this value. Defaults to 3.</span>
+<span class="sd">            maximum_ws (float, optional): Maximum wind speed at which</span>
+<span class="sd">                optimization is performed (m/s). Assumes optimal yaw offsets</span>
+<span class="sd">                are zero above this wind speed. Defaults to 25.</span>
+<span class="sd">            yaw_angles_baseline (iterable, optional): The baseline yaw</span>
+<span class="sd">                angles used to calculate the initial and baseline power</span>
+<span class="sd">                production in the wind farm and used to normalize the cost</span>
+<span class="sd">                function. If none are specified, this variable is set equal</span>
+<span class="sd">                to the current yaw angles in floris. Note that this variable</span>
+<span class="sd">                need not meet the yaw constraints specified in self.bnds,</span>
+<span class="sd">                yet a warning is raised if it does to inform the user.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            x0 (iterable, optional): The initial guess for the optimization</span>
+<span class="sd">                problem. These values must meet the constraints specified</span>
+<span class="sd">                in self.bnds. Note that, if exclude_downstream_turbines=True,</span>
+<span class="sd">                the initial guess for any downstream turbines are ignored</span>
+<span class="sd">                since they are not part of the optimization. Instead, the yaw</span>
+<span class="sd">                angles for those turbines are 0.0 if that meets the lower and</span>
+<span class="sd">                upper bound, or otherwise as close to 0.0 as feasible. If no</span>
+<span class="sd">                values for x0 are specified, x0 is set to be equal to zeros</span>
+<span class="sd">                wherever feasible (w.r.t. the bounds), and equal to the</span>
+<span class="sd">                average of its lower and upper bound for all non-downstream</span>
+<span class="sd">                turbines otherwise. Defaults to None.</span>
+<span class="sd">            bnds (iterable, optional): Bounds for the yaw angles, as tuples of</span>
+<span class="sd">                min, max values for each turbine (deg). One can fix the yaw</span>
+<span class="sd">                angle of certain turbines to a predefined value by setting that</span>
+<span class="sd">                turbine&#39;s lower bound equal to its upper bound (i.e., an</span>
+<span class="sd">                equality constraint), as: bnds[ti] = (x, x), where x is the</span>
+<span class="sd">                fixed yaw angle assigned to the turbine. This works for both</span>
+<span class="sd">                zero and nonzero yaw angles. Moreover, if</span>
+<span class="sd">                exclude_downstream_turbines=True, the yaw angles for all</span>
+<span class="sd">                downstream turbines will be 0.0 or a feasible value closest to</span>
+<span class="sd">                0.0. If none are specified, the bounds are set to</span>
+<span class="sd">                (minimum_yaw_angle, maximum_yaw_angle) for each turbine. Note</span>
+<span class="sd">                that, if bnds is not none, its values overwrite any value given</span>
+<span class="sd">                in minimum_yaw_angle and maximum_yaw_angle. Defaults to None.</span>
+<span class="sd">            opt_method (str, optional): The optimization method used by</span>
+<span class="sd">                scipy.optimize.minize. Defaults to &#39;SLSQP&#39;.</span>
+<span class="sd">            opt_options (dictionary, optional): Optimization options used by</span>
+<span class="sd">                scipy.optimize.minize. If none are specified, they are set to</span>
+<span class="sd">                {&#39;maxiter&#39;: 100, &#39;disp&#39;: False, &#39;iprint&#39;: 1, &#39;ftol&#39;: 1e-7,</span>
+<span class="sd">                &#39;eps&#39;: 0.01}. Defaults to None.</span>
+<span class="sd">            include_unc (bool, optional): Determines whether wind direction or</span>
+<span class="sd">                yaw uncertainty are included. If True, uncertainty in wind</span>
+<span class="sd">                direction and/or yaw position is included when determining</span>
+<span class="sd">                wind farm power. Uncertainty is included by computing the</span>
+<span class="sd">                mean wind farm power for a distribution of wind direction</span>
+<span class="sd">                and yaw position deviations from the intended wind direction</span>
+<span class="sd">                and yaw angles. Defaults to False.</span>
+<span class="sd">            unc_pmfs (dictionary, optional): A dictionary containing</span>
+<span class="sd">                probability mass functions describing the distribution of</span>
+<span class="sd">                wind direction and yaw position deviations when wind direction</span>
+<span class="sd">                and/or yaw position uncertainty is included in the power</span>
+<span class="sd">                calculations. Contains the following key-value pairs:</span>
+
+<span class="sd">                -   **wd_unc** (*np.array*): The wind direction</span>
+<span class="sd">                    deviations from the intended wind direction (deg).</span>
+<span class="sd">                -   **wd_unc_pmf** (*np.array*): The probability</span>
+<span class="sd">                    of each wind direction deviation in **wd_unc** occuring.</span>
+<span class="sd">                -   **yaw_unc** (*np.array*): The yaw angle deviations</span>
+<span class="sd">                    from the intended yaw angles (deg).</span>
+<span class="sd">                -   **yaw_unc_pmf** (*np.array*): The probability</span>
+<span class="sd">                    of each yaw angle deviation in **yaw_unc** occuring.</span>
+
+<span class="sd">                If none are specified, default PMFs are calculated using</span>
+<span class="sd">                values provided in **unc_options**. Defaults to None.</span>
+<span class="sd">            unc_options (dictionary, optional): A dictionary containing values</span>
+<span class="sd">                used to create normally-distributed, zero-mean probability mass</span>
+<span class="sd">                functions describing the distribution of wind direction and yaw</span>
+<span class="sd">                position deviations when wind direction and/or yaw position</span>
+<span class="sd">                uncertainty is included. This argument is only used when</span>
+<span class="sd">                **unc_pmfs** is None and contains the following key-value pairs:</span>
+
+<span class="sd">                -   **std_wd** (*float*): The standard deviation of</span>
+<span class="sd">                    the wind direction deviations from the original wind</span>
+<span class="sd">                    direction (deg).</span>
+<span class="sd">                -   **std_yaw** (*float*): The standard deviation of</span>
+<span class="sd">                    the yaw angle deviations from the original yaw angles (deg).</span>
+<span class="sd">                -   **pmf_res** (*float*): The resolution in degrees</span>
+<span class="sd">                    of the wind direction and yaw angle PMFs.</span>
+<span class="sd">                -   **pdf_cutoff** (*float*): The cumulative</span>
+<span class="sd">                    distribution function value at which the tails of the</span>
+<span class="sd">                    PMFs are truncated.</span>
+
+<span class="sd">                If none are specified, default values of</span>
+<span class="sd">                {&#39;std_wd&#39;: 4.95, &#39;std_yaw&#39;: 1.75, &#39;pmf_res&#39;: 1.0,</span>
+<span class="sd">                &#39;pdf_cutoff&#39;: 0.995} are used. Defaults to None.</span>
+<span class="sd">            turbine_weights (iterable, optional): weighing terms that allow</span>
+<span class="sd">                the user to emphasize power gains at particular turbines or</span>
+<span class="sd">                completely ignore power gains from other turbines. The array</span>
+<span class="sd">                of turbine powers from floris is multiplied with this array</span>
+<span class="sd">                in the calculation of the objective function. If None, this</span>
+<span class="sd">                is an array with all values 1.0 and length equal to the</span>
+<span class="sd">                number of turbines. Defaults to None.</span>
+<span class="sd">            exclude_downstream_turbines (bool, optional): If True,</span>
+<span class="sd">                automatically finds and excludes turbines that are most</span>
+<span class="sd">                downstream from the optimization problem. This significantly</span>
+<span class="sd">                reduces computation time at no loss in performance. The yaw</span>
+<span class="sd">                angles of these downstream turbines are fixed to 0.0 deg if</span>
+<span class="sd">                the yaw bounds specified in self.bnds allow that, or otherwise</span>
+<span class="sd">                are fixed to the lower or upper yaw bound, whichever is closer</span>
+<span class="sd">                to 0.0. Defaults to False.</span>
+<span class="sd">            clustering_wake_slope (float, optional): linear slope of the wake</span>
+<span class="sd">                in the simplified linear expansion wake model (dy/dx). This</span>
+<span class="sd">                model is used to derive wake interactions between turbines and</span>
+<span class="sd">                to identify the turbine clusters. A good value is about equal</span>
+<span class="sd">                to the turbulence intensity in FLORIS. Though, since yaw</span>
+<span class="sd">                optimizations may shift the wake laterally, a safer option</span>
+<span class="sd">                is twice the turbulence intensity. The default value is 0.30</span>
+<span class="sd">                which should be valid for yaw optimizations at wd_std = 0.0 deg</span>
+<span class="sd">                and turbulence intensities up to 15%. Defaults to 0.30.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">fi</span><span class="p">,</span>
+            <span class="n">wd</span><span class="p">,</span>
+            <span class="n">ws</span><span class="p">,</span>
+            <span class="n">ti</span><span class="o">=</span><span class="n">ti</span><span class="p">,</span>
+            <span class="n">minimum_yaw_angle</span><span class="o">=</span><span class="n">minimum_yaw_angle</span><span class="p">,</span>
+            <span class="n">maximum_yaw_angle</span><span class="o">=</span><span class="n">maximum_yaw_angle</span><span class="p">,</span>
+            <span class="n">minimum_ws</span><span class="o">=</span><span class="n">minimum_ws</span><span class="p">,</span>
+            <span class="n">maximum_ws</span><span class="o">=</span><span class="n">maximum_ws</span><span class="p">,</span>
+            <span class="n">yaw_angles_baseline</span><span class="o">=</span><span class="n">yaw_angles_baseline</span><span class="p">,</span>
+            <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+            <span class="n">bnds</span><span class="o">=</span><span class="n">bnds</span><span class="p">,</span>
+            <span class="n">opt_method</span><span class="o">=</span><span class="n">opt_method</span><span class="p">,</span>
+            <span class="n">opt_options</span><span class="o">=</span><span class="n">opt_options</span><span class="p">,</span>
+            <span class="n">include_unc</span><span class="o">=</span><span class="n">include_unc</span><span class="p">,</span>
+            <span class="n">unc_pmfs</span><span class="o">=</span><span class="n">unc_pmfs</span><span class="p">,</span>
+            <span class="n">unc_options</span><span class="o">=</span><span class="n">unc_options</span><span class="p">,</span>
+            <span class="n">turbine_weights</span><span class="o">=</span><span class="n">turbine_weights</span><span class="p">,</span>
+            <span class="n">calc_init_power</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">exclude_downstream_turbines</span><span class="o">=</span><span class="n">exclude_downstream_turbines</span><span class="p">,</span>
+            <span class="n">clustering_wake_slope</span><span class="o">=</span><span class="n">clustering_wake_slope</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clustering_wake_slope</span> <span class="o">=</span> <span class="n">clustering_wake_slope</span>
+
+    <span class="c1"># Private methods</span>
+
+<div class="viewcode-block" id="YawOptimizationWindRoseParallelClustered._calc_baseline_power_one_case"><a class="viewcode-back" href="../../../../../../_autosummary/floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered.html#floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered._calc_baseline_power_one_case">[docs]</a>    <span class="k">def</span> <span class="nf">_calc_baseline_power_one_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ws</span><span class="p">,</span> <span class="n">wd</span><span class="p">,</span> <span class="n">ti</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For a single (wind speed, direction, ti (optional)) combination, finds</span>
+<span class="sd">        the baseline power produced by the wind farm and the ideal power</span>
+<span class="sd">        without wake losses.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ws (float): The wind speed used in floris for the yaw optimization.</span>
+<span class="sd">            wd (float): The wind direction used in floris for the yaw</span>
+<span class="sd">                optimization.</span>
+<span class="sd">            ti (float, optional): An optional turbulence intensity value for</span>
+<span class="sd">                the yaw optimization. Defaults to None, meaning TI will not be</span>
+<span class="sd">                included in the AEP calculations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - **df_base** (*Pandas DataFrame*) - DataFrame with a single row,</span>
+<span class="sd">                containing the following columns:</span>
+
+<span class="sd">                - **ws** (*float*) - The wind speed value for the row.</span>
+<span class="sd">                - **wd** (*float*) - The wind direction value for the row.</span>
+<span class="sd">                - **ti** (*float*) - The turbulence intensity value for the</span>
+<span class="sd">                    row. Only included if self.ti is not None.</span>
+<span class="sd">                - **power_baseline** (*float*) - The total power produced by</span>
+<span class="sd">                    the wind farm with baseline yaw control (W).</span>
+<span class="sd">                - **power_no_wake** (*float*) - The ideal total power produced</span>
+<span class="sd">                    by the wind farm without wake losses (W).</span>
+<span class="sd">                - **turbine_power_baseline** (*list* (*float*)) - A</span>
+<span class="sd">                    list containing the baseline power without wake steering</span>
+<span class="sd">                    for each wind turbine (W).</span>
+<span class="sd">                - **turbine_power_no_wake** (*list* (*float*)) - A list</span>
+<span class="sd">                    containing the ideal power without wake losses for each</span>
+<span class="sd">                    wind turbine (W).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Computing wind speed = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; m/s, wind direction = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; deg.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Computing wind speed = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; m/s, wind direction = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; deg, turbulence intensity = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ti</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Find baseline power in FLORIS</span>
+
+        <span class="k">if</span> <span class="n">ws</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum_ws</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize_flow_field</span><span class="p">(</span><span class="n">wind_direction</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="n">ws</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize_flow_field</span><span class="p">(</span>
+                    <span class="n">wind_direction</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="n">ws</span><span class="p">,</span> <span class="n">turbulence_intensity</span><span class="o">=</span><span class="n">ti</span>
+                <span class="p">)</span>
+            <span class="c1"># calculate baseline power</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_baseline</span><span class="p">)</span>
+            <span class="n">power_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_power</span><span class="p">(</span>
+                <span class="n">include_unc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">include_unc</span><span class="p">,</span>
+                <span class="n">unc_pmfs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unc_pmfs</span><span class="p">,</span>
+                <span class="n">unc_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unc_options</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># calculate power for no wake case</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_baseline</span><span class="p">,</span> <span class="n">no_wake</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">power_no_wake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_power</span><span class="p">(</span>
+                <span class="n">include_unc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">include_unc</span><span class="p">,</span>
+                <span class="n">unc_pmfs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unc_pmfs</span><span class="p">,</span>
+                <span class="n">unc_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unc_options</span><span class="p">,</span>
+                <span class="n">no_wake</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">power_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span> <span class="o">*</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+            <span class="n">power_no_wake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span> <span class="o">*</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+
+        <span class="c1"># Add turbine weighing terms</span>
+        <span class="n">power_base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turbine_weights</span><span class="p">,</span> <span class="n">power_base</span><span class="p">)</span>
+        <span class="n">power_no_wake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turbine_weights</span><span class="p">,</span> <span class="n">power_no_wake</span><span class="p">)</span>
+
+        <span class="c1"># add variables to dataframe</span>
+        <span class="k">if</span> <span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df_base</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;ws&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ws</span><span class="p">],</span>
+                    <span class="s2">&quot;wd&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">wd</span><span class="p">],</span>
+                    <span class="s2">&quot;power_baseline&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">power_base</span><span class="p">)],</span>
+                    <span class="s2">&quot;turbine_power_baseline&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">power_base</span><span class="p">],</span>
+                    <span class="s2">&quot;power_no_wake&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">power_no_wake</span><span class="p">)],</span>
+                    <span class="s2">&quot;turbine_power_no_wake&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">power_no_wake</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df_base</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;ws&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ws</span><span class="p">],</span>
+                    <span class="s2">&quot;wd&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">wd</span><span class="p">],</span>
+                    <span class="s2">&quot;ti&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ti</span><span class="p">],</span>
+                    <span class="s2">&quot;power_baseline&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">power_base</span><span class="p">)],</span>
+                    <span class="s2">&quot;turbine_power_baseline&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">power_base</span><span class="p">],</span>
+                    <span class="s2">&quot;power_no_wake&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">power_no_wake</span><span class="p">)],</span>
+                    <span class="s2">&quot;turbine_power_no_wake&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">power_no_wake</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_base</span></div>
+
+<div class="viewcode-block" id="YawOptimizationWindRoseParallelClustered._optimize_one_case"><a class="viewcode-back" href="../../../../../../_autosummary/floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered.html#floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered._optimize_one_case">[docs]</a>    <span class="k">def</span> <span class="nf">_optimize_one_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ws</span><span class="p">,</span> <span class="n">wd</span><span class="p">,</span> <span class="n">initial_farm_power</span><span class="p">,</span> <span class="n">ti</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For a single (wind speed, direction, ti (optional)) combination, finds</span>
+<span class="sd">        the power resulting from optimal wake steering.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ws (float): The wind speed used in floris for the yaw optimization.</span>
+<span class="sd">            wd (float): The wind direction used in floris for the yaw</span>
+<span class="sd">                optimization.</span>
+<span class="sd">            ti (float, optional): An optional turbulence intensity value for</span>
+<span class="sd">                the yaw optimization. Defaults to None, meaning TI will not be</span>
+<span class="sd">                included in the AEP calculations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - **df_opt** (*Pandas DataFrame*) - DataFrame with a single row,</span>
+<span class="sd">                containing the following columns:</span>
+
+<span class="sd">                - **ws** (*float*) - The wind speed value for the row.</span>
+<span class="sd">                - **wd** (*float*) - The wind direction value for the row.</span>
+<span class="sd">                - **ti** (*float*) - The turbulence intensity value for the</span>
+<span class="sd">                    row. Only included if self.ti is not None.</span>
+<span class="sd">                - **power_opt** (*float*) - The total power produced by the</span>
+<span class="sd">                    wind farm with optimal yaw offsets (W).</span>
+<span class="sd">                - **turbine_power_opt** (*list* (*float*)) - A list</span>
+<span class="sd">                    containing the power produced by each wind turbine with</span>
+<span class="sd">                    optimal yaw offsets (W).</span>
+<span class="sd">                - **yaw_angles** (*list* (*float*)) - A list containing</span>
+<span class="sd">                    the optimal yaw offsets for maximizing total wind farm</span>
+<span class="sd">                    power for each wind turbine (deg).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Computing wind speed = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; m/s, wind direction = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; deg.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Computing wind speed = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; m/s, wind direction = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; deg, turbulence intensity = &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ti</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Optimizing wake redirection control</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">ws</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum_ws</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ws</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum_ws</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize_flow_field</span><span class="p">(</span><span class="n">wind_direction</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="n">ws</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize_flow_field</span><span class="p">(</span>
+                    <span class="n">wind_direction</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="n">ws</span><span class="p">,</span> <span class="n">turbulence_intensity</span><span class="o">=</span><span class="n">ti</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">initial_farm_power</span> <span class="o">=</span> <span class="n">initial_farm_power</span>
+
+            <span class="c1"># Determine clusters and then optimize by cluster</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_turbines</span><span class="p">()</span>
+
+            <span class="c1"># Save parameters to a full list</span>
+            <span class="n">yaw_angles_template_full</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_template</span><span class="p">)</span>
+            <span class="n">yaw_angles_baseline_full</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_baseline</span><span class="p">)</span>
+            <span class="n">turbine_weights_full</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turbine_weights</span><span class="p">)</span>
+            <span class="n">bnds_full</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bnds</span><span class="p">)</span>
+            <span class="n">x0_full</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">)</span>
+            <span class="n">fi_full</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="p">)</span>
+
+            <span class="c1"># Overwrite parameters for each cluster and optimize</span>
+            <span class="n">opt_yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x0_full</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ci</span><span class="p">,</span> <span class="n">cl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====================================================&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimizing </span><span class="si">%d</span><span class="s2"> parameters in cluster </span><span class="si">%d</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cl</span><span class="p">),</span> <span class="n">ci</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====================================================&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_template</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">yaw_angles_template_full</span><span class="p">)[</span><span class="n">cl</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_baseline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">yaw_angles_baseline_full</span><span class="p">)[</span><span class="n">cl</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">turbine_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_weights_full</span><span class="p">)[</span><span class="n">cl</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bnds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bnds_full</span><span class="p">)[</span><span class="n">cl</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x0_full</span><span class="p">)[</span><span class="n">cl</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fi</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fi_full</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize_flow_field</span><span class="p">(</span>
+                    <span class="n">layout_array</span><span class="o">=</span><span class="p">[</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fi_full</span><span class="o">.</span><span class="n">layout_x</span><span class="p">)[</span><span class="n">cl</span><span class="p">],</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fi_full</span><span class="o">.</span><span class="n">layout_y</span><span class="p">)[</span><span class="n">cl</span><span class="p">]</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">opt_yaw_angles</span><span class="p">[</span><span class="n">cl</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimize</span><span class="p">()</span>
+
+            <span class="c1"># Restore parameters</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_template</span> <span class="o">=</span> <span class="n">yaw_angles_template_full</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_baseline</span> <span class="o">=</span> <span class="n">yaw_angles_baseline_full</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">turbine_weights</span> <span class="o">=</span> <span class="n">turbine_weights_full</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bnds</span> <span class="o">=</span> <span class="n">bnds_full</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">x0_full</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fi</span> <span class="o">=</span> <span class="n">fi_full</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize_flow_field</span><span class="p">(</span>
+                <span class="n">layout_array</span><span class="o">=</span><span class="p">[</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fi_full</span><span class="o">.</span><span class="n">layout_x</span><span class="p">),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fi_full</span><span class="o">.</span><span class="n">layout_y</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">opt_yaw_angles</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;No change in controls suggested for this inflow </span><span class="se">\</span>
+<span class="s2">                    condition...&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># optimized power</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">opt_yaw_angles</span><span class="p">)</span>
+            <span class="n">power_opt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_power</span><span class="p">(</span>
+                <span class="n">include_unc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">include_unc</span><span class="p">,</span>
+                <span class="n">unc_pmfs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unc_pmfs</span><span class="p">,</span>
+                <span class="n">unc_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unc_options</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ws</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum_ws</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;No change in controls suggested for this inflow </span><span class="se">\</span>
+<span class="s2">                    condition...&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize_flow_field</span><span class="p">(</span><span class="n">wind_direction</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="n">ws</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize_flow_field</span><span class="p">(</span>
+                    <span class="n">wind_direction</span><span class="o">=</span><span class="n">wd</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="n">ws</span><span class="p">,</span> <span class="n">turbulence_intensity</span><span class="o">=</span><span class="n">ti</span>
+                <span class="p">)</span>
+            <span class="n">opt_yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_template</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">opt_yaw_angles</span><span class="p">)</span>
+            <span class="n">power_opt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_power</span><span class="p">(</span>
+                <span class="n">include_unc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">include_unc</span><span class="p">,</span>
+                <span class="n">unc_pmfs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unc_pmfs</span><span class="p">,</span>
+                <span class="n">unc_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unc_options</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;No change in controls suggested for this inflow </span><span class="se">\</span>
+<span class="s2">                    condition...&quot;</span>
+            <span class="p">)</span>
+            <span class="n">opt_yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles_template</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">power_opt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nturbs</span> <span class="o">*</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+
+        <span class="c1"># Add turbine weighing terms</span>
+        <span class="n">power_opt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turbine_weights</span><span class="p">,</span> <span class="n">power_opt</span><span class="p">)</span>
+
+        <span class="c1"># add variables to dataframe</span>
+        <span class="k">if</span> <span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df_opt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;ws&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ws</span><span class="p">],</span>
+                    <span class="s2">&quot;wd&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">wd</span><span class="p">],</span>
+                    <span class="s2">&quot;power_opt&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">power_opt</span><span class="p">)],</span>
+                    <span class="s2">&quot;turbine_power_opt&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">power_opt</span><span class="p">],</span>
+                    <span class="s2">&quot;yaw_angles&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">opt_yaw_angles</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df_opt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;ws&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ws</span><span class="p">],</span>
+                    <span class="s2">&quot;wd&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">wd</span><span class="p">],</span>
+                    <span class="s2">&quot;ti&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ti</span><span class="p">],</span>
+                    <span class="s2">&quot;power_opt&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">power_opt</span><span class="p">)],</span>
+                    <span class="s2">&quot;turbine_power_opt&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">power_opt</span><span class="p">],</span>
+                    <span class="s2">&quot;yaw_angles&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">opt_yaw_angles</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_opt</span></div>
+
+    <span class="c1"># Public methods</span>
+
+<div class="viewcode-block" id="YawOptimizationWindRoseParallelClustered.calc_baseline_power"><a class="viewcode-back" href="../../../../../../_autosummary/floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered.html#floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered.calc_baseline_power">[docs]</a>    <span class="k">def</span> <span class="nf">calc_baseline_power</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method computes the baseline power produced by the wind farm and</span>
+<span class="sd">        the ideal power without wake losses for a series of wind speed, wind</span>
+<span class="sd">        direction, and optionally TI combinations. The optimization for</span>
+<span class="sd">        different wind condition combinations is parallelized using the mpi4py</span>
+<span class="sd">        futures module.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: A pandas DataFrame with the same number of rows</span>
+<span class="sd">            as the length of the wd and ws arrays, containing the following</span>
+<span class="sd">            columns:</span>
+
+<span class="sd">                - **ws** (*float*) - The wind speed values for which power is</span>
+<span class="sd">                computed (m/s).</span>
+<span class="sd">                - **wd** (*float*) - The wind direction value for which power</span>
+<span class="sd">                is calculated (deg).</span>
+<span class="sd">                - **ti** (*float*) - The turbulence intensity value for which</span>
+<span class="sd">                power is calculated. Only included if self.ti is not None.</span>
+<span class="sd">                - **power_baseline** (*float*) - The total power produced by</span>
+<span class="sd">                he wind farm with baseline yaw control (W).</span>
+<span class="sd">                - **power_no_wake** (*float*) - The ideal total power produced</span>
+<span class="sd">                by the wind farm without wake losses (W).</span>
+<span class="sd">                - **turbine_power_baseline** (*list* (*float*)) - A list</span>
+<span class="sd">                containing the baseline power without wake steering for each</span>
+<span class="sd">                wind turbine in the wind farm (W).</span>
+<span class="sd">                - **turbine_power_no_wake** (*list* (*float*)) - A list</span>
+<span class="sd">                containing the ideal power without wake losses for each wind</span>
+<span class="sd">                turbine in the wind farm (W).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">mpi4py.futures</span> <span class="kn">import</span> <span class="n">MPIPoolExecutor</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;It appears you do not have mpi4py installed. &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;Please refer to https://mpi4py.readthedocs.io/ for &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;guidance on how to properly install the module.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err_msg</span><span class="p">,</span> <span class="n">stack_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====================================================&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculating baseline power in parallel...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of wind conditions to calculate = &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wd</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====================================================&quot;</span><span class="p">)</span>
+
+        <span class="n">df_base</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">MPIPoolExecutor</span><span class="p">()</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">df_base_one</span> <span class="ow">in</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_calc_baseline_power_one_case</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ws</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd</span><span class="o">.</span><span class="n">values</span>
+                <span class="p">):</span>
+
+                    <span class="c1"># add variables to dataframe</span>
+                    <span class="n">df_base</span> <span class="o">=</span> <span class="n">df_base</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_base_one</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">df_base_one</span> <span class="ow">in</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_calc_baseline_power_one_case</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ws</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">wd</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ti</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">):</span>
+
+                    <span class="c1"># add variables to dataframe</span>
+                    <span class="n">df_base</span> <span class="o">=</span> <span class="n">df_base</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_base_one</span><span class="p">)</span>
+
+        <span class="n">df_base</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_base</span> <span class="o">=</span> <span class="n">df_base</span>
+        <span class="k">return</span> <span class="n">df_base</span></div>
+
+<div class="viewcode-block" id="YawOptimizationWindRoseParallelClustered.optimize"><a class="viewcode-back" href="../../../../../../_autosummary/floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered.html#floris.tools.optimization.legacy.scipy.yaw_wind_rose_parallel_clustered.YawOptimizationWindRoseParallelClustered.optimize">[docs]</a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method solves for the optimum turbine yaw angles for power</span>
+<span class="sd">        production and the resulting power produced by the wind farm for a</span>
+<span class="sd">        series of wind speed, wind direction, and optionally TI combinations.</span>
+<span class="sd">        The optimization for different wind condition combinations is</span>
+<span class="sd">        parallelized using the mpi4py.futures module.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: A pandas DataFrame with the same number of rows</span>
+<span class="sd">            as the length of the wd and ws arrays, containing the following</span>
+<span class="sd">            columns:</span>
+
+<span class="sd">                - **ws** (*float*) - The wind speed values for which the yaw</span>
+<span class="sd">                angles are optimized and power is computed (m/s).</span>
+<span class="sd">                - **wd** (*float*) - The wind direction values for which the</span>
+<span class="sd">                yaw angles are optimized and power is computed (deg).</span>
+<span class="sd">                - **ti** (*float*) - The turbulence intensity values for which</span>
+<span class="sd">                the yaw angles are optimized and power is computed. Only</span>
+<span class="sd">                included if self.ti is not None.</span>
+<span class="sd">                - **power_opt** (*float*) - The total power produced by the</span>
+<span class="sd">                wind farm with optimal yaw offsets (W).</span>
+<span class="sd">                - **turbine_power_opt** (*list* (*float*)) - A list containing</span>
+<span class="sd">                the power produced by each wind turbine with optimal yaw</span>
+<span class="sd">                offsets (W).</span>
+<span class="sd">                - **yaw_angles** (*list* (*float*)) - A list containing the</span>
+<span class="sd">                optimal yaw offsets for maximizing total wind farm power for</span>
+<span class="sd">                each wind turbine (deg).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">mpi4py.futures</span> <span class="kn">import</span> <span class="n">MPIPoolExecutor</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;It appears you do not have mpi4py installed. &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;Please refer to https://mpi4py.readthedocs.io/ for &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;guidance on how to properly install the module.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err_msg</span><span class="p">,</span> <span class="n">stack_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====================================================&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimizing wake redirection control in parallel...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of wind conditions to optimize = &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wd</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of yaw angles to optimize = &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">turbs_to_opt</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====================================================&quot;</span><span class="p">)</span>
+
+        <span class="n">df_opt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">MPIPoolExecutor</span><span class="p">()</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ti</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">df_opt_one</span> <span class="ow">in</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_optimize_one_case</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ws</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">wd</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df_base</span><span class="o">.</span><span class="n">power_baseline</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">):</span>
+
+                    <span class="c1"># add variables to dataframe</span>
+                    <span class="n">df_opt</span> <span class="o">=</span> <span class="n">df_opt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_opt_one</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">df_opt_one</span> <span class="ow">in</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_optimize_one_case</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ws</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">wd</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df_base</span><span class="o">.</span><span class="n">power_baseline</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ti</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="p">):</span>
+
+                    <span class="c1"># add variables to dataframe</span>
+                    <span class="n">df_opt</span> <span class="o">=</span> <span class="n">df_opt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_opt_one</span><span class="p">)</span>
+
+        <span class="n">df_opt</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_opt</span></div></div>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By National Renewable Energy Laboratory<br/>
+  
+      &copy; Copyright 2023.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

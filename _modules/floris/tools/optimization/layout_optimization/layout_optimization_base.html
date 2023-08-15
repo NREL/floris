@@ -1363,13 +1363,18 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">LineString</span><span class="p">,</span> <span class="n">Polygon</span>
 
+<span class="kn">from</span> <span class="nn">floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">YawOptimizationGeometric</span><span class="p">,</span>
+<span class="p">)</span>
+
 <span class="kn">from</span> <span class="nn">....logging_manager</span> <span class="kn">import</span> <span class="n">LoggerBase</span>
 
 
 <div class="viewcode-block" id="LayoutOptimization"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_base.LayoutOptimization.html#floris.tools.optimization.layout_optimization.layout_optimization_base.LayoutOptimization">[docs]</a><span class="k">class</span> <span class="nc">LayoutOptimization</span><span class="p">(</span><span class="n">LoggerBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fi</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fi</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enable_geometric_yaw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fi</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span> <span class="o">=</span> <span class="n">boundaries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable_geometric_yaw</span> <span class="o">=</span> <span class="n">enable_geometric_yaw</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_polygon</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_boundary_line</span> <span class="o">=</span> <span class="n">LineString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span><span class="p">)</span>
@@ -1395,6 +1400,15 @@ title="Open an issue"
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span>
 
+        <span class="c1"># Establish geometric yaw class</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_geometric_yaw</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yaw_opt</span> <span class="o">=</span> <span class="n">YawOptimizationGeometric</span><span class="p">(</span>
+                <span class="n">fi</span><span class="p">,</span>
+                <span class="n">minimum_yaw_angle</span><span class="o">=-</span><span class="mf">30.0</span><span class="p">,</span>
+                <span class="n">maximum_yaw_angle</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+                <span class="n">exploit_layout_symmetry</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_AEP</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1405,6 +1419,15 @@ title="Open an issue"
 
 <div class="viewcode-block" id="LayoutOptimization._unnorm"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_base.LayoutOptimization.html#floris.tools.optimization.layout_optimization.layout_optimization_base.LayoutOptimization._unnorm">[docs]</a>    <span class="k">def</span> <span class="nf">_unnorm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">+</span> <span class="n">x1</span></div>
+
+<div class="viewcode-block" id="LayoutOptimization._get_geoyaw_angles"><a class="viewcode-back" href="../../../../../_autosummary/floris.tools.optimization.layout_optimization.layout_optimization_base.LayoutOptimization.html#floris.tools.optimization.layout_optimization.layout_optimization_base.LayoutOptimization._get_geoyaw_angles">[docs]</a>    <span class="k">def</span> <span class="nf">_get_geoyaw_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_geometric_yaw</span><span class="p">:</span>
+            <span class="n">df_opt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yaw_opt</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt</span><span class="p">[</span><span class="s1">&#39;yaw_angles_opt&#39;</span><span class="p">])[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">yaw_angles</span></div>
 
     <span class="c1"># Public methods</span>
 
@@ -1440,9 +1463,8 @@ title="Open an issue"
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                     <span class="p">[</span><span class="n">verts</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">verts</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">verts</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">verts</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span> <span class="s2">&quot;b&quot;</span>
-                <span class="p">)</span>
+                <span class="p">)</span></div>
 
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
     <span class="c1">###########################################################################</span>
     <span class="c1"># Properties</span>

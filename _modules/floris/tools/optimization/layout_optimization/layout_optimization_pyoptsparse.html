@@ -1379,9 +1379,11 @@ title="Open an issue"
         <span class="n">optOptions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">timeLimit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">storeHistory</span><span class="o">=</span><span class="s1">&#39;hist.hist&#39;</span><span class="p">,</span>
-        <span class="n">hotStart</span><span class="o">=</span><span class="kc">None</span>
+        <span class="n">hotStart</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">enable_geometric_yaw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fi</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="n">min_dist</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                         <span class="n">enable_geometric_yaw</span><span class="o">=</span><span class="n">enable_geometric_yaw</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">layout_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">layout_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">)</span>
@@ -1389,6 +1391,7 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">storeHistory</span> <span class="o">=</span> <span class="n">storeHistory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timeLimit</span> <span class="o">=</span> <span class="n">timeLimit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hotStart</span> <span class="o">=</span> <span class="n">hotStart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable_geometric_yaw</span> <span class="o">=</span> <span class="n">enable_geometric_yaw</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">pyoptsparse</span>
@@ -1452,10 +1455,13 @@ title="Open an issue"
         <span class="c1"># Update turbine map with turbince locations</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">layout_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
 
+        <span class="c1"># Compute turbine yaw angles using PJ&#39;s geometric code (if enabled)</span>
+        <span class="n">yaw_angles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_geoyaw_angles</span><span class="p">()</span>
+
         <span class="c1"># Compute the objective function</span>
         <span class="n">funcs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">funcs</span><span class="p">[</span><span class="s2">&quot;obj&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_AEP</span>
+            <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_AEP</span>
         <span class="p">)</span>
 
         <span class="c1"># Compute constraints, if any are defined for the optimization</span>

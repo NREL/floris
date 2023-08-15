@@ -1413,7 +1413,7 @@ title="Print to PDF"
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.tools.optimization.yaw_optimization.yaw_optimization_base.</span></span><span class="sig-name descname"><span class="pre">YawOptimization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_yaw_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum_yaw_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles_baseline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_control_variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_baseline_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_downstream_turbines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exploit_layout_symmetry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_convergence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/optimization/yaw_optimization/yaw_optimization_base.html#YawOptimization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="floris.logging_manager.LoggerBase.html#floris.logging_manager.LoggerBase" title="floris.logging_manager.LoggerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">floris.logging_manager.LoggerBase</span></code></a></p>
 <p>YawOptimization is a subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">floris.tools.optimization.scipy.</span>
 <span class="pre">Optimization</span></code> that is used to optimize the yaw angles of all turbines in a Floris
 Farm for a single set of inflow conditions using the SciPy optimize package.</p>
@@ -1424,6 +1424,18 @@ Farm for a single set of inflow conditions using the SciPy optimize package.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.logger" title="floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py method">
@@ -1503,6 +1515,11 @@ to reduce the optimization problem by 50 %.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization._finalize">
 <span class="sig-name descname"><span class="pre">_finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">farm_power_opt_subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles_opt_subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/optimization/yaw_optimization/yaw_optimization_base.html#YawOptimization._finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization._finalize" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.logger">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#floris.tools.optimization.yaw_optimization.yaw_optimization_base.YawOptimization.logger" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

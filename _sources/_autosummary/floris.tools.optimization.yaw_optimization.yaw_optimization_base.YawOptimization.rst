@@ -21,4 +21,10 @@ floris.tools.optimization.yaw\_optimization.yaw\_optimization\_base.YawOptimizat
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~YawOptimization.logger
+   
    

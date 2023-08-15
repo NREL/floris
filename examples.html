@@ -1477,10 +1477,17 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#b-heterogenaity-multiple-ws-wd-py">
-     16b_heterogenaity_multiple_ws_wd.py
+    <a class="reference internal nav-link" href="#b-heterogeneity-multiple-ws-wd-py">
+     16b_heterogeneity_multiple_ws_wd.py
     </a>
    </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#c-optimize-layout-with-heterogeneity-py">
+   16c_optimize_layout_with_heterogeneity.py
+  </a>
+  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#multiple-turbine-types-py">
      17_multiple_turbine_types.py
@@ -1667,10 +1674,17 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#b-heterogenaity-multiple-ws-wd-py">
-     16b_heterogenaity_multiple_ws_wd.py
+    <a class="reference internal nav-link" href="#b-heterogeneity-multiple-ws-wd-py">
+     16b_heterogeneity_multiple_ws_wd.py
     </a>
    </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#c-optimize-layout-with-heterogeneity-py">
+   16c_optimize_layout_with_heterogeneity.py
+  </a>
+  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#multiple-turbine-types-py">
      17_multiple_turbine_types.py
@@ -1891,10 +1905,21 @@ prints the wind speeds at all turbines.</p>
 speedups at locations throughout the farm. Show plots of the
 impact on wind turbine wakes.</p>
 </section>
-<section id="b-heterogenaity-multiple-ws-wd-py">
-<h3>16b_heterogenaity_multiple_ws_wd.py<a class="headerlink" href="#b-heterogenaity-multiple-ws-wd-py" title="Permalink to this headline">#</a></h3>
-<p>Illustrate usage of heterogenaity with multiple wind speeds and directions.</p>
+<section id="b-heterogeneity-multiple-ws-wd-py">
+<h3>16b_heterogeneity_multiple_ws_wd.py<a class="headerlink" href="#b-heterogeneity-multiple-ws-wd-py" title="Permalink to this headline">#</a></h3>
+<p>Illustrate usage of heterogeneity with multiple wind speeds and directions.</p>
 </section>
+</section>
+<section id="c-optimize-layout-with-heterogeneity-py">
+<h2>16c_optimize_layout_with_heterogeneity.py<a class="headerlink" href="#c-optimize-layout-with-heterogeneity-py" title="Permalink to this headline">#</a></h2>
+<p>This example shows a layout optimization using the geometric yaw option. It
+combines elements of examples 15 (layout optimization) and 16 (heterogeneous
+inflow) for demonstrative purposes. If you haven't yet run those examples,
+we recommend you try them first.</p>
+<p>Heterogeneity in the inflow provides the necessary driver for coupled yaw
+and layout optimization to be worthwhile. First, a layout optimization is
+run without coupled yaw optimization; then a coupled optimization is run to
+show the benefits of coupled optimization when flows are heterogeneous.</p>
 <section id="multiple-turbine-types-py">
 <h3>17_multiple_turbine_types.py<a class="headerlink" href="#multiple-turbine-types-py" title="Permalink to this headline">#</a></h3>
 <p>Load an input file that describes a wind farm with two turbines
