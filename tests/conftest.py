@@ -107,6 +107,21 @@ TIME_SERIES = False
 IS_VERTICAL_AXIS_TURBINE = np.full(N_TURBINES, False)
 VAWT_BLADE_LENGTHS = np.zeros(N_TURBINES)
 
+X_COORDS_VAWT = [
+    0.0,
+    5 * 26.0,
+    10 * 26.0,
+]
+Y_COORDS_VAWT = [
+    0.0,
+    0.0,
+    0.0,
+]
+Z_COORDS_VAWT = [
+    40.0,
+    40.0,
+    40.0,
+]
 
 ## Unit test fixtures
 
@@ -365,10 +380,191 @@ class SampleInputs:
         }
         self.turbine_floating["floating_correct_cp_ct_for_tilt"] = True
 
+        self.vertical_axis_turbine = {
+            "turbine_type": "t1_long_blades_vawt",
+            "is_vertical_axis_turbine": True,
+            "rotor_diameter": 26.0,
+            "vawt_blade_length": 48.0,
+            "hub_height": 40.0,
+            "pP": 1.88,
+            "pT": 1.88,
+            "generator_efficiency": 1.0,
+            "ref_density_cp_ct": 1.225,
+            "ref_tilt_cp_ct": 0.0,
+            "power_thrust_table": {
+                "power": [
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                    0.33,
+                ],
+                "thrust": [
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                    0.64,
+                ],
+                "wind_speed": [
+                    0.0,
+                    2.0,
+                    2.5,
+                    3.0,
+                    3.5,
+                    4.0,
+                    4.5,
+                    5.0,
+                    5.5,
+                    6.0,
+                    6.5,
+                    7.0,
+                    7.5,
+                    8.0,
+                    8.5,
+                    9.0,
+                    9.5,
+                    10.0,
+                    10.5,
+                    11.0,
+                    11.5,
+                    12.0,
+                    12.5,
+                    13.0,
+                    13.5,
+                    14.0,
+                    14.5,
+                    15.0,
+                    15.5,
+                    16.0,
+                    16.5,
+                    17.0,
+                    17.5,
+                    18.0,
+                    18.5,
+                    19.0,
+                    19.5,
+                    20.0,
+                    20.5,
+                    21.0,
+                    21.5,
+                    22.0,
+                    22.5,
+                    23.0,
+                    23.5,
+                    24.0,
+                    24.5,
+                    25.0,
+                    25.01,
+                    25.02,
+                    50.0,
+                ],
+            },
+            "TSR": 3.8,
+        }
+
         self.farm = {
             "layout_x": X_COORDS,
             "layout_y": Y_COORDS,
             "turbine_type": [self.turbine]
+        }
+
+        self.farm_vawt = {
+            "layout_x": X_COORDS_VAWT,
+            "layout_y": Y_COORDS_VAWT,
+            "turbine_type": [self.vertical_axis_turbine],
         }
 
         self.flow_field = {
@@ -380,6 +576,9 @@ class SampleInputs:
             "air_density": 1.225,
             "reference_wind_height": self.turbine["hub_height"],
         }
+
+        self.flow_field_vawt = copy.deepcopy(self.flow_field)
+        self.flow_field_vawt["reference_wind_height"] = self.vertical_axis_turbine["hub_height"]
 
         self.wake = {
             "model_strings": {
@@ -442,6 +641,16 @@ class SampleInputs:
                     "smoothing_length_D": 2.0,
                     "mixing_gain_velocity": 2.0
                 },
+                "super_gaussian_vawt": {
+                    "wake_expansion_coeff_y": 0.50,
+                    "wake_expansion_coeff_z": 0.50,
+                    "ay": 0.95,
+                    "az": 4.5,
+                    "by": 0.35,
+                    "bz": 0.70,
+                    "cy": 2.4,
+                    "cz": 2.4,
+                },
             },
             "wake_turbulence_parameters": {
                 "crespo_hernandez": {
@@ -459,10 +668,38 @@ class SampleInputs:
             "enable_transverse_velocities": False,
         }
 
+        self.wake_vawt = copy.deepcopy(self.wake)
+        model_strings_vawt = {
+            "velocity_model": "super_gaussian_vawt",
+            "deflection_model": "none",
+            "combination_model": "sosfs",
+            "turbulence_model": "none",
+        }
+        self.wake_vawt["model_strings"] = model_strings_vawt
+
         self.floris = {
             "farm": self.farm,
             "flow_field": self.flow_field,
             "wake": self.wake,
+            "solver": {
+                "type": "turbine_grid",
+                "turbine_grid_points": 3,
+            },
+            "logging": {
+                "console": {"enable": True, "level": 1},
+                "file": {"enable": False, "level": 1},
+            },
+            "name": "conftest",
+            "description": "Inputs used for testing",
+            "floris_version": "v3.0.0",
+        }
+
+        # Create a vertical-axis wind turbine (VAWT) configuration
+        # that is similar to `self.floris` above
+        self.floris_vawt = {
+            "farm": self.farm_vawt,
+            "flow_field": self.flow_field_vawt,
+            "wake": self.wake_vawt,
             "solver": {
                 "type": "turbine_grid",
                 "turbine_grid_points": 3,
