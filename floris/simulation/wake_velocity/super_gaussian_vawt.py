@@ -29,7 +29,7 @@ from floris.simulation import (
 @define
 class SuperGaussianVAWTVelocityDeficit(BaseModel):
     """
-    This is a super-Gaussian wake velocity model for Vertical Axis Wind Turbines (VAWTs).
+    This is a super-Gaussian wake velocity model for vertical-axis wind turbines (VAWTs).
     The model is based on :cite:`ouro2021theoretical` and allows the wake to have
     different characteristics in the cross-stream (y) and vertical direction (z). The initial
     wake shape is closely related to the turbine cross section, which is:
@@ -112,7 +112,7 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
         fac = np.sqrt(1 - ct_i)
         beta = 0.5 * (1 + fac) / fac
 
-        # Characteristic nondimensional wake width at x - x_i = 0
+        # `epsilon` is the characteristic nondimensional wake width at x - x_i = 0
         ny_0 = ay + cy
         nz_0 = az + cz
         eta_0 = 1/ny_0 + 1/nz_0
@@ -123,7 +123,7 @@ class SuperGaussianVAWTVelocityDeficit(BaseModel):
         sigma_y_tilde = ne.evaluate("ky_star * x_tilde + epsilon")
         sigma_z_tilde = ne.evaluate("kz_star * x_tilde_H + epsilon")
 
-        # Eponents which determine the wake shape
+        # Exponents which determine the wake shape
         ny = ne.evaluate("ay * exp(-by * x_tilde) + cy")
         nz = ne.evaluate("az * exp(-bz * x_tilde_H) + cz")
 
