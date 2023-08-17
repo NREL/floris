@@ -41,27 +41,27 @@ baseline = np.array(
     [
         # 8 m/s
         [
-            [7.9736330, 0.7636044, 1691326.6483808, 0.2568973],
-            [5.1827276, 0.8807411, 441118.3637433, 0.3273306],
-            [4.9925898, 0.8926413, 385869.8808447, 0.3361718],
+            [7.9808916, 0.6400000, 128284.1947176, 0.2000000],
+            [5.7072555, 0.6400000, 47157.2775396, 0.2000000],
+            [5.3899835, 0.6400000, 39671.9573422, 0.2000000],
         ],
-        # 9m/s
+        # 9 m/s
         [
-            [8.9703371, 0.7625570, 2407841.6718785, 0.2563594],
-            [5.8355012, 0.8438407, 650343.4078478, 0.3024150],
-            [5.6871296, 0.8514332, 598874.9374620, 0.3072782],
+            [8.9785030, 0.6400000, 182645.8538054, 0.2000000],
+            [6.4206624, 0.6400000, 66928.1744359, 0.2000000],
+            [6.0637314, 0.6400000, 56371.3864073, 0.2000000],
         ],
         # 10 m/s
         [
-            [9.9670412, 0.7529384, 3298067.1555604, 0.2514735],
-            [6.5341306, 0.8110034, 925882.5592972, 0.2826313],
-            [6.4005794, 0.8169593, 869713.2904634, 0.2860837],
+            [9.9761145, 0.6400000, 250533.3207157, 0.2000000],
+            [7.1340694, 0.6400000, 91857.4256469, 0.2000000],
+            [6.7374793, 0.6400000, 77466.6641405, 0.2000000],
         ],
         # 11 m/s
         [
-            [10.9637454, 0.7306256, 4363191.9880631, 0.2404936],
-            [7.3150380, 0.7819182, 1309551.0796815, 0.2665039],
-            [7.1452486, 0.7874908, 1219637.5477980, 0.2695064],
+            [10.9737259, 0.6400000, 333449.2621454, 0.2000000],
+            [7.8474763, 0.6400000, 122218.0126134, 0.2000000],
+            [7.4112273, 0.6400000, 102886.3004900, 0.2000000],
         ],
     ]
 )
@@ -78,7 +78,6 @@ def test_regression_tandem(sample_inputs_fixture):
         TURBULENCE_MODEL
 
     floris = Floris.from_dict(sample_inputs_fixture.floris_vawt)
-    exit() # pytest -sk 'test_regression_tandem' super_gaussian_vawt_regression_test.py
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
@@ -193,27 +192,29 @@ def test_regression_rotation(sample_inputs_fixture):
     In 270, turbines 2 and 3 are waked. In 360, turbines 0 and 2 are waked.
     The test compares turbines 2 and 3 with 0 and 2 from 270 and 360.
     """
-    TURBINE_DIAMETER = 126.0
+    TURBINE_DIAMETER = 26.0
 
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["turbulence_model"] = TURBULENCE_MODEL
-    sample_inputs_fixture.floris["farm"]["layout_x"] = [
+    sample_inputs_fixture.floris_vawt["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris_vawt["wake"]["model_strings"]["deflection_model"] = \
+        DEFLECTION_MODEL
+    sample_inputs_fixture.floris_vawt["wake"]["model_strings"]["turbulence_model"] = \
+        TURBULENCE_MODEL
+    sample_inputs_fixture.floris_vawt["farm"]["layout_x"] = [
         0.0,
         0.0,
         5 * TURBINE_DIAMETER,
         5 * TURBINE_DIAMETER,
     ]
-    sample_inputs_fixture.floris["farm"]["layout_y"] = [
+    sample_inputs_fixture.floris_vawt["farm"]["layout_y"] = [
         0.0,
         5 * TURBINE_DIAMETER,
         0.0,
-        5 * TURBINE_DIAMETER
+        5 * TURBINE_DIAMETER,
     ]
-    sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
-    sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
+    sample_inputs_fixture.floris_vawt["flow_field"]["wind_directions"] = [270.0, 360.0]
+    sample_inputs_fixture.floris_vawt["flow_field"]["wind_speeds"] = [8.0]
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris_vawt)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
@@ -251,20 +252,22 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     turbine to be affected by its own wake. This test requires that at least in this particular
     configuration the masking correctly filters grid points.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["turbulence_model"] = TURBULENCE_MODEL
+    sample_inputs_fixture.floris_vawt["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris_vawt["wake"]["model_strings"]["deflection_model"] = \
+        DEFLECTION_MODEL
+    sample_inputs_fixture.floris_vawt["wake"]["model_strings"]["turbulence_model"] = \
+        TURBULENCE_MODEL
     X, Y = np.meshgrid(
-        6.0 * 126.0 * np.arange(0, 5, 1),
-        6.0 * 126.0 * np.arange(0, 5, 1)
+        6.0 * 26.0 * np.arange(0, 5, 1),
+        6.0 * 26.0 * np.arange(0, 5, 1),
     )
     X = X.flatten()
     Y = Y.flatten()
 
-    sample_inputs_fixture.floris["farm"]["layout_x"] = X
-    sample_inputs_fixture.floris["farm"]["layout_y"] = Y
+    sample_inputs_fixture.floris_vawt["farm"]["layout_x"] = X
+    sample_inputs_fixture.floris_vawt["farm"]["layout_y"] = Y
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Floris.from_dict(sample_inputs_fixture.floris_vawt)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
