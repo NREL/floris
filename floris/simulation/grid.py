@@ -25,6 +25,7 @@ from attrs import define, field
 from floris.type_dec import (
     floris_array_converter,
     floris_float_type,
+    NDArrayBool,
     NDArrayFloat,
     NDArrayInt,
 )
@@ -152,21 +153,31 @@ class Grid(ABC):
 
 @define
 class TurbineGrid(Grid):
-    """See `Grid` for more details.
+    """
+    See `Grid` for more details.
 
     Args:
         turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.
         reference_turbine_diameter (:py:obj:`float`): A reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points in each
-            direction of the square grid on the rotor plane. For example, grid_resolution=3
-            creates a 3x3 grid within the rotor swept area.
+            direction of a yz-grid centered on the hub of each turbine. For example, for a
+            horizontal-axis turbine, grid_resolution=[3, 3] creates a 3x3 square grid in the rotor
+            plane within the rotor swept area. Alias grid_resolution=3 or grid_resolution=[3] can
+            be used to create the same 3x3 grid (setting the same number of points in each
+            direction).
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
+        is_vertical_axis_turbine (:py:obj:`NDArrayBool`): Indicates whether a turbine is a
+            vertical_axis_turbine (value `True`) or a traditional horizontal-axis turbine
+            (value `False`).
+        vawt_blade_lengths (:py:obj:`NDArrayFloat`): Length of the vertical turbine blades for
+            vertical-axis turbines. The value doesn't matter for horizontal-axis turbines, but
+            zero is usually used as a placeholder.
     """
     # TODO: describe these and the differences between `sorted_indices` and `sorted_coord_indices`
-    is_vertical_axis_turbine: np.ndarray = field(converter=np.array)
+    is_vertical_axis_turbine: NDArrayBool = field(converter=np.array)
     vawt_blade_lengths: NDArrayFloat = field()
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
@@ -183,6 +194,8 @@ class TurbineGrid(Grid):
         """
         Create grid points at each turbine for each wind direction and wind speed in the simulation.
         This creates the underlying data structure for the calculation.
+        Both horizontal-axis turbines and vertical-axis turbines are supported, including a mix
+        of the two in the same farm.
 
         arrays have shape
         (n wind directions, n wind speeds, n turbines, m grid spanwise, m grid vertically)
@@ -246,7 +259,7 @@ class TurbineGrid(Grid):
         width_ratio = 0.5
         height_ratio = 0.5
 
-        # Use a square area for traditional horisontal-axis turbines and a rectangular area
+        # Use a square area for horizontal-axis turbines and a rectangular area
         # for vertical-axis turbines
         width = width_ratio * self.reference_turbine_diameter
         height  = self.vawt_blade_lengths * self.is_vertical_axis_turbine
@@ -266,7 +279,7 @@ class TurbineGrid(Grid):
 
         # Conceptually, each turbine's grid can be seen as a meshgrid of a coordinate vector in
         # `cross_stream_vecs` and a coordinate vector in `vertical_vecs`. These variables store one
-        # vector per turbine, since the turbine diameters or vawt blade lenths may be different.
+        # vector per turbine, since the turbine diameters or vawt blade lengths may be different.
         if self.grid_resolution[0] == 1:
          # If the first grid resolution is 1, then let each coordinate vector in `cross_stream_vecs`
          # be [0.0], as np.linspace would just return the starting value of -width / 2 which would

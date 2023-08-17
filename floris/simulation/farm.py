@@ -31,6 +31,7 @@ from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
     iter_validator,
+    NDArrayBool,
     NDArrayFloat,
     NDArrayObject,
 )
@@ -84,7 +85,7 @@ class Farm(BaseClass):
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
     turbine_fTilts: list = field(init=False, default=[])
-    is_vertical_axis_turbine: list[bool] = field(init=False, default=[])
+    is_vertical_axis_turbine: NDArrayBool = field(init=False, default=[])
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:

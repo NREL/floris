@@ -605,6 +605,12 @@ class Turbine(BaseClass):
                 at different wind speeds.
             wind_speed (:py:obj: List[float]): The wind speeds for
                 which the power and thrust values are provided (m/s).
+        is_vertical_axis_turbine (:py:obj bool, optional): Placeholder attribute
+            for a vertical-axis wind turbine. If using such a turbine, please
+            instantiate a `VerticalAxisTurbine` instead of a `Turbine`.
+        vawt_blade_length (:py:obj float, optional): Placeholder attribute
+            for a vertical-axis wind turbine. If using such a turbine, please
+            instantiate a `VerticalAxisTurbine` instead of a `Turbine`.
         ngrid (*int*, optional): The square root of the number
             of points to use on the turbine grid. This number will be
             squared so that the points can be evenly distributed.
@@ -627,8 +633,6 @@ class Turbine(BaseClass):
     power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
     floating_tilt_table = field(default=None)
     floating_correct_cp_ct_for_tilt = field(default=None)
-    # Placeholder attributes for a vertical-axis wind turbine. If using such a turbine,
-    # please instantiate a VerticalAxisTurbine instead of a Turbine.
     is_vertical_axis_turbine = field(default=False)
     vawt_blade_length: float = field(default=0.0)
 
@@ -767,33 +771,36 @@ class Turbine(BaseClass):
 @define
 class VerticalAxisTurbine(BaseClass):
     """
-    Turbine is a class containing objects pertaining to the individual
-    turbines.
-
-    Turbine is a model class representing a particular wind turbine. It
-    is largely a container of data and parameters, but also contains
-    methods to probe properties for output.
+    VerticalAxisTurbine is a model class representing a particular
+    vertixal-axis wind turbine (VAWT). It is largely a container of data
+    and parameters, but also contains methods to probe properties for output.
 
     Parameters:
-        rotor_diameter (:py:obj: float): The rotor diameter (m).
-        hub_height (:py:obj: float): The hub height (m).
-        pP (:py:obj: float): The cosine exponent relating the yaw
-            misalignment angle to power.
-        pT (:py:obj: float): The cosine exponent relating the rotor
+        rotor_diameter (:py:obj:`float`): The rotor diameter (m).
+        vawt_blade_length (:py:obj:`float`): Length of the vertical turbine blades (m).
+        hub_height (:py:obj:`float`): The hub height (m).
+        pP (:py:obj:`float`): The cosine exponent relating the yaw
+            misalignment angle to power. This value shouldn't matter since the concept
+            of yaw is not applicable to VAWTs.
+        pT (:py:obj:`float`): The cosine exponent relating the rotor
             tilt angle to power.
-        generator_efficiency (:py:obj: float): The generator
+        TSR (:py:obj:`float`): Tip speed ratio defined as the tangential speed of the
+            blade tip normalized by the incoming wind speed.
+        generator_efficiency (:py:obj:`float`): The generator
             efficiency factor used to scale the power production.
-        ref_density_cp_ct (:py:obj: float): The density at which the provided
-            cp and ct is defined
+        ref_density_cp_ct (:py:obj:`float`): The density at which the provided
+            cp and ct is defined.
         power_thrust_table (PowerThrustTable): A dictionary containing the
             following key-value pairs:
 
-            power (:py:obj: List[float]): The coefficient of power at
+            power (:py:obj:`list[float]`): The coefficient of power at
                 different wind speeds.
-            thrust (:py:obj: List[float]): The coefficient of thrust
+            thrust (:py:obj:`list[float]`): The coefficient of thrust
                 at different wind speeds.
-            wind_speed (:py:obj: List[float]): The wind speeds for
+            wind_speed (:py:obj:`list[float]`): The wind speeds for
                 which the power and thrust values are provided (m/s).
+        is_vertical_axis_turbine (:py:obj:`bool`, optional): Value `True` indicates that
+            this is a vertical-axis turbine and not a traditional horizontal-axis turbine.
     """
 
     turbine_type: str = field()

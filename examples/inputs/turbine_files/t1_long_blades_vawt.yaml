@@ -1,9 +1,10 @@
+# This is a vertical-axis wind turbine (VAWT).
 turbine_type: 't1_long_blades_vawt'
 is_vertical_axis_turbine: True
 generator_efficiency: 1.0
 hub_height: 40.0
-# Cosine exponent for power loss due to yaw misalignment. Assume that this value
-# doesn't matter for VAWTs since they cannot have yaw.
+# Cosine exponent for power loss due to yaw misalignment. This value shouldn't
+# matter since the concept of yaw is not applicable to VAWTs.
 pP: 1.88
 # Cosine exponent for power loss due to tilt. Placeholder value.
 pT: 1.88

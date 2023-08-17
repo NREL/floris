@@ -106,7 +106,7 @@ class FlorisInterface(LoggerBase):
 
         if len(np.unique(self.floris.farm.is_vertical_axis_turbine)) == 2:
             raise NotImplementedError(
-                'There is currently no solver that supports a mix of horisontal-axis turbines '
+                'There is currently no solver that supports a mix of horizontal-axis turbines '
                 'and vertical-axis turbines in the same farm.'
             )
 
