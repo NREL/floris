@@ -265,6 +265,7 @@ def full_flow_sequential_solver(
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
 
+    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_fCts()
     turbine_grid_farm.construct_turbine_power_interps()
@@ -279,7 +280,6 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
@@ -670,6 +670,7 @@ def full_flow_cc_solver(
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
 
+    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_fCts()
     turbine_grid_farm.construct_turbine_power_interps()
@@ -684,7 +685,6 @@ def full_flow_cc_solver(
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
@@ -1110,6 +1110,7 @@ def full_flow_turbopark_solver(
     # turbine_grid_farm = copy.deepcopy(farm)
     # turbine_grid_flow_field = copy.deepcopy(flow_field)
 
+    # turbine_grid_farm.construct_is_vertical_axis_turbine()
     # turbine_grid_farm.construct_turbine_map()
     # turbine_grid_farm.construct_turbine_fCts()
     # turbine_grid_farm.construct_turbine_power_interps()
@@ -1119,7 +1120,6 @@ def full_flow_turbopark_solver(
     # turbine_grid_farm.construct_turbine_TSRs()
     # turbine_grid_farm.construc_turbine_pPs()
     # turbine_grid_farm.construct_coordinates()
-    # turbine_grid_farm.construct_is_vertical_axis_turbine()
 
 
     # turbine_grid = TurbineGrid(
@@ -1354,6 +1354,7 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
 
+    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_fCts()
     turbine_grid_farm.construct_turbine_power_interps()
@@ -1368,7 +1369,6 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
@@ -1624,6 +1624,7 @@ def full_flow_vawt_solver(
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
 
+    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_fCts()
     turbine_grid_farm.construct_turbine_power_interps()
@@ -1638,7 +1639,6 @@ def full_flow_vawt_solver(
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.construct_coordinates()
-    turbine_grid_farm.construct_is_vertical_axis_turbine()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(

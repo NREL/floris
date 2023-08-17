@@ -245,26 +245,22 @@ class Farm(BaseClass):
             [turb.correct_cp_ct_for_tilt for turb in self.turbine_map]
         )
 
-    def construct_turbine_map(self):
-        self.turbine_map = []
+    def construct_is_vertical_axis_turbine(self):
+        is_vertical_axis_turbine = []
         for turb in self.turbine_definitions:
             try:
-                is_vertical_axis_turbine = turb['is_vertical_axis_turbine']
+                is_vertical_axis_turbine.append(turb['is_vertical_axis_turbine'])
             except KeyError:
-                is_vertical_axis_turbine = False
+                is_vertical_axis_turbine.append(False)
+        self.is_vertical_axis_turbine = np.array(is_vertical_axis_turbine)
 
-            if is_vertical_axis_turbine:
+    def construct_turbine_map(self):
+        self.turbine_map = []
+        for turb, is_vawt in zip(self.turbine_definitions, self.is_vertical_axis_turbine):
+            if is_vawt:
                 self.turbine_map.append(VerticalAxisTurbine.from_dict(turb))
             else:
                 self.turbine_map.append(Turbine.from_dict(turb))
-
-    def construct_is_vertical_axis_turbine(self):
-        self.is_vertical_axis_turbine = []
-        for turb in self.turbine_definitions:
-            try:
-                self.is_vertical_axis_turbine.append(turb['is_vertical_axis_turbine'])
-            except KeyError:
-                self.is_vertical_axis_turbine.append(False)
 
     def construct_turbine_fCts(self):
         self.turbine_fCts = {

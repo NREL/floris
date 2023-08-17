@@ -77,6 +77,7 @@ class Floris(BaseClass):
         self.check_deprecated_inputs()
 
         # Initialize farm quanitities that depend on other objects
+        self.farm.construct_is_vertical_axis_turbine()
         self.farm.construct_turbine_map()
         self.farm.construct_turbine_fCts()
         self.farm.construct_turbine_power_interps()
@@ -91,7 +92,6 @@ class Floris(BaseClass):
         self.farm.construct_turbine_fTilts()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
         self.farm.construct_coordinates()
-        self.farm.construct_is_vertical_axis_turbine()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
         self.farm.set_tilt_to_ref_tilt(
             self.flow_field.n_wind_directions,
