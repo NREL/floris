@@ -86,6 +86,7 @@ class FlorisInterface(LoggerBase):
             if np.any(np.array(ngrid) > 3):
                 if isinstance(ngrid, int) or \
                     (isinstance(ngrid, Iterable) and len(np.array(ngrid)) == 1):
+                    # An alias (a single number) was used to set the grid resolution
                     self.logger.error(
                         f"`turbine_grid_points` is {ngrid} (which is an alias for grid resolution "
                         f"{self.floris.grid.grid_resolution} in the cross-stream and vertical "
@@ -94,7 +95,9 @@ class FlorisInterface(LoggerBase):
                         "points reduce the computational performance but have a small change on "
                         "accuracy."
                     )
-                else:
+                elif isinstance(ngrid, Iterable) and len(np.array(ngrid)) == 2:
+                    # The grid resolution was set in the same way as it is stored in the
+                    # `TurbineGrid` class
                     self.logger.error(
                         f"`turbine_grid_points` is {ngrid}. This is larger then the recommended "
                         "value of less than or equal to 3 in each direction. High amounts of "
