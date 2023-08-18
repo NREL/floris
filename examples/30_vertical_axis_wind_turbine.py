@@ -29,7 +29,7 @@ from floris.tools.visualization import (
 
 """
 The first part of this example shows a characteristic wake of a vertical-axis wind turbine (VAWT).
-It is based on case 3 in :cite:``abkar2019theoretical. The super-Gaussian velocity model with
+It is based on case 3 in :cite:`abkar2019theoretical`. The super-Gaussian velocity model with
 default coefficients is used, which allows the wake to have different characteristics in the
 cross-stream (y) and vertical direction (z). The initial wake shape is closely related to
 the turbine cross section, which is:
