@@ -53,13 +53,13 @@ def test_point_in_bounds(test_x, test_y, poly_outer):
     return poly_outer.contains(Point(test_x, test_y))
 
 # Return in MW
-def _get_aep(layout_x, layout_y, fi, freq):
+def _get_aep(layout_x, layout_y, fi, freq, yaw_angles=None):
     fi.reinitialize(
         layout_x = layout_x,
         layout_y = layout_y
     )
 
-    return fi.get_farm_AEP(freq)/1E6
+    return fi.get_farm_AEP(freq, yaw_angles=yaw_angles)/1E6
 
 def _gen_dist_based_init(
     N, # Number of turbins to place
@@ -127,6 +127,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         max_workers=None,
         grid_step_size = 100.,
         relegation_number = 1,
+        enable_geometric_yaw=False,
     ):
         """
         _summary_
@@ -210,7 +211,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         if min_dist_D is not None:
             min_dist = min_dist_D * self.D
 
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq)
+        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq,
+            enable_geometric_yaw=enable_geometric_yaw)
 
         # Save min_dist_D
         self.min_dist_D = self.min_dist / self.D
@@ -238,7 +240,13 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.seconds_per_iteration = seconds_per_iteration
 
         # Get the initial AEP value
-        self.aep_initial = _get_aep(self.x_initial, self.y_initial, self.fi, self.freq)
+        self.aep_initial = _get_aep(
+            self.x_initial,
+            self.y_initial,
+            self.fi,
+            self.freq,
+            self._get_geoyaw_angles()
+        )
 
         # Initialize the aep statistics
         self.aep_mean = self.aep_initial
