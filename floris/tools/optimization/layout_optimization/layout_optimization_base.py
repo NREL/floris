@@ -16,12 +16,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import Polygon, MultiPolygon
 
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
+    YawOptimizationGeometric,
+)
+
 from ....logging_manager import LoggerBase
 
 
 class LayoutOptimization(LoggerBase):
-    def __init__(self, fi, boundaries, min_dist=None, freq=None):
+    def __init__(self, fi, boundaries, min_dist=None, freq=None, enable_geometric_yaw=False):
         self.fi = fi.copy()
+
+        self.enable_geometric_yaw = enable_geometric_yaw
 
         # Allow boundaries to be set either as a list of corners or as a 
         # nested list of corners (for seperable regions)
@@ -62,6 +68,15 @@ class LayoutOptimization(LoggerBase):
         else:
             self.freq = freq
 
+        # Establish geometric yaw class
+        if self.enable_geometric_yaw:
+            self.yaw_opt = YawOptimizationGeometric(
+                fi,
+                minimum_yaw_angle=-30.0,
+                maximum_yaw_angle=30.0,
+                exploit_layout_symmetry=False
+            )
+
         self.initial_AEP = fi.get_farm_AEP(self.freq)
 
     def __str__(self):
@@ -72,6 +87,15 @@ class LayoutOptimization(LoggerBase):
 
     def _unnorm(self, val, x1, x2):
         return np.array(val) * (x2 - x1) + x1
+
+    def _get_geoyaw_angles(self):
+        if self.enable_geometric_yaw:
+            df_opt = self.yaw_opt.optimize()
+            self.yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
+        else:
+            self.yaw_angles = None
+
+        return self.yaw_angles
 
     # Public methods
 
@@ -104,7 +128,6 @@ class LayoutOptimization(LoggerBase):
             xy = np.array(line.coords)
             plt.plot(xy[:,0], xy[:,1], color="b")
 
-        plt.show()
 
     ###########################################################################
     # Properties
