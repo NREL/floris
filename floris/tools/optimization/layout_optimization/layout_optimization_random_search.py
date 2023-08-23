@@ -313,7 +313,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         if ax is None:
             fig, ax = plt.subplots(1,1)
         
-        ax.stem(self.distance_pmf["d"], self.distance_pmf["p"])
+        ax.stem(self.distance_pmf["d"], self.distance_pmf["p"], linefmt="k-")
         ax.grid(True)
         ax.set_xlabel("Step distance [m]")
         ax.set_ylabel("Probability")
@@ -486,7 +486,7 @@ def _single_particle_opt(
     fi_dict,
     freq,
     min_dist,
-    poly_outer, # Polygon of outer boundary (how generic is this? How do we support multiple zones?)
+    poly_outer,
     dist_pmf
 ):
 
