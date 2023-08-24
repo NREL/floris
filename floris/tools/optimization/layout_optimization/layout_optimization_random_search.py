@@ -120,7 +120,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         freq=None,
         min_dist_D=None,
         distance_pmf=None,
-        n_particles=4,
+        n_individuals=4,
         seconds_per_iteration=60.,
         total_optimization_seconds = 600.,
         interface="multiprocessing",  # Options are 'multiprocessing', 'mpi4py'
@@ -152,7 +152,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 (array of probability of occurence, should sum to 1). Defaults to 
                 uniform probability between 0.5D and 2D, with some extra mass
                 to encourage large changes. 
-            n_particles (int, optional): The number of particles to use in the
+            n_individuals (int, optional): The number of individuals to use in the
                 optimization. Defaults to 4.
             seconds_per_iteration (float, optional): The number of seconds to
                 run each step of the optimization for. Defaults to 60.
@@ -166,9 +166,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 available cores.
             grid_step_size (float): The courseness of the grid used to generate the initial layout.
                 Defaults to 100.
-            relegation_number (int): The number of the lowest performing particles to be replaced
-                with new particles generated from the best performing particle.  Must
-                be less than n_particles / 2.  Defaults to 1.
+            relegation_number (int): The number of the lowest performing individuals to be replaced
+                with new individuals generated from the best performing individual.  Must
+                be less than n_individuals / 2.  Defaults to 1.
         """
         # The parallel computing interface to use
         if interface == "mpi4py":
@@ -195,8 +195,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.interface = interface
 
         # Confirm the relegation_number is valid
-        if relegation_number >= n_particles / 2:
-            raise ValueError("relegation_number must be less than n_particles / 2.")
+        if relegation_number >= n_individuals / 2:
+            raise ValueError("relegation_number must be less than n_individuals / 2.")
         self.relegation_number = relegation_number
 
         # Store the rotor diameter and number of turbines
@@ -226,8 +226,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         # Save the grid step size
         self.grid_step_size = grid_step_size
 
-        # Save number of particles
-        self.n_particles = n_particles
+        # Save number of individuals
+        self.n_individuals = n_individuals
 
         # Store the initial locations
         self.x_initial = self.fi.layout_x
@@ -255,12 +255,12 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.aep_min = self.aep_initial
 
         # Initialize the numpy arrays which will hold the candidate layouts
-        # these will have dimensions n_particles x N_turbines
-        self.x_candidate = np.zeros((self.n_particles, self.N_turbines))
-        self.y_candidate = np.zeros((self.n_particles, self.N_turbines))
+        # these will have dimensions n_individuals x N_turbines
+        self.x_candidate = np.zeros((self.n_individuals, self.N_turbines))
+        self.y_candidate = np.zeros((self.n_individuals, self.N_turbines))
 
         # Initialize the array which will hold the AEP values for each candidate
-        self.aep_candidate = np.zeros(self.n_particles)
+        self.aep_candidate = np.zeros(self.n_individuals)
 
         # Initialize the iteration step
         self.iteration_step = -1
@@ -279,7 +279,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         print("Random Layout Optimization")
         print(f"Number of turbines to optimize = {self.N_turbines}")
         print(f"Minimum distance between turbines = {self.min_dist_D} [D], {self.min_dist} [m]")
-        print(f"Number of particles = {self.n_particles}")
+        print(f"Number of individuals = {self.n_individuals}")
         print(f"Seconds per iteration = {self.seconds_per_iteration}")
         print(f"Initial AEP = {self.aep_initial} [GWh]")
 
@@ -372,11 +372,11 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
     # Private methods
     def _generate_initial_layouts(self):
         """
-        This method generates n_particles initial layout of turbines. It does
+        This method generates n_individuals initial layout of turbines. It does
         this by calling the _generate_random_layout method within a multiprocessing
         pool.
         """
-        print(f'Generating {self.n_particles} initial layouts...')
+        print(f'Generating {self.n_individuals} initial layouts...')
         t1 = timerpc()
         # Generate the multiargs for parallel execution
         multiargs = [
@@ -387,7 +387,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
              self.xmax,
              self.ymin,
              self.ymax)
-             for i in range(self.n_particles)
+             for i in range(self.n_individuals)
         ]
 
 
@@ -398,12 +398,12 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                     out = p.starmap(_gen_dist_based_init, multiargs)
 
         # Unpack out into the candidate layouts
-        for i in range(self.n_particles):
+        for i in range(self.n_individuals):
             self.x_candidate[i, :] = out[i][0]
             self.y_candidate[i, :] = out[i][1]
 
         # Get the AEP values for each candidate layout
-        for i in range(self.n_particles):
+        for i in range(self.n_individuals):
             self.aep_candidate[i] = _get_aep(
                 self.x_candidate[i, :],
                 self.y_candidate[i, :],
@@ -433,7 +433,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         """
         Perform the optimization
         """
-        print(f'Optimizing {self.n_particles} initial layouts...')
+        print(f'Optimizing {self.n_individuals} initial layouts...')
         opt_start_time = timerpc()
         opt_stop_time = opt_start_time + self.total_optimization_seconds
         sim_time = 0
@@ -445,7 +445,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             print(f'Optimization time: {sim_time:.1f} s / {self.total_optimization_seconds:.1f} s')
 
 
-            # Generate the multiargs for parallel execution of single particle optimization
+            # Generate the multiargs for parallel execution of single individual optimization
             multiargs = [
                 (self.seconds_per_iteration,
                     self.aep_candidate[i],
@@ -456,20 +456,20 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                     self.min_dist,
                     self._boundary_polygon,
                     self.distance_pmf)
-                    for i in range(self.n_particles)
+                    for i in range(self.n_individuals)
             ]
 
-            # Run the single particle optimization in parallel
+            # Run the single individual optimization in parallel
             with self._PoolExecutor(self.max_workers) as p:
-                out = p.starmap(_single_particle_opt, multiargs)
+                out = p.starmap(_single_individual_opt, multiargs)
 
             # Unpack the results
-            for i in range(self.n_particles):
+            for i in range(self.n_individuals):
                 self.aep_candidate[i] = out[i][0]
                 self.x_candidate[i, :] = out[i][1]
                 self.y_candidate[i, :] = out[i][2]
 
-            # Evaluate the particles for this step
+            # Evaluate the individuals for this step
             self._evaluate_opt_step()
 
         # Finalize the result
@@ -486,7 +486,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
 
 
-def _single_particle_opt(
+def _single_individual_opt(
     seconds_per_iteration,
     initial_aep,
     layout_x,
@@ -569,5 +569,5 @@ def _single_particle_opt(
                 get_new_point = True
                 continue
 
-    # Return the best result from this particle
+    # Return the best result from this individual
     return current_aep, layout_x, layout_y
