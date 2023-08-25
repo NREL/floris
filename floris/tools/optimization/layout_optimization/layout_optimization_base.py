@@ -108,8 +108,11 @@ class LayoutOptimization(LoggerBase):
 
         plt.figure(figsize=(9, 6))
         fontsize = 16
-        plt.plot(x_initial, y_initial, "ob")
-        plt.plot(x_opt, y_opt, "or")
+        self.plot_layout_opt_boundary(
+            {"color":"None", "edgecolor":"b", "alpha":1, "linewidth":2}
+        )
+        plt.plot(x_initial, y_initial, "ob", label="Initial locations")
+        plt.plot(x_opt, y_opt, "or", label="New locations")
         # plt.title('Layout Optimization Results', fontsize=fontsize)
         plt.xlabel("x (m)", fontsize=fontsize)
         plt.ylabel("y (m)", fontsize=fontsize)
@@ -117,16 +120,26 @@ class LayoutOptimization(LoggerBase):
         plt.grid()
         plt.tick_params(which="both", labelsize=fontsize)
         plt.legend(
-            ["Old locations", "New locations"],
             loc="lower center",
             bbox_to_anchor=(0.5, 1.01),
             ncol=2,
             fontsize=fontsize,
         )
 
+
+    def plot_layout_opt_boundary(self, plot_boundary_dict={}):
+
+        default_plot_boundary_dict = {
+            "color":"k",
+            "alpha":0.1,
+            "edgecolor":None
+        }
+
+        plot_boundary_dict = {**default_plot_boundary_dict, **plot_boundary_dict}
+
         for line in self._boundary_line.geoms:
             xy = np.array(line.coords)
-            plt.plot(xy[:,0], xy[:,1], color="b")
+            plt.fill(xy[:,0], xy[:,1], **plot_boundary_dict)
 
 
     ###########################################################################
