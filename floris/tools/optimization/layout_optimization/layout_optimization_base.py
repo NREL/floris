@@ -117,7 +117,7 @@ class LayoutOptimization(LoggerBase):
         plt.xlabel("x (m)", fontsize=fontsize)
         plt.ylabel("y (m)", fontsize=fontsize)
         plt.axis("equal")
-        plt.grid()
+        plt.grid(True)
         plt.tick_params(which="both", labelsize=fontsize)
         plt.legend(
             loc="lower center",
@@ -140,6 +140,7 @@ class LayoutOptimization(LoggerBase):
         for line in self._boundary_line.geoms:
             xy = np.array(line.coords)
             plt.fill(xy[:,0], xy[:,1], **plot_boundary_dict)
+        plt.grid(True)
 
 
     ###########################################################################
