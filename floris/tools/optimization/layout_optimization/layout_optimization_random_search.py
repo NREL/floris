@@ -68,13 +68,17 @@ def _gen_dist_based_init(
     min_x,
     max_x,
     min_y,
-    max_y
+    max_y,
+    s
 ):
     """
     Generates an initial layout by randomly placing
     the first turbine than placing the remaining turbines
     as far as possible from the existing turbines.
     """
+
+    # Set random seed
+    np.random.seed(s)
 
     # Choose the initial point randomly
     init_x = float(random.randint(int(min_x),int(max_x)))
@@ -91,6 +95,7 @@ def _gen_dist_based_init(
     # Now add the remaining points
     for i in range(1,N):
 
+        print("Placing turbine {0} of {1}.".format(i, N))
         # Add a new turbine being as far as possible from current
         max_dist = 0.
         for x in np.arange(min_x, max_x,step_size):
@@ -123,11 +128,13 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         n_individuals=4,
         seconds_per_iteration=60.,
         total_optimization_seconds = 600.,
-        interface="multiprocessing",  # Options are 'multiprocessing', 'mpi4py'
+        interface="multiprocessing",  # Options are 'multiprocessing', 'mpi4py', None
         max_workers=None,
         grid_step_size = 100.,
         relegation_number = 1,
         enable_geometric_yaw=False,
+        use_dist_based_init=True,
+        random_seed=None
     ):
         """
         _summary_
@@ -169,6 +176,11 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             relegation_number (int): The number of the lowest performing individuals to be replaced
                 with new individuals generated from the best performing individual.  Must
                 be less than n_individuals / 2.  Defaults to 1.
+            enable_geometric_yaw (bool): Use geometric yaw code to determine approximate wake 
+                steering yaw angles during layout optimization routine. Defaults to False.
+            use_dist_based_init (bool): Generate initial layouts automatically by placing turbines
+                as far apart as possible.
+            random_seed (int or None): Random seed for reproducibility. Defaults to None.
         """
         # The parallel computing interface to use
         if interface == "mpi4py":
@@ -179,6 +191,15 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             self._PoolExecutor = mp.Pool
             if max_workers is None:
                 max_workers = mp.cpu_count()
+        elif interface is None:
+            if n_individuals > 1 or (max_workers is not None and max_workers > 1):
+                print("Parallelization not possible with interface=None. "+\
+                    "Reducing n_individuals to 1 and ignoring max_workers.")
+                self._PoolExecutor = None
+                max_workers = None
+                n_individuals = 1
+
+            
         # elif interface == "concurrent":
         #     from concurrent.futures import ProcessPoolExecutor
         #     self._PoolExecutor = ProcessPoolExecutor
@@ -188,11 +209,17 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 "Please use ' 'multiprocessing' or 'mpi4py'."
             )
 
+        if enable_geometric_yaw:
+            raise NotImplementedError("geometric yaw not yet configured.")
+
         # Store the max_workers
         self.max_workers = max_workers
 
         # Store the interface
         self.interface = interface
+
+        # Set and store the random seed
+        self.random_seed = random_seed
 
         # Confirm the relegation_number is valid
         if relegation_number >= n_individuals / 2:
@@ -270,7 +297,14 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.opt_time = 0
 
         # Generate the initial layouts
-        self._generate_initial_layouts()
+        if use_dist_based_init:
+            self._generate_initial_layouts()
+        else:
+            print(f'Using supplied initial layout for {self.n_individuals} individuals.')
+            for i in range(self.n_individuals):
+                self.x_candidate[i, :] = self.x_initial
+                self.y_candidate[i, :] = self.y_initial
+                self.aep_candidate[i] = self.aep_initial
 
         # Evaluate the initial optimization step
         self._evaluate_opt_step()
@@ -313,21 +347,6 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
         self.distance_pmf = dist_pmf
 
-    def plot_distance_pmf(self, ax=None):
-        """
-        Tool to check the used distance pmf.
-        """
-
-        if ax is None:
-            fig, ax = plt.subplots(1,1)
-        
-        ax.stem(self.distance_pmf["d"], self.distance_pmf["p"], linefmt="k-")
-        ax.grid(True)
-        ax.set_xlabel("Step distance [m]")
-        ax.set_ylabel("Probability")
-
-        return ax
-
     def _evaluate_opt_step(self):
 
         # Sort the candidate layouts by AEP
@@ -364,9 +383,10 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
         # Replace the relegation_number worst performing layouts with relegation_number
         # best layouts
-        self.aep_candidate[-self.relegation_number:] = self.aep_candidate[:self.relegation_number]
-        self.x_candidate[-self.relegation_number:] = self.x_candidate[:self.relegation_number]
-        self.y_candidate[-self.relegation_number:] = self.y_candidate[:self.relegation_number]
+        if self.relegation_number > 0:
+            self.aep_candidate[-self.relegation_number:] = self.aep_candidate[:self.relegation_number]
+            self.x_candidate[-self.relegation_number:] = self.x_candidate[:self.relegation_number]
+            self.y_candidate[-self.relegation_number:] = self.y_candidate[:self.relegation_number]
 
 
     # Private methods
@@ -376,26 +396,38 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         this by calling the _generate_random_layout method within a multiprocessing
         pool.
         """
+
+        # Set random seed for initial layout
+        if self.random_seed is None:
+            multi_random_seeds = [None]*self.n_individuals
+        else:
+            multi_random_seeds = [23 + i for i in range(self.n_individuals)]
+            # 23 is just an arbitrary choice to ensure different random seeds
+            # to the evaluation code
+            
         print(f'Generating {self.n_individuals} initial layouts...')
         t1 = timerpc()
         # Generate the multiargs for parallel execution
         multiargs = [
             (self.N_turbines,
-             self.grid_step_size,
-             self._boundary_polygon,
-             self.xmin,
-             self.xmax,
-             self.ymin,
-             self.ymax)
-             for i in range(self.n_individuals)
+            self.grid_step_size,
+            self._boundary_polygon,
+            self.xmin,
+            self.xmax,
+            self.ymin,
+            self.ymax,
+            multi_random_seeds[i])
+            for i in range(self.n_individuals)
         ]
 
-
-        with self._PoolExecutor(self.max_workers) as p:
-            # This code is not currently necessary, but leaving in case implement
-            # concurrent later, based on parallel_computing_interface.py
-            if (self.interface == "mpi4py") or (self.interface == "multiprocessing"):
-                    out = p.starmap(_gen_dist_based_init, multiargs)
+        if self._PoolExecutor: # Parallelized
+            with self._PoolExecutor(self.max_workers) as p:
+                # This code is not currently necessary, but leaving in case implement
+                # concurrent later, based on parallel_computing_interface.py
+                if (self.interface == "mpi4py") or (self.interface == "multiprocessing"):
+                        out = p.starmap(_gen_dist_based_init, multiargs)
+        else: # Parallelization not activated
+            out = [_gen_dist_based_init(*multiargs[0])]
 
         # Unpack out into the candidate layouts
         for i in range(self.n_individuals):
@@ -409,8 +441,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 self.y_candidate[i, :],
                 self.fi,
                 self.freq,
+                self._get_geoyaw_angles()
             )
-
 
         t2 = timerpc()
         print(f"  Time to generate intial layouts: {t2-t1:.3f} s")
@@ -438,7 +470,20 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         opt_stop_time = opt_start_time + self.total_optimization_seconds
         sim_time = 0
 
+        self.aep_candidate_log = []
+        self.num_aep_calls_log = []
+        self._num_aep_calls = [0]*self.n_individuals
+
         while timerpc() < opt_stop_time:
+
+            # Set random seed for the main loop
+            if self.random_seed is None:
+                multi_random_seeds = [None]*self.n_individuals
+            else:
+                multi_random_seeds = [55 + self.iteration_step + i 
+                    for i in range(self.n_individuals)]
+            # 55 is just an arbitrary choice to ensure different random seeds
+            # to the initialization code
 
             # Update the optimization time
             sim_time = timerpc() - opt_start_time
@@ -448,26 +493,34 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             # Generate the multiargs for parallel execution of single individual optimization
             multiargs = [
                 (self.seconds_per_iteration,
-                    self.aep_candidate[i],
-                    self.x_candidate[i, :],
-                    self.y_candidate[i, :],
-                    self.fi_dict,
-                    self.freq,
-                    self.min_dist,
-                    self._boundary_polygon,
-                    self.distance_pmf)
+                 self.aep_candidate[i],
+                 self.x_candidate[i, :],
+                 self.y_candidate[i, :],
+                 self.fi_dict,
+                 self.freq,
+                 self.min_dist,
+                 self._boundary_polygon,
+                 self.distance_pmf,
+                 multi_random_seeds[i]
+                )
                     for i in range(self.n_individuals)
             ]
 
             # Run the single individual optimization in parallel
-            with self._PoolExecutor(self.max_workers) as p:
-                out = p.starmap(_single_individual_opt, multiargs)
+            if self._PoolExecutor: # Parallelized
+                with self._PoolExecutor(self.max_workers) as p:
+                    out = p.starmap(_single_individual_opt, multiargs)
+            else: # Parallelization not activated
+                out = [_single_individual_opt(*multiargs[0])]
 
             # Unpack the results
             for i in range(self.n_individuals):
                 self.aep_candidate[i] = out[i][0]
                 self.x_candidate[i, :] = out[i][1]
                 self.y_candidate[i, :] = out[i][2]
+                self._num_aep_calls[i] = out[i][3]
+            self.aep_candidate_log.append(self.aep_candidate)
+            self.num_aep_calls_log.append(self._num_aep_calls)
 
             # Evaluate the individuals for this step
             self._evaluate_opt_step()
@@ -483,6 +536,22 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
         return self.final_aep, self.x_opt, self.y_opt
 
+    
+    # Helpful visualizations
+    def plot_distance_pmf(self, ax=None):
+        """
+        Tool to check the used distance pmf.
+        """
+
+        if ax is None:
+            fig, ax = plt.subplots(1,1)
+        
+        ax.stem(self.distance_pmf["d"], self.distance_pmf["p"], linefmt="k-")
+        ax.grid(True)
+        ax.set_xlabel("Step distance [m]")
+        ax.set_ylabel("Probability")
+
+        return ax
 
 
 
@@ -495,12 +564,17 @@ def _single_individual_opt(
     freq,
     min_dist,
     poly_outer,
-    dist_pmf
+    dist_pmf,
+    s
 ):
+    # Set random seed
+    np.random.seed(s)
 
     # Initialize the optimization time
     single_opt_start_time = timerpc()
     stop_time = single_opt_start_time + seconds_per_iteration
+
+    num_aep_calls = 0
 
     # Get the fi
     fi_ = _load_local_floris_object(fi_dict)
@@ -551,7 +625,9 @@ def _single_individual_opt(
                 continue
 
             # Does it improve AEP?
-            test_aep = _get_aep(layout_x, layout_y, fi_, freq)
+            num_aep_calls += 1
+            test_aep = _get_aep(layout_x, layout_y, fi_, freq) 
+            # TODO: Geoyaw angles not available here!
 
             if test_aep > current_aep:
                 # Accept the change
@@ -561,6 +637,7 @@ def _single_individual_opt(
                 # try not getting a new point
                 if not random_point:
                     get_new_point = False
+                    print("here. Why?")
 
             else:
                 # Revert the change
@@ -570,4 +647,4 @@ def _single_individual_opt(
                 continue
 
     # Return the best result from this individual
-    return current_aep, layout_x, layout_y
+    return current_aep, layout_x, layout_y, num_aep_calls
