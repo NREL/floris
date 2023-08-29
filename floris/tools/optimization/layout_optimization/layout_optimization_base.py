@@ -103,31 +103,47 @@ class LayoutOptimization(LoggerBase):
         sol = self._optimize()
         return sol
 
-    def plot_layout_opt_results(self):
+    def plot_layout_opt_results(self, plot_boundary_dict={}, ax=None, fontsize=16):
+        
         x_initial, y_initial, x_opt, y_opt = self._get_initial_and_final_locs()
 
-        plt.figure(figsize=(9, 6))
-        fontsize = 16
-        self.plot_layout_opt_boundary(
-            {"color":"None", "edgecolor":"b", "alpha":1, "linewidth":2}
-        )
-        plt.plot(x_initial, y_initial, "ob", label="Initial locations")
-        plt.plot(x_opt, y_opt, "or", label="New locations")
-        # plt.title('Layout Optimization Results', fontsize=fontsize)
-        plt.xlabel("x (m)", fontsize=fontsize)
-        plt.ylabel("y (m)", fontsize=fontsize)
-        plt.axis("equal")
-        plt.grid(True)
-        plt.tick_params(which="both", labelsize=fontsize)
-        plt.legend(
+        # Generate axis, if needed
+        if ax is None:
+            fig = plt.figure(figsize=(9,6))
+            ax = fig.add_subplot(111)
+            ax.set_aspect("equal")
+        
+        default_plot_boundary_dict = {
+            "color":"None",
+            "alpha":1,
+            "edgecolor":"b",
+            "linewidth":2
+        }
+        plot_boundary_dict = {**default_plot_boundary_dict, **plot_boundary_dict}
+
+        self.plot_layout_opt_boundary(plot_boundary_dict, ax=ax)
+        ax.plot(x_initial, y_initial, "ob", label="Initial locations")
+        ax.plot(x_opt, y_opt, "or", label="New locations")
+        ax.set_xlabel("x (m)", fontsize=fontsize)
+        ax.set_ylabel("y (m)", fontsize=fontsize)
+        ax.grid(True)
+        ax.tick_params(which="both", labelsize=fontsize)
+        ax.legend(
             loc="lower center",
             bbox_to_anchor=(0.5, 1.01),
             ncol=2,
             fontsize=fontsize,
         )
 
+        return ax
 
-    def plot_layout_opt_boundary(self, plot_boundary_dict={}):
+    def plot_layout_opt_boundary(self, plot_boundary_dict={}, ax=None):
+
+        # Generate axis, if needed
+        if ax is None:
+            fig = plt.figure(figsize=(9,6))
+            ax = fig.add_subplot(111)
+            ax.set_aspect("equal")
 
         default_plot_boundary_dict = {
             "color":"k",
@@ -139,8 +155,37 @@ class LayoutOptimization(LoggerBase):
 
         for line in self._boundary_line.geoms:
             xy = np.array(line.coords)
-            plt.fill(xy[:,0], xy[:,1], **plot_boundary_dict)
-        plt.grid(True)
+            ax.fill(xy[:,0], xy[:,1], **plot_boundary_dict)
+        ax.grid(True)
+
+        return ax
+
+    def plot_progress(self, ax=None):
+
+        if not hasattr(self, "aep_candidate_log"):
+            raise NotImplementedError(
+                "plot_progress not yet configured for "+self.__class__.__name__
+            )
+
+        if ax is None:
+            fig, ax = plt.subplots(1,1)
+
+        aep_log_array = np.array(self.aep_candidate_log)
+        
+        if len(aep_log_array.shape) == 1: # Just one AEP candidate per step
+            ax.plot(np.arange(len(aep_log_array)), aep_log_array, color="k")
+        elif len(aep_log_array.shape) == 2: # Multiple AEP candidates per step
+            for i in range(aep_log_array.shape[1]):
+                ax.plot(np.arange(len(aep_log_array)), aep_log_array[:,i], 
+                    color="lightgray")
+
+        # Plot aesthetics
+        ax.grid(True)
+        ax.set_xlabel("Optimization step [-]")
+        ax.set_ylabel("AEP value [GWh]") 
+        # TODO: Check optimizers for AEP unit consistency
+
+        return ax
 
 
     ###########################################################################
