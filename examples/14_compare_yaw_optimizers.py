@@ -39,7 +39,7 @@ The example now also compares the Geometric Yaw optimizer, which is fast
 a method to find approximately optimal yaw angles based on the wind farm geometry. Its
 main use case is for coupled layout and yaw optimization.
 see floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric.py and the paper online
-at https://wes.copernicus.org/preprints/wes-2023-1/. See also example 16c.
+at https://wes.copernicus.org/articles/8//2023/. See also example 16c.
 
 """
 
