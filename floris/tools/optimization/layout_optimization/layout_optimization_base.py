@@ -176,13 +176,13 @@ class LayoutOptimization(LoggerBase):
             ax.plot(np.arange(len(aep_log_array)), aep_log_array, color="k")
         elif len(aep_log_array.shape) == 2: # Multiple AEP candidates per step
             for i in range(aep_log_array.shape[1]):
-                ax.plot(np.arange(len(aep_log_array)), aep_log_array[:,i], 
+                ax.plot(np.arange(len(aep_log_array)), aep_log_array[:,i]/1e9, 
                     color="lightgray")
 
         # Plot aesthetics
         ax.grid(True)
         ax.set_xlabel("Optimization step [-]")
-        ax.set_ylabel("AEP value [GWh]") 
+        ax.set_ylabel("AEP value [GWh]")
         # TODO: Check optimizers for AEP unit consistency
 
         return ax

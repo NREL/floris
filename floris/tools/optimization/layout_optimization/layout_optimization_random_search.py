@@ -36,6 +36,9 @@ from floris.tools.uncertainty_interface import FlorisInterface
 
 from .layout_optimization_base import LayoutOptimization
 
+from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
+    YawOptimizationGeometric,
+)
 
 def _load_local_floris_object(
     fi_dict,
@@ -59,7 +62,7 @@ def _get_aep(layout_x, layout_y, fi, freq, yaw_angles=None):
         layout_y = layout_y
     )
 
-    return fi.get_farm_AEP(freq, yaw_angles=yaw_angles)/1E6
+    return fi.get_farm_AEP(freq, yaw_angles=yaw_angles)#/1E6
 
 def _gen_dist_based_init(
     N, # Number of turbins to place
@@ -208,9 +211,6 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 f"Interface '{interface}' not recognized. "
                 "Please use ' 'multiprocessing' or 'mpi4py'."
             )
-
-        if enable_geometric_yaw:
-            raise NotImplementedError("geometric yaw not yet configured.")
 
         # Store the max_workers
         self.max_workers = max_workers
@@ -501,6 +501,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                  self.min_dist,
                  self._boundary_polygon,
                  self.distance_pmf,
+                 self.enable_geometric_yaw,
                  multi_random_seeds[i]
                 )
                     for i in range(self.n_individuals)
@@ -565,6 +566,7 @@ def _single_individual_opt(
     min_dist,
     poly_outer,
     dist_pmf,
+    enable_geometric_yaw,
     s
 ):
     # Set random seed
@@ -584,6 +586,17 @@ def _single_individual_opt(
     get_new_point = True
     random_point = False
     current_aep = initial_aep
+
+    # Establish geometric yaw optimizer, if desired
+    if enable_geometric_yaw:
+        yaw_opt = YawOptimizationGeometric(
+            fi_,
+            minimum_yaw_angle=-30.0,
+            maximum_yaw_angle=30.0,
+            exploit_layout_symmetry=False
+        )
+    else: # yaw_angles will always be none
+        yaw_angles = None
 
     # Loop as long as we've not hit the stop time
     while timerpc() < stop_time:
@@ -625,8 +638,12 @@ def _single_individual_opt(
                 continue
 
             # Does it improve AEP?
+            if enable_geometric_yaw: # Select appropriate yaw angles
+                df_opt = yaw_opt.optimize()
+                yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
+
             num_aep_calls += 1
-            test_aep = _get_aep(layout_x, layout_y, fi_, freq) 
+            test_aep = _get_aep(layout_x, layout_y, fi_, freq, yaw_angles) 
             # TODO: Geoyaw angles not available here!
 
             if test_aep > current_aep:
