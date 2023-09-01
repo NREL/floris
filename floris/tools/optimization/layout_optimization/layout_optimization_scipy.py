@@ -95,6 +95,10 @@ class LayoutOptimizationScipy(LayoutOptimization):
     # Private methods
 
     def _optimize(self):
+
+        self._num_aep_calls = 0
+        self._aep_record = []
+
         self.residual_plant = minimize(
             self._obj_func,
             self.x0,
@@ -117,8 +121,11 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self._change_coordinates(locs_unnorm)
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
-        return (-1 * self.fi.get_farm_AEP(self.freq, yaw_angles=yaw_angles) /
-                self.initial_AEP)
+        self._num_aep_calls += 1
+        aep = self.fi.get_farm_AEP(self.freq, yaw_angles=yaw_angles)
+        self._aep_record.append(aep)
+        print(self.x)
+        return (-1 * aep / self.initial_AEP)
 
     def _change_coordinates(self, locs):
         # Parse the layout coordinates

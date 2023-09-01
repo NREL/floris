@@ -315,7 +315,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         print(f"Minimum distance between turbines = {self.min_dist_D} [D], {self.min_dist} [m]")
         print(f"Number of individuals = {self.n_individuals}")
         print(f"Seconds per iteration = {self.seconds_per_iteration}")
-        print(f"Initial AEP = {self.aep_initial} [GWh]")
+        print(f"Initial AEP = {self.aep_initial/1e9} [GWh]")
 
     def _process_dist_pmf(self, dist_pmf):
         """
@@ -371,13 +371,13 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         print("=======================================")
         print(f"Optimization step {self.iteration_step:+.1f}")
         print(f"Optimization time = {self.opt_time:+.1f} [s]")
-        print(f"Mean AEP = {self.aep_mean:.1f} [MWh] \
+        print(f"Mean AEP = {self.aep_mean/1e9:.1f} [GWh] \
               ({100 * (self.aep_mean - self.aep_initial) / self.aep_initial:+.2f}%)")
-        print(f"Median AEP = {self.aep_median:.1f} [MWh] \
+        print(f"Median AEP = {self.aep_median/1e9:.1f} [GWh] \
                ({100 * (self.aep_median - self.aep_initial) / self.aep_initial:+.2f}%)")
-        print(f"Max AEP = {self.aep_max:.1f} [MWh] \
+        print(f"Max AEP = {self.aep_max/1e9:.1f} [GWh] \
               ({100 * (self.aep_max - self.aep_initial) / self.aep_initial:+.2f}%)")
-        print(f"Min AEP = {self.aep_min:.1f} [MWh] \
+        print(f"Min AEP = {self.aep_min/1e9:.1f} [GWh] \
                ({100 * (self.aep_min - self.aep_initial) / self.aep_initial:+.2f}%)")
         print("=======================================")
 
@@ -465,7 +465,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         """
         Perform the optimization
         """
-        print(f'Optimizing {self.n_individuals} initial layouts...')
+        print(f'Optimizing using {self.n_individuals} individuals.')
         opt_start_time = timerpc()
         opt_stop_time = opt_start_time + self.total_optimization_seconds
         sim_time = 0
@@ -532,7 +532,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.y_opt = self.y_candidate[0, :]
 
         # Print the final result
-        print(f'Final AEP = {self.final_aep:.1f} [MWh] \
+        print(f'Final AEP = {self.final_aep/1e9:.1f} [GWh] \
                ({100 * (self.final_aep - self.aep_initial) / self.aep_initial:+.2f}%)')
 
         return self.final_aep, self.x_opt, self.y_opt
@@ -583,8 +583,7 @@ def _single_individual_opt(
 
     # Initialize local variables
     num_turbines = len(layout_x)
-    get_new_point = True
-    random_point = False
+    get_new_point = True # TODO: CHECK: how useful is this?
     current_aep = initial_aep
 
     # Establish geometric yaw optimizer, if desired
@@ -600,8 +599,6 @@ def _single_individual_opt(
 
     # Loop as long as we've not hit the stop time
     while timerpc() < stop_time:
-
-            random_point = False
 
             if get_new_point: #If the last test wasn't succesfull
 
@@ -652,15 +649,13 @@ def _single_individual_opt(
 
                 # If not a random point this cycle and it did improve things
                 # try not getting a new point
-                if not random_point:
-                    get_new_point = False
-                    print("here. Why?")
+                get_new_point = False # TODO: Possibly remove this feature
 
             else:
                 # Revert the change
                 layout_x[tr] = original_x
                 layout_y[tr] = original_y
-                get_new_point = True
+                get_new_point = True # TODO: Possibly remove this feature
                 continue
 
     # Return the best result from this individual
