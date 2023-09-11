@@ -162,7 +162,7 @@ class WindRose:
         df["ws"] = pd.cut(df.ws, ws_edges, labels=ws)
 
         # Regroup
-        df = df.groupby([c for c in df.columns if c != "freq_val"]).sum()
+        df = df.groupby([c for c in df.columns if c != "freq_val"], observed=False).sum()
 
         # Fill nans
         df = df.fillna(0)
