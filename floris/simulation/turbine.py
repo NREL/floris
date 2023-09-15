@@ -521,9 +521,9 @@ class PowerThrustTable(FromDictMixin):
         ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
         ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
     """
-    power: NDArrayFloat = field(converter=floris_array_converter)
-    thrust: NDArrayFloat = field(converter=floris_array_converter)
-    wind_speed: NDArrayFloat = field(converter=floris_array_converter)
+    power: NDArrayFloat = field(default=[], converter=floris_array_converter)
+    thrust: NDArrayFloat = field(default=[], converter=floris_array_converter)
+    wind_speed: NDArrayFloat = field(default=[], converter=floris_array_converter)
 
     def __attrs_post_init__(self) -> None:
         # Validate the power, thrust, and wind speed inputs.
@@ -624,9 +624,9 @@ class Turbine(BaseClass):
     generator_efficiency: float = field()
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
-    power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
-    floating_tilt_table = field(default=None)
-    floating_correct_cp_ct_for_tilt = field(default=None)
+    power_thrust_table: PowerThrustTable = field(default=None)
+    floating_tilt_table: TiltTable = field(default=None)
+    floating_correct_cp_ct_for_tilt: bool = field(default=None)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -650,6 +650,7 @@ class Turbine(BaseClass):
     def __attrs_post_init__(self) -> None:
 
         # Post-init initialization for the power curve interpolation functions
+        self.power_thrust_table = PowerThrustTable.from_dict(self.power_thrust_table)
         wind_speeds = self.power_thrust_table.wind_speed
         self.fCp_interp = interp1d(
             wind_speeds,
