@@ -12,6 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
+
 import copy
 from collections.abc import Iterable
 
@@ -83,7 +85,6 @@ def power_multidim(
     for i, wd in enumerate(power_interp):
         for j, ws in enumerate(wd):
             for k, turb in enumerate(ws):
-                print(power_interp[i, j, k](rotor_effective_velocities[i, j, k]))
                 p[i, j, k] = power_interp[i, j, k](rotor_effective_velocities[i, j, k])
 
     return p * ref_density_cp_ct
