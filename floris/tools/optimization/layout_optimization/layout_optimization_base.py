@@ -182,6 +182,8 @@ class LayoutOptimization(LoggerBase):
                 ax.plot(np.arange(len(aep_log_array)), aep_log_array[:,i]/1e9, 
                     color="lightgray")
 
+        # TODO: add initial point and final value (possibly with value labels?)
+
         # Plot aesthetics
         ax.grid(True)
         ax.set_xlabel("Optimization step [-]")

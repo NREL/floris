@@ -267,6 +267,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.seconds_per_iteration = seconds_per_iteration
 
         # Get the initial AEP value
+        self.x = self.x_initial # Required by _get_geoyaw_angles
+        self.y = self.y_initial # Required by _get_geoyaw_angles
         self.aep_initial = _get_aep(
             self.x_initial,
             self.y_initial,
@@ -274,6 +276,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             self.freq,
             self._get_geoyaw_angles()
         )
+        del self.x # Deleting to avoid confusion, since not updated
+        del self.y # Deleting to avoid confusion, since not updated
 
         # Initialize the aep statistics
         self.aep_mean = self.aep_initial
@@ -315,7 +319,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         print(f"Minimum distance between turbines = {self.min_dist_D} [D], {self.min_dist} [m]")
         print(f"Number of individuals = {self.n_individuals}")
         print(f"Seconds per iteration = {self.seconds_per_iteration}")
-        print(f"Initial AEP = {self.aep_initial/1e9} [GWh]")
+        print(f"Initial AEP = {self.aep_initial/1e9:.1f} [GWh]")
 
     def _process_dist_pmf(self, dist_pmf):
         """
@@ -470,7 +474,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         opt_stop_time = opt_start_time + self.total_optimization_seconds
         sim_time = 0
 
-        self.aep_candidate_log = []
+        self.aep_candidate_log = [self.aep_candidate] # TODO: Not recording initial correctly?
         self.num_aep_calls_log = []
         self._num_aep_calls = [0]*self.n_individuals
 
@@ -636,6 +640,7 @@ def _single_individual_opt(
 
             # Does it improve AEP?
             if enable_geometric_yaw: # Select appropriate yaw angles
+                yaw_opt.fi_subset.reinitialize(layout_x=layout_x, layout_y=layout_y)
                 df_opt = yaw_opt.optimize()
                 yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
 

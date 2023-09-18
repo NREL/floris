@@ -124,7 +124,6 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self._num_aep_calls += 1
         aep = self.fi.get_farm_AEP(self.freq, yaw_angles=yaw_angles)
         self._aep_record.append(aep)
-        print(self.x)
         return (-1 * aep / self.initial_AEP)
 
     def _change_coordinates(self, locs):
