@@ -170,7 +170,7 @@ def Ct_multidim(
     for i, wd in enumerate(fCt):
         for j, ws in enumerate(wd):
             for k, turb in enumerate(ws):
-                thrust_coefficient[i, j, k] = fCt[i, j, k](average_velocities)
+                thrust_coefficient[i, j, k] = fCt[i, j, k](average_velocities[i, j, k])
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
     return effective_thrust

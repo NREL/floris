@@ -292,16 +292,36 @@ class Farm(BaseClass):
             axis=2
         )
         if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys():
-            self.turbine_fCts_sorted = np.take_along_axis(
-                np.reshape(self.turbine_fCts, np.shape(template_shape)),
-                sorted_coord_indices,
-                axis=2
-            )
-            self.turbine_power_interps_sorted = np.take_along_axis(
-                np.reshape(self.turbine_power_interps, np.shape(template_shape)),
-                sorted_coord_indices,
-                axis=2
-            )
+            wd_dim = np.shape(template_shape)[0]
+            ws_dim = np.shape(template_shape)[1]
+            if wd_dim != 1 | ws_dim != 0:
+                self.turbine_fCts_sorted = np.take_along_axis(
+                    np.reshape(
+                        np.repeat(self.turbine_fCts, wd_dim * ws_dim),
+                        np.shape(template_shape)
+                    ),
+                    sorted_coord_indices,
+                    axis=2
+                )
+                self.turbine_power_interps_sorted = np.take_along_axis(
+                    np.reshape(
+                        np.repeat(self.turbine_power_interps, wd_dim * ws_dim),
+                        np.shape(template_shape)
+                    ),
+                    sorted_coord_indices,
+                    axis=2
+                )
+            else:
+                self.turbine_fCts_sorted = np.take_along_axis(
+                    np.reshape(self.turbine_fCts, np.shape(template_shape)),
+                    sorted_coord_indices,
+                    axis=2
+                )
+                self.turbine_power_interps_sorted = np.take_along_axis(
+                    np.reshape(self.turbine_power_interps, np.shape(template_shape)),
+                    sorted_coord_indices,
+                    axis=2
+                )
         self.rotor_diameters_sorted = np.take_along_axis(
             self.rotor_diameters * template_shape,
             sorted_coord_indices,
