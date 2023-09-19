@@ -215,11 +215,21 @@ class FlorisInterface(LoggerBase):
             flow_field_dict["wind_veer"] = wind_veer
         if reference_wind_height is not None:
             flow_field_dict["reference_wind_height"] = reference_wind_height
+
+        # If we have updated the wind direction and/or the wind speed, we must also update
+        # the turbulence intensity. We can only do this automatically if we have the same
+        # turbulence intensity for all wind directions and wind speeds.
+        if ((wind_speeds is not None) | (wind_directions is not None)) and \
+            (turbulence_intensity is None):
+            unique_turbulence_intensities = np.unique(flow_field_dict["turbulence_intensity"])
+            if len(unique_turbulence_intensities) == 1:
+                turbulence_intensity = float(unique_turbulence_intensities[0])
+
         if turbulence_intensity is not None:
             # Ensure turbulence intensity is of appropriate dimensions
             s = (
-                len(flow_field_dict["wind_directions"]),
-                len(flow_field_dict["wind_speeds"])
+                len(np.array(flow_field_dict["wind_directions"])),
+                len(np.array(flow_field_dict["wind_speeds"]))
             )
             if isinstance(turbulence_intensity, float):
                 turbulence_intensity = turbulence_intensity * np.ones(s)
