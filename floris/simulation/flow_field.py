@@ -39,7 +39,7 @@ class FlowField(BaseClass):
     wind_veer: float = field(converter=float)
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
-    turbulence_intensity: float = field(converter=float)
+    turbulence_intensity: NDArrayFloat = field(converter=floris_array_converter)
     reference_wind_height: float = field(converter=float)
     time_series : bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
@@ -214,14 +214,10 @@ class FlowField(BaseClass):
         self.v_sorted = self.v_initial_sorted.copy()
         self.w_sorted = self.w_initial_sorted.copy()
 
-        self.turbulence_intensity_field = self.turbulence_intensity * np.ones(
-            (
-                self.n_wind_directions,
-                self.n_wind_speeds,
-                grid.n_turbines,
-                1,
-                1,
-            )
+        self.turbulence_intensity_field = np.repeat(
+            self.turbulence_intensity[:, :, None, None, None],
+            repeats=grid.n_turbines,
+            axis=2
         )
         self.turbulence_intensity_field_sorted = self.turbulence_intensity_field.copy()
 

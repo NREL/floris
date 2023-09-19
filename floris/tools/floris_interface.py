@@ -185,7 +185,7 @@ class FlorisInterface(LoggerBase):
         wind_shear: float | None = None,
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
-        turbulence_intensity: float | None = None,
+        turbulence_intensity: float | list[float] | NDArrayFloat | None = None,
         # turbulence_kinetic_energy=None,
         air_density: float | None = None,
         # wake: WakeModelManager = None,
@@ -216,6 +216,16 @@ class FlorisInterface(LoggerBase):
         if reference_wind_height is not None:
             flow_field_dict["reference_wind_height"] = reference_wind_height
         if turbulence_intensity is not None:
+            # Ensure turbulence intensity is of appropriate dimensions
+            s = (
+                self.floris.flow_field.n_wind_directions,
+                self.floris.flow_field.n_wind_speeds
+            )
+            if isinstance(turbulence_intensity, float):
+                turbulence_intensity = turbulence_intensity * np.ones(s)
+            if not np.shape(turbulence_intensity) == s:
+                self.logger.error("Turbulence intensity array is not the right shape.")
+
             flow_field_dict["turbulence_intensity"] = turbulence_intensity
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
