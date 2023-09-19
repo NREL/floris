@@ -218,8 +218,8 @@ class FlorisInterface(LoggerBase):
         if turbulence_intensity is not None:
             # Ensure turbulence intensity is of appropriate dimensions
             s = (
-                self.floris.flow_field.n_wind_directions,
-                self.floris.flow_field.n_wind_speeds
+                len(flow_field_dict["wind_directions"]),
+                len(flow_field_dict["wind_speeds"])
             )
             if isinstance(turbulence_intensity, float):
                 turbulence_intensity = turbulence_intensity * np.ones(s)

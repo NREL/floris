@@ -76,11 +76,8 @@ def sequential_solver(
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
-    turbine_turbulence_intensity = (
-        flow_field.turbulence_intensity
-        * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
-    )
-    ambient_turbulence_intensity = flow_field.turbulence_intensity
+    turbine_turbulence_intensity = flow_field.turbulence_intensity_field
+    ambient_turbulence_intensity = flow_field.turbulence_intensity[:, :, None, None, None]
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
@@ -453,11 +450,8 @@ def cc_solver(
     turb_u_wake = np.zeros_like(flow_field.u_initial_sorted)
     turb_inflow_field = copy.deepcopy(flow_field.u_initial_sorted)
 
-    turbine_turbulence_intensity = (
-        flow_field.turbulence_intensity
-        * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
-    )
-    ambient_turbulence_intensity = flow_field.turbulence_intensity
+    turbine_turbulence_intensity = flow_field.turbulence_intensity_field
+    ambient_turbulence_intensity = flow_field.turbulence_intensity[:, :, None, None, None]
 
     shape = (farm.n_turbines,) + np.shape(flow_field.u_initial_sorted)
     Ctmp = np.zeros((shape))
@@ -871,11 +865,8 @@ def turbopark_solver(
     velocity_deficit = np.zeros(shape)
     deflection_field = np.zeros_like(flow_field.u_initial_sorted)
 
-    turbine_turbulence_intensity = (
-        flow_field.turbulence_intensity
-        * np.ones((flow_field.n_wind_directions, flow_field.n_wind_speeds, farm.n_turbines, 1, 1))
-    )
-    ambient_turbulence_intensity = flow_field.turbulence_intensity
+    turbine_turbulence_intensity = flow_field.turbulence_intensity_field
+    ambient_turbulence_intensity = flow_field.turbulence_intensity[:, :, None, None, None]
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):

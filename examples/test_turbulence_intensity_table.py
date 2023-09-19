@@ -34,22 +34,26 @@ The power of both turbines for each wind direction is then plotted
 # Instantiate FLORIS using either the GCH or CC model
 fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
 
-# # Option one: 
-# fi.reinitialize(
-#     wind_directions=[260.0, 270.0, 280.0],
-#     wind_speeds=[7.0, 9.0],
-#     turbulence_intensity=0.06
-# )
-# fi.calculate_wake()
-# farm_powers = fi.get_farm_power()
-# print(f"Farm powers: {farm_powers}")
+# Option one:
+ws_array = np.array([6.0, 7.0, 8.0, 9.0])
+ti_array = np.array([0.10, 0.09, 0.08, 0.07])
+farm_powers = []
+for wsii, ws in enumerate(ws_array):
+    fi.reinitialize(
+        wind_directions=[270.0],
+        wind_speeds=[ws],
+        turbulence_intensity=ti_array[wsii]
+    )
+    fi.calculate_wake()
+    farm_powers.append(float(fi.get_farm_power()))
+print(f"Farm powers (old method): {np.round(farm_powers)}")
 
 # Option two: as a table
 fi.reinitialize(
-    wind_directions=[260.0, 270.0, 280.0],
-    wind_speeds=[7.0, 9.0],
-    turbulence_intensity=[[0.08, 0.06], [0.081, 0.064], [0.079, 0.058]]
+    wind_directions=[270.0],
+    wind_speeds=ws_array,
+    turbulence_intensity=ti_array[None, :],
 )
 fi.calculate_wake()
-farm_powers = fi.get_farm_power()
-print(f"Farm powers: {farm_powers}")
+farm_powers = fi.get_farm_power().flatten()
+print(f"Farm powers (new method): {np.round(farm_powers)}")
