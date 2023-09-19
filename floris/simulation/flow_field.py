@@ -76,6 +76,12 @@ class FlowField(BaseClass):
         """Using the validator method to keep the `n_wind_directions` attribute up to date."""
         self.n_wind_directions = value.size
 
+    @turbulence_intensity.validator
+    def turbulence_intensity_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
+        """Using the validator method to format turbulence intensity to appropriate dimensions."""
+        if value.shape == ():  # If a float was specified, copy over to all conditions
+            self.turbulence_intensity = value * np.ones((self.n_wind_directions, self.n_wind_speeds))
+
     @heterogenous_inflow_config.validator
     def heterogenous_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
         """Using the validator method to check that the heterogenous_inflow_config dictionary has
