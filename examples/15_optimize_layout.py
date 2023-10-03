@@ -16,6 +16,7 @@
 import os
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from floris.tools import FlorisInterface
 from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
@@ -85,3 +86,5 @@ print(
     f'from {base_aep:.1f} MWh to {opt_aep:.1f} MWh'
 )
 layout_opt.plot_layout_opt_results()
+
+plt.show()
