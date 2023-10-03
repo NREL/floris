@@ -15,8 +15,8 @@
 
 import os
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 from floris.tools import FlorisInterface
 from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
