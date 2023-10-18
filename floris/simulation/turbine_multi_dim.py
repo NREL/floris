@@ -300,7 +300,7 @@ def multidim_Ct_down_select(
     return downselect_turbine_fCts
 
 
-def multidim_Cp_down_select(
+def multidim_power_down_select(
     power_interps,
     conditions,
 ) -> list:
@@ -346,16 +346,55 @@ def multidim_Cp_down_select(
 
 @define
 class MultiDimensionalPowerThrustTable():
-    """Helper class to convert the multi-dimensional inputs to a object of arrays.
-
-    Args:
-        power_thrust_data_file (str): Filename for the multidimensional Cp/Ct data.
+    """Helper class to convert the multi-dimensional inputs to a dictionary of objects.
     """
-    power_thrust_data_file: str = field()
 
-    def from_file(self, input_filename) -> None:
-        df = pd.read_csv(input_filename)
-        return df
+    @classmethod
+    def from_dataframe(self, df) -> None:
+        # Validate the dataframe
+        if not all(ele in df.columns.values.tolist() for ele in ["ws", "Cp", "Ct"]):
+            print(df.columns.values.tolist())
+            raise ValueError("Multidimensional data missing required ws/Cp/Ct data.")
+        if df.columns.values[-3:].tolist() != ["ws", "Cp", "Ct"]:
+            print(df.columns.values[-3:].tolist())
+            raise ValueError(
+                "Multidimensional data not in correct form. ws, Cp, and Ct must be "
+                "defined as the last 3 columns, in that order."
+            )
+
+        # Extract the supplied dimensions, minus the required ws, Cp, and Ct columns.
+        keys = df.columns.values[:-3].tolist()
+        values = [df[df.columns.values[i]].unique().tolist() for i in range(len(keys))]
+        values = [[str(val) for val in value] for value in values]
+
+        # Functions for recursively building a nested dictionary from
+        # an arbitrary number of paired-inputs.
+        def add_level(obj, k, v):
+            tmp = {}
+            for val in v:
+                tmp.update({val: []})
+            obj.update({k: tmp})
+            return obj
+
+        def add_sub_level(obj, k):
+            tmp = {}
+            for key in k:
+                tmp.update({key: obj})
+            return tmp
+
+        obj = {}
+        # Reverse the lists to start from the lowest level of the dictionary
+        keys.reverse()
+        values.reverse()
+        # Recursively build a nested dictionary from the user-supplied dimensions
+        for i, key in enumerate(keys):
+            if i == 0:
+                obj = add_level(obj, key, values[i])
+            else:
+                obj = add_sub_level(obj, values[i])
+                obj = {key: obj}
+
+        return flatten(obj)
 
 
 @define
@@ -398,7 +437,7 @@ class TurbineMultiDimensional(Turbine):
             Defaults to 0.5.
     """
 
-    power_thrust_data_file: MultiDimensionalPowerThrustTable = field(default=None)
+    power_thrust_data_file: str = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
@@ -423,55 +462,21 @@ class TurbineMultiDimensional(Turbine):
     def __attrs_post_init__(self) -> None:
 
         # Read in the multi-dimensional data supplied by the user.
-        self.power_thrust_data = MultiDimensionalPowerThrustTable.from_file(
-            [], self.power_thrust_data_file
-        )
+        df = pd.read_csv(self.power_thrust_data_file)
 
-        # Extract the supplied dimensions, minus the required ws, Cp, and Ct columns.
-        df = self.power_thrust_data
-        keys = df.columns.values[:-3].tolist()
-        values = [df[df.columns.values[i]].unique().tolist() for i in range(len(keys))]
-        values = [[str(val) for val in value] for value in values]
+        # Build the multi-dimensional power/thrust table
+        self.power_thrust_data = MultiDimensionalPowerThrustTable.from_dataframe(df)
 
-        # Functions for recursively building a nested dictionary from
-        # an arbitrary number of paired-inputs.
-        def add_level(obj, k, v):
-            tmp = {}
-            for val in v:
-                tmp.update({val: []})
-            obj.update({k: tmp})
-            return obj
-
-        def add_sub_level(obj, k):
-            tmp = {}
-            for key in k:
-                tmp.update({key: obj})
-            return tmp
-
-
-        obj = {}
-        # Reverse the lists to start from the lowest level of the dictionary
-        keys.reverse()
-        values.reverse()
-        # Recursively build a nested dictionary from the user-supplied dimensions
-        for i, key in enumerate(keys):
-            if i == 0:
-                obj = add_level(obj, key, values[i])
-            else:
-                obj = add_sub_level(obj, values[i])
-                obj = {key: obj}
-
-        # Flatten the dictionary, combining the nested keys into one key
-        flattened_obj = flatten(obj)
-        self.fCt_interp = copy.deepcopy(flattened_obj)
-        self.power_interp = copy.deepcopy(flattened_obj)
+        # Create placeholders for the interpolation functions
+        self.fCt_interp = copy.deepcopy(self.power_thrust_data)
+        self.power_interp = copy.deepcopy(self.power_thrust_data)
 
         # Down-select the DataFrame to have just the ws, Cp, and Ct values
         index_col = df.columns.values[:-2]
         df2 = df.set_index(index_col.tolist())
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
         # the Ct and power interpolants.
-        for key in flattened_obj.keys():
+        for key in self.power_thrust_data.keys():
             # Select the correct ws/Cp/Ct data
             data = df2.loc[key[1::2]].reset_index()
 

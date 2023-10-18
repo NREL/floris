@@ -29,7 +29,7 @@ from floris.simulation.turbine import (
     power,
     rotor_effective_velocity,
 )
-from floris.simulation.turbine_multi_dim import multidim_Cp_down_select, power_multidim
+from floris.simulation.turbine_multi_dim import multidim_power_down_select, power_multidim
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
 
@@ -628,7 +628,7 @@ class FlorisInterface(LoggerBase):
         if (self.turbine_effective_velocities < 0.).any():
             self.logger.warning("Some rotor effective velocities are negative.")
 
-        turbine_power_interps = multidim_Cp_down_select(
+        turbine_power_interps = multidim_power_down_select(
             self.floris.farm.turbine_power_interps,
             self.floris.flow_field.multidim_conditions
         )
