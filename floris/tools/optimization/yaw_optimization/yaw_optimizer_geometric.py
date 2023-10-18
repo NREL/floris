@@ -14,7 +14,6 @@
 
 
 import numpy as np
-from scipy.optimize import minimize
 
 from floris.utilities import rotate_coordinates_rel_west
 
