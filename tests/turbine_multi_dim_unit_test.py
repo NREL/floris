@@ -13,6 +13,8 @@
 # See https://floris.readthedocs.io for documentation
 
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -33,6 +35,10 @@ from floris.simulation.turbine_multi_dim import (
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
+TEST_DATA = Path(__file__).resolve().parent.parent / "floris" / "turbine_library"
+CSV_INPUT = TEST_DATA / "iea_15MW_multi_dim_Tp_Hs.csv"
+
+
 # size 3 x 4 x 1 x 1 x 1
 WIND_CONDITION_BROADCAST = np.stack(
     (
@@ -49,6 +55,7 @@ def test_multidim_Ct_down_select():
     CONDITIONS = {'Tp': 2, 'Hs': 1}
 
     turbine_data = SampleInputs().turbine_multi_dim
+    turbine_data["power_thrust_data_file"] = CSV_INPUT
     turbine = TurbineMultiDimensional.from_dict(turbine_data)
     turbine_type_map = np.array([turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
@@ -62,6 +69,7 @@ def test_multidim_power_down_select():
     CONDITIONS = {'Tp': 2, 'Hs': 1}
 
     turbine_data = SampleInputs().turbine_multi_dim
+    turbine_data["power_thrust_data_file"] = CSV_INPUT
     turbine = TurbineMultiDimensional.from_dict(turbine_data)
     turbine_type_map = np.array([turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
@@ -73,6 +81,7 @@ def test_multidim_power_down_select():
 
 def test_multi_dimensional_power_thrust_table():
     turbine_data = SampleInputs().turbine_multi_dim
+    turbine_data["power_thrust_data_file"] = CSV_INPUT
     df_data = pd.read_csv(turbine_data["power_thrust_data_file"])
     flattened_dict = MultiDimensionalPowerThrustTable.from_dataframe(df_data)
     flattened_dict_base = {
@@ -93,6 +102,7 @@ def test_multi_dimensional_power_thrust_table():
 
 def test_turbine_init():
     turbine_data = SampleInputs().turbine_multi_dim
+    turbine_data["power_thrust_data_file"] = CSV_INPUT
     turbine = TurbineMultiDimensional.from_dict(turbine_data)
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
@@ -111,6 +121,7 @@ def test_ct():
     N_TURBINES = 4
 
     turbine_data = SampleInputs().turbine_multi_dim
+    turbine_data["power_thrust_data_file"] = CSV_INPUT
     turbine = TurbineMultiDimensional.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
@@ -184,6 +195,7 @@ def test_power():
     AIR_DENSITY = 1.225
 
     turbine_data = SampleInputs().turbine_multi_dim
+    turbine_data["power_thrust_data_file"] = CSV_INPUT
     turbine = TurbineMultiDimensional.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
@@ -247,6 +259,7 @@ def test_axial_induction():
     N_TURBINES = 4
 
     turbine_data = SampleInputs().turbine_multi_dim
+    turbine_data["power_thrust_data_file"] = CSV_INPUT
     turbine = TurbineMultiDimensional.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
