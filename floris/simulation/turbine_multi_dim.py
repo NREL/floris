@@ -278,24 +278,17 @@ def multidim_Ct_down_select(
     for i, wd in enumerate(turbine_fCts):
         for j, ws in enumerate(wd):
             for k, turb in enumerate(ws):
-                # Get the interpolant keys in string type for selection
-                keys_str = np.array([list(val[1::2]) for val in turb.keys()])
                 # Get the interpolant keys in float type for comparison
-                keys_float = np.array([[float(v) for v in val[1::2]] for val in turb.keys()])
+                keys_float = np.array([[float(v) for v in val] for val in turb.keys()])
 
-                # Find the nearest key to the specified conditions. The index returned from
-                # argmin() is then used to select the string form of the key, thus eliminating
-                # issues arising from converting the string values to float and back in terms
-                # of format when being used as the dictionary key.
+                # Find the nearest key to the specified conditions.
                 key_vals = []
                 for ii, cond in enumerate(conditions.values()):
-                    key_vals.append(keys_str[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()])
+                    key_vals.append(
+                        keys_float[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()]
+                    )
 
-                # Use the constructed key to choose the correct interpolant
-                downselect_key = tuple(
-                    [item for items in zip(conditions.keys(), key_vals) for item in items]
-                )
-                downselect_turbine_fCts[i, j, k] = turb[downselect_key]
+                downselect_turbine_fCts[i, j, k] = turb[tuple(key_vals)]
 
     return downselect_turbine_fCts
 
@@ -322,24 +315,18 @@ def multidim_power_down_select(
     for i, wd in enumerate(power_interps):
         for j, ws in enumerate(wd):
             for k, turb in enumerate(ws):
-                # Get the interpolant keys in string type for selection
-                keys_str = np.array([list(val[1::2]) for val in turb.keys()])
                 # Get the interpolant keys in float type for comparison
-                keys_float = np.array([[float(v) for v in val[1::2]] for val in turb.keys()])
+                keys_float = np.array([[float(v) for v in val] for val in turb.keys()])
 
-                # Find the nearest key to the specified conditions. The index returned from
-                # argmin() is then used to select the string form of the key, thus eliminating
-                # issues arising from converting the string values to float and back in terms
-                # of format when being used as the dictionary key.
+                # Find the nearest key to the specified conditions.
                 key_vals = []
                 for ii, cond in enumerate(conditions.values()):
-                    key_vals.append(keys_str[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()])
+                    key_vals.append(
+                        keys_float[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()]
+                    )
 
                 # Use the constructed key to choose the correct interpolant
-                downselect_key = tuple(
-                    [item for items in zip(conditions.keys(), key_vals) for item in items]
-                )
-                downselect_power_interps[i, j, k] = turb[downselect_key]
+                downselect_power_interps[i, j, k] = turb[tuple(key_vals)]
 
     return downselect_power_interps
 
@@ -468,17 +455,18 @@ class TurbineMultiDimensional(Turbine):
         self.power_thrust_data = MultiDimensionalPowerThrustTable.from_dataframe(df)
 
         # Create placeholders for the interpolation functions
-        self.fCt_interp = copy.deepcopy(self.power_thrust_data)
-        self.power_interp = copy.deepcopy(self.power_thrust_data)
+        self.fCt_interp = {}
+        self.power_interp = {}
 
         # Down-select the DataFrame to have just the ws, Cp, and Ct values
-        index_col = df.columns.values[:-2]
+        index_col = df.columns.values[:-3]
         df2 = df.set_index(index_col.tolist())
+
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
         # the Ct and power interpolants.
-        for key in self.power_thrust_data.keys():
+        for key in df2.index.unique():
             # Select the correct ws/Cp/Ct data
-            data = df2.loc[key[1::2]].reset_index()
+            data = df2.loc[key]
 
             # Build the interpolants
             wind_speeds = data['ws'].values
