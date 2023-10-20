@@ -1,4 +1,4 @@
-# Copyright 2021 NREL
+# Copyright 2023 NREL
 
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -37,6 +37,10 @@ the turbine definition. Also of note is the 'velocity_model' must be set to 'mul
 the main input file. With both of these values provided, the solver will downselect to use the
 interpolant defined at the closest conditions. The user must supply these conditions in the
 main input file under the 'flow_field' section, e.g.:
+
+NOTE: The multi-dimensional Cp/Ct data used in this example is fictional for the purposes of
+facilitating this example. The Cp/Ct values for the different wave conditions are scaled
+values of the original Cp/Ct data for the IEA 15MW turbine.
 
 flow_field:
   multidim_conditions:
