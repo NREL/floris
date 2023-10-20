@@ -62,7 +62,7 @@ def test_multidim_Ct_down_select():
 
     downselect_turbine_fCts = multidim_Ct_down_select([[[turbine.fCt_interp]]], CONDITIONS)
 
-    assert downselect_turbine_fCts == turbine.fCt_interp[('Tp', '2', 'Hs', '1')]
+    assert downselect_turbine_fCts == turbine.fCt_interp[(2, 1)]
 
 
 def test_multidim_power_down_select():
@@ -76,7 +76,7 @@ def test_multidim_power_down_select():
 
     downselect_power_interps = multidim_power_down_select([[[turbine.power_interp]]], CONDITIONS)
 
-    assert downselect_power_interps == turbine.power_interp[('Tp', '2', 'Hs', '1')]
+    assert downselect_power_interps == turbine.power_interp[(2, 1)]
 
 
 def test_multi_dimensional_power_thrust_table():
@@ -134,13 +134,14 @@ def test_ct():
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
-        fCt=np.array([[[turbine.fCt_interp[('Tp', '2', 'Hs', '1')]]]]),
+        fCt=np.array([[[turbine.fCt_interp[(2, 1)]]]]),
         tilt_interp=np.array([(turbine.turbine_type, None)]),
         correct_cp_ct_for_tilt=np.array([[[False]]]),
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
-    np.testing.assert_allclose(thrust, np.array([[[0.58857407]]]))
+    print(thrust)
+    np.testing.assert_allclose(thrust, np.array([[[0.77853469]]]))
 
     # Multiple turbines with index filter
     # 4 turbines with 3 x 3 grid arrays
@@ -150,7 +151,7 @@ def test_ct():
         tilt_angle=np.ones((1, 1, N_TURBINES)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, N_TURBINES)) * 5.0,
         fCt=np.tile(
-            [turbine.fCt_interp[('Tp', '2', 'Hs', '1')]],
+            [turbine.fCt_interp[(2, 1)]],
             (
                 np.shape(WIND_CONDITION_BROADCAST)[0],
                 np.shape(WIND_CONDITION_BROADCAST)[1],
@@ -168,22 +169,22 @@ def test_ct():
 
     thrusts_truth = [
         [
-            [0.44540072, 0.44540072],
-            [0.74548909, 0.74548909],
-            [0.58857407, 0.58857407],
-            [0.48218958, 0.48218958],
+            [0.77853469, 0.77853469],
+            [0.77853469, 0.77853469],
+            [0.77853469, 0.77853469],
+            [0.6957943,  0.6957943 ],
         ],
         [
-            [0.44540072, 0.44540072],
-            [0.74548909, 0.74548909],
-            [0.58857407, 0.58857407],
-            [0.48218958, 0.48218958],
+            [0.77853469, 0.77853469],
+            [0.77853469, 0.77853469],
+            [0.77853469, 0.77853469],
+            [0.6957943,  0.6957943 ],
         ],
         [
-            [0.44540072, 0.44540072],
-            [0.74548909, 0.74548909],
-            [0.58857407, 0.58857407],
-            [0.48218958, 0.48218958],
+            [0.77853469, 0.77853469],
+            [0.77853469, 0.77853469],
+            [0.77853469, 0.77853469],
+            [0.6957943,  0.6957943 ],
         ],
     ]
 
@@ -205,16 +206,16 @@ def test_power():
     p = power_multidim(
         ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
-        power_interp=np.array([[[turbine.power_interp[('Tp', '2', 'Hs', '1')]]]]),
+        power_interp=np.array([[[turbine.power_interp[(2, 1)]]]]),
     )
 
     power_truth = [
         [
             [
                 [
-                    [1607841.34706696, 1607841.34706696, 1607841.34706696],
-                    [1607841.34706696, 1607841.34706696, 1607841.34706696],
-                    [1607841.34706696, 1607841.34706696, 1607841.34706696],
+                    [3215682.686486, 3215682.686486, 3215682.686486],
+                    [3215682.686486, 3215682.686486, 3215682.686486],
+                    [3215682.686486, 3215682.686486, 3215682.686486],
                 ]
             ]
         ]
@@ -228,7 +229,7 @@ def test_power():
         ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=rotor_effective_velocities,
         power_interp=np.tile(
-            [turbine.power_interp[('Tp', '2', 'Hs', '1')]],
+            [turbine.power_interp[(2, 1)]],
             (
                 np.shape(WIND_CONDITION_BROADCAST)[0],
                 np.shape(WIND_CONDITION_BROADCAST)[1],
@@ -239,7 +240,7 @@ def test_power():
     )
     assert len(p[0, 0]) == len(INDEX_FILTER)
 
-    unique_power = turbine.power_interp[('Tp', '2', 'Hs', '1')](
+    unique_power = turbine.power_interp[(2, 1)](
         np.unique(rotor_effective_velocities)
     ) * AIR_DENSITY
 
@@ -264,7 +265,7 @@ def test_axial_induction():
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
 
-    baseline_ai = 0.17928754
+    baseline_ai = 0.2646995
 
     # Single turbine
     wind_speed = 10.0
@@ -273,7 +274,7 @@ def test_axial_induction():
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
-        fCt=np.array([[[turbine.fCt_interp[('Tp', '2', 'Hs', '1')]]]]),
+        fCt=np.array([[[turbine.fCt_interp[(2, 1)]]]]),
         tilt_interp=np.array([(turbine.turbine_type, None)]),
         correct_cp_ct_for_tilt=np.array([[[False]]]),
         turbine_type_map=turbine_type_map[0,0,0],
@@ -287,7 +288,7 @@ def test_axial_induction():
         tilt_angle=np.ones((1, 1, N_TURBINES)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, N_TURBINES)) * 5.0,
         fCt=np.tile(
-            [turbine.fCt_interp[('Tp', '2', 'Hs', '1')]],
+            [turbine.fCt_interp[(2, 1)]],
             (
                 np.shape(WIND_CONDITION_BROADCAST)[0],
                 np.shape(WIND_CONDITION_BROADCAST)[1],
