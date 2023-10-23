@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import attrs
 import yaml
 from attrs import define, field
 
@@ -23,7 +24,9 @@ from floris import logging_manager
 from floris.simulation import (
     BaseClass,
     cc_solver,
+    CCSolver,
     empirical_gauss_solver,
+    EmpiricalGaussSolver,
     Farm,
     FlowField,
     FlowFieldGrid,
@@ -35,10 +38,12 @@ from floris.simulation import (
     Grid,
     PointsGrid,
     sequential_solver,
+    SequentialSolver,
     State,
     TurbineCubatureGrid,
     TurbineGrid,
     turbopark_solver,
+    TurbOParkSolver,
     WakeModelManager,
 )
 from floris.utilities import load_yaml
@@ -65,6 +70,13 @@ class Floris(BaseClass):
     floris_version: str = field(converter=str)
 
     grid: Grid = field(init=False)
+    solve: SequentialSolver | CCSolver | TurbOParkSolver | EmpiricalGaussSolver = field(
+        default=None,
+        init=False,
+        validator=attrs.validators.instance_of(
+            (SequentialSolver, CCSolver, TurbOParkSolver, EmpiricalGaussSolver, type(None))
+        )
+    )
 
     def __attrs_post_init__(self) -> None:
 
@@ -223,33 +235,16 @@ class Floris(BaseClass):
             )
 
         if vel_model=="cc":
-            cc_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+            self.solve = CCSolver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turbopark":
-            turbopark_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+            self.solve = TurbOParkSolver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="empirical_gauss":
-            empirical_gauss_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+            self.solve = EmpiricalGaussSolver(self.farm, self.flow_field, self.grid, self.wake)
         else:
-            sequential_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+            self.solve = SequentialSolver(self.farm, self.flow_field, self.grid, self.wake)
+
+        self.solve.solve()
+        self.post_solve_update_flow_field()
         # end = time.time()
         # elapsed_time = end - start
 
@@ -268,13 +263,16 @@ class Floris(BaseClass):
         vel_model = self.wake.model_strings["velocity_model"]
 
         if vel_model=="cc":
-            full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
+            self.solve = CCSolver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turbopark":
-            full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
+            self.solve = TurbOParkSolver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="empirical_gauss":
-            full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
+            self.solve = EmpiricalGaussSolver(self.farm, self.flow_field, self.grid, self.wake)
         else:
-            full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+            self.solve = SequentialSolver(self.farm, self.flow_field, self.grid, self.wake)
+
+        self.solve.solve(full_flow=True)
+        self.post_solve_update_flow_field()
 
     def solve_for_points(self, x, y, z):
         # Do the calculation with the TurbineGrid for a single wind speed
@@ -307,12 +305,37 @@ class Floris(BaseClass):
                 "solve_for_points is currently only available with the "+\
                 "gauss, jensen, and empirical_guass models."
             )
-        elif vel_model == "empirical_gauss":
-            full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
+
+        if vel_model == "empirical_gauss":
+            self.solve = EmpiricalGaussSolver(self.farm, self.flow_field, field_grid, self.wake)
         else:
-            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+            # full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+            self.solve = SequentialSolver(self.farm, self.flow_field, self.grid, self.wake)
+
+        self.solve.solve(full_flow=True)
+        self.post_solve_update_flow_field()
 
         return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
+
+    def post_solve_update_flow_field(self):
+        """Updates the `flow_field` values with those that were solved during the steady state
+        calculation.
+        """
+        self.flow_field.u = self.solve.flow_field.u
+        self.flow_field.v = self.solve.flow_field.v
+        self.flow_field.w = self.solve.flow_field.w
+        self.flow_field.u_sorted = self.solve.flow_field.u_sorted
+        self.flow_field.v_sorted = self.solve.flow_field.v_sorted
+        self.flow_field.w_sorted = self.solve.flow_field.w_sorted
+        self.flow_field.turbulence_intensity_field = (
+            self.solve.flow_field.turbulence_intensity_field
+            )
+        self.flow_field.turbulence_intensity_field_sorted = (
+            self.solve.flow_field.turbulence_intensity_field_sorted
+        )
+        self.flow_field.turbulence_intensity_field_sorted_avg = (
+            self.solve.flow_field.turbulence_intensity_field_sorted_avg
+        )
 
     def finalize(self):
         # Once the wake calculation is finished, unsort the values to match
