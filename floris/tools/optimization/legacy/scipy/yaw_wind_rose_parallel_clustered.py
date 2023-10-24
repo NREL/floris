@@ -20,6 +20,7 @@ import pandas as pd
 from scipy.optimize import minimize
 
 from floris.logging_manager import LoggerBase
+
 from .yaw_wind_rose_clustered import YawOptimizationWindRoseClustered
 
 

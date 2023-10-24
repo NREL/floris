@@ -18,6 +18,7 @@ import numpy as np
 import pandas as pd
 
 from floris.logging_manager import LoggerBase
+
 from .cluster_turbines import cluster_turbines
 from .yaw_wind_rose import YawOptimizationWindRose
 
