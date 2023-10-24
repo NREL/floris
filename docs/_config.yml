@@ -60,7 +60,7 @@ sphinx:
       members: true
       member-order: bysource
       undoc-members: true
-      private-members: true
+      private-members: false
       # special-members: true
       # inherited-members
       # show-inheritance
