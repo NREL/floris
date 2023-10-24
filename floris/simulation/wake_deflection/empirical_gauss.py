@@ -60,7 +60,7 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
     """
     horizontal_deflection_gain_D: float = field(default=3.0)
     vertical_deflection_gain_D: float = field(default=-1)
-    deflection_rate: float = field(default=15)
+    deflection_rate: float = field(default=30)
     mixing_gain_deflection: float = field(default=0.0)
     yaw_added_mixing_gain: float = field(default=0.0)
 
