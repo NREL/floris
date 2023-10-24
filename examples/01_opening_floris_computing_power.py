@@ -51,7 +51,7 @@ print('The turbine power matrix should be of dimensions 1 WD X 1 WS X 2 Turbines
 print(turbine_powers)
 print("Shape: ",turbine_powers.shape)
 
-# Single wind speed and wind direction
+# Single wind speed and multiple wind directions
 print('\n========================= Single Wind Direction and Multiple Wind Speeds ===============')
 
 
@@ -64,7 +64,7 @@ print('The turbine power matrix should be of dimensions 1 WD X 3 WS X 2 Turbines
 print(turbine_powers)
 print("Shape: ",turbine_powers.shape)
 
-# Single wind speed and wind direction
+# Multiple wind speeds and multiple wind directions
 print('\n========================= Multiple Wind Directions and Multiple Wind Speeds ============')
 
 wind_directions = np.array([260., 270., 280.])
