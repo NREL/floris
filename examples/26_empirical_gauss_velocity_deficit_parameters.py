@@ -150,7 +150,7 @@ if show_flow_cuts:
 # Increase the base recovery rate
 fi_dict_mod = copy.deepcopy(fi_dict)
 fi_dict_mod['wake']['wake_velocity_parameters']['empirical_gauss']\
-    ['wake_expansion_rates'] = [0.02, 0.01]
+    ['wake_expansion_rates'] = [0.03, 0.015]
 fi = FlorisInterface(fi_dict_mod)
 fi.reinitialize(
     wind_speeds=[8.0],

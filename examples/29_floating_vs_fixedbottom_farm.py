@@ -73,8 +73,8 @@ sc = ax.scatter(
     y.flatten(),
     c=power_difference.flatten()/1000,
     cmap="PuOr",
-    vmin=-100,
-    vmax=100,
+    vmin=-30,
+    vmax=30,
     s=200,
 )
 ax.set_xlabel("x coordinate [m]")

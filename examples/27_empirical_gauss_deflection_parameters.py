@@ -39,6 +39,8 @@ first_three_yaw_angles = [20., 20., 10.]
 yaw_angles = np.array(first_three_yaw_angles + [0.]*(num_in_row-3))\
     [None, None, :]
 
+print("Turbine yaw angles (degrees): ", yaw_angles[0,0,:])
+
 # Define function for visualizing wakes
 def generate_wake_visualization(fi, title=None):
     # Using the FlorisInterface functions, get 2D slices.
