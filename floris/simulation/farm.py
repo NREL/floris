@@ -248,7 +248,8 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys():
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
             self.turbine_map = [
                 TurbineMultiDimensional.from_dict(turb) for turb in self.turbine_definitions
             ]
@@ -291,7 +292,8 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=2
         )
-        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys():
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
             wd_dim = np.shape(template_shape)[0]
             ws_dim = np.shape(template_shape)[1]
             if wd_dim != 1 | ws_dim != 0:
@@ -398,7 +400,8 @@ class Farm(BaseClass):
         return tilt_angles
 
     def finalize(self, unsorted_indices):
-        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys():
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
             self.turbine_fCts = np.take_along_axis(
                 self.turbine_fCts_sorted,
                 unsorted_indices[:,:,:,0,0],

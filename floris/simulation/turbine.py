@@ -627,6 +627,8 @@ class Turbine(BaseClass):
     power_thrust_table: PowerThrustTable = field(default=None)
     floating_tilt_table: TiltTable = field(default=None)
     floating_correct_cp_ct_for_tilt: bool = field(default=None)
+    power_thrust_data_file: str = field(default=None)
+    multi_dimensional_cp_ct: bool = field(default=False)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
