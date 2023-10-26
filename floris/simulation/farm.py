@@ -24,6 +24,7 @@ from floris.simulation import (
     BaseClass,
     State,
     Turbine,
+    TurbineMultiDimensional,
 )
 from floris.simulation.turbine import compute_tilt_angles_for_floating_turbines
 from floris.type_dec import (
@@ -247,12 +248,21 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
+            self.turbine_map = [
+                TurbineMultiDimensional.from_dict(turb) for turb in self.turbine_definitions
+            ]
+        else:
+            self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
     def construct_turbine_fCts(self):
         self.turbine_fCts = {
             turb.turbine_type: turb.fCt_interp for turb in self.turbine_map
         }
+
+    def construct_multidim_turbine_fCts(self):
+        self.turbine_fCts = [turb.fCt_interp for turb in self.turbine_map]
 
     def construct_turbine_fTilts(self):
         self.turbine_fTilts = [(turb.turbine_type, turb.fTilt_interp) for turb in self.turbine_map]
@@ -261,6 +271,9 @@ class Farm(BaseClass):
         self.turbine_power_interps = {
             turb.turbine_type: turb.power_interp for turb in self.turbine_map
         }
+
+    def construct_multidim_turbine_power_interps(self):
+        self.turbine_power_interps = [turb.power_interp for turb in self.turbine_map]
 
     def construct_coordinates(self):
         self.coordinates = np.array([
@@ -279,6 +292,38 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=2
         )
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
+            wd_dim = np.shape(template_shape)[0]
+            ws_dim = np.shape(template_shape)[1]
+            if wd_dim != 1 | ws_dim != 0:
+                self.turbine_fCts_sorted = np.take_along_axis(
+                    np.reshape(
+                        np.repeat(self.turbine_fCts, wd_dim * ws_dim),
+                        np.shape(template_shape)
+                    ),
+                    sorted_coord_indices,
+                    axis=2
+                )
+                self.turbine_power_interps_sorted = np.take_along_axis(
+                    np.reshape(
+                        np.repeat(self.turbine_power_interps, wd_dim * ws_dim),
+                        np.shape(template_shape)
+                    ),
+                    sorted_coord_indices,
+                    axis=2
+                )
+            else:
+                self.turbine_fCts_sorted = np.take_along_axis(
+                    np.reshape(self.turbine_fCts, np.shape(template_shape)),
+                    sorted_coord_indices,
+                    axis=2
+                )
+                self.turbine_power_interps_sorted = np.take_along_axis(
+                    np.reshape(self.turbine_power_interps, np.shape(template_shape)),
+                    sorted_coord_indices,
+                    axis=2
+                )
         self.rotor_diameters_sorted = np.take_along_axis(
             self.rotor_diameters * template_shape,
             sorted_coord_indices,
@@ -355,6 +400,18 @@ class Farm(BaseClass):
         return tilt_angles
 
     def finalize(self, unsorted_indices):
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
+            self.turbine_fCts = np.take_along_axis(
+                self.turbine_fCts_sorted,
+                unsorted_indices[:,:,:,0,0],
+                axis=2
+            )
+            self.turbine_power_interps = np.take_along_axis(
+                self.turbine_power_interps_sorted,
+                unsorted_indices[:,:,:,0,0],
+                axis=2
+            )
         self.yaw_angles = np.take_along_axis(
             self.yaw_angles_sorted,
             unsorted_indices[:,:,:,0,0],
