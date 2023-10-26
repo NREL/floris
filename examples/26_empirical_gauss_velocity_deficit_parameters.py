@@ -42,7 +42,7 @@ def generate_wake_visualization(fi: FlorisInterface, title=None):
     # Using the FlorisInterface functions, get 2D slices.
     x_bounds = [-500, 3000]
     y_bounds = [-250, 250]
-    z_bounds = [0, 500]
+    z_bounds = [0.001, 500]
     cross_plane_locations = [10, 1200, 2500]
     horizontal_plane_location = 90.0
     streamwise_plane_location = 0.0
@@ -150,7 +150,7 @@ if show_flow_cuts:
 # Increase the base recovery rate
 fi_dict_mod = copy.deepcopy(fi_dict)
 fi_dict_mod['wake']['wake_velocity_parameters']['empirical_gauss']\
-    ['wake_expansion_rates'] = [0.02, 0.01]
+    ['wake_expansion_rates'] = [0.03, 0.015]
 fi = FlorisInterface(fi_dict_mod)
 fi.reinitialize(
     wind_speeds=[8.0],

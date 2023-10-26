@@ -142,7 +142,7 @@ def compute_tilt_angles_for_floating_turbines(
         else:
             tilt_angles += (
                 tilt_interp[turb_type](rotor_effective_velocities)
-                * np.array(turbine_type_map == turb_type)
+                * (turbine_type_map == turb_type)
             )
 
     # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
@@ -267,7 +267,7 @@ def power(
         # type to the main thrust coefficient array
         p += (
             power_interp[turb_type](rotor_effective_velocities)
-            * np.array(turbine_type_map == turb_type)
+            * (turbine_type_map == turb_type)
         )
 
     return p * ref_density_cp_ct
@@ -355,7 +355,7 @@ def Ct(
         # type to the main thrust coefficient array
         thrust_coefficient += (
             fCt[turb_type](average_velocities)
-            * np.array(turbine_type_map == turb_type)
+            * (turbine_type_map == turb_type)
         )
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
@@ -521,9 +521,9 @@ class PowerThrustTable(FromDictMixin):
         ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
         ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
     """
-    power: NDArrayFloat = field(converter=floris_array_converter)
-    thrust: NDArrayFloat = field(converter=floris_array_converter)
-    wind_speed: NDArrayFloat = field(converter=floris_array_converter)
+    power: NDArrayFloat = field(default=[], converter=floris_array_converter)
+    thrust: NDArrayFloat = field(default=[], converter=floris_array_converter)
+    wind_speed: NDArrayFloat = field(default=[], converter=floris_array_converter)
 
     def __attrs_post_init__(self) -> None:
         # Validate the power, thrust, and wind speed inputs.
@@ -624,9 +624,11 @@ class Turbine(BaseClass):
     generator_efficiency: float = field()
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
-    power_thrust_table: PowerThrustTable = field(converter=PowerThrustTable.from_dict)
-    floating_tilt_table = field(default=None)
-    floating_correct_cp_ct_for_tilt = field(default=None)
+    power_thrust_table: PowerThrustTable = field(default=None)
+    floating_tilt_table: TiltTable = field(default=None)
+    floating_correct_cp_ct_for_tilt: bool = field(default=None)
+    power_thrust_data_file: str = field(default=None)
+    multi_dimensional_cp_ct: bool = field(default=False)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -650,6 +652,7 @@ class Turbine(BaseClass):
     def __attrs_post_init__(self) -> None:
 
         # Post-init initialization for the power curve interpolation functions
+        self.power_thrust_table = PowerThrustTable.from_dict(self.power_thrust_table)
         wind_speeds = self.power_thrust_table.wind_speed
         self.fCp_interp = interp1d(
             wind_speeds,
@@ -665,7 +668,9 @@ class Turbine(BaseClass):
         )
         self.power_interp = interp1d(
             wind_speeds,
-            inner_power
+            inner_power,
+            bounds_error=False,
+            fill_value=0
         )
 
         """

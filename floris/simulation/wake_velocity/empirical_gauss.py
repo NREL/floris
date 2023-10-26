@@ -65,7 +65,7 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             :style: unsrt
             :filter: docname in docnames
     """
-    wake_expansion_rates: list = field(default=[0.01, 0.005])
+    wake_expansion_rates: list = field(default=[0.023, 0.008])
     breakpoints_D: list = field(default=[10])
     sigma_0_D: float = field(default=0.28)
     smoothing_length_D: float = field(default=2.0)
@@ -155,8 +155,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
         sigma_z0 = self.sigma_0_D * rotor_diameter_i * cosd(tilt_angle_i)
 
         # No specific near, far wakes in this model
-        downstream_mask = np.array(x > x_i + 0.1)
-        upstream_mask = np.array(x < x_i - 0.1)
+        downstream_mask = (x > x_i + 0.1)
+        upstream_mask = (x < x_i - 0.1)
 
         # Wake expansion in the lateral (y) and the vertical (z)
         # TODO: could compute shared components in sigma_z, sigma_y

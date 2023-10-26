@@ -34,6 +34,7 @@ from floris.simulation import (
     full_flow_turbopark_solver,
     Grid,
     PointsGrid,
+    sequential_multidim_solver,
     sequential_solver,
     State,
     TurbineCubatureGrid,
@@ -68,12 +69,26 @@ class Floris(BaseClass):
 
     def __attrs_post_init__(self) -> None:
 
+        # Configure logging
+        logging_manager.configure_console_log(
+            self.logging["console"]["enable"],
+            self.logging["console"]["level"],
+        )
+        logging_manager.configure_file_log(
+            self.logging["file"]["enable"],
+            self.logging["file"]["level"],
+        )
+
         self.check_deprecated_inputs()
 
         # Initialize farm quanitities that depend on other objects
         self.farm.construct_turbine_map()
-        self.farm.construct_turbine_fCts()
-        self.farm.construct_turbine_power_interps()
+        if self.wake.model_strings['velocity_model'] == 'multidim_cp_ct':
+            self.farm.construct_multidim_turbine_fCts()
+            self.farm.construct_multidim_turbine_power_interps()
+        else:
+            self.farm.construct_turbine_fCts()
+            self.farm.construct_turbine_power_interps()
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()
         self.farm.construct_turbine_TSRs()
@@ -143,16 +158,6 @@ class Floris(BaseClass):
                 self.flow_field.n_wind_speeds,
                 self.grid.sorted_coord_indices
             )
-
-        # Configure logging
-        logging_manager.configure_console_log(
-            self.logging["console"]["enable"],
-            self.logging["console"]["level"],
-        )
-        logging_manager.configure_file_log(
-            self.logging["file"]["enable"],
-            self.logging["file"]["level"],
-        )
 
     def check_deprecated_inputs(self):
         """
@@ -238,6 +243,13 @@ class Floris(BaseClass):
             )
         elif vel_model=="empirical_gauss":
             empirical_gauss_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
+        elif vel_model=="multidim_cp_ct":
+            sequential_multidim_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,

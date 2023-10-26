@@ -37,7 +37,21 @@ isort:skip_file
 import floris.logging_manager
 
 from .base import BaseClass, BaseModel, State
-from .turbine import average_velocity, axial_induction, Ct, power, rotor_effective_velocity, Turbine
+from .turbine import (
+    average_velocity,
+    axial_induction,
+    compute_tilt_angles_for_floating_turbines,
+    Ct,
+    power,
+    rotor_effective_velocity,
+    TiltTable,
+    Turbine
+)
+from .turbine_multi_dim import (
+    axial_induction_multidim,
+    Ct_multidim,
+    TurbineMultiDimensional
+)
 from .farm import Farm
 from .grid import (
     FlowFieldGrid,
@@ -57,6 +71,7 @@ from .solver import (
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     sequential_solver,
+    sequential_multidim_solver,
     turbopark_solver,
 )
 from .floris import Floris

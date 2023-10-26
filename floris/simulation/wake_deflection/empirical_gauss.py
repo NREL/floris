@@ -60,7 +60,7 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
     """
     horizontal_deflection_gain_D: float = field(default=3.0)
     vertical_deflection_gain_D: float = field(default=-1)
-    deflection_rate: float = field(default=15)
+    deflection_rate: float = field(default=30)
     mixing_gain_deflection: float = field(default=0.0)
     yaw_added_mixing_gain: float = field(default=0.0)
 
@@ -126,7 +126,7 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
         A_z = (deflection_gain_z * ct_i * tilt_r) / (1 + self.mixing_gain_deflection * mixing_i)
 
         # Apply downstream mask in the process
-        x_normalized = (x - x_i) * np.array(x > x_i + 0.1) / rotor_diameter_i
+        x_normalized = (x - x_i) * (x > x_i + 0.1) / rotor_diameter_i
 
         log_term = np.log(
             (x_normalized - self.deflection_rate) / (x_normalized + self.deflection_rate)

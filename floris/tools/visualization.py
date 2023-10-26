@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import copy
+import warnings
 from typing import Union
 
 import matplotlib as mpl
@@ -40,9 +41,10 @@ def plot_turbines(
     yaw_angles,
     rotor_diameters,
     color: str | None = None,
-    wind_direction: float = 270.0,
 ):
     """
+    This function is deprecated and will be removed in v3.5, use `plot_turbines_with_fi` instead.
+
     Plot wind plant layout from turbine locations.
 
     Args:
@@ -50,21 +52,20 @@ def plot_turbines(
         layout_x (np.array): Wind turbine locations (east-west).
         layout_y (np.array): Wind turbine locations (north-south).
         yaw_angles (np.array): Yaw angles of each wind turbine.
-        D (float): Wind turbine rotor diameter.
-        color (str): Pyplot color option to plot the turbines.
-        wind_direction (float): Wind direction (rotates farm)
+        rotor_diameters (np.array): Wind turbine rotor diameter.
+        color (str): pyplot color option to plot the turbines.
     """
+    warnings.warn(
+        "The `plot_turbines` function is deprecated and will be removed in v3.5, "
+        "use `plot_turbines_with_fi` instead.",
+        DeprecationWarning,
+        stacklevel=2  # This prints the calling function and this function in the warning
+    )
+
     if color is None:
         color = "k"
 
-    # Rotate layout to inertial frame for plotting turbines relative to wind direction
-    coordinates_array = np.array([[x, y, 0.0] for x, y in list(zip(layout_x, layout_y))])
-    layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
-        np.array([wind_direction]),
-        coordinates_array
-    )
-
-    for x, y, yaw, d in zip(layout_x[0,0], layout_y[0,0], yaw_angles, rotor_diameters):
+    for x, y, yaw, d in zip(layout_x, layout_y, yaw_angles, rotor_diameters):
         R = d / 2.0
         x_0 = x + np.sin(np.deg2rad(yaw)) * R
         x_1 = x - np.sin(np.deg2rad(yaw)) * R
@@ -75,14 +76,16 @@ def plot_turbines(
 
 def plot_turbines_with_fi(
     fi: FlorisInterface,
-    ax=None,
-    color=None,
-    wd=None,
-    yaw_angles=None,
+    ax: plt.Axes = None,
+    color: str = None,
+    wd: np.ndarray = None,
+    yaw_angles: np.ndarray = None,
 ):
     """
-    Wrapper function to plot turbines which extracts the data
-    from a FLORIS interface object
+    Plot the wind plant layout from turbine locations gotten from a FlorisInterface object.
+    Note that this function automatically uses the first wind direction and first wind speed.
+    Generally, it is most explicit to create a new FlorisInterface with only the single
+    wind condition that should be plotted.
 
     Args:
         fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
@@ -101,15 +104,17 @@ def plot_turbines_with_fi(
     # Rotate yaw angles to inertial frame for plotting turbines relative to wind direction
     yaw_angles = yaw_angles - wind_delta(np.array(wd))
 
-    plot_turbines(
-        ax,
-        fi.layout_x,
-        fi.layout_y,
-        yaw_angles.flatten(),
-        fi.floris.farm.rotor_diameters.flatten(),
-        color=color,
-        wind_direction=fi.floris.flow_field.wind_directions[0],
-    )
+    if color is None:
+        color = "k"
+
+    rotor_diameters = fi.floris.farm.rotor_diameters.flatten()
+    for x, y, yaw, d in zip(fi.layout_x, fi.layout_y, yaw_angles[0,0], rotor_diameters):
+        R = d / 2.0
+        x_0 = x + np.sin(np.deg2rad(yaw)) * R
+        x_1 = x - np.sin(np.deg2rad(yaw)) * R
+        y_0 = y - np.cos(np.deg2rad(yaw)) * R
+        y_1 = y + np.cos(np.deg2rad(yaw)) * R
+        ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
 def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
@@ -146,7 +151,13 @@ def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
         )
 
 
-def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwargs):
+def line_contour_cut_plane(
+    cut_plane,
+    ax=None,
+    levels=None,
+    colors=None,
+    label_contours=False,
+    **kwargs):
     """
     Visualize a cut_plane as a line contour plot.
 
@@ -159,6 +170,8 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
             Defaults to None.
         colors (list, optional): Strings of color specification info.
             Defaults to None.
+        label_contours (Boolean, optional): Flag to include a numerical contour labels
+            on the plot. Defaults to False.
         **kwargs: Additional parameters to pass to `ax.contour`.
     """
 
@@ -178,7 +191,8 @@ def line_contour_cut_plane(cut_plane, ax=None, levels=None, colors=None, **kwarg
         **kwargs,
     )
 
-    ax.clabel(contours, contours.levels, inline=True, fontsize=10, colors="black")
+    if label_contours:
+        ax.clabel(contours, contours.levels, inline=True, fontsize=10, colors="black")
 
     # Make equal axis
     ax.set_aspect("equal")
@@ -194,6 +208,7 @@ def visualize_cut_plane(
     levels=None,
     clevels=None,
     color_bar=False,
+    label_contours=False,
     title="",
     **kwargs
 ):
@@ -219,6 +234,8 @@ def visualize_cut_plane(
             Defaults to None.
         color_bar (Boolean, optional): Flag to include a color bar on the plot.
             Defaults to False.
+        label_contours (Boolean, optional): Flag to include a numerical contour labels
+            on the plot. Defaults to False.
         title (str, optional): User-supplied title for the plot. Defaults to "".
         **kwargs: Additional parameters to pass to line contour plot.
 
@@ -270,6 +287,7 @@ def visualize_cut_plane(
         ax=ax,
         levels=levels,
         colors="b",
+        label_contours=label_contours,
         linewidths=0.8,
         alpha=0.3,
         **kwargs
@@ -302,6 +320,7 @@ def visualize_heterogeneous_cut_plane(
     levels=None,
     clevels=None,
     color_bar=False,
+    label_contours=False,
     title="",
     plot_het_bounds=True,
     **kwargs
@@ -329,6 +348,8 @@ def visualize_heterogeneous_cut_plane(
             Defaults to None.
         color_bar (Boolean, optional): Flag to include a color bar on the plot.
             Defaults to False.
+        label_contours (Boolean, optional): Flag to include a numerical contour labels
+            on the plot. Defaults to False.
         title (str, optional): User-supplied title for the plot. Defaults to "".
         plot_het_bonds (boolean, optional): Flag to include the user-defined bounds of the
             heterogeneous wind speed area. Defaults to True.
@@ -381,6 +402,7 @@ def visualize_heterogeneous_cut_plane(
         ax=ax,
         levels=levels,
         colors="b",
+        label_contours=label_contours,
         linewidths=0.8,
         alpha=0.3,
         **kwargs

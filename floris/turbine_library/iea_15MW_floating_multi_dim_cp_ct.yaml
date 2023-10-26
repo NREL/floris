@@ -1,0 +1,29 @@
+turbine_type: 'iea_15MW_floating'
+generator_efficiency: 1.0
+hub_height: 150.0
+pP: 1.88
+pT: 1.88
+rotor_diameter: 242.24
+TSR: 8.0
+ref_density_cp_ct: 1.225
+ref_tilt_cp_ct: 6.0
+multi_dimensional_cp_ct: True
+power_thrust_data_file: '../floris/turbine_library/iea_15MW_multi_dim_Tp_Hs.csv'
+floating_tilt_table:
+  tilt:
+    - 5.747296314800103
+    - 7.2342400188651068
+    - 9.0468701999352397
+    - 9.762182013267733
+    - 8.795649572299896
+    - 8.089078308325314
+    - 7.7229584934943614
+  wind_speeds:
+    - 4.0
+    - 6.0
+    - 8.0
+    - 10.0
+    - 12.0
+    - 14.0
+    - 16.0
+floating_correct_cp_ct_for_tilt: True

@@ -31,6 +31,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         min_dist=None,
         solver='SLSQP',
         optOptions=None,
+        enable_geometric_yaw=False,
     ):
         """
         _summary_
@@ -53,7 +54,8 @@ class LayoutOptimizationScipy(LayoutOptimization):
             optOptions (dict, optional): Dicitonary for setting the
                 optimization options. Defaults to None.
         """
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq)
+        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq,
+                    enable_geometric_yaw=enable_geometric_yaw)
 
         self.boundaries_norm = [
             [
@@ -75,10 +77,12 @@ class LayoutOptimizationScipy(LayoutOptimization):
             self._set_opt_bounds()
         if solver is not None:
             self.solver = solver
+
+        default_optOptions = {"maxiter": 100, "disp": True, "iprint": 2, "ftol": 1e-9, "eps":0.01}
         if optOptions is not None:
-            self.optOptions = optOptions
+            self.optOptions = {**default_optOptions, **optOptions}
         else:
-            self.optOptions = {"maxiter": 100, "disp": True, "iprint": 2, "ftol": 1e-9, "eps":0.01}
+            self.optOptions = default_optOptions
 
         self._generate_constraints()
 
@@ -106,12 +110,19 @@ class LayoutOptimizationScipy(LayoutOptimization):
             for valy in locs[self.nturbs : 2 * self.nturbs]
         ]
         self._change_coordinates(locs_unnorm)
-        return -1 * self.fi.get_farm_AEP(self.freq) / self.initial_AEP
+        # Compute turbine yaw angles using PJ's geometric code (if enabled)
+        yaw_angles = self._get_geoyaw_angles()
+        return (-1 * self.fi.get_farm_AEP(self.freq, yaw_angles=yaw_angles) /
+                self.initial_AEP)
 
     def _change_coordinates(self, locs):
         # Parse the layout coordinates
         layout_x = locs[0 : self.nturbs]
         layout_y = locs[self.nturbs : 2 * self.nturbs]
+
+        # Store on object for use in geoyaw code
+        self.x = layout_x
+        self.y = layout_y
 
         # Update the turbine map in floris
         self.fi.reinitialize(layout_x=layout_x, layout_y=layout_y)

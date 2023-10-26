@@ -84,8 +84,19 @@ Define non-uniform (heterogeneous) atmospheric conditions by specifying
 speedups at locations throughout the farm. Show plots of the
 impact on wind turbine wakes.
 
-### 16b_heterogenaity_multiple_ws_wd.py
-Illustrate usage of heterogenaity with multiple wind speeds and directions.
+### 16b_heterogeneity_multiple_ws_wd.py
+Illustrate usage of heterogeneity with multiple wind speeds and directions.
+
+## 16c_optimize_layout_with_heterogeneity.py
+This example shows a layout optimization using the geometric yaw option. It
+combines elements of examples 15 (layout optimization) and 16 (heterogeneous
+inflow) for demonstrative purposes. If you haven't yet run those examples,
+we recommend you try them first.
+
+Heterogeneity in the inflow provides the necessary driver for coupled yaw
+and layout optimization to be worthwhile. First, a layout optimization is
+run without coupled yaw optimization; then a coupled optimization is run to
+show the benefits of coupled optimization when flows are heterogeneous.
 
 ### 17_multiple_turbine_types.py
 Load an input file that describes a wind farm with two turbines
@@ -99,6 +110,10 @@ of a turbine layout within FLORIS.
 Demonstrates the definition of a floating turbine and how to enable the effects of tilt
 on Cp and Ct.
 
+For further examples on floating wind turbines, see also examples
+25 (vertical wake deflection by a forced tilt angle) and 29 (comparison between
+a fixed-bottom and floating wind farm).
+
 ### 25_tilt_driven_vertical_wake_deflection.py
 
 This example demonstrates vertical wake deflections due to the tilt angle when running
@@ -106,6 +121,10 @@ with the Empirical Gauss model. Note that only the Empirical Gauss model impleme
 vertical deflections at this time. Also be aware that this example uses a potentially
 unrealistic tilt angle, 15 degrees, to highlight the wake deflection. Moreover, the magnitude
 of vertical deflections due to tilt has not been validated.
+
+For further examples on floating wind turbines, see also examples
+24 (effects of tilt on turbine power and thrust coefficients) and 29
+(comparison between a fixed-bottom and floating wind farm).
 
 ### 26_empirical_gauss_velocity_deficit_parameters.py
 
@@ -126,6 +145,32 @@ mast across all wind directions (at a fixed free stream wind speed).
 
 Try different values for met_mast_option to vary the location of the met mast within
 the two-turbine farm.
+
+### 29_floating_vs_fixedbottom_farm.py
+
+Compares a fixed-bottom wind farm (with a gridded layout) to a floating
+wind farm with the same layout. Includes:
+- Turbine-by-turbine power comparison for a single wind speed and direction
+- Flow visualizations for a single wind speed and direction
+- AEP calculations based on an example wind rose.
+
+For further examples on floating wind turbines, see also examples
+24 (effects of tilt on turbine power and thrust coefficients) and 25
+(vertical wake deflection by a forced tilt angle).
+
+### 30_multi_dimensional_cp_ct.py
+
+This example showcases the capability of using multi-dimensional Cp/Ct data in turbine defintions
+dependent on external conditions. Specifically, fictional data for varying Cp/Ct values based on
+wave period, Ts, and wave height, Hs, is used, showing the user how to setup the turbine
+definition and input file. Also demonstrated is the different method for getting turbine
+powers when using multi-dimensional Cp/Ct data.
+
+### 31_multi_dimensional_cp_ct_2Hs.py
+
+This example builds on example 30. Specifically, fictional data for varying Cp/Ct values based on
+wave period, Ts, and wave height, Hs, is used to show the difference in power performance for
+different wave heights.
 
 ## Optimization
 

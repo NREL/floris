@@ -39,12 +39,14 @@ first_three_yaw_angles = [20., 20., 10.]
 yaw_angles = np.array(first_three_yaw_angles + [0.]*(num_in_row-3))\
     [None, None, :]
 
+print("Turbine yaw angles (degrees): ", yaw_angles[0,0,:])
+
 # Define function for visualizing wakes
 def generate_wake_visualization(fi, title=None):
     # Using the FlorisInterface functions, get 2D slices.
     x_bounds = [-500, 3000]
     y_bounds = [-250, 250]
-    z_bounds = [0, 500]
+    z_bounds = [0.001, 500]
     cross_plane_locations = [10, 1200, 2500]
     horizontal_plane_location = 90.0
     streamwise_plane_location = 0.0
@@ -152,8 +154,6 @@ if show_flow_cuts:
 
 # Increase the maximum deflection attained
 fi_dict_mod = copy.deepcopy(fi_dict)
-
-print(fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss'])
 
 fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
     ['horizontal_deflection_gain_D'] = 5.0

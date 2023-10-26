@@ -42,6 +42,8 @@ fi.reinitialize(wind_speeds=ws_array)
 turbines = os.listdir('../floris/turbine_library')
 turbines = [t for t in turbines if 'yaml' in t]
 turbines = [t.strip('.yaml') for t in turbines]
+# Remove multi-dimensional Cp/Ct turbine definitions as they require different handling
+turbines = [i for i in turbines if ('multi_dim' not in i)]
 
 # Declare a set of figures for comparing cp and ct across models
 fig_cp_ct, axarr_cp_ct = plt.subplots(2,1,sharex=True,figsize=(10,10))

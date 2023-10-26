@@ -18,10 +18,6 @@ import numpy as np
 
 import floris.tools.visualization as wakeviz
 from floris.tools import FlorisInterface
-from floris.tools.visualization import (
-    calculate_horizontal_plane_with_turbines,
-    visualize_cut_plane,
-)
 
 
 """
@@ -78,13 +74,28 @@ cross_plane = fi.calculate_cross_plane(
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
-wakeviz.visualize_cut_plane(horizontal_plane, ax=ax_list[0], title="Horizontal")
-wakeviz.visualize_cut_plane(y_plane, ax=ax_list[1], title="Streamwise profile")
-wakeviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile")
+wakeviz.visualize_cut_plane(
+    horizontal_plane,
+    ax=ax_list[0],
+    label_contours=True,
+    title="Horizontal"
+)
+wakeviz.visualize_cut_plane(
+    y_plane,
+    ax=ax_list[1],
+    label_contours=True,
+    title="Streamwise profile"
+)
+wakeviz.visualize_cut_plane(
+    cross_plane,
+    ax=ax_list[2],
+    label_contours=True,
+    title="Spanwise profile"
+)
 
 # Some wake models may not yet have a visualization method included, for these cases can use
 # a slower version which scans a turbine model to produce the horizontal flow
-horizontal_plane_scan_turbine = calculate_horizontal_plane_with_turbines(
+horizontal_plane_scan_turbine = wakeviz.calculate_horizontal_plane_with_turbines(
     fi,
     x_resolution=20,
     y_resolution=10,
@@ -92,9 +103,10 @@ horizontal_plane_scan_turbine = calculate_horizontal_plane_with_turbines(
 )
 
 fig, ax = plt.subplots()
-visualize_cut_plane(
+wakeviz.visualize_cut_plane(
     horizontal_plane_scan_turbine,
     ax=ax,
+    label_contours=True,
     title="Horizontal (coarse turbine scan method)",
 )
 
