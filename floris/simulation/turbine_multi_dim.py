@@ -25,12 +25,12 @@ from scipy.interpolate import interp1d
 
 # import floris.simulation.turbine as turbine
 from floris.simulation import (
-    _filter_convert,
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
     TiltTable,
     Turbine,
 )
+from floris.simulation.turbine import _filter_convert
 from floris.type_dec import (
     NDArrayBool,
     NDArrayFilter,

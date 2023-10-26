@@ -38,7 +38,6 @@ import floris.logging_manager
 
 from .base import BaseClass, BaseModel, State
 from .turbine import (
-    _filter_convert,
     average_velocity,
     axial_induction,
     compute_tilt_angles_for_floating_turbines,
