@@ -45,6 +45,7 @@ floris.simulation.flow\_field.FlowField
       ~FlowField.reference_wind_height
       ~FlowField.time_series
       ~FlowField.heterogenous_inflow_config
+      ~FlowField.multidim_conditions
       ~FlowField.n_wind_speeds
       ~FlowField.n_wind_directions
       ~FlowField.u_initial_sorted

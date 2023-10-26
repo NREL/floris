@@ -45,6 +45,8 @@ floris.simulation.turbine.Turbine
       ~Turbine.power_thrust_table
       ~Turbine.floating_tilt_table
       ~Turbine.floating_correct_cp_ct_for_tilt
+      ~Turbine.power_thrust_data_file
+      ~Turbine.multi_dimensional_cp_ct
       ~Turbine.rotor_radius
       ~Turbine.rotor_area
       ~Turbine.fCp_interp

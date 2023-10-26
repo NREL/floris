@@ -24,6 +24,8 @@ floris.simulation.farm.Farm
       ~Farm.check_y
       ~Farm.construct_coordinates
       ~Farm.construct_hub_heights
+      ~Farm.construct_multidim_turbine_fCts
+      ~Farm.construct_multidim_turbine_power_interps
       ~Farm.construct_rotor_diameters
       ~Farm.construct_turbine_TSRs
       ~Farm.construct_turbine_correct_cp_ct_for_tilt

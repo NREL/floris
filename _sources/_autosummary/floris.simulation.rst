@@ -33,6 +33,7 @@
    floris.simulation.grid
    floris.simulation.solver
    floris.simulation.turbine
+   floris.simulation.turbine_multi_dim
    floris.simulation.wake
    floris.simulation.wake_combination
    floris.simulation.wake_deflection

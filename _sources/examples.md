@@ -158,6 +158,20 @@ For further examples on floating wind turbines, see also examples
 24 (effects of tilt on turbine power and thrust coefficients) and 25
 (vertical wake deflection by a forced tilt angle).
 
+### 30_multi_dimensional_cp_ct.py
+
+This example showcases the capability of using multi-dimensional Cp/Ct data in turbine defintions
+dependent on external conditions. Specifically, fictional data for varying Cp/Ct values based on
+wave period, Ts, and wave height, Hs, is used, showing the user how to setup the turbine
+definition and input file. Also demonstrated is the different method for getting turbine
+powers when using multi-dimensional Cp/Ct data.
+
+### 31_multi_dimensional_cp_ct_2Hs.py
+
+This example builds on example 30. Specifically, fictional data for varying Cp/Ct values based on
+wave period, Ts, and wave height, Hs, is used to show the difference in power performance for
+different wave heights.
+
 ## Optimization
 
 These examples demonstrate use of the optimization routines

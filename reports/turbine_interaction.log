@@ -1,0 +1,93 @@
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 51, in single_nb_execution
+    executenb(
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/client.py", line 1204, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/client.py", line 663, in async_execute
+    await self.async_execute_cell(
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/client.py", line 965, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/client.py", line 862, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# Initialize the turbine library (no definitions required!)
+tl = TurbineLibrary()
+
+# Load the internal library, except the 20 MW turbine
+tl.load_internal_library(exclude=["x_20MW.yaml"])
+for turbine in tl.turbine_map:
+    print(turbine)
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mTypeError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[6], line 5[0m
+[1;32m      2[0m tl [38;5;241m=[39m TurbineLibrary()
+[1;32m      4[0m [38;5;66;03m# Load the internal library, except the 20 MW turbine[39;00m
+[0;32m----> 5[0m [43mtl[49m[38;5;241;43m.[39;49m[43mload_internal_library[49m[43m([49m[43mexclude[49m[38;5;241;43m=[39;49m[43m[[49m[38;5;124;43m"[39;49m[38;5;124;43mx_20MW.yaml[39;49m[38;5;124;43m"[39;49m[43m][49m[43m)[49m
+[1;32m      6[0m [38;5;28;01mfor[39;00m turbine [38;5;129;01min[39;00m tl[38;5;241m.[39mturbine_map:
+[1;32m      7[0m     [38;5;28mprint[39m(turbine)
+
+File [0;32m~/work/floris/floris/floris/turbine_library/turbine_previewer.py:334[0m, in [0;36mTurbineLibrary.load_internal_library[0;34m(self, which, exclude)[0m
+[1;32m    331[0m [38;5;28;01mfor[39;00m fn [38;5;129;01min[39;00m include:
+[1;32m    332[0m     turbine_dict [38;5;241m=[39m load_yaml(fn)
+[1;32m    333[0m     [38;5;28mself[39m[38;5;241m.[39mturbine_map[38;5;241m.[39mupdate({
+[0;32m--> 334[0m         turbine_dict[[38;5;124m"[39m[38;5;124mturbine_type[39m[38;5;124m"[39m]: [43mTurbineInterface[49m[38;5;241;43m.[39;49m[43mfrom_turbine_dict[49m[43m([49m[43mturbine_dict[49m[43m)[49m
+[1;32m    335[0m     })
+
+File [0;32m~/work/floris/floris/floris/turbine_library/turbine_previewer.py:81[0m, in [0;36mTurbineInterface.from_turbine_dict[0;34m(cls, config_dict)[0m
+[1;32m     70[0m [38;5;129m@classmethod[39m
+[1;32m     71[0m [38;5;28;01mdef[39;00m [38;5;21mfrom_turbine_dict[39m([38;5;28mcls[39m, config_dict: [38;5;28mdict[39m):
+[1;32m     72[0m [38;5;250m    [39m[38;5;124;03m"""Loads the turbine definition from a dictionary.[39;00m
+[1;32m     73[0m 
+[1;32m     74[0m [38;5;124;03m    Args:[39;00m
+[0;32m   (...)[0m
+[1;32m     79[0m [38;5;124;03m        (`TurbineInterface`): Returns a ``TurbineInterface`` object.[39;00m
+[1;32m     80[0m [38;5;124;03m    """[39;00m
+[0;32m---> 81[0m     [38;5;28;01mreturn[39;00m [38;5;28mcls[39m(turbine[38;5;241m=[39m[43mTurbine[49m[38;5;241;43m.[39;49m[43mfrom_dict[49m[43m([49m[43mconfig_dict[49m[43m)[49m)
+
+File [0;32m~/work/floris/floris/floris/type_dec.py:160[0m, in [0;36mFromDictMixin.from_dict[0;34m(cls, data)[0m
+[1;32m    155[0m [38;5;28;01mif[39;00m undefined:
+[1;32m    156[0m     [38;5;28;01mraise[39;00m [38;5;167;01mAttributeError[39;00m(
+[1;32m    157[0m         [38;5;124mf[39m[38;5;124m"[39m[38;5;124mThe class definition for [39m[38;5;132;01m{[39;00m[38;5;28mcls[39m[38;5;241m.[39m[38;5;18m__name__[39m[38;5;132;01m}[39;00m[38;5;124m [39m[38;5;124m"[39m
+[1;32m    158[0m         [38;5;124mf[39m[38;5;124m"[39m[38;5;124mis missing the following inputs: [39m[38;5;132;01m{[39;00mundefined[38;5;132;01m}[39;00m[38;5;124m"[39m
+[1;32m    159[0m     )
+[0;32m--> 160[0m [38;5;28;01mreturn[39;00m [38;5;28;43mcls[39;49m[43m([49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mkwargs[49m[43m)[49m
+
+File [0;32m<attrs generated init floris.simulation.turbine.Turbine>:21[0m, in [0;36m__init__[0;34m(self, turbine_type, rotor_diameter, hub_height, pP, pT, TSR, generator_efficiency, ref_density_cp_ct, ref_tilt_cp_ct, power_thrust_table, floating_tilt_table, floating_correct_cp_ct_for_tilt, power_thrust_data_file, multi_dimensional_cp_ct)[0m
+[1;32m     19[0m     __attr_validator_floating_tilt_table([38;5;28mself[39m, __attr_floating_tilt_table, [38;5;28mself[39m[38;5;241m.[39mfloating_tilt_table)
+[1;32m     20[0m     __attr_validator_floating_correct_cp_ct_for_tilt([38;5;28mself[39m, __attr_floating_correct_cp_ct_for_tilt, [38;5;28mself[39m[38;5;241m.[39mfloating_correct_cp_ct_for_tilt)
+[0;32m---> 21[0m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m__attrs_post_init__[49m[43m([49m[43m)[49m
+
+File [0;32m~/work/floris/floris/floris/simulation/turbine.py:655[0m, in [0;36mTurbine.__attrs_post_init__[0;34m(self)[0m
+[1;32m    652[0m [38;5;28;01mdef[39;00m [38;5;21m__attrs_post_init__[39m([38;5;28mself[39m) [38;5;241m-[39m[38;5;241m>[39m [38;5;28;01mNone[39;00m:
+[1;32m    653[0m 
+[1;32m    654[0m     [38;5;66;03m# Post-init initialization for the power curve interpolation functions[39;00m
+[0;32m--> 655[0m     [38;5;28mself[39m[38;5;241m.[39mpower_thrust_table [38;5;241m=[39m [43mPowerThrustTable[49m[38;5;241;43m.[39;49m[43mfrom_dict[49m[43m([49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mpower_thrust_table[49m[43m)[49m
+[1;32m    656[0m     wind_speeds [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mpower_thrust_table[38;5;241m.[39mwind_speed
+[1;32m    657[0m     [38;5;28mself[39m[38;5;241m.[39mfCp_interp [38;5;241m=[39m interp1d(
+[1;32m    658[0m         wind_speeds,
+[1;32m    659[0m         [38;5;28mself[39m[38;5;241m.[39mpower_thrust_table[38;5;241m.[39mpower,
+[1;32m    660[0m         fill_value[38;5;241m=[39m([38;5;241m0.0[39m, [38;5;241m1.0[39m),
+[1;32m    661[0m         bounds_error[38;5;241m=[39m[38;5;28;01mFalse[39;00m,
+[1;32m    662[0m     )
+
+File [0;32m~/work/floris/floris/floris/type_dec.py:139[0m, in [0;36mFromDictMixin.from_dict[0;34m(cls, data)[0m
+[1;32m    137[0m [38;5;66;03m# Check for any inputs that aren't part of the class definition[39;00m
+[1;32m    138[0m class_attr_names [38;5;241m=[39m [a[38;5;241m.[39mname [38;5;28;01mfor[39;00m a [38;5;129;01min[39;00m [38;5;28mcls[39m[38;5;241m.[39m__attrs_attrs__]
+[0;32m--> 139[0m extra_args [38;5;241m=[39m [d [38;5;28;01mfor[39;00m d [38;5;129;01min[39;00m data [38;5;28;01mif[39;00m d [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m class_attr_names]
+[1;32m    140[0m [38;5;28;01mif[39;00m [38;5;28mlen[39m(extra_args):
+[1;32m    141[0m     [38;5;28;01mraise[39;00m [38;5;167;01mAttributeError[39;00m(
+[1;32m    142[0m         [38;5;124mf[39m[38;5;124m"[39m[38;5;124mThe initialization for [39m[38;5;132;01m{[39;00m[38;5;28mcls[39m[38;5;241m.[39m[38;5;18m__name__[39m[38;5;132;01m}[39;00m[38;5;124m was given extraneous inputs: [39m[38;5;132;01m{[39;00mextra_args[38;5;132;01m}[39;00m[38;5;124m"[39m
+[1;32m    143[0m     )
+
+[0;31mTypeError[0m: 'NoneType' object is not iterable
+TypeError: 'NoneType' object is not iterable
+
