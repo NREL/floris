@@ -361,6 +361,11 @@ class SampleInputs:
         }
         self.turbine_floating["floating_correct_cp_ct_for_tilt"] = True
 
+        self.turbine_multi_dim = copy.deepcopy(self.turbine)
+        del self.turbine_multi_dim['power_thrust_table']
+        self.turbine_multi_dim["multi_dimensional_cp_ct"] = True
+        self.turbine_multi_dim["power_thrust_data_file"] = ""
+
         self.farm = {
             "layout_x": X_COORDS,
             "layout_y": Y_COORDS,
@@ -402,7 +407,7 @@ class SampleInputs:
                 "empirical_gauss": {
                    "horizontal_deflection_gain_D": 3.0,
                    "vertical_deflection_gain_D": -1,
-                   "deflection_rate": 15,
+                   "deflection_rate": 30,
                    "mixing_gain_deflection": 0.0,
                    "yaw_added_mixing_gain": 0.0
                 },
@@ -432,7 +437,7 @@ class SampleInputs:
                     "sigma_max_rel": 4.0
                 },
                 "empirical_gauss": {
-                    "wake_expansion_rates": [0.01, 0.005],
+                    "wake_expansion_rates": [0.023, 0.008],
                     "breakpoints_D": [10],
                     "sigma_0_D": 0.28,
                     "smoothing_length_D": 2.0,

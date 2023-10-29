@@ -1,6 +1,6 @@
 
-name: Emperical Gaussian floating
-description: Single turbine using emperical Gaussian model for floating
+name: Emperical Gaussian
+description: Example of single floating turbine
 floris_version: v3.x
 
 logging:
@@ -18,10 +18,14 @@ solver:
 farm:
   layout_x:
   - 0.0
+  - 630.0
+  - 1260.0
   layout_y:
   - 0.0
+  - 0.0
+  - 0.0
   turbine_type:
-  - !include turbine_files/nrel_5MW_floating_fixedtilt5.yaml
+  - !include turbine_files/nrel_5MW_floating.yaml
 
 flow_field:
   air_density: 1.225

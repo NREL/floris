@@ -1,7 +1,7 @@
 
-name: Emperical Gaussian floating
-description: Single turbine using emperical Gaussian model for floating
-floris_version: v3.x
+name: GCH multi dimensional Cp/Ct
+description: Three turbines using GCH model
+floris_version: v3.0.0
 
 logging:
   console:
@@ -18,12 +18,19 @@ solver:
 farm:
   layout_x:
   - 0.0
+  - 630.0
+  - 1260.0
   layout_y:
   - 0.0
+  - 0.0
+  - 0.0
   turbine_type:
-  - !include turbine_files/nrel_5MW_floating_fixedtilt5.yaml
+  - iea_15MW_floating_multi_dim_cp_ct
 
 flow_field:
+  multidim_conditions:
+    Tp: 2.5
+    Hs: 3.01
   air_density: 1.225
   reference_wind_height: -1 # -1 is code for use the hub height
   turbulence_intensity: 0.06
@@ -37,13 +44,13 @@ flow_field:
 wake:
   model_strings:
     combination_model: sosfs
-    deflection_model: empirical_gauss
-    turbulence_model: wake_induced_mixing
-    velocity_model: empirical_gauss
+    deflection_model: gauss
+    turbulence_model: crespo_hernandez
+    velocity_model: multidim_cp_ct
 
-  enable_secondary_steering: false
+  enable_secondary_steering: true
   enable_yaw_added_recovery: true
-  enable_transverse_velocities: false
+  enable_transverse_velocities: true
 
   wake_deflection_parameters:
     gauss:
@@ -58,12 +65,6 @@ wake:
       ad: 0.0
       bd: 0.0
       kd: 0.05
-    empirical_gauss:
-      horizontal_deflection_gain_D: 3.0
-      vertical_deflection_gain_D: -1
-      deflection_rate: 30
-      mixing_gain_deflection: 0.0
-      yaw_added_mixing_gain: 0.0
 
   wake_velocity_parameters:
     cc:
@@ -75,27 +76,17 @@ wake:
       b_f: -0.68
       c_f: 2.41
       alpha_mod: 1.0
-    gauss:
+    multidim_cp_ct:
       alpha: 0.58
       beta: 0.077
       ka: 0.38
       kb: 0.004
     jensen:
       we: 0.05
-    empirical_gauss:
-      wake_expansion_rates:
-      - 0.023
-      - 0.008
-      breakpoints_D:
-      - 10
-      sigma_0_D: 0.28
-      smoothing_length_D: 2.0
-      mixing_gain_velocity: 2.0
+
   wake_turbulence_parameters:
     crespo_hernandez:
-      initial: 0.1
-      constant: 0.5
-      ai: 0.8
-      downstream: -0.32
-    wake_induced_mixing:
-      atmospheric_ti_gain: 0.0
+      initial: 0.01
+      constant: 0.9
+      ai: 0.83
+      downstream: -0.25

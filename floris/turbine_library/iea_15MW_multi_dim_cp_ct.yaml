@@ -1,0 +1,11 @@
+turbine_type: 'iea_15MW_multi_dim_cp_ct'
+generator_efficiency: 1.0
+hub_height: 150.0
+pP: 1.88
+pT: 1.88
+rotor_diameter: 242.24
+TSR: 8.0
+ref_density_cp_ct: 1.225
+ref_tilt_cp_ct: 6.0
+multi_dimensional_cp_ct: True
+power_thrust_data_file: '../floris/turbine_library/iea_15MW_multi_dim_Tp_Hs.csv'
