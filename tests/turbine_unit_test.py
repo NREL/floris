@@ -15,8 +15,10 @@
 
 import attr
 import numpy as np
+import os
 import pytest
 from scipy.interpolate import interp1d
+import yaml
 
 from floris.simulation import (
     average_velocity,
@@ -31,6 +33,9 @@ from floris.simulation.turbine import (
     _rotor_velocity_yaw_correction,
     compute_tilt_angles_for_floating_turbines,
     PowerThrustTable,
+)
+from floris.turbine_library import (
+    build_turbine_yaml
 )
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
@@ -580,3 +585,89 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     dict2 = new_turb.as_dict()
 
     assert dict1 == dict2
+
+def test_build_turbine_yaml():
+
+    orig_file_path = "floris/turbine_library/iea_10MW.yaml"
+    test_turb_name = "test_iea_10MW"
+    test_file_path = "tests/"
+    
+    in_dict = yaml.safe_load( open(orig_file_path, "r") )
+
+    # Mocked up turbine data
+    turbine_data_dict = {
+        "wind_speed":in_dict["power_thrust_table"]["wind_speed"],
+        "power_coefficient":in_dict["power_thrust_table"]["power"],
+        "thrust_coefficient":in_dict["power_thrust_table"]["thrust"]
+    }
+
+    build_turbine_yaml(
+        turbine_data_dict,
+        test_turb_name,
+        file_path=test_file_path,
+        generator_efficiency=in_dict["generator_efficiency"],
+        hub_height=in_dict["hub_height"],
+        pP=in_dict["pP"],
+        pT=in_dict["pT"],
+        rotor_diameter=in_dict["rotor_diameter"],
+        TSR=in_dict["TSR"],
+        air_density=in_dict["ref_density_cp_ct"],
+        ref_tilt_cp_ct=in_dict["ref_tilt_cp_ct"]
+    )
+
+    test_dict = yaml.safe_load(
+        open(os.path.join(test_file_path, test_turb_name+".yaml"), "r")
+    )
+
+    # Correct intended difference for test; assert equal
+    test_dict["turbine_type"] = in_dict["turbine_type"]
+    assert list(in_dict.keys()) == list(test_dict.keys())
+    assert in_dict == test_dict
+
+    # Now, in absolute values
+    Cp = np.array(in_dict["power_thrust_table"]["power"])
+    Ct = np.array(in_dict["power_thrust_table"]["thrust"])
+    ws = np.array(in_dict["power_thrust_table"]["wind_speed"])
+
+    P = 0.5 * in_dict["ref_density_cp_ct"] * (np.pi * in_dict["rotor_diameter"]**2/4) \
+        * Cp * ws**3
+    T = 0.5 * in_dict["ref_density_cp_ct"] * (np.pi * in_dict["rotor_diameter"]**2/4) \
+        * Ct * ws**2
+
+    turbine_data_dict = {
+        "wind_speed":in_dict["power_thrust_table"]["wind_speed"],
+        "power_absolute": P/1000,
+        "thrust_absolute": T/1000
+    }
+
+    build_turbine_yaml(
+        turbine_data_dict,
+        test_turb_name,
+        file_path=test_file_path,
+        generator_efficiency=in_dict["generator_efficiency"],
+        hub_height=in_dict["hub_height"],
+        pP=in_dict["pP"],
+        pT=in_dict["pT"],
+        rotor_diameter=in_dict["rotor_diameter"],
+        TSR=in_dict["TSR"],
+        air_density=in_dict["ref_density_cp_ct"],
+        ref_tilt_cp_ct=in_dict["ref_tilt_cp_ct"]
+    )
+
+    test_dict = yaml.safe_load(
+        open(os.path.join(test_file_path, test_turb_name+".yaml"), "r")
+    )
+    
+    test_dict["turbine_type"] = in_dict["turbine_type"]
+    assert list(in_dict.keys()) == list(test_dict.keys())
+    for k in in_dict.keys():
+        if type(in_dict[k]) is dict:
+            for k2 in in_dict[k].keys():
+                assert np.allclose(in_dict[k][k2], test_dict[k][k2])
+        elif type(in_dict[k]) is str:
+            assert in_dict[k] == test_dict[k]
+        else:
+            assert np.allclose(in_dict[k], test_dict[k])
+    #assert in_dict == test_dict
+
+    os.remove( os.path.join(test_file_path, test_turb_name+".yaml") )
