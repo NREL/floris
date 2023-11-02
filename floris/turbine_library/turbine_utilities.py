@@ -1,6 +1,8 @@
-import numpy as np
 import os.path
+
+import numpy as np
 import yaml
+
 
 def build_turbine_yaml(
     turbine_data_dict,
@@ -21,17 +23,17 @@ def build_turbine_yaml(
     Default value for turbine physical parameters are from the NREL 5MW reference
     wind turbine.
 
-    turbine_data is a dictionary that contains keys specifying the 
+    turbine_data is a dictionary that contains keys specifying the
     turbine power and thrust as a function of wind speed. The following keys
     are possible:
     - wind_speed [m/s]
     - power_absolute [kW]
     - power_coefficient [-]
-    - thrust_absolute [kN] 
+    - thrust_absolute [kN]
     - thrust_coefficient [-]
     Of these, wind_speed is required. One of power_absolute and power_coefficient
     must be specified; and one of thrust_absolute and thrust_coefficient must be
-    specified. If both _absolute and _coeffient versions are specified, the 
+    specified. If both _absolute and _coeffient versions are specified, the
     _coefficient entry will be used and the _absolute entry ignored.
 
     Args:
@@ -47,9 +49,9 @@ def build_turbine_yaml(
         pT (float): Cosine exponent for thrust loss to yaw [-]. Defaults to 1.88.
         rotor_diameter (float). Rotor diameter [m]. Defaults to 126.0.
         TSR (float). Turbine optimal tip-speed ratio [-]. Defaults to 8.0.
-        air_density (float). Air density used to specify power and thrust 
+        air_density (float). Air density used to specify power and thrust
             curves [kg/m^3]. Defaults to 1.225.
-        ref_tilt_cp_ct (float). Rotor tilt (due to shaft tilt and/or platform 
+        ref_tilt_cp_ct (float). Rotor tilt (due to shaft tilt and/or platform
             tilt) used when defining the power and thrust curves [deg]. Defaults
             to 5.0.
     """
@@ -59,7 +61,7 @@ def build_turbine_yaml(
         raise KeyError("wind_speed column must be specified.")
     u = np.array(turbine_data_dict["wind_speed"])
     A = np.pi * rotor_diameter**2/4
-    
+
     # Construct the Cp curve
     if "power_coefficient" in turbine_data_dict:
         if "power_absolute" in turbine_data_dict:
@@ -68,7 +70,7 @@ def build_turbine_yaml(
                 "Ignoring power_absolute."
             )
         Cp = np.array(turbine_data_dict["power_coefficient"])
-    
+
     elif "power_absolute" in turbine_data_dict:
         P = np.array(turbine_data_dict["power_absolute"])
         if _find_nearest_value_for_wind_speed(P, u, 10) > 20000 or \
@@ -84,7 +86,7 @@ def build_turbine_yaml(
         Cp[validity_mask] = (P[validity_mask]*1000) / \
                             (0.5*air_density*A*u[validity_mask]**3)
         # TODO: get u, P where 0 and 0; replace Cp
-    
+
     else:
        raise KeyError(
            "Either power_absolute or power_coefficient must be specified."
@@ -98,7 +100,7 @@ def build_turbine_yaml(
                 "Ignoring thrust_absolute."
             )
         Ct = np.array(turbine_data_dict["thrust_coefficient"])
-    
+
     elif "thrust_absolute" in turbine_data_dict:
         T = np.array(turbine_data_dict["thrust_absolute"])
         if _find_nearest_value_for_wind_speed(T, u, 10) > 3000 or \
@@ -110,15 +112,15 @@ def build_turbine_yaml(
 
         validity_mask = (T != 0) | (u != 0)
         Ct = np.zeros_like(T)
-        
+
         Ct[validity_mask] = (T[validity_mask]*1000)/\
                             (0.5*air_density*A*u[validity_mask]**2)
-    
+
     else:
        raise KeyError(
            "Either thrust_absolute or thrust_coefficient must be specified."
         )
-    
+
     # Build the turbine dict
     power_thrust_dict = {
         "wind_speed": u.tolist(),

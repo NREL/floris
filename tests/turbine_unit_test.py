@@ -13,12 +13,13 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import os
+
 import attr
 import numpy as np
-import os
 import pytest
-from scipy.interpolate import interp1d
 import yaml
+from scipy.interpolate import interp1d
 
 from floris.simulation import (
     average_velocity,
@@ -34,9 +35,7 @@ from floris.simulation.turbine import (
     compute_tilt_angles_for_floating_turbines,
     PowerThrustTable,
 )
-from floris.turbine_library import (
-    build_turbine_yaml
-)
+from floris.turbine_library import build_turbine_yaml
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
@@ -591,7 +590,7 @@ def test_build_turbine_yaml():
     orig_file_path = "floris/turbine_library/iea_10MW.yaml"
     test_turb_name = "test_iea_10MW"
     test_file_path = "tests/"
-    
+
     in_dict = yaml.safe_load( open(orig_file_path, "r") )
 
     # Mocked up turbine data
@@ -657,7 +656,7 @@ def test_build_turbine_yaml():
     test_dict = yaml.safe_load(
         open(os.path.join(test_file_path, test_turb_name+".yaml"), "r")
     )
-    
+
     test_dict["turbine_type"] = in_dict["turbine_type"]
     assert list(in_dict.keys()) == list(test_dict.keys())
     for k in in_dict.keys():
