@@ -35,7 +35,7 @@ from floris.simulation.turbine import (
     compute_tilt_angles_for_floating_turbines,
     PowerThrustTable,
 )
-from floris.turbine_library import build_turbine_yaml
+from floris.turbine_library.turbine_utilities import build_turbine_yaml
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
