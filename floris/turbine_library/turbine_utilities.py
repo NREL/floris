@@ -2,10 +2,8 @@ import numpy as np
 import os.path
 import yaml
 
-# import yaml or something? How do I print, format a yaml?
-
 def build_turbine_yaml(
-    turbine_data,
+    turbine_data_dict,
     turbine_name,
     file_path=None,
     generator_efficiency=1.0,
@@ -23,8 +21,8 @@ def build_turbine_yaml(
     Default value for turbine physical parameters are from the NREL 5MW reference
     wind turbine.
 
-    turbine_data is a pandas DataFrame that contains columns specifying the 
-    turbine power and thrust as a function of wind speed. The following columns
+    turbine_data is a dictionary that contains keys specifying the 
+    turbine power and thrust as a function of wind speed. The following keys
     are possible:
     - wind_speed [m/s]
     - power_absolute [kW]
@@ -37,7 +35,7 @@ def build_turbine_yaml(
     _coefficient entry will be used and the _absolute entry ignored.
 
     Args:
-        turbine_data (pd.DataFrame): Dataframe containing performance of the wind
+        turbine_data (dict): Dictionary containing performance of the wind
            turbine as a function of wind speed. Described in more detail above.
         turbine_name (string): Name of the turbine, which will be used for the
            turbine_type field as well as the filename.
@@ -57,22 +55,22 @@ def build_turbine_yaml(
     """
 
     # Check that necessary columns are specified
-    if "wind_speed" not in turbine_data.columns:
+    if "wind_speed" not in turbine_data_dict:
         raise KeyError("wind_speed column must be specified.")
-    u = turbine_data.wind_speed.values
+    u = np.array(turbine_data_dict["wind_speed"])
     A = np.pi * rotor_diameter**2/4
     
     # Construct the Cp curve
-    if "power_coefficient" in turbine_data.columns:
-        if "power_absolute" in turbine_data.columns:
+    if "power_coefficient" in turbine_data_dict:
+        if "power_absolute" in turbine_data_dict:
             print(
                 "Found both power_absolute and power_coefficient."
                 "Ignoring power_absolute."
             )
-        Cp = turbine_data.power_coefficient.values
+        Cp = np.array(turbine_data_dict["power_coefficient"])
     
-    elif "power_absolute" in turbine_data.columns:
-        P = turbine_data.power_absolute.values
+    elif "power_absolute" in turbine_data_dict:
+        P = np.array(turbine_data_dict["power_absolute"])
         if _find_nearest_value_for_wind_speed(P, u, 10) > 20000 or \
            _find_nearest_value_for_wind_speed(P, u, 10) < 1000:
            print(
@@ -80,7 +78,12 @@ def build_turbine_yaml(
                "is specified in kW."
            )
 
-        Cp = (P*1000)/(0.5*air_density*A*u**3)
+        validity_mask = (P != 0) | (u != 0)
+        Cp = np.zeros_like(P)
+
+        Cp[validity_mask] = (P[validity_mask]*1000) / \
+                            (0.5*air_density*A*u[validity_mask]**3)
+        # TODO: get u, P where 0 and 0; replace Cp
     
     else:
        raise KeyError(
@@ -88,24 +91,28 @@ def build_turbine_yaml(
         )
 
     # Construct Ct curve
-    if "thrust_coefficient" in turbine_data.columns:
-        if "thrust_absolute" in turbine_data.columns:
+    if "thrust_coefficient" in turbine_data_dict:
+        if "thrust_absolute" in turbine_data_dict:
             print(
                 "Found both thrust_absolute and thrust_coefficient."
                 "Ignoring thrust_absolute."
             )
-        Ct = turbine_data.thrust_coefficient.values
+        Ct = np.array(turbine_data_dict["thrust_coefficient"])
     
-    elif "thrust_absolute" in turbine_data.columns:
-        T = turbine_data.thrust_absolute.values
+    elif "thrust_absolute" in turbine_data_dict:
+        T = np.array(turbine_data_dict["thrust_absolute"])
         if _find_nearest_value_for_wind_speed(T, u, 10) > 3000 or \
            _find_nearest_value_for_wind_speed(T, u, 10) < 100:
            print(
                "Unusual thrust value detected. Please check that thrust_absolute",
                "is specified in kN."
            )
+
+        validity_mask = (T != 0) | (u != 0)
+        Ct = np.zeros_like(T)
         
-        Ct = (T*1000)/(0.5*air_density*A*u**2)
+        Ct[validity_mask] = (T[validity_mask]*1000)/\
+                            (0.5*air_density*A*u[validity_mask]**2)
     
     else:
        raise KeyError(
@@ -114,9 +121,9 @@ def build_turbine_yaml(
     
     # Build the turbine dict
     power_thrust_dict = {
-        "wind_speed": list(u),
-        "power": list(Cp),
-        "thrust": list(Ct)
+        "wind_speed": u.tolist(),
+        "power": Cp.tolist(),
+        "thrust": Ct.tolist()
     }
 
     turbine_dict = {
@@ -129,7 +136,7 @@ def build_turbine_yaml(
         "TSR": TSR,
         "ref_density_cp_ct": air_density,
         "ref_tilt_cp_ct": ref_tilt_cp_ct,
-        "power_thurst_table": power_thrust_dict
+        "power_thrust_table": power_thrust_dict
     }
 
     # Create yaml file
