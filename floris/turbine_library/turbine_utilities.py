@@ -4,7 +4,7 @@ import numpy as np
 import yaml
 
 
-def build_turbine_yaml(
+def build_turbine_dict(
     turbine_data_dict,
     turbine_name,
     file_path=None,
@@ -18,10 +18,14 @@ def build_turbine_yaml(
     ref_tilt_cp_ct=5.0
 ):
     """
-    Tool for formatting a turbine yaml from data formatted as a pandas dataframe.
+    Tool for formatting a full turbine dict from data formatted as a 
+    dictionary.
 
     Default value for turbine physical parameters are from the NREL 5MW reference
     wind turbine.
+
+    Returns a turbine dictionary object as expected by FLORIS. Optionally, 
+    prints the dictionary to a yaml to be included in a FLORIS wake model yaml.
 
     turbine_data is a dictionary that contains keys specifying the
     turbine power and thrust as a function of wind speed. The following keys
@@ -37,12 +41,12 @@ def build_turbine_yaml(
     _coefficient entry will be used and the _absolute entry ignored.
 
     Args:
-        turbine_data (dict): Dictionary containing performance of the wind
+        turbine_data_dict (dict): Dictionary containing performance of the wind
            turbine as a function of wind speed. Described in more detail above.
         turbine_name (string): Name of the turbine, which will be used for the
            turbine_type field as well as the filename.
         file_path (): Path for placement of the produced yaml. Defaults to None,
-           which places the turbine in the running directory.
+           in which case no yaml is written.
         generator_efficiency (float): Generator efficiency [-]. Defaults to 1.0.
         hub_height (float): Hub height [m]. Defaults to 90.0.
         pP (float): Cosine exponent for power loss to yaw [-]. Defaults to 1.88.
@@ -54,6 +58,9 @@ def build_turbine_yaml(
         ref_tilt_cp_ct (float). Rotor tilt (due to shaft tilt and/or platform
             tilt) used when defining the power and thrust curves [deg]. Defaults
             to 5.0.
+    
+    Returns:
+       turbine_dict (dict): Formatted turbine dictionary as expected by FLORIS.
     """
 
     # Check that necessary columns are specified
@@ -81,11 +88,10 @@ def build_turbine_yaml(
            )
 
         validity_mask = (P != 0) | (u != 0)
-        Cp = np.zeros_like(P)
+        Cp = np.zeros_like(P, dtype=float)
 
         Cp[validity_mask] = (P[validity_mask]*1000) / \
                             (0.5*air_density*A*u[validity_mask]**3)
-        # TODO: get u, P where 0 and 0; replace Cp
 
     else:
        raise KeyError(
@@ -142,16 +148,17 @@ def build_turbine_yaml(
     }
 
     # Create yaml file
-    full_name = os.path.join(file_path, turbine_name+".yaml")
-    yaml.dump(
-        turbine_dict,
-        open(full_name, "w"),
-        sort_keys=False
-    )
+    if file_path is not None:
+        full_name = os.path.join(file_path, turbine_name+".yaml")
+        yaml.dump(
+            turbine_dict,
+            open(full_name, "w"),
+            sort_keys=False
+        )
 
-    print(full_name, "created.")
+        print(full_name, "created.")
 
-    return None
+    return turbine_dict
 
 def _find_nearest_value_for_wind_speed(test_vals, ws_vals, ws):
     errs = np.absolute(ws_vals-ws)
