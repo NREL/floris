@@ -18,13 +18,13 @@ def build_turbine_dict(
     ref_tilt_cp_ct=5.0
 ):
     """
-    Tool for formatting a full turbine dict from data formatted as a 
+    Tool for formatting a full turbine dict from data formatted as a
     dictionary.
 
     Default value for turbine physical parameters are from the NREL 5MW reference
     wind turbine.
 
-    Returns a turbine dictionary object as expected by FLORIS. Optionally, 
+    Returns a turbine dictionary object as expected by FLORIS. Optionally,
     prints the dictionary to a yaml to be included in a FLORIS wake model yaml.
 
     turbine_data is a dictionary that contains keys specifying the
@@ -58,7 +58,7 @@ def build_turbine_dict(
         ref_tilt_cp_ct (float). Rotor tilt (due to shaft tilt and/or platform
             tilt) used when defining the power and thrust curves [deg]. Defaults
             to 5.0.
-    
+
     Returns:
        turbine_dict (dict): Formatted turbine dictionary as expected by FLORIS.
     """

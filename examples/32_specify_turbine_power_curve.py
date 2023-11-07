@@ -36,7 +36,7 @@ locations throughout the farm while calculating the velocity at it's
 rotor.
 """
 
-# Generate an example turbine power and thrust curve for use in the FLORIS 
+# Generate an example turbine power and thrust curve for use in the FLORIS
 # model
 turbine_data_dict = {
     "wind_speed":[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
@@ -58,7 +58,7 @@ powers = fi.get_farm_power()
 fig, ax = plt.subplots(1,1)
 
 ax.scatter(wind_speeds, powers[0,:]/1000, color="C0", s=5, label="Test points")
-ax.scatter(turbine_data_dict["wind_speed"], turbine_data_dict["power_absolute"], 
+ax.scatter(turbine_data_dict["wind_speed"], turbine_data_dict["power_absolute"],
     color="red", s=20, label="Specified points")
 
 ax.grid()

@@ -35,7 +35,7 @@ from floris.simulation.turbine import (
     compute_tilt_angles_for_floating_turbines,
     PowerThrustTable,
 )
-from floris.turbine_library import build_turbine_yaml
+from floris.turbine_library import build_turbine_dict
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
@@ -585,7 +585,7 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
 
     assert dict1 == dict2
 
-def test_build_turbine_yaml():
+def test_build_turbine_dict():
 
     orig_file_path = "floris/turbine_library/iea_10MW.yaml"
     test_turb_name = "test_iea_10MW"
@@ -600,7 +600,7 @@ def test_build_turbine_yaml():
         "thrust_coefficient":in_dict["power_thrust_table"]["thrust"]
     }
 
-    build_turbine_yaml(
+    build_turbine_dict(
         turbine_data_dict,
         test_turb_name,
         file_path=test_file_path,
@@ -639,7 +639,7 @@ def test_build_turbine_yaml():
         "thrust_absolute": T/1000
     }
 
-    build_turbine_yaml(
+    build_turbine_dict(
         turbine_data_dict,
         test_turb_name,
         file_path=test_file_path,
