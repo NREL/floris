@@ -394,7 +394,7 @@ def axial_induction(
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
-            integer indices (as an aray or iterable) to filter out before calculation.
+            integer indices (as an array or iterable) to filter out before calculation.
             Defaults to None.
 
     Returns:

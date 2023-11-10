@@ -42,7 +42,7 @@ class FlorisInterface(LoggerBase):
     methods on objects within FLORIS.
 
     Args:
-        configuration (:py:obj:`dict`): The Floris configuration dictarionary or YAML file.
+        configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.
             The configuration should have the following inputs specified.
                 - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
@@ -584,7 +584,7 @@ class FlorisInterface(LoggerBase):
             )
 
     def get_turbine_powers(self) -> NDArrayFloat:
-        """Calculates the power at each turbine in the windfarm.
+        """Calculates the power at each turbine in the wind farm.
 
         Returns:
             NDArrayFloat: Powers at each turbine.
@@ -610,7 +610,7 @@ class FlorisInterface(LoggerBase):
         return turbine_powers
 
     def get_turbine_powers_multidim(self) -> NDArrayFloat:
-        """Calculates the power at each turbine in the windfarm
+        """Calculates the power at each turbine in the wind farm
         when using multi-dimensional Cp/Ct turbine definitions.
 
         Returns:

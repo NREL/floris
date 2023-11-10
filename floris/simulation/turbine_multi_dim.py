@@ -207,7 +207,7 @@ def axial_induction_multidim(
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
-            integer indices (as an aray or iterable) to filter out before calculation.
+            integer indices (as an array or iterable) to filter out before calculation.
             Defaults to None.
 
     Returns:
@@ -270,7 +270,7 @@ def multidim_Ct_down_select(
         conditions (dict): The conditions at which to determine which Ct interpolant to use.
 
     Returns:
-        NDArray: The downselected Ct interpolants for the selected conditions.
+        NDArray: The down selected Ct interpolants for the selected conditions.
     """
     downselect_turbine_fCts = np.empty_like(turbine_fCts)
     # Loop over the wind directions, wind speeds, and turbines, finding the Ct interpolant
@@ -307,7 +307,7 @@ def multidim_power_down_select(
         conditions (dict): The conditions at which to determine which Ct interpolant to use.
 
     Returns:
-        NDArray: The downselected power interpolants for the selected conditions.
+        NDArray: The down selected power interpolants for the selected conditions.
     """
     downselect_power_interps = np.empty_like(power_interps)
     # Loop over the wind directions, wind speeds, and turbines, finding the power interpolant
