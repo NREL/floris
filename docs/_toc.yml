@@ -21,6 +21,8 @@ parts:
   - caption: Theory and Background
     chapters:
     - file: wake_models
+      sections:
+      - file: empirical_gauss_model
     - file: bibliography
 
   - caption: Developer Reference
