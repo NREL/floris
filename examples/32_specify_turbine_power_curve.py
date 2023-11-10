@@ -22,18 +22,12 @@ from floris.turbine_library.turbine_utilities import build_turbine_dict
 
 
 """
-This example initializes the FLORIS software, and then uses internal
-functions to run a simulation and plot the results. In this case,
-we are plotting three slices of the resulting flow field:
-1. Horizontal slice parallel to the ground and located at the hub height
-2. Vertical slice of parallel with the direction of the wind
-3. Veritical slice parallel to to the turbine disc plane
+This example demonstrates how to specify a turbine model based on a power
+and thrust curve for the wind turbine, as well as possible physical parameters
+(which default to the parameters of the NREL 5MW reference turbine).
 
-Additionally, an alternative method of plotting a horizontal slice
-is shown. Rather than calculating points in the domain behind a turbine,
-this method adds an additional turbine to the farm and moves it to
-locations throughout the farm while calculating the velocity at it's
-rotor.
+Note that it is also possible to have a .yaml created, if the file_path
+argument to build_turbine_dict is set.
 """
 
 # Generate an example turbine power and thrust curve for use in the FLORIS
@@ -44,7 +38,19 @@ turbine_data_dict = {
     "thrust_coefficient":[0, 0.9, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.25, 0.2]
 }
 
-turbine_dict = build_turbine_dict(turbine_data_dict, "example_turbine")
+turbine_dict = build_turbine_dict(
+    turbine_data_dict,
+    "example_turbine",
+    file_path=None,
+    generator_efficiency=1,
+    hub_height=90,
+    pP=1.88,
+    pT=1.88,
+    rotor_diameter=126,
+    TSR=8,
+    air_density=1.225,
+    ref_tilt_cp_ct=5
+)
 
 fi = FlorisInterface("inputs/gch.yaml")
 wind_speeds = np.linspace(1, 15, 100)
