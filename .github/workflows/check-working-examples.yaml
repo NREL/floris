@@ -25,9 +25,14 @@ jobs:
         pip install nbconvert  # For converting Jupyter notebook to python script in the next step
     - name: Run examples
       # Run all examples and test that they finish successfully. Do not evaluate the results.
+      # Copy the examples to a new directory outside of the repo to ensure that there is no
+      # reliance on the repo directory structure.
       run: |
 
-        cd examples/
+        mkdir -p temp1/temp2/temp3
+        cp -r examples/ temp1/temp2/temp3/.
+        cd temp1/temp2/temp3/examples/
+
         error_found=0  # 0 is false
         error_results="Error in example:"
 
