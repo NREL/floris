@@ -256,15 +256,23 @@ class TurbineGrid(Grid):
         #         the rotor radius.
         #         Defaults to 0.5.
 
+        # For horisontal axis turbines, makes sure that the square grid is within the
+        # rotor swept area
         width_ratio = 0.5
         height_ratio = 0.5
+        # For vertical-axis turbines, let the rectangular grid coincide with the turbine
+        # cross-section area (as seen by the incoming flow)
+        width_ratio_vawt = 1.0
+        height_ratio_vawt = 1.0
 
-        # Use a square area for horizontal-axis turbines and a rectangular area
-        # for vertical-axis turbines
-        width = width_ratio * self.reference_turbine_diameter
-        height  = self.vawt_blade_lengths * self.is_vertical_axis_turbine
-        height += self.reference_turbine_diameter * np.invert(self.is_vertical_axis_turbine)
-        height *= height_ratio
+        is_vawt = self.is_vertical_axis_turbine
+        is_hawt = np.invert(is_vawt)
+        width_ratios = width_ratio * is_hawt + width_ratio_vawt * is_vawt
+        height_ratios = height_ratio * is_hawt + height_ratio_vawt * is_vawt
+
+        width = width_ratios * self.reference_turbine_diameter
+        height = self.reference_turbine_diameter * is_hawt + self.vawt_blade_lengths * is_vawt
+        height *= height_ratios
 
         template_grid = np.ones(
             (
