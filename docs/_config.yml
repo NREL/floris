@@ -51,7 +51,7 @@ sphinx:
     templates_path:
     - '_templates'
     language: 'python'
-    nb_execution_show_tb: True          # Shows the stack trace in stdout; its suppressed otherwise
+    nb_execution_show_tb: true          # Shows the stack trace in stdout; its suppressed otherwise.
     nb_execution_raise_on_error: true   # Stops the Sphinx build if there is an error in a notebook. See https://github.com/executablebooks/jupyter-book/issues/2011
     suppress_warnings:
     - etoc.toctree                      # autodoc output contains toctrees, so suppress this warning. See https://github.com/executablebooks/sphinx-external-toc/issues/36
