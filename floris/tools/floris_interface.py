@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import inspect
 from pathlib import Path
 
 import numpy as np
@@ -55,7 +56,16 @@ class FlorisInterface(LoggerBase):
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
-            self.floris = Floris.from_file(self.configuration)
+            try:
+                self.floris = Floris.from_file(self.configuration)
+            except FileNotFoundError:
+                # If the file cannot be found, then attempt the configuration path relative to the
+                # file location from which FlorisInterface was attempted to be run. If successful,
+                # update self.configuration to an aboslute, working file path and name.
+                base_fn = Path(inspect.stack()[-1].filename).resolve().parent
+                config = (base_fn / self.configuration).resolve()
+                self.floris = Floris.from_file(config)
+                self.configuration = config
 
         elif isinstance(self.configuration, dict):
             self.floris = Floris.from_dict(self.configuration)
