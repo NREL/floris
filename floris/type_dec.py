@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 from pathlib import Path
 from typing import (
     Any,
@@ -95,6 +96,8 @@ def convert_to_path(fn: str | Path) -> Path:
         fn (str | Path): The user input file path or file name.
 
     Raises:
+        FileExistsError: Raised if :py:attr:`fn` is not able to be found as an absolute path, nor as
+            a relative path.
         TypeError: Raised if :py:attr:`fn` is neither a :py:obj:`str`, nor a :py:obj:`pathlib.Path`.
 
     Returns:
@@ -103,11 +106,30 @@ def convert_to_path(fn: str | Path) -> Path:
     if isinstance(fn, str):
         fn = Path(fn)
 
+    # Get the base path from where the analysis script was run to determine the relative
+    # path from which `fn` might be based. [1] is where a direct call to this function will be
+    # located (e.g., testing via pytest), and [-1] is where a direct call to the function via an
+    # analysis script will be located (e.g., running an example).
+    base_fn_script = Path(inspect.stack()[-1].filename).resolve().parent
+    base_fn_sys = Path(inspect.stack()[1].filename).resolve().parent
+
     if isinstance(fn, Path):
-        fn.resolve()
-    else:
-        raise TypeError(f"The passed input: {fn} could not be converted to a pathlib.Path object")
-    return fn
+        absolute_fn = fn.resolve()
+        relative_fn_script = (base_fn_script / fn).resolve()
+        relative_fn_sys = (base_fn_sys / fn).resolve()
+        if absolute_fn.is_dir():
+            return absolute_fn
+        if relative_fn_script.is_dir():
+            return relative_fn_script
+        if relative_fn_sys.is_dir():
+            return relative_fn_sys
+        raise FileExistsError(
+            f"{fn} could not be found as either a\n"
+            f"  - relative file path from a script: {relative_fn_script}\n"
+            f"  - relative file path from a system location: {relative_fn_sys}\n"
+            f"  - or absolute file path: {absolute_fn}"
+        )
+    raise TypeError(f"The passed input: {fn} could not be converted to a pathlib.Path object")
 
 
 @define
