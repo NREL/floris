@@ -16,7 +16,9 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable
+from pathlib import Path
 
+import attrs
 import numpy as np
 import pandas as pd
 from attrs import define, field
@@ -423,9 +425,12 @@ class TurbineMultiDimensional(Turbine):
             the rotor radius.
             Defaults to 0.5.
     """
-
     power_thrust_data_file: str = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
+    turbine_library_path: Path = field(
+        default=Path(".").resolve(),
+        validator=attrs.validators.instance_of(Path)
+    )
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -447,6 +452,10 @@ class TurbineMultiDimensional(Turbine):
     #     self.use_points_on_perimeter = False
 
     def __attrs_post_init__(self) -> None:
+        # Solidify the data file path and name
+        self.power_thrust_data_file = (
+            self.turbine_library_path / self.power_thrust_data_file
+        ).resolve()
 
         # Read in the multi-dimensional data supplied by the user.
         df = pd.read_csv(self.power_thrust_data_file)

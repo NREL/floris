@@ -264,10 +264,14 @@ class Farm(BaseClass):
     def construct_turbine_map(self):
         multi_key = "multi_dimensional_cp_ct"
         if multi_key in self.turbine_definitions[0] and self.turbine_definitions[0][multi_key]:
-            # TODO: Need to load this with the turbine library location
-            self.turbine_map = [
-                TurbineMultiDimensional.from_dict(turb) for turb in self.turbine_definitions
-            ]
+            self.turbine_map = []
+            for turb in self.turbine_definitions:
+                try:
+                    _turb = {**turb, **{"turbine_library_path": self.interal_turbine_library}}
+                    self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
+                except FileNotFoundError:
+                    _turb = {**turb, **{"turbine_library_path": self.turbine_library_path}}
+                    self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
         else:
             self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
