@@ -134,7 +134,7 @@ class FlowField(BaseClass):
             * (grid.z_sorted) ** (self.wind_shear - 1)
         )
 
-        # If no hetergeneous inflow defined, then set all speeds ups to 1.0
+        # If no heterogeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
             speed_ups = 1.0
 

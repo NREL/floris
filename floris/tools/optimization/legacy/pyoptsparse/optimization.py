@@ -12,7 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from ....logging_manager import LoggerBase
+from floris.logging_manager import LoggerBase
 
 
 class Optimization(LoggerBase):

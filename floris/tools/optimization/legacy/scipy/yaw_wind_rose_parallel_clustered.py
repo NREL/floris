@@ -19,7 +19,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from ....logging_manager import LoggerBase
+from floris.logging_manager import LoggerBase
+
 from .yaw_wind_rose_clustered import YawOptimizationWindRoseClustered
 
 

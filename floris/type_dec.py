@@ -66,20 +66,16 @@ def _attr_floris_filter(inst: Attribute, value: Any) -> bool:
     return True
 
 def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
-    """Helper function to generate iterable validators that will reduce the amount of
+    """
+    Helper function to generate iterable validators that will reduce the amount of
     boilerplate code.
 
-    Parameters
-    ----------
-    iter_type : any iterable
-        The type of iterable object that should be validated.
-    item_types : Union[Any, Tuple[Any]]
-        The type or types of acceptable item types.
+    Args:
+        iter_type (iterable): The type of iterable object that should be validated.
+        item_types (Union[Any, Tuple[Any]]): The type or types of acceptable item types.
 
-    Returns
-    -------
-    Callable
-        The attr.validators.deep_iterable iterable and instance validator.
+    Returns:
+        Callable: The attr.validators.deep_iterable iterable and instance validator.
     """
     validator = attrs.validators.deep_iterable(
         member_validator=attrs.validators.instance_of(item_types),

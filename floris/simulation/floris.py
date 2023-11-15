@@ -200,7 +200,7 @@ class Floris(BaseClass):
     def initialize_domain(self):
         """Initialize solution space prior to wake calculations"""
 
-        # Initialize field quanitities; doing this immediately prior to doing
+        # Initialize field quantities; doing this immediately prior to doing
         # the calculation step allows for manipulating inputs in a script
         # without changing the data structures
         self.flow_field.initialize_velocity_field(self.grid)

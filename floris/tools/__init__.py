@@ -31,9 +31,9 @@ Examples:
     >>> dir(floris.tools)
     ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',
-    'floris_interface', 'flow_data',
+    'floris_interface',
     'layout_functions', 'optimization', 'plotting', 'power_rose',
-    'rews', 'sowfa_utilities', 'visualization', 'wind_rose']
+    'rews', 'visualization', 'wind_rose']
 """
 
 from .floris_interface import FlorisInterface
@@ -52,14 +52,12 @@ from .wind_rose import WindRose
 # from floris.tools import (
     # cut_plane,
     # floris_interface,
-    # flow_data,
     # interface_utilities,
     # layout_functions,
     # optimization,
     # plotting,
     # power_rose,
     # rews,
-    # sowfa_utilities,
     # visualization,
     # wind_rose,
 # )

@@ -35,7 +35,7 @@ class MAX(BaseModel):
 
     def function(self, wake_field: np.ndarray, velocity_field: np.ndarray):
         """
-        Incorporates the velicty deficits into the base flow field by
+        Incorporates the velocity deficits into the base flow field by
         selecting the maximum of the two for each point.
 
         Args:
