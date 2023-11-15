@@ -17,7 +17,8 @@ import copy
 import numpy as np
 import pandas as pd
 
-from ....logging_manager import LoggerBase
+from floris.logging_manager import LoggerBase
+
 from .cluster_turbines import cluster_turbines
 from .yaw import YawOptimization
 

@@ -42,6 +42,7 @@ REQUIRED = [
 
     # utilities
     "coloredlogs>=10.0",
+    "flatten_dict",
 ]
 
 # What packages are optional?
@@ -51,8 +52,8 @@ REQUIRED = [
 #   pip install "floris[develop]"       installs developer packages in non-editable install
 EXTRAS = {
     "docs": {
-        "jupyter-book<=0.13.3",
-        "sphinx-book-theme",
+        "jupyter-book==0.14",
+        "sphinx-book-theme==0.4.0rc1",
         "sphinx-autodoc-typehints",
         "sphinxcontrib-autoyaml",
         "sphinxcontrib.mermaid",

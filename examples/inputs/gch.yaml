@@ -134,6 +134,15 @@ flow_field:
   # The wind veer as a constant value for all points in the grid.
   wind_veer: 0.0
 
+  ###
+  # The conditions that are specified for use with the multi-dimensional Cp/Ct capbility.
+  # These conditions are external to FLORIS and specified by the user. They are used internally
+  # through a nearest-neighbor selection process to choose the correct Cp/Ct interpolants
+  # to use. These conditions are only used with the ``multidim_cp_ct`` velocity deficit model.
+  multidim_conditions:
+    Tp: 2.5
+    Hs: 3.01
+
 ###
 # Configure the wake model.
 wake:

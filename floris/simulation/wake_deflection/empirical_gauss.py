@@ -29,7 +29,7 @@ from floris.utilities import cosd, sind
 class EmpiricalGaussVelocityDeflection(BaseModel):
     """
     The Empirical Gauss deflection model is based on the form of previous the
-    Guass deflection model (see :cite:`bastankhah2016experimental` and
+    Gauss deflection model (see :cite:`bastankhah2016experimental` and
     :cite:`King2019Controls`) but simplifies the formulation for simpler
     tuning and more independence from the velocity deficit model.
 
@@ -38,10 +38,10 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
         in `parameter_dictionary`. Possible key-value pairs include:
 
             -   **horizontal_deflection_gain_D** (*float*): Gain for the
-                maximum (y-direction) deflection acheived far downstream
+                maximum (y-direction) deflection achieved far downstream
                 of a yawed turbine.
             -   **vertical_deflection_gain_D** (*float*): Gain for the
-                maximum vertical (z-direction) deflection acheived at a
+                maximum vertical (z-direction) deflection achieved at a
                 far downstream location due to rotor tilt. Specifying as
                 -1 will mean that vertical deflections due to tilt match
                 horizontal deflections due to yaw.
@@ -60,7 +60,7 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
     """
     horizontal_deflection_gain_D: float = field(default=3.0)
     vertical_deflection_gain_D: float = field(default=-1)
-    deflection_rate: float = field(default=15)
+    deflection_rate: float = field(default=30)
     mixing_gain_deflection: float = field(default=0.0)
     yaw_added_mixing_gain: float = field(default=0.0)
 
@@ -101,7 +101,7 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
             mixing_i (np.array): The wake-induced mixing term for the
                 ith turbine.
             ct_i (np.array): Thrust coefficient for the ith turbine (-).
-            rotor_diameter_i (np.array): Rotor diamter for the ith
+            rotor_diameter_i (np.array): Rotor diameter for the ith
                 turbine (m).
 
             x (np.array): Streamwise direction grid coordinates of the
@@ -126,7 +126,7 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
         A_z = (deflection_gain_z * ct_i * tilt_r) / (1 + self.mixing_gain_deflection * mixing_i)
 
         # Apply downstream mask in the process
-        x_normalized = (x - x_i) * np.array(x > x_i + 0.1) / rotor_diameter_i
+        x_normalized = (x - x_i) * (x > x_i + 0.1) / rotor_diameter_i
 
         log_term = np.log(
             (x_normalized - self.deflection_rate) / (x_normalized + self.deflection_rate)

@@ -162,7 +162,7 @@ class WindRose:
         df["ws"] = pd.cut(df.ws, ws_edges, labels=ws)
 
         # Regroup
-        df = df.groupby([c for c in df.columns if c != "freq_val"]).sum()
+        df = df.groupby([c for c in df.columns if c != "freq_val"], observed=False).sum()
 
         # Fill nans
         df = df.fillna(0)
@@ -261,7 +261,7 @@ class WindRose:
         df["wd"] = pd.cut(df.wd, wd_edges, labels=wd)
 
         # Regroup
-        df = df.groupby([c for c in df.columns if c != "freq_val"]).sum()
+        df = df.groupby([c for c in df.columns if c != "freq_val"], observed=False).sum()
 
         # Fill nans
         df = df.fillna(0)
@@ -335,7 +335,7 @@ class WindRose:
         df[col] = pd.cut(df[col], var_edges, labels=bins)
 
         # Regroup
-        df = df.groupby([c for c in df.columns if c != "freq_val"]).sum()
+        df = df.groupby([c for c in df.columns if c != "freq_val"], observed=False).sum()
 
         # Fill nans
         df = df.fillna(0)
@@ -688,7 +688,7 @@ class WindRose:
 
         # Now group up
         df["freq_val"] = 1.0
-        df = df.groupby([c for c in df.columns if c != "freq_val"]).sum()
+        df = df.groupby([c for c in df.columns if c != "freq_val"], observed=False).sum()
         df["freq_val"] = df.freq_val.astype(float) / df.freq_val.sum()
         df = df.reset_index()
 
@@ -1140,7 +1140,7 @@ class WindRose:
 
         # Now group up
         df["freq_val"] = 1.0
-        df = df.groupby([c for c in df.columns if c != "freq_val"]).sum()
+        df = df.groupby([c for c in df.columns if c != "freq_val"], observed=False).sum()
         df["freq_val"] = df.freq_val.astype(float) / df.freq_val.sum()
         df = df.reset_index()
 

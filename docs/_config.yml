@@ -44,13 +44,17 @@ sphinx:
   - 'sphinx.ext.viewcode'
   - 'sphinx_autodoc_typehints'
   - 'sphinxcontrib.autoyaml'
-  - 'sphinx.ext.napoleon'       # Formats google and numpy docstring styles
+  - 'sphinx.ext.napoleon'               # Formats google and numpy docstring styles
   - 'sphinxcontrib.mermaid'
   config:
     html_theme: sphinx_book_theme
     templates_path:
     - '_templates'
     language: 'python'
+    nb_execution_show_tb: true          # Shows the stack trace in stdout; its suppressed otherwise.
+    nb_execution_raise_on_error: true   # Stops the Sphinx build if there is an error in a notebook. See https://github.com/executablebooks/jupyter-book/issues/2011
+    suppress_warnings:
+    - etoc.toctree                      # autodoc output contains toctrees, so suppress this warning. See https://github.com/executablebooks/sphinx-external-toc/issues/36
     autoyaml_level: 3
     autosummary_generate: true
 
@@ -60,7 +64,7 @@ sphinx:
       members: true
       member-order: bysource
       undoc-members: true
-      private-members: true
+      private-members: false
       # special-members: true
       # inherited-members
       # show-inheritance

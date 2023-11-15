@@ -41,8 +41,9 @@ class FlowField(BaseClass):
     air_density: float = field(converter=float)
     turbulence_intensity: float = field(converter=float)
     reference_wind_height: float = field(converter=float)
-    time_series : bool = field(default=False)
+    time_series: bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
+    multidim_conditions: dict = field(default=None)
 
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
@@ -137,7 +138,7 @@ class FlowField(BaseClass):
                 * (grid.z_sorted) ** (self.wind_shear - 1)
             )
 
-        # If no hetergeneous inflow defined, then set all speeds ups to 1.0
+        # If no heterogeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
             speed_ups = 1.0
 

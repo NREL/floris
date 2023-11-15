@@ -24,6 +24,7 @@ from floris.simulation import (
     BaseClass,
     State,
     Turbine,
+    TurbineMultiDimensional,
 )
 from floris.simulation.turbine import compute_tilt_angles_for_floating_turbines
 from floris.type_dec import (
@@ -62,26 +63,39 @@ class Farm(BaseClass):
     )
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
+    coordinates: List[Vec3] = field(init=False)
+    turbine_fCts: tuple = field(init=False, default=[])
+    turbine_fTilts: list = field(init=False, default=[])
+
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
+
     tilt_angles: NDArrayFloat = field(init=False)
     tilt_angles_sorted: NDArrayFloat = field(init=False)
-    coordinates: List[Vec3] = field(init=False)
+
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
-    turbine_fCts: tuple = field(init=False, default=[])
+
+    turbine_type_map: NDArrayObject = field(init=False, default=[])
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
+
+    rotor_diameters: NDArrayFloat = field(init=False, default=[])
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
+
+    TSRs: NDArrayFloat = field(init=False, default=[])
     TSRs_sorted: NDArrayFloat = field(init=False, default=[])
+
     pPs: NDArrayFloat = field(init=False, default=[])
     pPs_sorted: NDArrayFloat = field(init=False, default=[])
+
     pTs: NDArrayFloat = field(init=False, default=[])
     pTs_sorted: NDArrayFloat = field(init=False, default=[])
+
     ref_tilt_cp_cts: NDArrayFloat = field(init=False, default=[])
     ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
+
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
-    turbine_fTilts: list = field(init=False, default=[])
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
@@ -234,12 +248,21 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
+            self.turbine_map = [
+                TurbineMultiDimensional.from_dict(turb) for turb in self.turbine_definitions
+            ]
+        else:
+            self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
     def construct_turbine_fCts(self):
         self.turbine_fCts = {
             turb.turbine_type: turb.fCt_interp for turb in self.turbine_map
         }
+
+    def construct_multidim_turbine_fCts(self):
+        self.turbine_fCts = [turb.fCt_interp for turb in self.turbine_map]
 
     def construct_turbine_fTilts(self):
         self.turbine_fTilts = [(turb.turbine_type, turb.fTilt_interp) for turb in self.turbine_map]
@@ -248,6 +271,9 @@ class Farm(BaseClass):
         self.turbine_power_interps = {
             turb.turbine_type: turb.power_interp for turb in self.turbine_map
         }
+
+    def construct_multidim_turbine_power_interps(self):
+        self.turbine_power_interps = [turb.power_interp for turb in self.turbine_map]
 
     def construct_coordinates(self):
         self.coordinates = np.array([
@@ -266,6 +292,38 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=2
         )
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
+            wd_dim = np.shape(template_shape)[0]
+            ws_dim = np.shape(template_shape)[1]
+            if wd_dim != 1 | ws_dim != 0:
+                self.turbine_fCts_sorted = np.take_along_axis(
+                    np.reshape(
+                        np.repeat(self.turbine_fCts, wd_dim * ws_dim),
+                        np.shape(template_shape)
+                    ),
+                    sorted_coord_indices,
+                    axis=2
+                )
+                self.turbine_power_interps_sorted = np.take_along_axis(
+                    np.reshape(
+                        np.repeat(self.turbine_power_interps, wd_dim * ws_dim),
+                        np.shape(template_shape)
+                    ),
+                    sorted_coord_indices,
+                    axis=2
+                )
+            else:
+                self.turbine_fCts_sorted = np.take_along_axis(
+                    np.reshape(self.turbine_fCts, np.shape(template_shape)),
+                    sorted_coord_indices,
+                    axis=2
+                )
+                self.turbine_power_interps_sorted = np.take_along_axis(
+                    np.reshape(self.turbine_power_interps, np.shape(template_shape)),
+                    sorted_coord_indices,
+                    axis=2
+                )
         self.rotor_diameters_sorted = np.take_along_axis(
             self.rotor_diameters * template_shape,
             sorted_coord_indices,
@@ -301,15 +359,16 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=2
         )
+
+        # NOTE: Tilt angles are sorted twice - here and in initialize()
         self.tilt_angles_sorted = np.take_along_axis(
             self.tilt_angles * template_shape,
             sorted_coord_indices,
             axis=2
         )
-        self.turbine_type_names_sorted = [turb["turbine_type"] for turb in self.turbine_definitions]
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(
-                self.turbine_type_names_sorted * n_wind_directions,
+                [turb["turbine_type"] for turb in self.turbine_definitions] * n_wind_directions,
                 np.shape(sorted_coord_indices)
             ),
             sorted_coord_indices,
@@ -341,6 +400,18 @@ class Farm(BaseClass):
         return tilt_angles
 
     def finalize(self, unsorted_indices):
+        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
+            self.turbine_fCts = np.take_along_axis(
+                self.turbine_fCts_sorted,
+                unsorted_indices[:,:,:,0,0],
+                axis=2
+            )
+            self.turbine_power_interps = np.take_along_axis(
+                self.turbine_power_interps_sorted,
+                unsorted_indices[:,:,:,0,0],
+                axis=2
+            )
         self.yaw_angles = np.take_along_axis(
             self.yaw_angles_sorted,
             unsorted_indices[:,:,:,0,0],
@@ -363,6 +434,22 @@ class Farm(BaseClass):
         )
         self.TSRs = np.take_along_axis(
             self.TSRs_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        # TODO: do these need to be unsorted? Maybe we should just for completeness...
+        self.ref_density_cp_cts = np.take_along_axis(
+            self.ref_density_cp_cts_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        self.ref_tilt_cp_cts = np.take_along_axis(
+            self.ref_tilt_cp_cts_sorted,
+            unsorted_indices[:,:,:,0,0],
+            axis=2
+        )
+        self.correct_cp_ct_for_tilt = np.take_along_axis(
+            self.correct_cp_ct_for_tilt_sorted,
             unsorted_indices[:,:,:,0,0],
             axis=2
         )

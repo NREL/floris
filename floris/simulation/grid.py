@@ -644,56 +644,6 @@ class FlowFieldPlanarGrid(Grid):
                 y_center_of_rotation=self.y_center_of_rotation,
             )
 
-        # self.sorted_indices = self.x.argsort(axis=2)
-        # self.unsorted_indices = self.sorted_indices.argsort(axis=2)
-
-        # Put the turbines into the final arrays in their sorted order
-        # self.x = np.take_along_axis(self.x, self.sorted_indices, axis=2)
-        # self.y = np.take_along_axis(self.y, self.sorted_indices, axis=2)
-        # self.z = np.take_along_axis(self.z, self.sorted_indices, axis=2)
-
-    # def finalize(self):
-        # sorted_indices = self.x.argsort(axis=2)
-        # unsorted_indices = sorted_indices.argsort(axis=2)
-
-        # # print(self.x)
-
-        # x_coordinates, y_coordinates, _ = self.turbine_coordinates_array.T
-
-        # x_center_of_rotation = (np.min(x_coordinates) + np.max(x_coordinates)) / 2
-        # y_center_of_rotation = (np.min(y_coordinates) + np.max(y_coordinates)) / 2
-        # # print(x_center_of_rotation)
-        # # print(y_center_of_rotation)
-        # # lkj
-
-        # self.x = np.take_along_axis(self.x, self.unsorted_indices, axis=2)
-        # self.y = np.take_along_axis(self.y, self.unsorted_indices, axis=2)
-        # self.z = np.take_along_axis(self.z, self.unsorted_indices, axis=2)
-        # # print(self.x)
-
-        # self.x, self.y, self.z = self._rotated_grid(
-        #     -1 * self.wind_directions,
-        #     (x_center_of_rotation, y_center_of_rotation)
-        # )
-        # TODO figure out how to un-rotate grid for plotting after it has been solved
-        # pass
-
-    # def _rotated_grid(self, angle, center_of_rotation):
-    #     """
-    #     Rotate the discrete flow field grid.
-    #     """
-    #     angle = ((angle - 270) % 360 + 360) % 360
-    #     # angle = np.reshape(angle, (len(angle), 1, 1))
-    #     xoffset = self.x - center_of_rotation[0]
-    #     yoffset = self.y - center_of_rotation[1]
-    #     rotated_x = (
-    #         xoffset * cosd(angle) - yoffset * sind(angle) + center_of_rotation[0]
-    #     )
-    #     rotated_y = (
-    #         xoffset * sind(angle) + yoffset * cosd(angle) + center_of_rotation[1]
-    #     )
-    #     return rotated_x, rotated_y, self.z
-
 @define
 class PointsGrid(Grid):
     """

@@ -19,10 +19,12 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
+from floris.logging_manager import LoggerBase
+
 from .yaw_optimization_tools import derive_downstream_turbines, find_layout_symmetry
 
 
-class YawOptimization:
+class YawOptimization(LoggerBase):
     """
     YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.
     Optimization` that is used to optimize the yaw angles of all turbines in a Floris
@@ -176,7 +178,17 @@ class YawOptimization:
         self.normalize_variables = normalize_control_variables
         self.calc_baseline_power = calc_baseline_power
         self.exclude_downstream_turbines = exclude_downstream_turbines
-        self.exploit_layout_symmetry = exploit_layout_symmetry
+
+        # Check if exploit_layout_symmetry is being used with heterogeneous inflow
+        if exploit_layout_symmetry and fi.floris.flow_field.heterogenous_inflow_config is not None:
+            err_msg = (
+                "Layout symmetry cannot be exploited with heterogeneous inflows. "
+                "Setting exploit_layout_symmetry to False."
+            )
+            self.logger.warning(err_msg, stack_info=True)
+            self.exploit_layout_symmetry = False
+        else:
+            self.exploit_layout_symmetry = exploit_layout_symmetry
 
         # Prepare for optimization and calculate baseline powers (if applic.)
         self._initialize()
@@ -338,7 +350,9 @@ class YawOptimization:
             / self._normalization_length
         )
 
-    def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None):
+    def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None,
+            heterogeneous_speed_multipliers=None
+        ):
         """
         Calculate the wind farm power production assuming the predefined
         probability distribution (self.unc_options/unc_pmf), with the
@@ -358,6 +372,9 @@ class YawOptimization:
             yaw_angles = self._yaw_angles_baseline_subset
         if turbine_weights is None:
             turbine_weights = self._turbine_weights_subset
+        if heterogeneous_speed_multipliers is not None:
+            fi_subset.floris.flow_field.\
+                heterogenous_inflow_config['speed_multipliers'] = heterogeneous_speed_multipliers
 
         # Ensure format [incompatible with _subset notation]
         yaw_angles = self._unpack_variable(yaw_angles, subset=True)
@@ -385,6 +402,9 @@ class YawOptimization:
             P = self._calculate_farm_power(self._yaw_angles_baseline_subset)
             self._farm_power_baseline_subset = P
             self.farm_power_baseline = self._unreduce_variable(P)
+        else:
+            self._farm_power_baseline_subset = None
+            self.farm_power_baseline = None
 
     def _derive_layout_symmetry(self):
         """Derive symmetry lines in the wind farm layout and use that
@@ -456,6 +476,9 @@ class YawOptimization:
 
     def _unreduce_variable(self, variable):
         # Check if needed to un-reduce at all, if not, return directly
+        if variable is None:
+            return variable
+
         if not self.exploit_layout_symmetry:
             return variable
 
@@ -516,8 +539,10 @@ class YawOptimization:
                 "wind_speed": wind_speed * np.ones(num_wind_directions),
                 "turbulence_intensity": ti * np.ones(num_wind_directions),
                 "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
-                "farm_power_opt": self.farm_power_opt[:, ii],
-                "farm_power_baseline": self.farm_power_baseline[:, ii],
+                "farm_power_opt": None if self.farm_power_opt is None \
+                                       else self.farm_power_opt[:, ii],
+                "farm_power_baseline": None if self.farm_power_baseline is None \
+                                            else self.farm_power_baseline[:, ii],
             }))
         df_opt = pd.concat(df_list, axis=0)
 
