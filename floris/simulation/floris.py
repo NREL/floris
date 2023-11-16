@@ -35,7 +35,6 @@ from floris.simulation import (
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     Grid,
-    LinesGrid,
     PointsGrid,
     sequential_multidim_solver,
     sequential_solver,
@@ -338,8 +337,8 @@ class Floris(BaseClass):
         resolution: int,
         homogeneous_wind_speed: float,
         ref_rotor_diameter: float,
-        x_inertial_start: float,
-        y_inertial_start: float,
+        x_start: float,
+        y_start: float,
         reference_height: float,
     ) -> list[pd.DataFrame]:
         """
@@ -348,15 +347,34 @@ class Floris(BaseClass):
         for more details.
         """
 
+        n_lines = len(downstream_dists)
+
+        downstream_dists_transpose = np.atleast_2d(downstream_dists).T
+        # The x-coordinate is fixed for every line (every row in  `x`)
+        x = (x_start + downstream_dists_transpose) * np.ones((n_lines, resolution))
+
+        if direction == 'y':
+            y_single_line = np.linspace(
+                y_start + profile_range[0],
+                y_start + profile_range[1],
+                resolution,
+            )
+            y = y_single_line * np.ones((n_lines, resolution))
+            z = reference_height * np.ones((n_lines, resolution))
+        elif direction == 'z':
+            z_single_line = np.linspace(
+                reference_height + profile_range[0],
+                reference_height + profile_range[1],
+                resolution,
+            )
+            z = z_single_line * np.ones((n_lines, resolution))
+            y = y_start * np.ones((n_lines, resolution))
+
         # Create a grid that contains coordinates for all the sample points in all profiles
-        field_grid = LinesGrid(
-            direction=direction,
-            downstream_dists=downstream_dists,
-            line_range=profile_range,
-            resolution=resolution,
-            x_inertial_start=x_inertial_start,
-            y_inertial_start=y_inertial_start,
-            reference_height=reference_height,
+        field_grid = PointsGrid(
+            points_x=x.flatten(),
+            points_y=y.flatten(),
+            points_z=z.flatten(),
             x_center_of_rotation=self.grid.x_center_of_rotation,
             y_center_of_rotation=self.grid.y_center_of_rotation,
             turbine_coordinates=self.farm.coordinates,
@@ -383,11 +401,11 @@ class Floris(BaseClass):
 
         n_profiles = len(downstream_dists)
         x_relative_start = np.reshape(
-            field_grid.x_sorted[0, 0, :, 0, 0] - field_grid.x_start,
+            field_grid.x_sorted[0, 0, :, 0, 0] - x_start,
             (n_profiles, resolution),
         )
         y_relative_start = np.reshape(
-            field_grid.y_sorted[0, 0, :, 0, 0] - field_grid.y_start,
+            field_grid.y_sorted[0, 0, :, 0, 0] - y_start,
             (n_profiles, resolution),
         )
         z_relative_start = np.reshape(

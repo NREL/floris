@@ -58,7 +58,6 @@ from .grid import (
     FlowFieldPlanarGrid,
     Grid,
     PointsGrid,
-    LinesGrid,
     TurbineGrid,
     TurbineCubatureGrid
 )
