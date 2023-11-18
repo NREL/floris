@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     profiles_fig.axs[0,0].legend(['gauss', 'jensen'], fontsize=11)
     profiles_fig.fig.suptitle(
-        'Velocity decifit profiles from different velocity models',
+        'Velocity deficit profiles from different velocity models',
         fontsize=14,
     )
 
