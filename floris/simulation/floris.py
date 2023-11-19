@@ -45,7 +45,10 @@ from floris.simulation import (
     WakeModelManager,
 )
 from floris.type_dec import NDArrayFloat
-from floris.utilities import load_yaml
+from floris.utilities import (
+    load_yaml,
+    reverse_rotate_coordinates_rel_west,
+)
 
 
 @define
@@ -347,6 +350,8 @@ class Floris(BaseClass):
         for more details.
         """
 
+        # Create a grid that contains coordinates for all the sample points in all profiles.
+        # Effectively, this is a grid of parallel lines.
         n_lines = len(downstream_dists)
 
         downstream_dists_transpose = np.atleast_2d(downstream_dists).T
@@ -370,13 +375,22 @@ class Floris(BaseClass):
             z = z_single_line * np.ones((n_lines, resolution))
             y = y_start * np.ones((n_lines, resolution))
 
-        # Create a grid that contains coordinates for all the sample points in all profiles
+        # Rotate sample coordinates with the wind direction
+        x_rotated, y_rotated, z_rotated = reverse_rotate_coordinates_rel_west(
+            self.flow_field.wind_directions,
+            x[None, None, None, :, :],
+            y[None, None, None, :, :],
+            z[None, None, None, :, :],
+            x_center_of_rotation=x_start,
+            y_center_of_rotation=y_start,
+        )
+
         field_grid = PointsGrid(
-            points_x=x.flatten(),
-            points_y=y.flatten(),
-            points_z=z.flatten(),
-            x_center_of_rotation=self.grid.x_center_of_rotation,
-            y_center_of_rotation=self.grid.y_center_of_rotation,
+            points_x=x_rotated.flatten(),
+            points_y=y_rotated.flatten(),
+            points_z=z_rotated.flatten(),
+            x_center_of_rotation=x_start,
+            y_center_of_rotation=y_start,
             turbine_coordinates=self.farm.coordinates,
             reference_turbine_diameter=self.farm.rotor_diameters,
             grid_resolution=1,
@@ -399,25 +413,17 @@ class Floris(BaseClass):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
-        n_profiles = len(downstream_dists)
-        x_relative_start = np.reshape(
-            field_grid.x_sorted[0, 0, :, 0, 0] - x_start,
-            (n_profiles, resolution),
-        )
-        y_relative_start = np.reshape(
-            field_grid.y_sorted[0, 0, :, 0, 0] - y_start,
-            (n_profiles, resolution),
-        )
-        z_relative_start = np.reshape(
-            field_grid.z_sorted[0, 0, :, 0, 0] - reference_height,
-            (n_profiles, resolution),
-        )
-        u = np.reshape(self.flow_field.u_sorted[0, 0, :, 0, 0], (n_profiles, resolution))
+        x_relative_start = x - x_start
+        y_relative_start = y - y_start
+        z_relative_start = z - reference_height
+        u = np.reshape(self.flow_field.u_sorted[0, 0, :, 0, 0], (n_lines, resolution))
         velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
 
         velocity_deficit_profiles = []
 
-        for i in range(n_profiles):
+        # In the coordinate system used by the DataFrame below, `x` is the streamwise direction
+        # and (x_start, y_start, reference_height) is the origin.
+        for i in range(n_lines):
             df = pd.DataFrame(
                 {
                     "x/D": x_relative_start[i]/ref_rotor_diameter,

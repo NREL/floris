@@ -93,8 +93,7 @@ if __name__ == '__main__':
     # in sample_velocity_deficit_profiles and VelocityProfilesFigure.
     # Case 2: Show that the coordinates x/D, y/D and z/D returned by
     # sample_velocity_deficit_profiles are relative to the sampling starting point.
-    # By default, this starting point is at (0.0, 0.0, fi.floris.flow_field.reference_wind_height)
-    # in inertial coordinates.
+    # By default, this starting point is at (0.0, 0.0, fi.floris.flow_field.reference_wind_height).
     downstream_dists = D * np.array([3])
     for case in [1, 2]:
         # The first added profile is a reference
@@ -114,14 +113,13 @@ if __name__ == '__main__':
             wind_directions = [315.0]
             layout_x, layout_y = [0.0], [0.0]
             # Same as the default starting point but specified for completeness
-            x_inertial_start, y_inertial_start = 0.0, 0.0
+            x_start, y_start = 0.0, 0.0
         elif case == 2:
             # Change turbine location compared to reference. Then, set the sampling starting
-            # point to the new turbine location using the arguments
-            # `x_inertial_start` and `y_inertial_start`.
+            # point to the new turbine location using the arguments `x_start` and `y_start`.
             wind_directions = [270.0]
             layout_x, layout_y = [D], [D]
-            x_inertial_start, y_inertial_start = D, D
+            x_start, y_start = D, D
 
         # Plot a second profile to show that it is equivalent to the reference
         fi.reinitialize(wind_directions=wind_directions, layout_x=layout_x, layout_y=layout_y)
@@ -130,8 +128,8 @@ if __name__ == '__main__':
             downstream_dists=downstream_dists,
             resolution=21,
             homogeneous_wind_speed=homogeneous_wind_speed,
-            x_inertial_start=x_inertial_start,
-            y_inertial_start=y_inertial_start,
+            x_start=x_start,
+            y_start=y_start,
         )
         profiles_fig.add_profiles(
             profiles,

@@ -995,8 +995,8 @@ class FlorisInterface(LoggerBase):
             wind_direction: float = None,
             homogeneous_wind_speed: float = None,
             ref_rotor_diameter: float = None,
-            x_inertial_start: float = 0.0,
-            y_inertial_start: float = 0.0,
+            x_start: float = 0.0,
+            y_start: float = 0.0,
             reference_height: float = None,
     ) -> list[pd.DataFrame]:
         """
@@ -1010,7 +1010,7 @@ class FlorisInterface(LoggerBase):
             direction: At each downstream location, this is the direction in which to sample the
                 profile. Either `y` or `z`.
             downstream_dists: A list/array of streamwise locations for where to sample the profiles.
-                Default starting point in inertial coordinates is (0.0, 0.0, reference_height).
+                Default starting point is (0.0, 0.0, reference_height).
             profile_range: Determines the extent of the line along which the profiles are sampled.
                 The range is defined about a point which lies some distance directly downstream of
                 the starting point.
@@ -1020,8 +1020,8 @@ class FlorisInterface(LoggerBase):
                 is temporarily set to 0.0 in this method.
             ref_rotor_diameter: A reference rotor diameter which is used to normalize the
                 coordinates.
-            x_inertial_start: x-coordinate of starting point in the inertial coordinate system.
-            y_inertial_start: y-coordinate of starting point in the inertial coordinate system.
+            x_start: x-coordinate of starting point.
+            y_start: y-coordinate of starting point.
             reference_height: If `direction` is y, then `reference_height` defines the height of the
                 xy-plane in which the velocity profiles are sampled. If `direction` is z, then the
                 velocity is sampled along the vertical direction with the `profile_range` being
@@ -1097,8 +1097,8 @@ class FlorisInterface(LoggerBase):
             resolution,
             homogeneous_wind_speed,
             ref_rotor_diameter,
-            x_inertial_start,
-            y_inertial_start,
+            x_start,
+            y_start,
             reference_height,
         )
 
