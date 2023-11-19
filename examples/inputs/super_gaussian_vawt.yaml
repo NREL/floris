@@ -30,7 +30,7 @@ flow_field:
   wind_veer: 0.0
 wake:
   model_strings:
-    combination_model: fls
+    combination_model: sosfs
     deflection_model: none
     turbulence_model: none
     velocity_model: super_gaussian_vawt
