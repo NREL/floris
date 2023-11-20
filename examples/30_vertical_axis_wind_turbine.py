@@ -144,10 +144,11 @@ profiles_fig.fig.suptitle('Velocity deficit profiles', fontsize=14)
 
 # Switch to a two-turbine layout. Then, calculate the velocities at each turbine in a
 # yz-grid centered on the hub of the turbine. The grids are based on the VAWTs' rectangular
-# cross-section and have a resolution of 3x5 to make them reasonably equidistant.
+# cross-section and have a resolution of 12x22 such that the turbine powers can be calculated
+# with reasonable accuracy.
 solver_settings = {
     'type': 'turbine_grid',
-    'turbine_grid_points': [3, 5]
+    'turbine_grid_points': [12, 22],
 }
 fi.reinitialize(layout_x=[0.0, 78.0], layout_y=[0.0, 0.0], solver_settings=solver_settings)
 fi.calculate_wake()
