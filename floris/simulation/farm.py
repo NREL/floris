@@ -109,7 +109,7 @@ class Farm(BaseClass):
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
 
-    interal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
+    internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
@@ -142,7 +142,7 @@ class Farm(BaseClass):
                     continue
 
                 # Check if the file exists in the internal and/or external library
-                internal_fn = (self.interal_turbine_library / t).with_suffix(".yaml")
+                internal_fn = (self.internal_turbine_library / t).with_suffix(".yaml")
                 external_fn = (self.turbine_library_path / t).with_suffix(".yaml")
                 in_internal = internal_fn.exists()
                 in_external = external_fn.exists()
@@ -267,7 +267,7 @@ class Farm(BaseClass):
             self.turbine_map = []
             for turb in self.turbine_definitions:
                 try:
-                    _turb = {**turb, **{"turbine_library_path": self.interal_turbine_library}}
+                    _turb = {**turb, **{"turbine_library_path": self.internal_turbine_library}}
                     self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
                 except FileNotFoundError:
                     _turb = {**turb, **{"turbine_library_path": self.turbine_library_path}}
