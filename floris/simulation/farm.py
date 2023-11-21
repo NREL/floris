@@ -266,11 +266,11 @@ class Farm(BaseClass):
         if multi_key in self.turbine_definitions[0] and self.turbine_definitions[0][multi_key]:
             self.turbine_map = []
             for turb in self.turbine_definitions:
+                _turb = {**turb, **{"turbine_library_path": self.internal_turbine_library}}
                 try:
-                    _turb = {**turb, **{"turbine_library_path": self.internal_turbine_library}}
                     self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
                 except FileNotFoundError:
-                    _turb = {**turb, **{"turbine_library_path": self.turbine_library_path}}
+                    _turb["turbine_library_path"] = self.turbine_library_path
                     self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
         else:
             self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
