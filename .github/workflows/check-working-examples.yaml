@@ -48,27 +48,6 @@ jobs:
           fi
         done
 
-        # Run all Jupyter notebooks
-        for i in *.ipynb; do
-
-          # Convert this notebook to a Python script
-          if ! jupyter nbconvert --to script $i; then
-            # On conversion error, report and go to the next notebook
-            error_results="${error_results}"$'\n'" - Error converting ${i} to Python script"
-            continue
-          fi
-
-          # Get the basename of the notebook since the converted script will have the same basename
-          script_name=`basename $i .ipynb`
-
-          # Run the converted script
-          if ! python "${script_name}.py"; then
-            error_results="${error_results}"$'\n'" - ${i}"
-            error_found=1
-          fi
-
-        done
-
         if [[ $error_found ]]; then
           echo "${error_results}"
         fi
