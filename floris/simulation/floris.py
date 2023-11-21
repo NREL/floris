@@ -429,6 +429,8 @@ class Floris(BaseClass):
         for i in range(n_lines):
             df = pd.DataFrame(
                 {
+                    "x": x_rotated[i],
+                    "y": y_rotated[i],
                     "x/D": x_relative_start[i]/ref_rotor_diameter,
                     "y/D": y_relative_start[i]/ref_rotor_diameter,
                     "z/D": z_relative_start[i]/ref_rotor_diameter,
