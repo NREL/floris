@@ -424,6 +424,15 @@ class TurbineMultiDimensional(Turbine):
             the width/height of the grid of points on the rotor as a ratio of
             the rotor radius.
             Defaults to 0.5.
+        power_thrust_data_file (:py:obj:`str`): The path and name of the file containing the
+            multidimensional power thrust curve. The path may be an absolute location or a relative
+            path to where FLORIS is being run.
+        multi_dimensional_cp_ct (:py:obj:`bool`, optional): Indicates if the turbine definition is
+            single dimensional (False) or multidimensional (True).
+        turbine_library_path (:py:obj:`pathlib.Path`, optional): The
+            :py:attr:`Farm.turbine_library_path` or :py:attr:`Farm.internal_turbine_library_path`,
+            whichever is being used to load turbine definitions.
+            Defaults to the current file location.
     """
     power_thrust_data_file: str = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
