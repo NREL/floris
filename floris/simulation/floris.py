@@ -378,12 +378,15 @@ class Floris(BaseClass):
         # Rotate sample coordinates with the wind direction
         x_rotated, y_rotated, z_rotated = reverse_rotate_coordinates_rel_west(
             self.flow_field.wind_directions,
-            x[None, None, None, :, :],
-            y[None, None, None, :, :],
-            z[None, None, None, :, :],
+            x[None, :, :],
+            y[None, :, :],
+            z[None, :, :],
             x_center_of_rotation=x_start,
             y_center_of_rotation=y_start,
         )
+        x_rotated = np.squeeze(x_rotated, axis=0)
+        y_rotated = np.squeeze(y_rotated, axis=0)
+        z_rotated = np.squeeze(z_rotated, axis=0)
 
         field_grid = PointsGrid(
             points_x=x_rotated.flatten(),
@@ -426,6 +429,8 @@ class Floris(BaseClass):
         for i in range(n_lines):
             df = pd.DataFrame(
                 {
+                    "x": x_rotated[i],
+                    "y": y_rotated[i],
                     "x/D": x_relative_start[i]/ref_rotor_diameter,
                     "y/D": y_relative_start[i]/ref_rotor_diameter,
                     "z/D": z_relative_start[i]/ref_rotor_diameter,

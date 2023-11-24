@@ -303,9 +303,9 @@ def reverse_rotate_coordinates_rel_west(
     grid_y_reversed = np.zeros_like(grid_x)
     grid_z_reversed = np.zeros_like(grid_x)
     for wii, angle_rotation in enumerate(wind_deviation_from_west):
-        x_rot = grid_x[wii, :, :, :, :]
-        y_rot = grid_y[wii, :, :, :, :]
-        z_rot = grid_z[wii, :, :, :, :]
+        x_rot = grid_x[wii]
+        y_rot = grid_y[wii]
+        z_rot = grid_z[wii]
 
         # Rotate turbine coordinates about the center
         x_rot_offset = x_rot - x_center_of_rotation
@@ -322,9 +322,9 @@ def reverse_rotate_coordinates_rel_west(
         )
         z = z_rot  # Nothing changed in this rotation
 
-        grid_x_reversed[wii, :, :, :, :] = x
-        grid_y_reversed[wii, :, :, :, :] = y
-        grid_z_reversed[wii, :, :, :, :] = z
+        grid_x_reversed[wii] = x
+        grid_y_reversed[wii] = y
+        grid_z_reversed[wii] = z
 
     return grid_x_reversed, grid_y_reversed, grid_z_reversed
 

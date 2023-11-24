@@ -18,7 +18,7 @@ import numpy as np
 
 from floris.tools import FlorisInterface
 from floris.tools.visualization import VelocityProfilesFigure
-
+import floris.tools.visualization as wakeviz
 
 """
 The first part of this example illustrates how to plot velocity deficit profiles at
@@ -37,16 +37,18 @@ def get_profiles(direction, resolution=100):
         downstream_dists=downstream_dists,
         resolution=resolution,
         homogeneous_wind_speed=homogeneous_wind_speed,
+        wind_direction=wind_direction
     )
 
 if __name__ == '__main__':
     D = 126.0 # Turbine diameter
     hub_height = 90.0
     fi = FlorisInterface("inputs/gch.yaml")
-    fi.reinitialize(layout_x=[0.0], layout_y=[0.0])
+    fi.reinitialize(layout_x=[0.0, 500, 1000], layout_y=[0.0, 0.0, 0.0])
 
     downstream_dists = D * np.array([3, 5, 7])
     homogeneous_wind_speed = 8.0
+    wind_direction = 310
 
     # Below, `get_profiles('y')` returns three velocity deficit profiles. These are sampled along
     # three corresponding lines that are all parallel to the y-axis (cross-stream direction).
@@ -55,6 +57,13 @@ if __name__ == '__main__':
     # same streamwise locations.
     profiles = get_profiles('y') + get_profiles('z')
 
+    plane = fi.calculate_horizontal_plane(height=90,  wd=[wind_direction])
+    ax = wakeviz.visualize_cut_plane(plane)
+    colors = ['r', 'g', 'b', 'c', 'm', 'y']
+    for i, prof in enumerate(profiles):
+        ax.plot(prof['x'], prof['y'], colors[i], label=str(i))
+    ax.legend()
+    
     # Initialize a VelocityProfilesFigure. The workflow is similar to a matplotlib Figure:
     # Initialize it, plot data, and then customize it further if needed.
     # The provided value of `layout` puts y-profiles on the top row of the figure and

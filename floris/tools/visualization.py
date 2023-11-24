@@ -312,7 +312,7 @@ def visualize_cut_plane(
     # Make equal axis
     ax.set_aspect("equal")
 
-    return im
+    return ax
 
 
 def visualize_heterogeneous_cut_plane(
