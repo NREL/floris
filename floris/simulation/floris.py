@@ -354,74 +354,39 @@ class Floris(BaseClass):
         # Effectively, this is a grid of parallel lines.
         n_lines = len(downstream_dists)
 
-        downstream_dists_transpose = np.atleast_2d(downstream_dists).T
-        # Let coordinate system (x1, x2, x3) be rotated such that x1 is in the streamwise direction.
+        # Coordinate system (x1, x2, x3) is used to define the sample points. The origin is at
+        # (x_start, y_start, reference_height) and x1 is in the streamwise direction.
         # The x1-coordinate is fixed for every line (every row in  `x1`).
-        x1 = (x_start + downstream_dists_transpose) * np.ones((n_lines, resolution))
+        x1 = np.atleast_2d(downstream_dists).T * np.ones((n_lines, resolution))
+
+        if resolution == 1:
+            single_line = [0.0]
+        else:
+            single_line = np.linspace(profile_range[0], profile_range[1], resolution)
 
         if direction == 'cross-stream':
-            x2_single_line = np.linspace(
-                x_start + profile_range[0],
-                x_start + profile_range[1],
-                resolution,
-            )
-            x2 = x2_single_line * np.ones((n_lines, resolution))
-            x3 = reference_height * np.ones((n_lines, resolution))
+            x2 = single_line * np.ones((n_lines, resolution))
+            x3 = np.zeros((n_lines, resolution))
         elif direction == 'vertical':
-            x3_single_line = np.linspace(
-                reference_height + profile_range[0],
-                reference_height + profile_range[1],
-                resolution,
-            )
-            x3 = x3_single_line * np.ones((n_lines, resolution))
-            x2 = y_start * np.ones((n_lines, resolution))
+            x3 = single_line * np.ones((n_lines, resolution))
+            x2 = np.zeros((n_lines, resolution))
 
-        # Find coordinates (x, y, z) in the inertial frame
+        # Find the coordinates of the sample points in the inertial frame (x, y, z). This is done
+        # through one rotation and one translation.
         x, y, z = reverse_rotate_coordinates_rel_west(
             self.flow_field.wind_directions,
             x1[None, :, :],
             x2[None, :, :],
             x3[None, :, :],
-            x_center_of_rotation=x_start,
-            y_center_of_rotation=y_start,
+            x_center_of_rotation=0.0,
+            y_center_of_rotation=0.0,
         )
-        x = np.squeeze(x, axis=0)
-        y = np.squeeze(y, axis=0)
-        z = np.squeeze(z, axis=0)
+        x = np.squeeze(x, axis=0) + x_start
+        y = np.squeeze(y, axis=0) + y_start
+        z = np.squeeze(z, axis=0) + reference_height
 
-        field_grid = PointsGrid(
-            points_x=x.flatten(),
-            points_y=y.flatten(),
-            points_z=z.flatten(),
-            x_center_of_rotation=x_start,
-            y_center_of_rotation=y_start,
-            turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.rotor_diameters,
-            grid_resolution=1,
-            wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
-            time_series=self.flow_field.time_series,
-        )
-
-        self.flow_field.initialize_velocity_field(field_grid)
-
-        vel_model = self.wake.model_strings["velocity_model"]
-
-        if vel_model in ["cc", "turbopark"]:
-            raise NotImplementedError(
-                "solve_for_velocity_deficit_profiles is currently only available with the "
-                "gauss, jensen, and empirical_guass models."
-            )
-        elif vel_model == "empirical_gauss":
-            full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
-        else:
-            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
-
-        # Move origin of the (x1, x2, x3) coordinate system to the sampling starting point
-        x1 = x1 - x_start
-        x2 = x2 - y_start
-        x3 = x3 - reference_height
-        u = np.reshape(self.flow_field.u_sorted[0, 0, :, 0, 0], (n_lines, resolution))
+        u = self.solve_for_points(x.flatten(), y.flatten(), z.flatten())
+        u = np.reshape(u[0, 0, :], (n_lines, resolution))
         velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
 
         velocity_deficit_profiles = []
@@ -429,13 +394,13 @@ class Floris(BaseClass):
         for i in range(n_lines):
             df = pd.DataFrame(
                 {
-                    "x": x[i],
-                    "y": y[i],
-                    "z": z[i],
-                    "x1/D": x1[i]/ref_rotor_diameter,
-                    "x2/D": x2[i]/ref_rotor_diameter,
-                    "x3/D": x3[i]/ref_rotor_diameter,
-                    "velocity_deficit": velocity_deficit[i],
+                    'x': x[i],
+                    'y': y[i],
+                    'z': z[i],
+                    'x1/D': x1[i]/ref_rotor_diameter,
+                    'x2/D': x2[i]/ref_rotor_diameter,
+                    'x3/D': x3[i]/ref_rotor_diameter,
+                    'velocity_deficit': velocity_deficit[i],
                 }
             )
             velocity_deficit_profiles.append(df)

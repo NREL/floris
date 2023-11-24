@@ -15,6 +15,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import ticker
 
 import floris.tools.visualization as wakeviz
 from floris.tools import cut_plane, FlorisInterface
@@ -86,6 +87,8 @@ if __name__ == '__main__':
     margin = 0.05
     profiles_fig.set_xlim([0.0 - margin, 0.6 + margin])
     profiles_fig.add_ref_lines_x2([-0.5, 0.5])
+    for ax in profiles_fig.axs[0]:
+        ax.xaxis.set_major_locator(ticker.MultipleLocator(0.2))
 
     profiles_fig.axs[0,0].legend(['gauss', 'jensen'], fontsize=11)
     profiles_fig.fig.suptitle(
@@ -93,5 +96,52 @@ if __name__ == '__main__':
         fontsize=14,
     )
 
+    # Show that the coordinates x1, x2, x3 returned by
+    # sample_velocity_deficit_profiles are relative to the sampling starting point.
+    # By default, this starting point is at (0.0, 0.0, fi.floris.flow_field.reference_wind_height).
+    # It also rotates with the wind direction.
+    downstream_dists = D * np.array([3, 5])
+    floris_dict = fi.floris.as_dict()
+    floris_dict['wake']['model_strings']['velocity_model'] = 'gauss'
+    fi = FlorisInterface(floris_dict)
+    fi.reinitialize(wind_directions=[315.0], layout_x=[0.0, 2 * D], layout_y=[0.0, -2 * D])
+
+    cross_profiles = fi.sample_velocity_deficit_profiles(
+        direction='cross-stream',
+        downstream_dists=downstream_dists,
+        homogeneous_wind_speed=homogeneous_wind_speed,
+        x_start= 2 * D,
+        y_start=-2 * D,
+    )
+
+    horizontal_plane = fi.calculate_horizontal_plane(height=hub_height, x_bounds=[-2 * D, 9 * D])
+    ax = wakeviz.visualize_cut_plane(horizontal_plane)
+    colors = ['b', 'g', 'c']
+    for i, df in enumerate(cross_profiles):
+        ax.plot(df['x'], df['y'], colors[i], label=f'$x_1/D={downstream_dists[i] / D:.1f}$')
+    ax.set_xlabel('x [m]')
+    ax.set_ylabel('y [m]')
+    ax.set_title('Streamwise velocity in a horizontal plane')
+    ax.legend()
+
+    vertical_profiles = fi.sample_velocity_deficit_profiles(
+        direction='vertical',
+        profile_range=[-hub_height, 4 * D - hub_height],
+        downstream_dists=downstream_dists,
+        homogeneous_wind_speed=homogeneous_wind_speed,
+        x_start= 2 * D,
+        y_start=-2 * D,
+    )
+
+    profiles_fig = VelocityProfilesFigure(
+        downstream_dists_D=downstream_dists / D,
+        layout=['cross-stream', 'vertical'],
+    )
+    profiles_fig.add_profiles(cross_profiles + vertical_profiles, color='k')
+
+    profiles_fig.add_ref_lines_x3([-hub_height / D])
+    profiles_fig.set_xlim([0.0 - margin, 0.8 + margin])
+    for ax in profiles_fig.axs[0]:
+        ax.xaxis.set_major_locator(ticker.MultipleLocator(0.4))
 
     plt.show()
