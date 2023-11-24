@@ -988,7 +988,7 @@ class FlorisInterface(LoggerBase):
 
     def sample_velocity_deficit_profiles(
             self,
-            direction: str = 'y',
+            direction: str = 'cross-stream',
             downstream_dists: NDArrayFloat | list = None,
             profile_range: NDArrayFloat | list = None,
             resolution: int = 100,
@@ -1002,13 +1002,13 @@ class FlorisInterface(LoggerBase):
         """
         Extract velocity deficit profiles at a set of downstream distances from a starting point
         (usually a turbine location). For each downstream distance, a profile is sampled along
-        a line in either the cross-stream direction (y) or the vertical direction (z).
+        a line in either the cross-stream direction (x2) or the vertical direction (x3).
         Velocity deficit is here defined as (homogeneous_wind_speed - u)/homogeneous_wind_speed,
         where u is the wake velocity obtained when wind_shear = 0.0.
 
         Args:
             direction: At each downstream location, this is the direction in which to sample the
-                profile. Either `y` or `z`.
+                profile. Either `cross-stream` or `vertical`.
             downstream_dists: A list/array of streamwise locations for where to sample the profiles.
                 Default starting point is (0.0, 0.0, reference_height).
             profile_range: Determines the extent of the line along which the profiles are sampled.
@@ -1022,17 +1022,17 @@ class FlorisInterface(LoggerBase):
                 coordinates.
             x_start: x-coordinate of starting point.
             y_start: y-coordinate of starting point.
-            reference_height: If `direction` is y, then `reference_height` defines the height of the
-                xy-plane in which the velocity profiles are sampled. If `direction` is z, then the
-                velocity is sampled along the vertical direction with the `profile_range` being
-                relative to the `reference_height`.
+            reference_height: If `direction` is cross-stream, then `reference_height` defines the
+                height of the horizontal plane in which the velocity profiles are sampled.
+                If `direction` is vertical, then the velocity is sampled along the vertical
+                direction with the `profile_range` being relative to the `reference_height`.
         Returns:
             A list of pandas DataFrame objects where each DataFrame represents one velocity deficit
             profile.
         """
 
-        if direction not in ['y', 'z']:
-            raise ValueError("`direction` must be either y or z.")
+        if direction not in ['cross-stream', 'vertical']:
+            raise ValueError("`direction` must be either `cross-stream` or `vertical`.")
 
         if ref_rotor_diameter is None:
             unique_rotor_diameters = np.unique(self.floris.farm.rotor_diameters)

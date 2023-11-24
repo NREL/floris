@@ -355,43 +355,44 @@ class Floris(BaseClass):
         n_lines = len(downstream_dists)
 
         downstream_dists_transpose = np.atleast_2d(downstream_dists).T
-        # The x-coordinate is fixed for every line (every row in  `x`)
-        x = (x_start + downstream_dists_transpose) * np.ones((n_lines, resolution))
+        # Let coordinate system (x1, x2, x3) be rotated such that x1 is in the streamwise direction.
+        # The x1-coordinate is fixed for every line (every row in  `x1`).
+        x1 = (x_start + downstream_dists_transpose) * np.ones((n_lines, resolution))
 
-        if direction == 'y':
-            y_single_line = np.linspace(
-                y_start + profile_range[0],
-                y_start + profile_range[1],
+        if direction == 'cross-stream':
+            x2_single_line = np.linspace(
+                x_start + profile_range[0],
+                x_start + profile_range[1],
                 resolution,
             )
-            y = y_single_line * np.ones((n_lines, resolution))
-            z = reference_height * np.ones((n_lines, resolution))
-        elif direction == 'z':
-            z_single_line = np.linspace(
+            x2 = x2_single_line * np.ones((n_lines, resolution))
+            x3 = reference_height * np.ones((n_lines, resolution))
+        elif direction == 'vertical':
+            x3_single_line = np.linspace(
                 reference_height + profile_range[0],
                 reference_height + profile_range[1],
                 resolution,
             )
-            z = z_single_line * np.ones((n_lines, resolution))
-            y = y_start * np.ones((n_lines, resolution))
+            x3 = x3_single_line * np.ones((n_lines, resolution))
+            x2 = y_start * np.ones((n_lines, resolution))
 
-        # Rotate sample coordinates with the wind direction
-        x_rotated, y_rotated, z_rotated = reverse_rotate_coordinates_rel_west(
+        # Find coordinates (x, y, z) in the inertial frame
+        x, y, z = reverse_rotate_coordinates_rel_west(
             self.flow_field.wind_directions,
-            x[None, :, :],
-            y[None, :, :],
-            z[None, :, :],
+            x1[None, :, :],
+            x2[None, :, :],
+            x3[None, :, :],
             x_center_of_rotation=x_start,
             y_center_of_rotation=y_start,
         )
-        x_rotated = np.squeeze(x_rotated, axis=0)
-        y_rotated = np.squeeze(y_rotated, axis=0)
-        z_rotated = np.squeeze(z_rotated, axis=0)
+        x = np.squeeze(x, axis=0)
+        y = np.squeeze(y, axis=0)
+        z = np.squeeze(z, axis=0)
 
         field_grid = PointsGrid(
-            points_x=x_rotated.flatten(),
-            points_y=y_rotated.flatten(),
-            points_z=z_rotated.flatten(),
+            points_x=x.flatten(),
+            points_y=y.flatten(),
+            points_z=z.flatten(),
             x_center_of_rotation=x_start,
             y_center_of_rotation=y_start,
             turbine_coordinates=self.farm.coordinates,
@@ -416,24 +417,24 @@ class Floris(BaseClass):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
-        x_relative_start = x - x_start
-        y_relative_start = y - y_start
-        z_relative_start = z - reference_height
+        # Move origin of the (x1, x2, x3) coordinate system to the sampling starting point
+        x1 = x1 - x_start
+        x2 = x2 - y_start
+        x3 = x3 - reference_height
         u = np.reshape(self.flow_field.u_sorted[0, 0, :, 0, 0], (n_lines, resolution))
         velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
 
         velocity_deficit_profiles = []
 
-        # In the coordinate system used by the DataFrame below, `x` is the streamwise direction
-        # and (x_start, y_start, reference_height) is the origin.
         for i in range(n_lines):
             df = pd.DataFrame(
                 {
-                    "x": x_rotated[i],
-                    "y": y_rotated[i],
-                    "x/D": x_relative_start[i]/ref_rotor_diameter,
-                    "y/D": y_relative_start[i]/ref_rotor_diameter,
-                    "z/D": z_relative_start[i]/ref_rotor_diameter,
+                    "x": x[i],
+                    "y": y[i],
+                    "z": z[i],
+                    "x1/D": x1[i]/ref_rotor_diameter,
+                    "x2/D": x2[i]/ref_rotor_diameter,
+                    "x3/D": x3[i]/ref_rotor_diameter,
                     "velocity_deficit": velocity_deficit[i],
                 }
             )
