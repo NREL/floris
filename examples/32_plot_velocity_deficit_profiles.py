@@ -30,6 +30,20 @@ several location downstream of a turbine. Here we use the following definition:
         same at all heights and equal to `homogeneous_wind_speed`.
 """
 
+def plot_coordinate_system(x_origin, y_origin, wind_direction):
+    quiv_length = 1.4 * D
+    plt.quiver(
+        [x_origin, x_origin],
+        [y_origin, y_origin],
+        [quiv_length, quiv_length],
+        [0, 0],
+        angles=[270 - wind_direction, 360 - wind_direction],
+        scale_units='x',
+        scale=1,
+    )
+    plt.text(3.2 * D, -2.7 * D, '$x_1$', bbox={'facecolor': 'white'})
+    plt.text(3.25 * D, -0.95 * D, '$x_2$', bbox={'facecolor': 'white'})
+
 if __name__ == '__main__':
     D = 126.0 # Turbine diameter
     hub_height = 90.0
@@ -40,7 +54,7 @@ if __name__ == '__main__':
 
     # ------------------------------ Single-turbine layout ------------------------------
     # We first show how to sample and plot velocity deficit profiles on a single-turbine layout.
-    # Lines are drawn on a horizontal_plane to indicate were the velocity is sampled.
+    # Lines are drawn on a horizontal plane to indicate were the velocity is sampled.
     downstream_dists = D * np.array([3, 5, 7])
     # Sample three profiles along three corresponding lines that are all parallel to the y-axis
     # (cross-stream direction). The streamwise location of each line is given in `downstream_dists`.
@@ -55,6 +69,7 @@ if __name__ == '__main__':
     wakeviz.visualize_cut_plane(horizontal_plane, ax)
     colors = ['b', 'g', 'c']
     for i, profile in enumerate(profiles):
+        # Plot profile coordinates on the horizontal plane
         ax.plot(profile['x'], profile['y'], colors[i], label=f'x/D={downstream_dists[i] / D:.1f}')
     ax.set_xlabel('x [m]')
     ax.set_ylabel('y [m]')
@@ -67,10 +82,10 @@ if __name__ == '__main__':
     profiles_fig = VelocityProfilesFigure(
         downstream_dists_D=downstream_dists / D,
         layout=['cross-stream'],
-        coordinate_labels=['x/D', 'y/D']
+        coordinate_labels=['x/D', 'y/D'],
     )
-    # Add profiles to the figure. This method automatically determines the direction and
-    # streamwise location of each profile from the profile coordinates.
+    # Add profiles to the VelocityProfilesFigure. This method automatically matches the supplied
+    # profiles to the initialized axes in the figure.
     profiles_fig.add_profiles(profiles, color='k')
 
     # Change velocity model to jensen, get the velocity deficit profiles,
@@ -100,49 +115,53 @@ if __name__ == '__main__':
     )
 
     # -------------------------------- Two-turbine layout --------------------------------
-    # Show that the coordinates x1, x2, x3 returned by
-    # sample_velocity_deficit_profiles are relative to the sampling starting point.
-    # By default, this starting point is at (0.0, 0.0, fi.floris.flow_field.reference_wind_height).
-    # It also rotates with the wind direction.
+    # This is a two-turbine case where the wind direction is north-west. Velocity profiles
+    # are sampled behind the second turbine. This illustrates the need for a
+    # sampling-coordinate-system (x1, x2, x3) that is rotated such that x1 is always in the
+    # streamwise direction. The user may define the origin of this coordinate system
+    # (i.e. where to start sampling the profiles).
+    wind_direction = 315.0 # Try to change this
     downstream_dists = D * np.array([3, 5])
     floris_dict = fi.floris.as_dict()
     floris_dict['wake']['model_strings']['velocity_model'] = 'gauss'
     fi = FlorisInterface(floris_dict)
-    fi.reinitialize(wind_directions=[315.0], layout_x=[0.0, 2 * D], layout_y=[0.0, -2 * D])
+    # Let (x_t1, y_t1) be the location of the second turbine
+    x_t1 =  2 * D
+    y_t1 = -2 * D
+    fi.reinitialize(wind_directions=[wind_direction], layout_x=[0.0, x_t1], layout_y=[0.0, y_t1])
 
+    # Extract profiles at a set of downstream distances from the starting point (x_start, y_start)
     cross_profiles = fi.sample_velocity_deficit_profiles(
         direction='cross-stream',
         downstream_dists=downstream_dists,
         homogeneous_wind_speed=homogeneous_wind_speed,
-        x_start= 2 * D,
-        y_start=-2 * D,
+        x_start=x_t1,
+        y_start=y_t1,
     )
 
     horizontal_plane = fi.calculate_horizontal_plane(height=hub_height, x_bounds=[-2 * D, 9 * D])
     ax = wakeviz.visualize_cut_plane(horizontal_plane)
     colors = ['b', 'g', 'c']
-    for i, df in enumerate(cross_profiles):
-        ax.plot(df['x'], df['y'], colors[i], label=f'$x_1/D={downstream_dists[i] / D:.1f}$')
+    for i, profile in enumerate(cross_profiles):
+        ax.plot(
+            profile['x'],
+            profile['y'],
+            colors[i],
+            label=f'$x_1/D={downstream_dists[i] / D:.1f}$'
+        )
     ax.set_xlabel('x [m]')
     ax.set_ylabel('y [m]')
     ax.set_title('Streamwise velocity in a horizontal plane')
     ax.legend()
+    plot_coordinate_system(x_origin=x_t1, y_origin=y_t1, wind_direction=wind_direction)
 
-    plt.quiver(
-        [ 2 * D,  2 * D],
-        [-2 * D, -2 * D],
-        [ D, D],
-        [-D, D],
-        angles='xy',
-        scale_units='xy',
-        scale=1,
-    )
-    plt.text(3.2 * D, -2.7 * D, '$x_1$', bbox={'facecolor': 'white'})
-    plt.text(3.25 * D, -0.95 * D, '$x_2$', bbox={'facecolor': 'white'})
-
+    # Sample velocity deficit profiles in the vertical direction at the same downstream
+    # locations as before and with x2 = 0. These profiles are almost identical to the
+    # cross-stream profiles. However, we here choose a slighly smaller profile range than
+    # the default value of [-2 * D, 2 * D].
     vertical_profiles = fi.sample_velocity_deficit_profiles(
         direction='vertical',
-        profile_range=[-hub_height, 4 * D - hub_height],
+        profile_range=[-1.5 * D, 1.5 * D],
         downstream_dists=downstream_dists,
         homogeneous_wind_speed=homogeneous_wind_speed,
         x_start= 2 * D,
@@ -155,8 +174,8 @@ if __name__ == '__main__':
     )
     profiles_fig.add_profiles(cross_profiles + vertical_profiles, color='k')
 
-    profiles_fig.add_ref_lines_x3([-hub_height / D], linestyle='-', linewidth=2.5)
     profiles_fig.set_xlim([0.0 - margin, 0.8 + margin])
+    profiles_fig.axs[1,0].set_ylim([-2.2, 2.2])
     for ax in profiles_fig.axs[0]:
         ax.xaxis.set_major_locator(ticker.MultipleLocator(0.4))
 
@@ -164,5 +183,6 @@ if __name__ == '__main__':
         'Cross-stream profiles at hub-height, and\nvertical profiles at $x_2 = 0$',
         fontsize=14,
     )
+
 
     plt.show()
