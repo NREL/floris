@@ -120,8 +120,6 @@ if __name__ == '__main__':
     )
     profiles_fig.add_profiles(profiles, color='r')
 
-    margin = 0.05
-    profiles_fig.set_xlim([0.0 - margin, 0.6 + margin])
     # The dashed reference lines show the extent of the rotor
     profiles_fig.add_ref_lines_x2([-0.5, 0.5])
     for ax in profiles_fig.axs[0]:
@@ -193,7 +191,7 @@ if __name__ == '__main__':
     )
     profiles_fig.add_profiles(cross_profiles + vertical_profiles, color='k')
 
-    profiles_fig.set_xlim([0.0 - margin, 0.8 + margin])
+    profiles_fig.set_xlim([-0.05, 0.85])
     profiles_fig.axs[1,0].set_ylim([-2.2, 2.2])
     for ax in profiles_fig.axs[0]:
         ax.xaxis.set_major_locator(ticker.MultipleLocator(0.4))

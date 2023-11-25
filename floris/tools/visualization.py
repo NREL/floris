@@ -748,6 +748,7 @@ class VelocityProfilesFigure():
     n_cols: int = field(init=False)
     fig: plt.Figure = field(init=False)
     axs: np.ndarray = field(init=False)
+    deficit_max: float = field(init=False, default=0.0)
 
     def __attrs_post_init__(self) -> None:
         self.n_rows = len(self.layout)
@@ -802,6 +803,10 @@ class VelocityProfilesFigure():
             ax, profile_direction = self.match_profile_to_axes(df)
             profile_direction_D = f'{profile_direction}/D'
             ax.plot(df['velocity_deficit'], df[profile_direction_D], **kwargs)
+            self.deficit_max = max(self.deficit_max, df['velocity_deficit'].max())
+
+        margin = 0.05
+        self.set_xlim([0.0 - margin, self.deficit_max + margin])
 
     def match_profile_to_axes(
         self,
