@@ -20,6 +20,7 @@ from matplotlib import ticker
 import floris.tools.visualization as wakeviz
 from floris.tools import cut_plane, FlorisInterface
 from floris.tools.visualization import VelocityProfilesFigure
+from floris.utilities import reverse_rotate_coordinates_rel_west
 
 
 """
@@ -30,19 +31,37 @@ several location downstream of a turbine. Here we use the following definition:
         same at all heights and equal to `homogeneous_wind_speed`.
 """
 
+# The first two functions are just used to plot the coordinate system in which the
+# profiles are sampled. Please go to the main function to begin the example.
 def plot_coordinate_system(x_origin, y_origin, wind_direction):
-    quiv_length = 1.4 * D
+    quiver_length = 1.4 * D
     plt.quiver(
         [x_origin, x_origin],
         [y_origin, y_origin],
-        [quiv_length, quiv_length],
+        [quiver_length, quiver_length],
         [0, 0],
         angles=[270 - wind_direction, 360 - wind_direction],
         scale_units='x',
         scale=1,
     )
-    plt.text(3.2 * D, -2.7 * D, '$x_1$', bbox={'facecolor': 'white'})
-    plt.text(3.25 * D, -0.95 * D, '$x_2$', bbox={'facecolor': 'white'})
+    annotate_coordinate_system(x_origin, y_origin, quiver_length)
+
+def annotate_coordinate_system(x_origin, y_origin, quiver_length):
+    x1 = np.array([quiver_length + 0.35 * D, 0.0])
+    x2 = np.array([0.0, quiver_length + 0.35 * D])
+    x3 = np.array([90.0, 90.0])
+    x, y, _ = reverse_rotate_coordinates_rel_west(
+            fi.floris.flow_field.wind_directions,
+            x1[None, :],
+            x2[None, :],
+            x3[None, :],
+            x_center_of_rotation=0.0,
+            y_center_of_rotation=0.0,
+    )
+    x = np.squeeze(x, axis=0) + x_origin
+    y = np.squeeze(y, axis=0) + y_origin
+    plt.text(x[0], y[0], '$x_1$', bbox={'facecolor': 'white'})
+    plt.text(x[1], y[1], '$x_2$', bbox={'facecolor': 'white'})
 
 if __name__ == '__main__':
     D = 126.0 # Turbine diameter
@@ -156,16 +175,16 @@ if __name__ == '__main__':
     plot_coordinate_system(x_origin=x_t1, y_origin=y_t1, wind_direction=wind_direction)
 
     # Sample velocity deficit profiles in the vertical direction at the same downstream
-    # locations as before and with x2 = 0. These profiles are almost identical to the
-    # cross-stream profiles. However, we here choose a slighly smaller profile range than
-    # the default value of [-2 * D, 2 * D].
+    # locations as before. We stay directly downstream of the turbine (i.e. x2 = 0). These
+    # profiles are almost identical to the cross-stream profiles. However, we now explicitly
+    # set the profile range. The default range is [-2 * D, 2 * D].
     vertical_profiles = fi.sample_velocity_deficit_profiles(
         direction='vertical',
         profile_range=[-1.5 * D, 1.5 * D],
         downstream_dists=downstream_dists,
         homogeneous_wind_speed=homogeneous_wind_speed,
-        x_start= 2 * D,
-        y_start=-2 * D,
+        x_start=x_t1,
+        y_start=y_t1,
     )
 
     profiles_fig = VelocityProfilesFigure(
