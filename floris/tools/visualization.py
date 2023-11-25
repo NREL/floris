@@ -904,9 +904,7 @@ class VelocityProfilesFigure():
                 'color': 'k',
                 'linewidth': 1.1
         }
-        for key in default_params:
-            if key not in kwargs:
-                kwargs[key] = default_params[key]
+        kwargs = default_params | kwargs
 
         for ax in self.axs[row]:
             for coordinate in ref_lines_D:

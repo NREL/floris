@@ -24,8 +24,8 @@ from floris.utilities import reverse_rotate_coordinates_rel_west
 
 
 """
-This example illustrates how to plot velocity deficit profiles at
-several location downstream of a turbine. Here we use the following definition:
+This example illustrates how to plot velocity deficit profiles at several locations
+downstream of a turbine. Here we use the following definition:
     velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
         , where u is the wake velocity obtained when the incoming wind speed is the
         same at all heights and equal to `homogeneous_wind_speed`.
@@ -166,7 +166,7 @@ if __name__ == '__main__':
             profile['x'],
             profile['y'],
             colors[i],
-            label=f'$x_1/D={downstream_dists[i] / D:.1f}$'
+            label=f'$x_1/D={downstream_dists[i] / D:.1f}$',
         )
     ax.set_xlabel('x [m]')
     ax.set_ylabel('y [m]')
