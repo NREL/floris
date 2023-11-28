@@ -52,6 +52,18 @@ class Farm(BaseClass):
     Wake, FlowField) and packages everything into the appropriate data
     type. Farm should also be used as an entry point to probe objects
     for generating output.
+
+    Args:
+        layout_x (NDArrayFloat): A sequence of x-axis locations for the turbines that can be
+            converted to a 1-D :py:obj:`numpy.ndarray`.
+        layout_y (NDArrayFloat): A sequence of y-axis locations for the turbines that can be
+            converted to a 1-D :py:obj:`numpy.ndarray`.
+        turbine_type (list[dict | str]): A list of turbine definition dictionaries, or string
+            references to the filename of the turbine type in either the FLORIS-provided turbine
+            library (.../floris/turbine_library/), or a user-provided
+            :py:attr:`turbine_library_path`.
+        turbine_library_path (:obj:`str`): Either an absolute file path to the turbine library, or a
+            path relative to the file that is running the analysis.
     """
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
@@ -97,6 +109,8 @@ class Farm(BaseClass):
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
 
+    internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
+
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
         # - A string selecting a turbine in the floris turbine library
@@ -128,7 +142,7 @@ class Farm(BaseClass):
                     continue
 
                 # Check if the file exists in the internal and/or external library
-                internal_fn = (default_turbine_library_path / t).with_suffix(".yaml")
+                internal_fn = (self.internal_turbine_library / t).with_suffix(".yaml")
                 external_fn = (self.turbine_library_path / t).with_suffix(".yaml")
                 in_internal = internal_fn.exists()
                 in_external = external_fn.exists()
@@ -248,11 +262,16 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
-            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
-            self.turbine_map = [
-                TurbineMultiDimensional.from_dict(turb) for turb in self.turbine_definitions
-            ]
+        multi_key = "multi_dimensional_cp_ct"
+        if multi_key in self.turbine_definitions[0] and self.turbine_definitions[0][multi_key]:
+            self.turbine_map = []
+            for turb in self.turbine_definitions:
+                _turb = {**turb, **{"turbine_library_path": self.internal_turbine_library}}
+                try:
+                    self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
+                except FileNotFoundError:
+                    _turb["turbine_library_path"] = self.turbine_library_path
+                    self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
         else:
             self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 

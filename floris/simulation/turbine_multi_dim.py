@@ -16,7 +16,9 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable
+from pathlib import Path
 
+import attrs
 import numpy as np
 import pandas as pd
 from attrs import define, field
@@ -422,10 +424,22 @@ class TurbineMultiDimensional(Turbine):
             the width/height of the grid of points on the rotor as a ratio of
             the rotor radius.
             Defaults to 0.5.
+        power_thrust_data_file (:py:obj:`str`): The path and name of the file containing the
+            multidimensional power thrust curve. The path may be an absolute location or a relative
+            path to where FLORIS is being run.
+        multi_dimensional_cp_ct (:py:obj:`bool`, optional): Indicates if the turbine definition is
+            single dimensional (False) or multidimensional (True).
+        turbine_library_path (:py:obj:`pathlib.Path`, optional): The
+            :py:attr:`Farm.turbine_library_path` or :py:attr:`Farm.internal_turbine_library_path`,
+            whichever is being used to load turbine definitions.
+            Defaults to the current file location.
     """
-
     power_thrust_data_file: str = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
+    turbine_library_path: Path = field(
+        default=Path(".").resolve(),
+        validator=attrs.validators.instance_of(Path)
+    )
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -447,6 +461,10 @@ class TurbineMultiDimensional(Turbine):
     #     self.use_points_on_perimeter = False
 
     def __attrs_post_init__(self) -> None:
+        # Solidify the data file path and name
+        self.power_thrust_data_file = (
+            self.turbine_library_path / self.power_thrust_data_file
+        ).resolve()
 
         # Read in the multi-dimensional data supplied by the user.
         df = pd.read_csv(self.power_thrust_data_file)
