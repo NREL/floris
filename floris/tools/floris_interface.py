@@ -1085,9 +1085,9 @@ class FlorisInterface(LoggerBase):
             reference_height = self.floris.flow_field.reference_wind_height
 
         self.reinitialize(
-                wind_directions=[wind_direction],
-                wind_speeds=[homogeneous_wind_speed],
-                wind_shear=0.0,
+            wind_directions=[wind_direction],
+            wind_speeds=[homogeneous_wind_speed],
+            wind_shear=0.0,
         )
 
         velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
@@ -1103,9 +1103,9 @@ class FlorisInterface(LoggerBase):
         )
 
         self.reinitialize(
-                wind_directions=wind_directions_copy,
-                wind_speeds=wind_speeds_copy,
-                wind_shear=wind_shear_copy,
+            wind_directions=wind_directions_copy,
+            wind_speeds=wind_speeds_copy,
+            wind_shear=wind_shear_copy,
         )
 
         return velocity_deficit_profiles
