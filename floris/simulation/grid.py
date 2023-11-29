@@ -66,7 +66,7 @@ class Grid(ABC):
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
     """
-    turbine_coordinates: list[Vec3] = field()
+    turbine_coordinates: NDArrayFloat = field()
     turbine_diameters: NDArrayFloat = field(converter=floris_array_converter)
     grid_resolution: int | Iterable = field()
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
@@ -76,7 +76,6 @@ class Grid(ABC):
     n_turbines: int = field(init=False)
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
-    turbine_coordinates_array: NDArrayFloat = field(init=False)
     x_sorted: NDArrayFloat = field(init=False)
     y_sorted: NDArrayFloat = field(init=False)
     z_sorted: NDArrayFloat = field(init=False)
@@ -85,18 +84,18 @@ class Grid(ABC):
     z_sorted_inertial_frame: NDArrayFloat = field(init=False)
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
-    def __attrs_post_init__(self) -> None:
-        self.turbine_coordinates_array = np.array([c.elements for c in self.turbine_coordinates])
-
     @turbine_coordinates.validator
     def check_coordinates(self, instance: attrs.Attribute, value: list[Vec3]) -> None:
         """
         Ensures all elements are `Vec3` objects and keeps the `n_turbines`
         attribute up to date.
         """
-        types = np.unique([isinstance(c, Vec3) for c in value])
+        types = np.unique([isinstance(c, np.ndarray) for c in value])
         if not all(types):
-            raise TypeError("'turbine_coordinates' must be `Vec3` objects.")
+            raise TypeError(
+                "'turbine_coordinates' must be `np.array` objects "
+                "with three components of type `float`."
+            )
 
         self.n_turbines = len(value)
 
@@ -158,7 +157,6 @@ class TurbineGrid(Grid):
     average_method = "cubic-mean"
 
     def __attrs_post_init__(self) -> None:
-        super().__attrs_post_init__()
         self.set_grid()
 
     def set_grid(self) -> None:
@@ -217,7 +215,7 @@ class TurbineGrid(Grid):
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
             self.wind_directions,
-            self.turbine_coordinates_array,
+            self.turbine_coordinates,
         )
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
@@ -318,7 +316,6 @@ class TurbineCubatureGrid(Grid):
     average_method = "simple-cubature"
 
     def __attrs_post_init__(self) -> None:
-        super().__attrs_post_init__()
         self.set_grid()
 
     def set_grid(self) -> None:
@@ -327,7 +324,7 @@ class TurbineCubatureGrid(Grid):
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
             self.wind_directions,
-            self.turbine_coordinates_array
+            self.turbine_coordinates
         )
 
         # Coefficients
@@ -474,7 +471,6 @@ class FlowFieldGrid(Grid):
     y_center_of_rotation: NDArrayFloat = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        super().__attrs_post_init__()
         self.set_grid()
 
     def set_grid(self) -> None:
@@ -496,7 +492,7 @@ class FlowFieldGrid(Grid):
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
             self.wind_directions,
-            self.turbine_coordinates_array
+            self.turbine_coordinates
         )
 
         # Construct the arrays storing the grid points
@@ -549,7 +545,6 @@ class FlowFieldPlanarGrid(Grid):
     unsorted_indices: NDArrayInt = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        super().__attrs_post_init__()
         self.set_grid()
 
     def set_grid(self) -> None:
@@ -570,7 +565,7 @@ class FlowFieldPlanarGrid(Grid):
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
             self.wind_directions,
-            self.turbine_coordinates_array
+            self.turbine_coordinates
         )
         max_diameter = np.max(self.turbine_diameters)
 
@@ -675,7 +670,6 @@ class PointsGrid(Grid):
     y_center_of_rotation: float | None = field(default=None)
 
     def __attrs_post_init__(self) -> None:
-        super().__attrs_post_init__()
         self.set_grid()
 
     def set_grid(self) -> None:

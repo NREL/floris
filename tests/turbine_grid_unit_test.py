@@ -83,14 +83,16 @@ def test_dynamic_properties(turbine_grid_fixture):
     assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS
     assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS
 
-    # TODO: @Rob @Chris This breaks n_turbines since the validator is not run.
+    # TODO: The following two lines break n_turbines since the validator is not run.
     # Is this case ok? Do we enforce that turbine_coordinates must be set by =?
     # turbine_grid_fixture.turbine_coordinates.append(Vec3([100.0, 200.0, 300.0]))
     # assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
 
-    turbine_grid_fixture.turbine_coordinates = [
-        *turbine_grid_fixture.turbine_coordinates, Vec3([100.0, 200.0, 300.0])
-    ]
+    turbine_grid_fixture.turbine_coordinates = np.append(
+        turbine_grid_fixture.turbine_coordinates,
+        np.array([[[100.0, 200.0, 300.0]]]),
+        axis=0
+    )
     assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
 
     turbine_grid_fixture.wind_speeds = [*turbine_grid_fixture.wind_speeds, 0.0]

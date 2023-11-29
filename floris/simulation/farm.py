@@ -80,7 +80,6 @@ class Farm(BaseClass):
     )
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
-    coordinates: List[Vec3] = field(init=False)
 
     turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, default=[])
     turbine_fCts_sorted: NDArrayFloat = field(init=False, default=[])
@@ -310,11 +309,6 @@ class Farm(BaseClass):
     def construct_multidim_turbine_power_interps(self):
         self.turbine_power_interps = [turb.power_interp for turb in self.turbine_map]
 
-    def construct_coordinates(self):
-        self.coordinates = np.array([
-            Vec3([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)
-        ])
-
     def expand_farm_properties(
         self,
         n_wind_directions: int,
@@ -503,6 +497,12 @@ class Farm(BaseClass):
             axis=2
         )
         self.state.USED
+
+    @property
+    def coordinates(self):
+        return np.array([
+            np.array([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)
+        ])
 
     @property
     def n_turbines(self):

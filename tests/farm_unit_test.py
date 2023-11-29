@@ -35,7 +35,7 @@ def test_farm_init_homogenous_turbines():
     layout_x = farm_data["layout_x"]
     layout_y = farm_data["layout_y"]
     coordinates = np.array([
-        Vec3([x, y, turbine_data["hub_height"]])
+        np.array([x, y, turbine_data["hub_height"]])
         for x, y in zip(layout_x, layout_y)
     ])
 
@@ -49,7 +49,6 @@ def test_farm_init_homogenous_turbines():
     # turbine_type=[turbine_data["turbine_type"]]
 
     farm.construct_hub_heights()
-    farm.construct_coordinates()
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
 
     # Check initial values
@@ -61,7 +60,6 @@ def test_farm_init_homogenous_turbines():
 def test_asdict(sample_inputs_fixture: SampleInputs):
     farm = Farm.from_dict(sample_inputs_fixture.farm)
     farm.construct_hub_heights()
-    farm.construct_coordinates()
     farm.construct_turbine_ref_tilt_cp_cts()
     farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     farm.set_tilt_to_ref_tilt(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
@@ -69,7 +67,6 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
 
     new_farm = farm.from_dict(dict1)
     new_farm.construct_hub_heights()
-    new_farm.construct_coordinates()
     new_farm.construct_turbine_ref_tilt_cp_cts()
     new_farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
     new_farm.set_tilt_to_ref_tilt(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
