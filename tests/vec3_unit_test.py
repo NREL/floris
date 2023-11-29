@@ -123,10 +123,10 @@ def test_equality(vec3_fixture):
     assert vec3_fixture != rhs
 
 
-def test_elements_property(vec3_fixture):
-    """Ensure that the x1, x2, and x3 elements match the expected values.
+def test_components_property(vec3_fixture):
+    """Ensure that the x1, x2, and x3 components match the expected values.
     """
-    x1, x2, x3 = vec3_fixture.elements
+    x1, x2, x3 = vec3_fixture.components
     assert 4.0 == x1
     assert 4.0 == x2
     assert 0.0 == x3

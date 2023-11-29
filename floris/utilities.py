@@ -38,11 +38,8 @@ class Vec3:
     Args:
         components (list(numeric, numeric, numeric), numeric): All three vector
             components.
-        string_format (str, optional): Format to use in the
-            overloaded __str__ function. Defaults to None.
     """
     components: NDArrayFloat = field(converter=floris_array_converter)
-    # NOTE: this does not convert elements to float if they are given as int. Is this ok?
 
     @components.validator
     def _check_components(self, attribute, value) -> None:
@@ -116,12 +113,6 @@ class Vec3:
     @x3.setter
     def x3(self, value):
         self.components[2] = float(value)
-
-    @property
-    def elements(self) -> Tuple[float, float, float]:
-        # TODO: replace references to elements with components
-        # and remove this @property
-        return self.components
 
 
 def cosd(angle):
