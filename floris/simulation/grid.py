@@ -58,7 +58,7 @@ class Grid(ABC):
 
     Args:
         turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.
-        reference_turbine_diameter (:py:obj:`float`): A reference turbine's rotor diameter.
+        turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution with values
             specific to each grid type.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
@@ -67,7 +67,7 @@ class Grid(ABC):
             series.
     """
     turbine_coordinates: list[Vec3] = field()
-    reference_turbine_diameter: float
+    turbine_diameters: NDArrayFloat = field(converter=floris_array_converter)
     grid_resolution: int | Iterable = field()
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
@@ -140,7 +140,7 @@ class TurbineGrid(Grid):
 
     Args:
         turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.
-        reference_turbine_diameter (:py:obj:`float`): A reference turbine's rotor diameter.
+        turbine_diameters (:py:obj:`float`): A reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points in each
             direction of the square grid on the rotor plane. For example, grid_resolution=3
             creates a 3x3 grid within the rotor swept area.
@@ -227,7 +227,7 @@ class TurbineGrid(Grid):
 
         # Create the data for the turbine grids
         radius_ratio = 0.5
-        disc_area_radius = radius_ratio * self.reference_turbine_diameter / 2
+        disc_area_radius = radius_ratio * self.turbine_diameters / 2
         template_grid = np.ones(
             (
                 self.n_wind_directions,
@@ -301,7 +301,7 @@ class TurbineCubatureGrid(Grid):
 
     Args:
         turbine_coordinates (`list[Vec3]`): The list of turbine coordinates as `Vec3` objects.
-        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        turbine_diameters (:py:obj:`float`): The reference turbine's rotor diameter.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points to
@@ -359,8 +359,8 @@ class TurbineCubatureGrid(Grid):
         _y = y[:, :, :, None, None] * template_grid
         _z = z[:, :, :, None, None] * template_grid
         for ti in range(self.n_turbines):
-            _y[:, :, ti, :, :] += yv[None, None, :, None]*self.reference_turbine_diameter[ti] / 2.0
-            _z[:, :, ti, :, :] += zv[None, None, :, None]*self.reference_turbine_diameter[ti] / 2.0
+            _y[:, :, ti, :, :] += yv[None, None, :, None]*self.turbine_diameters[ti] / 2.0
+            _z[:, :, ti, :, :] += zv[None, None, :, None]*self.turbine_diameters[ti] / 2.0
 
         # Sort the turbines at each wind direction
 
@@ -467,7 +467,7 @@ class FlowFieldGrid(Grid):
     Args:
         grid_resolution (`Vec3`): The number of grid points to be created in each direction.
         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
-        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        turbine_diameters (:py:obj:`float`): The reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
     x_center_of_rotation: NDArrayFloat = field(init=False)
@@ -501,10 +501,10 @@ class FlowFieldGrid(Grid):
 
         # Construct the arrays storing the grid points
         eps = 0.01
-        xmin = min(x[0,0]) - 2 * self.reference_turbine_diameter
-        xmax = max(x[0,0]) + 10 * self.reference_turbine_diameter
-        ymin = min(y[0,0]) - 2 * self.reference_turbine_diameter
-        ymax = max(y[0,0]) + 2 * self.reference_turbine_diameter
+        xmin = min(x[0,0]) - 2 * self.turbine_diameters
+        xmax = max(x[0,0]) + 10 * self.turbine_diameters
+        ymin = min(y[0,0]) - 2 * self.turbine_diameters
+        ymax = max(y[0,0]) + 2 * self.turbine_diameters
         zmin = 0 + eps
         zmax = 6 * max(z[0,0])
 
@@ -536,7 +536,7 @@ class FlowFieldPlanarGrid(Grid):
     Args:
         grid_resolution (`Vec3`): The number of grid points to be created in each direction.
         turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
-        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        turbine_diameters (:py:obj:`float`): The reference turbine's rotor diameter.
         grid_resolution (:py:obj:`int`): The number of points on each turbine
     """
     normal_vector: str = field()
@@ -572,7 +572,7 @@ class FlowFieldPlanarGrid(Grid):
             self.wind_directions,
             self.turbine_coordinates_array
         )
-        max_diameter = np.max(self.reference_turbine_diameter)
+        max_diameter = np.max(self.turbine_diameters)
 
         if self.normal_vector == "z":  # Rules of thumb for horizontal plane
             if self.x1_bounds is None:
@@ -649,7 +649,7 @@ class PointsGrid(Grid):
     """
     Args:
         turbine_coordinates (`list[Vec3]`): The list of turbine coordinates as `Vec3` objects.
-        reference_turbine_diameter (:py:obj:`float`): The reference turbine's rotor diameter.
+        turbine_diameters (:py:obj:`float`): A reference turbine's rotor diameter.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Not used for PointsGrid, but
