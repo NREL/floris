@@ -42,7 +42,7 @@ REQUIRED = [
 
     # utilities
     "coloredlogs~=10.0",
-    "flatten_dict~0.4",
+    "flatten_dict~=0.4",
 ]
 
 # What packages are optional?
