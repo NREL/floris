@@ -29,20 +29,20 @@ REQUIRES_PYTHON = ">=3.8.0"
 # What packages are required for this module to be executed?
 REQUIRED = [
     # simulation
-    "attrs~=23.1",
+    "attrs",
     "pyyaml~=6.0",
-    "numexpr~=2.8",
+    "numexpr~=2.0",
     "numpy~=1.20",
     "scipy~=1.1",
 
     # tools
-    "matplotlib~=3.8",
-    "pandas~=2.1",
+    "matplotlib~=3.0",
+    "pandas~=2.0",
     "shapely~=2.0",
 
     # utilities
     "coloredlogs~=10.0",
-    "flatten_dict~=0.4",
+    "flatten_dict~=0.0",
 ]
 
 # What packages are optional?
