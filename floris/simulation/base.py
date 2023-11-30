@@ -25,7 +25,11 @@ from typing import (
     Final,
 )
 
-import attrs
+from attrs import (
+    asdict,
+    define,
+    fields,
+)
 
 from floris.logging_manager import LoggerBase
 from floris.type_dec import FromDictMixin
@@ -37,6 +41,7 @@ class State(Enum):
     USED = 2
 
 
+@define
 class BaseClass(LoggerBase, FromDictMixin):
     """
     BaseClass object class. This class does the logging and MixIn class inheritance.
@@ -54,7 +59,7 @@ class BaseClass(LoggerBase, FromDictMixin):
         Dict[str, Any]
             Dictionary of keyword argument: default.
         """
-        return {el.name: el.default for el in attrs.fields(cls)}
+        return {el.name: el.default for el in fields(cls)}
 
     def _get_model_dict(self) -> dict:
         """Convenience method that wraps the `attrs.asdict` method. Returns the object's
@@ -65,9 +70,10 @@ class BaseClass(LoggerBase, FromDictMixin):
         dict
             The provided or default, if no input provided, model settings as a dictionary.
         """
-        return attrs.asdict(self)
+        return asdict(self)
 
 
+@define
 class BaseModel(BaseClass, ABC):
     """
     BaseModel is the generic class for any wake models. It defines the API required to

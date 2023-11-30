@@ -16,6 +16,7 @@ import logging
 from datetime import datetime
 
 import coloredlogs
+from attrs import define
 
 
 # Global variables for logging
@@ -143,6 +144,7 @@ class TracebackInfoFilter(logging.Filter):
         return True
 
 
+@define
 class LoggerBase:
     """
     Convenience super-class to any class requiring access to the logging
