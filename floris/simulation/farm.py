@@ -14,7 +14,11 @@ from __future__ import annotations
 
 import copy
 from pathlib import Path
-from typing import Any, List, Dict
+from typing import (
+    Any,
+    Dict,
+    List,
+)
 
 import attrs
 import numpy as np

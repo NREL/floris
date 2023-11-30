@@ -14,7 +14,11 @@ from typing import Any, Dict
 
 import numexpr as ne
 import numpy as np
-from attrs import define, field, fields
+from attrs import (
+    define,
+    field,
+    fields,
+)
 
 from floris.simulation import (
     BaseModel,
@@ -23,6 +27,7 @@ from floris.simulation import (
     Grid,
     Turbine,
 )
+
 
 NUM_EPS = fields(BaseModel).NUM_EPS.default
 

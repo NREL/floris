@@ -16,7 +16,11 @@ from typing import Any
 
 import numexpr as ne
 import numpy as np
-from attrs import define, field, fields
+from attrs import (
+    define,
+    field,
+    fields,
+)
 from numpy import pi
 
 from floris.simulation import (
@@ -27,6 +31,7 @@ from floris.simulation import (
     Turbine,
 )
 from floris.utilities import cosd, sind
+
 
 NUM_EPS = fields(BaseModel).NUM_EPS.default
 

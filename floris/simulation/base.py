@@ -26,8 +26,8 @@ from typing import (
 )
 
 from attrs import (
-    Attribute,
     asdict,
+    Attribute,
     define,
     field,
     fields,
@@ -51,7 +51,7 @@ class BaseClass(LoggerBase, FromDictMixin):
 
     # Initialize `state` and ensure it is treated as an attribute rather than a constant parameter.
     # See https://www.attrs.org/en/stable/api-attr.html#attr.ib
-    state = field(init=False, default=State.UNINITIALIZED)  
+    state = field(init=False, default=State.UNINITIALIZED)
 
     @classmethod
     def get_model_defaults(cls) -> Dict[str, Any]:
@@ -83,7 +83,8 @@ class BaseModel(BaseClass):
     create a valid model.
     """
 
-    NUM_EPS: Final[float] = field(init=False, default=0.001)  # This is a numerical epsilon to prevent divide by zeros
+    # This is a numerical epsilon to prevent divide by zeros
+    NUM_EPS: Final[float] = field(init=False, default=0.001)
 
     @NUM_EPS.validator
     def lock_num_eps(self, attribute: Attribute, value: Any) -> None:
