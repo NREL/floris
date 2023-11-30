@@ -625,6 +625,7 @@ class Turbine(BaseClass):
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
     power_thrust_table: PowerThrustTable = field(default=None)
+    correct_cp_ct_for_tilt: bool = field(default=None)
     floating_tilt_table: TiltTable = field(default=None)
     floating_correct_cp_ct_for_tilt: bool = field(default=None)
     power_thrust_data_file: str = field(default=None)
@@ -640,6 +641,7 @@ class Turbine(BaseClass):
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
     tilt_interp: interp1d = field(init=False)
+    fTilt_interp: interp1d = field(init=False)
 
 
     # For the following parameters, use default values if not user-specified

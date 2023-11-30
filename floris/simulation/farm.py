@@ -14,11 +14,12 @@ from __future__ import annotations
 
 import copy
 from pathlib import Path
-from typing import Any, List
+from typing import Any, List, Dict
 
 import attrs
 import numpy as np
 from attrs import define, field
+from scipy.interpolate import interp1d
 
 from floris.simulation import (
     BaseClass,
@@ -88,8 +89,12 @@ class Farm(BaseClass):
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
 
+    turbine_map: List[Turbine | TurbineMultiDimensional] = field(init=False, default=[])
+
     turbine_type_map: NDArrayObject = field(init=False, default=[])
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
+
+    turbine_power_interps: Dict[str, interp1d] | List[interp1d] = field(init=False, default=[])
 
     rotor_diameters: NDArrayFloat = field(init=False, default=[])
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
@@ -102,6 +107,9 @@ class Farm(BaseClass):
 
     pTs: NDArrayFloat = field(init=False, default=[])
     pTs_sorted: NDArrayFloat = field(init=False, default=[])
+
+    ref_density_cp_cts: NDArrayFloat = field(init=False, default=[])
+    ref_density_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
 
     ref_tilt_cp_cts: NDArrayFloat = field(init=False, default=[])
     ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
