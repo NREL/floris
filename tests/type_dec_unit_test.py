@@ -143,10 +143,10 @@ def test_convert_to_path():
     # Test that both of those inputs are the same
     assert test_str_input == test_path_input
 
-    # Test that a non-existent folder also works even though it's a valid data type
-    str_input = "tests"
-    test_str_input = convert_to_path(str_input)
-    assert isinstance(test_str_input, Path)
+    # Test that a non-existent folder fails, now that the conversion has a multi-pronged search
+    str_input = str(Path(__file__).parent / "tests")
+    with pytest.raises(FileExistsError):
+        convert_to_path(str_input)
 
     # Test that invalid data types fail
     with pytest.raises(TypeError):
