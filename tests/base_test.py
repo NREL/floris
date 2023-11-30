@@ -35,10 +35,11 @@ def test_get_model_defaults():
     """
     This tests that the default parameter values are set correctly and unchanged if not
     explicitly set.
-    Note that NUM_EPS in BaseModel is treated as a default parameter by attrs.
+    Note that state and NUM_EPS in BaseClass and BaseModel are treated as default parameters
+    by attrs.
     """
     defaults = ClassTest.get_model_defaults()
-    assert len(defaults) == 3
+    assert len(defaults) == 4
     assert defaults["x"] == 1
     assert defaults["a_string"] == "abc"
 
@@ -46,11 +47,19 @@ def test_get_model_defaults():
 def test_get_model_values():
     """
     This tests that the parameters are changed when set by the user.
-    Note that NUM_EPS in BaseModel is treated as a parameter by attrs. It isn't changed
-    in the instantiation method, but it is still included as the parameter set.
+    Note that state and NUM_EPS in BaseClass and BaseModel are treated as parameters by attrs.
+    They aren't changed in the instantiation method, but they are still included in the
+    parameter set.
     """
     cls = ClassTest(x=4, a_string="xyz")
     values = cls._get_model_dict()
-    assert len(values) == 3
+    assert len(values) == 4
     assert values["x"] == 4
     assert values["a_string"] == "xyz"
+
+def test_NUM_EPS():
+    cls = ClassTest(x=4, a_string="xyz")
+    assert cls.NUM_EPS == 0.001
+
+    with pytest.raises(AssertionError):
+        cls.NUM_EPS = 2

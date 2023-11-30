@@ -26,8 +26,10 @@ from typing import (
 )
 
 from attrs import (
+    Attribute,
     asdict,
     define,
+    field,
     fields,
 )
 
@@ -47,8 +49,9 @@ class BaseClass(LoggerBase, FromDictMixin):
     BaseClass object class. This class does the logging and MixIn class inheritance.
     """
 
-    state = State.UNINITIALIZED
-
+    # Initialize `state` and ensure it is treated as an attribute rather than a constant parameter.
+    # See https://www.attrs.org/en/stable/api-attr.html#attr.ib
+    state = field(init=False, default=State.UNINITIALIZED)  
 
     @classmethod
     def get_model_defaults(cls) -> Dict[str, Any]:
@@ -74,13 +77,17 @@ class BaseClass(LoggerBase, FromDictMixin):
 
 
 @define
-class BaseModel(BaseClass, ABC):
+class BaseModel(BaseClass):
     """
     BaseModel is the generic class for any wake models. It defines the API required to
     create a valid model.
     """
 
-    NUM_EPS: Final[float] = 0.001  # This is a numerical epsilon to prevent divide by zeros
+    NUM_EPS: Final[float] = field(init=False, default=0.001)  # This is a numerical epsilon to prevent divide by zeros
+
+    @NUM_EPS.validator
+    def lock_num_eps(self, attribute: Attribute, value: Any) -> None:
+        assert value == 0.001  # Locks NUM_EPS to a fixed value. You shouldn't change this!
 
     @abstractmethod
     def prepare_function() -> dict:
