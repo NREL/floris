@@ -22,6 +22,7 @@ import attrs
 import numpy as np
 from attrs import define, field
 
+from floris.simulation import BaseClass
 from floris.type_dec import (
     floris_array_converter,
     floris_float_type,
@@ -36,7 +37,7 @@ from floris.utilities import (
 
 
 @define
-class Grid(ABC):
+class Grid(ABC, BaseClass):
     """
     Grid should establish domain bounds based on given criteria,
     and develop three arrays to contain components of the grid
@@ -66,7 +67,7 @@ class Grid(ABC):
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
     """
-    turbine_coordinates: NDArrayFloat = field()
+    turbine_coordinates: NDArrayFloat = field(converter=floris_array_converter)
     turbine_diameters: NDArrayFloat = field(converter=floris_array_converter)
     grid_resolution: int | Iterable = field()
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
