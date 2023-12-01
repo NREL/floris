@@ -151,6 +151,11 @@ def test_convert_to_path():
     test_abs_path = convert_to_path(abs_path)
     assert test_abs_path == expected_path
 
+    # Test a file
+    file_input = Path(__file__)
+    test_file = convert_to_path(file_input)
+    assert test_file == file_input
+
     # Test that a non-existent folder fails, now that the conversion has a multi-pronged search
     str_input = str(Path(__file__).parent / "tests")
     with pytest.raises(FileExistsError):
