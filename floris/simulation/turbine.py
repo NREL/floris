@@ -417,8 +417,11 @@ def average_velocity(
     method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None
 ) -> NDArrayFloat:
-    """This property calculates and returns the cube root of the
-    mean cubed velocity in the turbine's rotor swept area (m/s).
+    """This property calculates and returns the average of the velocity field
+    in turbine's rotor swept area. The average is calculated using the
+    user-specified method. This is a vectorized function, so it can be used
+    to calculate the average velocity for multiple turbines at once or
+    a single turbine.
 
     **Note:** The velocity is scaled to an effective velocity by the yaw.
 
@@ -428,6 +431,14 @@ def average_velocity(
         ix_filter (NDArrayFilter | Iterable[int] | None], optional): The boolean array, or
             integer indices (as an iterable or array) to filter out before calculation.
             Defaults to None.
+        method (str, optional): The method to use for averaging. Options are:
+            - "simple-mean": The simple mean of the velocities
+            - "cubic-mean": The cubic mean of the velocities
+            - "simple-cubature": A cubature integration of the velocities
+            - "cubic-cubature": A cubature integration of the cube of the velocities
+            Defaults to "cubic-mean".
+        cubature_weights (NDArrayFloat, optional): The cubature weights to use for the
+            cubature integration methods. Defaults to None.
 
     Returns:
         NDArrayFloat: The average velocity across the rotor(s).
@@ -437,9 +448,9 @@ def average_velocity(
     # (# wind directions, # wind speeds, # turbines, grid resolution, grid resolution)
 
     if ix_filter is not None:
-        velocities = velocities[:, :, ix_filter]
+        velocities = velocities[:, ix_filter]
 
-    axis = tuple([3 + i for i in range(velocities.ndim - 3)])
+    axis = tuple([2 + i for i in range(velocities.ndim - 2)])
     if method == "simple-mean":
         return simple_mean(velocities, axis)
 

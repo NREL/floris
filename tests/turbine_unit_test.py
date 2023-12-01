@@ -133,61 +133,61 @@ def test_rotor_area():
 
 def test_average_velocity():
     # TODO: why do we use cube root - mean - cube (like rms) instead of a simple average (np.mean)?
-    # Dimensions are (n wind directions, n wind speeds, n turbines, grid x, grid y)
-    velocities = np.ones((1, 1, 1, 5, 5))
+    # Dimensions are (n sample, n turbines, grid x, grid y)
+    velocities = np.ones((1, 1, 5, 5))
     assert average_velocity(velocities, method="cubic-mean") == 1
 
-    # Constructs an array of shape 1 x 1 x 2 x 3 x 3 with finrst turbie all 1, second turbine all 2
+    # Constructs an array of shape 1 x 2 x 3 x 3 with first turbine all 1, second turbine all 2
     velocities = np.stack(
         (
-            np.ones((1, 1, 3, 3)),  # The first dimension here is the wind direction and the second
-            2 * np.ones((1, 1, 3, 3)),  # is the wind speed since we are stacking on axis=2
+            np.ones((1, 3, 3)),  # The first dimension here is the sample dimension and the second
+            2 * np.ones((1, 3, 3)),  # is the n turbine since we are stacking on axis=1
         ),
-        axis=2,
+        axis=1,
     )
 
-    # Pull out the first wind speed for the test
+    # Pull out the first sample for the test
     np.testing.assert_array_equal(
-        average_velocity(velocities, method="cubic-mean")[0, 0],
+        average_velocity(velocities, method="cubic-mean")[0],
         np.array([1, 2])
     )
 
     # Test boolean filter
     ix_filter = [True, False, True, False]
-    velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,1,4,3,3)
-        [i * np.ones((1, 1, 3, 3)) for i in range(1,5)],
+    velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
+        [i * np.ones((1, 3, 3)) for i in range(1,5)],
         # (
-        #     # The first dimension here is the wind direction
-        #     # and second is the wind speed since we are stacking on axis=2
+        #     # The first dimension here is the sample dimension
+        #     # and second is the turbine dimension since we are stacking on axis=1
         #     np.ones(
-        #         (1, 1, 3, 3)
+        #         (1, 3, 3)
         #     ),
-        #     2 * np.ones((1, 1, 3, 3)),
-        #     3 * np.ones((1, 1, 3, 3)),
-        #     4 * np.ones((1, 1, 3, 3)),
+        #     2 * np.ones((1, 3, 3)),
+        #     3 * np.ones((1, 3, 3)),
+        #     4 * np.ones((1, 3, 3)),
         # ),
-        axis=2,
+        axis=1,
     )
     avg = average_velocity(velocities, ix_filter, method="cubic-mean")
-    assert avg.shape == (1, 1, 2)  # 1 wind direction, 1 wind speed, 2 turbines filtered
+    assert avg.shape == (1, 2)  # 1 sample, 2 turbines filtered
 
-    # Pull out the first wind direction and wind speed for the comparison
-    assert np.allclose(avg[0, 0], np.array([1.0, 3.0]))
+    # Pull out the first sample for the comparison
+    assert np.allclose(avg[0], np.array([1.0, 3.0]))
     # This fails in GitHub Actions due to a difference in precision:
     # E           assert 3.0000000000000004 == 3.0
     # np.testing.assert_array_equal(avg[0], np.array([1.0, 3.0]))
 
     # Test integer array filter
     # np.arange(1, 5).reshape((-1,1,1)) * np.ones((1, 1, 3, 3))
-    velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,1,4,3,3)
-        [i * np.ones((1, 1, 3, 3)) for i in range(1,5)],
-        axis=2,
+    velocities = np.stack(  # 4 turbines with 3 x 3 velocity array; shape (1,4,3,3)
+        [i * np.ones((1, 3, 3)) for i in range(1,5)],
+        axis=1,
     )
     avg = average_velocity(velocities, INDEX_FILTER, method="cubic-mean")
-    assert avg.shape == (1, 1, 2)  # 1 wind direction, 1 wind speed, 2 turbines filtered
+    assert avg.shape == (1, 2)  # 1 sample, 2 turbines filtered
 
-    # Pull out the first wind direction and wind speed for the comparison
-    assert np.allclose(avg[0, 0], np.array([1.0, 3.0]))
+    # Pull out the first sample for the comparison
+    assert np.allclose(avg[0], np.array([1.0, 3.0]))
 
 
 def test_ct():
