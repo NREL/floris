@@ -130,18 +130,26 @@ def test_attrs_array_converter():
 
 
 def test_convert_to_path():
-    # Test that a string works
     str_input = "../tests"
+    expected_path = (Path(__file__).parent / str_input).resolve()
+
+    # Test that a string works
     test_str_input = convert_to_path(str_input)
-    assert isinstance(test_str_input, Path)
+    assert test_str_input == expected_path
 
     # Test that a pathlib.Path works
-    path_input = Path("../tests")
+    path_input = Path(str_input)
     test_path_input = convert_to_path(path_input)
-    assert isinstance(test_path_input, Path)
+    assert test_path_input == expected_path
 
     # Test that both of those inputs are the same
+    # NOTE These first three asserts tests the relative path search
     assert test_str_input == test_path_input
+
+    # Test absolute path
+    abs_path = expected_path
+    test_abs_path = convert_to_path(abs_path)
+    assert test_abs_path == expected_path
 
     # Test that a non-existent folder fails, now that the conversion has a multi-pronged search
     str_input = str(Path(__file__).parent / "tests")
