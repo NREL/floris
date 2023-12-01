@@ -23,8 +23,9 @@ from floris.simulation import (
     Ct,
     power,
     Turbine,
+    TurbineMultiDimensional,
 )
-from floris.type_dec import NDArrayFloat
+from floris.type_dec import convert_to_path, NDArrayFloat
 from floris.utilities import (
     load_yaml,
     round_nearest,
@@ -38,21 +39,36 @@ DEFAULT_WIND_SPEEDS = np.linspace(0, 40, 81)
 
 @define(auto_attribs=True)
 class TurbineInterface:
-    turbine: Turbine = field(validator=attrs.validators.instance_of(Turbine))
+    turbine: Turbine | TurbineMultiDimensional = field(
+        validator=attrs.validators.instance_of((Turbine, TurbineMultiDimensional))
+    )
 
     @classmethod
-    def from_internal_library(cls, file_name: str):
-        """Loads the turbine definition from a YAML configuration file located in
-        ``floris/floris/turbine_library/``.
+    def from_library(cls, library_path: str | Path, file_name: str):
+        """Loads the turbine definition from a YAML configuration file located in either the
+        internal turbine library ``floris/floris/turbine_library/``, or a user-specified location.
 
         Args:
-            file_`name : str | Path
-                T`he file name of the turbine configuration file.
+            library_path (:obj:`str` | :obj:`pathlib.Path`): The location of the turbine library;
+                use "internal" to use the FLORIS-provided library.
+            file_name (:obj:`str` | :obj:`pathlib.Path`): The name of the configuration file.
 
         Returns:
             (TurbineInterface): Creates a new ``TurbineInterface`` object.
         """
-        return cls(turbine=Turbine.from_dict(load_yaml(INTERNAL_LIBRARY / file_name)))
+        # Use the pre-mapped internal turbine library or validate the user's library
+        if library_path == "internal":
+            library_path = INTERNAL_LIBRARY
+        else:
+            library_path = convert_to_path(library_path)
+        print(library_path)
+
+        # Add in the library specification if needed, and load from dict
+        turb_dict = load_yaml(library_path / file_name)
+        if turb_dict.get("multi_dimensional_cp_ct", False):
+            turb_dict.setdefault("turbine_library_path", library_path)
+            return cls(turbine=TurbineMultiDimensional.from_dict(turb_dict))
+        return cls(turbine=Turbine.from_dict(turb_dict))
 
     @classmethod
     def from_yaml(cls, file_path: str | Path):
@@ -65,7 +81,14 @@ class TurbineInterface:
         Returns:
             (TurbineInterface): Creates a new ``TurbineInterface`` object.
         """
-        return cls(turbine=Turbine.from_dict(load_yaml(file_path)))
+        file_path = Path(file_path).resolve()
+
+        # Add in the library specification if needed, and load from dict
+        turb_dict = load_yaml(file_path)
+        if turb_dict.get("multi_dimensional_cp_ct", False):
+            turb_dict.setdefault("turbine_library_path", file_path.parent)
+            return cls(turbine=TurbineMultiDimensional.from_dict(turb_dict))
+        return cls(turbine=Turbine.from_dict(turb_dict))
 
     @classmethod
     def from_turbine_dict(cls, config_dict: dict):
@@ -78,6 +101,8 @@ class TurbineInterface:
         Returns:
             (`TurbineInterface`): Returns a ``TurbineInterface`` object.
         """
+        if config_dict.get("multi_dimensional_cp_ct", False):
+            return cls(turbine=TurbineMultiDimensional.from_dict(config_dict))
         return cls(turbine=Turbine.from_dict(config_dict))
 
     def power_curve(
