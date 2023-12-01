@@ -32,7 +32,6 @@ from floris.type_dec import (
 from floris.utilities import (
     reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
-    Vec3,
 )
 
 

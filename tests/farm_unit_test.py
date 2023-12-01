@@ -19,7 +19,7 @@ import numpy as np
 import pytest
 
 from floris.simulation import Farm
-from floris.utilities import load_yaml, Vec3
+from floris.utilities import load_yaml
 from tests.conftest import (
     N_TURBINES,
     N_WIND_DIRECTIONS,

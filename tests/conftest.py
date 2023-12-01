@@ -25,7 +25,6 @@ from floris.simulation import (
     PointsGrid,
     TurbineGrid,
 )
-from floris.utilities import Vec3
 
 
 def turbines_to_array(turbine_list: list):
@@ -109,10 +108,6 @@ TIME_SERIES = False
 ## Unit test fixtures
 
 @pytest.fixture
-def vec3_fixture():
-    return Vec3([4, 4, 0])
-
-@pytest.fixture
 def flow_field_fixture(sample_inputs_fixture):
     flow_field_dict = sample_inputs_fixture.flow_field
     return FlowField.from_dict(flow_field_dict)
@@ -144,7 +139,7 @@ def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
 
 @pytest.fixture
 def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
-    turbine_coordinates = [Vec3(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))]
+    turbine_coordinates = np.array([np.array(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))])
     rotor_diameters = ROTOR_DIAMETER * np.ones( (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES) )
     points_x = [0.0, 10.0]
     points_y = [0.0, 0.0]
