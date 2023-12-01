@@ -28,7 +28,7 @@ from tests.conftest import (
 # TODO: test the dimension expansion
 
 
-def test_turbinegrid_set_grid(turbine_grid_fixture):
+def test_set_grid(turbine_grid_fixture):
     expected_x_grid = [
         [[0.0, 0.0], [0.0, 0.0]],
         [[630.0, 630.0], [630.0, 630.0]],
@@ -54,7 +54,7 @@ def test_turbinegrid_set_grid(turbine_grid_fixture):
     assert not np.any(turbine_grid_fixture.z_sorted[0, 0] - expected_z_grid)
 
 
-def test_turbinegrid_dimensions(turbine_grid_fixture):
+def test_dimensions(turbine_grid_fixture):
     assert np.shape(turbine_grid_fixture.x_sorted) == (
         N_WIND_DIRECTIONS,
         N_WIND_SPEEDS,
@@ -78,7 +78,7 @@ def test_turbinegrid_dimensions(turbine_grid_fixture):
     )
 
 
-def test_turbinegrid_dynamic_properties(turbine_grid_fixture):
+def test_dynamic_properties(turbine_grid_fixture):
     assert turbine_grid_fixture.n_turbines == N_TURBINES
     assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS
     assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS
@@ -98,80 +98,3 @@ def test_turbinegrid_dynamic_properties(turbine_grid_fixture):
 
     turbine_grid_fixture.wind_directions = [*turbine_grid_fixture.wind_directions, 0.0]
     assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS + 1
-
-
-
-# def test_flow_field_set_bounds(flow_field_grid_fixture):
-#     assert flow_field_grid_fixture.xmin == -252.0
-#     assert flow_field_grid_fixture.xmax == 2520.0
-#     assert flow_field_grid_fixture.ymin == -252.0
-#     assert flow_field_grid_fixture.ymax == 252.0
-#     assert flow_field_grid_fixture.zmin == 0.1
-#     assert flow_field_grid_fixture.zmax == 540
-
-
-# def test_flow_field_set_grid(flow_field_grid_fixture):
-#     assert (
-#         [
-#             flow_field_grid_fixture.x[0][0][0],
-#             flow_field_grid_fixture.y[0][0][0],
-#             flow_field_grid_fixture.z[0][0][0]
-#         ]
-#         == [ -252.0, -252.0, 0.1]
-#     )
-#     assert (
-#         [
-#             flow_field_grid_fixture.x[1][0][0],
-#             flow_field_grid_fixture.y[0][0][0],
-#             flow_field_grid_fixture.z[0][0][0]
-#         ]
-#         == [ 2520.0, -252.0, 0.1]
-#     )
-#     assert (
-#         [
-#             flow_field_grid_fixture.x[0][0][0],
-#             flow_field_grid_fixture.y[0][1][0],
-#             flow_field_grid_fixture.z[0][0][0]
-#         ]
-#         == [ -252.0,  252.0, 0.1]
-#     )
-#     assert (
-#         [
-#             flow_field_grid_fixture.x[1][0][0],
-#             flow_field_grid_fixture.y[0][1][0],
-#             flow_field_grid_fixture.z[0][0][0]
-#         ]
-#         == [ 2520.0,  252.0, 0.1]
-#     )
-#     assert (
-#         [
-#             flow_field_grid_fixture.x[0][0][0],
-#             flow_field_grid_fixture.y[0][0][0],
-#             flow_field_grid_fixture.z[0][0][1]
-#         ]
-#         == [ -252.0, -252.0, 540.0]
-#     )
-#     assert (
-#         [
-#             flow_field_grid_fixture.x[1][0][0],
-#             flow_field_grid_fixture.y[0][0][0],
-#             flow_field_grid_fixture.z[0][0][1]
-#         ]
-#         == [ 2520.0, -252.0, 540.0]
-#     )
-#     assert (
-#         [
-#             flow_field_grid_fixture.x[0][0][0],
-#             flow_field_grid_fixture.y[0][1][0],
-#             flow_field_grid_fixture.z[0][0][1]
-#         ]
-#         == [ -252.0,  252.0, 540.0]
-#     )
-#     assert (
-#         [
-#             flow_field_grid_fixture.x[1][0][0],
-#             flow_field_grid_fixture.y[0][1][0],
-#             flow_field_grid_fixture.z[0][0][1]
-#         ]
-#         == [ 2520.0,  252.0, 540.0]
-#     )
