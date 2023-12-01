@@ -144,11 +144,10 @@ class TracebackInfoFilter(logging.Filter):
         return True
 
 
-@define
-class LoggerBase:
+class LoggingManager:
     """
-    Convenience super-class to any class requiring access to the logging
-    module. The virtual property here allows a simple and dynamic method
+    This class provide an easy access to the global logger.
+    The virtual property here allows a simple and dynamic method
     for obtaining the correct logger for the calling class.
     """
 

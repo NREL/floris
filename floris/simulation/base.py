@@ -33,7 +33,7 @@ from attrs import (
     fields,
 )
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 from floris.type_dec import FromDictMixin
 
 
@@ -44,7 +44,7 @@ class State(Enum):
 
 
 @define
-class BaseClass(LoggerBase, FromDictMixin):
+class BaseClass(FromDictMixin):
     """
     BaseClass object class. This class does the logging and MixIn class inheritance.
     """
@@ -52,6 +52,11 @@ class BaseClass(LoggerBase, FromDictMixin):
     # Initialize `state` and ensure it is treated as an attribute rather than a constant parameter.
     # See https://www.attrs.org/en/stable/api-attr.html#attr.ib
     state = field(init=False, default=State.UNINITIALIZED)
+    _logging_manager: LoggingManager = field(init=False, default=None)
+
+    def __attrs_post_init__(self):
+        """Post-initialization hook that sets the logger manager."""
+        self._logging_manager = LoggingManager()
 
     @classmethod
     def get_model_defaults(cls) -> Dict[str, Any]:
@@ -75,6 +80,10 @@ class BaseClass(LoggerBase, FromDictMixin):
         """
         return asdict(self)
 
+    @property
+    def logger(self):
+        """Returns the logger manager object."""
+        return self._logging_manager.logger
 
 @define
 class BaseModel(BaseClass):

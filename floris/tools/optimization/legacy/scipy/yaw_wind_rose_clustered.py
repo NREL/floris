@@ -17,13 +17,13 @@ import copy
 import numpy as np
 import pandas as pd
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 
 from .cluster_turbines import cluster_turbines
 from .yaw_wind_rose import YawOptimizationWindRose
 
 
-class YawOptimizationWindRoseClustered(YawOptimizationWindRose, LoggerBase):
+class YawOptimizationWindRoseClustered(YawOptimizationWindRose, LoggingManager):
     """
     YawOptimizationWindRose is a subclass of
     :py:class:`~.tools.optimizationscipy.YawOptimizationWindRose` that is used

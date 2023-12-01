@@ -17,12 +17,12 @@ import copy
 import numpy as np
 from scipy.stats import norm
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 from floris.tools import FlorisInterface
 from floris.utilities import wrap_360
 
 
-class UncertaintyInterface(LoggerBase):
+class UncertaintyInterface(LoggingManager):
     def __init__(
         self,
         configuration,
