@@ -219,7 +219,7 @@ def rotor_effective_velocity(
 def power(
     ref_density_cp_ct: float,
     rotor_effective_velocities: NDArrayFloat,
-    power_interp: NDArrayObject,
+    power_interp: dict[str, NDArrayObject],
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -230,8 +230,8 @@ def power(
         ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
         rotor_effective_velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The rotor
             effective velocities at a turbine.
-        power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function
-            for each turbine.
+        power_interp (dict[str, NDArrayObject[wd, ws, turbines]]): The power interpolation function
+            for each turbine type as a dictionary.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
         ix_filter (NDArrayInt, optional): The boolean array, or
