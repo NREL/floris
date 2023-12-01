@@ -51,6 +51,18 @@ def floris_array_converter(data: Iterable) -> np.ndarray:
         raise TypeError(e.args[0] + f". Data given: {data}")
     return a
 
+# def array_field(**kwargs) -> Callable:
+#     """
+#     A wrapper for the :py:func:`attr.field` function that converts the input to a Numpy array,
+#     adds a comparison function specific to Numpy arrays, and passes through all additional
+#     keyword arguments.
+#     """
+#     return field(
+#         converter=floris_array_converter,
+#         eq=cmp_using(eq=np.array_equal),
+#         **kwargs
+#     )
+
 def _attr_serializer(inst: type, field: Attribute, value: Any):
     if isinstance(value, np.ndarray):
         return value.tolist()

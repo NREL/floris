@@ -14,9 +14,8 @@
 
 
 import numpy as np
-import pytest
 
-from floris.utilities import Vec3
+from floris.simulation import TurbineGrid
 from tests.conftest import (
     N_TURBINES,
     N_WIND_DIRECTIONS,
@@ -25,7 +24,10 @@ from tests.conftest import (
 )
 
 
-# TODO: test the dimension expansion
+# def test_from_dict_as_dict(turbine_grid_fixture):
+#     grid_dict = turbine_grid_fixture.as_dict()
+#     new_grid = TurbineGrid.from_dict(grid_dict)
+#     assert new_grid == turbine_grid_fixture
 
 
 def test_set_grid(turbine_grid_fixture):
