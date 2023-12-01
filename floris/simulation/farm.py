@@ -81,7 +81,10 @@ class Farm(BaseClass):
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
     coordinates: List[Vec3] = field(init=False)
-    turbine_fCts: tuple = field(init=False, default=[])
+
+    turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, default=[])
+    turbine_fCts_sorted: NDArrayFloat = field(init=False, default=[])
+
     turbine_fTilts: list = field(init=False, default=[])
 
     yaw_angles: NDArrayFloat = field(init=False)
@@ -99,6 +102,7 @@ class Farm(BaseClass):
     turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
 
     turbine_power_interps: Dict[str, interp1d] | List[interp1d] = field(init=False, default=[])
+    turbine_power_interps_sorted: NDArrayFloat = field(init=False, default=[])
 
     rotor_diameters: NDArrayFloat = field(init=False, default=[])
     rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
@@ -468,7 +472,6 @@ class Farm(BaseClass):
             unsorted_indices[:,:,:,0,0],
             axis=2
         )
-        # TODO: do these need to be unsorted? Maybe we should just for completeness...
         self.ref_density_cp_cts = np.take_along_axis(
             self.ref_density_cp_cts_sorted,
             unsorted_indices[:,:,:,0,0],
