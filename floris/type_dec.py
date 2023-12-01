@@ -85,8 +85,12 @@ def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
     return validator
 
 def convert_to_path(fn: str | Path) -> Path:
-    """Converts an input string or ``pathlib.Path`` object to a fully resolved ``pathlib.Path``
-    object.
+    """
+    Converts an input string or ``pathlib.Path`` object to a fully resolved ``pathlib.Path``
+    object. If the input is a string, it is converted to a pathlib.Path object.
+    The function then checks if the path exists as an absolute path, a relative path from
+    the script, or a relative path from the system location. If the path does not exist in
+    any of these locations, a FileExistsError is raised.
 
     Args:
         fn (str | Path): The user input file path or file name.
