@@ -92,7 +92,7 @@ def test_dynamic_properties(turbine_grid_fixture):
 
     turbine_grid_fixture.turbine_coordinates = np.append(
         turbine_grid_fixture.turbine_coordinates,
-        np.array([[[100.0, 200.0, 300.0]]]),
+        np.array([[100.0, 200.0, 300.0]]),
         axis=0
     )
     assert turbine_grid_fixture.n_turbines == N_TURBINES + 1

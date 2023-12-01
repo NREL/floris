@@ -119,12 +119,7 @@ def flow_field_fixture(sample_inputs_fixture):
 
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
-    turbine_coordinates = np.array([np.array([c]) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))])
-
-    # TODO: The TurbineGrid requires that the rotor diameters be 1d but the
-    # Farm constructs them as 3d
-    #   Can we make this consistent?
-
+    turbine_coordinates = np.array([np.array(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))])
     rotor_diameters = ROTOR_DIAMETER * np.ones( (N_TURBINES) )
     return TurbineGrid(
         turbine_coordinates=turbine_coordinates,
