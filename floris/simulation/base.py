@@ -52,11 +52,7 @@ class BaseClass(FromDictMixin):
     # Initialize `state` and ensure it is treated as an attribute rather than a constant parameter.
     # See https://www.attrs.org/en/stable/api-attr.html#attr.ib
     state = field(init=False, default=State.UNINITIALIZED)
-    _logging_manager: LoggingManager = field(init=False, default=None)
-
-    def __attrs_post_init__(self):
-        """Post-initialization hook that sets the logger manager."""
-        self._logging_manager = LoggingManager()
+    _logging_manager: LoggingManager = field(init=False, default=LoggingManager())
 
     @classmethod
     def get_model_defaults(cls) -> Dict[str, Any]:
