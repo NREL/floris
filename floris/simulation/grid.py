@@ -58,21 +58,22 @@ class Grid(ABC, BaseClass):
     all of these arrays are the same size
 
     Args:
-        turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.
+        turbine_coordinates (:py:obj:`NDArrayFloat`): The arrays of turbine coordinates as Numpy
+            arrays with shape (N coordinates, 3).
         turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
-        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution with values
-            specific to each grid type.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
+        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution with values
+            specific to each grid type.
     """
     turbine_coordinates: NDArrayFloat = field(converter=floris_array_converter)
     turbine_diameters: NDArrayFloat = field(converter=floris_array_converter)
-    grid_resolution: int | Iterable = field()
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
     time_series: bool = field()
+    grid_resolution: int | Iterable = field()
 
     n_turbines: int = field(init=False)
     n_wind_speeds: int = field(init=False)
@@ -86,9 +87,9 @@ class Grid(ABC, BaseClass):
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
     @turbine_coordinates.validator
-    def check_coordinates(self, instance: attrs.Attribute, value: list[Vec3]) -> None:
+    def check_coordinates(self, instance: attrs.Attribute, value: np.ndarray) -> None:
         """
-        Ensures all elements are `Vec3` objects and keeps the `n_turbines`
+        Ensures all elements are Numpy arrays and keeps the `n_turbines`
         attribute up to date.
         """
         types = np.unique([isinstance(c, np.ndarray) for c in value])
@@ -116,7 +117,7 @@ class Grid(ABC, BaseClass):
     @grid_resolution.validator
     def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
         # TODO move this to the grid types and off of the base class
-        """Check that grid resolution is given as int or Vec3 with int components."""
+        """Check that grid resolution is given as int with int components."""
         if isinstance(value, int) and \
             isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid)):
             return
@@ -139,15 +140,16 @@ class TurbineGrid(Grid):
     """See `Grid` for more details.
 
     Args:
-        turbine_coordinates (`list[Vec3]`): The series of turbine coordinate (`Vec3`) objects.
-        turbine_diameters (:py:obj:`float`): A reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points in each
-            direction of the square grid on the rotor plane. For example, grid_resolution=3
-            creates a 3x3 grid within the rotor swept area.
+        turbine_coordinates (:py:obj:`NDArrayFloat`): The arrays of turbine coordinates as Numpy
+            arrays with shape (N coordinates, 3).
+        turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
+        grid_resolution (:py:obj:`int`): The number of points in each
+            direction of the square grid on the rotor plane. For example, grid_resolution=3
+            creates a 3x3 grid within the rotor swept area.
     """
     # TODO: describe these and the differences between `sorted_indices` and `sorted_coord_indices`
     sorted_indices: NDArrayInt = field(init=False)
@@ -299,15 +301,16 @@ class TurbineCubatureGrid(Grid):
     a more accurate average velocity, thrust coefficient, and axial induction.
 
     Args:
-        turbine_coordinates (`list[Vec3]`): The list of turbine coordinates as `Vec3` objects.
-        turbine_diameters (:py:obj:`float`): The reference turbine's rotor diameter.
+        turbine_coordinates (:py:obj:`NDArrayFloat`): The arrays of turbine coordinates as Numpy
+            arrays with shape (N coordinates, 3).
+        turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
-        grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): The number of points to
-            include in the cubature method. This value must be in the range [1, 10], and the
-            corresponding cubature weights are set automatically.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
+        grid_resolution (:py:obj:`int`): The number of points to
+            include in the cubature method. This value must be in the range [1, 10], and the
+            corresponding cubature weights are set automatically.
     """
     sorted_indices: NDArrayInt = field(init=False)
     sorted_coord_indices: NDArrayInt = field(init=False)
@@ -463,10 +466,15 @@ class TurbineCubatureGrid(Grid):
 class FlowFieldGrid(Grid):
     """
     Args:
-        grid_resolution (`Vec3`): The number of grid points to be created in each direction.
-        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
-        turbine_diameters (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int`): The number of points on each turbine
+        turbine_coordinates (:py:obj:`NDArrayFloat`): The arrays of turbine coordinates as Numpy
+            arrays with shape (N coordinates, 3).
+        turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
+            series.
+        grid_resolution (:py:obj:`Iterable(int,)`): The number of grid points to create in each
+            planar direction. Must be 3 components for resolution in the x, y, and z directions.
     """
     x_center_of_rotation: NDArrayFloat = field(init=False)
     y_center_of_rotation: NDArrayFloat = field(init=False)
@@ -477,7 +485,6 @@ class FlowFieldGrid(Grid):
     def set_grid(self) -> None:
         """
         Create a structured grid for the entire flow field domain.
-        resolution: Vec3
 
         Calculates the domain bounds for the current wake model. The bounds
         are calculated based on preset extents from the
@@ -531,10 +538,17 @@ class FlowFieldGrid(Grid):
 class FlowFieldPlanarGrid(Grid):
     """
     Args:
-        grid_resolution (`Vec3`): The number of grid points to be created in each direction.
-        turbine_coordinates (`list[Vec3]`): The collection of turbine coordinate (`Vec3`) objects.
-        turbine_diameters (:py:obj:`float`): The reference turbine's rotor diameter.
-        grid_resolution (:py:obj:`int`): The number of points on each turbine
+        turbine_coordinates (:py:obj:`NDArrayFloat`): The arrays of turbine coordinates as Numpy
+            arrays with shape (N coordinates, 3).
+        turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
+        wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
+            series.
+        grid_resolution (:py:obj:`Iterable(int,)`): The number of grid points to create in each
+            planar direction. Must be 2 components for resolution in the x and y directions.
+            The z direction is set to 3 planes at -10.0, 0.0, and +10.0 relative to the
+            `planar_coordinate`.
     """
     normal_vector: str = field()
     planar_coordinate: float = field()
@@ -551,14 +565,11 @@ class FlowFieldPlanarGrid(Grid):
     def set_grid(self) -> None:
         """
         Create a structured grid for the entire flow field domain.
-        resolution: Vec3
 
         Calculates the domain bounds for the current wake model. The bounds
         are calculated based on preset extents from the
         given layout. The bounds consist of the minimum and maximum values
         in the x-, y-, and z-directions.
-
-        If the Curl model is used, the predefined bounds are always set.
 
         First, sort the turbines so that we know the bounds in the correct orientation.
         Then, create the grid based on this wind-from-left orientation
@@ -644,14 +655,18 @@ class FlowFieldPlanarGrid(Grid):
 class PointsGrid(Grid):
     """
     Args:
-        turbine_coordinates (`list[Vec3]`): The list of turbine coordinates as `Vec3` objects.
-        turbine_diameters (:py:obj:`float`): A reference turbine's rotor diameter.
+        turbine_coordinates (:py:obj:`NDArrayFloat`): Not used for PointsGrid, but
+            required for the `Grid` super-class.
+        turbine_diameters (:py:obj:`NDArrayFloat`):  Not used for PointsGrid, but
+            required for the `Grid` super-class.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
-        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
+        wind_speeds (:py:obj:`NDArrayFloat`):  Not used for PointsGrid, but
+            required for the `Grid` super-class.
+        time_series (:py:obj:`bool`):  Not used for PointsGrid, but
+            required for the `Grid` super-class.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Not used for PointsGrid, but
             required for the `Grid` super-class.
-        time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
-            series.
+
         points_x (:py:obj:`NDArrayFloat`): Array of x-components for the points in the grid.
         points_y (:py:obj:`NDArrayFloat`): Array of y-components for the points in the grid.
         points_z (:py:obj:`NDArrayFloat`): Array of z-components for the points in the grid.
