@@ -19,10 +19,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from attrs import define, field
 
-from floris.simulation import (
+from floris.simulation.turbine import (
     Ct,
     power,
     Turbine,
+)
+from floris.simulation.turbine_multi_dim import (
+    Ct_multidim,
+    power_multidim,
     TurbineMultiDimensional,
 )
 from floris.type_dec import convert_to_path, NDArrayFloat
@@ -61,7 +65,6 @@ class TurbineInterface:
             library_path = INTERNAL_LIBRARY
         else:
             library_path = convert_to_path(library_path)
-        print(library_path)
 
         # Add in the library specification if needed, and load from dict
         turb_dict = load_yaml(library_path / file_name)
@@ -105,10 +108,10 @@ class TurbineInterface:
             return cls(turbine=TurbineMultiDimensional.from_dict(config_dict))
         return cls(turbine=Turbine.from_dict(config_dict))
 
-    def power_curve(
+    def  power_curve(
         self,
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
-    ) -> tuple[NDArrayFloat, NDArrayFloat]:
+    ) -> tuple[NDArrayFloat, NDArrayFloat] | tuple[NDArrayFloat, dict[tuple, NDArrayFloat]]:
         """Produces a plot-ready power curve for the turbine for wind speed vs power (MW), assuming
         no tilt or yaw effects.
 
@@ -117,15 +120,27 @@ class TurbineInterface:
                 0 m/s -> 40 m/s, every 0.5 m/s.
 
         Returns:
-            (tuple[NDArrayFloat, NDArrayFloat]): Returns the wind speed array and the power array.
+            (tuple[NDArrayFloat, NDArrayFloat] | tuple[NDArrayFloat, dict[tuple, NDArrayFloat]]):
+                Returns the wind speed array and the power array, or the wind speed array and a
+                dictionary of the multidimensional parameters and their associated power arrays.
         """
         shape = (1, wind_speeds.size, 1)
-        power_mw = power(
-            ref_density_cp_ct=np.full(shape, self.turbine.ref_density_cp_ct),
-            rotor_effective_velocities=wind_speeds.reshape(shape),
-            power_interp={self.turbine.turbine_type: self.turbine.power_interp},
-            turbine_type_map=np.full(shape, self.turbine.turbine_type)
-        ).flatten() / 1e6
+        if self.turbine.multi_dimensional_cp_ct:
+            power_mw = {
+                k: power_multidim(
+                    ref_density_cp_ct=np.full(shape, self.turbine.ref_density_cp_ct),
+                    rotor_effective_velocities=wind_speeds.reshape(shape),
+                    power_interp=np.array([[[self.turbine.power_interp[k]]]]),
+                ).flatten() / 1e6
+                for k in self.turbine.power_interp
+            }
+        else:
+            power_mw = power(
+                ref_density_cp_ct=np.full(shape, self.turbine.ref_density_cp_ct),
+                rotor_effective_velocities=wind_speeds.reshape(shape),
+                power_interp={self.turbine.turbine_type: self.turbine.power_interp},
+                turbine_type_map=np.full(shape, self.turbine.turbine_type)
+            ).flatten() / 1e6
         return wind_speeds, power_mw
 
     def Cp_curve(
@@ -210,8 +225,15 @@ class TurbineInterface:
         min_windspeed = 0
         max_windspeed = max(wind_speeds)
         min_power = 0
-        max_power = max(power_mw)
-        ax.plot(wind_speeds, power_mw, label=self.turbine.turbine_type, **plot_kwargs)
+        max_power = 0
+        if isinstance(power_mw, dict):
+            for key, _power_mw in power_mw.items():
+                max_power = max(max_power, *_power_mw)
+                label = f"{self.turbine.turbine_type} - {key}"
+                ax.plot(wind_speeds, _power_mw, label=label, **plot_kwargs)
+        else:
+            max_power = max(power_mw)
+            ax.plot(wind_speeds, power_mw, label=self.turbine.turbine_type, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
