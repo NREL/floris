@@ -26,6 +26,7 @@ from floris.simulation.turbine import (
 )
 from floris.simulation.turbine_multi_dim import (
     Ct_multidim,
+    multidim_power_down_select,
     power_multidim,
     TurbineMultiDimensional,
 )
@@ -126,11 +127,18 @@ class TurbineInterface:
         """
         shape = (1, wind_speeds.size, 1)
         if self.turbine.multi_dimensional_cp_ct:
+            power_interps = {
+                k: multidim_power_down_select(
+                    np.full(shape, self.turbine.power_interp),
+                    dict(zip(self.turbine.condition_keys, k)),
+                )
+                for k in self.turbine.power_interp
+            }
             power_mw = {
                 k: power_multidim(
                     ref_density_cp_ct=np.full(shape, self.turbine.ref_density_cp_ct),
                     rotor_effective_velocities=wind_speeds.reshape(shape),
-                    power_interp=np.array([[[self.turbine.power_interp[k]]]]),
+                    power_interp=power_interps[k],
                 ).flatten() / 1e6
                 for k in self.turbine.power_interp
             }
@@ -229,7 +237,8 @@ class TurbineInterface:
         if isinstance(power_mw, dict):
             for key, _power_mw in power_mw.items():
                 max_power = max(max_power, *_power_mw)
-                label = f"{self.turbine.turbine_type} - {key}"
+                _cond = "; ".join((f"{c}: {k}" for c, k in zip(self.turbine.condition_keys, key)))
+                label = f"{self.turbine.turbine_type} - {_cond}"
                 ax.plot(wind_speeds, _power_mw, label=label, **plot_kwargs)
         else:
             max_power = max(power_mw)
