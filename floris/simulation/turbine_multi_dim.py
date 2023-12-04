@@ -443,6 +443,9 @@ class TurbineMultiDimensional(Turbine):
         validator=attrs.validators.instance_of(Path)
     )
 
+    # Not to be provided by the user
+    condition_keys: list[str] = field(init=False, factory=list)
+
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
 
@@ -478,6 +481,7 @@ class TurbineMultiDimensional(Turbine):
 
         # Down-select the DataFrame to have just the ws, Cp, and Ct values
         index_col = df.columns.values[:-3]
+        self.condition_keys = index_col.tolist()
         df2 = df.set_index(index_col.tolist())
 
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
