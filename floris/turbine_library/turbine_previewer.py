@@ -201,8 +201,9 @@ class TurbineInterface:
     def plot_power_curve(
         self,
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
-        fig_kwargs: dict = {},
-        plot_kwargs = {},
+        fig_kwargs: dict | None =  None,
+        plot_kwargs: dict | None =  None,
+        legend_kwargs: dict | None =  None,
         return_fig: bool = False
     ) -> None | tuple[plt.Figure, plt.Axes]:
         """Plots the power curve for a given set of wind speeds.
@@ -211,9 +212,11 @@ class TurbineInterface:
             wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s.
                 Defaults to 0 m/s -> 40 m/s, every 0.5 m/s.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
+                Defaults to None.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
+            legend_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.legend()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
 
@@ -222,6 +225,11 @@ class TurbineInterface:
                 a tuple of the Figure and Axes objects are returned.
         """
         wind_speeds, power_mw = self.power_curve(wind_speeds=wind_speeds)
+
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        plot_kwargs = {} if plot_kwargs is None else plot_kwargs
+        legend_kwargs = {} if legend_kwargs is None else legend_kwargs
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
@@ -246,7 +254,7 @@ class TurbineInterface:
 
         ax.grid()
         ax.set_axisbelow(True)
-        ax.legend()
+        ax.legend(**legend_kwargs)
 
         max_power = round_nearest_2_or_5(max_power)
         ax.set_xlim(min_windspeed, max_windspeed)
@@ -263,8 +271,9 @@ class TurbineInterface:
     def plot_Cp_curve(
         self,
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
-        fig_kwargs: dict = {},
-        plot_kwargs = {},
+        fig_kwargs: dict | None =  None,
+        plot_kwargs: dict | None =  None,
+        legend_kwargs: dict | None =  None,
         return_fig: bool = False
     ) -> None | tuple[plt.Figure, plt.Axes]:
         """Plots the power coefficient curve for a given set of wind speeds.
@@ -273,9 +282,11 @@ class TurbineInterface:
             wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to
                 0 m/s -> 40 m/s, every 0.5 m/s.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
+                Defaults to None.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
+            legend_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.legend()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
 
@@ -284,6 +295,11 @@ class TurbineInterface:
                 a tuple of the Figure and Axes objects are returned.
         """
         wind_speeds, power_c = self.Cp_curve(wind_speeds=wind_speeds)
+
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        plot_kwargs = {} if plot_kwargs is None else plot_kwargs
+        legend_kwargs = {} if legend_kwargs is None else legend_kwargs
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
@@ -298,7 +314,7 @@ class TurbineInterface:
 
         ax.grid()
         ax.set_axisbelow(True)
-        ax.legend()
+        ax.legend(**legend_kwargs)
 
         ax.set_xlim(min_windspeed, max_windspeed)
         ax.set_ylim(0, round_nearest(max(power_c) * 100, base=10) / 100)
@@ -314,8 +330,9 @@ class TurbineInterface:
     def plot_Ct_curve(
         self,
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
-        fig_kwargs: dict = {},
-        plot_kwargs = {},
+        fig_kwargs: dict | None =  None,
+        plot_kwargs: dict | None =  None,
+        legend_kwargs: dict | None =  None,
         return_fig: bool = False
     ) -> None | tuple[plt.Figure, plt.Axes]:
         """Plots the thrust coefficient curve for a given set of wind speeds.
@@ -324,9 +341,11 @@ class TurbineInterface:
             wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to
                 0 m/s -> 40 m/s, every 0.5 m/s.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
+                Defaults to None.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
+            legend_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.legend()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
 
@@ -335,6 +354,11 @@ class TurbineInterface:
                 a tuple of the Figure and Axes objects are returned.
         """
         wind_speeds, thrust = self.Ct_curve(wind_speeds=wind_speeds)
+
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        plot_kwargs = {} if plot_kwargs is None else plot_kwargs
+        legend_kwargs = {} if legend_kwargs is None else legend_kwargs
 
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
@@ -349,7 +373,7 @@ class TurbineInterface:
 
         ax.grid()
         ax.set_axisbelow(True)
-        ax.legend()
+        ax.legend(**legend_kwargs)
 
         ax.set_xlim(min_windspeed, max_windspeed)
         ax.set_ylim(0, round_nearest(max(thrust) * 100, base=10) / 100)
@@ -471,8 +495,9 @@ class TurbineLibrary:
         which: list[str] = [],
         exclude: list[str] = [],
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
-        fig_kwargs: dict = {},
-        plot_kwargs = {},
+        fig_kwargs: dict | None = None,
+        plot_kwargs: dict | None = None,
+        legend_kwargs: dict | None = None,
         return_fig: bool = False,
         show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
@@ -488,9 +513,11 @@ class TurbineLibrary:
             wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to
                 0 m/s -> 40 m/s, every 0.5 m/s.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
+                Defaults to None.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
+            legend_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.legend()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
             show (bool, optional): Indicator if the figure should be automatically displayed.
@@ -504,6 +531,11 @@ class TurbineLibrary:
             self.compute_power_curves(wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
+
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        plot_kwargs = {} if plot_kwargs is None else plot_kwargs
+        legend_kwargs = {} if legend_kwargs is None else legend_kwargs
 
         # Set the figure defaults if none are provided
         if fig is None:
@@ -527,7 +559,7 @@ class TurbineLibrary:
 
         ax.grid()
         ax.set_axisbelow(True)
-        ax.legend()
+        ax.legend(**legend_kwargs)
 
         max_power = round_nearest(max_power, base=5)
         ax.set_xlim(min_windspeed, max_windspeed)
@@ -549,8 +581,9 @@ class TurbineLibrary:
         which: list[str] = [],
         exclude: list[str] = [],
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
-        fig_kwargs: dict = {},
-        plot_kwargs = {},
+        fig_kwargs: dict | None = None,
+        plot_kwargs: dict | None = None,
+        legend_kwargs: dict | None = None,
         return_fig: bool = False,
         show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
@@ -566,9 +599,11 @@ class TurbineLibrary:
             wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to
                 0 m/s -> 40 m/s, every 0.5 m/s.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
+                Defaults to None.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
+            legend_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.legend()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
             show (bool, optional): Indicator if the figure should be automatically displayed.
@@ -582,6 +617,11 @@ class TurbineLibrary:
             self.compute_Cp_curves(wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
+
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        plot_kwargs = {} if plot_kwargs is None else plot_kwargs
+        legend_kwargs = {} if legend_kwargs is None else legend_kwargs
 
         # Set the figure defaults if none are provided
         if fig is None:
@@ -604,7 +644,7 @@ class TurbineLibrary:
 
         ax.grid()
         ax.set_axisbelow(True)
-        ax.legend()
+        ax.legend(**legend_kwargs)
 
         ax.set_xlim(min_windspeed, max_windspeed)
         ax.set_ylim(0, round_nearest(max_power * 100, base=10) / 100)
@@ -625,8 +665,9 @@ class TurbineLibrary:
         which: list[str] = [],
         exclude: list[str] = [],
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
-        fig_kwargs: dict = {},
-        plot_kwargs = {},
+        fig_kwargs: dict | None =  None,
+        plot_kwargs: dict | None =  None,
+        legend_kwargs: dict | None =  None,
         return_fig: bool = False,
         show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
@@ -642,9 +683,11 @@ class TurbineLibrary:
             wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to
                 0 m/s -> 40 m/s, every 0.5 m/s.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
+                Defaults to None.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
+            plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.legend()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
             show (bool, optional): Indicator if the figure should be automatically displayed.
@@ -658,6 +701,12 @@ class TurbineLibrary:
             self.compute_Ct_curves(wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
+
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        plot_kwargs = {} if plot_kwargs is None else plot_kwargs
+        legend_kwargs = {} if legend_kwargs is None else legend_kwargs
+
 
         # Set the figure defaults if none are provided
         if fig is None:
@@ -680,7 +729,7 @@ class TurbineLibrary:
 
         ax.grid()
         ax.set_axisbelow(True)
-        ax.legend()
+        ax.legend(**legend_kwargs)
 
         ax.set_xlim(min_windspeed, max_windspeed)
         ax.set_ylim(0, round_nearest(max_thrust * 100, base=10) / 100)
@@ -700,8 +749,8 @@ class TurbineLibrary:
         ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
-        fig_kwargs: dict = {},
-        bar_kwargs = {},
+        fig_kwargs: dict | None =  None,
+        bar_kwargs: dict | None =  None,
         return_fig: bool = False,
         show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
@@ -715,9 +764,9 @@ class TurbineLibrary:
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
-            bar_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
+            bar_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.bar()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
             show (bool, optional): Indicator if the figure should be automatically displayed.
@@ -728,6 +777,10 @@ class TurbineLibrary:
                 a tuple of the Figure and Axes objects are returned.
         """
         which = [*self.turbine_map] if which == [] else which
+
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        bar_kwargs = {} if bar_kwargs is None else bar_kwargs
 
         # Set the figure defaults if none are provided
         if fig is None:
@@ -770,8 +823,8 @@ class TurbineLibrary:
         ax: plt.Axes | None = None,
         which: list[str] = [],
         exclude: list[str] = [],
-        fig_kwargs: dict = {},
-        bar_kwargs = {},
+        fig_kwargs: dict | None =  None,
+        bar_kwargs: dict | None =  None,
         return_fig: bool = False,
         show: bool = False,
     ) -> None | tuple[plt.Figure, plt.Axes]:
@@ -785,9 +838,9 @@ class TurbineLibrary:
             exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults
                 to [].
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
-            bar_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
+            bar_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.bar()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
             show (bool, optional): Indicator if the figure should be automatically displayed.
@@ -798,6 +851,10 @@ class TurbineLibrary:
                 a tuple of the Figure and Axes objects are returned.
         """
         which = [*self.turbine_map] if which == [] else which
+
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        bar_kwargs = {} if bar_kwargs is None else bar_kwargs
 
         # Set the figure defaults if none are provided
         if fig is None:
@@ -839,9 +896,10 @@ class TurbineLibrary:
         which: list[str] = [],
         exclude: list[str] = [],
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
-        fig_kwargs: dict = {},
-        plot_kwargs = {},
-        bar_kwargs = {},
+        fig_kwargs: dict | None =  None,
+        plot_kwargs: dict | None =  None,
+        bar_kwargs: dict | None =  None,
+        legend_kwargs: dict | None =  None,
         return_fig: bool = False
     ) -> None | tuple[plt.Figure, list[plt.Axes]]:
         """Plots each thrust curve in ``turbine_map`` in a single plot.
@@ -854,11 +912,13 @@ class TurbineLibrary:
             wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to
                 0 m/s -> 40 m/s, every 0.5 m/s.
             fig_kwargs (dict, optional): Any keywords arguments to be passed to ``plt.Figure()``.
-                Defaults to {}.
+                Defaults to None.
             plot_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.plot()``.
-                Defaults to {}.
+                Defaults to None.
             bar_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.bar()``.
-                Defaults to {}.
+                Defaults to None.
+            legend_kwargs (dict, optional): Any keyword arguments to be passed to ``plt.legend()``.
+                Defaults to None.
             return_fig (bool, optional): Indicator if the ``Figure`` and ``Axes`` objects should be
                 returned. Defaults to False.
 
@@ -866,9 +926,16 @@ class TurbineLibrary:
             None | tuple[plt.Figure, list[plt.Axes]]: None, if :py:attr:`return_fig` is False,
                 otherwise a tuple of the Figure and Axes objects are returned.
         """
+        # Initialize kwargs if None
+        fig_kwargs = {} if fig_kwargs is None else fig_kwargs
+        plot_kwargs = {} if plot_kwargs is None else plot_kwargs
+        bar_kwargs = {} if bar_kwargs is None else bar_kwargs
+        legend_kwargs = {} if legend_kwargs is None else legend_kwargs
+
         # Set the figure defaults if none are provided
         fig_kwargs.setdefault("dpi", 200)
         fig_kwargs.setdefault("figsize", (6, 5))
+        legend_kwargs.setdefault("fontsize", 6)
 
         fig = plt.figure(**fig_kwargs)
         ax1 = fig.add_subplot(321)
@@ -911,7 +978,7 @@ class TurbineLibrary:
             ax.yaxis.label.set_size(8)
 
         for ax in (ax1, ax3, ax5):
-            ax.legend(fontsize=6)
+            ax.legend(**legend_kwargs)
 
         if return_fig:
             return fig, ax_list
