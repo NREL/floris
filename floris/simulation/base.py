@@ -17,7 +17,7 @@
 Defines the BaseClass parent class for all models to be based upon.
 """
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from enum import Enum
 from typing import (
     Any,

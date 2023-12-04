@@ -16,7 +16,6 @@ import logging
 from datetime import datetime
 
 import coloredlogs
-from attrs import define
 
 
 # Global variables for logging
