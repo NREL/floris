@@ -93,7 +93,8 @@ class BaseModel(BaseClass):
 
     @NUM_EPS.validator
     def lock_num_eps(self, attribute: Attribute, value: Any) -> None:
-        assert value == 0.001  # Locks NUM_EPS to a fixed value. You shouldn't change this!
+        if value != 0.001:
+            raise ValueError("NUM_EPS should remain a fixed value. Don't change this!")
 
     @abstractmethod
     def prepare_function() -> dict:

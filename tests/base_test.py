@@ -61,5 +61,5 @@ def test_NUM_EPS():
     cls = ClassTest(x=4, a_string="xyz")
     assert cls.NUM_EPS == 0.001
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         cls.NUM_EPS = 2
