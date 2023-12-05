@@ -26,6 +26,7 @@ from floris.simulation.turbine import (
 )
 from floris.simulation.turbine_multi_dim import (
     Ct_multidim,
+    multidim_Ct_down_select,
     multidim_power_down_select,
     power_multidim,
     TurbineMultiDimensional,
@@ -186,16 +187,38 @@ class TurbineInterface:
                 Returns the wind speed array and the thrust coefficient array.
         """
         shape = (1, wind_speeds.size, 1)
-        ct_curve = Ct(
-            velocities=wind_speeds.reshape(shape),
-            yaw_angle=np.zeros(shape),
-            tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
-            ref_tilt_cp_ct=np.full(shape, self.turbine.ref_tilt_cp_ct),
-            fCt={self.turbine.turbine_type: self.turbine.fCt_interp},
-            tilt_interp=[(self.turbine.turbine_type, self.turbine.fTilt_interp)],
-            correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
-            turbine_type_map=np.full(shape, self.turbine.turbine_type),
-        ).flatten()
+        if self.turbine.multi_dimensional_cp_ct:
+            fCt_interps = {
+                k: multidim_Ct_down_select(
+                    np.full(shape, self.turbine.fCt_interp),
+                    dict(zip(self.turbine.condition_keys, k)),
+                )
+                for k in self.turbine.fCt_interp
+            }
+            ct_curve = {
+                k: Ct_multidim(
+                    velocities=wind_speeds.reshape(shape),
+                    yaw_angle=np.zeros(shape),
+                    tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
+                    ref_tilt_cp_ct=np.full(shape, self.turbine.ref_tilt_cp_ct),
+                    fCt=fCt_interps[k],
+                    tilt_interp=[(self.turbine.turbine_type, self.turbine.fTilt_interp)],
+                    correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
+                    turbine_type_map=np.full(shape, self.turbine.turbine_type)
+                ).flatten() / 1e6
+                for k in self.turbine.fCt_interp
+            }
+        else:
+            ct_curve = Ct(
+                velocities=wind_speeds.reshape(shape),
+                yaw_angle=np.zeros(shape),
+                tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
+                ref_tilt_cp_ct=np.full(shape, self.turbine.ref_tilt_cp_ct),
+                fCt={self.turbine.turbine_type: self.turbine.fCt_interp},
+                tilt_interp=[(self.turbine.turbine_type, self.turbine.fTilt_interp)],
+                correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
+                turbine_type_map=np.full(shape, self.turbine.turbine_type),
+            ).flatten()
         return wind_speeds, ct_curve
 
     def plot_power_curve(
@@ -368,15 +391,24 @@ class TurbineInterface:
         ax = fig.add_subplot(111)
 
         min_windspeed = 0
+        max_thrust = 0
         max_windspeed = max(wind_speeds)
-        ax.plot(wind_speeds, thrust, label=self.turbine.turbine_type, **plot_kwargs)
+        if isinstance(thrust, dict):
+            for key, _thrust in thrust.items():
+                max_thrust = max(max_thrust, *_thrust)
+                _cond = "; ".join((f"{c}: {k}" for c, k in zip(self.turbine.condition_keys, key)))
+                label = f"{self.turbine.turbine_type} - {_cond}"
+                ax.plot(wind_speeds, _thrust, label=label, **plot_kwargs)
+        else:
+            max_thrust = max(thrust)
+            ax.plot(wind_speeds, thrust, label=self.turbine.turbine_type, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
         ax.legend(**legend_kwargs)
 
         ax.set_xlim(min_windspeed, max_windspeed)
-        ax.set_ylim(0, round_nearest(max(thrust) * 100, base=10) / 100)
+        ax.set_ylim(0, round_nearest(max_thrust * 100, base=10) / 100)
 
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Thrust Coefficient")
