@@ -246,7 +246,7 @@ def test_ct():
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine_floating.fCt_interp},
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
+        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.tilt_interp)]),
         correct_cp_ct_for_tilt=np.array([[[True]]]),
         turbine_type_map=turbine_type_map[:,:,0]
     )
@@ -397,7 +397,7 @@ def test_axial_induction():
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine_floating.fCt_interp},
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
+        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.tilt_interp)]),
         correct_cp_ct_for_tilt=np.array([[[True]]]),
         turbine_type_map=turbine_type_map[0,0,0],
     )
@@ -462,7 +462,7 @@ def test_rotor_velocity_tilt_correction():
         tilt_angle=5.0*np.ones((1, 1, 1)),
         ref_tilt_cp_ct=np.array([turbine.ref_tilt_cp_ct]),
         pT=np.array([turbine.pT]),
-        tilt_interp=np.array([(turbine.turbine_type, turbine.fTilt_interp)]),
+        tilt_interp=np.array([(turbine.turbine_type, turbine.tilt_interp)]),
         correct_cp_ct_for_tilt=np.array([[[False]]]),
         rotor_effective_velocities=wind_speed,
     )
@@ -475,7 +475,7 @@ def test_rotor_velocity_tilt_correction():
         tilt_angle=5.0*np.ones((1, 1, N_TURBINES)),
         ref_tilt_cp_ct=np.array([turbine.ref_tilt_cp_ct] * N_TURBINES),
         pT=np.array([turbine.pT] * N_TURBINES),
-        tilt_interp=np.array([(turbine.turbine_type, turbine.fTilt_interp)] * N_TURBINES),
+        tilt_interp=np.array([(turbine.turbine_type, turbine.tilt_interp)] * N_TURBINES),
         correct_cp_ct_for_tilt=np.array([[[False] * N_TURBINES]]),
         rotor_effective_velocities=wind_speed_N_TURBINES,
     )
@@ -488,7 +488,7 @@ def test_rotor_velocity_tilt_correction():
         tilt_angle=5.0*np.ones((1, 1, 1)),
         ref_tilt_cp_ct=np.array([turbine_floating.ref_tilt_cp_ct]),
         pT=np.array([turbine_floating.pT]),
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
+        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.tilt_interp)]),
         correct_cp_ct_for_tilt=np.array([[[True]]]),
         rotor_effective_velocities=wind_speed,
     )
@@ -502,7 +502,7 @@ def test_rotor_velocity_tilt_correction():
         ref_tilt_cp_ct=np.array([turbine_floating.ref_tilt_cp_ct] * N_TURBINES),
         pT=np.array([turbine_floating.pT] * N_TURBINES),
         tilt_interp=np.array(
-            [(turbine_floating.turbine_type, turbine_floating.fTilt_interp)] * N_TURBINES
+            [(turbine_floating.turbine_type, turbine_floating.tilt_interp)] * N_TURBINES
         ),
         correct_cp_ct_for_tilt=np.array([[[True] * N_TURBINES]]),
         rotor_effective_velocities=wind_speed_N_TURBINES,
@@ -529,7 +529,7 @@ def test_compute_tilt_angles_for_floating_turbines():
     tilt = compute_tilt_angles_for_floating_turbines(
         turbine_type_map=np.array([turbine_type_map[:, :, 0]]),
         tilt_angle=5.0*np.ones((1, 1, 1)),
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
+        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.tilt_interp)]),
         rotor_effective_velocities=rotor_effective_velocities,
     )
 
@@ -543,7 +543,7 @@ def test_compute_tilt_angles_for_floating_turbines():
         turbine_type_map=np.array(turbine_type_map),
         tilt_angle=5.0*np.ones((1, 1, N_TURBINES)),
         tilt_interp=np.array(
-            [(turbine_floating.turbine_type, turbine_floating.fTilt_interp)] * N_TURBINES
+            [(turbine_floating.turbine_type, turbine_floating.tilt_interp)] * N_TURBINES
         ),
         rotor_effective_velocities=rotor_effective_velocities_N_TURBINES,
     )

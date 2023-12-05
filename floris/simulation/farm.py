@@ -298,7 +298,7 @@ class Farm(BaseClass):
     def construct_multidim_turbine_fCts(self):
         self.turbine_fCts = [turb.fCt_interp for turb in self.turbine_map]
 
-    def construct_turbine_fTilts(self):
+    def construct_turbine_tilt_interps(self):
         self.turbine_fTilts = [(turb.turbine_type, turb.fTilt_interp) for turb in self.turbine_map]
 
     def construct_turbine_power_interps(self):

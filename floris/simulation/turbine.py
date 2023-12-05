@@ -585,10 +585,7 @@ class Turbine(BaseClass):
     fCp_interp: interp1d = field(init=False)
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
-    tilt_interp: interp1d = field(init=False)
-    fTilt_interp: interp1d = field(init=False)
-
-
+    tilt_interp: interp1d = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
         # TODO validate that the wind speed, power, and thrust are floats and all the same size
@@ -637,18 +634,13 @@ class Turbine(BaseClass):
         # of the interpolation range.
         if self.floating_tilt_table is not None:
             self.floating_tilt_table = TiltTable.from_dict(self.floating_tilt_table)
-            self.fTilt_interp = interp1d(
+            self.tilt_interp = interp1d(
                 self.floating_tilt_table.wind_speeds,
                 self.floating_tilt_table.tilt,
                 fill_value=(0.0, self.floating_tilt_table.tilt[-1]),
                 bounds_error=False,
             )
-            self.tilt_interp = self.fTilt_interp
             self.correct_cp_ct_for_tilt = self.floating_correct_cp_ct_for_tilt
-        else:
-            self.fTilt_interp = None
-            self.tilt_interp = None
-            self.correct_cp_ct_for_tilt = False
 
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:
