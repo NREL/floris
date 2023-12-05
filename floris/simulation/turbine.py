@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable
-from typing import Any, Dict
 
 import attrs
 import numpy as np
@@ -174,7 +173,7 @@ def rotor_effective_velocity(
 def power(
     ref_density_cp_ct: float,
     rotor_effective_velocities: NDArrayFloat,
-    power_interp: dict[str, NDArrayObject],
+    power_interp: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -185,8 +184,8 @@ def power(
         ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
         rotor_effective_velocities (NDArrayFloat[wd, ws, turbines]): The rotor
             effective velocities at a turbine.
-        power_interp (dict[str, NDArrayObject[wd, ws, turbines]]): The power interpolation function
-            for each turbine type as a dictionary.
+        power_interp (dict[str, interp1d]): A dictionary of power interpolation functions for
+            each turbine type.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
         ix_filter (NDArrayInt, optional): The boolean array, or
@@ -536,7 +535,7 @@ class Turbine(BaseClass):
     generator_efficiency: float = field()
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
-    power_thrust_table: Dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
+    power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
 
     correct_cp_ct_for_tilt: bool = field(default=False)
     floating_tilt_table: TiltTable = field(default=None)
@@ -659,7 +658,7 @@ class Turbine(BaseClass):
         self.rotor_radius = (value / np.pi) ** 0.5
 
     @floating_tilt_table.validator
-    def check_floating_tilt_table(self, instance: attrs.Attribute, value: Any) -> None:
+    def check_floating_tilt_table(self, instance: attrs.Attribute, value: TiltTable) -> None:
         """
         Check that if the tile/wind_speed table is defined, that the tilt and
         wind_speed arrays are the same length so that the interpolation will work.
@@ -677,7 +676,7 @@ class Turbine(BaseClass):
     def check_for_cp_ct_correct_flag_if_floating(
         self,
         instance: attrs.Attribute,
-        value: Any
+        value: bool
     ) -> None:
         """
         Check that the boolean flag exists for correcting Cp/Ct for tilt
