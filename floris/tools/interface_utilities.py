@@ -27,6 +27,7 @@ def show_params(
         # props = get_props(obj, fi)
         props = fi.floris.wake._asdict()
         # props = props["wake_velocity_parameters"][fi.floris.wake.velocity_model.model_string]
+        # NOTE: _get_model_dict is remove and model.as_dict() should be used instead
         props = fi.floris.wake.velocity_model._get_model_dict()
 
         if verbose:

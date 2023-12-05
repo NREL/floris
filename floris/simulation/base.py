@@ -26,7 +26,6 @@ from typing import (
 )
 
 from attrs import (
-    asdict,
     Attribute,
     define,
     field,
@@ -53,28 +52,6 @@ class BaseClass(FromDictMixin):
     # See https://www.attrs.org/en/stable/api-attr.html#attr.ib
     state = field(init=False, default=State.UNINITIALIZED)
     _logging_manager: LoggingManager = field(init=False, default=LoggingManager())
-
-    @classmethod
-    def get_model_defaults(cls) -> Dict[str, Any]:
-        """Produces a dictionary of the keyword arguments and their defaults.
-
-        Returns
-        -------
-        Dict[str, Any]
-            Dictionary of keyword argument: default.
-        """
-        return {el.name: el.default for el in fields(cls)}
-
-    def _get_model_dict(self) -> dict:
-        """Convenience method that wraps the `attrs.asdict` method. Returns the object's
-        parameters as a dictionary.
-
-        Returns
-        -------
-        dict
-            The provided or default, if no input provided, model settings as a dictionary.
-        """
-        return asdict(self)
 
     @property
     def logger(self):

@@ -31,29 +31,16 @@ class ClassTest(BaseModel):
         return None
 
 
-def test_get_model_defaults():
-    """
-    This tests that the default parameter values are set correctly and unchanged if not
-    explicitly set.
-    Note that the attributes in BaseClass and BaseModel are treated as default parameters
-    by attrs.
-    """
-    defaults = ClassTest.get_model_defaults()
-    assert len(defaults) == 5
-    assert defaults["x"] == 1
-    assert defaults["a_string"] == "abc"
-
-
 def test_get_model_values():
     """
+    BaseClass and therefore BaseModel previously had a method `get_model_values` that
+    returned the values of the model parameters. This was removed because it was redundant
+    but this test was refactored to test the as_dict method from FromDictMixin.
     This tests that the parameters are changed when set by the user.
-    Note that the attributes in BaseClass and BaseModel are treated as parameters by attrs.
-    They aren't changed in the instantiation method, but they are still included in the
-    parameter set.
     """
     cls = ClassTest(x=4, a_string="xyz")
-    values = cls._get_model_dict()
-    assert len(values) == 5
+    values = cls.as_dict()
+    assert len(values) == 2
     assert values["x"] == 4
     assert values["a_string"] == "xyz"
 
