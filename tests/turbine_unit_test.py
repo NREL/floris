@@ -29,7 +29,6 @@ from floris.simulation.turbine import (
     _rotor_velocity_tilt_correction,
     _rotor_velocity_yaw_correction,
     compute_tilt_angles_for_floating_turbines,
-    PowerThrustTable,
 )
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
@@ -46,55 +45,41 @@ WIND_CONDITION_BROADCAST = np.stack(
 INDEX_FILTER = [0, 2]
 
 
-def test_power_thrust_table():
-    turbine_data = SampleInputs().turbine
-    table = PowerThrustTable.from_dict(turbine_data["power_thrust_table"])
-
-    # Test data conversion is correct
-    assert isinstance(table.power, np.ndarray)
-    assert isinstance(table.thrust, np.ndarray)
-    assert isinstance(table.wind_speed, np.ndarray)
-
-    # Test for initialization errors
-    for el in ("power", "thrust", "wind_speed"):
-        pt_table = SampleInputs().turbine["power_thrust_table"]
-        pt_table[el] = pt_table[el][:-1]
-        with pytest.raises(ValueError):
-            PowerThrustTable.from_dict(pt_table)
-
-        pt_table = SampleInputs().turbine["power_thrust_table"]
-        pt_table[el] = np.array(pt_table[el]).reshape(2, -1)
-        with pytest.raises(ValueError):
-            PowerThrustTable.from_dict(pt_table)
-
-
 def test_turbine_init():
     turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
+    assert turbine.turbine_type == turbine_data["turbine_type"]
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
     assert turbine.pP == turbine_data["pP"]
     assert turbine.pT == turbine_data["pT"]
+    assert turbine.TSR == turbine_data["TSR"]
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
+    assert turbine.ref_density_cp_ct == turbine_data["ref_density_cp_ct"]
+    assert turbine.ref_tilt_cp_ct == turbine_data["ref_tilt_cp_ct"]
+    assert np.array_equal(
+        turbine.power_thrust_table["wind_speed"],
+        turbine_data["power_thrust_table"]["wind_speed"]
+    )
+    assert np.array_equal(
+        turbine.power_thrust_table["power"],
+        turbine_data["power_thrust_table"]["power"]
+    )
+    assert np.array_equal(
+        turbine.power_thrust_table["thrust"],
+        turbine_data["power_thrust_table"]["thrust"]
+    )
+    assert turbine.rotor_radius == turbine.rotor_diameter / 2.0
+    assert turbine.rotor_area == np.pi * turbine.rotor_radius ** 2.0
 
-    pt_data = turbine_data["power_thrust_table"]
-    assert isinstance(turbine.power_thrust_table, PowerThrustTable)
-    np.testing.assert_allclose(
-        turbine.power_thrust_table.power,
-        np.array(pt_data["power"])
-    )
-    np.testing.assert_allclose(
-        turbine.power_thrust_table.thrust,
-        np.array(pt_data["thrust"])
-    )
-    np.testing.assert_allclose(
-        turbine.power_thrust_table.wind_speed,
-        np.array(pt_data["wind_speed"])
-    )
+    # TODO: test these explicitly.
+    # Test create a simpler interpolator and test that you get the values you expect
+    # fCt_interp: interp1d = field(init=False)
+    # power_interp: interp1d = field(init=False)
+    # tilt_interp: interp1d = field(init=False, default=None)
 
     assert isinstance(turbine.fCt_interp, interp1d)
     assert isinstance(turbine.power_interp, interp1d)
-    assert turbine.rotor_radius == turbine_data["rotor_diameter"] / 2.0
 
 
 def test_rotor_radius():

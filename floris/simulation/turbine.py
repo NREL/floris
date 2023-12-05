@@ -26,6 +26,7 @@ from scipy.interpolate import interp1d
 from floris.simulation import BaseClass
 from floris.type_dec import (
     floris_array_converter,
+    floris_numeric_dict_converter,
     FromDictMixin,
     NDArrayBool,
     NDArrayFilter,
@@ -218,10 +219,7 @@ def power(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        p += (
-            power_interp[turb_type](rotor_effective_velocities)
-            * (turbine_type_map == turb_type)
-        )
+        p += power_interp[turb_type](rotor_effective_velocities) * (turbine_type_map == turb_type)
 
     return p * ref_density_cp_ct
 
@@ -459,40 +457,6 @@ def average_velocity(
     else:
         raise ValueError("Incorrect method given.")
 
-@define
-class PowerThrustTable(FromDictMixin):
-    """Helper class to convert the dictionary and list-based inputs to a object of arrays.
-
-    Args:
-        power (NDArrayFloat): The power produced at a given wind speed.
-        thrust (NDArrayFloat): The thrust at a given wind speed.
-        wind_speed (NDArrayFloat): Wind speed values, m/s.
-
-    Raises:
-        ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
-        ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
-    """
-    power: NDArrayFloat = field(default=[], converter=floris_array_converter)
-    thrust: NDArrayFloat = field(default=[], converter=floris_array_converter)
-    wind_speed: NDArrayFloat = field(default=[], converter=floris_array_converter)
-
-    def __attrs_post_init__(self) -> None:
-        # Validate the power, thrust, and wind speed inputs.
-
-        inputs = (self.power, self.thrust, self.wind_speed)
-
-        if any(el.ndim > 1 for el in inputs):
-            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
-
-        if len( {self.power.size, self.thrust.size, self.wind_speed.size} ) > 1:
-            raise ValueError("power, thrust, and wind_speed tables must be the same size.")
-
-        # Remove any duplicate wind speed entries
-        _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
-        self.power = self.power[duplicate_filter]
-        self.thrust = self.thrust[duplicate_filter]
-        self.wind_speed = self.wind_speed[duplicate_filter]
-
 
 @define
 class TiltTable(FromDictMixin):
@@ -572,8 +536,9 @@ class Turbine(BaseClass):
     generator_efficiency: float = field()
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
-    correct_cp_ct_for_tilt: bool = field(default=None)
-    power_thrust_table: Dict[str, float] = field()
+    power_thrust_table: Dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
+
+    correct_cp_ct_for_tilt: bool = field(default=False)
     floating_tilt_table: TiltTable = field(default=None)
     floating_correct_cp_ct_for_tilt: bool = field(default=None)
     power_thrust_data_file: str = field(default=None)
@@ -587,14 +552,18 @@ class Turbine(BaseClass):
     tilt_interp: interp1d = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
-        # TODO validate that the wind speed, power, and thrust are floats and all the same size
-
-        # Post-init initialization for the power curve interpolation functions
-        self.power_thrust_table = PowerThrustTable.from_dict(self.power_thrust_table)
-        wind_speeds = self.power_thrust_table.wind_speed
+        # TODO This validation for the power thrust tables should go in the turbine library
+        # since it's preprocessing
+        # Remove any duplicate wind speed entries
+        # _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
+        # self.power = self.power[duplicate_filter]
+        # self.thrust = self.thrust[duplicate_filter]
+        # self.wind_speed = self.wind_speed[duplicate_filter]
+        
+        wind_speeds = self.power_thrust_table["wind_speed"]
         cp_interp = interp1d(
             wind_speeds,
-            self.power_thrust_table.power,
+            self.power_thrust_table["power"],
             fill_value=(0.0, 1.0),
             bounds_error=False,
         )
@@ -622,7 +591,7 @@ class Turbine(BaseClass):
         """
         self.fCt_interp = interp1d(
             wind_speeds,
-            self.power_thrust_table.thrust,
+            self.power_thrust_table["thrust"],
             fill_value=(0.0001, 0.9999),
             bounds_error=False,
         )
@@ -639,6 +608,30 @@ class Turbine(BaseClass):
                 bounds_error=False,
             )
             self.correct_cp_ct_for_tilt = self.floating_correct_cp_ct_for_tilt
+
+    @power_thrust_table.validator
+    def check_power_thrust_table(self, instance: attrs.Attribute, value: float) -> None:
+        """
+        Verify that the power and thrust tables are given with arrays of equal length
+        to the wind speed array and all elements of type float.
+        """
+        if len(value.keys()) != 3 or set(value.keys()) != set(("wind_speed", "power", "thrust")):
+            raise ValueError(
+                """
+                power_thrust_table dictionary must have the form:
+                    {
+                        "wind_speed": List[float],
+                        "power": List[float],
+                        "thrust": List[float],
+                    }
+                """
+            )
+
+        if any(e.ndim > 1 for e in (value["power"], value["thrust"], value["wind_speed"])):
+            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
+
+        if len( set((value["power"].size, value["thrust"].size, value["wind_speed"].size)) ) > 1:
+            raise ValueError("power, thrust, and wind_speed tables must be the same size.")
 
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:

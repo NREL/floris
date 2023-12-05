@@ -51,6 +51,12 @@ def floris_array_converter(data: Iterable) -> np.ndarray:
         raise TypeError(e.args[0] + f". Data given: {data}")
     return a
 
+def floris_numeric_dict_converter(data: dict) -> dict:
+    try:
+        return {k: floris_array_converter(v) for k, v in data.items()}
+    except TypeError as e:
+        raise TypeError(e.args[0] + f". Data given: {data}")
+
 # def array_field(**kwargs) -> Callable:
 #     """
 #     A wrapper for the :py:func:`attr.field` function that converts the input to a Numpy array,
