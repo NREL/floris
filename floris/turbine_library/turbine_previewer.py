@@ -586,9 +586,16 @@ class TurbineLibrary:
         for name, (ws, p) in self.power_curves.items():
             if name in exclude or name not in which:
                 continue
-            max_power = max(p.max(), max_power)
-            max_windspeed = max(ws.max(), max_windspeed)
-            ax.plot(ws, p, label=name, **plot_kwargs)
+            if isinstance(p, dict):
+                max_windspeed = max(ws.max(), max_windspeed)
+                for k, _p in p.items():
+                    max_power = max(_p.max(), max_power)
+                    label = f"{name} - {k}"
+                    ax.plot(ws, _p, label=label, linestyle="--", **plot_kwargs)
+            else:
+                max_power = max(p.max(), max_power)
+                max_windspeed = max(ws.max(), max_windspeed)
+                ax.plot(ws, p, label=name, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
@@ -756,9 +763,16 @@ class TurbineLibrary:
         for name, (ws, t) in self.Ct_curves.items():
             if name in exclude or name not in which:
                 continue
-            max_windspeed = max(ws.max(), max_windspeed)
-            max_thrust = max(t.max(), max_thrust)
-            ax.plot(ws, t, label=name, **plot_kwargs)
+            if isinstance(t, dict):
+                max_windspeed = max(ws.max(), max_windspeed)
+                for k, _t in t.items():
+                    max_thrust = max(_t.max(), max_thrust)
+                    label = f"{name} - {k}"
+                    ax.plot(ws, _t, label=label, linestyle="--", **plot_kwargs)
+            else:
+                max_windspeed = max(ws.max(), max_windspeed)
+                max_thrust = max(t.max(), max_thrust)
+                ax.plot(ws, t, label=name, **plot_kwargs)
 
         ax.grid()
         ax.set_axisbelow(True)
@@ -841,7 +855,7 @@ class TurbineLibrary:
         ax.set_ylim(0, round_nearest(max(y) / 10, base=5) * 10)
 
         ax.set_xticks(x)
-        ax.set_xticklabels(np.array([*subset_map])[ix_sort])
+        ax.set_xticklabels(np.array([*subset_map])[ix_sort], rotation=30, ha="right")
         ax.set_ylabel("Rotor Diameter (m)")
 
         if return_fig:
@@ -915,7 +929,7 @@ class TurbineLibrary:
         ax.set_ylim(0, round_nearest(max(y) / 10, base=5) * 10)
 
         ax.set_xticks(x)
-        ax.set_xticklabels(np.array([*subset_map])[ix_sort])
+        ax.set_xticklabels(np.array([*subset_map])[ix_sort], rotation=30, ha="right")
         ax.set_ylabel("Hub Height (m)")
 
         if return_fig:
