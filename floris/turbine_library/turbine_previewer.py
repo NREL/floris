@@ -187,6 +187,7 @@ class TurbineInterface:
                 Returns the wind speed array and the thrust coefficient array.
         """
         shape = (1, wind_speeds.size, 1)
+        shape_single = (1, 1, 1)
         if self.turbine.multi_dimensional_cp_ct:
             fCt_interps = {
                 k: multidim_Ct_down_select(
@@ -200,12 +201,12 @@ class TurbineInterface:
                     velocities=wind_speeds.reshape(shape),
                     yaw_angle=np.zeros(shape),
                     tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
-                    ref_tilt_cp_ct=np.full(shape, self.turbine.ref_tilt_cp_ct),
+                    ref_tilt_cp_ct=np.full(shape_single, self.turbine.ref_tilt_cp_ct),
                     fCt=fCt_interps[k],
                     tilt_interp=[(self.turbine.turbine_type, self.turbine.fTilt_interp)],
-                    correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
-                    turbine_type_map=np.full(shape, self.turbine.turbine_type)
-                ).flatten() / 1e6
+                    correct_cp_ct_for_tilt=np.zeros(shape_single, dtype=bool),
+                    turbine_type_map=np.full(shape_single, self.turbine.turbine_type)
+                ).flatten()
                 for k in self.turbine.fCt_interp
             }
         else:
