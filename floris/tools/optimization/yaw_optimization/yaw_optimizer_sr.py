@@ -20,13 +20,13 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 
 # from .yaw_optimizer_scipy import YawOptimizationScipy
 from .yaw_optimization_base import YawOptimization
 
 
-class YawOptimizationSR(YawOptimization, LoggerBase):
+class YawOptimizationSR(YawOptimization, LoggingManager):
     def __init__(
         self,
         fi,

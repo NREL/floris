@@ -18,12 +18,12 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 
 from .yaw_wind_rose import YawOptimizationWindRose
 
 
-class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggerBase):
+class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
     """
     YawOptimizationWindRose is a subclass of
     :py:class:`~.tools.optimizationscipy.YawOptimizationWindRose` that is used

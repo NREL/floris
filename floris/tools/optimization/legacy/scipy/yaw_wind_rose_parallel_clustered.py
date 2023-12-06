@@ -19,12 +19,12 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 
 from .yaw_wind_rose_clustered import YawOptimizationWindRoseClustered
 
 
-class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered, LoggerBase):
+class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered, LoggingManager):
     """
     YawOptimizationWindRoseClustered is a subclass of
     :py:class:`~.tools.optimizationscipy.YawOptimizationWindRoseClustered` that
