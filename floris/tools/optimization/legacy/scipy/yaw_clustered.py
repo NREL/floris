@@ -17,13 +17,13 @@ import copy
 import numpy as np
 import pandas as pd
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 
 from .cluster_turbines import cluster_turbines
 from .yaw import YawOptimization
 
 
-class YawOptimizationClustered(YawOptimization, LoggerBase):
+class YawOptimizationClustered(YawOptimization, LoggingManager):
     """
     YawOptimization is a subclass of
     :py:class:`~.tools.optimizationscipy.YawOptimization` that is used to

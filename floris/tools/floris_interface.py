@@ -19,9 +19,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
 from floris.simulation.turbine import (
     average_velocity,
@@ -35,7 +34,7 @@ from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
 
 
-class FlorisInterface(LoggerBase):
+class FlorisInterface(LoggingManager):
     """
     FlorisInterface provides a high-level user interface to many of the
     underlying methods within the FLORIS framework. It is meant to act as a
@@ -61,7 +60,7 @@ class FlorisInterface(LoggerBase):
             except FileNotFoundError:
                 # If the file cannot be found, then attempt the configuration path relative to the
                 # file location from which FlorisInterface was attempted to be run. If successful,
-                # update self.configuration to an aboslute, working file path and name.
+                # update self.configuration to an absolute, working file path and name.
                 base_fn = Path(inspect.stack()[-1].filename).resolve().parent
                 config = (base_fn / self.configuration).resolve()
                 self.floris = Floris.from_file(config)

@@ -16,7 +16,11 @@ from typing import Any
 
 import numexpr as ne
 import numpy as np
-from attrs import define, field
+from attrs import (
+    define,
+    field,
+    fields,
+)
 from numpy import pi
 
 from floris.simulation import (
@@ -28,6 +32,8 @@ from floris.simulation import (
 )
 from floris.utilities import cosd, sind
 
+
+NUM_EPS = fields(BaseModel).NUM_EPS.default
 
 @define
 class GaussVelocityDeflection(BaseModel):
@@ -309,11 +315,11 @@ def wake_added_yaw(
     ### compute the spanwise and vertical velocities induced by yaw
 
     # decay = eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)   # This is the decay downstream
-    yLocs = delta_y + BaseModel.NUM_EPS
+    yLocs = delta_y + NUM_EPS
 
     # top vortex
     # NOTE: this is the top of the grid, not the top of the rotor
-    zT = z_i - (HH + D / 2) + BaseModel.NUM_EPS  # distance from the top of the grid
+    zT = z_i - (HH + D / 2) + NUM_EPS  # distance from the top of the grid
     rT = ne.evaluate("yLocs ** 2 + zT ** 2")  # TODO: This is (-) in the paper
     # This looks like spanwise decay;
     # it defines the vortex profile in the spanwise directions
@@ -323,7 +329,7 @@ def wake_added_yaw(
     # w_top = (-1 * Gamma_top * yLocs) / (2 * pi * rT) * core_shape * decay
 
     # bottom vortex
-    zB = z_i - (HH - D / 2) + BaseModel.NUM_EPS
+    zB = z_i - (HH - D / 2) + NUM_EPS
     rB = ne.evaluate("yLocs ** 2 + zB ** 2")
     core_shape = ne.evaluate("1 - exp(-rB / (eps ** 2))")
     v_bottom = ne.evaluate("(Gamma_bottom * zB) / (2 * pi * rB) * core_shape")
@@ -331,7 +337,7 @@ def wake_added_yaw(
     # w_bottom = (-1 * Gamma_bottom * yLocs) / (2 * pi * rB) * core_shape * decay
 
     # wake rotation vortex
-    zC = z_i - HH + BaseModel.NUM_EPS
+    zC = z_i - HH + NUM_EPS
     rC = ne.evaluate("yLocs ** 2 + zC ** 2")
     core_shape = ne.evaluate("1 - exp(-rC / (eps ** 2))")
     v_core = ne.evaluate("(Gamma_wake_rotation * zC) / (2 * pi * rC) * core_shape")
@@ -411,10 +417,10 @@ def calculate_transverse_velocity(
 
     # This is the decay downstream
     decay = ne.evaluate("eps ** 2 / (4 * nu * delta_x / Uinf + eps ** 2)")
-    yLocs = delta_y + BaseModel.NUM_EPS
+    yLocs = delta_y + NUM_EPS
 
     # top vortex
-    zT = z - (HH + D / 2) + BaseModel.NUM_EPS
+    zT = z - (HH + D / 2) + NUM_EPS
     rT = ne.evaluate("yLocs ** 2 + zT ** 2")  # TODO: This is - in the paper
     # This looks like spanwise decay;
     # it defines the vortex profile in the spanwise directions
@@ -423,14 +429,14 @@ def calculate_transverse_velocity(
     W1 = ne.evaluate("(-1 * Gamma_top * yLocs) / (2 * pi * rT) * core_shape * decay")
 
     # bottom vortex
-    zB = z - (HH - D / 2) + BaseModel.NUM_EPS
+    zB = z - (HH - D / 2) + NUM_EPS
     rB = ne.evaluate("yLocs ** 2 + zB ** 2")
     core_shape = ne.evaluate("1 - exp(-rB / (eps ** 2))")
     V2 = ne.evaluate("(Gamma_bottom * zB) / (2 * pi * rB) * core_shape * decay")
     W2 = ne.evaluate("(-1 * Gamma_bottom * yLocs) / (2 * pi * rB) * core_shape * decay")
 
     # wake rotation vortex
-    zC = z - HH + BaseModel.NUM_EPS
+    zC = z - HH + NUM_EPS
     rC = ne.evaluate("yLocs ** 2 + zC ** 2")
     core_shape = ne.evaluate("1 - exp(-rC / (eps ** 2))")
     V5 = ne.evaluate("(Gamma_wake_rotation * zC) / (2 * pi * rC) * core_shape * decay")
@@ -439,7 +445,7 @@ def calculate_transverse_velocity(
     ### Boundary condition - ground mirror vortex
 
     # top vortex - ground
-    zTb = z + (HH + D / 2) + BaseModel.NUM_EPS
+    zTb = z + (HH + D / 2) + NUM_EPS
     rTb = ne.evaluate("yLocs ** 2 + zTb ** 2")
     # This looks like spanwise decay;
     # it defines the vortex profile in the spanwise directions
@@ -448,14 +454,14 @@ def calculate_transverse_velocity(
     W3 = ne.evaluate("(Gamma_top * yLocs) / (2 * pi * rTb) * core_shape * decay")
 
     # bottom vortex - ground
-    zBb = z + (HH - D / 2) + BaseModel.NUM_EPS
+    zBb = z + (HH - D / 2) + NUM_EPS
     rBb = ne.evaluate("yLocs ** 2 + zBb ** 2")
     core_shape = ne.evaluate("1 - exp(-rBb / (eps ** 2))")
     V4 = ne.evaluate("(-1 * Gamma_bottom * zBb) / (2 * pi * rBb) * core_shape * decay")
     W4 = ne.evaluate("(Gamma_bottom * yLocs) / (2 * pi * rBb) * core_shape * decay")
 
     # wake rotation vortex - ground effect
-    zCb = z + HH + BaseModel.NUM_EPS
+    zCb = z + HH + NUM_EPS
     rCb = ne.evaluate("yLocs ** 2 + zCb ** 2")
     core_shape = ne.evaluate("1 - exp(-rCb / (eps ** 2))")
     V6 = ne.evaluate("(-1 * Gamma_wake_rotation * zCb) / (2 * pi * rCb) * core_shape * decay")

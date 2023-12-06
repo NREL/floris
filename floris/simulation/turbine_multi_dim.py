@@ -435,6 +435,7 @@ class TurbineMultiDimensional(Turbine):
             Defaults to the current file location.
     """
     power_thrust_data_file: str = field(default=None)
+    power_thrust_data: MultiDimensionalPowerThrustTable = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
     turbine_library_path: Path = field(
         default=Path(".").resolve(),
