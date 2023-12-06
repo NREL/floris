@@ -304,7 +304,9 @@ def test_ct():
 
 
 def test_power():
-    N_TURBINES = 4
+
+    # Test that power is computed as expected for a single turbine
+    N_TURBINES = 1
     AIR_DENSITY = 1.225
 
     turbine_data = SampleInputs().turbine
@@ -312,54 +314,56 @@ def test_power():
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
 
-    # Single turbine
+    # Use wind speed = 10.
     wind_speed = 10.0
+
+    # Compute power using the power function
     p = power(
         ref_density_cp_ct=AIR_DENSITY,
-        rotor_effective_velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
-        power_interp={turbine.turbine_type: turbine.fCp_interp},
+        rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
+        power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
-    # calculate power again
+    # Recompute using the original provided cp table
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
     cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
     power_truth = (
         0.5
+        * AIR_DENSITY
         * turbine.rotor_area
         * cp_truth
         * turbine.generator_efficiency
         * wind_speed ** 3
     )
-    np.testing.assert_allclose(p,cp_truth,power_truth )
+    np.testing.assert_allclose(p,power_truth )
 
-    # # Multiple turbines with ix filter
-    # p = power(
-    #     air_density=AIR_DENSITY,
-    #     velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
-    #     yaw_angle=np.zeros((1, 1, N_TURBINES)),
-    #     pP=turbine.pP * np.ones((3, 4, N_TURBINES)),
-    #     power_interp={turbine.turbine_type: turbine.fCp_interp},
-    #     turbine_type_map=turbine_type_map,
-    #     ix_filter=INDEX_FILTER,
-    # )
-    # assert len(p[0, 0]) == len(INDEX_FILTER)
 
-    # for i in range(len(INDEX_FILTER)):
-    #     effective_velocity_trurth = ((AIR_DENSITY/1.225)**(1/3)) * WIND_SPEEDS[0]
-    #     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(
-    #         effective_velocity_trurth
-    #     )
-    #     cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
-    #     power_truth = (
-    #         0.5
-    #         * turbine.rotor_area
-    #         * cp_truth
-    #         * turbine.generator_efficiency
-    #         * effective_velocity_trurth ** 3
-    #     )
-    #     print(i,WIND_SPEEDS, effective_velocity_trurth, cp_truth, p[0, 0, i], power_truth)
-    #     np.testing.assert_allclose(p[0, 0, i], power_truth)
+    # Test that above rated wind speeds, the power should be very close to 5MW
+    wind_speed = 18.0
+
+    p = power(
+        ref_density_cp_ct=AIR_DENSITY,
+        rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
+        power_interp={turbine.turbine_type: turbine.power_interp},
+        turbine_type_map=turbine_type_map[:,:,0]
+    )
+
+    np.testing.assert_allclose(p,5E6,10.0 )
+
+    # Test that near 0 wind speeds, the power should be near 0
+    wind_speed = 0.1
+
+    p = power(
+        ref_density_cp_ct=AIR_DENSITY,
+        rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
+        power_interp={turbine.turbine_type: turbine.power_interp},
+        turbine_type_map=turbine_type_map[:,:,0]
+    )
+
+    np.testing.assert_allclose(p,0.0,10.0 )
+
+
 
 
 def test_axial_induction():
