@@ -136,7 +136,7 @@ def test_regression_tandem(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.pPs,
         floris.farm.pTs,
-        floris.farm.turbine_fTilts,
+        floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
@@ -146,7 +146,7 @@ def test_regression_tandem(sample_inputs_fixture):
         tilt_angles,
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
-        floris.farm.turbine_fTilts,
+        floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
@@ -162,7 +162,7 @@ def test_regression_tandem(sample_inputs_fixture):
         tilt_angles,
         ref_tilt_cp_cts,
         floris.farm.turbine_fCts,
-        floris.farm.turbine_fTilts,
+        floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
@@ -328,7 +328,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
         ref_tilt_cp_cts,
         floris.farm.pPs,
         floris.farm.pTs,
-        floris.farm.turbine_fTilts,
+        floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
     )
