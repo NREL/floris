@@ -34,6 +34,7 @@ from floris.simulation import (
 )
 from floris.simulation.turbine import _filter_convert
 from floris.type_dec import (
+    convert_to_path,
     NDArrayBool,
     NDArrayFilter,
     NDArrayFloat,
@@ -432,15 +433,19 @@ class TurbineMultiDimensional(Turbine):
         turbine_library_path (:py:obj:`pathlib.Path`, optional): The
             :py:attr:`Farm.turbine_library_path` or :py:attr:`Farm.internal_turbine_library_path`,
             whichever is being used to load turbine definitions.
-            Defaults to the current file location.
+            Defaults to the internal turbine library.
     """
     power_thrust_data_file: str = field(default=None)
     power_thrust_data: MultiDimensionalPowerThrustTable = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
     turbine_library_path: Path = field(
-        default=Path(".").resolve(),
+        default=Path(__file__).parents[1] / "turbine_library",
+        converter=convert_to_path,
         validator=attrs.validators.instance_of(Path)
     )
+
+    # Not to be provided by the user
+    condition_keys: list[str] = field(init=False, factory=list)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -463,9 +468,7 @@ class TurbineMultiDimensional(Turbine):
 
     def __attrs_post_init__(self) -> None:
         # Solidify the data file path and name
-        self.power_thrust_data_file = (
-            self.turbine_library_path / self.power_thrust_data_file
-        ).resolve()
+        self.power_thrust_data_file = self.turbine_library_path / self.power_thrust_data_file
 
         # Read in the multi-dimensional data supplied by the user.
         df = pd.read_csv(self.power_thrust_data_file)
@@ -479,6 +482,7 @@ class TurbineMultiDimensional(Turbine):
 
         # Down-select the DataFrame to have just the ws, Cp, and Ct values
         index_col = df.columns.values[:-3]
+        self.condition_keys = index_col.tolist()
         df2 = df.set_index(index_col.tolist())
 
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
