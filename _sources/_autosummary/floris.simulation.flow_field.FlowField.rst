@@ -21,7 +21,6 @@ floris.simulation.flow\_field.FlowField
       ~FlowField.finalize
       ~FlowField.from_dict
       ~FlowField.generate_heterogeneous_wind_map
-      ~FlowField.get_model_defaults
       ~FlowField.het_map_validator
       ~FlowField.heterogenous_config_validator
       ~FlowField.initialize_velocity_field

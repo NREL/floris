@@ -19,7 +19,7 @@ floris.simulation.wake\_turbulence.wake\_induced\_mixing.WakeInducedMixing
       ~WakeInducedMixing.as_dict
       ~WakeInducedMixing.from_dict
       ~WakeInducedMixing.function
-      ~WakeInducedMixing.get_model_defaults
+      ~WakeInducedMixing.lock_num_eps
       ~WakeInducedMixing.prepare_function
    
    

@@ -21,7 +21,6 @@ floris.simulation.floris.Floris
       ~Floris.finalize
       ~Floris.from_dict
       ~Floris.from_file
-      ~Floris.get_model_defaults
       ~Floris.initialize_domain
       ~Floris.solve_for_points
       ~Floris.solve_for_viz

@@ -16,12 +16,10 @@ floris.turbine\_library.turbine\_previewer.TurbineInterface
    .. autosummary::
       :nosignatures:
    
-      ~TurbineInterface.Cp_curve
       ~TurbineInterface.Ct_curve
-      ~TurbineInterface.from_internal_library
+      ~TurbineInterface.from_library
       ~TurbineInterface.from_turbine_dict
       ~TurbineInterface.from_yaml
-      ~TurbineInterface.plot_Cp_curve
       ~TurbineInterface.plot_Ct_curve
       ~TurbineInterface.plot_power_curve
       ~TurbineInterface.power_curve

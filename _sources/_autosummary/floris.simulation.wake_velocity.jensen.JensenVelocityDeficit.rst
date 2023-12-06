@@ -19,7 +19,7 @@ floris.simulation.wake\_velocity.jensen.JensenVelocityDeficit
       ~JensenVelocityDeficit.as_dict
       ~JensenVelocityDeficit.from_dict
       ~JensenVelocityDeficit.function
-      ~JensenVelocityDeficit.get_model_defaults
+      ~JensenVelocityDeficit.lock_num_eps
       ~JensenVelocityDeficit.prepare_function
    
    

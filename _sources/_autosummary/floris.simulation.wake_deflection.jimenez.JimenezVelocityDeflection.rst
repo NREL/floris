@@ -19,7 +19,7 @@ floris.simulation.wake\_deflection.jimenez.JimenezVelocityDeflection
       ~JimenezVelocityDeflection.as_dict
       ~JimenezVelocityDeflection.from_dict
       ~JimenezVelocityDeflection.function
-      ~JimenezVelocityDeflection.get_model_defaults
+      ~JimenezVelocityDeflection.lock_num_eps
       ~JimenezVelocityDeflection.prepare_function
    
    

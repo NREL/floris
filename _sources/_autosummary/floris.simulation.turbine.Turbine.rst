@@ -20,7 +20,6 @@ floris.simulation.turbine.Turbine
       ~Turbine.check_floating_tilt_table
       ~Turbine.check_for_cp_ct_correct_flag_if_floating
       ~Turbine.from_dict
-      ~Turbine.get_model_defaults
       ~Turbine.reset_rotor_area
       ~Turbine.reset_rotor_diameter_dependencies
       ~Turbine.reset_rotor_radius
@@ -43,6 +42,7 @@ floris.simulation.turbine.Turbine
       ~Turbine.ref_density_cp_ct
       ~Turbine.ref_tilt_cp_ct
       ~Turbine.power_thrust_table
+      ~Turbine.correct_cp_ct_for_tilt
       ~Turbine.floating_tilt_table
       ~Turbine.floating_correct_cp_ct_for_tilt
       ~Turbine.power_thrust_data_file
@@ -53,6 +53,7 @@ floris.simulation.turbine.Turbine
       ~Turbine.fCt_interp
       ~Turbine.power_interp
       ~Turbine.tilt_interp
+      ~Turbine.fTilt_interp
       ~Turbine.logger
       ~Turbine.state
    

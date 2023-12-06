@@ -19,7 +19,7 @@ floris.simulation.wake\_velocity.empirical\_gauss.EmpiricalGaussVelocityDeficit
       ~EmpiricalGaussVelocityDeficit.as_dict
       ~EmpiricalGaussVelocityDeficit.from_dict
       ~EmpiricalGaussVelocityDeficit.function
-      ~EmpiricalGaussVelocityDeficit.get_model_defaults
+      ~EmpiricalGaussVelocityDeficit.lock_num_eps
       ~EmpiricalGaussVelocityDeficit.prepare_function
    
    

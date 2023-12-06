@@ -19,7 +19,7 @@ floris.simulation.wake\_deflection.empirical\_gauss.EmpiricalGaussVelocityDeflec
       ~EmpiricalGaussVelocityDeflection.as_dict
       ~EmpiricalGaussVelocityDeflection.from_dict
       ~EmpiricalGaussVelocityDeflection.function
-      ~EmpiricalGaussVelocityDeflection.get_model_defaults
+      ~EmpiricalGaussVelocityDeflection.lock_num_eps
       ~EmpiricalGaussVelocityDeflection.prepare_function
    
    

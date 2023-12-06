@@ -18,7 +18,6 @@ floris.simulation.wake.WakeModelManager
    
       ~WakeModelManager.as_dict
       ~WakeModelManager.from_dict
-      ~WakeModelManager.get_model_defaults
       ~WakeModelManager.validate_model_strings
    
    

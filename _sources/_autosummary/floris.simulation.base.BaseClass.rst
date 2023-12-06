@@ -18,7 +18,6 @@ floris.simulation.base.BaseClass
    
       ~BaseClass.as_dict
       ~BaseClass.from_dict
-      ~BaseClass.get_model_defaults
    
    
 
@@ -28,7 +27,7 @@ floris.simulation.base.BaseClass
 
    .. autosummary::
    
-      ~BaseClass.logger
       ~BaseClass.state
+      ~BaseClass.logger
    
    

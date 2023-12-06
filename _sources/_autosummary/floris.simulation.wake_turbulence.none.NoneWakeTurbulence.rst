@@ -19,7 +19,7 @@ floris.simulation.wake\_turbulence.none.NoneWakeTurbulence
       ~NoneWakeTurbulence.as_dict
       ~NoneWakeTurbulence.from_dict
       ~NoneWakeTurbulence.function
-      ~NoneWakeTurbulence.get_model_defaults
+      ~NoneWakeTurbulence.lock_num_eps
       ~NoneWakeTurbulence.prepare_function
    
    

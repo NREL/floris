@@ -19,7 +19,7 @@ floris.simulation.wake\_combination.fls.FLS
       ~FLS.as_dict
       ~FLS.from_dict
       ~FLS.function
-      ~FLS.get_model_defaults
+      ~FLS.lock_num_eps
       ~FLS.prepare_function
    
    

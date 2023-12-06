@@ -19,7 +19,7 @@ floris.simulation.wake\_velocity.none.NoneVelocityDeficit
       ~NoneVelocityDeficit.as_dict
       ~NoneVelocityDeficit.from_dict
       ~NoneVelocityDeficit.function
-      ~NoneVelocityDeficit.get_model_defaults
+      ~NoneVelocityDeficit.lock_num_eps
       ~NoneVelocityDeficit.prepare_function
    
    

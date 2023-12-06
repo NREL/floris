@@ -29,7 +29,7 @@
       :template: custom-class-template.rst
       :nosignatures:
    
-      LoggerBase
+      LoggingManager
       TracebackInfoFilter
    
    

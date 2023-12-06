@@ -19,7 +19,7 @@ floris.simulation.wake\_turbulence.crespo\_hernandez.CrespoHernandez
       ~CrespoHernandez.as_dict
       ~CrespoHernandez.from_dict
       ~CrespoHernandez.function
-      ~CrespoHernandez.get_model_defaults
+      ~CrespoHernandez.lock_num_eps
       ~CrespoHernandez.prepare_function
    
    

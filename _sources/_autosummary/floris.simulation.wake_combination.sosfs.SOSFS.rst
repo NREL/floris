@@ -19,7 +19,7 @@ floris.simulation.wake\_combination.sosfs.SOSFS
       ~SOSFS.as_dict
       ~SOSFS.from_dict
       ~SOSFS.function
-      ~SOSFS.get_model_defaults
+      ~SOSFS.lock_num_eps
       ~SOSFS.prepare_function
    
    

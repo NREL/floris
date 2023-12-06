@@ -19,7 +19,7 @@ floris.simulation.base.BaseModel
       ~BaseModel.as_dict
       ~BaseModel.from_dict
       ~BaseModel.function
-      ~BaseModel.get_model_defaults
+      ~BaseModel.lock_num_eps
       ~BaseModel.prepare_function
    
    

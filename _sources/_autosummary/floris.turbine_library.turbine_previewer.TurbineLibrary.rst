@@ -16,12 +16,10 @@ floris.turbine\_library.turbine\_previewer.TurbineLibrary
    .. autosummary::
       :nosignatures:
    
-      ~TurbineLibrary.compute_Cp_curves
       ~TurbineLibrary.compute_Ct_curves
       ~TurbineLibrary.compute_power_curves
       ~TurbineLibrary.load_external_library
       ~TurbineLibrary.load_internal_library
-      ~TurbineLibrary.plot_Cp_curves
       ~TurbineLibrary.plot_Ct_curves
       ~TurbineLibrary.plot_comparison
       ~TurbineLibrary.plot_hub_heights

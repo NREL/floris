@@ -20,7 +20,6 @@ floris.simulation.turbine\_multi\_dim.TurbineMultiDimensional
       ~TurbineMultiDimensional.check_floating_tilt_table
       ~TurbineMultiDimensional.check_for_cp_ct_correct_flag_if_floating
       ~TurbineMultiDimensional.from_dict
-      ~TurbineMultiDimensional.get_model_defaults
       ~TurbineMultiDimensional.reset_rotor_area
       ~TurbineMultiDimensional.reset_rotor_diameter_dependencies
       ~TurbineMultiDimensional.reset_rotor_radius
@@ -33,9 +32,14 @@ floris.simulation.turbine\_multi\_dim.TurbineMultiDimensional
 
    .. autosummary::
    
+      ~TurbineMultiDimensional.power_thrust_data
+      ~TurbineMultiDimensional.turbine_library_path
+      ~TurbineMultiDimensional.condition_keys
       ~TurbineMultiDimensional.TSR
+      ~TurbineMultiDimensional.correct_cp_ct_for_tilt
       ~TurbineMultiDimensional.fCp_interp
       ~TurbineMultiDimensional.fCt_interp
+      ~TurbineMultiDimensional.fTilt_interp
       ~TurbineMultiDimensional.floating_correct_cp_ct_for_tilt
       ~TurbineMultiDimensional.floating_tilt_table
       ~TurbineMultiDimensional.generator_efficiency

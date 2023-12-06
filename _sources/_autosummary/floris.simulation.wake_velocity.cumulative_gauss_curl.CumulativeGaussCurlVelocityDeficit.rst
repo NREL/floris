@@ -19,7 +19,7 @@ floris.simulation.wake\_velocity.cumulative\_gauss\_curl.CumulativeGaussCurlVelo
       ~CumulativeGaussCurlVelocityDeficit.as_dict
       ~CumulativeGaussCurlVelocityDeficit.from_dict
       ~CumulativeGaussCurlVelocityDeficit.function
-      ~CumulativeGaussCurlVelocityDeficit.get_model_defaults
+      ~CumulativeGaussCurlVelocityDeficit.lock_num_eps
       ~CumulativeGaussCurlVelocityDeficit.prepare_function
    
    
