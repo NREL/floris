@@ -30,19 +30,19 @@ REQUIRES_PYTHON = ">=3.8.0"
 REQUIRED = [
     # simulation
     "attrs",
-    "pyyaml",
-    "numexpr",
-    "numpy>=1.20",
-    "scipy>=1.1",
+    "pyyaml~=6.0",
+    "numexpr~=2.0",
+    "numpy~=1.20",
+    "scipy~=1.1",
 
     # tools
-    "matplotlib>=3",
-    "pandas",
-    "shapely",
+    "matplotlib~=3.0",
+    "pandas~=2.0",
+    "shapely~=2.0",
 
     # utilities
-    "coloredlogs>=10.0",
-    "flatten_dict",
+    "coloredlogs~=10.0",
+    "flatten_dict~=0.0",
 ]
 
 # What packages are optional?
