@@ -228,7 +228,7 @@ def power(
 
     Args:
         ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
-        rotor_effective_velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The rotor
+        rotor_effective_velocities (NDArrayFloat[wd, ws, turbines]): The rotor
             effective velocities at a turbine.
         power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function
             for each turbine.
