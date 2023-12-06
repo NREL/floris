@@ -340,6 +340,7 @@ def test_power():
 
 
     # Test that above rated wind speeds, the power should be very close to 5MW
+    # this is because the test turbine used is the NREL 5MW reference turbine
     wind_speed = 18.0
 
     p = power(
@@ -349,7 +350,7 @@ def test_power():
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
-    np.testing.assert_allclose(p,5E6,10.0 )
+    np.testing.assert_allclose(p,5E6,1.0 )
 
     # Test that near 0 wind speeds, the power should be near 0
     wind_speed = 0.1
@@ -361,9 +362,46 @@ def test_power():
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
-    np.testing.assert_allclose(p,0.0,10.0 )
+    np.testing.assert_allclose(p,0.0,1.0 )
 
 
+    # Test the vectorized version with multiple turbines
+    N_TURBINES = 4
+    turbine_data = SampleInputs().turbine
+    turbine = Turbine.from_dict(turbine_data)
+    turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
+    turbine_type_map = turbine_type_map[None, None, :]
+
+    wind_speed = 10.0
+
+    # Compute power using the power function
+    p = power(
+        ref_density_cp_ct=AIR_DENSITY,
+        rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
+        power_interp={turbine.turbine_type: turbine.power_interp},
+        turbine_type_map=turbine_type_map[:,:,0]
+    )
+
+    np.testing.assert_allclose(p,power_truth )
+
+    # Test with the grid dimension included
+    N_TURBINES = 4
+    turbine_data = SampleInputs().turbine
+    turbine = Turbine.from_dict(turbine_data)
+    turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
+    turbine_type_map = turbine_type_map[None, None, :]
+
+    wind_speed = 10.0
+
+    # Compute power using the power function
+    p = power(
+        ref_density_cp_ct=AIR_DENSITY,
+        rotor_effective_velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
+        power_interp={turbine.turbine_type: turbine.power_interp},
+        turbine_type_map=turbine_type_map[:,:,0]
+    )
+
+    np.testing.assert_allclose(p,power_truth )
 
 
 def test_axial_induction():
