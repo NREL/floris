@@ -61,10 +61,12 @@ class FlowField(BaseClass):
     dudz_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    turbulence_intensity_field_sorted: NDArrayFloat = field(init=False,
-                                                            factory=lambda: np.array([]))
-    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(init=False,
-                                                                factory=lambda: np.array([]))
+    turbulence_intensity_field_sorted: NDArrayFloat = field(
+        init=False, factory=lambda: np.array([])
+    )
+    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(
+        init=False, factory=lambda: np.array([])
+    )
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
