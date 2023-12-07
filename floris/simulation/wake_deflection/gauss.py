@@ -130,21 +130,7 @@ class GaussVelocityDeflection(BaseModel):
         for details on the methods used.
 
         Args:
-            x_locations (np.array): An array of floats that contains the
-                streamwise direction grid coordinates of the flow field
-                domain (m).
-            y_locations (np.array): An array of floats that contains the grid
-                coordinates of the flow field domain in the direction normal to
-                x and parallel to the ground (m).
-            z_locations (np.array): An array of floats that contains the grid
-                coordinates of the flow field domain in the vertical
-                direction (m).
-            turbine (:py:obj:`floris.simulation.turbine`): Object that
-                represents the turbine creating the wake.
-            coord (:py:obj:`floris.utilities.Vec3`): Object containing
-                the coordinate of the turbine creating the wake (m).
-            flow_field (:py:class:`floris.simulation.flow_field`): Object
-                containing the flow field information for the wind farm.
+            # TODO
 
         Returns:
             np.array: Deflection field for the wake.

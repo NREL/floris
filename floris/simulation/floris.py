@@ -104,7 +104,6 @@ class Floris(BaseClass):
         self.farm.construct_turbine_ref_tilt_cp_cts()
         self.farm.construct_turbine_fTilts()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
-        self.farm.construct_coordinates()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
         self.farm.set_tilt_to_ref_tilt(
             self.flow_field.n_wind_directions,
@@ -114,7 +113,7 @@ class Floris(BaseClass):
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.rotor_diameters,
+                turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["turbine_grid_points"],
@@ -123,7 +122,7 @@ class Floris(BaseClass):
         elif self.solver["type"] == "turbine_cubature_grid":
             self.grid = TurbineCubatureGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.rotor_diameters,
+                turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 time_series=self.flow_field.time_series,
@@ -132,7 +131,7 @@ class Floris(BaseClass):
         elif self.solver["type"] == "flow_field_grid":
             self.grid = FlowFieldGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.rotor_diameters,
+                turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["flow_field_grid_points"],
@@ -141,7 +140,7 @@ class Floris(BaseClass):
         elif self.solver["type"] == "flow_field_planar_grid":
             self.grid = FlowFieldPlanarGrid(
                 turbine_coordinates=self.farm.coordinates,
-                reference_turbine_diameter=self.farm.rotor_diameters,
+                turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 wind_speeds=self.flow_field.wind_speeds,
                 normal_vector=self.solver["normal_vector"],
@@ -307,7 +306,7 @@ class Floris(BaseClass):
             points_y=y,
             points_z=z,
             turbine_coordinates=self.farm.coordinates,
-            reference_turbine_diameter=self.farm.rotor_diameters,
+            turbine_diameters=self.farm.rotor_diameters,
             wind_directions=self.flow_field.wind_directions,
             wind_speeds=self.flow_field.wind_speeds,
             grid_resolution=1,

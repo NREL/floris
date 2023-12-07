@@ -284,12 +284,11 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.construct_coordinates()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
-        reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
+        turbine_diameters=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
@@ -690,12 +689,11 @@ def full_flow_cc_solver(
     turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.construct_coordinates()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
-        reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
+        turbine_diameters=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
@@ -1125,11 +1123,10 @@ def full_flow_turbopark_solver(
     # turbine_grid_farm.construct_rotor_diameters()
     # turbine_grid_farm.construct_turbine_TSRs()
     # turbine_grid_farm.construc_turbine_pPs()
-    # turbine_grid_farm.construct_coordinates()
 
     # turbine_grid = TurbineGrid(
     #     turbine_coordinates=turbine_grid_farm.coordinates,
-    #     reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
+    #     turbine_diameters=turbine_grid_farm.rotor_diameters,
     #     wind_directions=turbine_grid_flow_field.wind_directions,
     #     wind_speeds=turbine_grid_flow_field.wind_speeds,
     #     grid_resolution=11,
@@ -1368,12 +1365,11 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
     turbine_grid_farm.construct_turbine_fTilts()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.construct_coordinates()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
-        reference_turbine_diameter=turbine_grid_farm.rotor_diameters,
+        turbine_diameters=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
         wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
