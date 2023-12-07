@@ -1027,7 +1027,7 @@ class FlorisInterface(LoggingManager):
             np.array: lists of x, y, and (optionally) z coordinates of
                 each turbine
         """
-        xcoords, ycoords, zcoords = np.array([c.elements for c in self.floris.farm.coordinates]).T
+        xcoords, ycoords, zcoords = self.floris.farm.coordinates.T
         if z:
             return xcoords, ycoords, zcoords
         else:

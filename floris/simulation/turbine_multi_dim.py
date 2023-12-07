@@ -32,7 +32,6 @@ from floris.simulation import (
     TiltTable,
     Turbine,
 )
-from floris.simulation.turbine import _filter_convert
 from floris.type_dec import (
     convert_to_path,
     NDArrayBool,
@@ -80,7 +79,6 @@ def power_multidim(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, rotor_effective_velocities)
         power_interp = power_interp[:, :, ix_filter]
         rotor_effective_velocities = rotor_effective_velocities[:, :, ix_filter]
     # Loop over each turbine to get power for all turbines
@@ -142,7 +140,6 @@ def Ct_multidim(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
@@ -241,7 +238,6 @@ def axial_induction_multidim(
     )
 
     # Then, process the input arguments as needed for this function
-    ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
