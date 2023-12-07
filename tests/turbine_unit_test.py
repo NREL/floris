@@ -304,31 +304,26 @@ def test_ct():
 
 
 def test_power():
-
-    # Test that power is computed as expected for a single turbine
-    N_TURBINES = 1
     AIR_DENSITY = 1.225
 
+    # Test that power is computed as expected for a single turbine
+    n_turbines = 1
+    wind_speed = 10.0
     turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
-    turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
+    turbine_type_map = np.array(n_turbines * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
-
-    # Use wind speed = 10.
-    wind_speed = 10.0
-
-    # Compute power using the power function
-    p = power(
+    test_power = power(
         ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
-    # Recompute using the original provided cp table
+    # Recompute using the provided Cp table
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
     cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
-    power_truth = (
+    baseline_power = (
         0.5
         * AIR_DENSITY
         * turbine.rotor_area
@@ -336,72 +331,63 @@ def test_power():
         * turbine.generator_efficiency
         * wind_speed ** 3
     )
-    np.testing.assert_allclose(p,power_truth )
+    assert np.allclose(baseline_power, test_power)
 
 
-    # Test that above rated wind speeds, the power should be very close to 5MW
-    # this is because the test turbine used is the NREL 5MW reference turbine
+    # At rated, the power calculated should be 5MW since the test data is the NREL 5MW turbine
     wind_speed = 18.0
-
-    p = power(
+    rated_power = power(
         ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
+    assert np.allclose(rated_power, 5e6)
 
-    np.testing.assert_allclose(p,5E6,1.0 )
 
-    # Test that near 0 wind speeds, the power should be near 0
-    wind_speed = 0.1
-
-    p = power(
+    # At wind speed = 0.0, the power should be 0 based on the provided Cp curve
+    wind_speed = 0.0
+    zero_power = power(
         ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
+    assert np.allclose(zero_power, 0.0)
 
-    np.testing.assert_allclose(p,0.0,1.0 )
 
-
-    # Test the vectorized version with multiple turbines
-    N_TURBINES = 4
+    # Test 4-turbine velocities array
+    n_turbines = 4
+    wind_speed = 10.0
     turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
-    turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
+    turbine_type_map = np.array(n_turbines * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
-
-    wind_speed = 10.0
-
-    # Compute power using the power function
-    p = power(
+    test_4_power = power(
         ref_density_cp_ct=AIR_DENSITY,
-        rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
+        rotor_effective_velocities=wind_speed * np.ones((1, 1, n_turbines)),
         power_interp={turbine.turbine_type: turbine.power_interp},
-        turbine_type_map=turbine_type_map[:,:,0]
+        turbine_type_map=turbine_type_map
     )
+    baseline_4_power = baseline_power * np.ones((1, 1, n_turbines))
+    assert np.allclose(baseline_4_power, test_4_power)
+    assert np.shape(baseline_4_power) == np.shape(test_4_power)
 
-    np.testing.assert_allclose(p,power_truth )
 
-    # Test with the grid dimension included
-    N_TURBINES = 4
+    # Same as above but with the grid expanded in the velocities array
     turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
-    turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
+    turbine_type_map = np.array(n_turbines * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, None, :]
-
-    wind_speed = 10.0
-
-    # Compute power using the power function
-    p = power(
+    test_grid_power = power(
         ref_density_cp_ct=AIR_DENSITY,
-        rotor_effective_velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
+        rotor_effective_velocities=wind_speed * np.ones((1, 1, n_turbines, 3, 3)),
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
-
-    np.testing.assert_allclose(p,power_truth )
+    baseline_grid_power = baseline_power * np.ones((1, 1, n_turbines, 3, 3))
+    assert np.allclose(baseline_grid_power, test_grid_power)
+    assert np.shape(baseline_grid_power) == np.shape(test_grid_power)
 
 
 def test_axial_induction():
