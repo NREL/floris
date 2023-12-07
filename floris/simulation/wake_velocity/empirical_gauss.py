@@ -65,8 +65,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             :style: unsrt
             :filter: docname in docnames
     """
-    wake_expansion_rates: list = field(default=[0.023, 0.008])
-    breakpoints_D: list = field(default=[10])
+    wake_expansion_rates: list = field(factory=lambda: [0.023, 0.008])
+    breakpoints_D: list = field(factory=lambda: [10])
     sigma_0_D: float = field(default=0.28)
     smoothing_length_D: float = field(default=2.0)
     mixing_gain_velocity: float = field(default=2.0)
