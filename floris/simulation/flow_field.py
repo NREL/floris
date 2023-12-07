@@ -48,21 +48,23 @@ class FlowField(BaseClass):
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
 
-    u_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    v_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    w_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    u_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    v_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    w_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    u: NDArrayFloat = field(init=False, default=np.array([]))
-    v: NDArrayFloat = field(init=False, default=np.array([]))
-    w: NDArrayFloat = field(init=False, default=np.array([]))
+    u_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    v_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    w_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    u_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    v_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    w_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    u: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    v: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    w: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
     het_map: list = field(init=False, default=None)
-    dudz_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
+    dudz_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
-    turbulence_intensity_field: NDArrayFloat = field(init=False, default=np.array([]))
-    turbulence_intensity_field_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(init=False, default=np.array([]))
+    turbulence_intensity_field: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    turbulence_intensity_field_sorted: NDArrayFloat = field(init=False,
+                                                            factory=lambda: np.array([]))
+    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(init=False,
+                                                                factory=lambda: np.array([]))
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
