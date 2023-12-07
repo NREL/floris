@@ -39,11 +39,11 @@ class AttrsDemoClass(FromDictMixin):
         self.non_initd = 1.1
 
     liststr: List[str] = field(
-        default=["qwerty", "asdf"],
+        factory=lambda:["qwerty", "asdf"],
         validator=iter_validator(list, str)
     )
     array: np.ndarray = field(
-        default=[1.0, 2.0],
+        factory=lambda:[1.0, 2.0],
         converter=floris_array_converter,
         # validator=iter_validator(np.ndarray, floris_float_type)
     )
