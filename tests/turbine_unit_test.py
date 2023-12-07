@@ -13,7 +13,6 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import attr
 import numpy as np
 import pytest
 from scipy.interpolate import interp1d
@@ -331,7 +330,7 @@ def test_power():
         * turbine.generator_efficiency
         * wind_speed ** 3
     )
-    assert np.allclose(baseline_power, test_power)
+    np.testing.assert_allclose(baseline_power, test_power)
 
 
     # At rated, the power calculated should be 5MW since the test data is the NREL 5MW turbine
@@ -342,7 +341,7 @@ def test_power():
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
-    assert np.allclose(rated_power, 5e6)
+    np.testing.assert_allclose(rated_power, 5e6)
 
 
     # At wind speed = 0.0, the power should be 0 based on the provided Cp curve
@@ -353,7 +352,7 @@ def test_power():
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,:,0]
     )
-    assert np.allclose(zero_power, 0.0)
+    np.testing.assert_allclose(zero_power, 0.0)
 
 
     # Test 4-turbine velocities array
@@ -370,7 +369,7 @@ def test_power():
         turbine_type_map=turbine_type_map
     )
     baseline_4_power = baseline_power * np.ones((1, 1, n_turbines))
-    assert np.allclose(baseline_4_power, test_4_power)
+    np.testing.assert_allclose(baseline_4_power, test_4_power)
     assert np.shape(baseline_4_power) == np.shape(test_4_power)
 
 
@@ -386,7 +385,7 @@ def test_power():
         turbine_type_map=turbine_type_map[:,:,0]
     )
     baseline_grid_power = baseline_power * np.ones((1, 1, n_turbines, 3, 3))
-    assert np.allclose(baseline_grid_power, test_grid_power)
+    np.testing.assert_allclose(baseline_grid_power, test_grid_power)
     assert np.shape(baseline_grid_power) == np.shape(test_grid_power)
 
 
