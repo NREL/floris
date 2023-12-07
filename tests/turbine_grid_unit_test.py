@@ -51,9 +51,9 @@ def test_set_grid(turbine_grid_fixture):
     # then, search for any elements that are true and negate the results
     # if an element is zero, the not will return true
     # if an element is non-zero, the not will return false
-    assert not np.any(turbine_grid_fixture.x_sorted[0, 0] - expected_x_grid)
-    assert not np.any(turbine_grid_fixture.y_sorted[0, 0] - expected_y_grid)
-    assert not np.any(turbine_grid_fixture.z_sorted[0, 0] - expected_z_grid)
+    np.testing.assert_array_equal(turbine_grid_fixture.x_sorted[0, 0], expected_x_grid)  
+    np.testing.assert_array_equal(turbine_grid_fixture.y_sorted[0, 0], expected_y_grid)  
+    np.testing.assert_array_equal(turbine_grid_fixture.z_sorted[0, 0], expected_z_grid)  
 
 
 def test_dimensions(turbine_grid_fixture):

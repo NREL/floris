@@ -116,7 +116,7 @@ class Grid(ABC, BaseClass):
     @grid_resolution.validator
     def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
         # TODO move this to the grid types and off of the base class
-        """Check that grid resolution is given as int with int components."""
+        """Check that grid resolution is given as appropriate for the chosen Grid-type."""
         if isinstance(value, int) and \
             isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid)):
             return

@@ -114,7 +114,7 @@ def flow_field_fixture(sample_inputs_fixture):
 
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
-    turbine_coordinates = np.array([np.array(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))])
+    turbine_coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
     rotor_diameters = ROTOR_DIAMETER * np.ones( (N_TURBINES) )
     return TurbineGrid(
         turbine_coordinates=turbine_coordinates,
@@ -127,7 +127,7 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
 
 @pytest.fixture
 def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
-    turbine_coordinates = np.array([np.array([c]) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))])
+    turbine_coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
     rotor_diameters = ROTOR_DIAMETER * np.ones( (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES) )
     return FlowFieldGrid(
         turbine_coordinates=turbine_coordinates,
@@ -139,7 +139,7 @@ def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
 
 @pytest.fixture
 def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
-    turbine_coordinates = np.array([np.array(c) for c in list(zip(X_COORDS, Y_COORDS, Z_COORDS))])
+    turbine_coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
     rotor_diameters = ROTOR_DIAMETER * np.ones( (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES) )
     points_x = [0.0, 10.0]
     points_y = [0.0, 0.0]
