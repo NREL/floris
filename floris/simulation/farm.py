@@ -234,13 +234,13 @@ class Farm(BaseClass):
         # Sort yaw angles from most upstream to most downstream wind turbine
         self.yaw_angles_sorted = np.take_along_axis(
             self.yaw_angles,
-            sorted_indices[:, :, :, 0, 0],
-            axis=2,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
         )
         self.tilt_angles_sorted = np.take_along_axis(
             self.tilt_angles,
-            sorted_indices[:, :, :, 0, 0],
-            axis=2,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
         )
         self.state = State.INITIALIZED
 
@@ -311,16 +311,17 @@ class Farm(BaseClass):
 
     def expand_farm_properties(
         self,
-        n_wind_directions: int,
-        n_wind_speeds: int,
+        n_findex: int,
         sorted_coord_indices
     ):
         template_shape = np.ones_like(sorted_coord_indices)
         self.hub_heights_sorted = np.take_along_axis(
             self.hub_heights * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
+
+        # TODO: update multidimensional turbine for 4D arrays
         if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
             and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
             wd_dim = np.shape(template_shape)[0]
@@ -332,7 +333,7 @@ class Farm(BaseClass):
                         np.shape(template_shape)
                     ),
                     sorted_coord_indices,
-                    axis=2
+                    axis=2 # TODO: This should probably be 1
                 )
                 self.turbine_power_interps_sorted = np.take_along_axis(
                     np.reshape(
@@ -340,82 +341,81 @@ class Farm(BaseClass):
                         np.shape(template_shape)
                     ),
                     sorted_coord_indices,
-                    axis=2
+                    axis=2 # TODO: This should probably be 1
                 )
             else:
                 self.turbine_fCts_sorted = np.take_along_axis(
                     np.reshape(self.turbine_fCts, np.shape(template_shape)),
                     sorted_coord_indices,
-                    axis=2
+                    axis=1
                 )
                 self.turbine_power_interps_sorted = np.take_along_axis(
                     np.reshape(self.turbine_power_interps, np.shape(template_shape)),
                     sorted_coord_indices,
-                    axis=2
+                    axis=1
                 )
         self.rotor_diameters_sorted = np.take_along_axis(
             self.rotor_diameters * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
         self.TSRs_sorted = np.take_along_axis(
             self.TSRs * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
         self.ref_density_cp_cts_sorted = np.take_along_axis(
             self.ref_density_cp_cts * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
         self.ref_tilt_cp_cts_sorted = np.take_along_axis(
             self.ref_tilt_cp_cts * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
         self.correct_cp_ct_for_tilt_sorted = np.take_along_axis(
             self.correct_cp_ct_for_tilt * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
         self.pPs_sorted = np.take_along_axis(
             self.pPs * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
         self.pTs_sorted = np.take_along_axis(
             self.pTs * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
 
         # NOTE: Tilt angles are sorted twice - here and in initialize()
         self.tilt_angles_sorted = np.take_along_axis(
             self.tilt_angles * template_shape,
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(
-                [turb["turbine_type"] for turb in self.turbine_definitions] * n_wind_directions,
+                [turb["turbine_type"] for turb in self.turbine_definitions] * n_findex,
                 np.shape(sorted_coord_indices)
             ),
             sorted_coord_indices,
-            axis=2
+            axis=1
         )
 
-    def set_yaw_angles(self, n_wind_directions: int, n_wind_speeds: int):
-        # TODO Is this just for initializing yaw angles to zero?
-        self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
-        self.yaw_angles_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
+    def set_yaw_angles(self, n_findex: int):
+        self.yaw_angles = np.zeros((n_findex, self.n_turbines))
+        self.yaw_angles_sorted = np.zeros((n_findex, self.n_turbines))
 
-    def set_tilt_to_ref_tilt(self, n_wind_directions: int, n_wind_speeds: int):
+    def set_tilt_to_ref_tilt(self, n_findex: int):
         self.tilt_angles = (
-            np.ones((n_wind_directions, n_wind_speeds, self.n_turbines))
+            np.ones((n_findex, self.n_turbines))
             * self.ref_tilt_cp_cts
         )
         self.tilt_angles_sorted = (
-            np.ones((n_wind_directions, n_wind_speeds, self.n_turbines))
+            np.ones((n_findex, self.n_turbines))
             * self.ref_tilt_cp_cts
         )
 
@@ -433,68 +433,68 @@ class Farm(BaseClass):
             and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
             self.turbine_fCts = np.take_along_axis(
                 self.turbine_fCts_sorted,
-                unsorted_indices[:,:,:,0,0],
-                axis=2
+                unsorted_indices[:,:,0,0],
+                axis=1
             )
             self.turbine_power_interps = np.take_along_axis(
                 self.turbine_power_interps_sorted,
-                unsorted_indices[:,:,:,0,0],
-                axis=2
+                unsorted_indices[:,:,0,0],
+                axis=1
             )
         self.yaw_angles = np.take_along_axis(
             self.yaw_angles_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.tilt_angles = np.take_along_axis(
             self.tilt_angles_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.hub_heights = np.take_along_axis(
             self.hub_heights_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.rotor_diameters = np.take_along_axis(
             self.rotor_diameters_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.TSRs = np.take_along_axis(
             self.TSRs_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.ref_density_cp_cts = np.take_along_axis(
             self.ref_density_cp_cts_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.ref_tilt_cp_cts = np.take_along_axis(
             self.ref_tilt_cp_cts_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.correct_cp_ct_for_tilt = np.take_along_axis(
             self.correct_cp_ct_for_tilt_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.pPs = np.take_along_axis(
             self.pPs_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.pTs = np.take_along_axis(
             self.pTs_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.turbine_type_map = np.take_along_axis(
             self.turbine_type_map_sorted,
-            unsorted_indices[:,:,:,0,0],
-            axis=2
+            unsorted_indices[:,:,0,0],
+            axis=1
         )
         self.state.USED
 

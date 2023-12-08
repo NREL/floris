@@ -20,10 +20,9 @@ import pytest
 
 from floris.simulation import Farm
 from floris.utilities import load_yaml
-from tests.conftest import (
+from tests.conftest import (  # N_WIND_DIRECTIONS,; N_WIND_SPEEDS,
+    N_FINDEX,
     N_TURBINES,
-    N_WIND_DIRECTIONS,
-    N_WIND_SPEEDS,
     SampleInputs,
 )
 
@@ -49,7 +48,7 @@ def test_farm_init_homogenous_turbines():
     # turbine_type=[turbine_data["turbine_type"]]
 
     farm.construct_hub_heights()
-    farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
+    farm.set_yaw_angles(N_FINDEX)
 
     # Check initial values
     np.testing.assert_array_equal(farm.coordinates, coordinates)
@@ -61,15 +60,15 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     farm = Farm.from_dict(sample_inputs_fixture.farm)
     farm.construct_hub_heights()
     farm.construct_turbine_ref_tilt_cp_cts()
-    farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
-    farm.set_tilt_to_ref_tilt(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
+    farm.set_yaw_angles(N_FINDEX)
+    farm.set_tilt_to_ref_tilt(N_FINDEX)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
     new_farm.construct_hub_heights()
     new_farm.construct_turbine_ref_tilt_cp_cts()
-    new_farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
-    new_farm.set_tilt_to_ref_tilt(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
+    new_farm.set_yaw_angles(N_FINDEX)
+    new_farm.set_tilt_to_ref_tilt(N_FINDEX)
     dict2 = new_farm.as_dict()
 
     assert dict1 == dict2
