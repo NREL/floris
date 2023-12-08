@@ -472,9 +472,9 @@ class PowerThrustTable(FromDictMixin):
         ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
         ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
     """
-    power: NDArrayFloat = field(default=[], converter=floris_array_converter)
-    thrust: NDArrayFloat = field(default=[], converter=floris_array_converter)
-    wind_speed: NDArrayFloat = field(default=[], converter=floris_array_converter)
+    power: NDArrayFloat = field(factory=list, converter=floris_array_converter)
+    thrust: NDArrayFloat = field(factory=list, converter=floris_array_converter)
+    wind_speed: NDArrayFloat = field(factory=list, converter=floris_array_converter)
 
     def __attrs_post_init__(self) -> None:
         # Validate the power, thrust, and wind speed inputs.

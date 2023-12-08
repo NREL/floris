@@ -81,10 +81,10 @@ class Farm(BaseClass):
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
 
-    turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, default=[])
-    turbine_fCts_sorted: NDArrayFloat = field(init=False, default=[])
+    turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
+    turbine_fCts_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    turbine_fTilts: list = field(init=False, default=[])
+    turbine_fTilts: list = field(init=False, factory=list)
 
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
@@ -93,36 +93,36 @@ class Farm(BaseClass):
     tilt_angles_sorted: NDArrayFloat = field(init=False)
 
     hub_heights: NDArrayFloat = field(init=False)
-    hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
+    hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    turbine_map: List[Turbine | TurbineMultiDimensional] = field(init=False, default=[])
+    turbine_map: List[Turbine | TurbineMultiDimensional] = field(init=False, factory=list)
 
-    turbine_type_map: NDArrayObject = field(init=False, default=[])
-    turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
+    turbine_type_map: NDArrayObject = field(init=False, factory=list)
+    turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
 
-    turbine_power_interps: Dict[str, interp1d] | List[interp1d] = field(init=False, default=[])
-    turbine_power_interps_sorted: NDArrayFloat = field(init=False, default=[])
+    turbine_power_interps: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
+    turbine_power_interps_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    rotor_diameters: NDArrayFloat = field(init=False, default=[])
-    rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
+    rotor_diameters: NDArrayFloat = field(init=False, factory=list)
+    rotor_diameters_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    TSRs: NDArrayFloat = field(init=False, default=[])
-    TSRs_sorted: NDArrayFloat = field(init=False, default=[])
+    TSRs: NDArrayFloat = field(init=False, factory=list)
+    TSRs_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    pPs: NDArrayFloat = field(init=False, default=[])
-    pPs_sorted: NDArrayFloat = field(init=False, default=[])
+    pPs: NDArrayFloat = field(init=False, factory=list)
+    pPs_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    pTs: NDArrayFloat = field(init=False, default=[])
-    pTs_sorted: NDArrayFloat = field(init=False, default=[])
+    pTs: NDArrayFloat = field(init=False, factory=list)
+    pTs_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    ref_density_cp_cts: NDArrayFloat = field(init=False, default=[])
-    ref_density_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
+    ref_density_cp_cts: NDArrayFloat = field(init=False, factory=list)
+    ref_density_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    ref_tilt_cp_cts: NDArrayFloat = field(init=False, default=[])
-    ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
+    ref_tilt_cp_cts: NDArrayFloat = field(init=False, factory=list)
+    ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
-    correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
+    correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
+    correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, factory=list)
 
     internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
 
