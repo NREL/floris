@@ -48,7 +48,7 @@ REQUIRED = [
     "pandas>=0.24",
     "pyproj>=2.1",
     "seaborn>=0.9",
-    "sklearn>=0.0",
+    "scikit-learn",
     "shapely>=1.7.1",
 ]
 
