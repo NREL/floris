@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         # 3.5 fails with a bad comparison in TurbineMap unit tests
-        python-version: [3.6, 3.7, 3.8, 3.9] # 3.5
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
         # windows-latest fails in codecov
         os: [ubuntu-latest, macos-latest]
       fail-fast: False
@@ -60,4 +60,4 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: true
+        fail_ci_if_error: false

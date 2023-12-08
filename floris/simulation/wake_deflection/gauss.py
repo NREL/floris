@@ -348,7 +348,7 @@ class Gauss(VelocityDeflection):
                 yaw_effective = max_yaw
             # check edge case, if true, assign min yaw value
             elif idx_1 == 0 or idx_2 == 0:
-                yaw_effective = -min_yaw
+                yaw_effective = min_yaw
             # for each identified minimum residual, use adjacent points to determine
             # two equations of line and find the intersection of the two lines to
             # determine the effective yaw angle to add; the if/else structure is based
