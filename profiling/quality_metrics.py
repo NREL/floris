@@ -24,10 +24,8 @@ from floris.simulation import Floris
 
 
 WIND_DIRECTIONS = np.arange(0, 360.0, 5)
-N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)
-
 WIND_SPEEDS = np.arange(8.0, 12.0, 0.2)
-N_WIND_SPEEDS = len(WIND_SPEEDS)
+N_FINDEX = len(WIND_DIRECTIONS)
 
 N_TURBINES = 3
 X_COORDS, Y_COORDS = np.meshgrid(
@@ -107,7 +105,7 @@ def memory_profile(input_dict):
 
     print(
         "Size of one data array: "
-        f"{64 * N_WIND_DIRECTIONS * N_WIND_SPEEDS * N_TURBINES * 25 / (1000 * 1000)} MB"
+        f"{64 * N_FINDEX * N_TURBINES * 25 / (1000 * 1000)} MB"
     )
 
 

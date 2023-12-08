@@ -18,8 +18,7 @@ import numpy as np
 from floris.simulation import TurbineGrid
 from tests.conftest import (
     N_TURBINES,
-    N_WIND_DIRECTIONS,
-    N_WIND_SPEEDS,
+    N_FINDEX,
     TURBINE_GRID_RESOLUTION,
 )
 
@@ -58,22 +57,19 @@ def test_set_grid(turbine_grid_fixture):
 
 def test_dimensions(turbine_grid_fixture):
     assert np.shape(turbine_grid_fixture.x_sorted) == (
-        N_WIND_DIRECTIONS,
-        N_WIND_SPEEDS,
+        N_FINDEX,
         N_TURBINES,
         TURBINE_GRID_RESOLUTION,
         TURBINE_GRID_RESOLUTION
     )
     assert np.shape(turbine_grid_fixture.y_sorted) == (
-        N_WIND_DIRECTIONS,
-        N_WIND_SPEEDS,
+        N_FINDEX,
         N_TURBINES,
         TURBINE_GRID_RESOLUTION,
         TURBINE_GRID_RESOLUTION
     )
     assert np.shape(turbine_grid_fixture.z_sorted) == (
-        N_WIND_DIRECTIONS,
-        N_WIND_SPEEDS,
+        N_FINDEX,
         N_TURBINES,
         TURBINE_GRID_RESOLUTION,
         TURBINE_GRID_RESOLUTION
@@ -82,8 +78,8 @@ def test_dimensions(turbine_grid_fixture):
 
 def test_dynamic_properties(turbine_grid_fixture):
     assert turbine_grid_fixture.n_turbines == N_TURBINES
-    assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS
-    assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS
+    assert turbine_grid_fixture.n_wind_speeds == N_FINDEX
+    assert turbine_grid_fixture.n_wind_directions == N_FINDEX
 
     turbine_grid_fixture.turbine_coordinates = np.append(
         turbine_grid_fixture.turbine_coordinates,

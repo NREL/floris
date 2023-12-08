@@ -25,8 +25,7 @@ from floris.simulation import (
 from tests.conftest import (
     assert_results_arrays,
     N_TURBINES,
-    N_WIND_DIRECTIONS,
-    N_WIND_SPEEDS,
+    N_FINDEX,
     print_test_values,
 )
 
@@ -421,7 +420,7 @@ def test_regression_yaw(sample_inputs_fixture):
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
-    yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
+    yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
 
@@ -514,7 +513,7 @@ def test_regression_gch(sample_inputs_fixture):
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
-    yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
+    yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
 
@@ -603,7 +602,7 @@ def test_regression_gch(sample_inputs_fixture):
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
-    yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
+    yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
 
@@ -699,7 +698,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
-    yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
+    yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
 
@@ -794,7 +793,7 @@ def test_regression_secondary_steering(sample_inputs_fixture):
 
     floris = Floris.from_dict(sample_inputs_fixture.floris)
 
-    yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
+    yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
 

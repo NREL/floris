@@ -20,7 +20,7 @@ import pytest
 
 from floris.simulation import Farm
 from floris.utilities import load_yaml
-from tests.conftest import (  # N_WIND_DIRECTIONS,; N_WIND_SPEEDS,
+from tests.conftest import (
     N_FINDEX,
     N_TURBINES,
     SampleInputs,

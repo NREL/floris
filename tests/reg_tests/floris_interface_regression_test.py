@@ -25,8 +25,7 @@ from floris.tools import FlorisInterface
 from tests.conftest import (
     assert_results_arrays,
     N_TURBINES,
-    N_WIND_DIRECTIONS,
-    N_WIND_SPEEDS,
+    N_FINDEX,
     print_test_values,
 )
 
