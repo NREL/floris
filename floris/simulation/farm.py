@@ -309,11 +309,7 @@ class Farm(BaseClass):
     def construct_multidim_turbine_power_interps(self):
         self.turbine_power_interps = [turb.power_interp for turb in self.turbine_map]
 
-    def expand_farm_properties(
-        self,
-        n_findex: int,
-        sorted_coord_indices
-    ):
+    def expand_farm_properties(self, n_findex: int, sorted_coord_indices):
         template_shape = np.ones_like(sorted_coord_indices)
         self.hub_heights_sorted = np.take_along_axis(
             self.hub_heights * template_shape,

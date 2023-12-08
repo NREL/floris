@@ -44,10 +44,8 @@ class FlowField(BaseClass):
     time_series: bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
     multidim_conditions: dict = field(default=None)
-
-    n_wind_speeds: int = field(init=False)
-    n_wind_directions: int = field(init=False)
-
+    
+    n_findex: int = field(init=False)
     u_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
     v_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
     w_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
@@ -64,18 +62,10 @@ class FlowField(BaseClass):
     turbulence_intensity_field_sorted: NDArrayFloat = field(init=False, default=np.array([]))
     turbulence_intensity_field_sorted_avg: NDArrayFloat = field(init=False, default=np.array([]))
 
-    @wind_speeds.validator
-    def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
-        """Using the validator method to keep the `n_wind_speeds` attribute up to date."""
-        if self.time_series:
-            self.n_wind_speeds = 1
-        else:
-            self.n_wind_speeds = value.size
-
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
-        """Using the validator method to keep the `n_wind_directions` attribute up to date."""
-        self.n_wind_directions = value.size
+        """Using the validator method to keep the `n_findex` attribute up to date."""
+        self.n_findex = value.size
 
     @heterogenous_inflow_config.validator
     def heterogenous_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
@@ -99,14 +89,14 @@ class FlowField(BaseClass):
     @het_map.validator
     def het_map_validator(self, instance: attrs.Attribute, value: list | None) -> None:
         """Using this validator to make sure that the het_map has an interpolant defined for
-        each wind direction.
+        each findex.
         """
         if value is None:
             return
 
-        if self.n_wind_directions!= np.array(value).shape[0]:
+        if self.n_findex != np.array(value).shape[0]:
             raise ValueError(
-                "The het_map's wind direction dimension not equal to number of wind directions."
+                "The het_map's first dimension not equal to the FLORIS first dimension."
             )
 
 
@@ -184,24 +174,9 @@ class FlowField(BaseClass):
         # here to do broadcasting from left to right (transposed), and then transpose back.
         # The result is an array the wind speed and wind direction dimensions on the left side
         # of the shape and the grid.template array on the right
-        if self.time_series:
-            self.u_initial_sorted = (
-                (self.wind_speeds[:].T * wind_profile_plane.T).T
-                * speed_ups
-            )
-            self.dudz_initial_sorted = (
-                (self.wind_speeds[:].T * dwind_profile_plane.T).T
-                * speed_ups
-            )
-        else:
-            self.u_initial_sorted = (
-                (self.wind_speeds[None, :].T * wind_profile_plane.T).T
-                * speed_ups
-            )
-            self.dudz_initial_sorted = (
-                (self.wind_speeds[None, :].T * dwind_profile_plane.T).T
-                * speed_ups
-            )
+        self.u_initial_sorted = (self.wind_speeds.T * wind_profile_plane.T).T * speed_ups
+        self.dudz_initial_sorted = (self.wind_speeds.T * dwind_profile_plane.T).T * speed_ups
+
         self.v_initial_sorted = np.zeros(
             np.shape(self.u_initial_sorted),
             dtype=self.u_initial_sorted.dtype
@@ -217,8 +192,7 @@ class FlowField(BaseClass):
 
         self.turbulence_intensity_field = self.turbulence_intensity * np.ones(
             (
-                self.n_wind_directions,
-                self.n_wind_speeds,
+                self.n_findex,
                 grid.n_turbines,
                 1,
                 1,
@@ -227,17 +201,17 @@ class FlowField(BaseClass):
         self.turbulence_intensity_field_sorted = self.turbulence_intensity_field.copy()
 
     def finalize(self, unsorted_indices):
-        self.u = np.take_along_axis(self.u_sorted, unsorted_indices, axis=2)
-        self.v = np.take_along_axis(self.v_sorted, unsorted_indices, axis=2)
-        self.w = np.take_along_axis(self.w_sorted, unsorted_indices, axis=2)
+        self.u = np.take_along_axis(self.u_sorted, unsorted_indices, axis=1)
+        self.v = np.take_along_axis(self.v_sorted, unsorted_indices, axis=1)
+        self.w = np.take_along_axis(self.w_sorted, unsorted_indices, axis=1)
 
         self.turbulence_intensity_field = np.mean(
             np.take_along_axis(
                 self.turbulence_intensity_field_sorted,
                 unsorted_indices,
-                axis=2
+                axis=1
             ),
-            axis=(3,4)
+            axis=(2,3)
         )
 
     def calculate_speed_ups(self, het_map, x, y, z=None):
