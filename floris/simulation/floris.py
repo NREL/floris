@@ -109,7 +109,6 @@ class Floris(BaseClass):
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["turbine_grid_points"],
                 time_series=self.flow_field.time_series,
             )
@@ -118,7 +117,6 @@ class Floris(BaseClass):
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
                 time_series=self.flow_field.time_series,
                 grid_resolution=self.solver["turbine_grid_points"],
             )
@@ -127,7 +125,6 @@ class Floris(BaseClass):
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["flow_field_grid_points"],
                 time_series=self.flow_field.time_series,
             )
@@ -136,7 +133,6 @@ class Floris(BaseClass):
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
                 normal_vector=self.solver["normal_vector"],
                 planar_coordinate=self.solver["planar_coordinate"],
                 grid_resolution=self.solver["flow_field_grid_points"],

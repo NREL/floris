@@ -123,7 +123,6 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
         turbine_coordinates=turbine_coordinates,
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
-        wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=TURBINE_GRID_RESOLUTION,
         time_series=TIME_SERIES
     )
@@ -136,7 +135,6 @@ def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
         turbine_coordinates=turbine_coordinates,
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
-        wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=[3,2,2]
     )
 
@@ -151,7 +149,6 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
         turbine_coordinates=turbine_coordinates,
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
-        wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=None,
         time_series=False,
         points_x=points_x,

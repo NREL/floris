@@ -61,7 +61,6 @@ class Grid(ABC, BaseClass):
             arrays with shape (N coordinates, 3).
         turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
-        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Grid resolution with values
@@ -70,13 +69,11 @@ class Grid(ABC, BaseClass):
     turbine_coordinates: NDArrayFloat = field(converter=floris_array_converter)
     turbine_diameters: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
-    wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
     time_series: bool = field()
     grid_resolution: int | Iterable = field()
 
     n_turbines: int = field(init=False)
-    n_wind_speeds: int = field(init=False)
-    n_wind_directions: int = field(init=False)
+    n_findex: int = field(init=False)
     x_sorted: NDArrayFloat = field(init=False)
     y_sorted: NDArrayFloat = field(init=False)
     z_sorted: NDArrayFloat = field(init=False)
@@ -100,18 +97,10 @@ class Grid(ABC, BaseClass):
 
         self.n_turbines = len(value)
 
-    @wind_speeds.validator
-    def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
-        """Using the validator method to keep the `n_wind_speeds` attribute up to date."""
-        if self.time_series:
-            self.n_wind_speeds = 1
-        else:
-            self.n_wind_speeds = value.size
-
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
-        """Using the validator method to keep the `n_wind_directions` attribute up to date."""
-        self.n_wind_directions = value.size
+        """Using the validator method to keep the `n_findex` attribute up to date."""
+        self.n_findex = value.size
 
     @grid_resolution.validator
     def grid_resolution_validator(self, instance: attrs.Attribute, value: int | Iterable) -> None:
@@ -143,7 +132,6 @@ class TurbineGrid(Grid):
             arrays with shape (N coordinates, 3).
         turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
-        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
         grid_resolution (:py:obj:`int`): The number of points in each
@@ -230,8 +218,7 @@ class TurbineGrid(Grid):
         disc_area_radius = radius_ratio * self.turbine_diameters / 2
         template_grid = np.ones(
             (
-                self.n_wind_directions,
-                self.n_wind_speeds,
+                self.n_findex,
                 self.n_turbines,
                 self.grid_resolution,
                 self.grid_resolution,
@@ -254,30 +241,30 @@ class TurbineGrid(Grid):
             )
         # Construct the turbine grids
         # Here, they are already rotated to the correct orientation for each wind direction
-        _x = x[:, :, :, None, None] * template_grid
+        _x = x[:, :, None, None] * template_grid
 
         ones_grid = np.ones(
             (self.n_turbines, self.grid_resolution, self.grid_resolution),
             dtype=floris_float_type
         )
-        _y = y[:, :, :, None, None] + template_grid * ( disc_grid[None, None, :, :, None])
-        _z = z[:, :, :, None, None] + template_grid * ( disc_grid[:, None, :] * ones_grid )
+        _y = y[:, :, None, None] + template_grid * ( disc_grid[None, :, :, None])
+        _z = z[:, :, None, None] + template_grid * ( disc_grid[:, None, :] * ones_grid )
 
         # Sort the turbines at each wind direction
 
         # Get the sorted indices for the x coordinates. These are the indices
         # to sort the turbines from upstream to downstream for all wind directions.
         # Also, store the indices to sort them back for when the calculation finishes.
-        self.sorted_indices = _x.argsort(axis=2)
-        self.sorted_coord_indices = x.argsort(axis=2)
-        self.unsorted_indices = self.sorted_indices.argsort(axis=2)
+        self.sorted_indices = _x.argsort(axis=1)
+        self.sorted_coord_indices = x.argsort(axis=1)
+        self.unsorted_indices = self.sorted_indices.argsort(axis=1)
 
         # Put the turbine coordinates into the final arrays in their sorted order
         # These are the coordinates that should be used within the internal calculations
         # such as the wake models and the solvers.
-        self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=2)
-        self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=2)
-        self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=2)
+        self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=1)
+        self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=1)
+        self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=1)
 
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \
@@ -304,7 +291,6 @@ class TurbineCubatureGrid(Grid):
             arrays with shape (N coordinates, 3).
         turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
-        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
         grid_resolution (:py:obj:`int`): The number of points to
@@ -347,8 +333,7 @@ class TurbineCubatureGrid(Grid):
         # wind direction
         template_grid = np.ones(
             (
-                self.n_wind_directions,
-                self.n_wind_speeds,
+                self.n_findex,
                 self.n_turbines,
                 len(yv),  # Number of coordinates
                 1,
@@ -374,13 +359,13 @@ class TurbineCubatureGrid(Grid):
         # Put the turbine coordinates into the final arrays in their sorted order
         # These are the coordinates that should be used within the internal calculations
         # such as the wake models and the solvers.
-        self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=2)
-        self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=2)
-        self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=2)
+        self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=1)
+        self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=1)
+        self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=1)
 
-        self.x = np.take_along_axis(self.x_sorted, self.unsorted_indices, axis=2)
-        self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=2)
-        self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=2)
+        self.x = np.take_along_axis(self.x_sorted, self.unsorted_indices, axis=1)
+        self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=1)
+        self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=1)
 
     @classmethod
     def get_cubature_coefficients(cls, N: int):
@@ -469,7 +454,6 @@ class FlowFieldGrid(Grid):
             arrays with shape (N coordinates, 3).
         turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
-        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
         grid_resolution (:py:obj:`Iterable(int,)`): The number of grid points to create in each
@@ -541,7 +525,6 @@ class FlowFieldPlanarGrid(Grid):
             arrays with shape (N coordinates, 3).
         turbine_diameters (:py:obj:`NDArrayFloat`): The rotor diameters of each turbine.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
-        wind_speeds (:py:obj:`NDArrayFloat`): Wind speeds supplied by the user.
         time_series (:py:obj:`bool`): Flag to indicate whether the supplied wind data is a time
             series.
         grid_resolution (:py:obj:`Iterable(int,)`): The number of grid points to create in each
@@ -659,8 +642,6 @@ class PointsGrid(Grid):
         turbine_diameters (:py:obj:`NDArrayFloat`):  Not used for PointsGrid, but
             required for the `Grid` super-class.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
-        wind_speeds (:py:obj:`NDArrayFloat`):  Not used for PointsGrid, but
-            required for the `Grid` super-class.
         time_series (:py:obj:`bool`):  Not used for PointsGrid, but
             required for the `Grid` super-class.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Not used for PointsGrid, but

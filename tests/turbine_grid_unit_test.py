@@ -50,9 +50,18 @@ def test_set_grid(turbine_grid_fixture):
     # then, search for any elements that are true and negate the results
     # if an element is zero, the not will return true
     # if an element is non-zero, the not will return false
-    np.testing.assert_array_equal(turbine_grid_fixture.x_sorted[0, 0], expected_x_grid)
-    np.testing.assert_array_equal(turbine_grid_fixture.y_sorted[0, 0], expected_y_grid)
-    np.testing.assert_array_equal(turbine_grid_fixture.z_sorted[0, 0], expected_z_grid)
+    np.testing.assert_array_equal(turbine_grid_fixture.x_sorted[0], expected_x_grid)
+    np.testing.assert_array_equal(turbine_grid_fixture.y_sorted[0], expected_y_grid)
+    np.testing.assert_array_equal(turbine_grid_fixture.z_sorted[0], expected_z_grid)
+
+    # These should have the following shape:
+    # (n findex, n turbines, grid resolution, grid resolution)
+    assert np.shape(turbine_grid_fixture.x_sorted) == (4,3,2,2)
+    assert np.shape(turbine_grid_fixture.y_sorted) == (4,3,2,2)
+    assert np.shape(turbine_grid_fixture.z_sorted) == (4,3,2,2)
+    assert np.shape(turbine_grid_fixture.x_sorted_inertial_frame) == (4,3,2,2)
+    assert np.shape(turbine_grid_fixture.y_sorted_inertial_frame) == (4,3,2,2)
+    assert np.shape(turbine_grid_fixture.z_sorted_inertial_frame) == (4,3,2,2)
 
 
 def test_dimensions(turbine_grid_fixture):
@@ -78,8 +87,7 @@ def test_dimensions(turbine_grid_fixture):
 
 def test_dynamic_properties(turbine_grid_fixture):
     assert turbine_grid_fixture.n_turbines == N_TURBINES
-    assert turbine_grid_fixture.n_wind_speeds == N_FINDEX
-    assert turbine_grid_fixture.n_wind_directions == N_FINDEX
+    assert turbine_grid_fixture.n_findex == N_FINDEX
 
     turbine_grid_fixture.turbine_coordinates = np.append(
         turbine_grid_fixture.turbine_coordinates,
@@ -88,8 +96,5 @@ def test_dynamic_properties(turbine_grid_fixture):
     )
     assert turbine_grid_fixture.n_turbines == N_TURBINES + 1
 
-    turbine_grid_fixture.wind_speeds = [*turbine_grid_fixture.wind_speeds, 0.0]
-    assert turbine_grid_fixture.n_wind_speeds == N_WIND_SPEEDS + 1
-
     turbine_grid_fixture.wind_directions = [*turbine_grid_fixture.wind_directions, 0.0]
-    assert turbine_grid_fixture.n_wind_directions == N_WIND_DIRECTIONS + 1
+    assert turbine_grid_fixture.n_findex == N_FINDEX + 1
