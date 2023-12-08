@@ -34,7 +34,7 @@ DESCRIPTION = "A controls-oriented engineering wake model."
 URL = "https://github.com/NREL/FLORIS"
 EMAIL = "rafael.mudafort@nrel.gov"
 AUTHOR = "NREL National Wind Technology Center"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.8.0"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -105,7 +105,7 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
