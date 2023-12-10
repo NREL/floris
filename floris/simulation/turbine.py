@@ -36,51 +36,6 @@ from floris.type_dec import (
 from floris.utilities import cosd
 
 
-def _filter_convert(
-    ix_filter: NDArrayFilter | Iterable[int] | None, sample_arg: NDArrayFloat | NDArrayInt
-) -> NDArrayFloat | None:
-    """This function selects turbine indeces from the given array of turbine properties
-    over the simulation's atmospheric conditions (wind directions / wind speeds).
-    It converts the ix_filter to a standard format of `np.ndarray`s for filtering
-    certain arguments.
-
-    Args:
-        ix_filter (NDArrayFilter | Iterable[int] | None): The indices, or truth
-            array-like object to use for filtering. None implies that all indeces in the
-            sample_arg should be selected.
-        sample_arg (NDArrayFloat | NDArrayInt): Any argument that will be filtered, to be used for
-            creating the shape. This should be of shape:
-            (n wind directions, n wind speeds, n turbines)
-
-    Returns:
-        NDArrayFloat | None: Returns an array of a truth or index list if a list is
-            passed, a truth array if ix_filter is None, or None if ix_filter is None
-            and the `sample_arg` is a single value.
-    """
-    # Check that the ix_filter is either None or an Iterable. Otherwise,
-    # there's nothing we can do with it.
-    if not isinstance(ix_filter, Iterable) and ix_filter is not None:
-        raise TypeError("Expected ix_filter to be an Iterable or None")
-
-    # Check that the sample_arg is a Numpy array. If it isn't, we
-    # can't get its shape.
-    if not isinstance(sample_arg, np.ndarray):
-        raise TypeError("Expected sample_arg to be a float or integer np.ndarray")
-
-    # At this point, the arguments have this type:
-    # ix_filter: Union[Iterable, None]
-    # sample_arg: np.ndarray
-
-    # Return all values in the turbine-dimension
-    # if the index filter is None
-    if ix_filter is None:
-        return np.ones(sample_arg.shape[-1], dtype=bool)
-
-    # Finally, we should have an index filter list of type Iterable,
-    # so cast it to Numpy array and return
-    return np.array(ix_filter)
-
-
 def _rotor_velocity_yaw_correction(
     pP: float,
     yaw_angle: NDArrayFloat,
@@ -178,7 +133,6 @@ def rotor_effective_velocity(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
@@ -219,7 +173,7 @@ def rotor_effective_velocity(
 def power(
     ref_density_cp_ct: float,
     rotor_effective_velocities: NDArrayFloat,
-    power_interp: NDArrayObject,
+    power_interp: dict[str, NDArrayObject],
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -228,10 +182,10 @@ def power(
 
     Args:
         ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
-        rotor_effective_velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The rotor
+        rotor_effective_velocities (NDArrayFloat[wd, ws, turbines]): The rotor
             effective velocities at a turbine.
-        power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function
-            for each turbine.
+        power_interp (dict[str, NDArrayObject[wd, ws, turbines]]): The power interpolation function
+            for each turbine type as a dictionary.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
         ix_filter (NDArrayInt, optional): The boolean array, or
@@ -255,7 +209,6 @@ def power(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, rotor_effective_velocities)
         rotor_effective_velocities = rotor_effective_velocities[:, :, ix_filter]
         turbine_type_map = turbine_type_map[:, :, ix_filter]
 
@@ -329,7 +282,6 @@ def Ct(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
         turbines_off = turbines_off[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
@@ -408,7 +360,7 @@ def axial_induction(
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
-            integer indices (as an aray or iterable) to filter out before calculation.
+            integer indices (as an array or iterable) to filter out before calculation.
             Defaults to None.
 
     Returns:
@@ -440,7 +392,6 @@ def axial_induction(
     )
 
     # Then, process the input arguments as needed for this function
-    ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
@@ -536,9 +487,9 @@ class PowerThrustTable(FromDictMixin):
         ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
         ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
     """
-    power: NDArrayFloat = field(default=[], converter=floris_array_converter)
-    thrust: NDArrayFloat = field(default=[], converter=floris_array_converter)
-    wind_speed: NDArrayFloat = field(default=[], converter=floris_array_converter)
+    power: NDArrayFloat = field(factory=list, converter=floris_array_converter)
+    thrust: NDArrayFloat = field(factory=list, converter=floris_array_converter)
+    wind_speed: NDArrayFloat = field(factory=list, converter=floris_array_converter)
 
     def __attrs_post_init__(self) -> None:
         # Validate the power, thrust, and wind speed inputs.
@@ -640,6 +591,7 @@ class Turbine(BaseClass):
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
     power_thrust_table: PowerThrustTable = field(default=None)
+    correct_cp_ct_for_tilt: bool = field(default=None)
     floating_tilt_table: TiltTable = field(default=None)
     floating_correct_cp_ct_for_tilt: bool = field(default=None)
     power_thrust_data_file: str = field(default=None)
@@ -655,6 +607,7 @@ class Turbine(BaseClass):
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
     tilt_interp: interp1d = field(init=False)
+    fTilt_interp: interp1d = field(init=False)
 
 
     # For the following parameters, use default values if not user-specified

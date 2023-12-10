@@ -14,11 +14,16 @@ from __future__ import annotations
 
 import copy
 from pathlib import Path
-from typing import Any, List
+from typing import (
+    Any,
+    Dict,
+    List,
+)
 
 import attrs
 import numpy as np
 from attrs import define, field
+from scipy.interpolate import interp1d
 
 from floris.simulation import (
     BaseClass,
@@ -35,7 +40,7 @@ from floris.type_dec import (
     NDArrayFloat,
     NDArrayObject,
 )
-from floris.utilities import load_yaml, Vec3
+from floris.utilities import load_yaml
 
 
 default_turbine_library_path = Path(__file__).parents[1] / "turbine_library"
@@ -53,6 +58,18 @@ class Farm(BaseClass):
     Wake, FlowField) and packages everything into the appropriate data
     type. Farm should also be used as an entry point to probe objects
     for generating output.
+
+    Args:
+        layout_x (NDArrayFloat): A sequence of x-axis locations for the turbines that can be
+            converted to a 1-D :py:obj:`numpy.ndarray`.
+        layout_y (NDArrayFloat): A sequence of y-axis locations for the turbines that can be
+            converted to a 1-D :py:obj:`numpy.ndarray`.
+        turbine_type (list[dict | str]): A list of turbine definition dictionaries, or string
+            references to the filename of the turbine type in either the FLORIS-provided turbine
+            library (.../floris/turbine_library/), or a user-provided
+            :py:attr:`turbine_library_path`.
+        turbine_library_path (:obj:`str`): Either an absolute file path to the turbine library, or a
+            path relative to the file that is running the analysis.
     """
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
@@ -64,9 +81,11 @@ class Farm(BaseClass):
     )
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
-    coordinates: List[Vec3] = field(init=False)
-    turbine_fCts: tuple = field(init=False, default=[])
-    turbine_fTilts: list = field(init=False, default=[])
+
+    turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
+    turbine_fCts_sorted: NDArrayFloat = field(init=False, factory=list)
+
+    turbine_fTilts: list = field(init=False, factory=list)
 
     turbines_off: NDArrayBool = field(init=False)
     turbines_off_sorted: NDArrayBool = field(init=False)
@@ -78,28 +97,38 @@ class Farm(BaseClass):
     tilt_angles_sorted: NDArrayFloat = field(init=False)
 
     hub_heights: NDArrayFloat = field(init=False)
-    hub_heights_sorted: NDArrayFloat = field(init=False, default=[])
+    hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    turbine_type_map: NDArrayObject = field(init=False, default=[])
-    turbine_type_map_sorted: NDArrayObject = field(init=False, default=[])
+    turbine_map: List[Turbine | TurbineMultiDimensional] = field(init=False, factory=list)
 
-    rotor_diameters: NDArrayFloat = field(init=False, default=[])
-    rotor_diameters_sorted: NDArrayFloat = field(init=False, default=[])
+    turbine_type_map: NDArrayObject = field(init=False, factory=list)
+    turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
 
-    TSRs: NDArrayFloat = field(init=False, default=[])
-    TSRs_sorted: NDArrayFloat = field(init=False, default=[])
+    turbine_power_interps: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
+    turbine_power_interps_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    pPs: NDArrayFloat = field(init=False, default=[])
-    pPs_sorted: NDArrayFloat = field(init=False, default=[])
+    rotor_diameters: NDArrayFloat = field(init=False, factory=list)
+    rotor_diameters_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    pTs: NDArrayFloat = field(init=False, default=[])
-    pTs_sorted: NDArrayFloat = field(init=False, default=[])
+    TSRs: NDArrayFloat = field(init=False, factory=list)
+    TSRs_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    ref_tilt_cp_cts: NDArrayFloat = field(init=False, default=[])
-    ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, default=[])
+    pPs: NDArrayFloat = field(init=False, factory=list)
+    pPs_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, default=[])
-    correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, default=[])
+    pTs: NDArrayFloat = field(init=False, factory=list)
+    pTs_sorted: NDArrayFloat = field(init=False, factory=list)
+
+    ref_density_cp_cts: NDArrayFloat = field(init=False, factory=list)
+    ref_density_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
+
+    ref_tilt_cp_cts: NDArrayFloat = field(init=False, factory=list)
+    ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
+
+    correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
+    correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, factory=list)
+
+    internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
@@ -132,7 +161,7 @@ class Farm(BaseClass):
                     continue
 
                 # Check if the file exists in the internal and/or external library
-                internal_fn = (default_turbine_library_path / t).with_suffix(".yaml")
+                internal_fn = (self.internal_turbine_library / t).with_suffix(".yaml")
                 external_fn = (self.turbine_library_path / t).with_suffix(".yaml")
                 in_internal = internal_fn.exists()
                 in_external = external_fn.exists()
@@ -257,11 +286,16 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
-            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
-            self.turbine_map = [
-                TurbineMultiDimensional.from_dict(turb) for turb in self.turbine_definitions
-            ]
+        multi_key = "multi_dimensional_cp_ct"
+        if multi_key in self.turbine_definitions[0] and self.turbine_definitions[0][multi_key]:
+            self.turbine_map = []
+            for turb in self.turbine_definitions:
+                _turb = {**turb, **{"turbine_library_path": self.internal_turbine_library}}
+                try:
+                    self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
+                except FileNotFoundError:
+                    _turb["turbine_library_path"] = self.turbine_library_path
+                    self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
         else:
             self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
@@ -283,11 +317,6 @@ class Farm(BaseClass):
 
     def construct_multidim_turbine_power_interps(self):
         self.turbine_power_interps = [turb.power_interp for turb in self.turbine_map]
-
-    def construct_coordinates(self):
-        self.coordinates = np.array([
-            Vec3([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)
-        ])
 
     def expand_farm_properties(
         self,
@@ -457,7 +486,6 @@ class Farm(BaseClass):
             unsorted_indices[:,:,:,0,0],
             axis=2
         )
-        # TODO: do these need to be unsorted? Maybe we should just for completeness...
         self.ref_density_cp_cts = np.take_along_axis(
             self.ref_density_cp_cts_sorted,
             unsorted_indices[:,:,:,0,0],
@@ -489,6 +517,12 @@ class Farm(BaseClass):
             axis=2
         )
         self.state.USED
+
+    @property
+    def coordinates(self):
+        return np.array([
+            np.array([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)
+        ])
 
     @property
     def n_turbines(self):

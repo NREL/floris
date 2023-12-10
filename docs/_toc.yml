@@ -2,11 +2,10 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: intro
+root: index
 parts:
   - caption: Getting Started
     chapters:
-    # - file: intro
     - file: installation
 
   - caption: User Reference
@@ -21,6 +20,8 @@ parts:
   - caption: Theory and Background
     chapters:
     - file: wake_models
+      sections:
+      - file: empirical_gauss_model
     - file: bibliography
 
   - caption: Developer Reference

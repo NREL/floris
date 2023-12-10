@@ -16,7 +16,9 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable
+from pathlib import Path
 
+import attrs
 import numpy as np
 import pandas as pd
 from attrs import define, field
@@ -30,8 +32,8 @@ from floris.simulation import (
     TiltTable,
     Turbine,
 )
-from floris.simulation.turbine import _filter_convert
 from floris.type_dec import (
+    convert_to_path,
     NDArrayBool,
     NDArrayFilter,
     NDArrayFloat,
@@ -77,7 +79,6 @@ def power_multidim(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, rotor_effective_velocities)
         power_interp = power_interp[:, :, ix_filter]
         rotor_effective_velocities = rotor_effective_velocities[:, :, ix_filter]
     # Loop over each turbine to get power for all turbines
@@ -92,6 +93,7 @@ def power_multidim(
 
 def Ct_multidim(
     velocities: NDArrayFloat,
+    turbines_off: NDArrayBool,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
     ref_tilt_cp_ct: NDArrayFloat,
@@ -112,6 +114,7 @@ def Ct_multidim(
     Args:
         velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The velocity field at
             a turbine.
+        turbines_off (NDArrayBool[wd, ws, turbines]): True for turbines shut down.
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
         tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
         ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
@@ -131,6 +134,9 @@ def Ct_multidim(
         NDArrayFloat: Coefficient of thrust for each requested turbine.
     """
 
+    if isinstance(turbines_off, list):
+        turbines_off = np.array(turbines_off)
+
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
@@ -139,8 +145,8 @@ def Ct_multidim(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
+        turbines_off = turbines_off[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
         ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
@@ -173,11 +179,16 @@ def Ct_multidim(
                 thrust_coefficient[i, j, k] = fCt[i, j, k](average_velocities[i, j, k])
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
+
+    # Set effective thrust closed to 0.0 for shut down turbines
+    effective_thrust[turbines_off] = 0.001
+
     return effective_thrust
 
 
 def axial_induction_multidim(
     velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
+    turbines_off: NDArrayBool,
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     tilt_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     ref_tilt_cp_ct: NDArrayFloat,
@@ -195,6 +206,7 @@ def axial_induction_multidim(
     Args:
         velocities (NDArrayFloat): The velocity field at each turbine; should be shape:
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
+        turbines_off (NDArrayBool[wd, ws, turbines]): True for turbines shut down.
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
         tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
         ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
@@ -207,7 +219,7 @@ def axial_induction_multidim(
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
-            integer indices (as an aray or iterable) to filter out before calculation.
+            integer indices (as an array or iterable) to filter out before calculation.
             Defaults to None.
 
     Returns:
@@ -225,6 +237,7 @@ def axial_induction_multidim(
     # Get Ct first before modifying any data
     thrust_coefficient = Ct_multidim(
         velocities,
+        turbines_off,
         yaw_angle,
         tilt_angle,
         ref_tilt_cp_ct,
@@ -238,7 +251,6 @@ def axial_induction_multidim(
     )
 
     # Then, process the input arguments as needed for this function
-    ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
@@ -270,7 +282,7 @@ def multidim_Ct_down_select(
         conditions (dict): The conditions at which to determine which Ct interpolant to use.
 
     Returns:
-        NDArray: The downselected Ct interpolants for the selected conditions.
+        NDArray: The down selected Ct interpolants for the selected conditions.
     """
     downselect_turbine_fCts = np.empty_like(turbine_fCts)
     # Loop over the wind directions, wind speeds, and turbines, finding the Ct interpolant
@@ -307,7 +319,7 @@ def multidim_power_down_select(
         conditions (dict): The conditions at which to determine which Ct interpolant to use.
 
     Returns:
-        NDArray: The downselected power interpolants for the selected conditions.
+        NDArray: The down selected power interpolants for the selected conditions.
     """
     downselect_power_interps = np.empty_like(power_interps)
     # Loop over the wind directions, wind speeds, and turbines, finding the power interpolant
@@ -422,10 +434,27 @@ class TurbineMultiDimensional(Turbine):
             the width/height of the grid of points on the rotor as a ratio of
             the rotor radius.
             Defaults to 0.5.
+        power_thrust_data_file (:py:obj:`str`): The path and name of the file containing the
+            multidimensional power thrust curve. The path may be an absolute location or a relative
+            path to where FLORIS is being run.
+        multi_dimensional_cp_ct (:py:obj:`bool`, optional): Indicates if the turbine definition is
+            single dimensional (False) or multidimensional (True).
+        turbine_library_path (:py:obj:`pathlib.Path`, optional): The
+            :py:attr:`Farm.turbine_library_path` or :py:attr:`Farm.internal_turbine_library_path`,
+            whichever is being used to load turbine definitions.
+            Defaults to the internal turbine library.
     """
-
     power_thrust_data_file: str = field(default=None)
+    power_thrust_data: MultiDimensionalPowerThrustTable = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
+    turbine_library_path: Path = field(
+        default=Path(__file__).parents[1] / "turbine_library",
+        converter=convert_to_path,
+        validator=attrs.validators.instance_of(Path)
+    )
+
+    # Not to be provided by the user
+    condition_keys: list[str] = field(init=False, factory=list)
 
     # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
     # use_points_on_perimeter: bool = bool_attrib()
@@ -447,6 +476,8 @@ class TurbineMultiDimensional(Turbine):
     #     self.use_points_on_perimeter = False
 
     def __attrs_post_init__(self) -> None:
+        # Solidify the data file path and name
+        self.power_thrust_data_file = self.turbine_library_path / self.power_thrust_data_file
 
         # Read in the multi-dimensional data supplied by the user.
         df = pd.read_csv(self.power_thrust_data_file)
@@ -460,6 +491,7 @@ class TurbineMultiDimensional(Turbine):
 
         # Down-select the DataFrame to have just the ws, Cp, and Ct values
         index_col = df.columns.values[:-3]
+        self.condition_keys = index_col.tolist()
         df2 = df.set_index(index_col.tolist())
 
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make

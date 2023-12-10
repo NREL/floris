@@ -30,19 +30,19 @@ REQUIRES_PYTHON = ">=3.8.0"
 REQUIRED = [
     # simulation
     "attrs",
-    "pyyaml",
-    "numexpr",
-    "numpy>=1.20",
-    "scipy>=1.1",
+    "pyyaml~=6.0",
+    "numexpr~=2.0",
+    "numpy~=1.20",
+    "scipy~=1.1",
 
     # tools
-    "matplotlib>=3",
-    "pandas",
-    "shapely",
+    "matplotlib~=3.0",
+    "pandas~=2.0",
+    "shapely~=2.0",
 
     # utilities
-    "coloredlogs>=10.0",
-    "flatten_dict",
+    "coloredlogs~=10.0",
+    "flatten_dict~=0.0",
 ]
 
 # What packages are optional?
@@ -52,8 +52,8 @@ REQUIRED = [
 #   pip install "floris[develop]"       installs developer packages in non-editable install
 EXTRAS = {
     "docs": {
-        "jupyter-book<=0.13.3",
-        "sphinx-book-theme",
+        "jupyter-book==0.14",
+        "sphinx-book-theme==0.4.0rc1",
         "sphinx-autodoc-typehints",
         "sphinxcontrib-autoyaml",
         "sphinxcontrib.mermaid",

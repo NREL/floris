@@ -131,6 +131,7 @@ def test_ct():
     wind_speed = 10.0
     thrust = Ct_multidim(
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
+        turbines_off=np.zeros((1, 1, 1)).astype(bool),
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
@@ -147,6 +148,7 @@ def test_ct():
     # 4 turbines with 3 x 3 grid arrays
     thrusts = Ct_multidim(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
+        turbines_off=np.zeros((3, 4, N_TURBINES)).astype(bool),
         yaw_angle=np.zeros((1, 1, N_TURBINES)),
         tilt_angle=np.ones((1, 1, N_TURBINES)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, N_TURBINES)) * 5.0,
@@ -271,6 +273,7 @@ def test_axial_induction():
     wind_speed = 10.0
     ai = axial_induction_multidim(
         velocities=wind_speed * np.ones((1, 1, 1, 3, 3)),
+        turbines_off=np.zeros((1, 1, 1)).astype(bool),
         yaw_angle=np.zeros((1, 1, 1)),
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
@@ -284,6 +287,7 @@ def test_axial_induction():
     # Multiple turbines with ix filter
     ai = axial_induction_multidim(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 3 x 4 x 4 x 3 x 3
+        turbines_off=np.zeros((3, 4, N_TURBINES)).astype(bool),
         yaw_angle=np.zeros((1, 1, N_TURBINES)),
         tilt_angle=np.ones((1, 1, N_TURBINES)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, N_TURBINES)) * 5.0,

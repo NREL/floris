@@ -13,7 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 
-import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -38,12 +38,13 @@ fi.reinitialize(layout_x=[0], layout_y=[0])
 # Apply wind speeds
 fi.reinitialize(wind_speeds=ws_array)
 
-# Get a list of available turbine models
-turbines = os.listdir('../floris/turbine_library')
-turbines = [t for t in turbines if 'yaml' in t]
-turbines = [t.strip('.yaml') for t in turbines]
-# Remove multi-dimensional Cp/Ct turbine definitions as they require different handling
-turbines = [i for i in turbines if ('multi_dim' not in i)]
+# Get a list of available turbine models provided through FLORIS, and remove
+# multi-dimensional Cp/Ct turbine definitions as they require different handling
+turbines = [
+    t.stem
+    for t in fi.floris.farm.internal_turbine_library.iterdir()
+    if t.suffix == ".yaml" and ("multi_dim" not in t.stem)
+]
 
 # Declare a set of figures for comparing cp and ct across models
 fig_cp_ct, axarr_cp_ct = plt.subplots(2,1,sharex=True,figsize=(10,10))

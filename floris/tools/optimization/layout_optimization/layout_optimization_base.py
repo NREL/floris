@@ -20,10 +20,10 @@ from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
 
-from ....logging_manager import LoggerBase
+from ....logging_manager import LoggingManager
 
 
-class LayoutOptimization(LoggerBase):
+class LayoutOptimization(LoggingManager):
     def __init__(self, fi, boundaries, min_dist=None, freq=None, enable_geometric_yaw=False):
         self.fi = fi.copy()
         self.boundaries = boundaries

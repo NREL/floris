@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import norm
 
-from ...visualization import visualize_cut_plane
+from floris.tools.visualization import visualize_cut_plane
 
 
 class Yaw:

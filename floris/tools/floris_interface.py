@@ -14,13 +14,13 @@
 
 from __future__ import annotations
 
+import inspect
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
 from floris.simulation.turbine import (
     average_velocity,
@@ -34,7 +34,7 @@ from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayBool, NDArrayFloat
 
 
-class FlorisInterface(LoggerBase):
+class FlorisInterface(LoggingManager):
     """
     FlorisInterface provides a high-level user interface to many of the
     underlying methods within the FLORIS framework. It is meant to act as a
@@ -42,7 +42,7 @@ class FlorisInterface(LoggerBase):
     methods on objects within FLORIS.
 
     Args:
-        configuration (:py:obj:`dict`): The Floris configuration dictarionary or YAML file.
+        configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.
             The configuration should have the following inputs specified.
                 - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
@@ -55,7 +55,16 @@ class FlorisInterface(LoggerBase):
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
-            self.floris = Floris.from_file(self.configuration)
+            try:
+                self.floris = Floris.from_file(self.configuration)
+            except FileNotFoundError:
+                # If the file cannot be found, then attempt the configuration path relative to the
+                # file location from which FlorisInterface was attempted to be run. If successful,
+                # update self.configuration to an absolute, working file path and name.
+                base_fn = Path(inspect.stack()[-1].filename).resolve().parent
+                config = (base_fn / self.configuration).resolve()
+                self.floris = Floris.from_file(config)
+                self.configuration = config
 
         elif isinstance(self.configuration, dict):
             self.floris = Floris.from_dict(self.configuration)
@@ -625,7 +634,7 @@ class FlorisInterface(LoggerBase):
             )
 
     def get_turbine_powers(self) -> NDArrayFloat:
-        """Calculates the power at each turbine in the windfarm.
+        """Calculates the power at each turbine in the wind farm.
 
         Returns:
             NDArrayFloat: Powers at each turbine.
@@ -655,7 +664,7 @@ class FlorisInterface(LoggerBase):
         return turbine_powers
 
     def get_turbine_powers_multidim(self) -> NDArrayFloat:
-        """Calculates the power at each turbine in the windfarm
+        """Calculates the power at each turbine in the wind farm
         when using multi-dimensional Cp/Ct turbine definitions.
 
         Returns:
@@ -1066,7 +1075,7 @@ class FlorisInterface(LoggerBase):
             np.array: lists of x, y, and (optionally) z coordinates of
                 each turbine
         """
-        xcoords, ycoords, zcoords = np.array([c.elements for c in self.floris.farm.coordinates]).T
+        xcoords, ycoords, zcoords = self.floris.farm.coordinates.T
         if z:
             return xcoords, ycoords, zcoords
         else:

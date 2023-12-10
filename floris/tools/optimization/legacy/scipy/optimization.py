@@ -12,14 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
-import matplotlib.pyplot as plt
 import numpy as np
-
-
-try:
-    from mpi4py.futures import MPIPoolExecutor
-except ImportError:
-    pass
 
 
 class Optimization:

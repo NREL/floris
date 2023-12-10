@@ -65,8 +65,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             :style: unsrt
             :filter: docname in docnames
     """
-    wake_expansion_rates: list = field(default=[0.023, 0.008])
-    breakpoints_D: list = field(default=[10])
+    wake_expansion_rates: list = field(factory=lambda: [0.023, 0.008])
+    breakpoints_D: list = field(factory=lambda: [10])
     sigma_0_D: float = field(default=0.28)
     smoothing_length_D: float = field(default=2.0)
     mixing_gain_velocity: float = field(default=2.0)
@@ -227,7 +227,7 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
                 sigma_y0,
                 sigma_z0
             )
-            # Normalize to match end of acuator disk model tube
+            # Normalize to match end of actuator disk model tube
             C_mirr = C_mirr / (8 * self.sigma_0_D**2)
 
             # ASSUME sum-of-squares superposition for the real and mirror wakes

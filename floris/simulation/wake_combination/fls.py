@@ -29,7 +29,7 @@ class FLS(BaseModel):
     def function(self, wake_field: np.ndarray, velocity_field: np.ndarray):
         """
         Combines the base flow field with the velocity deficits
-        using freestream linear superpostion. In other words, the wake
+        using freestream linear superposition. In other words, the wake
         field and base fields are simply added together.
 
         Args:
