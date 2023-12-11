@@ -456,39 +456,6 @@ def average_velocity(
     else:
         raise ValueError("Incorrect method given.")
 
-
-@define
-class TiltTable(FromDictMixin):
-    """Helper class to convert the dictionary and list-based inputs to a object of arrays.
-
-    Args:
-        tilt (NDArrayFloat): The tilt angle at a given wind speed.
-        wind_speeds (NDArrayFloat): Wind speed values, m/s.
-
-    Raises:
-        ValueError: Raised if tilt and wind_speeds are not all 1-d array-like shapes.
-        ValueError: Raised if tilt and wind_speeds don't have the same number of values.
-    """
-    tilt: NDArrayFloat = field(converter=floris_array_converter)
-    wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
-
-    def __attrs_post_init__(self) -> None:
-        # Validate the power, thrust, and wind speed inputs.
-
-        inputs = (self.tilt, self.wind_speeds)
-
-        if any(el.ndim > 1 for el in inputs):
-            raise ValueError("tilt and wind_speed inputs must be 1-D.")
-
-        if len({self.tilt.size, self.wind_speeds.size}) > 1:
-            raise ValueError("tilt and wind_speed tables must be the same size.")
-
-        # Remove any duplicate wind speed entries
-        _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
-        self.tilt = self.tilt[duplicate_filter]
-        self.wind_speeds = self.wind_speeds[duplicate_filter]
-
-
 @define
 class Turbine(BaseClass):
     """
@@ -517,11 +484,16 @@ class Turbine(BaseClass):
                 }
         correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt.
             Optional, defaults to False.
-        floating_tilt_table (TiltTable): A table containing tilt values for a floating turbine.
-            Required if `correct_cp_ct_for_tilt = True`, defaults to False.
         floating_correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct
             for tilt for a floating turbine.
             Optional, defaults to False.
+        floating_tilt_table (dict[str, float]): Look up table of tilt angles at a series of
+            wind speeds. The dictionary must have the following keys with equal length values:
+                {
+                    "wind_speeds": List[float],
+                    "tilt": List[float],
+                }
+            Required if `correct_cp_ct_for_tilt = True`. Defaults to None.
         power_thrust_data_file (str): The path to the file containing power and thrust data.
         multi_dimensional_cp_ct (bool): A flag to indicate whether Cp and Ct are multi-dimensional.
     """
@@ -538,8 +510,11 @@ class Turbine(BaseClass):
     power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
 
     correct_cp_ct_for_tilt: bool = field(default=False)
-    floating_tilt_table: TiltTable = field(default=None)
     floating_correct_cp_ct_for_tilt: bool = field(default=None)
+    floating_tilt_table: dict[str, NDArrayFloat] = field(
+        default=None,
+        converter=floris_numeric_dict_converter
+    )
     power_thrust_data_file: str = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
 
@@ -558,7 +533,11 @@ class Turbine(BaseClass):
         # self.power = self.power[duplicate_filter]
         # self.thrust = self.thrust[duplicate_filter]
         # self.wind_speed = self.wind_speed[duplicate_filter]
-        
+        # Remove any duplicate wind speed entries
+        # _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
+        # self.tilt = self.tilt[duplicate_filter]
+        # self.wind_speeds = self.wind_speeds[duplicate_filter]
+
         wind_speeds = self.power_thrust_table["wind_speed"]
         cp_interp = interp1d(
             wind_speeds,
@@ -599,20 +578,19 @@ class Turbine(BaseClass):
         # fill_value currently set to apply the min or max tilt angles if outside
         # of the interpolation range.
         if self.floating_tilt_table is not None:
-            self.floating_tilt_table = TiltTable.from_dict(self.floating_tilt_table)
             self.tilt_interp = interp1d(
-                self.floating_tilt_table.wind_speeds,
-                self.floating_tilt_table.tilt,
-                fill_value=(0.0, self.floating_tilt_table.tilt[-1]),
+                self.floating_tilt_table["wind_speeds"],
+                self.floating_tilt_table["tilt"],
+                fill_value=(0.0, self.floating_tilt_table["tilt"][-1]),
                 bounds_error=False,
             )
             self.correct_cp_ct_for_tilt = self.floating_correct_cp_ct_for_tilt
 
     @power_thrust_table.validator
-    def check_power_thrust_table(self, instance: attrs.Attribute, value: float) -> None:
+    def check_power_thrust_table(self, instance: attrs.Attribute, value: dict) -> None:
         """
         Verify that the power and thrust tables are given with arrays of equal length
-        to the wind speed array and all elements of type float.
+        to the wind speed array.
         """
         if len(value.keys()) != 3 or set(value.keys()) != set(("wind_speed", "power", "thrust")):
             raise ValueError(
@@ -658,19 +636,30 @@ class Turbine(BaseClass):
         self.rotor_radius = (value / np.pi) ** 0.5
 
     @floating_tilt_table.validator
-    def check_floating_tilt_table(self, instance: attrs.Attribute, value: TiltTable) -> None:
+    def check_floating_tilt_table(self, instance: attrs.Attribute, value: dict | None) -> None:
         """
-        Check that if the tile/wind_speed table is defined, that the tilt and
-        wind_speed arrays are the same length so that the interpolation will work.
+        If the tilt / wind_speed table is defined, verify that the tilt and
+        wind_speed arrays are the same length.
         """
-        if self.floating_tilt_table is not None:
-            if (
-                len(self.floating_tilt_table["tilt"])
-                != len(self.floating_tilt_table["wind_speeds"])
-            ):
-                raise ValueError(
-                    "tilt and wind_speeds must be the same length for the interpolation to work."
-                )
+        if value is None:
+            return
+
+        if len(value.keys()) != 2 or set(value.keys()) != set(("wind_speed", "tilt")):
+            raise ValueError(
+                """
+                floating_tilt_table dictionary must have the form:
+                    {
+                        "wind_speed": List[float],
+                        "tilt": List[float],
+                    }
+                """
+            )
+
+        if any(e.ndim > 1 for e in (value["tilt"], value["wind_speed"])):
+            raise ValueError("tilt and wind_speed inputs must be 1-D.")
+
+        if len( set((value["tilt"].size, value["wind_speed"].size)) ) > 1:
+            raise ValueError("tilt and wind_speed inputs must be the same size.")
 
     @floating_correct_cp_ct_for_tilt.validator
     def check_for_cp_ct_correct_flag_if_floating(

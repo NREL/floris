@@ -29,7 +29,6 @@ from scipy.interpolate import interp1d
 from floris.simulation import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
-    TiltTable,
     Turbine,
 )
 from floris.type_dec import (
