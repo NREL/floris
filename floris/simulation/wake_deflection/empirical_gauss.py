@@ -145,8 +145,8 @@ def yaw_added_wake_mixing(
     yaw_added_mixing_gain
 ):
     return (
-        axial_induction_i[:,:,:,0,0]
+        axial_induction_i[:,:,0,0]
         * yaw_added_mixing_gain
-        * (1 - cosd(yaw_angle_i[:,:,:,0,0]))
+        * (1 - cosd(yaw_angle_i[:,:,0,0]))
         / downstream_distance_D_i**2
     )

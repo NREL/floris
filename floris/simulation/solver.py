@@ -1188,28 +1188,33 @@ def empirical_gauss_solver(
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
-    x_locs = np.mean(grid.x_sorted, axis=(3, 4))[:,:,:,None]
-    downstream_distance_D = x_locs - np.transpose(x_locs, axes=(0,1,3,2))
+    x_locs = np.mean(grid.x_sorted, axis=(2, 3))[:,:,None]
+    downstream_distance_D = x_locs - np.transpose(x_locs, axes=(0,2,1))
     downstream_distance_D = downstream_distance_D / \
-        np.repeat(farm.rotor_diameters_sorted[:,:,:,None], grid.n_turbines, axis=-1)
+        np.repeat(farm.rotor_diameters_sorted[:,:,None], grid.n_turbines, axis=-1)
     downstream_distance_D = np.maximum(downstream_distance_D, 0.1) # For ease
-    mixing_factor = np.zeros_like(downstream_distance_D)
-    mixing_factor[:,:,:,:] = model_manager.turbulence_model.atmospheric_ti_gain*\
-        flow_field.turbulence_intensity*np.eye(grid.n_turbines)
+    # Initialize the mixing factor model using TI if specified
+    initial_mixing_factor = model_manager.turbulence_model.atmospheric_ti_gain*\
+            flow_field.turbulence_intensity*np.eye(grid.n_turbines)
+    mixing_factor = np.repeat(
+        initial_mixing_factor[None,:,:],
+        flow_field.n_findex,
+        axis=0
+    )
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
 
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, :, i:i+1], axis=(3, 4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, :, i:i+1], axis=(3, 4))
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
+        x_i = np.mean(grid.x_sorted[:, i:i+1], axis=(2, 3))
+        x_i = x_i[:, :, None, None]
+        y_i = np.mean(grid.y_sorted[:, i:i+1], axis=(2, 3))
+        y_i = y_i[:, :, None, None]
+        z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
+        z_i = z_i[:, :, None, None]
 
-        flow_field.u_sorted[:, :, i:i+1]
-        flow_field.v_sorted[:, :, i:i+1]
+        flow_field.u_sorted[:, i:i+1]
+        flow_field.v_sorted[:, i:i+1]
 
         ct_i = Ct(
             velocities=flow_field.u_sorted,
@@ -1226,7 +1231,7 @@ def empirical_gauss_solver(
         )
         # Since we are filtering for the i'th turbine in the Ct function,
         # get the first index here (0:1)
-        ct_i = ct_i[:, :, 0:1, None, None]
+        ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
@@ -1242,13 +1247,14 @@ def empirical_gauss_solver(
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
-        axial_induction_i = axial_induction_i[:, :, 0:1, None, None]
-        yaw_angle_i = farm.yaw_angles_sorted[:, :, i:i+1, None, None]
-        hub_height_i = farm.hub_heights_sorted[: ,:, i:i+1, None, None]
-        rotor_diameter_i = farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
+        axial_induction_i = axial_induction_i[:, 0:1, None, None]
+        yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
+        hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
+        rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
 
-        effective_yaw_i = np.zeros_like(yaw_angle_i)
-        effective_yaw_i += yaw_angle_i
+        # Secondary steering not currently implemented in EmGauss model
+        # effective_yaw_i = np.zeros_like(yaw_angle_i)
+        # effective_yaw_i += yaw_angle_i
 
         average_velocities = average_velocity(
             flow_field.u_sorted,
@@ -1256,7 +1262,7 @@ def empirical_gauss_solver(
             cubature_weights=grid.cubature_weights
         )
         tilt_angle_i = farm.calculate_tilt_for_eff_velocities(average_velocities)
-        tilt_angle_i = tilt_angle_i[:, :, i:i+1, None, None]
+        tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError(
@@ -1268,7 +1274,7 @@ def empirical_gauss_solver(
 
         if model_manager.enable_yaw_added_recovery:
             # Influence of yawing on turbine's own wake
-            mixing_factor[:, :, i:i+1, i] += \
+            mixing_factor[:, i:i+1, i] += \
                 yaw_added_wake_mixing(
                     axial_induction_i,
                     yaw_angle_i,
@@ -1278,8 +1284,8 @@ def empirical_gauss_solver(
 
         # Extract total wake induced mixing for turbine i
         mixing_i = np.linalg.norm(
-            mixing_factor[:, :, i:i+1, :, None],
-            ord=2, axis=3, keepdims=True
+            mixing_factor[:, i:i+1, :, None],
+            ord=2, axis=2, keepdims=True
         )
 
         # Model calculations
@@ -1287,7 +1293,7 @@ def empirical_gauss_solver(
         deflection_field_y, deflection_field_z = model_manager.deflection_model.function(
             x_i,
             y_i,
-            effective_yaw_i,
+            yaw_angle_i,
             tilt_angle_i,
             mixing_i,
             ct_i,
@@ -1318,20 +1324,20 @@ def empirical_gauss_solver(
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
-        area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(3, 4))\
+        area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3))\
             / (grid.grid_resolution * grid.grid_resolution)
 
         # Compute wake induced mixing factor
-        mixing_factor[:,:,:,i] += \
+        mixing_factor[:,:,i] += \
             area_overlap * model_manager.turbulence_model.function(
-                axial_induction_i, downstream_distance_D[:,:,:,i]
+                axial_induction_i, downstream_distance_D[:,:,i]
             )
         if model_manager.enable_yaw_added_recovery:
-            mixing_factor[:,:,:,i] += \
+            mixing_factor[:,:,i] += \
                 area_overlap * yaw_added_wake_mixing(
                 axial_induction_i,
                 yaw_angle_i,
-                downstream_distance_D[:,:,:,i],
+                downstream_distance_D[:,:,i],
                 model_manager.deflection_model.yaw_added_mixing_gain
             )
 

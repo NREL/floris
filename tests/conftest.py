@@ -54,17 +54,19 @@ def print_test_values(
     average_velocities: list,
     thrusts: list,
     powers: list,
-    axial_inductions: list
+    axial_inductions: list,
+    max_findex_print: int | None=None
 ):
-    n_wd, n_ws, n_turb = np.shape(average_velocities)
-    i=0
-    for j in range(n_ws):
+    n_findex, n_turb = np.shape(average_velocities)
+    if max_findex_print is not None:
+        n_findex = min(n_findex, max_findex_print)
+    for i in range(n_findex):
         print("[")
-        for k in range(n_turb):
+        for j in range(n_turb):
             print(
                 "    [{:.7f}, {:.7f}, {:.7f}, {:.7f}],".format(
-                    average_velocities[i,j,k], thrusts[i,j,k], powers[i,j,k],
-                    axial_inductions[i,j,k]
+                    average_velocities[i,j], thrusts[i,j], powers[i,j],
+                    axial_inductions[i,j]
                 )
             )
         print("],")

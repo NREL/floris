@@ -170,7 +170,7 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             self.mixing_gain_velocity * mixing_i,
         )
         sigma_y[upstream_mask] = \
-            np.tile(sigma_y0, np.shape(sigma_y)[2:])[upstream_mask]
+            np.tile(sigma_y0, np.shape(sigma_y)[1:])[upstream_mask]
 
         sigma_z = empirical_gauss_model_wake_width(
             x - x_i,
@@ -181,7 +181,7 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
             self.mixing_gain_velocity * mixing_i,
         )
         sigma_z[upstream_mask] = \
-            np.tile(sigma_z0, np.shape(sigma_z)[2:])[upstream_mask]
+            np.tile(sigma_z0, np.shape(sigma_z)[1:])[upstream_mask]
 
         # 'Standard' wake component
         r, C = rCalt(
