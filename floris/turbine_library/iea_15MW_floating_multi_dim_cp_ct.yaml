@@ -26,4 +26,4 @@ floating_tilt_table:
     - 12.0
     - 14.0
     - 16.0
-floating_correct_cp_ct_for_tilt: True
+correct_cp_ct_for_tilt: True

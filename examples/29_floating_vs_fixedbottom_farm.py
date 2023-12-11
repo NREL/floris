@@ -32,7 +32,7 @@ to the respective wake model.
 The value of the parameter ref_tilt_cp_ct is the value of tilt at which the
 ct/cp curves have been defined.
 
-With floating_correct_cp_ct_for_tilt True, the difference between the current
+With `correct_cp_ct_for_tilt` True, the difference between the current
 tilt as interpolated from the floating tilt table is used to scale the turbine
 power and thrust.
 

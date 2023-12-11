@@ -482,10 +482,8 @@ class Turbine(BaseClass):
                     "power": List[float],
                     "thrust": List[float],
                 }
-        correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt.
-            Optional, defaults to False.
-        floating_correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct
-            for tilt for a floating turbine.
+        correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt
+            usually for a floating turbine.
             Optional, defaults to False.
         floating_tilt_table (dict[str, float]): Look up table of tilt angles at a series of
             wind speeds. The dictionary must have the following keys with equal length values:
@@ -510,7 +508,6 @@ class Turbine(BaseClass):
     power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
 
     correct_cp_ct_for_tilt: bool = field(default=False)
-    floating_correct_cp_ct_for_tilt: bool = field(default=None)
     floating_tilt_table: dict[str, NDArrayFloat] = field(
         default=None,
         converter=floris_numeric_dict_converter
@@ -577,14 +574,13 @@ class Turbine(BaseClass):
         # If defined, create a tilt interpolation function for floating turbines.
         # fill_value currently set to apply the min or max tilt angles if outside
         # of the interpolation range.
-        if self.floating_tilt_table is not None:
+        if self.correct_cp_ct_for_tilt is not None:
             self.tilt_interp = interp1d(
                 self.floating_tilt_table["wind_speeds"],
                 self.floating_tilt_table["tilt"],
                 fill_value=(0.0, self.floating_tilt_table["tilt"][-1]),
                 bounds_error=False,
             )
-            self.correct_cp_ct_for_tilt = self.floating_correct_cp_ct_for_tilt
 
     @power_thrust_table.validator
     def check_power_thrust_table(self, instance: attrs.Attribute, value: dict) -> None:
@@ -661,7 +657,7 @@ class Turbine(BaseClass):
         if len( set((value["tilt"].size, value["wind_speed"].size)) ) > 1:
             raise ValueError("tilt and wind_speed inputs must be the same size.")
 
-    @floating_correct_cp_ct_for_tilt.validator
+    @correct_cp_ct_for_tilt.validator
     def check_for_cp_ct_correct_flag_if_floating(
         self,
         instance: attrs.Attribute,
@@ -671,9 +667,7 @@ class Turbine(BaseClass):
         Check that the boolean flag exists for correcting Cp/Ct for tilt
         if a tile/wind_speed table is also defined.
         """
-        if self.floating_tilt_table is not None:
-            if self.floating_correct_cp_ct_for_tilt is None:
-                raise ValueError(
-                    "If a floating tilt/wind_speed table is defined, the boolean flag"
-                    "floating_correct_cp_ct_for_tilt must also be defined."
-                )
+        if self.correct_cp_ct_for_tilt and self.floating_tilt_table is None:
+            raise ValueError(
+                "To enable the Cp and Ct tilt correction, a tilt table must be given."
+            )

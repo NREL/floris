@@ -349,7 +349,7 @@ class SampleInputs:
                 50.0,
             ],
         }
-        self.turbine_floating["floating_correct_cp_ct_for_tilt"] = True
+        self.turbine_floating["correct_cp_ct_for_tilt"] = True
 
         self.turbine_multi_dim = copy.deepcopy(self.turbine)
         del self.turbine_multi_dim['power_thrust_table']

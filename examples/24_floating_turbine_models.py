@@ -29,10 +29,10 @@ to the respective wake model.
 The value of the parameter ref_tilt_cp_ct is the value of tilt at which the ct/cp curves
 have been defined.
 
-If floating_correct_cp_ct_for_tilt is True, then the difference between the current tilt as
+If `correct_cp_ct_for_tilt` is True, then the difference between the current tilt as
 interpolated from the floating tilt table is used to scale the turbine power and thrust.
 
-If floating_correct_cp_ct_for_tilt is False, then it is assumed that the Cp/Ct tables provided
+If `correct_cp_ct_for_tilt` is False, then it is assumed that the Cp/Ct tables provided
 already account for the variation in tilt with wind speed (for example they were computed from
 a turbine simulator with tilt degree-of-freedom enabled and the floating platform simulated),
 and no correction is made.
