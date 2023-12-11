@@ -30,6 +30,7 @@ from attrs import (
     define,
     field,
     fields,
+    setters,
 )
 
 from floris.logging_manager import LoggingManager
@@ -66,12 +67,7 @@ class BaseModel(BaseClass):
     """
 
     # This is a numerical epsilon to prevent divide by zeros
-    NUM_EPS: Final[float] = field(init=False, default=0.001)
-
-    @NUM_EPS.validator
-    def lock_num_eps(self, attribute: Attribute, value: Any) -> None:
-        if value != 0.001:
-            raise ValueError("NUM_EPS should remain a fixed value. Don't change this!")
+    NUM_EPS: Final[float] = field(init=False, default=0.001, on_setattr=setters.frozen)
 
     @abstractmethod
     def prepare_function() -> dict:
