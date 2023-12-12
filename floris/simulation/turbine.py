@@ -487,10 +487,7 @@ class Turbine(BaseClass):
                     "tilt": List[float],
                 }
             Required if `correct_cp_ct_for_tilt = True`. Defaults to None.
-        multi_dimensional_cp_ct (bool): A flag to indicate whether Cp and Ct are multi-dimensional.
-        power_thrust_data_file (str): The path to the file containing power and thrust data.
     """
-
     turbine_type: str = field()
     rotor_diameter: float = field()
     hub_height: float = field()
@@ -504,6 +501,11 @@ class Turbine(BaseClass):
 
     correct_cp_ct_for_tilt: bool = field(default=False)
     floating_tilt_table: dict[str, NDArrayFloat] | None = field(default=None)
+
+    # Even though this Turbine class does not support the multidimensional features as they
+    # are implemented in TurbineMultiDim, providing the following two attributes here allows
+    # the turbine data inputs to keep the multidimensional Cp and Ct curve but switch them off
+    # with multi_dimensional_cp_ct = False
     multi_dimensional_cp_ct: bool = field(default=False)
     power_thrust_data_file: str = field(default=None)
 
@@ -515,6 +517,13 @@ class Turbine(BaseClass):
     tilt_interp: interp1d = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
+        self._initialize_power_thrust_interpolation()
+        self.__post_init__()
+
+    def __post_init__(self) -> None:
+        self._initialize_tilt_interpolation()
+
+    def _initialize_power_thrust_interpolation(self) -> None:
         # TODO This validation for the power thrust tables should go in the turbine library
         # since it's preprocessing
         # Remove any duplicate wind speed entries
@@ -522,10 +531,6 @@ class Turbine(BaseClass):
         # self.power = self.power[duplicate_filter]
         # self.thrust = self.thrust[duplicate_filter]
         # self.wind_speed = self.wind_speed[duplicate_filter]
-        # Remove any duplicate wind speed entries
-        # _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
-        # self.tilt = self.tilt[duplicate_filter]
-        # self.wind_speeds = self.wind_speeds[duplicate_filter]
 
         wind_speeds = self.power_thrust_table["wind_speed"]
         cp_interp = interp1d(
@@ -562,6 +567,13 @@ class Turbine(BaseClass):
             fill_value=(0.0001, 0.9999),
             bounds_error=False,
         )
+
+    def _initialize_tilt_interpolation(self) -> None:
+        # TODO:
+        # Remove any duplicate wind speed entries
+        # _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
+        # self.tilt = self.tilt[duplicate_filter]
+        # self.wind_speeds = self.wind_speeds[duplicate_filter]
 
         if self.floating_tilt_table is not None:
             self.floating_tilt_table = floris_numeric_dict_converter(self.floating_tilt_table)
