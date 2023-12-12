@@ -20,7 +20,7 @@ from floris.tools.layout_functions import visualize_layout
 
 
 """
-This example demonstrates the impact of floating on turbine power and thurst (not wake behavior).
+This example demonstrates the impact of floating on turbine power and thrust (not wake behavior).
 A floating turbine in FLORIS is defined by including a `floating_tilt_table` in the turbine
 input yaml which sets the steady tilt angle of the turbine based on wind speed.  This tilt angle
 is computed for each turbine based on effective velocity.  This tilt angle is then passed on
