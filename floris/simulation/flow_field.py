@@ -29,11 +29,13 @@ from floris.simulation import (
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,
+    validate_3DArray_shape,
+    ValidateMixin,
 )
 
 
 @define
-class FlowField(BaseClass):
+class FlowField(BaseClass, ValidateMixin):
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_veer: float = field(converter=float)

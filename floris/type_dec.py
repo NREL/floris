@@ -40,7 +40,6 @@ NDArrayInt = npt.NDArray[np.int_]
 NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 NDArrayBool = npt.NDArray[np.bool_]
-NDArray = NDArrayFloat | NDArrayInt | NDArrayFilter | NDArrayObject | NDArrayBool
 
 
 ### Custom callables for attrs objects and functions
@@ -145,23 +144,48 @@ def convert_to_path(fn: str | Path) -> Path:
     raise TypeError(f"The passed input: {fn} could not be converted to a pathlib.Path object")
 
 
-def validate_3DArray_shape(instance, attribute: Attribute, value: NDArray) -> None:
-    if not isinstance(value, NDArray):
+def validate_3DArray_shape(instance, attribute: Attribute, value: np.ndarray) -> None:
+    """Validator that checks if the array's shape is N wind directions x N wind speeds x N turbines.
+
+    Args:
+        instance (cls): The class instance.
+        attribute (Attribute): The ``attrs.Attribute`` data.
+        value (np.ndarray): The input or updated NumPy array.
+
+    Raises:
+        TypeError: raised if :py:attr:`value` is not a NumPy array.
+        ValueError: raised if the shape of :py:attr:`value` is not
+            N wind directions x N wind speeds x N turbines.
+    """
+    if not isinstance(value, np.ndarray):
         raise TypeError(f"{attribute.name} is not a valid NumPy array type.")
 
     shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines)
     if value.shape != shape:
-        raise ValueError(f"{attribute.name} should have shape: {shape}")
+        raise ValueError(f"{attribute.name} should have shape: {shape}; not shape: {value.shape}")
 
 
-def validate_5DArray_shape(instance, attribute: Attribute, value: NDArray) -> None:
-    if not isinstance(value, NDArray):
+def validate_5DArray_shape(instance, attribute: Attribute, value: np.ndarray) -> None:
+    """Validator that checks if the array's shape is
+    N wind directions x N wind speeds x N turbines x N grid points x N grid points.
+
+    Args:
+        instance (cls): The class instance.
+        attribute (Attribute): The ``attrs.Attribute`` data.
+        value (np.ndarray): The input or updated NumPy array.
+
+    Raises:
+        TypeError: raised if :py:attr:`value` is not a NumPy array.
+        ValueError: raised if the shape of :py:attr:`value` is not
+            N wind directions x N wind speeds x N turbines x N grid points x N grid points.
+    """
+    if not isinstance(value, np.ndarray):
         raise TypeError(f"{attribute.name} is not a valid NumPy array type.")
 
     grid = instance.grid_resolution
     shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines, grid, grid)
     if value.shape != shape:
-        raise ValueError(f"{attribute.name} should have shape: {shape}")
+        raise ValueError(f"{attribute.name} should have shape: {shape}; not shape: {value.shape}")
 
 @define
 class FromDictMixin:

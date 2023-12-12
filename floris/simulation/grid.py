@@ -28,6 +28,8 @@ from floris.type_dec import (
     floris_float_type,
     NDArrayFloat,
     NDArrayInt,
+    validate_5DArray_shape,
+    ValidateMixin,
 )
 from floris.utilities import (
     reverse_rotate_coordinates_rel_west,
@@ -36,7 +38,7 @@ from floris.utilities import (
 
 
 @define
-class Grid(ABC, BaseClass):
+class Grid(ABC, BaseClass, ValidateMixin):
     """
     Grid should establish domain bounds based on given criteria,
     and develop three arrays to contain components of the grid
@@ -77,12 +79,12 @@ class Grid(ABC, BaseClass):
     n_turbines: int = field(init=False)
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
-    x_sorted: NDArrayFloat = field(init=False)
-    y_sorted: NDArrayFloat = field(init=False)
-    z_sorted: NDArrayFloat = field(init=False)
-    x_sorted_inertial_frame: NDArrayFloat = field(init=False)
-    y_sorted_inertial_frame: NDArrayFloat = field(init=False)
-    z_sorted_inertial_frame: NDArrayFloat = field(init=False)
+    x_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
+    y_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
+    z_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
+    x_sorted_inertial_frame: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
+    y_sorted_inertial_frame: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
+    z_sorted_inertial_frame: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
     @turbine_coordinates.validator
