@@ -30,12 +30,11 @@ from floris.type_dec import (
     array_5D_field,
     floris_array_converter,
     NDArrayFloat,
-    ValidateMixin,
 )
 
 
 @define
-class FlowField(BaseClass, ValidateMixin):
+class FlowField(BaseClass):
     wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     wind_veer: float = field(converter=float)
@@ -47,8 +46,8 @@ class FlowField(BaseClass, ValidateMixin):
     heterogenous_inflow_config: dict = field(default=None)
     multidim_conditions: dict = field(default=None)
 
-    n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
+    n_wind_speeds: int = field(init=False)
     n_turbines: int = field(init=False)
     grid_resolution: int = field(init=False)
 

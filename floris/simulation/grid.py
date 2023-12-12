@@ -30,7 +30,6 @@ from floris.type_dec import (
     NDArrayInt,
     validate_3DArray_shape,
     validate_5DArray_shape,
-    ValidateMixin,
 )
 from floris.utilities import (
     reverse_rotate_coordinates_rel_west,
@@ -39,7 +38,7 @@ from floris.utilities import (
 
 
 @define
-class Grid(ABC, BaseClass, ValidateMixin):
+class Grid(ABC, BaseClass):
     """
     Grid should establish domain bounds based on given criteria,
     and develop three arrays to contain components of the grid
@@ -77,9 +76,9 @@ class Grid(ABC, BaseClass, ValidateMixin):
     time_series: bool = field()
     grid_resolution: int | Iterable = field()
 
-    n_turbines: int = field(init=False)
-    n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
+    n_wind_speeds: int = field(init=False)
+    n_turbines: int = field(init=False)
     x_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
     y_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
     z_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)

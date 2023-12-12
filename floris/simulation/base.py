@@ -33,7 +33,7 @@ from attrs import (
 )
 
 from floris.logging_manager import LoggingManager
-from floris.type_dec import FromDictMixin
+from floris.type_dec import FromDictMixin, ValidateMixin
 
 
 class State(Enum):
@@ -43,7 +43,7 @@ class State(Enum):
 
 
 @define
-class BaseClass(FromDictMixin):
+class BaseClass(FromDictMixin, ValidateMixin):
     """
     BaseClass object class. This class does the logging and MixIn class inheritance.
     """
