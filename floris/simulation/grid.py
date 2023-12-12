@@ -157,8 +157,12 @@ class TurbineGrid(Grid):
     sorted_indices: NDArrayInt = field(init=False, validator=validate_5DArray_shape)
     sorted_coord_indices: NDArrayInt = field(init=False, validator=validate_3DArray_shape)
     unsorted_indices: NDArrayInt = field(init=False, validator=validate_5DArray_shape)
-    x_center_of_rotation: NDArrayFloat = field(init=False)  # TODO: this is a numpy float
-    y_center_of_rotation: NDArrayFloat = field(init=False)  # TODO: this is a numpy float
+    x_center_of_rotation: floris_float_type = field(
+        init=False, validator=attrs.validators.instance_of(floris_float_type)
+    )
+    y_center_of_rotation: floris_float_type = field(
+        init=False, validator=attrs.validators.instance_of(floris_float_type)
+        )
     average_method = "cubic-mean"
 
     def __attrs_post_init__(self) -> None:
@@ -317,8 +321,12 @@ class TurbineCubatureGrid(Grid):
     sorted_indices: NDArrayInt = field(init=False, validator=validate_5DArray_shape)
     sorted_coord_indices: NDArrayInt = field(init=False, validator=validate_3DArray_shape)
     unsorted_indices: NDArrayInt = field(init=False, validator=validate_5DArray_shape)
-    x_center_of_rotation: NDArrayFloat = field(init=False)
-    y_center_of_rotation: NDArrayFloat = field(init=False)
+    x_center_of_rotation: floris_float_type = field(
+        init=False, validator=attrs.validators.instance_of(floris_float_type)
+    )
+    y_center_of_rotation: floris_float_type = field(
+        init=False, validator=attrs.validators.instance_of(floris_float_type)
+    )
     average_method = "simple-cubature"
 
     def __attrs_post_init__(self) -> None:
@@ -478,8 +486,12 @@ class FlowFieldGrid(Grid):
         grid_resolution (:py:obj:`Iterable(int,)`): The number of grid points to create in each
             planar direction. Must be 3 components for resolution in the x, y, and z directions.
     """
-    x_center_of_rotation: NDArrayFloat = field(init=False)
-    y_center_of_rotation: NDArrayFloat = field(init=False)
+    x_center_of_rotation: floris_float_type = field(
+        init=False, validator=attrs.validators.instance_of(floris_float_type)
+    )
+    y_center_of_rotation: floris_float_type = field(
+        init=False, validator=attrs.validators.instance_of(floris_float_type)
+    )
 
     def __attrs_post_init__(self) -> None:
         self.set_grid()
@@ -556,8 +568,12 @@ class FlowFieldPlanarGrid(Grid):
     planar_coordinate: float = field()
     x1_bounds: tuple = field(default=None)
     x2_bounds: tuple = field(default=None)
-    x_center_of_rotation: NDArrayFloat = field(init=False)
-    y_center_of_rotation: NDArrayFloat = field(init=False)
+    x_center_of_rotation: floris_float_type = field(
+        init=False, validator=attrs.validators.instance_of(floris_float_type)
+    )
+    y_center_of_rotation: floris_float_type = field(
+        init=False, validator=attrs.validators.instance_of(floris_float_type)
+    )
     sorted_indices: NDArrayInt = field(init=False, validator=validate_3DArray_shape)
     unsorted_indices: NDArrayInt = field(init=False, validator=validate_3DArray_shape)
 
@@ -684,8 +700,12 @@ class PointsGrid(Grid):
     points_x: NDArrayFloat = field(converter=floris_array_converter)
     points_y: NDArrayFloat = field(converter=floris_array_converter)
     points_z: NDArrayFloat = field(converter=floris_array_converter)
-    x_center_of_rotation: float | None = field(default=None)
-    y_center_of_rotation: float | None = field(default=None)
+    x_center_of_rotation: float | None = field(
+        default=None, validator=attrs.validators.instance_of(floris_float_type)
+    )
+    y_center_of_rotation: float | None = field(
+        default=None, validator=attrs.validators.instance_of(floris_float_type)
+    )
 
     def __attrs_post_init__(self) -> None:
         self.set_grid()
