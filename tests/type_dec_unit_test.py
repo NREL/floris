@@ -39,11 +39,11 @@ class AttrsDemoClass(FromDictMixin):
         self.non_initd = 1.1
 
     liststr: List[str] = field(
-        default=["qwerty", "asdf"],
+        factory=lambda:["qwerty", "asdf"],
         validator=iter_validator(list, str)
     )
     array: np.ndarray = field(
-        default=[1.0, 2.0],
+        factory=lambda:[1.0, 2.0],
         converter=floris_array_converter,
         # validator=iter_validator(np.ndarray, floris_float_type)
     )
@@ -63,8 +63,8 @@ def test_FromDictMixin_defaults():
     defaults = {a.name: a.default for a in AttrsDemoClass.__attrs_attrs__ if a.default}
     assert cls.y == defaults["y"]
     assert cls.z == defaults["z"]
-    np.testing.assert_array_equal(cls.liststr, defaults["liststr"])
-    np.testing.assert_array_equal(cls.array, defaults["array"])
+    np.testing.assert_array_equal(cls.liststr, defaults["liststr"].factory())
+    np.testing.assert_array_equal(cls.array, defaults["array"].factory())
 
     # Test that defaults can be overwritten
     inputs = {"w": 0, "x": 1, "y": 4.5}
