@@ -24,9 +24,7 @@ from scipy.interpolate import interp1d
 
 from floris.simulation import BaseClass
 from floris.type_dec import (
-    floris_array_converter,
     floris_numeric_dict_converter,
-    FromDictMixin,
     NDArrayBool,
     NDArrayFilter,
     NDArrayFloat,
@@ -69,10 +67,8 @@ def _rotor_velocity_tilt_correction(
     tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
 
     # Compute the rotor effective velocity adjusting for tilt
-    rotor_effective_velocities = (
-        rotor_effective_velocities
-        * cosd(tilt_angle - ref_tilt_cp_ct) ** (pT / 3.0)
-    )
+    relative_tilt = tilt_angle - ref_tilt_cp_ct
+    rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
     return rotor_effective_velocities
 
 
@@ -102,7 +98,7 @@ def compute_tilt_angles_for_floating_turbines(
     # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
     # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
     # definition contained  a wind_speed/tilt table definition)
-    if not tilt_angles.all() == 0.:
+    if not tilt_angles.all() == 0.0:
         tilt_angle = tilt_angles
 
     return tilt_angle
@@ -491,8 +487,8 @@ class Turbine(BaseClass):
                     "tilt": List[float],
                 }
             Required if `correct_cp_ct_for_tilt = True`. Defaults to None.
-        power_thrust_data_file (str): The path to the file containing power and thrust data.
         multi_dimensional_cp_ct (bool): A flag to indicate whether Cp and Ct are multi-dimensional.
+        power_thrust_data_file (str): The path to the file containing power and thrust data.
     """
 
     turbine_type: str = field()
@@ -507,12 +503,9 @@ class Turbine(BaseClass):
     power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
 
     correct_cp_ct_for_tilt: bool = field(default=False)
-    floating_tilt_table: dict[str, NDArrayFloat] = field(
-        default=None,
-        converter=floris_numeric_dict_converter
-    )
-    power_thrust_data_file: str = field(default=None)
+    floating_tilt_table: dict[str, NDArrayFloat] | None = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
+    power_thrust_data_file: str = field(default=None)
 
     # Initialized in the post_init function
     rotor_radius: float = field(init=False)
@@ -570,10 +563,13 @@ class Turbine(BaseClass):
             bounds_error=False,
         )
 
+        if self.floating_tilt_table is not None:
+            self.floating_tilt_table = floris_numeric_dict_converter(self.floating_tilt_table)
+
         # If defined, create a tilt interpolation function for floating turbines.
         # fill_value currently set to apply the min or max tilt angles if outside
         # of the interpolation range.
-        if self.correct_cp_ct_for_tilt is not None:
+        if self.correct_cp_ct_for_tilt:
             self.tilt_interp = interp1d(
                 self.floating_tilt_table["wind_speed"],
                 self.floating_tilt_table["tilt"],
@@ -650,10 +646,10 @@ class Turbine(BaseClass):
                 """
             )
 
-        if any(e.ndim > 1 for e in (value["tilt"], value["wind_speed"])):
+        if any(len(np.shape(e)) > 1 for e in (value["tilt"], value["wind_speed"])):
             raise ValueError("tilt and wind_speed inputs must be 1-D.")
 
-        if len( set((value["tilt"].size, value["wind_speed"].size)) ) > 1:
+        if len( set((len(value["tilt"]), len(value["wind_speed"]))) ) > 1:
             raise ValueError("tilt and wind_speed inputs must be the same size.")
 
     @correct_cp_ct_for_tilt.validator
