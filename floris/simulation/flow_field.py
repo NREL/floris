@@ -27,9 +27,9 @@ from floris.simulation import (
     Grid,
 )
 from floris.type_dec import (
+    array_5D_field,
     floris_array_converter,
     NDArrayFloat,
-    validate_3DArray_shape,
     ValidateMixin,
 )
 
@@ -49,16 +49,18 @@ class FlowField(BaseClass, ValidateMixin):
 
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
+    n_turbines: int = field(init=False)
+    grid_resolution: int = field(init=False)
 
-    u_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    v_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    w_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    u_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    v_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    w_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    u: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    v: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    w: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    u_initial_sorted: NDArrayFloat = array_5D_field
+    v_initial_sorted: NDArrayFloat = array_5D_field
+    w_initial_sorted: NDArrayFloat = array_5D_field
+    u_sorted: NDArrayFloat = array_5D_field
+    v_sorted: NDArrayFloat = array_5D_field
+    w_sorted: NDArrayFloat = array_5D_field
+    u: NDArrayFloat = array_5D_field
+    v: NDArrayFloat = array_5D_field
+    w: NDArrayFloat = array_5D_field
     het_map: list = field(init=False, default=None)
     dudz_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
@@ -133,6 +135,9 @@ class FlowField(BaseClass, ValidateMixin):
         # determined by this line. Since the right-most dimension on grid.z is storing the values
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
+        self.n_turbines = grid.n_turbines
+        self.grid_resolution = grid.grid_resolution
+
         wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
         dwind_profile_plane = (
             self.wind_shear

@@ -28,7 +28,11 @@ from typing import (
 import attrs
 import numpy as np
 import numpy.typing as npt
-from attrs import Attribute, define
+from attrs import (
+    Attribute,
+    define,
+    field,
+)
 
 
 ### Define general data types used throughout
@@ -160,6 +164,10 @@ def validate_3DArray_shape(instance, attribute: Attribute, value: np.ndarray) ->
     if not isinstance(value, np.ndarray):
         raise TypeError(f"`{attribute.name}` is not a valid NumPy array type.")
 
+    # Don't fail on the initialized empty array
+    if value.size == 0:
+        return
+
     shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines)
     if value.shape != shape:
         # The grid sorted_coord_indices are broadcast along the wind speed dimension
@@ -187,6 +195,10 @@ def validate_5DArray_shape(instance, attribute: Attribute, value: np.ndarray) ->
     if not isinstance(value, np.ndarray):
         print(type(value))
         raise TypeError(f"`{attribute.name}` is not a valid NumPy array type.")
+
+    # Don't fail on the initialized empty array
+    if value.size == 0:
+        return
 
     grid = instance.grid_resolution
     shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines, grid, grid)
@@ -265,7 +277,10 @@ class ValidateMixin:
         attrs.validate(self)
 
 
-# Avoids constant redefinition of the same attr.ib properties for model attributes
+# Avoids constant redefinition of the same field properties for model attributes
+
+array_5D_field = field(init=False, factory=lambda: np.array([]), validator=validate_5DArray_shape)
+
 
 # from functools import partial, update_wrapper
 
