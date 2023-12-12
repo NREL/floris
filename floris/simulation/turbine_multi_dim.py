@@ -431,7 +431,7 @@ class TurbineMultiDimensional(Turbine):
             whichever is being used to load turbine definitions.
             Defaults to the internal turbine library.
     """
-    power_thrust_data_file: str = field(default=None)
+    power_thrust_data_file: str = field(default=None)  # TODO This is actually required and should not default to None. However, the super class has optional attributes so a required attribute here breaks
     power_thrust_data: MultiDimensionalPowerThrustTable = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
     turbine_library_path: Path = field(
@@ -443,9 +443,6 @@ class TurbineMultiDimensional(Turbine):
     # Not to be provided by the user
     condition_keys: list[str] = field(init=False, factory=list)
 
-    # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
-    # use_points_on_perimeter: bool = bool_attrib()
-
     # Initialized in the post_init function
     # rotor_radius: float = field(init=False)
     # rotor_area: float = field(init=False)
@@ -453,14 +450,6 @@ class TurbineMultiDimensional(Turbine):
     # fCt_interp: interp1d = field(init=False)
     # power_interp: interp1d = field(init=False)
     # tilt_interp: interp1d = field(init=False)
-
-
-    # For the following parameters, use default values if not user-specified
-    # self.rloc = float(input_dictionary["rloc"]) if "rloc" in input_dictionary else 0.5
-    # if "use_points_on_perimeter" in input_dictionary:
-    #     self.use_points_on_perimeter = bool(input_dictionary["use_points_on_perimeter"])
-    # else:
-    #     self.use_points_on_perimeter = False
 
     def __attrs_post_init__(self) -> None:
         # Solidify the data file path and name

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, Dict
 
 import attrs
 import numpy as np
@@ -529,41 +529,38 @@ class TiltTable(FromDictMixin):
 @define
 class Turbine(BaseClass):
     """
-    Turbine is a class containing objects pertaining to the individual
-    turbines.
+    A class containing the parameters and infrastructure to model a wind turbine's performance
+    for a particular atmospheric condition.
 
-    Turbine is a model class representing a particular wind turbine. It
-    is largely a container of data and parameters, but also contains
-    methods to probe properties for output.
-
-    Parameters:
-        rotor_diameter (:py:obj: float): The rotor diameter (m).
-        hub_height (:py:obj: float): The hub height (m).
-        pP (:py:obj: float): The cosine exponent relating the yaw
-            misalignment angle to power.
-        pT (:py:obj: float): The cosine exponent relating the rotor
-            tilt angle to power.
-        generator_efficiency (:py:obj: float): The generator
-            efficiency factor used to scale the power production.
-        ref_density_cp_ct (:py:obj: float): The density at which the provided
-            cp and ct is defined
-        power_thrust_table (PowerThrustTable): A dictionary containing the
-            following key-value pairs:
-
-            power (:py:obj: List[float]): The coefficient of power at
-                different wind speeds.
-            thrust (:py:obj: List[float]): The coefficient of thrust
-                at different wind speeds.
-            wind_speed (:py:obj: List[float]): The wind speeds for
-                which the power and thrust values are provided (m/s).
-        ngrid (*int*, optional): The square root of the number
-            of points to use on the turbine grid. This number will be
-            squared so that the points can be evenly distributed.
-            Defaults to 5.
-        rloc (:py:obj: float, optional): A value, from 0 to 1, that determines
-            the width/height of the grid of points on the rotor as a ratio of
-            the rotor radius.
-            Defaults to 0.5.
+    Args:
+        turbine_type (str): An identifier for this type of turbine such as "NREL_5MW".
+        rotor_diameter (float): The rotor diameter in meters.
+        hub_height (float): The hub height in meters.
+        pP (float): The cosine exponent relating the yaw misalignment angle to turbine power.
+        pT (float): The cosine exponent relating the rotor tilt angle to turbine power.
+        TSR (float): The Tip Speed Ratio of the turbine.
+        generator_efficiency (float): The efficiency of the generator used to scale
+            power production.
+        ref_density_cp_ct (float): The density at which the provided Cp and Ct curves are defined.
+        ref_tilt_cp_ct (float): The implicit tilt of the turbine for which the Cp and Ct
+            curves are defined. This is typically the nacelle tilt.
+        power_thrust_table (dict[str, float]): Contains power coefficient and thrust coefficient
+            values at a series of wind speeds to define the turbine performance.
+            The dictionary must have the following three keys with equal length values:
+                {
+                    "wind_speeds": List[float],
+                    "power": List[float],
+                    "thrust": List[float],
+                }
+        correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt.
+            Optional, defaults to False.
+        floating_tilt_table (TiltTable): A table containing tilt values for a floating turbine.
+            Required if `correct_cp_ct_for_tilt = True`, defaults to False.
+        floating_correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct
+            for tilt for a floating turbine.
+            Optional, defaults to False.
+        power_thrust_data_file (str): The path to the file containing power and thrust data.
+        multi_dimensional_cp_ct (bool): A flag to indicate whether Cp and Ct are multi-dimensional.
     """
 
     turbine_type: str = field()
@@ -575,15 +572,12 @@ class Turbine(BaseClass):
     generator_efficiency: float = field()
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
-    power_thrust_table: PowerThrustTable = field(default=None)
     correct_cp_ct_for_tilt: bool = field(default=None)
+    power_thrust_table: Dict[str, float] = field()
     floating_tilt_table: TiltTable = field(default=None)
     floating_correct_cp_ct_for_tilt: bool = field(default=None)
     power_thrust_data_file: str = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
-
-    # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
-    # use_points_on_perimeter: bool = bool_attrib()
 
     # Initialized in the post_init function
     rotor_radius: float = field(init=False)
@@ -595,14 +589,9 @@ class Turbine(BaseClass):
     fTilt_interp: interp1d = field(init=False)
 
 
-    # For the following parameters, use default values if not user-specified
-    # self.rloc = float(input_dictionary["rloc"]) if "rloc" in input_dictionary else 0.5
-    # if "use_points_on_perimeter" in input_dictionary:
-    #     self.use_points_on_perimeter = bool(input_dictionary["use_points_on_perimeter"])
-    # else:
-    #     self.use_points_on_perimeter = False
 
     def __attrs_post_init__(self) -> None:
+        # TODO validate that the wind speed, power, and thrust are floats and all the same size
 
         # Post-init initialization for the power curve interpolation functions
         self.power_thrust_table = PowerThrustTable.from_dict(self.power_thrust_table)
