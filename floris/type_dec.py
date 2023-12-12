@@ -158,11 +158,16 @@ def validate_3DArray_shape(instance, attribute: Attribute, value: np.ndarray) ->
             N wind directions x N wind speeds x N turbines.
     """
     if not isinstance(value, np.ndarray):
-        raise TypeError(f"{attribute.name} is not a valid NumPy array type.")
+        raise TypeError(f"`{attribute.name}` is not a valid NumPy array type.")
 
     shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines)
     if value.shape != shape:
-        raise ValueError(f"{attribute.name} should have shape: {shape}; not shape: {value.shape}")
+        # The grid sorted_coord_indices are broadcast along the wind speed dimension
+        broadcast_shape = (instance.n_wind_directions, 1, instance.n_turbines)
+        if value.shape != broadcast_shape:
+            raise ValueError(
+                f"`{attribute.name}` should have shape: {shape}; not shape: {value.shape}"
+            )
 
 
 def validate_5DArray_shape(instance, attribute: Attribute, value: np.ndarray) -> None:
@@ -180,12 +185,13 @@ def validate_5DArray_shape(instance, attribute: Attribute, value: np.ndarray) ->
             N wind directions x N wind speeds x N turbines x N grid points x N grid points.
     """
     if not isinstance(value, np.ndarray):
-        raise TypeError(f"{attribute.name} is not a valid NumPy array type.")
+        print(type(value))
+        raise TypeError(f"`{attribute.name}` is not a valid NumPy array type.")
 
     grid = instance.grid_resolution
     shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines, grid, grid)
     if value.shape != shape:
-        raise ValueError(f"{attribute.name} should have shape: {shape}; not shape: {value.shape}")
+        raise ValueError(f"`{attribute.name}` should have shape: {shape}; not shape: {value.shape}")
 
 @define
 class FromDictMixin:

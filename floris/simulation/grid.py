@@ -28,6 +28,7 @@ from floris.type_dec import (
     floris_float_type,
     NDArrayFloat,
     NDArrayInt,
+    validate_3DArray_shape,
     validate_5DArray_shape,
     ValidateMixin,
 )
@@ -153,11 +154,11 @@ class TurbineGrid(Grid):
             creates a 3x3 grid within the rotor swept area.
     """
     # TODO: describe these and the differences between `sorted_indices` and `sorted_coord_indices`
-    sorted_indices: NDArrayInt = field(init=False)
-    sorted_coord_indices: NDArrayInt = field(init=False)
-    unsorted_indices: NDArrayInt = field(init=False)
-    x_center_of_rotation: NDArrayFloat = field(init=False)
-    y_center_of_rotation: NDArrayFloat = field(init=False)
+    sorted_indices: NDArrayInt = field(init=False, validator=validate_5DArray_shape)
+    sorted_coord_indices: NDArrayInt = field(init=False, validator=validate_3DArray_shape)
+    unsorted_indices: NDArrayInt = field(init=False, validator=validate_5DArray_shape)
+    x_center_of_rotation: NDArrayFloat = field(init=False)  # TODO: this is a numpy float
+    y_center_of_rotation: NDArrayFloat = field(init=False)  # TODO: this is a numpy float
     average_method = "cubic-mean"
 
     def __attrs_post_init__(self) -> None:
@@ -313,9 +314,9 @@ class TurbineCubatureGrid(Grid):
             include in the cubature method. This value must be in the range [1, 10], and the
             corresponding cubature weights are set automatically.
     """
-    sorted_indices: NDArrayInt = field(init=False)
-    sorted_coord_indices: NDArrayInt = field(init=False)
-    unsorted_indices: NDArrayInt = field(init=False)
+    sorted_indices: NDArrayInt = field(init=False, validator=validate_5DArray_shape)
+    sorted_coord_indices: NDArrayInt = field(init=False, validator=validate_3DArray_shape)
+    unsorted_indices: NDArrayInt = field(init=False, validator=validate_5DArray_shape)
     x_center_of_rotation: NDArrayFloat = field(init=False)
     y_center_of_rotation: NDArrayFloat = field(init=False)
     average_method = "simple-cubature"
@@ -557,8 +558,8 @@ class FlowFieldPlanarGrid(Grid):
     x2_bounds: tuple = field(default=None)
     x_center_of_rotation: NDArrayFloat = field(init=False)
     y_center_of_rotation: NDArrayFloat = field(init=False)
-    sorted_indices: NDArrayInt = field(init=False)
-    unsorted_indices: NDArrayInt = field(init=False)
+    sorted_indices: NDArrayInt = field(init=False, validator=validate_3DArray_shape)
+    unsorted_indices: NDArrayInt = field(init=False, validator=validate_3DArray_shape)
 
     def __attrs_post_init__(self) -> None:
         self.set_grid()
