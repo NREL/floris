@@ -40,6 +40,7 @@ NDArrayInt = npt.NDArray[np.int_]
 NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 NDArrayBool = npt.NDArray[np.bool_]
+NDArray = NDArrayFloat | NDArrayInt | NDArrayFilter | NDArrayObject | NDArrayBool
 
 
 ### Custom callables for attrs objects and functions
@@ -144,6 +145,24 @@ def convert_to_path(fn: str | Path) -> Path:
     raise TypeError(f"The passed input: {fn} could not be converted to a pathlib.Path object")
 
 
+def validate_3DArray_shape(instance, attribute: Attribute, value: NDArray) -> None:
+    if not isinstance(value, NDArray):
+        raise TypeError(f"{attribute.name} is not a valid NumPy array type.")
+
+    shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines)
+    if value.shape != shape:
+        raise ValueError(f"{attribute.name} should have shape: {shape}")
+
+
+def validate_5DArray_shape(instance, attribute: Attribute, value: NDArray) -> None:
+    if not isinstance(value, NDArray):
+        raise TypeError(f"{attribute.name} is not a valid NumPy array type.")
+
+    grid = instance.grid_resolution
+    shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines, grid, grid)
+    if value.shape != shape:
+        raise ValueError(f"{attribute.name} should have shape: {shape}")
+
 @define
 class FromDictMixin:
     """
@@ -203,6 +222,17 @@ class FromDictMixin:
             dict: All key, value pairs required for class recreation.
         """
         return attrs.asdict(self, filter=_attr_floris_filter, value_serializer=_attr_serializer)
+
+
+@define
+class ValidateMixin:
+    """
+    A Mixin class to wraps the ``attrs.validate()`` method to provide ``self.validate()`` so that
+    all class attributes with validators can be run at once.
+    """
+    def validate(self) -> None:
+        """Runs ``attrs.validate(self)``."""
+        attrs.validate(self)
 
 
 # Avoids constant redefinition of the same attr.ib properties for model attributes
