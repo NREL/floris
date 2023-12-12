@@ -111,7 +111,6 @@ def test_turbine_init():
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
 
     assert isinstance(turbine.power_thrust_data, dict)
-    assert isinstance(turbine.fCp_interp, interp1d)
     assert isinstance(turbine.fCt_interp, dict)
     assert isinstance(turbine.power_interp, dict)
     assert turbine.rotor_radius == turbine_data["rotor_diameter"] / 2.0

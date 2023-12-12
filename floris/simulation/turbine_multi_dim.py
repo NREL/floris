@@ -446,7 +446,6 @@ class TurbineMultiDimensional(Turbine):
     # Initialized in the post_init function
     # rotor_radius: float = field(init=False)
     # rotor_area: float = field(init=False)
-    # fCp_interp: interp1d = field(init=False)
     # fCt_interp: interp1d = field(init=False)
     # power_interp: interp1d = field(init=False)
     # tilt_interp: interp1d = field(init=False)
@@ -478,26 +477,23 @@ class TurbineMultiDimensional(Turbine):
 
             # Build the interpolants
             wind_speeds = data['ws'].values
-            self.fCp_interp = interp1d(
+            cp_interp = interp1d(
                 wind_speeds,
                 data['Cp'].values,
                 fill_value=(0.0, 1.0),
                 bounds_error=False,
             )
-            inner_power = (
-                0.5 * self.rotor_area
-                * self.fCp_interp(wind_speeds)
-                * self.generator_efficiency
-                * wind_speeds ** 3
+            self.power_interp = interp1d(
+                wind_speeds,
+                (
+                    0.5 * self.rotor_area
+                    * cp_interp(wind_speeds)
+                    * self.generator_efficiency
+                    * wind_speeds ** 3
+                ),
+                bounds_error=False,
+                fill_value=0
             )
-            self.power_interp.update({
-                key: interp1d(
-                    wind_speeds,
-                    inner_power,
-                    bounds_error=False,
-                    fill_value=0
-                )
-            })
             self.fCt_interp.update({
                 key: interp1d(
                     wind_speeds,

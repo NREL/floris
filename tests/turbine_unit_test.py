@@ -92,7 +92,6 @@ def test_turbine_init():
         np.array(pt_data["wind_speed"])
     )
 
-    assert isinstance(turbine.fCp_interp, interp1d)
     assert isinstance(turbine.fCt_interp, interp1d)
     assert isinstance(turbine.power_interp, interp1d)
     assert turbine.rotor_radius == turbine_data["rotor_diameter"] / 2.0
@@ -280,11 +279,11 @@ def test_power():
     cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
     baseline_power = (
         0.5
+        * cp_truth
         * AIR_DENSITY
         * turbine.rotor_area
-        * cp_truth
-        * turbine.generator_efficiency
         * wind_speed ** 3
+        * turbine.generator_efficiency
     )
     assert np.allclose(baseline_power, test_power)
 

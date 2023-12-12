@@ -582,7 +582,6 @@ class Turbine(BaseClass):
     # Initialized in the post_init function
     rotor_radius: float = field(init=False)
     rotor_area: float = field(init=False)
-    fCp_interp: interp1d = field(init=False)
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
@@ -593,21 +592,20 @@ class Turbine(BaseClass):
         # Post-init initialization for the power curve interpolation functions
         self.power_thrust_table = PowerThrustTable.from_dict(self.power_thrust_table)
         wind_speeds = self.power_thrust_table.wind_speed
-        self.fCp_interp = interp1d(
+        cp_interp = interp1d(
             wind_speeds,
             self.power_thrust_table.power,
             fill_value=(0.0, 1.0),
             bounds_error=False,
         )
-        inner_power = (
-            0.5 * self.rotor_area
-            * self.fCp_interp(wind_speeds)
-            * self.generator_efficiency
-            * wind_speeds ** 3
-        )
         self.power_interp = interp1d(
             wind_speeds,
-            inner_power,
+            (
+                0.5 * self.rotor_area
+                * cp_interp(wind_speeds)
+                * self.generator_efficiency
+                * wind_speeds ** 3
+            ),
             bounds_error=False,
             fill_value=0
         )
