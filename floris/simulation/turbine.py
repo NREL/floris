@@ -79,12 +79,11 @@ def _rotor_velocity_tilt_correction(
 def compute_tilt_angles_for_floating_turbines(
     turbine_type_map: NDArrayObject,
     tilt_angle: NDArrayFloat,
-    tilt_interp: NDArrayObject,
+    tilt_interp: dict[str, interp1d],
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Loop over each turbine type given to get tilt angles for all turbines
     tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
-    tilt_interp = dict(tilt_interp)
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # If no tilt interpolation is specified, assume no modification to tilt
