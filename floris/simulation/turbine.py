@@ -595,7 +595,7 @@ class Turbine(BaseClass):
         Verify that the power and thrust tables are given with arrays of equal length
         to the wind speed array.
         """
-        if len(value.keys()) != 3 or set(value.keys()) != set(("wind_speed", "power", "thrust")):
+        if len(value.keys()) != 3 or set(value.keys()) != {"wind_speed", "power", "thrust"}:
             raise ValueError(
                 """
                 power_thrust_table dictionary must have the form:
@@ -610,7 +610,7 @@ class Turbine(BaseClass):
         if any(e.ndim > 1 for e in (value["power"], value["thrust"], value["wind_speed"])):
             raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
 
-        if len( set((value["power"].size, value["thrust"].size, value["wind_speed"].size)) ) > 1:
+        if len( {value["power"].size, value["thrust"].size, value["wind_speed"].size} ) > 1:
             raise ValueError("power, thrust, and wind_speed tables must be the same size.")
 
     @rotor_diameter.validator
@@ -647,7 +647,7 @@ class Turbine(BaseClass):
         if value is None:
             return
 
-        if len(value.keys()) != 2 or set(value.keys()) != set(("wind_speed", "tilt")):
+        if len(value.keys()) != 2 or set(value.keys()) != {"wind_speed", "tilt"}:
             raise ValueError(
                 """
                 floating_tilt_table dictionary must have the form:
@@ -661,7 +661,7 @@ class Turbine(BaseClass):
         if any(len(np.shape(e)) > 1 for e in (value["tilt"], value["wind_speed"])):
             raise ValueError("tilt and wind_speed inputs must be 1-D.")
 
-        if len( set((len(value["tilt"]), len(value["wind_speed"]))) ) > 1:
+        if len( {len(value["tilt"]), len(value["wind_speed"])} ) > 1:
             raise ValueError("tilt and wind_speed inputs must be the same size.")
 
     @correct_cp_ct_for_tilt.validator
