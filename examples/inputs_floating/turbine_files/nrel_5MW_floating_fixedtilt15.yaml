@@ -172,7 +172,7 @@ floating_tilt_table:
     - 15.0
     - 15.0
     - 15.0
-  wind_speeds:
+  wind_speed:
     - 0.0
     - 4.0
     - 11.0

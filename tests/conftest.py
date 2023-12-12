@@ -343,7 +343,7 @@ class SampleInputs:
                 5.0,
                 5.0,
             ],
-            "wind_speeds": [
+            "wind_speed": [
                 0.0,
                 25.0,
                 50.0,

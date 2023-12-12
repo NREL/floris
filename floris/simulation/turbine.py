@@ -575,7 +575,7 @@ class Turbine(BaseClass):
         # of the interpolation range.
         if self.correct_cp_ct_for_tilt is not None:
             self.tilt_interp = interp1d(
-                self.floating_tilt_table["wind_speeds"],
+                self.floating_tilt_table["wind_speed"],
                 self.floating_tilt_table["tilt"],
                 fill_value=(0.0, self.floating_tilt_table["tilt"][-1]),
                 bounds_error=False,
