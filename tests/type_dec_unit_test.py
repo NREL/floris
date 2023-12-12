@@ -15,6 +15,7 @@
 from pathlib import Path
 from typing import List
 
+import attrs
 import numpy as np
 import pytest
 from attrs import define, field
@@ -24,16 +25,17 @@ from floris.type_dec import (
     floris_array_converter,
     FromDictMixin,
     iter_validator,
+    ValidateMixin,
 )
 
 
 @define
-class AttrsDemoClass(FromDictMixin):
-    w: int
+class AttrsDemoClass(FromDictMixin, ValidateMixin):
+    w: int = field(validator=attrs.validators.instance_of(int))
     x: int = field(converter=int)
     y: float = field(converter=float, default=2.1)
     z: str = field(converter=str, default="z")
-    non_initd: float = field(init=False)
+    non_initd: float = field(init=False, validator=attrs.validators.instance_of(float))
 
     def __attrs_post_init__(self):
         self.non_initd = 1.1
@@ -96,6 +98,36 @@ def test_FromDictMixin_custom():
     inputs = {}
     with pytest.raises(AttributeError):
         AttrsDemoClass.from_dict(inputs)
+
+
+def test_ValidateMixin():
+    inputs = {
+        "w": 0,
+        "x": 1,
+        "y": 2.3,
+        "z": "asdf",
+    }
+    demo = AttrsDemoClass.from_dict(inputs)
+
+    # Disable the validators to set attributes with a failing value, then
+    # manually validate with the mixin functionality to check it's working
+    with attrs.validators.disabled():
+        demo.w = "string"
+
+    with pytest.raises(TypeError):
+        demo.validate()
+
+    with attrs.validators.disabled():
+        demo.non_initd = "2.2"
+
+    with pytest.raises(TypeError):
+        demo.validate()
+
+    with attrs.validators.disabled():
+        demo.liststr = (3, 2)
+
+    with pytest.raises(TypeError):
+        demo.validate()
 
 
 def test_iter_validator():
