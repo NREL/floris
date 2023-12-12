@@ -33,6 +33,7 @@ from floris.simulation import (
 )
 from floris.simulation.turbine import compute_tilt_angles_for_floating_turbines
 from floris.type_dec import (
+    array_3D_field,
     convert_to_path,
     floris_array_converter,
     iter_validator,
@@ -79,6 +80,9 @@ class Farm(BaseClass):
         default=default_turbine_library_path, converter=convert_to_path
     )
 
+    n_wind_directions: int = field(init=False)
+    n_wind_speeds: int = field(init=False)
+
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
 
     turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
@@ -86,43 +90,43 @@ class Farm(BaseClass):
 
     turbine_fTilts: list = field(init=False, factory=list)
 
-    yaw_angles: NDArrayFloat = field(init=False)
-    yaw_angles_sorted: NDArrayFloat = field(init=False)
+    yaw_angles: NDArrayFloat = array_3D_field
+    yaw_angles_sorted: NDArrayFloat = array_3D_field
 
-    tilt_angles: NDArrayFloat = field(init=False)
-    tilt_angles_sorted: NDArrayFloat = field(init=False)
+    tilt_angles: NDArrayFloat = array_3D_field
+    tilt_angles_sorted: NDArrayFloat = array_3D_field
 
-    hub_heights: NDArrayFloat = field(init=False)
-    hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
+    hub_heights: NDArrayFloat = array_3D_field
+    hub_heights_sorted: NDArrayFloat = array_3D_field
 
     turbine_map: List[Turbine | TurbineMultiDimensional] = field(init=False, factory=list)
 
-    turbine_type_map: NDArrayObject = field(init=False, factory=list)
-    turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
+    turbine_type_map: NDArrayObject = array_3D_field
+    turbine_type_map_sorted: NDArrayObject = array_3D_field
 
     turbine_power_interps: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
-    turbine_power_interps_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_power_interps_sorted: NDArrayFloat = array_3D_field
 
-    rotor_diameters: NDArrayFloat = field(init=False, factory=list)
-    rotor_diameters_sorted: NDArrayFloat = field(init=False, factory=list)
+    rotor_diameters: NDArrayFloat = array_3D_field
+    rotor_diameters_sorted: NDArrayFloat = array_3D_field
 
-    TSRs: NDArrayFloat = field(init=False, factory=list)
-    TSRs_sorted: NDArrayFloat = field(init=False, factory=list)
+    TSRs: NDArrayFloat = array_3D_field
+    TSRs_sorted: NDArrayFloat = array_3D_field
 
-    pPs: NDArrayFloat = field(init=False, factory=list)
-    pPs_sorted: NDArrayFloat = field(init=False, factory=list)
+    pPs: NDArrayFloat = array_3D_field
+    pPs_sorted: NDArrayFloat = array_3D_field
 
-    pTs: NDArrayFloat = field(init=False, factory=list)
-    pTs_sorted: NDArrayFloat = field(init=False, factory=list)
+    pTs: NDArrayFloat = array_3D_field
+    pTs_sorted: NDArrayFloat = array_3D_field
 
-    ref_density_cp_cts: NDArrayFloat = field(init=False, factory=list)
-    ref_density_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
+    ref_density_cp_cts: NDArrayFloat = array_3D_field
+    ref_density_cp_cts_sorted: NDArrayFloat = array_3D_field
 
-    ref_tilt_cp_cts: NDArrayFloat = field(init=False, factory=list)
-    ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
+    ref_tilt_cp_cts: NDArrayFloat = array_3D_field
+    ref_tilt_cp_cts_sorted: NDArrayFloat = array_3D_field
 
-    correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
-    correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, factory=list)
+    correct_cp_ct_for_tilt: NDArrayFloat = array_3D_field
+    correct_cp_ct_for_tilt_sorted: NDArrayFloat = array_3D_field
 
     internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
 
@@ -405,6 +409,9 @@ class Farm(BaseClass):
         )
 
     def set_yaw_angles(self, n_wind_directions: int, n_wind_speeds: int):
+        self.n_wind_directions = n_wind_directions
+        self.n_wind_speeds = n_wind_speeds
+
         # TODO Is this just for initializing yaw angles to zero?
         self.yaw_angles = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))
         self.yaw_angles_sorted = np.zeros((n_wind_directions, n_wind_speeds, self.n_turbines))

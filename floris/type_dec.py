@@ -164,8 +164,8 @@ def validate_3DArray_shape(instance, attribute: Attribute, value: np.ndarray) ->
     if not isinstance(value, np.ndarray):
         raise TypeError(f"`{attribute.name}` is not a valid NumPy array type.")
 
-    # Don't fail on the initialized empty array
-    if value.size == 0:
+    # Don't fail on the initialized empty array or initialized 1-D array
+    if value.size == 0 or value.ndim == 1:
         return
 
     shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines)
@@ -279,6 +279,7 @@ class ValidateMixin:
 
 # Avoids constant redefinition of the same field properties for model attributes
 
+array_3D_field = field(init=False, factory=lambda: np.array([]), validator=validate_3DArray_shape)
 array_5D_field = field(init=False, factory=lambda: np.array([]), validator=validate_5DArray_shape)
 
 
