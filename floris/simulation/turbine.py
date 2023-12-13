@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable
-from typing import Any
 
 import attrs
 import numpy as np
@@ -25,8 +24,7 @@ from scipy.interpolate import interp1d
 
 from floris.simulation import BaseClass
 from floris.type_dec import (
-    floris_array_converter,
-    FromDictMixin,
+    floris_numeric_dict_converter,
     NDArrayBool,
     NDArrayFilter,
     NDArrayFloat,
@@ -69,22 +67,19 @@ def _rotor_velocity_tilt_correction(
     tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
 
     # Compute the rotor effective velocity adjusting for tilt
-    rotor_effective_velocities = (
-        rotor_effective_velocities
-        * cosd(tilt_angle - ref_tilt_cp_ct) ** (pT / 3.0)
-    )
+    relative_tilt = tilt_angle - ref_tilt_cp_ct
+    rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
     return rotor_effective_velocities
 
 
 def compute_tilt_angles_for_floating_turbines(
     turbine_type_map: NDArrayObject,
     tilt_angle: NDArrayFloat,
-    tilt_interp: NDArrayObject,
+    tilt_interp: dict[str, interp1d],
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Loop over each turbine type given to get tilt angles for all turbines
     tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
-    tilt_interp = dict(tilt_interp)
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # If no tilt interpolation is specified, assume no modification to tilt
@@ -103,7 +98,7 @@ def compute_tilt_angles_for_floating_turbines(
     # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
     # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
     # definition contained  a wind_speed/tilt table definition)
-    if not tilt_angles.all() == 0.:
+    if not tilt_angles.all() == 0.0:
         tilt_angle = tilt_angles
 
     return tilt_angle
@@ -173,7 +168,7 @@ def rotor_effective_velocity(
 def power(
     ref_density_cp_ct: float,
     rotor_effective_velocities: NDArrayFloat,
-    power_interp: dict[str, NDArrayObject],
+    power_interp: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
@@ -184,8 +179,8 @@ def power(
         ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
         rotor_effective_velocities (NDArrayFloat[wd, ws, turbines]): The rotor
             effective velocities at a turbine.
-        power_interp (dict[str, NDArrayObject[wd, ws, turbines]]): The power interpolation function
-            for each turbine type as a dictionary.
+        power_interp (dict[str, interp1d]): A dictionary of power interpolation functions for
+            each turbine type.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
         ix_filter (NDArrayInt, optional): The boolean array, or
@@ -218,10 +213,7 @@ def power(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        p += (
-            power_interp[turb_type](rotor_effective_velocities)
-            * (turbine_type_map == turb_type)
-        )
+        p += power_interp[turb_type](rotor_effective_velocities) * (turbine_type_map == turb_type)
 
     return p * ref_density_cp_ct
 
@@ -471,112 +463,42 @@ def average_velocity(
         raise ValueError("Incorrect method given.")
 
 @define
-class PowerThrustTable(FromDictMixin):
-    """Helper class to convert the dictionary and list-based inputs to a object of arrays.
-
-    Args:
-        power (NDArrayFloat): The power produced at a given wind speed.
-        thrust (NDArrayFloat): The thrust at a given wind speed.
-        wind_speed (NDArrayFloat): Wind speed values, m/s.
-
-    Raises:
-        ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.
-        ValueError: Raised if power, thrust, and wind_speed don't have the same number of values.
-    """
-    power: NDArrayFloat = field(default=[], converter=floris_array_converter)
-    thrust: NDArrayFloat = field(default=[], converter=floris_array_converter)
-    wind_speed: NDArrayFloat = field(default=[], converter=floris_array_converter)
-
-    def __attrs_post_init__(self) -> None:
-        # Validate the power, thrust, and wind speed inputs.
-
-        inputs = (self.power, self.thrust, self.wind_speed)
-
-        if any(el.ndim > 1 for el in inputs):
-            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
-
-        if len( {self.power.size, self.thrust.size, self.wind_speed.size} ) > 1:
-            raise ValueError("power, thrust, and wind_speed tables must be the same size.")
-
-        # Remove any duplicate wind speed entries
-        _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
-        self.power = self.power[duplicate_filter]
-        self.thrust = self.thrust[duplicate_filter]
-        self.wind_speed = self.wind_speed[duplicate_filter]
-
-
-@define
-class TiltTable(FromDictMixin):
-    """Helper class to convert the dictionary and list-based inputs to a object of arrays.
-
-    Args:
-        tilt (NDArrayFloat): The tilt angle at a given wind speed.
-        wind_speeds (NDArrayFloat): Wind speed values, m/s.
-
-    Raises:
-        ValueError: Raised if tilt and wind_speeds are not all 1-d array-like shapes.
-        ValueError: Raised if tilt and wind_speeds don't have the same number of values.
-    """
-    tilt: NDArrayFloat = field(converter=floris_array_converter)
-    wind_speeds: NDArrayFloat = field(converter=floris_array_converter)
-
-    def __attrs_post_init__(self) -> None:
-        # Validate the power, thrust, and wind speed inputs.
-
-        inputs = (self.tilt, self.wind_speeds)
-
-        if any(el.ndim > 1 for el in inputs):
-            raise ValueError("tilt and wind_speed inputs must be 1-D.")
-
-        if len({self.tilt.size, self.wind_speeds.size}) > 1:
-            raise ValueError("tilt and wind_speed tables must be the same size.")
-
-        # Remove any duplicate wind speed entries
-        _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
-        self.tilt = self.tilt[duplicate_filter]
-        self.wind_speeds = self.wind_speeds[duplicate_filter]
-
-
-@define
 class Turbine(BaseClass):
     """
-    Turbine is a class containing objects pertaining to the individual
-    turbines.
+    A class containing the parameters and infrastructure to model a wind turbine's performance
+    for a particular atmospheric condition.
 
-    Turbine is a model class representing a particular wind turbine. It
-    is largely a container of data and parameters, but also contains
-    methods to probe properties for output.
-
-    Parameters:
-        rotor_diameter (:py:obj: float): The rotor diameter (m).
-        hub_height (:py:obj: float): The hub height (m).
-        pP (:py:obj: float): The cosine exponent relating the yaw
-            misalignment angle to power.
-        pT (:py:obj: float): The cosine exponent relating the rotor
-            tilt angle to power.
-        generator_efficiency (:py:obj: float): The generator
-            efficiency factor used to scale the power production.
-        ref_density_cp_ct (:py:obj: float): The density at which the provided
-            cp and ct is defined
-        power_thrust_table (PowerThrustTable): A dictionary containing the
-            following key-value pairs:
-
-            power (:py:obj: List[float]): The coefficient of power at
-                different wind speeds.
-            thrust (:py:obj: List[float]): The coefficient of thrust
-                at different wind speeds.
-            wind_speed (:py:obj: List[float]): The wind speeds for
-                which the power and thrust values are provided (m/s).
-        ngrid (*int*, optional): The square root of the number
-            of points to use on the turbine grid. This number will be
-            squared so that the points can be evenly distributed.
-            Defaults to 5.
-        rloc (:py:obj: float, optional): A value, from 0 to 1, that determines
-            the width/height of the grid of points on the rotor as a ratio of
-            the rotor radius.
-            Defaults to 0.5.
+    Args:
+        turbine_type (str): An identifier for this type of turbine such as "NREL_5MW".
+        rotor_diameter (float): The rotor diameter in meters.
+        hub_height (float): The hub height in meters.
+        pP (float): The cosine exponent relating the yaw misalignment angle to turbine power.
+        pT (float): The cosine exponent relating the rotor tilt angle to turbine power.
+        TSR (float): The Tip Speed Ratio of the turbine.
+        generator_efficiency (float): The efficiency of the generator used to scale
+            power production.
+        ref_density_cp_ct (float): The density at which the provided Cp and Ct curves are defined.
+        ref_tilt_cp_ct (float): The implicit tilt of the turbine for which the Cp and Ct
+            curves are defined. This is typically the nacelle tilt.
+        power_thrust_table (dict[str, float]): Contains power coefficient and thrust coefficient
+            values at a series of wind speeds to define the turbine performance.
+            The dictionary must have the following three keys with equal length values:
+                {
+                    "wind_speeds": List[float],
+                    "power": List[float],
+                    "thrust": List[float],
+                }
+        correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt
+            usually for a floating turbine.
+            Optional, defaults to False.
+        floating_tilt_table (dict[str, float]): Look up table of tilt angles at a series of
+            wind speeds. The dictionary must have the following keys with equal length values:
+                {
+                    "wind_speeds": List[float],
+                    "tilt": List[float],
+                }
+            Required if `correct_cp_ct_for_tilt = True`. Defaults to None.
     """
-
     turbine_type: str = field()
     rotor_diameter: float = field()
     hub_height: float = field()
@@ -586,53 +508,56 @@ class Turbine(BaseClass):
     generator_efficiency: float = field()
     ref_density_cp_ct: float = field()
     ref_tilt_cp_ct: float = field()
-    power_thrust_table: PowerThrustTable = field(default=None)
-    correct_cp_ct_for_tilt: bool = field(default=None)
-    floating_tilt_table: TiltTable = field(default=None)
-    floating_correct_cp_ct_for_tilt: bool = field(default=None)
-    power_thrust_data_file: str = field(default=None)
-    multi_dimensional_cp_ct: bool = field(default=False)
+    power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
 
-    # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
-    # use_points_on_perimeter: bool = bool_attrib()
+    correct_cp_ct_for_tilt: bool = field(default=False)
+    floating_tilt_table: dict[str, NDArrayFloat] | None = field(default=None)
+
+    # Even though this Turbine class does not support the multidimensional features as they
+    # are implemented in TurbineMultiDim, providing the following two attributes here allows
+    # the turbine data inputs to keep the multidimensional Cp and Ct curve but switch them off
+    # with multi_dimensional_cp_ct = False
+    multi_dimensional_cp_ct: bool = field(default=False)
+    power_thrust_data_file: str = field(default=None)
 
     # Initialized in the post_init function
     rotor_radius: float = field(init=False)
     rotor_area: float = field(init=False)
-    fCp_interp: interp1d = field(init=False)
     fCt_interp: interp1d = field(init=False)
     power_interp: interp1d = field(init=False)
-    tilt_interp: interp1d = field(init=False)
-    fTilt_interp: interp1d = field(init=False)
-
-
-    # For the following parameters, use default values if not user-specified
-    # self.rloc = float(input_dictionary["rloc"]) if "rloc" in input_dictionary else 0.5
-    # if "use_points_on_perimeter" in input_dictionary:
-    #     self.use_points_on_perimeter = bool(input_dictionary["use_points_on_perimeter"])
-    # else:
-    #     self.use_points_on_perimeter = False
+    tilt_interp: interp1d = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
+        self._initialize_power_thrust_interpolation()
+        self.__post_init__()
 
-        # Post-init initialization for the power curve interpolation functions
-        self.power_thrust_table = PowerThrustTable.from_dict(self.power_thrust_table)
-        wind_speeds = self.power_thrust_table.wind_speed
-        self.fCp_interp = interp1d(
+    def __post_init__(self) -> None:
+        self._initialize_tilt_interpolation()
+
+    def _initialize_power_thrust_interpolation(self) -> None:
+        # TODO This validation for the power thrust tables should go in the turbine library
+        # since it's preprocessing
+        # Remove any duplicate wind speed entries
+        # _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
+        # self.power = self.power[duplicate_filter]
+        # self.thrust = self.thrust[duplicate_filter]
+        # self.wind_speed = self.wind_speed[duplicate_filter]
+
+        wind_speeds = self.power_thrust_table["wind_speed"]
+        cp_interp = interp1d(
             wind_speeds,
-            self.power_thrust_table.power,
+            self.power_thrust_table["power"],
             fill_value=(0.0, 1.0),
             bounds_error=False,
         )
-        inner_power = (
-            0.5 * self.rotor_area
-            * self.fCp_interp(wind_speeds)
-            * self.generator_efficiency
-            * wind_speeds ** 3
-        )
         self.power_interp = interp1d(
             wind_speeds,
-            inner_power,
+            (
+                0.5 * self.rotor_area
+                * cp_interp(wind_speeds)
+                * self.generator_efficiency
+                * wind_speeds ** 3
+            ),
             bounds_error=False,
             fill_value=0
         )
@@ -649,28 +574,55 @@ class Turbine(BaseClass):
         """
         self.fCt_interp = interp1d(
             wind_speeds,
-            self.power_thrust_table.thrust,
+            self.power_thrust_table["thrust"],
             fill_value=(0.0001, 0.9999),
             bounds_error=False,
         )
 
+    def _initialize_tilt_interpolation(self) -> None:
+        # TODO:
+        # Remove any duplicate wind speed entries
+        # _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)
+        # self.tilt = self.tilt[duplicate_filter]
+        # self.wind_speeds = self.wind_speeds[duplicate_filter]
+
+        if self.floating_tilt_table is not None:
+            self.floating_tilt_table = floris_numeric_dict_converter(self.floating_tilt_table)
+
         # If defined, create a tilt interpolation function for floating turbines.
         # fill_value currently set to apply the min or max tilt angles if outside
         # of the interpolation range.
-        if self.floating_tilt_table is not None:
-            self.floating_tilt_table = TiltTable.from_dict(self.floating_tilt_table)
-            self.fTilt_interp = interp1d(
-                self.floating_tilt_table.wind_speeds,
-                self.floating_tilt_table.tilt,
-                fill_value=(0.0, self.floating_tilt_table.tilt[-1]),
+        if self.correct_cp_ct_for_tilt:
+            self.tilt_interp = interp1d(
+                self.floating_tilt_table["wind_speed"],
+                self.floating_tilt_table["tilt"],
+                fill_value=(0.0, self.floating_tilt_table["tilt"][-1]),
                 bounds_error=False,
             )
-            self.tilt_interp = self.fTilt_interp
-            self.correct_cp_ct_for_tilt = self.floating_correct_cp_ct_for_tilt
-        else:
-            self.fTilt_interp = None
-            self.tilt_interp = None
-            self.correct_cp_ct_for_tilt = False
+
+    @power_thrust_table.validator
+    def check_power_thrust_table(self, instance: attrs.Attribute, value: dict) -> None:
+        """
+        Verify that the power and thrust tables are given with arrays of equal length
+        to the wind speed array.
+        """
+        if len(value.keys()) != 3 or set(value.keys()) != {"wind_speed", "power", "thrust"}:
+            raise ValueError(
+                """
+                power_thrust_table dictionary must have the form:
+                    {
+                        "wind_speed": List[float],
+                        "power": List[float],
+                        "thrust": List[float],
+                    }
+                """
+            )
+
+        if any(e.ndim > 1 for e in (value["power"], value["thrust"], value["wind_speed"])):
+            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
+
+        if len( {value["power"].size, value["thrust"].size, value["wind_speed"].size} ) > 1:
+            raise ValueError("power, thrust, and wind_speed tables must be the same size.")
 
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:
@@ -698,33 +650,42 @@ class Turbine(BaseClass):
         self.rotor_radius = (value / np.pi) ** 0.5
 
     @floating_tilt_table.validator
-    def check_floating_tilt_table(self, instance: attrs.Attribute, value: Any) -> None:
+    def check_floating_tilt_table(self, instance: attrs.Attribute, value: dict | None) -> None:
         """
-        Check that if the tile/wind_speed table is defined, that the tilt and
-        wind_speed arrays are the same length so that the interpolation will work.
+        If the tilt / wind_speed table is defined, verify that the tilt and
+        wind_speed arrays are the same length.
         """
-        if self.floating_tilt_table is not None:
-            if (
-                len(self.floating_tilt_table["tilt"])
-                != len(self.floating_tilt_table["wind_speeds"])
-            ):
-                raise ValueError(
-                    "tilt and wind_speeds must be the same length for the interpolation to work."
-                )
+        if value is None:
+            return
 
-    @floating_correct_cp_ct_for_tilt.validator
+        if len(value.keys()) != 2 or set(value.keys()) != {"wind_speed", "tilt"}:
+            raise ValueError(
+                """
+                floating_tilt_table dictionary must have the form:
+                    {
+                        "wind_speed": List[float],
+                        "tilt": List[float],
+                    }
+                """
+            )
+
+        if any(len(np.shape(e)) > 1 for e in (value["tilt"], value["wind_speed"])):
+            raise ValueError("tilt and wind_speed inputs must be 1-D.")
+
+        if len( {len(value["tilt"]), len(value["wind_speed"])} ) > 1:
+            raise ValueError("tilt and wind_speed inputs must be the same size.")
+
+    @correct_cp_ct_for_tilt.validator
     def check_for_cp_ct_correct_flag_if_floating(
         self,
         instance: attrs.Attribute,
-        value: Any
+        value: bool
     ) -> None:
         """
         Check that the boolean flag exists for correcting Cp/Ct for tilt
         if a tile/wind_speed table is also defined.
         """
-        if self.floating_tilt_table is not None:
-            if self.floating_correct_cp_ct_for_tilt is None:
-                raise ValueError(
-                    "If a floating tilt/wind_speed table is defined, the boolean flag"
-                    "floating_correct_cp_ct_for_tilt must also be defined."
-                )
+        if self.correct_cp_ct_for_tilt and self.floating_tilt_table is None:
+            raise ValueError(
+                "To enable the Cp and Ct tilt correction, a tilt table must be given."
+            )

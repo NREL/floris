@@ -369,13 +369,13 @@ class SampleInputs:
                 5.0,
                 5.0,
             ],
-            "wind_speeds": [
+            "wind_speed": [
                 0.0,
                 25.0,
                 50.0,
             ],
         }
-        self.turbine_floating["floating_correct_cp_ct_for_tilt"] = True
+        self.turbine_floating["correct_cp_ct_for_tilt"] = True
 
         self.turbine_multi_dim = copy.deepcopy(self.turbine)
         del self.turbine_multi_dim['power_thrust_table']

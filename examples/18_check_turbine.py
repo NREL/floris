@@ -60,15 +60,15 @@ for t in turbines:
 
     # Plot cp and ct onto the fig_cp_ct plot
     axarr_cp_ct[0].plot(
-        fi.floris.farm.turbine_map[0].power_thrust_table.wind_speed,
-        fi.floris.farm.turbine_map[0].power_thrust_table.power,label=t
+        fi.floris.farm.turbine_map[0].power_thrust_table["wind_speed"],
+        fi.floris.farm.turbine_map[0].power_thrust_table["power"],label=t
     )
     axarr_cp_ct[0].grid(True)
     axarr_cp_ct[0].legend()
     axarr_cp_ct[0].set_ylabel('Cp')
     axarr_cp_ct[1].plot(
-        fi.floris.farm.turbine_map[0].power_thrust_table.wind_speed,
-        fi.floris.farm.turbine_map[0].power_thrust_table.thrust,label=t
+        fi.floris.farm.turbine_map[0].power_thrust_table["wind_speed"],
+        fi.floris.farm.turbine_map[0].power_thrust_table["thrust"],label=t
     )
     axarr_cp_ct[1].grid(True)
     axarr_cp_ct[1].legend()

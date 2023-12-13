@@ -40,10 +40,8 @@ class Grid(ABC, BaseClass):
     """
     Grid should establish domain bounds based on given criteria,
     and develop three arrays to contain components of the grid
-    locations in space.
-
-    This could be generalized to any number of dimensions to be
-    used by perhaps a turbulence field.
+    locations in space. This could be generalized to any number
+    of dimensions to be used by perhaps a turbulence field.
 
     The grid will have to be reestablished for each wind direction since the planform
     area of the farm will be different.

@@ -44,7 +44,6 @@ from .turbine import (
     Ct,
     power,
     rotor_effective_velocity,
-    TiltTable,
     Turbine
 )
 from .turbine_multi_dim import (

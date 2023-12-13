@@ -46,21 +46,25 @@ class FlowField(BaseClass):
     multidim_conditions: dict = field(default=None)
     
     n_findex: int = field(init=False)
-    u_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    v_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    w_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    u_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    v_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    w_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    u: NDArrayFloat = field(init=False, default=np.array([]))
-    v: NDArrayFloat = field(init=False, default=np.array([]))
-    w: NDArrayFloat = field(init=False, default=np.array([]))
+    u_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    v_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    w_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    u_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    v_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    w_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    u: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    v: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    w: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
     het_map: list = field(init=False, default=None)
-    dudz_initial_sorted: NDArrayFloat = field(init=False, default=np.array([]))
+    dudz_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
-    turbulence_intensity_field: NDArrayFloat = field(init=False, default=np.array([]))
-    turbulence_intensity_field_sorted: NDArrayFloat = field(init=False, default=np.array([]))
-    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(init=False, default=np.array([]))
+    turbulence_intensity_field: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    turbulence_intensity_field_sorted: NDArrayFloat = field(
+        init=False, factory=lambda: np.array([])
+    )
+    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(
+        init=False, factory=lambda: np.array([])
+    )
 
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
@@ -121,9 +125,12 @@ class FlowField(BaseClass):
         dwind_profile_plane = (
             self.wind_shear
             * (1 / self.reference_wind_height) ** self.wind_shear
-            * (grid.z_sorted) ** (self.wind_shear - 1)
+            * np.power(
+                grid.z_sorted,
+                (self.wind_shear - 1),
+                where=grid.z_sorted != 0.0
+            )
         )
-
         # If no heterogeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
             speed_ups = 1.0

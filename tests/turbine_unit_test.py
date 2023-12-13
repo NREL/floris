@@ -13,9 +13,13 @@
 # See https://floris.readthedocs.io for documentation
 
 
+import os
+from pathlib import Path
+
 import attr
 import numpy as np
 import pytest
+import yaml
 from scipy.interpolate import interp1d
 
 from floris.simulation import (
@@ -30,9 +34,9 @@ from floris.simulation.turbine import (
     _rotor_velocity_yaw_correction,
     compute_tilt_angles_for_floating_turbines,
     cubic_cubature,
-    PowerThrustTable,
     simple_cubature,
 )
+from floris.turbine_library import build_turbine_dict
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
@@ -50,56 +54,41 @@ WIND_CONDITION_BROADCAST = np.concatenate(
 INDEX_FILTER = [0, 2]
 
 
-def test_power_thrust_table():
-    turbine_data = SampleInputs().turbine
-    table = PowerThrustTable.from_dict(turbine_data["power_thrust_table"])
-
-    # Test data conversion is correct
-    assert isinstance(table.power, np.ndarray)
-    assert isinstance(table.thrust, np.ndarray)
-    assert isinstance(table.wind_speed, np.ndarray)
-
-    # Test for initialization errors
-    for el in ("power", "thrust", "wind_speed"):
-        pt_table = SampleInputs().turbine["power_thrust_table"]
-        pt_table[el] = pt_table[el][:-1]
-        with pytest.raises(ValueError):
-            PowerThrustTable.from_dict(pt_table)
-
-        pt_table = SampleInputs().turbine["power_thrust_table"]
-        pt_table[el] = np.array(pt_table[el]).reshape(2, -1)
-        with pytest.raises(ValueError):
-            PowerThrustTable.from_dict(pt_table)
-
-
 def test_turbine_init():
     turbine_data = SampleInputs().turbine
     turbine = Turbine.from_dict(turbine_data)
+    assert turbine.turbine_type == turbine_data["turbine_type"]
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
     assert turbine.pP == turbine_data["pP"]
     assert turbine.pT == turbine_data["pT"]
+    assert turbine.TSR == turbine_data["TSR"]
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
+    assert turbine.ref_density_cp_ct == turbine_data["ref_density_cp_ct"]
+    assert turbine.ref_tilt_cp_ct == turbine_data["ref_tilt_cp_ct"]
+    assert np.array_equal(
+        turbine.power_thrust_table["wind_speed"],
+        turbine_data["power_thrust_table"]["wind_speed"]
+    )
+    assert np.array_equal(
+        turbine.power_thrust_table["power"],
+        turbine_data["power_thrust_table"]["power"]
+    )
+    assert np.array_equal(
+        turbine.power_thrust_table["thrust"],
+        turbine_data["power_thrust_table"]["thrust"]
+    )
+    assert turbine.rotor_radius == turbine.rotor_diameter / 2.0
+    assert turbine.rotor_area == np.pi * turbine.rotor_radius ** 2.0
 
-    pt_data = turbine_data["power_thrust_table"]
-    assert isinstance(turbine.power_thrust_table, PowerThrustTable)
-    np.testing.assert_allclose(
-        turbine.power_thrust_table.power,
-        np.array(pt_data["power"])
-    )
-    np.testing.assert_allclose(
-        turbine.power_thrust_table.thrust,
-        np.array(pt_data["thrust"])
-    )
-    np.testing.assert_allclose(
-        turbine.power_thrust_table.wind_speed,
-        np.array(pt_data["wind_speed"])
-    )
+    # TODO: test these explicitly.
+    # Test create a simpler interpolator and test that you get the values you expect
+    # fCt_interp: interp1d = field(init=False)
+    # power_interp: interp1d = field(init=False)
+    # tilt_interp: interp1d = field(init=False, default=None)
 
-    assert isinstance(turbine.fCp_interp, interp1d)
     assert isinstance(turbine.fCt_interp, interp1d)
     assert isinstance(turbine.power_interp, interp1d)
-    assert turbine.rotor_radius == turbine_data["rotor_diameter"] / 2.0
 
 
 def test_rotor_radius():
@@ -215,7 +204,7 @@ def test_ct():
         tilt_angle=np.ones((1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine.fCt_interp},
-        tilt_interp=np.array([(turbine.turbine_type, None)]),
+        tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
         turbine_type_map=turbine_type_map[:,0]
     )
@@ -231,7 +220,7 @@ def test_ct():
         tilt_angle=np.ones((1, N_TURBINES)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, N_TURBINES)) * 5.0,
         fCt={turbine.turbine_type: turbine.fCt_interp},
-        tilt_interp=np.array([(turbine.turbine_type, None)]),
+        tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,
@@ -252,7 +241,7 @@ def test_ct():
         tilt_angle=np.ones((1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine_floating.fCt_interp},
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
+        tilt_interp={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[True]]),
         turbine_type_map=turbine_type_map[:,0]
     )
@@ -286,11 +275,11 @@ def test_power():
     cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
     baseline_power = (
         0.5
+        * cp_truth
         * AIR_DENSITY
         * turbine.rotor_area
-        * cp_truth
-        * turbine.generator_efficiency
         * wind_speed ** 3
+        * turbine.generator_efficiency
     )
     assert np.allclose(baseline_power, test_power)
 
@@ -372,7 +361,7 @@ def test_axial_induction():
         tilt_angle=np.ones((1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine.fCt_interp},
-        tilt_interp=np.array([(turbine.turbine_type, None)]),
+        tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
         turbine_type_map=turbine_type_map[0,0],
     )
@@ -385,7 +374,7 @@ def test_axial_induction():
         tilt_angle=np.ones((1, N_TURBINES)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, N_TURBINES)) * 5.0,
         fCt={turbine.turbine_type: turbine.fCt_interp},
-        tilt_interp=np.array([(turbine.turbine_type, None)] * N_TURBINES),
+        tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,
@@ -403,7 +392,7 @@ def test_axial_induction():
         tilt_angle=np.ones((1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine_floating.fCt_interp},
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
+        tilt_interp={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[True]]),
         turbine_type_map=turbine_type_map[0,0],
     )
@@ -468,7 +457,7 @@ def test_rotor_velocity_tilt_correction():
         tilt_angle=5.0*np.ones((1, 1)),
         ref_tilt_cp_ct=np.array([turbine.ref_tilt_cp_ct]),
         pT=np.array([turbine.pT]),
-        tilt_interp=np.array([(turbine.turbine_type, turbine.fTilt_interp)]),
+        tilt_interp={turbine.turbine_type: turbine.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[False]]),
         rotor_effective_velocities=wind_speed,
     )
@@ -481,7 +470,7 @@ def test_rotor_velocity_tilt_correction():
         tilt_angle=5.0*np.ones((1, N_TURBINES)),
         ref_tilt_cp_ct=np.array([turbine.ref_tilt_cp_ct] * N_TURBINES),
         pT=np.array([turbine.pT] * N_TURBINES),
-        tilt_interp=np.array([(turbine.turbine_type, turbine.fTilt_interp)] * N_TURBINES),
+        tilt_interp={turbine.turbine_type: turbine.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
         rotor_effective_velocities=wind_speed_N_TURBINES,
     )
@@ -494,7 +483,7 @@ def test_rotor_velocity_tilt_correction():
         tilt_angle=5.0*np.ones((1, 1)),
         ref_tilt_cp_ct=np.array([turbine_floating.ref_tilt_cp_ct]),
         pT=np.array([turbine_floating.pT]),
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
+        tilt_interp={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[True]]),
         rotor_effective_velocities=wind_speed,
     )
@@ -507,9 +496,7 @@ def test_rotor_velocity_tilt_correction():
         tilt_angle=5.0*np.ones((1, N_TURBINES)),
         ref_tilt_cp_ct=np.array([turbine_floating.ref_tilt_cp_ct] * N_TURBINES),
         pT=np.array([turbine_floating.pT] * N_TURBINES),
-        tilt_interp=np.array(
-            [(turbine_floating.turbine_type, turbine_floating.fTilt_interp)] * N_TURBINES
-        ),
+        tilt_interp={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[True] * N_TURBINES]),
         rotor_effective_velocities=wind_speed_N_TURBINES,
     )
@@ -535,27 +522,25 @@ def test_compute_tilt_angles_for_floating_turbines():
     tilt = compute_tilt_angles_for_floating_turbines(
         turbine_type_map=np.array([turbine_type_map[:, 0]]),
         tilt_angle=5.0*np.ones((1, 1)),
-        tilt_interp=np.array([(turbine_floating.turbine_type, turbine_floating.fTilt_interp)]),
+        tilt_interp={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         rotor_effective_velocities=rotor_effective_velocities,
     )
 
     # calculate tilt again
-    truth_index = turbine_floating_data["floating_tilt_table"]["wind_speeds"].index(wind_speed)
+    truth_index = turbine_floating_data["floating_tilt_table"]["wind_speed"].index(wind_speed)
     tilt_truth = turbine_floating_data["floating_tilt_table"]["tilt"][truth_index]
     np.testing.assert_allclose(tilt, tilt_truth)
 
-    # Mulitple turbines
+    # Multiple turbines
     tilt_N_turbines = compute_tilt_angles_for_floating_turbines(
         turbine_type_map=np.array(turbine_type_map),
         tilt_angle=5.0*np.ones((1, N_TURBINES)),
-        tilt_interp=np.array(
-            [(turbine_floating.turbine_type, turbine_floating.fTilt_interp)] * N_TURBINES
-        ),
+        tilt_interp={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         rotor_effective_velocities=rotor_effective_velocities_N_TURBINES,
     )
 
     # calculate tilt again
-    truth_index = turbine_floating_data["floating_tilt_table"]["wind_speeds"].index(wind_speed)
+    truth_index = turbine_floating_data["floating_tilt_table"]["wind_speed"].index(wind_speed)
     tilt_truth = turbine_floating_data["floating_tilt_table"]["tilt"][truth_index]
     np.testing.assert_allclose(tilt_N_turbines, [[tilt_truth] * N_TURBINES])
 
@@ -610,3 +595,88 @@ def test_cubic_cubature():
 
     # Check if the result matches the expected output
     np.testing.assert_allclose(result, expected_output)
+
+def test_build_turbine_dict():
+
+    orig_file_path = Path(__file__).resolve().parent / "data" / "nrel_5MW_custom.yaml"
+    test_turb_name = "test_turbine_export"
+    test_file_path = "."
+
+    in_dict = yaml.safe_load( open(orig_file_path, "r") )
+
+    # Mocked up turbine data
+    turbine_data_dict = {
+        "wind_speed":in_dict["power_thrust_table"]["wind_speed"],
+        "power_coefficient":in_dict["power_thrust_table"]["power"],
+        "thrust_coefficient":in_dict["power_thrust_table"]["thrust"]
+    }
+
+    build_turbine_dict(
+        turbine_data_dict,
+        test_turb_name,
+        file_path=test_file_path,
+        generator_efficiency=in_dict["generator_efficiency"],
+        hub_height=in_dict["hub_height"],
+        pP=in_dict["pP"],
+        pT=in_dict["pT"],
+        rotor_diameter=in_dict["rotor_diameter"],
+        TSR=in_dict["TSR"],
+        air_density=in_dict["ref_density_cp_ct"],
+        ref_tilt_cp_ct=in_dict["ref_tilt_cp_ct"]
+    )
+
+    test_dict = yaml.safe_load(
+        open(os.path.join(test_file_path, test_turb_name+".yaml"), "r")
+    )
+
+    # Correct intended difference for test; assert equal
+    test_dict["turbine_type"] = in_dict["turbine_type"]
+    assert list(in_dict.keys()) == list(test_dict.keys())
+    assert in_dict == test_dict
+
+    # Now, in absolute values
+    Cp = np.array(in_dict["power_thrust_table"]["power"])
+    Ct = np.array(in_dict["power_thrust_table"]["thrust"])
+    ws = np.array(in_dict["power_thrust_table"]["wind_speed"])
+
+    P = 0.5 * in_dict["ref_density_cp_ct"] * (np.pi * in_dict["rotor_diameter"]**2/4) \
+        * Cp * ws**3
+    T = 0.5 * in_dict["ref_density_cp_ct"] * (np.pi * in_dict["rotor_diameter"]**2/4) \
+        * Ct * ws**2
+
+    turbine_data_dict = {
+        "wind_speed":in_dict["power_thrust_table"]["wind_speed"],
+        "power_absolute": P/1000,
+        "thrust_absolute": T/1000
+    }
+
+    build_turbine_dict(
+        turbine_data_dict,
+        test_turb_name,
+        file_path=test_file_path,
+        generator_efficiency=in_dict["generator_efficiency"],
+        hub_height=in_dict["hub_height"],
+        pP=in_dict["pP"],
+        pT=in_dict["pT"],
+        rotor_diameter=in_dict["rotor_diameter"],
+        TSR=in_dict["TSR"],
+        air_density=in_dict["ref_density_cp_ct"],
+        ref_tilt_cp_ct=in_dict["ref_tilt_cp_ct"]
+    )
+
+    test_dict = yaml.safe_load(
+        open(os.path.join(test_file_path, test_turb_name+".yaml"), "r")
+    )
+
+    test_dict["turbine_type"] = in_dict["turbine_type"]
+    assert list(in_dict.keys()) == list(test_dict.keys())
+    for k in in_dict.keys():
+        if type(in_dict[k]) is dict:
+            for k2 in in_dict[k].keys():
+                assert np.allclose(in_dict[k][k2], test_dict[k][k2])
+        elif type(in_dict[k]) is str:
+            assert in_dict[k] == test_dict[k]
+        else:
+            assert np.allclose(in_dict[k], test_dict[k])
+
+    os.remove( os.path.join(test_file_path, test_turb_name+".yaml") )

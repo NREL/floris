@@ -17,17 +17,23 @@ import copy
 import warnings
 from typing import Union
 
+import attrs
 import matplotlib as mpl
 import matplotlib.colors as mplcolors
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from attrs import define, field
 from matplotlib import rcParams
 from scipy.spatial import ConvexHull
 
 from floris.simulation import Floris
 from floris.tools.cut_plane import CutPlane
 from floris.tools.floris_interface import FlorisInterface
+from floris.type_dec import (
+    floris_array_converter,
+    NDArrayFloat,
+)
 from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 
@@ -306,7 +312,7 @@ def visualize_cut_plane(
     # Make equal axis
     ax.set_aspect("equal")
 
-    return im
+    return ax
 
 
 def visualize_heterogeneous_cut_plane(
@@ -712,3 +718,199 @@ def calculate_horizontal_plane_with_turbines(
         horizontal_plane = CutPlane(df, x_resolution, y_resolution, "z")
 
         return horizontal_plane
+
+@define
+class VelocityProfilesFigure():
+    """
+    Create a figure which displays velocity deficit profiles at several downstream
+    locations of a turbine.
+
+    Args:
+        downstream_dists_D: A list/array of streamwise locations at which the velocity deficit
+            profiles have been sampled. The locations should be normalized by the turbine
+            diameter D.
+        layout: A one- or two-element list defining the direction of the profiles and in which
+            order the directions are plotted. For example, ['cross-stream', 'vertical'] initializes
+            a figure where cross-stream profiles are expected on the top row of Axes in the figure,
+            and vertical profiles are expected on the bottom row.
+        ax_width: Roughly the width of each Axes.
+        ax_height: Roughly the height of each Axes.
+        coordinate_labels: A list of labels for the normalized coordinates.
+
+    """
+    downstream_dists_D: NDArrayFloat = field(converter=floris_array_converter)
+    layout: list[str] = field(default=['cross-stream'])
+    ax_width: float = field(default=2.07)
+    ax_height: float = field(default=3.0)
+    coordinate_labels: list[str] = field(default=['x_1/D', 'x_2/D', 'x_3/D'])
+
+    n_rows: int = field(init=False)
+    n_cols: int = field(init=False)
+    fig: plt.Figure = field(init=False)
+    axs: np.ndarray = field(init=False)
+    deficit_max: float = field(init=False, default=0.0)
+
+    def __attrs_post_init__(self) -> None:
+        self.n_rows = len(self.layout)
+        self.n_cols = len(self.downstream_dists_D)
+        figsize = [0.7 + self.ax_width * self.n_cols, 1.0 + self.ax_height * self.n_rows]
+        self.fig, self.axs = plt.subplots(
+            self.n_rows,
+            self.n_cols,
+            figsize=figsize,
+            layout='tight',
+            sharex='col',
+            sharey='row',
+            squeeze=False,
+        )
+
+        for ax in self.axs[-1]:
+            ax.set_xlabel(r'$\Delta U / U_\infty$', fontsize=14)
+            ax.tick_params('x', labelsize=14)
+
+        for ax, x1_D in zip(self.axs[0], self.downstream_dists_D):
+            ax.set_title(f'${self.coordinate_labels[0]} = {x1_D:.1f}$', fontsize=14)
+
+        for ax, profile_direction in zip(self.axs[:,0], self.layout):
+            if profile_direction == 'cross-stream':
+                ylabel = f'${self.coordinate_labels[1]}$'
+            elif profile_direction == 'vertical':
+                ylabel = f'${self.coordinate_labels[2]}$'
+            ax.set_ylabel(ylabel, fontsize=14)
+            ax.tick_params('y', labelsize=14)
+
+    @layout.validator
+    def layout_validator(self, instance : attrs.Attribute, value : list[str]) -> None:
+        allowed_layouts = [
+            ['cross-stream'],
+            ['vertical'],
+            ['cross-stream', 'vertical'],
+            ['vertical', 'cross-stream'],
+        ]
+        if value not in allowed_layouts:
+            raise ValueError(f"'layout' must be one of the following: {allowed_layouts}.")
+
+    def add_profiles(
+        self,
+        velocity_deficit_profiles: list[pd.DataFrame],
+        **kwargs
+    ) -> None:
+        """
+        Add a list of velocity deficit profiles to the figure. Each profile is represented
+        as a pandas DataFrame. `kwargs` are passed to `ax.plot`.
+        """
+        for df in velocity_deficit_profiles:
+            ax, profile_direction = self.match_profile_to_axes(df)
+            profile_direction_D = f'{profile_direction}/D'
+            ax.plot(df['velocity_deficit'], df[profile_direction_D], **kwargs)
+            self.deficit_max = max(self.deficit_max, df['velocity_deficit'].max())
+
+        margin = 0.05
+        self.set_xlim([0.0 - margin, self.deficit_max + margin])
+
+    def match_profile_to_axes(
+        self,
+        df: pd.DataFrame,
+    ) -> tuple[plt.Axes, str]:
+        x1_D = np.unique(df['x1/D'])
+        if len(x1_D) == 1:
+            x1_D = x1_D[0]
+        else:
+            raise ValueError(
+                "The streamwise location x1/D must be constant for each velocity profile."
+            )
+
+        unique_x2 = np.unique(df['x2/D'])
+        unique_x3 = np.unique(df['x3/D'])
+        if len(unique_x2) == 1:
+            profile_direction = 'x3'
+            profile_direction_name = 'vertical'
+        elif len(unique_x3) == 1:
+            profile_direction = 'x2'
+            profile_direction_name = 'cross-stream'
+        else:
+            raise ValueError(
+                f"Velocity deficit profile at x1/D = {x1_D} is neither in the cross-stream (x2) "
+                "nor the vertical (x3) direction."
+            )
+        row = self.layout.index(profile_direction_name)
+
+        col = None
+        for i in range(self.n_cols):
+            if np.abs(x1_D - self.downstream_dists_D[i]) < 0.001:
+                col = i
+                break
+        if col is None:
+            raise ValueError(
+                "Could not add a velocity deficit profile at downstream distance "
+                f"x1/D = {x1_D}. The downstream distance must be one of the following "
+                "values with which this VelocityProfilesFigure object was initialized: "
+                f"{self.downstream_dists_D}."
+            )
+        return self.axs[row,col], profile_direction
+
+    def set_xlim(
+        self,
+        xlim: list[float] | NDArrayFloat,
+    ) -> None:
+        for ax in self.axs[-1]:
+            ax.set_xlim(xlim)
+
+    def add_ref_lines_x2(
+        self,
+        ref_lines_x2_D: list[float] | NDArrayFloat,
+        **kwargs
+    ) -> None:
+        """
+        Add reference lines to the VelocityProfilesFigure which go along the XAxis.
+        Commonly used to show the extent of the turbine.
+        Args:
+            ref_lines_x2_D: A list of x2-coordinates normalized by the turbine diameter D.
+                One coordinate per reference line.
+            **kwargs: Additional parameters to pass to `ax.plot`.
+        """
+        if 'cross-stream' not in self.layout:
+            raise Exception(
+                "Could not add reference lines to cross-stream (x2) velocity profiles. No "
+                "such profiles exist in the figure."
+            )
+        row_x2 = self.layout.index('cross-stream')
+        self.add_ref_lines(ref_lines_x2_D, row_x2, **kwargs)
+
+    def add_ref_lines_x3(
+        self,
+        ref_lines_x3_D: list[float] | NDArrayFloat,
+        **kwargs
+    ) -> None:
+        """
+        Add reference lines to the VelocityProfilesFigure which go along the XAxis.
+        Commonly used to show the extent of the turbine.
+        Args:
+            ref_lines_x3_D: A list of x3-coordinates normalized by the turbine diameter D.
+                One coordinate per reference line.
+            **kwargs: Additional parameters to pass to `ax.plot`.
+        """
+        if 'vertical' not in self.layout:
+            raise Exception(
+                "Could not add reference lines to vertical (x3) velocity profiles. No "
+                "such profiles exist in the figure."
+            )
+        row_x3 = self.layout.index('vertical')
+        self.add_ref_lines(ref_lines_x3_D, row_x3, **kwargs)
+
+    def add_ref_lines(
+        self,
+        ref_lines_D: list[float] | NDArrayFloat,
+        row: int,
+        **kwargs
+    ) -> None:
+        default_params = {
+                'linestyle': (0, (4, 2)),
+                'color': 'k',
+                'linewidth': 1.1
+        }
+        kwargs = default_params | kwargs
+
+        for ax in self.axs[row]:
+            for coordinate in ref_lines_D:
+                ax.plot([0.0, 1.0], [coordinate, coordinate], **kwargs)
