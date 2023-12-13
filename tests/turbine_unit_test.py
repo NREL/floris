@@ -14,6 +14,7 @@
 
 
 import os
+from pathlib import Path
 
 import attr
 import numpy as np
@@ -587,9 +588,9 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
 
 def test_build_turbine_dict():
 
-    orig_file_path = "floris/turbine_library/iea_10MW.yaml"
-    test_turb_name = "test_iea_10MW"
-    test_file_path = "tests/"
+    orig_file_path = Path(__file__).resolve().parent / "data" / "nrel_5MW_custom.yaml"
+    test_turb_name = "test_turbine_export"
+    test_file_path = "."
 
     in_dict = yaml.safe_load( open(orig_file_path, "r") )
 
