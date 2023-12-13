@@ -293,7 +293,6 @@ class Floris(BaseClass):
             turbine_coordinates=self.farm.coordinates,
             turbine_diameters=self.farm.rotor_diameters,
             wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
             grid_resolution=1,
             time_series=self.flow_field.time_series,
             x_center_of_rotation=self.grid.x_center_of_rotation,

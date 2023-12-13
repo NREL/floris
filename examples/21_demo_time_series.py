@@ -20,22 +20,8 @@ from floris.tools import FlorisInterface
 
 
 """
-This example demonstrates running FLORIS in time series mode.
-
-Typically when an array of wind directions and wind speeds are passed in FLORIS,
-it is assumed these are defining a grid of wd/ws points to consider, as in a wind rose.
-All combinations of wind direction and wind speed are therefore computed, and resulting
-matrices, for example of turbine power are returned with martrices whose dimensions are
-wind direction, wind speed and turbine number.
-
-In time series mode, specified by setting the time_series flag of the FLORIS interface to True
-each wd/ws pair is assumed to constitute a single point in time and each pair is computed.
-Results are returned still as a 3 dimensional matrix, however the index of the (wd/ws) pair
-is provided in the first dimension, the second dimension is fixed at 1, and the thrid is
-turbine number again for consistency.
-
-Note by not specifying yaw, the assumption is that all turbines are always pointing into the
-current wind direction with no offset.
+This example demonstrates running FLORIS given a time series
+of wind direction and wind speed combinations.
 """
 
 # Initialize FLORIS to simple 4 turbine farm
@@ -56,7 +42,7 @@ for idx in range(1, len(time)):
 
 
 # Now intiialize FLORIS object to this history using time_series flag
-fi.reinitialize(wind_directions=wd, wind_speeds=ws, time_series=True)
+fi.reinitialize(wind_directions=wd, wind_speeds=ws)
 
 # Collect the powers
 fi.calculate_wake()
@@ -84,7 +70,7 @@ ax.grid(True)
 
 ax = axarr[2]
 for t in range(num_turbines):
-    ax.plot(time,turbine_powers[:, 0, t], 'o-', label='Turbine %d' % t)
+    ax.plot(time,turbine_powers[:, t], 'o-', label='Turbine %d' % t)
 ax.legend()
 ax.set_ylabel('Turbine Power (kW)')
 ax.set_xlabel('Time (minutes)')
