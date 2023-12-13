@@ -544,22 +544,11 @@ class Turbine(BaseClass):
         # self.wind_speed = self.wind_speed[duplicate_filter]
 
         wind_speeds = self.power_thrust_table["wind_speed"]
-        cp_interp = interp1d(
-            wind_speeds,
-            self.power_thrust_table["power"],
-            fill_value=(0.0, 1.0),
-            bounds_error=False,
-        )
         self.power_interp = interp1d(
             wind_speeds,
-            (
-                0.5 * self.rotor_area
-                * cp_interp(wind_speeds)
-                * self.generator_efficiency
-                * wind_speeds ** 3
-            ),
+            self.power_thrust_table["power"],
+            fill_value=0.0,
             bounds_error=False,
-            fill_value=0
         )
 
         """
@@ -574,7 +563,7 @@ class Turbine(BaseClass):
         """
         self.fCt_interp = interp1d(
             wind_speeds,
-            self.power_thrust_table["thrust"],
+            self.power_thrust_table["thrust_coefficient"],
             fill_value=(0.0001, 0.9999),
             bounds_error=False,
         )
@@ -606,23 +595,24 @@ class Turbine(BaseClass):
         Verify that the power and thrust tables are given with arrays of equal length
         to the wind speed array.
         """
-        if len(value.keys()) != 3 or set(value.keys()) != {"wind_speed", "power", "thrust"}:
+        if len(value.keys()) != 3 or set(value.keys()) != {"wind_speed", "power", "thrust_coefficient"}:
+            import ipdb; ipdb.set_trace()
             raise ValueError(
                 """
                 power_thrust_table dictionary must have the form:
                     {
                         "wind_speed": List[float],
                         "power": List[float],
-                        "thrust": List[float],
+                        "thrust_coefficient": List[float],
                     }
                 """
             )
 
-        if any(e.ndim > 1 for e in (value["power"], value["thrust"], value["wind_speed"])):
-            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
+        if any(e.ndim > 1 for e in (value["power"], value["thrust_coefficient"], value["wind_speed"])):
+            raise ValueError("power, thrust_coefficient, and wind_speed inputs must be 1-D.")
 
-        if len( {value["power"].size, value["thrust"].size, value["wind_speed"].size} ) > 1:
-            raise ValueError("power, thrust, and wind_speed tables must be the same size.")
+        if len( {value["power"].size, value["thrust_coefficient"].size, value["wind_speed"].size} ) > 1:
+            raise ValueError("power, thrust_coefficient, and wind_speed tables must be the same size.")
 
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:
