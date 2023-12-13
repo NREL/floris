@@ -166,7 +166,6 @@ def rotor_effective_velocity(
 
 
 def power(
-    ref_density_cp_ct: float,
     rotor_effective_velocities: NDArrayFloat,
     power_interp: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
@@ -176,9 +175,8 @@ def power(
     given in Watts.
 
     Args:
-        ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
         rotor_effective_velocities (NDArrayFloat[wd, ws, turbines]): The rotor
-            effective velocities at a turbine.
+            effective velocities at a turbine. Includes the air density correction.
         power_interp (dict[str, interp1d]): A dictionary of power interpolation functions for
             each turbine type.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
@@ -215,7 +213,7 @@ def power(
         # type to the main thrust coefficient array
         p += power_interp[turb_type](rotor_effective_velocities) * (turbine_type_map == turb_type)
 
-    return p * ref_density_cp_ct
+    return p
 
 
 def Ct(
@@ -546,7 +544,7 @@ class Turbine(BaseClass):
         wind_speeds = self.power_thrust_table["wind_speed"]
         self.power_interp = interp1d(
             wind_speeds,
-            self.power_thrust_table["power"],
+            self.power_thrust_table["power"] * 1e3, # Convert to W
             fill_value=0.0,
             bounds_error=False,
         )

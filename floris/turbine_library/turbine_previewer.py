@@ -147,7 +147,6 @@ class TurbineInterface:
             }
         else:
             power_mw = power(
-                ref_density_cp_ct=np.full(shape, self.turbine.ref_density_cp_ct),
                 rotor_effective_velocities=wind_speeds.reshape(shape),
                 power_interp={self.turbine.turbine_type: self.turbine.power_interp},
                 turbine_type_map=np.full(shape, self.turbine.turbine_type)

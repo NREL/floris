@@ -605,7 +605,6 @@ class FlorisInterface(LoggingManager):
             self.logger.warning("Some rotor effective velocities are negative.")
 
         turbine_powers = power(
-            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
             rotor_effective_velocities=self.turbine_effective_velocities,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
