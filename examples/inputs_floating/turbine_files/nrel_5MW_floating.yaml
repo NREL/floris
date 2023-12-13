@@ -7,7 +7,7 @@ rotor_diameter: 126.0
 TSR: 8.0
 ref_density_cp_ct: 1.225
 ref_tilt_cp_ct: 5.0
-floating_correct_cp_ct_for_tilt: True # Apply tilt correction to cp/ct
+correct_cp_ct_for_tilt: True # Apply tilt correction to cp/ct
 power_thrust_table:
   power:
     - 0.0
@@ -172,7 +172,7 @@ floating_tilt_table:
     - 9.0
     - 5.0
     - 5.0
-  wind_speeds:
+  wind_speed:
     - 0.0
     - 4.0
     - 11.0

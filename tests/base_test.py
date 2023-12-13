@@ -15,6 +15,7 @@
 
 import pytest
 from attr import define, field
+from attrs.exceptions import FrozenAttributeError
 
 from floris.simulation import BaseClass, BaseModel
 
@@ -48,5 +49,5 @@ def test_NUM_EPS():
     cls = ClassTest(x=4, a_string="xyz")
     assert cls.NUM_EPS == 0.001
 
-    with pytest.raises(ValueError):
+    with pytest.raises(FrozenAttributeError):
         cls.NUM_EPS = 2

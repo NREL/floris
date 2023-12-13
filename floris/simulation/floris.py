@@ -81,7 +81,7 @@ class Floris(BaseClass):
 
         self.check_deprecated_inputs()
 
-        # Initialize farm quanitities that depend on other objects
+        # Initialize farm quantities that depend on other objects
         self.farm.construct_turbine_map()
         if self.wake.model_strings['velocity_model'] == 'multidim_cp_ct':
             self.farm.construct_multidim_turbine_fCts()
@@ -96,7 +96,7 @@ class Floris(BaseClass):
         self.farm.construct_turbine_pTs()
         self.farm.construct_turbine_ref_density_cp_cts()
         self.farm.construct_turbine_ref_tilt_cp_cts()
-        self.farm.construct_turbine_fTilts()
+        self.farm.construct_turbine_tilt_interps()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
         self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
         self.farm.set_tilt_to_ref_tilt(
@@ -195,7 +195,6 @@ class Floris(BaseClass):
                     "\n\n".join(error_messages)
                 )
 
-    # @profile
     def initialize_domain(self):
         """Initialize solution space prior to wake calculations"""
 
@@ -214,9 +213,6 @@ class Floris(BaseClass):
         initialize_domain() is required to be called before this function."""
 
         vel_model = self.wake.model_strings["velocity_model"]
-
-        # <<interface>>
-        # start = time.time()
 
         if vel_model in ["gauss", "cc", "turbopark", "jensen"] and \
             self.farm.correct_cp_ct_for_tilt.any():
@@ -261,11 +257,8 @@ class Floris(BaseClass):
                 self.grid,
                 self.wake
             )
-        # end = time.time()
-        # elapsed_time = end - start
 
         self.finalize()
-        # return elapsed_time
 
     def solve_for_viz(self):
         # Do the calculation with the TurbineGrid for a single wind speed

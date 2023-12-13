@@ -18,7 +18,7 @@ floating_tilt_table:
     - 8.795649572299896
     - 8.089078308325314
     - 7.7229584934943614
-  wind_speeds:
+  wind_speed:
     - 4.0
     - 6.0
     - 8.0
@@ -26,4 +26,4 @@ floating_tilt_table:
     - 12.0
     - 14.0
     - 16.0
-floating_correct_cp_ct_for_tilt: True
+correct_cp_ct_for_tilt: True
