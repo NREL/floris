@@ -995,6 +995,130 @@ class FlorisInterface(LoggingManager):
 
         return self.floris.solve_for_points(x, y, z)
 
+    def sample_velocity_deficit_profiles(
+            self,
+            direction: str = 'cross-stream',
+            downstream_dists: NDArrayFloat | list = None,
+            profile_range: NDArrayFloat | list = None,
+            resolution: int = 100,
+            wind_direction: float = None,
+            homogeneous_wind_speed: float = None,
+            ref_rotor_diameter: float = None,
+            x_start: float = 0.0,
+            y_start: float = 0.0,
+            reference_height: float = None,
+    ) -> list[pd.DataFrame]:
+        """
+        Extract velocity deficit profiles at a set of downstream distances from a starting point
+        (usually a turbine location). For each downstream distance, a profile is sampled along
+        a line in either the cross-stream direction (x2) or the vertical direction (x3).
+        Velocity deficit is here defined as (homogeneous_wind_speed - u)/homogeneous_wind_speed,
+        where u is the wake velocity obtained when wind_shear = 0.0.
+
+        Args:
+            direction: At each downstream location, this is the direction in which to sample the
+                profile. Either `cross-stream` or `vertical`.
+            downstream_dists: A list/array of streamwise locations for where to sample the profiles.
+                Default starting point is (0.0, 0.0, reference_height).
+            profile_range: Determines the extent of the line along which the profiles are sampled.
+                The range is defined about a point which lies some distance directly downstream of
+                the starting point.
+            resolution: Number of sample points in each profile.
+            wind_direction: A single wind direction.
+            homogeneous_wind_speed: A single wind speed. It is called homogeneous since 'wind_shear'
+                is temporarily set to 0.0 in this method.
+            ref_rotor_diameter: A reference rotor diameter which is used to normalize the
+                coordinates.
+            x_start: x-coordinate of starting point.
+            y_start: y-coordinate of starting point.
+            reference_height: If `direction` is cross-stream, then `reference_height` defines the
+                height of the horizontal plane in which the velocity profiles are sampled.
+                If `direction` is vertical, then the velocity is sampled along the vertical
+                direction with the `profile_range` being relative to the `reference_height`.
+        Returns:
+            A list of pandas DataFrame objects where each DataFrame represents one velocity deficit
+            profile.
+        """
+
+        if direction not in ['cross-stream', 'vertical']:
+            raise ValueError("`direction` must be either `cross-stream` or `vertical`.")
+
+        if ref_rotor_diameter is None:
+            unique_rotor_diameters = np.unique(self.floris.farm.rotor_diameters)
+            if len(unique_rotor_diameters) == 1:
+                ref_rotor_diameter = unique_rotor_diameters[0]
+            else:
+                raise ValueError(
+                    "Please provide a `ref_rotor_diameter`. This is needed to normalize the "
+                    "coordinates. Could not select a value automatically since the number of "
+                    "unique rotor diameters in the turbine layout is not 1. "
+                    f"Found the following rotor diameters: {unique_rotor_diameters}."
+                )
+
+        if downstream_dists is None:
+            downstream_dists = ref_rotor_diameter * np.array([3, 5, 7, 9])
+
+        if profile_range is None:
+            profile_range = ref_rotor_diameter * np.array([-2, 2])
+
+        wind_directions_copy = np.array(self.floris.flow_field.wind_directions, copy=True)
+        wind_speeds_copy = np.array(self.floris.flow_field.wind_speeds, copy=True)
+        wind_shear_copy = self.floris.flow_field.wind_shear
+
+        if wind_direction is None:
+            if len(wind_directions_copy) == 1:
+                wind_direction = wind_directions_copy[0]
+            else:
+                raise ValueError(
+                    "Could not determine a wind direction for which to sample the velocity "
+                    "profiles. Either provide a single `wind_direction` as an argument to this "
+                    "method, or initialize the Floris object with a single wind direction."
+                )
+
+        if homogeneous_wind_speed is None:
+            if len(wind_speeds_copy) == 1:
+                homogeneous_wind_speed = wind_speeds_copy[0]
+                self.logger.warning(
+                    "`homogeneous_wind_speed` not provided. Setting it to the following wind speed "
+                    f"found in the current flow field: {wind_speeds_copy[0]} m/s. Note that the "
+                    "inflow is always homogeneous when calculating the velocity deficit profiles. "
+                    "This is done by temporarily setting `wind_shear` to 0.0"
+                )
+            else:
+                raise ValueError(
+                    "Could not determine a wind speed for which to sample the velocity "
+                    "profiles. Provide a single `homogeneous_wind_speed` to this method."
+                )
+
+        if reference_height is None:
+            reference_height = self.floris.flow_field.reference_wind_height
+
+        self.reinitialize(
+            wind_directions=[wind_direction],
+            wind_speeds=[homogeneous_wind_speed],
+            wind_shear=0.0,
+        )
+
+        velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
+            direction,
+            downstream_dists,
+            profile_range,
+            resolution,
+            homogeneous_wind_speed,
+            ref_rotor_diameter,
+            x_start,
+            y_start,
+            reference_height,
+        )
+
+        self.reinitialize(
+            wind_directions=wind_directions_copy,
+            wind_speeds=wind_speeds_copy,
+            wind_shear=wind_shear_copy,
+        )
+
+        return velocity_deficit_profiles
+
     @property
     def layout_x(self):
         """

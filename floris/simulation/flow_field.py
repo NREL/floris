@@ -135,9 +135,12 @@ class FlowField(BaseClass):
         dwind_profile_plane = (
             self.wind_shear
             * (1 / self.reference_wind_height) ** self.wind_shear
-            * (grid.z_sorted) ** (self.wind_shear - 1)
+            * np.power(
+                grid.z_sorted,
+                (self.wind_shear - 1),
+                where=grid.z_sorted != 0.0
+            )
         )
-
         # If no heterogeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
             speed_ups = 1.0

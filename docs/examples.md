@@ -146,6 +146,14 @@ mast across all wind directions (at a fixed free stream wind speed).
 Try different values for met_mast_option to vary the location of the met mast within
 the two-turbine farm.
 
+### 32_plot_velocity_deficit_profiles.py
+This example illustrates how to plot velocity deficit profiles at several locations
+downstream of a turbine. Here we use the following definition:
+
+    velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
+        , where u is the wake velocity obtained when the incoming wind speed is the
+        same at all heights and equal to `homogeneous_wind_speed`.
+
 ### 29_floating_vs_fixedbottom_farm.py
 
 Compares a fixed-bottom wind farm (with a gridded layout) to a floating
