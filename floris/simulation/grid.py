@@ -699,10 +699,10 @@ class PointsGrid(Grid):
     points_x: NDArrayFloat = field(converter=floris_array_converter)
     points_y: NDArrayFloat = field(converter=floris_array_converter)
     points_z: NDArrayFloat = field(converter=floris_array_converter)
-    x_center_of_rotation: float | None = field(
+    x_center_of_rotation: floris_float_type  | None = field(
         default=None, validator=attrs.validators.instance_of(floris_float_type)
     )
-    y_center_of_rotation: float | None = field(
+    y_center_of_rotation: floris_float_type | None = field(
         default=None, validator=attrs.validators.instance_of(floris_float_type)
     )
 

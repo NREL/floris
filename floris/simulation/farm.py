@@ -86,7 +86,7 @@ class Farm(BaseClass):
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
 
     turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
-    turbine_fCts_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_fCts_sorted: NDArrayFloat = array_3D_field
 
     turbine_fTilts: list = field(init=False, factory=list)
 

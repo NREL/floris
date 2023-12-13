@@ -28,6 +28,7 @@ from floris.simulation import (
 )
 from floris.type_dec import (
     array_5D_field,
+    array_mixed_dim_field,
     floris_array_converter,
     NDArrayFloat,
 )
@@ -61,15 +62,11 @@ class FlowField(BaseClass):
     v: NDArrayFloat = array_5D_field
     w: NDArrayFloat = array_5D_field
     het_map: list = field(init=False, default=None)
-    dudz_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    dudz_initial_sorted: NDArrayFloat = array_5D_field
 
-    turbulence_intensity_field: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    turbulence_intensity_field_sorted: NDArrayFloat = field(
-        init=False, factory=lambda: np.array([])
-    )
-    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(
-        init=False, factory=lambda: np.array([])
-    )
+    turbulence_intensity_field: NDArrayFloat = array_mixed_dim_field
+    turbulence_intensity_field_sorted: NDArrayFloat = array_5D_field
+    turbulence_intensity_field_sorted_avg: NDArrayFloat = array_mixed_dim_field
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:

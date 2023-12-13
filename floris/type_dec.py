@@ -203,7 +203,35 @@ def validate_5DArray_shape(instance, attribute: Attribute, value: np.ndarray) ->
     grid = instance.grid_resolution
     shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines, grid, grid)
     if value.shape != shape:
-        raise ValueError(f"`{attribute.name}` should have shape: {shape}; not shape: {value.shape}")
+        broadcast_shape = (
+            instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines, 1, 1
+        )
+        if value.shape != broadcast_shape:
+            raise ValueError(
+                f"`{attribute.name}` should have shape: {shape}; not shape: {value.shape}"
+            )
+
+
+def validate_mixed_dim(instance, attribute: Attribute, value: np.ndarray) -> None:
+    """Validator that checks if the array's shape is N wind directions x N wind speeds x N turbines
+    or N wind directions x N wind speeds x N turbines x N grid points x N grid points.
+
+    Args:
+        instance (cls): The class instance.
+        attribute (Attribute): The ``attrs.Attribute`` data.
+        value (np.ndarray): The input or updated NumPy array.
+
+    Raises:
+        TypeError: raised if :py:attr:`value` is not a NumPy array.
+        ValueError: raised if the shape of :py:attr:`value` is not a valid 5D or 3D array.
+    """
+    try:
+        validate_5DArray_shape(instance, attribute, value)
+    except ValueError:
+        try:
+            validate_3DArray_shape(instance, attribute, value)
+        except ValueError:
+            raise ValueError(f"`{attribute.name}` could not be validated as a 5-D or 3-D array.")
 
 @define
 class FromDictMixin:
@@ -281,6 +309,9 @@ class ValidateMixin:
 
 array_3D_field = field(init=False, factory=lambda: np.array([]), validator=validate_3DArray_shape)
 array_5D_field = field(init=False, factory=lambda: np.array([]), validator=validate_5DArray_shape)
+array_mixed_dim_field = field(
+    init=False, factory=lambda: np.array([]), validator=validate_mixed_dim
+)
 
 
 # from functools import partial, update_wrapper
