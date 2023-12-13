@@ -159,16 +159,24 @@ def test_array_validators():
     # Check assignment with correct shape: 3 x 4 x 10 (x 3 x 3)
     demo.five_dimensions_provided = np.random.random((3, 4, 10, 3, 3))
     demo.three_dimensions_provided = np.random.random((3, 4, 10))
+    demo.mixed_dimensions_provided = np.random.random((3, 4, 10, 3, 3))
     demo.validate()
 
     # Check assignment with correct broadcatable shape: 3 x 4 x 10 x 1 x 1 or 3 x 1 x 10
     demo.five_dimensions_provided = np.random.random((3, 4, 10, 1, 1))
     demo.three_dimensions_provided = np.random.random((3, 1, 10))
+    demo.mixed_dimensions_provided = np.random.random((3, 1, 10))
     demo.validate()
 
     # Check for correct number of dimensions, but wrong shape
     with pytest.raises(ValueError):
         demo.five_dimensions_provided = np.random.random((3, 3, 3, 3, 3))
+
+    with pytest.raises(ValueError):
+        demo.mixed_dimensions_provided = np.random.random((4, 3, 10, 1, 1))
+
+    with pytest.raises(ValueError):
+        demo.mixed_dimensions_provided = np.random.random((4, 3, 10))
 
     with pytest.raises(ValueError):
         demo.three_dimensions_provided = np.random.random((3, 5, 10))
