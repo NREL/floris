@@ -25,8 +25,7 @@ def test_calculate_wake():
     fi = FlorisInterface(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones(
         (
-            fi.floris.flow_field.n_wind_directions,
-            fi.floris.flow_field.n_wind_speeds,
+            fi.floris.flow_field.n_findex,
             fi.floris.farm.n_turbines
         )
     )
@@ -35,8 +34,7 @@ def test_calculate_wake():
 
     yaw_angles = np.zeros(
         (
-            fi.floris.flow_field.n_wind_directions,
-            fi.floris.flow_field.n_wind_speeds,
+            fi.floris.flow_field.n_findex,
             fi.floris.farm.n_turbines
         )
     )
@@ -53,8 +51,7 @@ def test_calculate_no_wake():
     fi = FlorisInterface(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones(
         (
-            fi.floris.flow_field.n_wind_directions,
-            fi.floris.flow_field.n_wind_speeds,
+            fi.floris.flow_field.n_findex,
             fi.floris.farm.n_turbines
         )
     )
@@ -63,14 +60,9 @@ def test_calculate_no_wake():
 
     yaw_angles = np.zeros(
         (
-            fi.floris.flow_field.n_wind_directions,
-            fi.floris.flow_field.n_wind_speeds,
+            fi.floris.flow_field.n_findex,
             fi.floris.farm.n_turbines
         )
     )
     fi.calculate_no_wake(yaw_angles=yaw_angles)
     assert fi.floris.farm.yaw_angles == yaw_angles
-
-
-def test_reinitialize():
-    pass

@@ -56,12 +56,13 @@ def test_set_grid(turbine_grid_fixture):
 
     # These should have the following shape:
     # (n findex, n turbines, grid resolution, grid resolution)
-    assert np.shape(turbine_grid_fixture.x_sorted) == (4,3,2,2)
-    assert np.shape(turbine_grid_fixture.y_sorted) == (4,3,2,2)
-    assert np.shape(turbine_grid_fixture.z_sorted) == (4,3,2,2)
-    assert np.shape(turbine_grid_fixture.x_sorted_inertial_frame) == (4,3,2,2)
-    assert np.shape(turbine_grid_fixture.y_sorted_inertial_frame) == (4,3,2,2)
-    assert np.shape(turbine_grid_fixture.z_sorted_inertial_frame) == (4,3,2,2)
+    expected_shape = (N_FINDEX,N_TURBINES,TURBINE_GRID_RESOLUTION,TURBINE_GRID_RESOLUTION)
+    assert np.shape(turbine_grid_fixture.x_sorted) == expected_shape
+    assert np.shape(turbine_grid_fixture.y_sorted) == expected_shape
+    assert np.shape(turbine_grid_fixture.z_sorted) == expected_shape
+    assert np.shape(turbine_grid_fixture.x_sorted_inertial_frame) == expected_shape
+    assert np.shape(turbine_grid_fixture.y_sorted_inertial_frame) == expected_shape
+    assert np.shape(turbine_grid_fixture.z_sorted_inertial_frame) == expected_shape
 
 
 def test_dimensions(turbine_grid_fixture):
