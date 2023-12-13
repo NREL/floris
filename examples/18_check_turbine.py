@@ -47,6 +47,10 @@ turbines = [
     if t.suffix == ".yaml" and ("multi_dim" not in t.stem)
 ]
 
+# TEMPORARY
+turbines = [turbines[2]]
+# END TEMPORARY
+
 # Declare a set of figures for comparing cp and ct across models
 fig_cp_ct, axarr_cp_ct = plt.subplots(2,1,sharex=True,figsize=(10,10))
 
@@ -66,14 +70,14 @@ for t in turbines:
     )
     axarr_cp_ct[0].grid(True)
     axarr_cp_ct[0].legend()
-    axarr_cp_ct[0].set_ylabel('Cp')
+    axarr_cp_ct[0].set_ylabel('Power (kW)')
     axarr_cp_ct[1].plot(
         fi.floris.farm.turbine_map[0].power_thrust_table["wind_speed"],
-        fi.floris.farm.turbine_map[0].power_thrust_table["thrust"],label=t
+        fi.floris.farm.turbine_map[0].power_thrust_table["thrust_coefficient"],label=t
     )
     axarr_cp_ct[1].grid(True)
     axarr_cp_ct[1].legend()
-    axarr_cp_ct[1].set_ylabel('Ct')
+    axarr_cp_ct[1].set_ylabel('Ct (-)')
     axarr_cp_ct[1].set_xlabel('Wind Speed (m/s)')
 
     # Create a figure
