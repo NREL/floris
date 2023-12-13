@@ -16,7 +16,9 @@ floris.simulation.grid.TurbineGrid
    .. autosummary::
       :nosignatures:
    
+      ~TurbineGrid.as_dict
       ~TurbineGrid.check_coordinates
+      ~TurbineGrid.from_dict
       ~TurbineGrid.grid_resolution_validator
       ~TurbineGrid.set_grid
       ~TurbineGrid.wind_directions_validator
@@ -38,13 +40,14 @@ floris.simulation.grid.TurbineGrid
       ~TurbineGrid.average_method
       ~TurbineGrid.cubature_weights
       ~TurbineGrid.grid_resolution
+      ~TurbineGrid.logger
       ~TurbineGrid.n_turbines
       ~TurbineGrid.n_wind_directions
       ~TurbineGrid.n_wind_speeds
-      ~TurbineGrid.reference_turbine_diameter
+      ~TurbineGrid.state
       ~TurbineGrid.time_series
       ~TurbineGrid.turbine_coordinates
-      ~TurbineGrid.turbine_coordinates_array
+      ~TurbineGrid.turbine_diameters
       ~TurbineGrid.wind_directions
       ~TurbineGrid.wind_speeds
       ~TurbineGrid.x_sorted

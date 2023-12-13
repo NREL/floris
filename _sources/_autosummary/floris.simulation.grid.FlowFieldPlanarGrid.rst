@@ -16,7 +16,9 @@ floris.simulation.grid.FlowFieldPlanarGrid
    .. autosummary::
       :nosignatures:
    
+      ~FlowFieldPlanarGrid.as_dict
       ~FlowFieldPlanarGrid.check_coordinates
+      ~FlowFieldPlanarGrid.from_dict
       ~FlowFieldPlanarGrid.grid_resolution_validator
       ~FlowFieldPlanarGrid.set_grid
       ~FlowFieldPlanarGrid.wind_directions_validator
@@ -40,13 +42,14 @@ floris.simulation.grid.FlowFieldPlanarGrid
       ~FlowFieldPlanarGrid.unsorted_indices
       ~FlowFieldPlanarGrid.cubature_weights
       ~FlowFieldPlanarGrid.grid_resolution
+      ~FlowFieldPlanarGrid.logger
       ~FlowFieldPlanarGrid.n_turbines
       ~FlowFieldPlanarGrid.n_wind_directions
       ~FlowFieldPlanarGrid.n_wind_speeds
-      ~FlowFieldPlanarGrid.reference_turbine_diameter
+      ~FlowFieldPlanarGrid.state
       ~FlowFieldPlanarGrid.time_series
       ~FlowFieldPlanarGrid.turbine_coordinates
-      ~FlowFieldPlanarGrid.turbine_coordinates_array
+      ~FlowFieldPlanarGrid.turbine_diameters
       ~FlowFieldPlanarGrid.wind_directions
       ~FlowFieldPlanarGrid.wind_speeds
       ~FlowFieldPlanarGrid.x_sorted

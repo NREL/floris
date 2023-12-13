@@ -16,7 +16,9 @@ floris.simulation.grid.PointsGrid
    .. autosummary::
       :nosignatures:
    
+      ~PointsGrid.as_dict
       ~PointsGrid.check_coordinates
+      ~PointsGrid.from_dict
       ~PointsGrid.grid_resolution_validator
       ~PointsGrid.set_grid
       ~PointsGrid.wind_directions_validator
@@ -37,13 +39,14 @@ floris.simulation.grid.PointsGrid
       ~PointsGrid.y_center_of_rotation
       ~PointsGrid.cubature_weights
       ~PointsGrid.grid_resolution
+      ~PointsGrid.logger
       ~PointsGrid.n_turbines
       ~PointsGrid.n_wind_directions
       ~PointsGrid.n_wind_speeds
-      ~PointsGrid.reference_turbine_diameter
+      ~PointsGrid.state
       ~PointsGrid.time_series
       ~PointsGrid.turbine_coordinates
-      ~PointsGrid.turbine_coordinates_array
+      ~PointsGrid.turbine_diameters
       ~PointsGrid.wind_directions
       ~PointsGrid.wind_speeds
       ~PointsGrid.x_sorted

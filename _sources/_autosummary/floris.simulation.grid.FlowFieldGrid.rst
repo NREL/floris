@@ -16,7 +16,9 @@ floris.simulation.grid.FlowFieldGrid
    .. autosummary::
       :nosignatures:
    
+      ~FlowFieldGrid.as_dict
       ~FlowFieldGrid.check_coordinates
+      ~FlowFieldGrid.from_dict
       ~FlowFieldGrid.grid_resolution_validator
       ~FlowFieldGrid.set_grid
       ~FlowFieldGrid.wind_directions_validator
@@ -34,13 +36,14 @@ floris.simulation.grid.FlowFieldGrid
       ~FlowFieldGrid.y_center_of_rotation
       ~FlowFieldGrid.cubature_weights
       ~FlowFieldGrid.grid_resolution
+      ~FlowFieldGrid.logger
       ~FlowFieldGrid.n_turbines
       ~FlowFieldGrid.n_wind_directions
       ~FlowFieldGrid.n_wind_speeds
-      ~FlowFieldGrid.reference_turbine_diameter
+      ~FlowFieldGrid.state
       ~FlowFieldGrid.time_series
       ~FlowFieldGrid.turbine_coordinates
-      ~FlowFieldGrid.turbine_coordinates_array
+      ~FlowFieldGrid.turbine_diameters
       ~FlowFieldGrid.wind_directions
       ~FlowFieldGrid.wind_speeds
       ~FlowFieldGrid.x_sorted

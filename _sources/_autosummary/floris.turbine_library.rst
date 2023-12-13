@@ -27,4 +27,5 @@
    :recursive:
 
    floris.turbine_library.turbine_previewer
+   floris.turbine_library.turbine_utilities
 

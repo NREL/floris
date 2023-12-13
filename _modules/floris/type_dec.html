@@ -708,9 +708,13 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">floris.turbine_library.turbine_previewer.TurbineLibrary</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.turbine_library.turbine_utilities.build_turbine_dict.html">floris.turbine_library.turbine_utilities.build_turbine_dict</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../_autosummary/floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_autosummary/floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-35"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.utilities.cosd.html">floris.utilities.cosd</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.utilities.load_yaml.html">floris.utilities.load_yaml</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.utilities.pshape.html">floris.utilities.pshape</a></li>
@@ -724,7 +728,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.utilities.wrap_180.html">floris.utilities.wrap_180</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.utilities.wrap_360.html">floris.utilities.wrap_360</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.utilities.Loader.html">floris.utilities.Loader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.utilities.Vec3.html">floris.utilities.Vec3</a></li>
 </ul>
 </li>
 </ul>
@@ -893,6 +896,18 @@ title="Open an issue"
     <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;. Data given: </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">a</span></div>
+
+<span class="c1"># def array_field(**kwargs) -&gt; Callable:</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     A wrapper for the :py:func:`attr.field` function that converts the input to a Numpy array,</span>
+<span class="c1">#     adds a comparison function specific to Numpy arrays, and passes through all additional</span>
+<span class="c1">#     keyword arguments.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return field(</span>
+<span class="c1">#         converter=floris_array_converter,</span>
+<span class="c1">#         eq=cmp_using(eq=np.array_equal),</span>
+<span class="c1">#         **kwargs</span>
+<span class="c1">#     )</span>
 
 <span class="k">def</span> <span class="nf">_attr_serializer</span><span class="p">(</span><span class="n">inst</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>

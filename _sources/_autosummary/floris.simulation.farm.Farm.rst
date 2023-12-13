@@ -22,7 +22,6 @@ floris.simulation.farm.Farm
       ~Farm.check_turbine_type
       ~Farm.check_x
       ~Farm.check_y
-      ~Farm.construct_coordinates
       ~Farm.construct_hub_heights
       ~Farm.construct_multidim_turbine_fCts
       ~Farm.construct_multidim_turbine_power_interps
@@ -57,7 +56,6 @@ floris.simulation.farm.Farm
       ~Farm.turbine_type
       ~Farm.turbine_library_path
       ~Farm.turbine_definitions
-      ~Farm.coordinates
       ~Farm.turbine_fCts
       ~Farm.turbine_fCts_sorted
       ~Farm.turbine_fTilts
@@ -87,6 +85,7 @@ floris.simulation.farm.Farm
       ~Farm.correct_cp_ct_for_tilt
       ~Farm.correct_cp_ct_for_tilt_sorted
       ~Farm.internal_turbine_library
+      ~Farm.coordinates
       ~Farm.logger
       ~Farm.n_turbines
       ~Farm.state

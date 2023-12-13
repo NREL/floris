@@ -708,9 +708,13 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">floris.turbine_library.turbine_previewer.TurbineLibrary</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.turbine_library.turbine_utilities.build_turbine_dict.html">floris.turbine_library.turbine_utilities.build_turbine_dict</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-35"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.utilities.cosd.html">floris.utilities.cosd</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.utilities.load_yaml.html">floris.utilities.load_yaml</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.utilities.pshape.html">floris.utilities.pshape</a></li>
@@ -724,7 +728,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.utilities.wrap_180.html">floris.utilities.wrap_180</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.utilities.wrap_360.html">floris.utilities.wrap_360</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.utilities.Loader.html">floris.utilities.Loader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.utilities.Vec3.html">floris.utilities.Vec3</a></li>
 </ul>
 </li>
 </ul>
@@ -908,8 +911,8 @@ title="Open an issue"
 <span class="sd">            :style: unsrt</span>
 <span class="sd">            :filter: docname in docnames</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">wake_expansion_rates</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mf">0.023</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">])</span>
-    <span class="n">breakpoints_D</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span>
+    <span class="n">wake_expansion_rates</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.023</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">])</span>
+    <span class="n">breakpoints_D</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">])</span>
     <span class="n">sigma_0_D</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.28</span><span class="p">)</span>
     <span class="n">smoothing_length_D</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
     <span class="n">mixing_gain_velocity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>

@@ -708,9 +708,13 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">floris.turbine_library.turbine_previewer.TurbineLibrary</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_utilities.build_turbine_dict.html">floris.turbine_library.turbine_utilities.build_turbine_dict</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-35"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.cosd.html">floris.utilities.cosd</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.load_yaml.html">floris.utilities.load_yaml</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.pshape.html">floris.utilities.pshape</a></li>
@@ -724,7 +728,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.wrap_180.html">floris.utilities.wrap_180</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.wrap_360.html">floris.utilities.wrap_360</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.Loader.html">floris.utilities.Loader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.Vec3.html">floris.utilities.Vec3</a></li>
 </ul>
 </li>
 </ul>
@@ -875,7 +878,6 @@ title="Open an issue"
     <span class="n">TiltTable</span><span class="p">,</span>
     <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.simulation.turbine</span> <span class="kn">import</span> <span class="n">_filter_convert</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">convert_to_path</span><span class="p">,</span>
     <span class="n">NDArrayBool</span><span class="p">,</span>
@@ -923,7 +925,6 @@ title="Open an issue"
 
     <span class="c1"># Down-select inputs if ix_filter is given</span>
     <span class="k">if</span> <span class="n">ix_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ix_filter</span> <span class="o">=</span> <span class="n">_filter_convert</span><span class="p">(</span><span class="n">ix_filter</span><span class="p">,</span> <span class="n">rotor_effective_velocities</span><span class="p">)</span>
         <span class="n">power_interp</span> <span class="o">=</span> <span class="n">power_interp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
         <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="n">rotor_effective_velocities</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
     <span class="c1"># Loop over each turbine to get power for all turbines</span>
@@ -985,7 +986,6 @@ title="Open an issue"
 
     <span class="c1"># Down-select inputs if ix_filter is given</span>
     <span class="k">if</span> <span class="n">ix_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ix_filter</span> <span class="o">=</span> <span class="n">_filter_convert</span><span class="p">(</span><span class="n">ix_filter</span><span class="p">,</span> <span class="n">yaw_angle</span><span class="p">)</span>
         <span class="n">velocities</span> <span class="o">=</span> <span class="n">velocities</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
         <span class="n">yaw_angle</span> <span class="o">=</span> <span class="n">yaw_angle</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
         <span class="n">tilt_angle</span> <span class="o">=</span> <span class="n">tilt_angle</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
@@ -1084,7 +1084,6 @@ title="Open an issue"
     <span class="p">)</span>
 
     <span class="c1"># Then, process the input arguments as needed for this function</span>
-    <span class="n">ix_filter</span> <span class="o">=</span> <span class="n">_filter_convert</span><span class="p">(</span><span class="n">ix_filter</span><span class="p">,</span> <span class="n">yaw_angle</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ix_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">yaw_angle</span> <span class="o">=</span> <span class="n">yaw_angle</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>
         <span class="n">tilt_angle</span> <span class="o">=</span> <span class="n">tilt_angle</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ix_filter</span><span class="p">]</span>

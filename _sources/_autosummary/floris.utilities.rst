@@ -40,7 +40,6 @@
       :nosignatures:
    
       Loader
-      Vec3
    
    
 

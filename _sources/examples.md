@@ -172,6 +172,12 @@ This example builds on example 30. Specifically, fictional data for varying Cp/C
 wave period, Ts, and wave height, Hs, is used to show the difference in power performance for
 different wave heights.
 
+### 32_specify_turbine_power_curve.py
+
+This example demonstrates how to generate a turbine dictionary or yaml input file based on
+a specified power and thrust curve. The power and thrust curves may be specified as power
+and thrust coefficients or as absolute values.
+
 ## Optimization
 
 These examples demonstrate use of the optimization routines

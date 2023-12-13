@@ -709,9 +709,13 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.turbine_library.turbine_previewer.TurbineLibrary.html">floris.turbine_library.turbine_previewer.TurbineLibrary</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.turbine_library.turbine_utilities.build_turbine_dict.html">floris.turbine_library.turbine_utilities.build_turbine_dict</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-35"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="floris.utilities.cosd.html">floris.utilities.cosd</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.utilities.load_yaml.html">floris.utilities.load_yaml</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.utilities.pshape.html">floris.utilities.pshape</a></li>
@@ -725,7 +729,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="floris.utilities.wrap_180.html">floris.utilities.wrap_180</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.utilities.wrap_360.html">floris.utilities.wrap_360</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.utilities.Loader.html">floris.utilities.Loader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.utilities.Vec3.html">floris.utilities.Vec3</a></li>
 </ul>
 </li>
 </ul>
@@ -904,16 +907,16 @@ title="Print to PDF"
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.grid.FlowFieldGrid.html#floris.simulation.grid.FlowFieldGrid" title="floris.simulation.grid.FlowFieldGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowFieldGrid</span></code></a></p></td>
 <td><p><dl class="field-list simple">
-<dt class="field-odd">param grid_resolution<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The number of grid points to be created in each direction.</p>
+<dt class="field-odd">param turbine_coordinates<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The arrays of turbine coordinates as Numpy</p>
 </dd>
 </dl>
 </p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="floris.simulation.grid.FlowFieldPlanarGrid.html#floris.simulation.grid.FlowFieldPlanarGrid" title="floris.simulation.grid.FlowFieldPlanarGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowFieldPlanarGrid</span></code></a></p></td>
 <td><p><dl class="field-list simple">
-<dt class="field-odd">param grid_resolution<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The number of grid points to be created in each direction.</p>
+<dt class="field-odd">param turbine_coordinates<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The arrays of turbine coordinates as Numpy</p>
 </dd>
 </dl>
 </p></td>
@@ -924,7 +927,7 @@ title="Print to PDF"
 <tr class="row-even"><td><p><a class="reference internal" href="floris.simulation.grid.PointsGrid.html#floris.simulation.grid.PointsGrid" title="floris.simulation.grid.PointsGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PointsGrid</span></code></a></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">param turbine_coordinates<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The list of turbine coordinates as <cite>Vec3</cite> objects.</p>
+<dd class="field-odd"><p>Not used for PointsGrid, but</p>
 </dd>
 </dl>
 </p></td>
@@ -939,7 +942,7 @@ title="Print to PDF"
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">Grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_turbine_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#Grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.Grid" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">Grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_diameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#Grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.Grid" title="Permalink to this definition">#</a></dt>
 <dd><p>Grid should establish domain bounds based on given criteria,
 and develop three arrays to contain components of the grid
 locations in space.</p>
@@ -957,45 +960,46 @@ all of these arrays are the same size</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The series of turbine coordinate (<cite>Vec3</cite>) objects.</p></li>
-<li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- A reference turbine's rotor diameter.</p></li>
-<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Grid resolution with values
-specific to each grid type.</p></li>
+<li><p><strong>turbine_coordinates</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The arrays of turbine coordinates as Numpy
+arrays with shape (N coordinates, 3).</p></li>
+<li><p><strong>turbine_diameters</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The rotor diameters of each turbine.</p></li>
 <li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
 <li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
 <li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- Flag to indicate whether the supplied wind data is a time
 series.</p></li>
+<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Grid resolution with values
+specific to each grid type.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.turbine_coordinates">
-<span class="sig-name descname"><span class="pre">turbine_coordinates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="floris.utilities.Vec3.html#floris.utilities.Vec3" title="floris.utilities.Vec3"><span class="pre">floris.utilities.Vec3</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.turbine_coordinates" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">turbine_coordinates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.turbine_coordinates" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.grid.Grid.reference_turbine_diameter">
-<span class="sig-name descname"><span class="pre">reference_turbine_diameter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.reference_turbine_diameter" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.grid.Grid.grid_resolution">
-<span class="sig-name descname"><span class="pre">grid_resolution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.grid_resolution" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.grid.Grid.turbine_diameters">
+<span class="sig-name descname"><span class="pre">turbine_diameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.turbine_diameters" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.wind_directions">
-<span class="sig-name descname"><span class="pre">wind_directions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.wind_directions" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">wind_directions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.wind_directions" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.wind_speeds">
-<span class="sig-name descname"><span class="pre">wind_speeds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.wind_speeds" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">wind_speeds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.wind_speeds" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.time_series">
 <span class="sig-name descname"><span class="pre">time_series</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.time_series" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.grid.Grid.grid_resolution">
+<span class="sig-name descname"><span class="pre">grid_resolution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.grid_resolution" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1014,49 +1018,44 @@ series.</p></li>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.grid.Grid.turbine_coordinates_array">
-<span class="sig-name descname"><span class="pre">turbine_coordinates_array</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.turbine_coordinates_array" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.x_sorted">
-<span class="sig-name descname"><span class="pre">x_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.x_sorted" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">x_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.x_sorted" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.y_sorted">
-<span class="sig-name descname"><span class="pre">y_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.y_sorted" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">y_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.y_sorted" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.z_sorted">
-<span class="sig-name descname"><span class="pre">z_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.z_sorted" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">z_sorted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.z_sorted" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.x_sorted_inertial_frame">
-<span class="sig-name descname"><span class="pre">x_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.x_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">x_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.x_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.y_sorted_inertial_frame">
-<span class="sig-name descname"><span class="pre">y_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.y_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">y_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.y_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.z_sorted_inertial_frame">
-<span class="sig-name descname"><span class="pre">z_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.z_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">z_sorted_inertial_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.z_sorted_inertial_frame" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.cubature_weights">
-<span class="sig-name descname"><span class="pre">cubature_weights</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.Grid.cubature_weights" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">cubature_weights</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.Grid.cubature_weights" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.check_coordinates">
 <span class="sig-name descname"><span class="pre">check_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#Grid.check_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.Grid.check_coordinates" title="Permalink to this definition">#</a></dt>
-<dd><p>Ensures all elements are <cite>Vec3</cite> objects and keeps the <cite>n_turbines</cite>
+<dd><p>Ensures all elements are Numpy arrays and keeps the <cite>n_turbines</cite>
 attribute up to date.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -1065,7 +1064,7 @@ attribute up to date.</p>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>instance</strong> (<em>Attribute</em>) -- </p></li>
-<li><p><strong>value</strong> (<em>list</em><em>[</em><a class="reference internal" href="floris.utilities.Vec3.html#floris.utilities.Vec3" title="floris.utilities.Vec3"><em>floris.utilities.Vec3</em></a><em>]</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>ndarray</em>) -- </p></li>
 </ul>
 </dd>
 </dl>
@@ -1108,7 +1107,7 @@ attribute up to date.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.grid.Grid.grid_resolution_validator">
 <span class="sig-name descname"><span class="pre">grid_resolution_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#Grid.grid_resolution_validator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.Grid.grid_resolution_validator" title="Permalink to this definition">#</a></dt>
-<dd><p>Check that grid resolution is given as int or Vec3 with int components.</p>
+<dd><p>Check that grid resolution is given as appropriate for the chosen Grid-type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -1136,46 +1135,47 @@ attribute up to date.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineGrid">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">TurbineGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_turbine_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#TurbineGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.TurbineGrid" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">TurbineGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_diameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#TurbineGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.TurbineGrid" title="Permalink to this definition">#</a></dt>
 <dd><p>See <cite>Grid</cite> for more details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The series of turbine coordinate (<cite>Vec3</cite>) objects.</p></li>
-<li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- A reference turbine's rotor diameter.</p></li>
-<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- The number of points in each
-direction of the square grid on the rotor plane. For example, grid_resolution=3
-creates a 3x3 grid within the rotor swept area.</p></li>
+<li><p><strong>turbine_coordinates</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The arrays of turbine coordinates as Numpy
+arrays with shape (N coordinates, 3).</p></li>
+<li><p><strong>turbine_diameters</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The rotor diameters of each turbine.</p></li>
 <li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
 <li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
 <li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- Flag to indicate whether the supplied wind data is a time
 series.</p></li>
+<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- The number of points in each
+direction of the square grid on the rotor plane. For example, grid_resolution=3
+creates a 3x3 grid within the rotor swept area.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineGrid.sorted_indices">
-<span class="sig-name descname"><span class="pre">sorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.sorted_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayInt</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.sorted_indices" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineGrid.sorted_coord_indices">
-<span class="sig-name descname"><span class="pre">sorted_coord_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.sorted_coord_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sorted_coord_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayInt</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.sorted_coord_indices" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineGrid.unsorted_indices">
-<span class="sig-name descname"><span class="pre">unsorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.unsorted_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">unsorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayInt</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.unsorted_indices" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineGrid.x_center_of_rotation">
-<span class="sig-name descname"><span class="pre">x_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.x_center_of_rotation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">x_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.x_center_of_rotation" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineGrid.y_center_of_rotation">
-<span class="sig-name descname"><span class="pre">y_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.y_center_of_rotation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">y_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineGrid.y_center_of_rotation" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1241,7 +1241,7 @@ Note that the x coordinates are all the same for the rotor plane.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineCubatureGrid">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">TurbineCubatureGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_turbine_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#TurbineCubatureGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">TurbineCubatureGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_diameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#TurbineCubatureGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid" title="Permalink to this definition">#</a></dt>
 <dd><p>This grid type arranges points throughout the swept area of the rotor based on the cubature
 of a unit circle. The number of points is set by the user, and then the location of the
 points and their weighting in integration is automatically set. This type of grid
@@ -1250,41 +1250,42 @@ a more accurate average velocity, thrust coefficient, and axial induction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The list of turbine coordinates as <cite>Vec3</cite> objects.</p></li>
-<li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The reference turbine's rotor diameter.</p></li>
+<li><p><strong>turbine_coordinates</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The arrays of turbine coordinates as Numpy
+arrays with shape (N coordinates, 3).</p></li>
+<li><p><strong>turbine_diameters</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The rotor diameters of each turbine.</p></li>
 <li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
 <li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
-<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- The number of points to
-include in the cubature method. This value must be in the range [1, 10], and the
-corresponding cubature weights are set automatically.</p></li>
 <li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- Flag to indicate whether the supplied wind data is a time
 series.</p></li>
+<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- The number of points to
+include in the cubature method. This value must be in the range [1, 10], and the
+corresponding cubature weights are set automatically.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineCubatureGrid.sorted_indices">
-<span class="sig-name descname"><span class="pre">sorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.sorted_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayInt</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.sorted_indices" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineCubatureGrid.sorted_coord_indices">
-<span class="sig-name descname"><span class="pre">sorted_coord_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.sorted_coord_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sorted_coord_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayInt</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.sorted_coord_indices" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineCubatureGrid.unsorted_indices">
-<span class="sig-name descname"><span class="pre">unsorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.unsorted_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">unsorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayInt</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.unsorted_indices" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineCubatureGrid.x_center_of_rotation">
-<span class="sig-name descname"><span class="pre">x_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.x_center_of_rotation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">x_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.x_center_of_rotation" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.TurbineCubatureGrid.y_center_of_rotation">
-<span class="sig-name descname"><span class="pre">y_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.y_center_of_rotation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">y_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.TurbineCubatureGrid.y_center_of_rotation" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1329,35 +1330,36 @@ integration coefficients, &quot;r&quot;, &quot;t&quot;, &quot;q&quot;, &quot;A&q
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldGrid">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">FlowFieldGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_turbine_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#FlowFieldGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.FlowFieldGrid" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">FlowFieldGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_diameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#FlowFieldGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.FlowFieldGrid" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- The number of grid points to be created in each direction.</p></li>
-<li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The collection of turbine coordinate (<cite>Vec3</cite>) objects.</p></li>
-<li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The reference turbine's rotor diameter.</p></li>
-<li><p><strong>grid_resolution</strong> -- The number of points on each turbine</p></li>
-<li><p><strong>wind_directions</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>wind_speeds</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>time_series</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>turbine_coordinates</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The arrays of turbine coordinates as Numpy
+arrays with shape (N coordinates, 3).</p></li>
+<li><p><strong>turbine_diameters</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The rotor diameters of each turbine.</p></li>
+<li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
+<li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
+<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- Flag to indicate whether the supplied wind data is a time
+series.</p></li>
+<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- The number of grid points to create in each
+planar direction. Must be 3 components for resolution in the x, y, and z directions.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldGrid.x_center_of_rotation">
-<span class="sig-name descname"><span class="pre">x_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldGrid.x_center_of_rotation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">x_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldGrid.x_center_of_rotation" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldGrid.y_center_of_rotation">
-<span class="sig-name descname"><span class="pre">y_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldGrid.y_center_of_rotation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">y_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldGrid.y_center_of_rotation" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldGrid.set_grid">
 <span class="sig-name descname"><span class="pre">set_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#FlowFieldGrid.set_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.FlowFieldGrid.set_grid" title="Permalink to this definition">#</a></dt>
-<dd><p>Create a structured grid for the entire flow field domain.
-resolution: Vec3</p>
+<dd><p>Create a structured grid for the entire flow field domain.</p>
 <p>Calculates the domain bounds for the current wake model. The bounds
 are calculated based on preset extents from the
 given layout. The bounds consist of the minimum and maximum values
@@ -1376,17 +1378,21 @@ Then, create the grid based on this wind-from-left orientation</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldPlanarGrid">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">FlowFieldPlanarGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_turbine_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planar_coordinate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#FlowFieldPlanarGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">FlowFieldPlanarGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_diameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normal_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planar_coordinate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#FlowFieldPlanarGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) -- The number of grid points to be created in each direction.</p></li>
-<li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The collection of turbine coordinate (<cite>Vec3</cite>) objects.</p></li>
-<li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The reference turbine's rotor diameter.</p></li>
-<li><p><strong>grid_resolution</strong> -- The number of points on each turbine</p></li>
-<li><p><strong>wind_directions</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>wind_speeds</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>time_series</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>turbine_coordinates</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The arrays of turbine coordinates as Numpy
+arrays with shape (N coordinates, 3).</p></li>
+<li><p><strong>turbine_diameters</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- The rotor diameters of each turbine.</p></li>
+<li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
+<li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
+<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- Flag to indicate whether the supplied wind data is a time
+series.</p></li>
+<li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- The number of grid points to create in each
+planar direction. Must be 2 components for resolution in the x and y directions.
+The z direction is set to 3 planes at -10.0, 0.0, and +10.0 relative to the
+<cite>planar_coordinate</cite>.</p></li>
 <li><p><strong>normal_vector</strong> (<em>str</em>) -- </p></li>
 <li><p><strong>planar_coordinate</strong> (<em>float</em>) -- </p></li>
 <li><p><strong>x1_bounds</strong> (<em>tuple</em>) -- </p></li>
@@ -1416,34 +1422,32 @@ Then, create the grid based on this wind-from-left orientation</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldPlanarGrid.x_center_of_rotation">
-<span class="sig-name descname"><span class="pre">x_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.x_center_of_rotation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">x_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.x_center_of_rotation" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldPlanarGrid.y_center_of_rotation">
-<span class="sig-name descname"><span class="pre">y_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.y_center_of_rotation" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">y_center_of_rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.y_center_of_rotation" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldPlanarGrid.sorted_indices">
-<span class="sig-name descname"><span class="pre">sorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.sorted_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayInt</span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.sorted_indices" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldPlanarGrid.unsorted_indices">
-<span class="sig-name descname"><span class="pre">unsorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.unsorted_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">unsorted_indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayInt</span></em><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.unsorted_indices" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.grid.FlowFieldPlanarGrid.set_grid">
 <span class="sig-name descname"><span class="pre">set_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#FlowFieldPlanarGrid.set_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.FlowFieldPlanarGrid.set_grid" title="Permalink to this definition">#</a></dt>
-<dd><p>Create a structured grid for the entire flow field domain.
-resolution: Vec3</p>
+<dd><p>Create a structured grid for the entire flow field domain.</p>
 <p>Calculates the domain bounds for the current wake model. The bounds
 are calculated based on preset extents from the
 given layout. The bounds consist of the minimum and maximum values
 in the x-, y-, and z-directions.</p>
-<p>If the Curl model is used, the predefined bounds are always set.</p>
 <p>First, sort the turbines so that we know the bounds in the correct orientation.
 Then, create the grid based on this wind-from-left orientation</p>
 <dl class="field-list simple">
@@ -1457,18 +1461,21 @@ Then, create the grid based on this wind-from-left orientation</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">PointsGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_turbine_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center_of_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center_of_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#PointsGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.PointsGrid" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.grid.</span></span><span class="sig-name descname"><span class="pre">PointsGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_diameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center_of_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center_of_rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/grid.html#PointsGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.grid.PointsGrid" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>turbine_coordinates</strong> (<cite>list[Vec3]</cite>) -- The list of turbine coordinates as <cite>Vec3</cite> objects.</p></li>
-<li><p><strong>reference_turbine_diameter</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) -- The reference turbine's rotor diameter.</p></li>
+<li><p><strong>turbine_coordinates</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Not used for PointsGrid, but
+required for the <cite>Grid</cite> super-class.</p></li>
+<li><p><strong>turbine_diameters</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Not used for PointsGrid, but
+required for the <cite>Grid</cite> super-class.</p></li>
 <li><p><strong>wind_directions</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind directions supplied by the user.</p></li>
-<li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Wind speeds supplied by the user.</p></li>
+<li><p><strong>wind_speeds</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Not used for PointsGrid, but
+required for the <cite>Grid</cite> super-class.</p></li>
+<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- Not used for PointsGrid, but
+required for the <cite>Grid</cite> super-class.</p></li>
 <li><p><strong>grid_resolution</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable(int,)</span></code>) -- Not used for PointsGrid, but
 required for the <cite>Grid</cite> super-class.</p></li>
-<li><p><strong>time_series</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) -- Flag to indicate whether the supplied wind data is a time
-series.</p></li>
 <li><p><strong>points_x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Array of x-components for the points in the grid.</p></li>
 <li><p><strong>points_y</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Array of y-components for the points in the grid.</p></li>
 <li><p><strong>points_z</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NDArrayFloat</span></code>) -- Array of z-components for the points in the grid.</p></li>
@@ -1485,17 +1492,17 @@ of rotation will be the centroid of the points in the PointsGrid.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.points_x">
-<span class="sig-name descname"><span class="pre">points_x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.points_x" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">points_x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.points_x" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.points_y">
-<span class="sig-name descname"><span class="pre">points_y</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.points_y" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">points_y</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.points_y" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.grid.PointsGrid.points_z">
-<span class="sig-name descname"><span class="pre">points_z</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.points_z" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">points_z</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span></em><a class="headerlink" href="#floris.simulation.grid.PointsGrid.points_z" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

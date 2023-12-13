@@ -708,9 +708,13 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.TurbineLibrary.html">floris.turbine_library.turbine_previewer.TurbineLibrary</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_utilities.build_turbine_dict.html">floris.turbine_library.turbine_utilities.build_turbine_dict</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-34"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.utilities.html">floris.utilities</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-35"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.cosd.html">floris.utilities.cosd</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.load_yaml.html">floris.utilities.load_yaml</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.pshape.html">floris.utilities.pshape</a></li>
@@ -724,7 +728,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.wrap_180.html">floris.utilities.wrap_180</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.wrap_360.html">floris.utilities.wrap_360</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.Loader.html">floris.utilities.Loader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.utilities.Vec3.html">floris.utilities.Vec3</a></li>
 </ul>
 </li>
 </ul>
@@ -1127,12 +1130,11 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_tilt_cp_cts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_fTilts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
-    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_coordinates</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
 
     <span class="n">turbine_grid</span> <span class="o">=</span> <span class="n">TurbineGrid</span><span class="p">(</span>
         <span class="n">turbine_coordinates</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
-        <span class="n">reference_turbine_diameter</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
+        <span class="n">turbine_diameters</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
         <span class="n">wind_directions</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
         <span class="n">wind_speeds</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
         <span class="n">grid_resolution</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
@@ -1533,12 +1535,11 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_tilt_cp_cts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_fTilts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
-    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_coordinates</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
 
     <span class="n">turbine_grid</span> <span class="o">=</span> <span class="n">TurbineGrid</span><span class="p">(</span>
         <span class="n">turbine_coordinates</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
-        <span class="n">reference_turbine_diameter</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
+        <span class="n">turbine_diameters</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
         <span class="n">wind_directions</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
         <span class="n">wind_speeds</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
         <span class="n">grid_resolution</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
@@ -1968,11 +1969,10 @@ title="Open an issue"
     <span class="c1"># turbine_grid_farm.construct_rotor_diameters()</span>
     <span class="c1"># turbine_grid_farm.construct_turbine_TSRs()</span>
     <span class="c1"># turbine_grid_farm.construc_turbine_pPs()</span>
-    <span class="c1"># turbine_grid_farm.construct_coordinates()</span>
 
     <span class="c1"># turbine_grid = TurbineGrid(</span>
     <span class="c1">#     turbine_coordinates=turbine_grid_farm.coordinates,</span>
-    <span class="c1">#     reference_turbine_diameter=turbine_grid_farm.rotor_diameters,</span>
+    <span class="c1">#     turbine_diameters=turbine_grid_farm.rotor_diameters,</span>
     <span class="c1">#     wind_directions=turbine_grid_flow_field.wind_directions,</span>
     <span class="c1">#     wind_speeds=turbine_grid_flow_field.wind_speeds,</span>
     <span class="c1">#     grid_resolution=11,</span>
@@ -2211,12 +2211,11 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_tilt_cp_cts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_fTilts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
-    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_coordinates</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
 
     <span class="n">turbine_grid</span> <span class="o">=</span> <span class="n">TurbineGrid</span><span class="p">(</span>
         <span class="n">turbine_coordinates</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
-        <span class="n">reference_turbine_diameter</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
+        <span class="n">turbine_diameters</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">,</span>
         <span class="n">wind_directions</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
         <span class="n">wind_speeds</span><span class="o">=</span><span class="n">turbine_grid_flow_field</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
         <span class="n">grid_resolution</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>

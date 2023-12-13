@@ -16,7 +16,9 @@ floris.simulation.grid.TurbineCubatureGrid
    .. autosummary::
       :nosignatures:
    
+      ~TurbineCubatureGrid.as_dict
       ~TurbineCubatureGrid.check_coordinates
+      ~TurbineCubatureGrid.from_dict
       ~TurbineCubatureGrid.get_cubature_coefficients
       ~TurbineCubatureGrid.grid_resolution_validator
       ~TurbineCubatureGrid.set_grid
@@ -39,13 +41,14 @@ floris.simulation.grid.TurbineCubatureGrid
       ~TurbineCubatureGrid.average_method
       ~TurbineCubatureGrid.cubature_weights
       ~TurbineCubatureGrid.grid_resolution
+      ~TurbineCubatureGrid.logger
       ~TurbineCubatureGrid.n_turbines
       ~TurbineCubatureGrid.n_wind_directions
       ~TurbineCubatureGrid.n_wind_speeds
-      ~TurbineCubatureGrid.reference_turbine_diameter
+      ~TurbineCubatureGrid.state
       ~TurbineCubatureGrid.time_series
       ~TurbineCubatureGrid.turbine_coordinates
-      ~TurbineCubatureGrid.turbine_coordinates_array
+      ~TurbineCubatureGrid.turbine_diameters
       ~TurbineCubatureGrid.wind_directions
       ~TurbineCubatureGrid.wind_speeds
       ~TurbineCubatureGrid.x_sorted
