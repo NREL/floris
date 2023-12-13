@@ -284,7 +284,7 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
     turbine_grid_farm.construct_turbine_tilt_interps()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
+    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,

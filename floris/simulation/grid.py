@@ -679,6 +679,6 @@ class PointsGrid(Grid):
             x_center_of_rotation=self.x_center_of_rotation,
             y_center_of_rotation=self.y_center_of_rotation
         )
-        self.x_sorted = x[:,:,:,None,None]
-        self.y_sorted = y[:,:,:,None,None]
-        self.z_sorted = z[:,:,:,None,None]
+        self.x_sorted = x[:,:,None,None]
+        self.y_sorted = y[:,:,None,None]
+        self.z_sorted = z[:,:,None,None]

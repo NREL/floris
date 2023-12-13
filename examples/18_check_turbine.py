@@ -26,6 +26,7 @@ For each turbine in the turbine library, make a small figure showing that its po
 curve and power loss to yaw are reasonable and  reasonably smooth
 """
 ws_array = np.arange(0.1,30,0.2)
+wd_array = 270.0 * np.ones_like(ws_array)
 yaw_angles = np.linspace(-30,30,60)
 wind_speed_to_test_yaw = 11
 
@@ -36,7 +37,7 @@ fi = FlorisInterface("inputs/gch.yaml")
 fi.reinitialize(layout_x=[0], layout_y=[0])
 
 # Apply wind speeds
-fi.reinitialize(wind_speeds=ws_array)
+fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
 
 # Get a list of available turbine models provided through FLORIS, and remove
 # multi-dimensional Cp/Ct turbine definitions as they require different handling
@@ -85,7 +86,7 @@ for t in turbines:
 
         # POWER CURVE
         ax = axarr[0]
-        fi.reinitialize(wind_speeds=ws_array)
+        fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
         fi.calculate_wake()
         turbine_powers = fi.get_turbine_powers().flatten() / 1e3
         if density == 1.225:
@@ -100,10 +101,10 @@ for t in turbines:
         # Power loss to yaw, try a range of yaw angles
         ax = axarr[1]
 
-        fi.reinitialize(wind_speeds=[wind_speed_to_test_yaw])
+        fi.reinitialize(wind_speeds=[wind_speed_to_test_yaw], wind_directions=[270.0])
         yaw_result = []
         for yaw in yaw_angles:
-            fi.calculate_wake(yaw_angles=np.array([[[yaw]]]))
+            fi.calculate_wake(yaw_angles=np.array([[yaw]]))
             turbine_powers = fi.get_turbine_powers().flatten() / 1e3
             yaw_result.append(turbine_powers[0])
         if density == 1.225:

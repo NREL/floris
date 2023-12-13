@@ -42,7 +42,8 @@ fi.reinitialize(layout_x = layout_x, layout_y = layout_y)
 
 # Define a simple wind rose with just 1 wind speed
 wd_array = np.arange(0,360,4.)
-fi.reinitialize(wind_directions=wd_array, wind_speeds=[8.])
+ws_array = 8.0 * np.ones_like(wd_array)
+fi.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
 
 
 # Calculate
