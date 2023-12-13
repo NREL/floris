@@ -174,8 +174,9 @@ different wave heights.
 
 ### 32_specify_turbine_power_curve.py
 
-This example demonstrates how to generate a turbine dictionary (or yaml file)
-based on a specified power and thrust curve. The power and thrust curves may be specified as power and thrust coefficients or as absolute values.
+This example demonstrates how to generate a turbine dictionary or yaml input file based on
+a specified power and thrust curve. The power and thrust curves may be specified as power
+and thrust coefficients or as absolute values.
 
 ## Optimization
 

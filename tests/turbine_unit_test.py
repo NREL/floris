@@ -667,6 +667,5 @@ def test_build_turbine_dict():
             assert in_dict[k] == test_dict[k]
         else:
             assert np.allclose(in_dict[k], test_dict[k])
-    #assert in_dict == test_dict
 
     os.remove( os.path.join(test_file_path, test_turb_name+".yaml") )

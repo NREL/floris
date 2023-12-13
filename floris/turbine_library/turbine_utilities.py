@@ -37,16 +37,16 @@ def build_turbine_dict(
     - thrust_coefficient [-]
     Of these, wind_speed is required. One of power_absolute and power_coefficient
     must be specified; and one of thrust_absolute and thrust_coefficient must be
-    specified. If both _absolute and _coeffient versions are specified, the
+    specified. If both _absolute and _coefficient versions are specified, the
     _coefficient entry will be used and the _absolute entry ignored.
 
     Args:
         turbine_data_dict (dict): Dictionary containing performance of the wind
-           turbine as a function of wind speed. Described in more detail above.
+            turbine as a function of wind speed. Described in more detail above.
         turbine_name (string): Name of the turbine, which will be used for the
-           turbine_type field as well as the filename.
+            turbine_type field as well as the filename.
         file_path (): Path for placement of the produced yaml. Defaults to None,
-           in which case no yaml is written.
+            in which case no yaml is written.
         generator_efficiency (float): Generator efficiency [-]. Defaults to 1.0.
         hub_height (float): Hub height [m]. Defaults to 90.0.
         pP (float): Cosine exponent for power loss to yaw [-]. Defaults to 1.88.
@@ -60,7 +60,7 @@ def build_turbine_dict(
             to 5.0.
 
     Returns:
-       turbine_dict (dict): Formatted turbine dictionary as expected by FLORIS.
+        turbine_dict (dict): Formatted turbine dictionary as expected by FLORIS.
     """
 
     # Check that necessary columns are specified
@@ -94,8 +94,8 @@ def build_turbine_dict(
                             (0.5*air_density*A*u[validity_mask]**3)
 
     else:
-       raise KeyError(
-           "Either power_absolute or power_coefficient must be specified."
+        raise KeyError(
+            "Either power_absolute or power_coefficient must be specified."
         )
 
     # Construct Ct curve
@@ -123,8 +123,8 @@ def build_turbine_dict(
                             (0.5*air_density*A*u[validity_mask]**2)
 
     else:
-       raise KeyError(
-           "Either thrust_absolute or thrust_coefficient must be specified."
+        raise KeyError(
+            "Either thrust_absolute or thrust_coefficient must be specified."
         )
 
     # Build the turbine dict

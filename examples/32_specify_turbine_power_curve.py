@@ -30,8 +30,7 @@ Note that it is also possible to have a .yaml created, if the file_path
 argument to build_turbine_dict is set.
 """
 
-# Generate an example turbine power and thrust curve for use in the FLORIS
-# model
+# Generate an example turbine power and thrust curve for use in the FLORIS model
 turbine_data_dict = {
     "wind_speed":[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
     "power_absolute":[0, 30, 200, 500, 1000, 2000, 4000, 4000, 4000, 4000, 4000],
@@ -55,8 +54,12 @@ turbine_dict = build_turbine_dict(
 fi = FlorisInterface("inputs/gch.yaml")
 wind_speeds = np.linspace(1, 15, 100)
 # Replace the turbine(s) in the FLORIS model with the created one
-fi.reinitialize(layout_x=[0], layout_y=[0], wind_speeds=wind_speeds,
-    turbine_type=[turbine_dict])
+fi.reinitialize(
+    layout_x=[0],
+    layout_y=[0],
+    wind_speeds=wind_speeds,
+    turbine_type=[turbine_dict]
+)
 fi.calculate_wake()
 
 powers = fi.get_farm_power()
