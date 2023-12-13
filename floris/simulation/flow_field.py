@@ -49,8 +49,8 @@ class FlowField(BaseClass):
 
     n_wind_directions: int = field(init=False)
     n_wind_speeds: int = field(init=False)
-    n_turbines: int = field(init=False)
-    grid_resolution: int = field(init=False)
+    n_turbines: int = field(init=False, default=0)
+    grid_resolution: int = field(init=False, default=0)
 
     u_initial_sorted: NDArrayFloat = array_5D_field
     v_initial_sorted: NDArrayFloat = array_5D_field
