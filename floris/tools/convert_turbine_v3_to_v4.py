@@ -13,7 +13,7 @@
 # See https://floris.readthedocs.io for documentation
 
 """
-This script is intended to be called with an argument and converts a turbine 
+This script is intended to be called with an argument and converts a turbine
 yaml file specified for FLORIS v3 to one specified for FLORIS v4.
 
 Usage:
@@ -24,11 +24,12 @@ and is appended _v4.
 """
 
 import sys
-
 from pathlib import Path
 
-from floris.utilities import load_yaml
 from floris.tools import build_turbine_dict
+from floris.utilities import load_yaml
+
+
 if len(sys.argv) != 2:
     raise Exception("Usage: python convert_turbine_yaml_v3_to_v4.py <path/to/turbine>.yaml")
 

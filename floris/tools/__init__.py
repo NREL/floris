@@ -39,6 +39,7 @@ Examples:
 from .floris_interface import FlorisInterface
 from .floris_interface_legacy_reader import FlorisInterfaceLegacyV2
 from .parallel_computing_interface import ParallelComputingInterface
+from .turbine_utilities import build_turbine_dict
 from .uncertainty_interface import UncertaintyInterface
 from .visualization import (
     plot_rotor_values,
@@ -47,7 +48,6 @@ from .visualization import (
     visualize_quiver,
 )
 from .wind_rose import WindRose
-from .turbine_utilities import build_turbine_dict
 
 
 # from floris.tools import (
