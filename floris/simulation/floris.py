@@ -313,7 +313,7 @@ class Floris(BaseClass):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
-        return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
+        return self.flow_field.u_sorted[:,:,0,0] # Remove turbine grid dimensions
 
     def solve_for_velocity_deficit_profiles(
         self,
@@ -369,7 +369,7 @@ class Floris(BaseClass):
         z = np.squeeze(z, axis=0) + reference_height
 
         u = self.solve_for_points(x.flatten(), y.flatten(), z.flatten())
-        u = np.reshape(u[0, 0, :], (n_lines, resolution))
+        u = np.reshape(u[0, :], (n_lines, resolution))
         velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
 
         velocity_deficit_profiles = []

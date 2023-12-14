@@ -55,20 +55,20 @@ horizontal_plane = fi.calculate_horizontal_plane(
     x_resolution=200,
     y_resolution=100,
     height=90.0,
-    yaw_angles=np.array([[[25.,0.,0.]]]),
+    yaw_angles=np.array([[25.,0.,0.]]),
 )
 
 y_plane = fi.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
     crossstream_dist=0.0,
-    yaw_angles=np.array([[[25.,0.,0.]]]),
+    yaw_angles=np.array([[25.,0.,0.]]),
 )
 cross_plane = fi.calculate_cross_plane(
     y_resolution=100,
     z_resolution=100,
     downstream_dist=630.0,
-    yaw_angles=np.array([[[25.,0.,0.]]]),
+    yaw_angles=np.array([[25.,0.,0.]]),
 )
 
 # Create the plots
@@ -99,7 +99,7 @@ horizontal_plane_scan_turbine = wakeviz.calculate_horizontal_plane_with_turbines
     fi,
     x_resolution=20,
     y_resolution=10,
-    yaw_angles=np.array([[[25.,0.,0.]]]),
+    yaw_angles=np.array([[25.,0.,0.]]),
 )
 
 fig, ax = plt.subplots()
@@ -120,8 +120,7 @@ fi.calculate_wake()
 # Plot the values at each rotor
 fig, axes, _ , _ = wakeviz.plot_rotor_values(
     fi.floris.flow_field.u,
-    wd_index=0,
-    ws_index=0,
+    findex=0,
     n_rows=1,
     n_cols=3,
     return_fig_objects=True
@@ -149,8 +148,7 @@ fi.calculate_wake()
 # Plot the values at each rotor
 fig, axes, _ , _ = wakeviz.plot_rotor_values(
     fi.floris.flow_field.u,
-    wd_index=0,
-    ws_index=0,
+    findex=0,
     n_rows=1,
     n_cols=3,
     return_fig_objects=True

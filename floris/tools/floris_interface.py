@@ -274,16 +274,16 @@ class FlorisInterface(LoggingManager):
         """
         # Get results vectors
         if (normal_vector == "z"):
-            x_flat = self.floris.grid.x_sorted_inertial_frame[0, 0].flatten()
-            y_flat = self.floris.grid.y_sorted_inertial_frame[0, 0].flatten()
-            z_flat = self.floris.grid.z_sorted_inertial_frame[0, 0].flatten()
+            x_flat = self.floris.grid.x_sorted_inertial_frame[0].flatten()
+            y_flat = self.floris.grid.y_sorted_inertial_frame[0].flatten()
+            z_flat = self.floris.grid.z_sorted_inertial_frame[0].flatten()
         else:
-            x_flat = self.floris.grid.x_sorted[0, 0].flatten()
-            y_flat = self.floris.grid.y_sorted[0, 0].flatten()
-            z_flat = self.floris.grid.z_sorted[0, 0].flatten()
-        u_flat = self.floris.flow_field.u_sorted[0, 0].flatten()
-        v_flat = self.floris.flow_field.v_sorted[0, 0].flatten()
-        w_flat = self.floris.flow_field.w_sorted[0, 0].flatten()
+            x_flat = self.floris.grid.x_sorted[0].flatten()
+            y_flat = self.floris.grid.y_sorted[0].flatten()
+            z_flat = self.floris.grid.z_sorted[0].flatten()
+        u_flat = self.floris.flow_field.u_sorted[0].flatten()
+        v_flat = self.floris.flow_field.v_sorted[0].flatten()
+        w_flat = self.floris.flow_field.w_sorted[0].flatten()
 
         # Create a df of these
         if normal_vector == "z":
@@ -830,7 +830,7 @@ class FlorisInterface(LoggingManager):
         """
 
         # Verify dimensions of the variable "freq"
-        if not (np.shape(freq)[0] == self.floris.flow_field.n_findex & len(np.shape(freq)) == 1):
+        if np.shape(freq)[0] != self.floris.flow_field.n_findex:
             raise UserWarning(
                 "'freq' should be a one-dimensional array with dimensions (n_findex)."
             )

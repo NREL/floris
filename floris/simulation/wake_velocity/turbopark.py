@@ -109,7 +109,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         r_dist = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z) ** 2)
         r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - (-z)) ** 2)
 
-        Cts[:, :, i:, :, :] = 0.00001
+        Cts[:, i:, :, :] = 0.00001
 
         # Characteristic wake widths from all turbines relative to turbine i
         dw = characteristic_wake_width(x_dist, ambient_turbulence_intensity, Cts, self.A)
@@ -137,9 +137,9 @@ class TurbOParkVelocityDeficit(BaseModel):
         delta_image = C * wtg_overlapping * self.overlap_gauss_interp(
             (r_dist_image / sigma, rotor_diameter_i / 2 / sigma)
         )
-        delta = np.concatenate((delta_real, delta_image), axis=2)
+        delta = np.concatenate((delta_real, delta_image), axis=1)
 
-        delta_total[:, :, i, :, :] = np.sqrt(np.sum(np.nan_to_num(delta) ** 2, axis=2))
+        delta_total[:, i, :, :] = np.sqrt(np.sum(np.nan_to_num(delta) ** 2, axis=1))
 
         return delta_total
 

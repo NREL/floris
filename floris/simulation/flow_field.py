@@ -44,7 +44,7 @@ class FlowField(BaseClass):
     time_series: bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
     multidim_conditions: dict = field(default=None)
-    
+
     n_findex: int = field(init=False)
     u_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
     v_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))

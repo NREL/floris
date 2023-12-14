@@ -580,9 +580,9 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
-            self.x_sorted = x_points[None, None, :, :, :]
-            self.y_sorted = y_points[None, None, :, :, :]
-            self.z_sorted = z_points[None, None, :, :, :]
+            self.x_sorted = x_points[None, :, :, :]
+            self.y_sorted = y_points[None, :, :, :]
+            self.z_sorted = z_points[None, :, :, :]
 
         elif self.normal_vector == "x":  # Rules of thumb for cross plane
             if self.x1_bounds is None:
@@ -598,9 +598,9 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
-            self.x_sorted = x_points[None, None, :, :, :]
-            self.y_sorted = y_points[None, None, :, :, :]
-            self.z_sorted = z_points[None, None, :, :, :]
+            self.x_sorted = x_points[None, :, :, :]
+            self.y_sorted = y_points[None, :, :, :]
+            self.z_sorted = z_points[None, :, :, :]
 
         elif self.normal_vector == "y":  # Rules of thumb for y plane
             if self.x1_bounds is None:
@@ -616,9 +616,9 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
-            self.x_sorted = x_points[None, None, :, :, :]
-            self.y_sorted = y_points[None, None, :, :, :]
-            self.z_sorted = z_points[None, None, :, :, :]
+            self.x_sorted = x_points[None, :, :, :]
+            self.y_sorted = y_points[None, :, :, :]
+            self.z_sorted = z_points[None, :, :, :]
 
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \

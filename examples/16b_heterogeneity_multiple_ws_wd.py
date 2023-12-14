@@ -58,19 +58,9 @@ print(f'T0: {turbine_powers[0]:.1f} kW')
 print(f'T1: {turbine_powers[1]:.1f} kW')
 print()
 
-# Since het maps are assigned for each wind direciton, it's allowable to change
-# the number of wind speeds
-fi.reinitialize(wind_speeds=[4, 8])
-fi.calculate_wake()
-turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
-print('With wind speeds now set to 4 and 8 m/s')
-print(f'T0: {turbine_powers[:, :, 0].flatten()} kW')
-print(f'T1: {turbine_powers[:, :, 1].flatten()} kW')
-print()
-
-# To change the number of wind directions however it is necessary to make a matching
-# change to the dimensions of the het map
-speed_multipliers = [[2.0, 1.0, 2.0, 1.0], [2.0, 1.0, 2.0, 1.0]] # Expand to two wind directions
+# If the number of conditions in the calculation changes, a new heterogeneous map
+# must be provided.
+speed_multipliers = [[2.0, 1.0, 2.0, 1.0], [2.0, 1.0, 2.0, 1.0]] # Expand to two wind conditions
 heterogenous_inflow_config = {
     'speed_multipliers': speed_multipliers,
     'x': x_locs,
@@ -78,14 +68,14 @@ heterogenous_inflow_config = {
 }
 fi.reinitialize(
     wind_directions=[270.0, 275.0],
-    wind_speeds=[8.0],
+    wind_speeds=[8.0, 8.0],
     heterogenous_inflow_config=heterogenous_inflow_config
 )
 fi.calculate_wake()
 turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
 print('With wind directions now set to 270 and 275 deg')
-print(f'T0: {turbine_powers[:, :, 0].flatten()} kW')
-print(f'T1: {turbine_powers[:, :, 1].flatten()} kW')
+print(f'T0: {turbine_powers[:, 0].flatten()} kW')
+print(f'T1: {turbine_powers[:, 1].flatten()} kW')
 
 # # Uncomment if want to see example of error output
 # # Note if we change wind directions to 3 without a matching change to het map we get an error
@@ -93,6 +83,6 @@ print(f'T1: {turbine_powers[:, :, 1].flatten()} kW')
 # print()
 # print('~~ Now forcing an error by not matching wd and het_map')
 
-# fi.reinitialize(wind_directions=[270, 275, 280], wind_speeds=[8.])
+# fi.reinitialize(wind_directions=[270, 275, 280], wind_speeds=3*[8.0])
 # fi.calculate_wake()
 # turbine_powers = np.round(fi.get_turbine_powers() / 1000.)

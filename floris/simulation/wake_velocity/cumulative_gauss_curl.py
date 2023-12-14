@@ -95,58 +95,58 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         turbine_yaw = yaw_i
 
         # TODO Should this be cbrt? This is done to match v2
-        turb_avg_vels = np.cbrt(np.mean(u_i ** 3, axis=(3, 4)))
-        turb_avg_vels = turb_avg_vels[:, :, :, None, None]
+        turb_avg_vels = np.cbrt(np.mean(u_i ** 3, axis=(2, 3)))
+        turb_avg_vels = turb_avg_vels[:, :, None, None]
 
         delta_x = x - x_i
 
         sigma_n = wake_expansion(
             delta_x,
-            turbine_Ct[:, :, ii:ii+1],
-            turbine_ti[:, :, ii:ii+1],
-            turbine_diameter[:, :, ii:ii+1],
+            turbine_Ct[:, ii:ii+1],
+            turbine_ti[:, ii:ii+1],
+            turbine_diameter[:, ii:ii+1],
             self.a_s,
             self.b_s,
             self.c_s1,
             self.c_s2,
         )
 
-        x_i_loc = np.mean(x_i, axis=(3, 4))
-        x_i_loc = x_i_loc[:, :, :, None, None]
+        x_i_loc = np.mean(x_i, axis=(2, 3))
+        x_i_loc = x_i_loc[:, :, None, None]
 
-        y_i_loc = np.mean(y_i, axis=(3, 4))
-        y_i_loc = y_i_loc[:, :, :, None, None]
+        y_i_loc = np.mean(y_i, axis=(2, 3))
+        y_i_loc = y_i_loc[:, :, None, None]
 
-        z_i_loc = np.mean(z_i, axis=(3, 4))
-        z_i_loc = z_i_loc[:, :, :, None, None]
+        z_i_loc = np.mean(z_i, axis=(2, 3))
+        z_i_loc = z_i_loc[:, :, None, None]
 
-        x_coord = np.mean(x, axis=(3, 4))[:, :, :, None, None]
+        x_coord = np.mean(x, axis=(2, 3))[:, :, None, None]
 
         y_loc = y
-        y_coord = np.mean(y, axis=(3, 4))[:, :, :, None, None]
+        y_coord = np.mean(y, axis=(2, 3))[:, :, None, None]
 
         z_loc = z  # np.mean(z, axis=(3,4))
-        z_coord = np.mean(z, axis=(3, 4))[:, :, :, None, None]
+        z_coord = np.mean(z, axis=(2, 3))[:, :, None, None]
 
         sum_lbda = np.zeros_like(u_initial)
 
         for m in range(0, ii - 1):
-            x_coord_m = x_coord[:, :, m:m+1]
-            y_coord_m = y_coord[:, :, m:m+1]
-            z_coord_m = z_coord[:, :, m:m+1]
+            x_coord_m = x_coord[:, m:m+1]
+            y_coord_m = y_coord[:, m:m+1]
+            z_coord_m = z_coord[:, m:m+1]
 
             # For computing cross planes, we don't need to compute downstream
             # turbines from out cross plane position.
-            if x_coord[:, :, m:m+1].size == 0:
+            if x_coord[:, m:m+1].size == 0:
                 break
 
             delta_x_m = x - x_coord_m
 
             sigma_i = wake_expansion(
                 delta_x_m,
-                turbine_Ct[:, :, m:m+1],
-                turbine_ti[:, :, m:m+1],
-                turbine_diameter[:, :, m:m+1],
+                turbine_Ct[:, m:m+1],
+                turbine_ti[:, m:m+1],
+                turbine_diameter[:, m:m+1],
                 self.a_s,
                 self.b_s,
                 self.c_s1,
@@ -181,9 +181,9 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
         # blondel
         # super gaussian
         # b_f = self.b_f1 * np.exp(self.b_f2 * TI) + self.b_f3
-        x_tilde = np.abs(delta_x) / turbine_diameter[:,:,ii:ii+1]
+        x_tilde = np.abs(delta_x) / turbine_diameter[:,ii:ii+1]
         r_tilde = np.sqrt( (y_loc - y_i_loc - deflection_field) ** 2 + (z_loc - z_i_loc) ** 2 )
-        r_tilde /= turbine_diameter[:,:,ii:ii+1]
+        r_tilde /= turbine_diameter[:,ii:ii+1]
 
         n = self.a_f * np.exp(self.b_f * x_tilde) + self.c_f
         a1 = 2 ** (2 / n - 1)
@@ -191,7 +191,7 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
 
         # based on Blondel model, modified to include cumulative effects
         tmp = a2 - (
-            (n * turbine_Ct[:, :, ii:ii+1])
+            (n * turbine_Ct[:, ii:ii+1])
             * cosd(turbine_yaw)
             / (
                 16.0
