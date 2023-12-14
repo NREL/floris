@@ -49,7 +49,7 @@ turbines = [
 
 # TEMPORARY
 print(turbines)
-turbines = turbines[2:]
+turbines = turbines[1:]
 # END TEMPORARY
 
 # Declare a set of figures for comparing cp and ct across models

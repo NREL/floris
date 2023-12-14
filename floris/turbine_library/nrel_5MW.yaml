@@ -3,6 +3,9 @@
 # An ID for this type of turbine definition.
 # This is not currently used, but it will be enabled in the future. This should typically
 # match the root name of the file.
+
+# Data based on:
+# https://github.com/NREL/turbine-models/blob/master/Offshore/NREL_5MW_126_RWT.csv
 turbine_type: 'nrel_5MW'
 
 ###
@@ -135,7 +138,7 @@ power_thrust_table:
     - 0.0
   wind_speed:
     - 0.0
-    - 2.5
+    - 2.9
     - 3.0
     - 4.0
     - 5.0

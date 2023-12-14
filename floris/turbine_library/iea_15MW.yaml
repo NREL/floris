@@ -1,3 +1,6 @@
+# Data based on:
+# https://github.com/IEAWindTask37/IEA-15-240-RWT/blob/master/Documentation/
+# IEA-15-240-RWT_tabular.xlsx
 turbine_type: 'iea_15MW'
 generator_efficiency: 1.0
 hub_height: 150.0
@@ -9,6 +12,7 @@ ref_density_cp_ct: 1.225
 ref_tilt_cp_ct: 6.0
 power_thrust_table:
   power:
+    - 0.000000
     - 0.000000
     - 42.733312
     - 292.585981
@@ -64,6 +68,7 @@ power_thrust_table:
     - 0.0
   thrust_coefficient:
     - 0.000000
+    - 0.000000
     - 0.80742173
     - 0.784655297
     - 0.781771245
@@ -118,7 +123,8 @@ power_thrust_table:
     - 0.0
   wind_speed:
     - 0.000
-    - 3
+    - 2.9
+    - 3.0
     - 3.54953237
     - 4.067900771
     - 4.553906848
