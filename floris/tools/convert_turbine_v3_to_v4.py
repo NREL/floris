@@ -48,6 +48,10 @@ v3_turbine_dict = load_yaml(input_yaml)
 
 # Split into components expected by build_turbine_dict
 power_thrust_table = v3_turbine_dict["power_thrust_table"]
+power_thrust_table["power_coefficient"] = power_thrust_table["power"]
+power_thrust_table["thrust_coefficient"] = power_thrust_table["thrust"]
+power_thrust_table.pop("power")
+power_thrust_table.pop("thrust")
 
 valid_properties = [
     "generator_efficiency",

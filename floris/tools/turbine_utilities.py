@@ -87,7 +87,7 @@ def build_turbine_dict(
     if "power" in turbine_data_dict:
         if "power_coefficient" in turbine_data_dict:
             print(
-                "Found both power and power_coefficient."
+                "Found both power and power_coefficient. "
                 "Ignoring power_coefficient."
             )
         p = np.array(turbine_data_dict["power"])
@@ -115,7 +115,7 @@ def build_turbine_dict(
     if "thrust_coefficient" in turbine_data_dict:
         if "thrust" in turbine_data_dict:
             print(
-                "Found both thrust and thrust_coefficient."
+                "Found both thrust and thrust_coefficient. "
                 "Ignoring thrust."
             )
         Ct = np.array(turbine_data_dict["thrust_coefficient"])
