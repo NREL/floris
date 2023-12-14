@@ -290,13 +290,11 @@ def full_flow_sequential_solver(
         turbine_coordinates=turbine_grid_farm.coordinates,
         turbine_diameters=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
-        wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
         time_series=turbine_grid_flow_field.time_series,
     )
     turbine_grid_farm.expand_farm_properties(
-        turbine_grid_flow_field.n_wind_directions,
-        turbine_grid_flow_field.n_wind_speeds,
+        turbine_grid_flow_field.n_findex,
         turbine_grid.sorted_coord_indices,
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
@@ -323,15 +321,15 @@ def full_flow_sequential_solver(
     for i in range(flow_field_grid.n_turbines):
 
         # Get the current turbine quantities
-        x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
+        x_i = np.mean(turbine_grid.x_sorted[:, i:i+1], axis=(2, 3))
+        x_i = x_i[:, :, None, None]
+        y_i = np.mean(turbine_grid.y_sorted[:, i:i+1], axis=(2, 3))
+        y_i = y_i[:, :, None, None]
+        z_i = np.mean(turbine_grid.z_sorted[:, i:i+1], axis=(2, 3))
+        z_i = z_i[:, :, None, None]
 
-        u_i = turbine_grid_flow_field.u_sorted[:, :, i:i+1]
-        v_i = turbine_grid_flow_field.v_sorted[:, :, i:i+1]
+        u_i = turbine_grid_flow_field.u_sorted[:, i:i+1]
+        v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
 
         ct_i = Ct(
             velocities=turbine_grid_flow_field.u_sorted,
@@ -346,7 +344,7 @@ def full_flow_sequential_solver(
         )
         # Since we are filtering for the i'th turbine in the Ct function,
         # get the first index here (0:1)
-        ct_i = ct_i[:, :, 0:1, None, None]
+        ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
@@ -360,13 +358,13 @@ def full_flow_sequential_solver(
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
-        axial_induction_i = axial_induction_i[:, :, 0:1, None, None]
+        axial_induction_i = axial_induction_i[:, 0:1, None, None]
         turbulence_intensity_i = \
-            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, :, i:i+1]
-        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
-        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, :, i:i+1, None, None]
-        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, :, i:i+1, None, None]
-        TSR_i = turbine_grid_farm.TSRs_sorted[:, :, i:i+1, None, None]
+            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]
+        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i:i+1, None, None]
+        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i:i+1, None, None]
+        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i:i+1, None, None]
+        TSR_i = turbine_grid_farm.TSRs_sorted[:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -376,8 +374,8 @@ def full_flow_sequential_solver(
                 u_i,
                 v_i,
                 turbine_grid_flow_field.u_initial_sorted,
-                turbine_grid.y_sorted[:, :, i:i+1] - y_i,
-                turbine_grid.z_sorted[:, :, i:i+1],
+                turbine_grid.y_sorted[:, i:i+1] - y_i,
+                turbine_grid.z_sorted[:, i:i+1],
                 rotor_diameter_i,
                 hub_height_i,
                 ct_i,
@@ -1108,48 +1106,6 @@ def full_flow_turbopark_solver(
 ) -> None:
     raise NotImplementedError("Plotting for the TurbOPark model is not currently implemented.")
 
-    # TODO: Below is a first attempt at plotting, and uses just the values on the rotor.
-    # The current TurbOPark model requires that points to be calculated are only at turbine
-    # locations. Modification will be required to allow for full flow field calculations.
-
-    # # Get the flow quantities and turbine performance
-    # turbine_grid_farm = copy.deepcopy(farm)
-    # turbine_grid_flow_field = copy.deepcopy(flow_field)
-
-    # turbine_grid_farm.construct_turbine_map()
-    # turbine_grid_farm.construct_turbine_fCts()
-    # turbine_grid_farm.construct_turbine_power_interps()
-    # turbine_grid_farm.construct_hub_heights()
-    # turbine_grid_farm.construct_rotor_diameters()
-    # turbine_grid_farm.construct_turbine_TSRs()
-    # turbine_grid_farm.construc_turbine_pPs()
-
-    # turbine_grid = TurbineGrid(
-    #     turbine_coordinates=turbine_grid_farm.coordinates,
-    #     turbine_diameters=turbine_grid_farm.rotor_diameters,
-    #     wind_directions=turbine_grid_flow_field.wind_directions,
-    #     wind_speeds=turbine_grid_flow_field.wind_speeds,
-    #     grid_resolution=11,
-    # )
-    # turbine_grid_farm.expand_farm_properties(
-    #     turbine_grid_flow_field.n_wind_directions,
-    #     turbine_grid_flow_field.n_wind_speeds,
-    #     turbine_grid.sorted_coord_indices
-    # )
-    # turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-    # turbine_grid_farm.initialize(turbine_grid.sorted_indices)
-    # turbopark_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
-
-
-
-    # flow_field.u = copy.deepcopy(turbine_grid_flow_field.u)
-    # flow_field.v = copy.deepcopy(turbine_grid_flow_field.v)
-    # flow_field.w = copy.deepcopy(turbine_grid_flow_field.w)
-
-    # flow_field_grid.x = copy.deepcopy(turbine_grid.x)
-    # flow_field_grid.y = copy.deepcopy(turbine_grid.y)
-    # flow_field_grid.z = copy.deepcopy(turbine_grid.z)
-
 
 def empirical_gauss_solver(
     farm: Farm,
@@ -1371,19 +1327,17 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
     turbine_grid_farm.construct_turbine_tilt_interps()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_wind_directions, flow_field.n_wind_speeds)
+    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
         turbine_diameters=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
-        wind_speeds=turbine_grid_flow_field.wind_speeds,
         grid_resolution=3,
         time_series=turbine_grid_flow_field.time_series,
     )
     turbine_grid_farm.expand_farm_properties(
-        turbine_grid_flow_field.n_wind_directions,
-        turbine_grid_flow_field.n_wind_speeds,
+        turbine_grid_flow_field.n_findex,
         turbine_grid.sorted_coord_indices
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
@@ -1411,15 +1365,15 @@ def full_flow_empirical_gauss_solver(
     for i in range(flow_field_grid.n_turbines):
 
         # Get the current turbine quantities
-        x_i = np.mean(turbine_grid.x_sorted[:, :, i:i+1], axis=(3, 4))
-        x_i = x_i[:, :, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, :, i:i+1], axis=(3, 4))
-        y_i = y_i[:, :, :, None, None]
-        z_i = np.mean(turbine_grid.z_sorted[:, :, i:i+1], axis=(3, 4))
-        z_i = z_i[:, :, :, None, None]
+        x_i = np.mean(turbine_grid.x_sorted[:, i:i+1], axis=(2,3))
+        x_i = x_i[:, :, None, None]
+        y_i = np.mean(turbine_grid.y_sorted[:, i:i+1], axis=(2,3))
+        y_i = y_i[:, :, None, None]
+        z_i = np.mean(turbine_grid.z_sorted[:, i:i+1], axis=(2,3))
+        z_i = z_i[:, :, None, None]
 
-        turbine_grid_flow_field.u_sorted[:, :, i:i+1]
-        turbine_grid_flow_field.v_sorted[:, :, i:i+1]
+        turbine_grid_flow_field.u_sorted[:, i:i+1]
+        turbine_grid_flow_field.v_sorted[:, i:i+1]
 
         ct_i = Ct(
             velocities=turbine_grid_flow_field.u_sorted,
@@ -1434,7 +1388,7 @@ def full_flow_empirical_gauss_solver(
         )
         # Since we are filtering for the i'th turbine in the Ct function,
         # get the first index here (0:1)
-        ct_i = ct_i[:, :, 0:1, None, None]
+        ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
@@ -1448,12 +1402,11 @@ def full_flow_empirical_gauss_solver(
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
-        axial_induction_i = axial_induction_i[:, :, 0:1, None, None]
-        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, :, i:i+1, None, None]
-        hub_height_i = turbine_grid_farm.hub_heights_sorted[: ,:, i:i+1, None, None]
-        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[: ,:, i:i+1, None, None]
-        wake_induced_mixing_i = wim_field[:, :, i:i+1, :, None].sum(axis=3, keepdims=1)
-
+        axial_induction_i = axial_induction_i[:, 0:1, None, None]
+        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i:i+1, None, None]
+        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i:i+1, None, None]
+        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i:i+1, None, None]
+        wake_induced_mixing_i = wim_field[:, i:i+1, :, None].sum(axis=2, keepdims=1)
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
 
@@ -1463,7 +1416,7 @@ def full_flow_empirical_gauss_solver(
             cubature_weights=turbine_grid.cubature_weights
         )
         tilt_angle_i = turbine_grid_farm.calculate_tilt_for_eff_velocities(average_velocities)
-        tilt_angle_i = tilt_angle_i[:, :, i:i+1, None, None]
+        tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
             raise NotImplementedError(

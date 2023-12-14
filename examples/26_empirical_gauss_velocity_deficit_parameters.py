@@ -35,7 +35,7 @@ velocity deficit model and their effects on the wind turbine wake.
 show_flow_cuts = True
 num_in_row = 5
 
-yaw_angles = np.zeros((1, 1, num_in_row))
+yaw_angles = np.zeros((1, num_in_row))
 
 # Define function for visualizing wakes
 def generate_wake_visualization(fi: FlorisInterface, title=None):

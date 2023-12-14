@@ -114,7 +114,7 @@ def plot_turbines_with_fi(
         color = "k"
 
     rotor_diameters = fi.floris.farm.rotor_diameters.flatten()
-    for x, y, yaw, d in zip(fi.layout_x, fi.layout_y, yaw_angles[0,0], rotor_diameters):
+    for x, y, yaw, d in zip(fi.layout_x, fi.layout_y, yaw_angles[0], rotor_diameters):
         R = d / 2.0
         x_0 = x + np.sin(np.deg2rad(yaw)) * R
         x_1 = x - np.sin(np.deg2rad(yaw)) * R
@@ -150,7 +150,7 @@ def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
     for i in range(fi.floris.farm.n_turbines):
         ax.annotate(
             i,
-            (layout_x[0,0,i], layout_y[0,0,i]),
+            (layout_x[0,i], layout_y[0,i]),
             xytext=(0,10),
             textcoords="offset points",
             **kwargs
@@ -508,8 +508,7 @@ def reverse_cut_plane_x_axis_in_plot(ax):
 
 def plot_rotor_values(
     values: np.ndarray,
-    wd_index: int,
-    ws_index: int,
+    findex: int,
     n_rows: int,
     n_cols: int,
     t_range: range | None = None,
@@ -524,10 +523,9 @@ def plot_rotor_values(
     used for inspection of what values are differing, and under what conditions.
 
     Parameters:
-        values (np.ndarray): The 5-dimensional array of values to plot. Should be:
-            N wind directions x N wind speeds x N turbines X N rotor points X N rotor points.
-        wd_index (int): The index for the wind direction to plot.
-        ws_index (int): The index of the wind speed to plot.
+        values (np.ndarray): The 4-dimensional array of values to plot. Should be:
+            (N findex, N turbines, N rotor points, N rotor points).
+        findex (int): The index for the sample point to plot.
         n_rows (int): The number of rows to include for subplots. With ncols, this should
             generally add up to the number of turbines in the farm.
         n_cols (int): The number of columns to include for subplots. With ncols, this should
@@ -548,9 +546,9 @@ def plot_rotor_values(
 
     Example:
         from floris.tools.visualization import plot_rotor_values
-        plot_rotor_values(floris.flow_field.u, wd_index=0, ws_index=0, n_rows=1, ncols=4)
-        plot_rotor_values(floris.flow_field.v, wd_index=0, ws_index=0, n_rows=1, ncols=4)
-        plot_rotor_values(floris.flow_field.w, wd_index=0, ws_index=0, n_rows=1, ncols=4, show=True)
+        plot_rotor_values(floris.flow_field.u, findex=0, n_rows=1, ncols=4)
+        plot_rotor_values(floris.flow_field.v, findex=0, n_rows=1, ncols=4)
+        plot_rotor_values(floris.flow_field.w, findex=0, n_rows=1, ncols=4, show=True)
     """
 
     cmap = plt.cm.get_cmap(name=cmap)
@@ -570,12 +568,12 @@ def plot_rotor_values(
 
     for ax, t, i in zip(axes.flatten(), titles, t_range):
 
-        vmin = np.min(values[wd_index, ws_index])
-        vmax = np.max(values[wd_index, ws_index])
+        vmin = np.min(values[findex])
+        vmax = np.max(values[findex])
 
         norm = mplcolors.Normalize(vmin, vmax)
 
-        ax.imshow(values[wd_index, ws_index, i].T, cmap=cmap, norm=norm, origin="lower")
+        ax.imshow(values[findex, i].T, cmap=cmap, norm=norm, origin="lower")
         ax.invert_xaxis()
 
         ax.set_xticks([])
@@ -657,12 +655,12 @@ def calculate_horizontal_plane_with_turbines(
         # Grab the turbine layout
         layout_x = copy.deepcopy(fi.layout_x)
         layout_y = copy.deepcopy(fi.layout_y)
-        D = fi.floris.farm.rotor_diameters_sorted[0, 0, 0]
+        D = np.unique(fi.floris.farm.rotor_diameters_sorted)[0]
 
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
-        yaw_angles = np.append(yaw_angles, np.zeros([len(wd), len(ws), 1]), axis=2)
+        yaw_angles = np.append(yaw_angles, [[0.0]], axis=1)
 
         # Get a grid of points test test
         if x_bounds is None:
@@ -698,8 +696,8 @@ def calculate_horizontal_plane_with_turbines(
                 fi.calculate_wake(yaw_angles=yaw_angles)
 
                 # Get the velocity of that test turbines central point
-                center_point = int(np.floor(fi.floris.flow_field.u[0,0,-1].shape[0] / 2.0))
-                u_results[idx] = fi.floris.flow_field.u[0,0,-1,center_point,center_point]
+                center_point = int(np.floor(fi.floris.flow_field.u[0,-1].shape[0] / 2.0))
+                u_results[idx] = fi.floris.flow_field.u[0,-1,center_point,center_point]
 
                 # Increment index
                 idx = idx + 1
