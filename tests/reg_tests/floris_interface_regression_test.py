@@ -81,17 +81,12 @@ def test_calculate_no_wake(sample_inputs_fixture):
     fi.calculate_no_wake()
 
     n_turbines = fi.floris.farm.n_turbines
-    n_wind_speeds = fi.floris.flow_field.n_wind_speeds
-    n_wind_directions = fi.floris.flow_field.n_wind_directions
+    n_findex = fi.floris.flow_field.n_findex
 
     velocities = fi.floris.flow_field.u
     yaw_angles = fi.floris.farm.yaw_angles
     tilt_angles = fi.floris.farm.tilt_angles
-    ref_tilt_cp_cts = (
-        np.ones((n_wind_directions, n_wind_speeds, n_turbines))
-        * fi.floris.farm.ref_tilt_cp_cts
-    )
-    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
+    test_results = np.zeros((n_findex, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
         velocities,
@@ -102,7 +97,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         velocities,
         yaw_angles,
         tilt_angles,
-        ref_tilt_cp_cts,
+        fi.floris.farm.ref_tilt_cp_cts,
         fi.floris.farm.pPs,
         fi.floris.farm.pTs,
         fi.floris.farm.turbine_tilt_interps,
@@ -113,7 +108,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         velocities,
         yaw_angles,
         tilt_angles,
-        ref_tilt_cp_cts,
+        fi.floris.farm.ref_tilt_cp_cts,
         fi.floris.farm.turbine_fCts,
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
@@ -129,19 +124,18 @@ def test_calculate_no_wake(sample_inputs_fixture):
         velocities,
         yaw_angles,
         tilt_angles,
-        ref_tilt_cp_cts,
+        fi.floris.farm.ref_tilt_cp_cts,
         fi.floris.farm.turbine_fCts,
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
     )
-    for i in range(n_wind_directions):
-        for j in range(n_wind_speeds):
-            for k in range(n_turbines):
-                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
-                test_results[i, j, k, 1] = farm_cts[i, j, k]
-                test_results[i, j, k, 2] = farm_powers[i, j, k]
-                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
+    for i in range(n_findex):
+        for j in range(n_turbines):
+            test_results[i, j, 0] = farm_avg_velocities[i, j]
+            test_results[i, j, 1] = farm_cts[i, j]
+            test_results[i, j, 2] = farm_powers[i, j]
+            test_results[i, j, 3] = farm_axial_inductions[i, j]
 
     if DEBUG:
         print_test_values(
@@ -151,4 +145,4 @@ def test_calculate_no_wake(sample_inputs_fixture):
             farm_axial_inductions,
         )
 
-    assert_results_arrays(test_results[0], baseline)
+    assert_results_arrays(test_results[0:4], baseline)
