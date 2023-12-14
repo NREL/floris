@@ -831,7 +831,7 @@ class FlorisInterface(LoggingManager):
         """
 
         # Verify dimensions of the variable "freq"
-        if not (np.shape(freq)[0] == self.floris.flow_field.n_findex & len(np.shape(freq)) == 1):
+        if np.shape(freq)[0] != self.floris.flow_field.n_findex:
             raise UserWarning(
                 "'freq' should be a one-dimensional array with dimensions (n_findex)."
             )
