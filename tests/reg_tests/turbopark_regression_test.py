@@ -24,8 +24,8 @@ from floris.simulation import (
 )
 from tests.conftest import (
     assert_results_arrays,
-    N_TURBINES,
     N_FINDEX,
+    N_TURBINES,
     print_test_values,
 )
 

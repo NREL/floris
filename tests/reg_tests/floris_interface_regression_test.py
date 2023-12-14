@@ -24,8 +24,8 @@ from floris.simulation.turbine import rotor_effective_velocity
 from floris.tools import FlorisInterface
 from tests.conftest import (
     assert_results_arrays,
-    N_TURBINES,
     N_FINDEX,
+    N_TURBINES,
     print_test_values,
 )
 

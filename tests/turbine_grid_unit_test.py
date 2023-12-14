@@ -17,8 +17,8 @@ import numpy as np
 
 from floris.simulation import TurbineGrid
 from tests.conftest import (
-    N_TURBINES,
     N_FINDEX,
+    N_TURBINES,
     TURBINE_GRID_RESOLUTION,
 )
 

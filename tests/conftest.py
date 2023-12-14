@@ -12,6 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
 
 import copy
 
@@ -55,7 +56,7 @@ def print_test_values(
     thrusts: list,
     powers: list,
     axial_inductions: list,
-    max_findex_print: int | None=None
+    max_findex_print: int | None =None
 ):
     n_findex, n_turb = np.shape(average_velocities)
     if max_findex_print is not None:

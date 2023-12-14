@@ -16,7 +16,7 @@
 import numpy as np
 
 from floris.simulation import FlowField, TurbineGrid
-from tests.conftest import N_TURBINES, N_FINDEX
+from tests.conftest import N_FINDEX, N_TURBINES
 
 
 def test_n_findex(flow_field_fixture):
