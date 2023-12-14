@@ -1,3 +1,17 @@
+# Copyright 2021 NREL
+
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+# See https://floris.readthedocs.io for documentation
+
 import os.path
 
 import numpy as np
@@ -7,14 +21,14 @@ import yaml
 def build_turbine_dict(
     turbine_data_dict,
     turbine_name,
-    file_path=None,
+    file_name=None,
     generator_efficiency=1.0,
     hub_height=90.0,
     pP=1.88,
     pT=1.88,
     rotor_diameter=126.0,
     TSR=8.0,
-    air_density=1.225,
+    ref_density_cp_ct=1.225,
     ref_tilt_cp_ct=5.0
 ):
     """
@@ -45,15 +59,15 @@ def build_turbine_dict(
             turbine as a function of wind speed. Described in more detail above.
         turbine_name (string): Name of the turbine, which will be used for the
             turbine_type field as well as the filename.
-        file_path (): Path for placement of the produced yaml. Defaults to None,
-            in which case no yaml is written.
+        file_name (): Name for the produced yaml, including possibly path.
+            Defaults to None, in which case no yaml is written.
         generator_efficiency (float): Generator efficiency [-]. Defaults to 1.0.
         hub_height (float): Hub height [m]. Defaults to 90.0.
         pP (float): Cosine exponent for power loss to yaw [-]. Defaults to 1.88.
         pT (float): Cosine exponent for thrust loss to yaw [-]. Defaults to 1.88.
         rotor_diameter (float). Rotor diameter [m]. Defaults to 126.0.
         TSR (float). Turbine optimal tip-speed ratio [-]. Defaults to 8.0.
-        air_density (float). Air density used to specify power and thrust
+        ref_density_cp_ct (float). Air density used to specify power and thrust
             curves [kg/m^3]. Defaults to 1.225.
         ref_tilt_cp_ct (float). Rotor tilt (due to shaft tilt and/or platform
             tilt) used when defining the power and thrust curves [deg]. Defaults
@@ -90,7 +104,7 @@ def build_turbine_dict(
         validity_mask = (Cp != 0) | (u != 0)
         p = np.zeros_like(Cp, dtype=float)
 
-        p[validity_mask] = Cp[validity_mask]*0.5*air_density*A*u[validity_mask]**3 / 1000
+        p[validity_mask] = Cp[validity_mask]*0.5*ref_density_cp_ct*A*u[validity_mask]**3 / 1000
 
     else:
         raise KeyError(
@@ -119,7 +133,7 @@ def build_turbine_dict(
         Ct = np.zeros_like(T)
 
         Ct[validity_mask] = (T[validity_mask]*1000)/\
-                            (0.5*air_density*A*u[validity_mask]**2)
+                            (0.5*ref_density_cp_ct*A*u[validity_mask]**2)
 
     else:
         raise KeyError(
@@ -141,21 +155,20 @@ def build_turbine_dict(
         "pT": pT,
         "rotor_diameter": rotor_diameter,
         "TSR": TSR,
-        "ref_density_cp_ct": air_density,
+        "ref_density_cp_ct": ref_density_cp_ct,
         "ref_tilt_cp_ct": ref_tilt_cp_ct,
         "power_thrust_table": power_thrust_dict
     }
 
     # Create yaml file
-    if file_path is not None:
-        full_name = os.path.join(file_path, turbine_name+".yaml")
+    if file_name is not None:
         yaml.dump(
             turbine_dict,
-            open(full_name, "w"),
+            open(file_name, "w"),
             sort_keys=False
         )
 
-        print(full_name, "created.")
+        print(file_name, "created.")
 
     return turbine_dict
 
