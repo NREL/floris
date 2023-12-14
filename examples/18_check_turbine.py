@@ -48,7 +48,8 @@ turbines = [
 ]
 
 # TEMPORARY
-turbines = [turbines[2]]
+print(turbines)
+turbines = turbines[2:]
 # END TEMPORARY
 
 # Declare a set of figures for comparing cp and ct across models

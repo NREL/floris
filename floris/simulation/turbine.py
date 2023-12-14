@@ -594,7 +594,6 @@ class Turbine(BaseClass):
         to the wind speed array.
         """
         if len(value.keys()) != 3 or set(value.keys()) != {"wind_speed", "power", "thrust_coefficient"}:
-            import ipdb; ipdb.set_trace()
             raise ValueError(
                 """
                 power_thrust_table dictionary must have the form:
