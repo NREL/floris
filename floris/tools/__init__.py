@@ -47,6 +47,7 @@ from .visualization import (
     visualize_quiver,
 )
 from .wind_rose import WindRose
+from .turbine_utilities import build_turbine_dict
 
 
 # from floris.tools import (

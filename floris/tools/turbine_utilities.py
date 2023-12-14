@@ -70,49 +70,48 @@ def build_turbine_dict(
     A = np.pi * rotor_diameter**2/4
 
     # Construct the Cp curve
-    if "power_coefficient" in turbine_data_dict:
-        if "power_absolute" in turbine_data_dict:
+    if "power" in turbine_data_dict:
+        if "power_coefficient" in turbine_data_dict:
             print(
-                "Found both power_absolute and power_coefficient."
-                "Ignoring power_absolute."
+                "Found both power and power_coefficient."
+                "Ignoring power_coefficient."
             )
-        Cp = np.array(turbine_data_dict["power_coefficient"])
+        p = np.array(turbine_data_dict["power"])
 
-    elif "power_absolute" in turbine_data_dict:
-        P = np.array(turbine_data_dict["power_absolute"])
-        if _find_nearest_value_for_wind_speed(P, u, 10) > 20000 or \
-           _find_nearest_value_for_wind_speed(P, u, 10) < 1000:
+    elif "power_coefficient" in turbine_data_dict:
+        Cp = np.array(turbine_data_dict["power_coefficient"])
+        if _find_nearest_value_for_wind_speed(Cp, u, 10) > 16.0/27.0 or \
+           _find_nearest_value_for_wind_speed(Cp, u, 10) < 0.0:
            print(
-               "Unusual power value detected. Please check that power_absolute",
-               "is specified in kW."
+               "Unusual power coefficient detected. Check that power coefficients"
+               "are physical."
            )
 
-        validity_mask = (P != 0) | (u != 0)
-        Cp = np.zeros_like(P, dtype=float)
+        validity_mask = (Cp != 0) | (u != 0)
+        p = np.zeros_like(Cp, dtype=float)
 
-        Cp[validity_mask] = (P[validity_mask]*1000) / \
-                            (0.5*air_density*A*u[validity_mask]**3)
+        p[validity_mask] = Cp[validity_mask]*0.5*air_density*A*u[validity_mask]**3 / 1000
 
     else:
         raise KeyError(
-            "Either power_absolute or power_coefficient must be specified."
+            "Either power or power_coefficient must be specified."
         )
 
     # Construct Ct curve
     if "thrust_coefficient" in turbine_data_dict:
-        if "thrust_absolute" in turbine_data_dict:
+        if "thrust" in turbine_data_dict:
             print(
-                "Found both thrust_absolute and thrust_coefficient."
-                "Ignoring thrust_absolute."
+                "Found both thrust and thrust_coefficient."
+                "Ignoring thrust."
             )
         Ct = np.array(turbine_data_dict["thrust_coefficient"])
 
-    elif "thrust_absolute" in turbine_data_dict:
-        T = np.array(turbine_data_dict["thrust_absolute"])
+    elif "thrust" in turbine_data_dict:
+        T = np.array(turbine_data_dict["thrust"])
         if _find_nearest_value_for_wind_speed(T, u, 10) > 3000 or \
            _find_nearest_value_for_wind_speed(T, u, 10) < 100:
            print(
-               "Unusual thrust value detected. Please check that thrust_absolute",
+               "Unusual thrust value detected. Please check that thrust",
                "is specified in kN."
            )
 
@@ -124,14 +123,14 @@ def build_turbine_dict(
 
     else:
         raise KeyError(
-            "Either thrust_absolute or thrust_coefficient must be specified."
+            "Either thrust or thrust_coefficient must be specified."
         )
 
     # Build the turbine dict
     power_thrust_dict = {
         "wind_speed": u.tolist(),
-        "power": Cp.tolist(),
-        "thrust": Ct.tolist()
+        "power": p.tolist(),
+        "thrust_coefficient": Ct.tolist()
     }
 
     turbine_dict = {

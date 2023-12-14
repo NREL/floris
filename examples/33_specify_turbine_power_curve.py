@@ -15,9 +15,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+from floris.simulation import turbine
 
-from floris.tools import FlorisInterface
-from floris.turbine_library.turbine_utilities import build_turbine_dict
+from floris.tools import FlorisInterface, build_turbine_dict
 
 
 """
@@ -30,9 +30,12 @@ argument to build_turbine_dict is set.
 """
 
 # Generate an example turbine power and thrust curve for use in the FLORIS model
+powers_orig = np.array([0, 30, 200, 500, 1000, 2000, 4000, 4000, 4000, 4000, 4000])
+wind_speeds = np.array([0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20])
+power_coeffs = powers_orig[1:]/(0.5*126.**2*np.pi/4*1.225*wind_speeds[1:]**3)
 turbine_data_dict = {
-    "wind_speed":[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
-    "power_absolute":[0, 30, 200, 500, 1000, 2000, 4000, 4000, 4000, 4000, 4000],
+    "wind_speed":list(wind_speeds),
+    "power_coefficient":[0]+list(power_coeffs),
     "thrust_coefficient":[0, 0.9, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.25, 0.2]
 }
 
@@ -52,10 +55,12 @@ turbine_dict = build_turbine_dict(
 
 fi = FlorisInterface("inputs/gch.yaml")
 wind_speeds = np.linspace(1, 15, 100)
+wind_directions = 270.*np.ones_like(wind_speeds)
 # Replace the turbine(s) in the FLORIS model with the created one
 fi.reinitialize(
     layout_x=[0],
     layout_y=[0],
+    wind_directions=wind_directions,
     wind_speeds=wind_speeds,
     turbine_type=[turbine_dict]
 )
@@ -63,10 +68,17 @@ fi.calculate_wake()
 
 powers = fi.get_farm_power()
 
-fig, ax = plt.subplots(1,1)
+specified_powers = (
+    np.array(turbine_data_dict["power_coefficient"])
+    *0.5*turbine_dict["ref_density_cp_ct"]
+    *turbine_dict["rotor_diameter"]**2*np.pi/4
+    *np.array(turbine_data_dict["wind_speed"])**3
+)/1000
 
-ax.scatter(wind_speeds, powers[0,:]/1000, color="C0", s=5, label="Test points")
-ax.scatter(turbine_data_dict["wind_speed"], turbine_data_dict["power_absolute"],
+fig, ax = plt.subplots(1,1,sharex=True)
+
+ax.scatter(wind_speeds, powers[:]/1000, color="C0", s=5, label="Test points")
+ax.scatter(turbine_data_dict["wind_speed"], specified_powers,
     color="red", s=20, label="Specified points")
 
 ax.grid()
