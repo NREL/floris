@@ -145,7 +145,6 @@ def test_regression_tandem(sample_inputs_fixture):
         floris.farm.turbine_type_map,
     )
     farm_powers = power(
-        floris.farm.ref_density_cp_cts,
         farm_eff_velocities,
         floris.farm.turbine_power_interps,
         floris.farm.turbine_type_map,
@@ -330,7 +329,6 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
         floris.farm.turbine_type_map,
     )
     farm_powers = power(
-        floris.farm.ref_density_cp_cts,
         farm_eff_velocities,
         floris.farm.turbine_power_interps,
         floris.farm.turbine_type_map,
