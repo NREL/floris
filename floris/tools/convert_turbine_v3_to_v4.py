@@ -77,12 +77,3 @@ build_turbine_dict(
     output_path,
     **turbine_properties
 )
-
-
-
-
-
-
-
-
-
