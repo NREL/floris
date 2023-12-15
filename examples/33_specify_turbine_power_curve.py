@@ -50,7 +50,7 @@ turbine_dict = build_turbine_dict(
     rotor_diameter=126,
     TSR=8,
     air_density=1.225,
-    ref_tilt_cp_ct=5
+    ref_tilt=5
 )
 
 fi = FlorisInterface("inputs/gch.yaml")

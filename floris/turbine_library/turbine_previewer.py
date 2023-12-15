@@ -182,8 +182,8 @@ class TurbineInterface:
                 k: Ct_multidim(
                     velocities=wind_speeds.reshape(shape),
                     yaw_angle=np.zeros(shape),
-                    tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
-                    ref_tilt_cp_ct=np.full(shape_single, self.turbine.ref_tilt_cp_ct),
+                    tilt_angle=np.full(shape, self.turbine.ref_tilt),
+                    ref_tilt=np.full(shape_single, self.turbine.ref_tilt),
                     fCt=fCt_interps[k],
                     tilt_interp=[(self.turbine.turbine_type, self.turbine.tilt_interp)],
                     correct_cp_ct_for_tilt=np.zeros(shape_single, dtype=bool),
@@ -195,8 +195,8 @@ class TurbineInterface:
             ct_curve = Ct(
                 velocities=wind_speeds.reshape(shape),
                 yaw_angle=np.zeros(shape),
-                tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
-                ref_tilt_cp_ct=np.full(shape, self.turbine.ref_tilt_cp_ct),
+                tilt_angle=np.full(shape, self.turbine.ref_tilt),
+                ref_tilt=np.full(shape, self.turbine.ref_tilt),
                 fCt={self.turbine.turbine_type: self.turbine.fCt_interp},
                 tilt_interp=[(self.turbine.turbine_type, self.turbine.tilt_interp)],
                 correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),

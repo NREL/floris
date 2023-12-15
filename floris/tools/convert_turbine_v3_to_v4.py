@@ -23,6 +23,7 @@ The resulting turbine is placed in the same directory as the original yaml,
 and is appended _v4.
 """
 
+from ipaddress import v4_int_to_packed
 import sys
 from pathlib import Path
 
@@ -61,10 +62,13 @@ valid_properties = [
     "rotor_diameter",
     "TSR",
     "ref_air_density",
-    "ref_tilt_cp_ct"
+    "ref_tilt"
 ]
 
 turbine_properties = {k:v for k,v in v3_turbine_dict.items() if k in valid_properties}
+turbine_properties["ref_air_density"] = v3_turbine_dict["ref_density_cp_ct"]
+if "ref_tilt_cp_ct" in v3_turbine_dict:
+    turbine_properties["ref_tilt"] = v3_turbine_dict["ref_tilt_cp_ct"]
 
 # Convert to v4 and print new yaml
 build_turbine_dict(

@@ -40,7 +40,7 @@ ref_air_density: 1.225
 ###
 # The tilt angle at which the Cp and Ct curves are defined. This is used to capture
 # the effects of a floating platform on a turbine's power and wake.
-ref_tilt_cp_ct: 5.0
+ref_tilt: 5.0
 
 ###
 # Cp and Ct as a function of wind speed for the turbine's full range of operating conditions.

@@ -29,7 +29,7 @@ def build_turbine_dict(
     rotor_diameter=126.0,
     TSR=8.0,
     ref_air_density=1.225,
-    ref_tilt_cp_ct=5.0
+    ref_tilt=5.0
 ):
     """
     Tool for formatting a full turbine dict from data formatted as a
@@ -69,7 +69,7 @@ def build_turbine_dict(
         TSR (float). Turbine optimal tip-speed ratio [-]. Defaults to 8.0.
         ref_air_density (float). Air density used to specify power and thrust
             curves [kg/m^3]. Defaults to 1.225.
-        ref_tilt_cp_ct (float). Rotor tilt (due to shaft tilt and/or platform
+        ref_tilt (float). Rotor tilt (due to shaft tilt and/or platform
             tilt) used when defining the power and thrust curves [deg]. Defaults
             to 5.0.
 
@@ -156,7 +156,7 @@ def build_turbine_dict(
         "rotor_diameter": rotor_diameter,
         "TSR": TSR,
         "ref_air_density": ref_air_density,
-        "ref_tilt_cp_ct": ref_tilt_cp_ct,
+        "ref_tilt": ref_tilt,
         "power_thrust_table": power_thrust_dict
     }
 

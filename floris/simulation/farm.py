@@ -118,8 +118,8 @@ class Farm(BaseClass):
     ref_air_densities: NDArrayFloat = field(init=False, factory=list)
     ref_air_densities_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    ref_tilt_cp_cts: NDArrayFloat = field(init=False, factory=list)
-    ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
+    ref_tilts: NDArrayFloat = field(init=False, factory=list)
+    ref_tilts_sorted: NDArrayFloat = field(init=False, factory=list)
 
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, factory=list)
@@ -266,9 +266,9 @@ class Farm(BaseClass):
             turb['ref_air_density'] for turb in self.turbine_definitions
         ])
 
-    def construct_turbine_ref_tilt_cp_cts(self):
-        self.ref_tilt_cp_cts = np.array(
-            [turb['ref_tilt_cp_ct'] for turb in self.turbine_definitions]
+    def construct_turbine_ref_tilts(self):
+        self.ref_tilts = np.array(
+            [turb['ref_tilt'] for turb in self.turbine_definitions]
         )
 
     def construct_turbine_correct_cp_ct_for_tilt(self):
@@ -367,8 +367,8 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=1
         )
-        self.ref_tilt_cp_cts_sorted = np.take_along_axis(
-            self.ref_tilt_cp_cts * template_shape,
+        self.ref_tilts_sorted = np.take_along_axis(
+            self.ref_tilts * template_shape,
             sorted_coord_indices,
             axis=1
         )
@@ -410,11 +410,11 @@ class Farm(BaseClass):
     def set_tilt_to_ref_tilt(self, n_findex: int):
         self.tilt_angles = (
             np.ones((n_findex, self.n_turbines))
-            * self.ref_tilt_cp_cts
+            * self.ref_tilts
         )
         self.tilt_angles_sorted = (
             np.ones((n_findex, self.n_turbines))
-            * self.ref_tilt_cp_cts
+            * self.ref_tilts
         )
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
@@ -469,8 +469,8 @@ class Farm(BaseClass):
             unsorted_indices[:,:,0,0],
             axis=1
         )
-        self.ref_tilt_cp_cts = np.take_along_axis(
-            self.ref_tilt_cp_cts_sorted,
+        self.ref_tilts = np.take_along_axis(
+            self.ref_tilts_sorted,
             unsorted_indices[:,:,0,0],
             axis=1
         )

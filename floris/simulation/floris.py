@@ -101,7 +101,7 @@ class Floris(BaseClass):
         self.farm.construct_turbine_pPs()
         self.farm.construct_turbine_pTs()
         self.farm.construct_turbine_ref_air_densities()
-        self.farm.construct_turbine_ref_tilt_cp_cts()
+        self.farm.construct_turbine_ref_tilts()
         self.farm.construct_turbine_tilt_interps()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
         self.farm.set_yaw_angles(self.flow_field.n_findex)
@@ -178,11 +178,11 @@ class Floris(BaseClass):
                     "see https://nrel.github.io/floris/input_reference_turbine.html."
                 )
 
-            if "ref_tilt_cp_ct" not in turbine.keys():
+            if "ref_tilt" not in turbine.keys():
                 error_messages.append(
-                    "From FLORIS v3.4, the turbine definition must include 'ref_tilt_cp_ct'. "
+                    "From FLORIS v3.4, the turbine definition must include 'ref_tilt'. "
                     "This value represents the tilt angle at which the provided Cp and Ct "
-                    "curves are defined. Add 'ref_tilt_cp_ct' to your turbine definition and "
+                    "curves are defined. Add 'ref_tilt' to your turbine definition and "
                     "try again. For a description of the turbine inputs, "
                     "see https://nrel.github.io/floris/input_reference_turbine.html."
                 )
