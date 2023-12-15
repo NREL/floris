@@ -52,11 +52,13 @@ turbine_dict = build_turbine_dict(
 
 fi = FlorisInterface("inputs/gch.yaml")
 wind_speeds = np.linspace(1, 15, 100)
+wind_directions = 270 * np.ones_like(wind_speeds)
 # Replace the turbine(s) in the FLORIS model with the created one
 fi.reinitialize(
     layout_x=[0],
     layout_y=[0],
     wind_speeds=wind_speeds,
+    wind_directions=wind_directions,
     turbine_type=[turbine_dict]
 )
 fi.calculate_wake()
@@ -65,7 +67,7 @@ powers = fi.get_farm_power()
 
 fig, ax = plt.subplots(1,1)
 
-ax.scatter(wind_speeds, powers[0,:]/1000, color="C0", s=5, label="Test points")
+ax.scatter(wind_speeds, powers/1000, color="C0", s=5, label="Test points")
 ax.scatter(turbine_data_dict["wind_speed"], turbine_data_dict["power_absolute"],
     color="red", s=20, label="Specified points")
 
