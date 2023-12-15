@@ -82,7 +82,7 @@ ax[0].legend()
 
 # Plot the velocities
 for z_idx, z in enumerate(points_z):
-    ax[1].plot(wd_array, u_at_points[:, :, z_idx].flatten(), label=f'Speed at z={z} m')
+    ax[1].plot(wd_array, u_at_points[:, z_idx].flatten(), label=f'Speed at z={z} m')
 ax[1].grid()
 ax[1].legend()
 ax[1].set_xlabel('Wind Direction (deg)')
