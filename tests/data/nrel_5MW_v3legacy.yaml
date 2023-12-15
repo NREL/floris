@@ -1,4 +1,4 @@
-turbine_type: 'nrel_5MW_custom'
+turbine_type: 'nrel_5MW_FLORISv3'
 generator_efficiency: 1.0
 hub_height: 90.0
 pP: 1.88

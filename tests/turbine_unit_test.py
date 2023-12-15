@@ -267,30 +267,20 @@ def test_power():
     turbine_type_map = np.array(n_turbines * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
     test_power = power(
-        #ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1)), # 1 findex, 1 turbine
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,0]
     )
 
-    # Recompute using the provided Cp table
+    # Recompute using the provided power
     truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
-    cp_truth = turbine_data["power_thrust_table"]["power"][truth_index]
-    baseline_power = (
-        0.5
-        * cp_truth
-        * AIR_DENSITY
-        * turbine.rotor_area
-        * wind_speed ** 3
-        * turbine.generator_efficiency
-    )
+    baseline_power = turbine_data["power_thrust_table"]["power"][truth_index] * 1000
     assert np.allclose(baseline_power, test_power)
 
 
     # At rated, the power calculated should be 5MW since the test data is the NREL 5MW turbine
     wind_speed = 18.0
     rated_power = power(
-        ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,0]
@@ -301,7 +291,6 @@ def test_power():
     # At wind speed = 0.0, the power should be 0 based on the provided Cp curve
     wind_speed = 0.0
     zero_power = power(
-        ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, 1)),
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,0]
@@ -317,7 +306,6 @@ def test_power():
     turbine_type_map = np.array(n_turbines * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
     test_4_power = power(
-        ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, n_turbines)),
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map
@@ -333,7 +321,6 @@ def test_power():
     turbine_type_map = np.array(n_turbines * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
     test_grid_power = power(
-        ref_density_cp_ct=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, n_turbines, 3, 3)),
         power_interp={turbine.turbine_type: turbine.power_interp},
         turbine_type_map=turbine_type_map[:,0]
