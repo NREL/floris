@@ -593,7 +593,8 @@ class Turbine(BaseClass):
         Verify that the power and thrust tables are given with arrays of equal length
         to the wind speed array.
         """
-        if len(value.keys()) != 3 or set(value.keys()) != {"wind_speed", "power", "thrust_coefficient"}:
+        if (len(value.keys()) != 3 or
+            set(value.keys()) != {"wind_speed", "power", "thrust_coefficient"}):
             raise ValueError(
                 """
                 power_thrust_table dictionary must have the form:
@@ -605,11 +606,16 @@ class Turbine(BaseClass):
                 """
             )
 
-        if any(e.ndim > 1 for e in (value["power"], value["thrust_coefficient"], value["wind_speed"])):
+        if any(e.ndim > 1 for e in
+            (value["power"], value["thrust_coefficient"], value["wind_speed"])
+            ):
             raise ValueError("power, thrust_coefficient, and wind_speed inputs must be 1-D.")
 
-        if len( {value["power"].size, value["thrust_coefficient"].size, value["wind_speed"].size} ) > 1:
-            raise ValueError("power, thrust_coefficient, and wind_speed tables must be the same size.")
+        if (len( {value["power"].size, value["thrust_coefficient"].size, value["wind_speed"].size} )
+            > 1):
+            raise ValueError(
+                "power, thrust_coefficient, and wind_speed tables must be the same size."
+            )
 
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:

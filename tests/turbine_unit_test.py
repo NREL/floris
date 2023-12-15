@@ -257,7 +257,7 @@ def test_ct():
 
 
 def test_power():
-    AIR_DENSITY = 1.225
+    # AIR_DENSITY = 1.225
 
     # Test that power is computed as expected for a single turbine
     n_turbines = 1

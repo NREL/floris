@@ -23,8 +23,8 @@ The resulting turbine is placed in the same directory as the original yaml,
 and is appended _v4.
 """
 
-from ipaddress import v4_int_to_packed
 import sys
+from ipaddress import v4_int_to_packed
 from pathlib import Path
 
 from floris.tools import build_turbine_dict

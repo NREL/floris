@@ -15,9 +15,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from floris.simulation import turbine
 
-from floris.tools import FlorisInterface, build_turbine_dict
+from floris.simulation import turbine
+from floris.tools import build_turbine_dict, FlorisInterface
 
 
 """
