@@ -115,8 +115,8 @@ class Farm(BaseClass):
     pTs: NDArrayFloat = field(init=False, factory=list)
     pTs_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    ref_density_cp_cts: NDArrayFloat = field(init=False, factory=list)
-    ref_density_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
+    ref_air_densities: NDArrayFloat = field(init=False, factory=list)
+    ref_air_densities_sorted: NDArrayFloat = field(init=False, factory=list)
 
     ref_tilt_cp_cts: NDArrayFloat = field(init=False, factory=list)
     ref_tilt_cp_cts_sorted: NDArrayFloat = field(init=False, factory=list)
@@ -261,9 +261,9 @@ class Farm(BaseClass):
     def construct_turbine_pTs(self):
         self.pTs = np.array([turb['pT'] for turb in self.turbine_definitions])
 
-    def construct_turbine_ref_density_cp_cts(self):
-        self.ref_density_cp_cts = np.array([
-            turb['ref_density_cp_ct'] for turb in self.turbine_definitions
+    def construct_turbine_ref_air_densities(self):
+        self.ref_air_densities = np.array([
+            turb['ref_air_density'] for turb in self.turbine_definitions
         ])
 
     def construct_turbine_ref_tilt_cp_cts(self):
@@ -362,8 +362,8 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=1
         )
-        self.ref_density_cp_cts_sorted = np.take_along_axis(
-            self.ref_density_cp_cts * template_shape,
+        self.ref_air_densities_sorted = np.take_along_axis(
+            self.ref_air_densities * template_shape,
             sorted_coord_indices,
             axis=1
         )
@@ -464,8 +464,8 @@ class Farm(BaseClass):
             unsorted_indices[:,:,0,0],
             axis=1
         )
-        self.ref_density_cp_cts = np.take_along_axis(
-            self.ref_density_cp_cts_sorted,
+        self.ref_air_densities = np.take_along_axis(
+            self.ref_air_densities_sorted,
             unsorted_indices[:,:,0,0],
             axis=1
         )

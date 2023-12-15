@@ -93,7 +93,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
     )
     farm_eff_velocities = rotor_effective_velocity(
         fi.floris.flow_field.air_density,
-        fi.floris.farm.ref_density_cp_cts,
+        fi.floris.farm.ref_air_densities,
         velocities,
         yaw_angles,
         tilt_angles,

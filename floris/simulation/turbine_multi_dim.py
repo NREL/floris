@@ -42,7 +42,7 @@ from floris.utilities import cosd
 
 
 def power_multidim(
-    ref_density_cp_ct: float,
+    ref_air_density: float,
     rotor_effective_velocities: NDArrayFloat,
     power_interp: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
@@ -51,7 +51,7 @@ def power_multidim(
     Cp/Ct values, adjusted for yaw and tilt. Value given in Watts.
 
     Args:
-        ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
+        ref_air_densities (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
         rotor_effective_velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The rotor
             effective velocities at a turbine.
         power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function
@@ -86,7 +86,7 @@ def power_multidim(
             for k, turb in enumerate(ws):
                 p[i, j, k] = power_interp[i, j, k](rotor_effective_velocities[i, j, k])
 
-    return p * ref_density_cp_ct
+    return p * ref_air_density
 
 
 def Ct_multidim(
@@ -400,7 +400,7 @@ class TurbineMultiDimensional(Turbine):
             tilt angle to power.
         generator_efficiency (:py:obj: float): The generator
             efficiency factor used to scale the power production.
-        ref_density_cp_ct (:py:obj: float): The density at which the provided
+        ref_air_density (:py:obj: float): The density at which the provided
             cp and ct is defined
         power_thrust_table (PowerThrustTable): A dictionary containing the
             following key-value pairs:

@@ -64,7 +64,7 @@ def test_turbine_init():
     assert turbine.pT == turbine_data["pT"]
     assert turbine.TSR == turbine_data["TSR"]
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
-    assert turbine.ref_density_cp_ct == turbine_data["ref_density_cp_ct"]
+    assert turbine.ref_air_density == turbine_data["ref_air_density"]
     assert turbine.ref_tilt_cp_ct == turbine_data["ref_tilt_cp_ct"]
     assert np.array_equal(
         turbine.power_thrust_table["wind_speed"],
@@ -611,7 +611,7 @@ def test_build_turbine_dict():
         pT=in_dict["pT"],
         rotor_diameter=in_dict["rotor_diameter"],
         TSR=in_dict["TSR"],
-        ref_density_cp_ct=in_dict["ref_density_cp_ct"],
+        ref_air_density=in_dict["ref_density_cp_ct"],
         ref_tilt_cp_ct=in_dict["ref_tilt_cp_ct"]
     )
 
@@ -633,8 +633,10 @@ def test_build_turbine_dict():
     in_dict["power_thrust_table"]["power"] = list(P / 1000)
     in_dict["power_thrust_table"]["thrust_coefficient"] = in_dict["power_thrust_table"]["thrust"]
     in_dict["power_thrust_table"].pop("thrust")
+    in_dict["ref_air_density"] = in_dict["ref_density_cp_ct"]
+    in_dict.pop("ref_density_cp_ct")
     test_dict["turbine_type"] = in_dict["turbine_type"]
-    assert list(in_dict.keys()) == list(test_dict.keys())
+    assert set(in_dict.keys()) == set(test_dict.keys())
     assert np.allclose(
         in_dict["power_thrust_table"]["power"],
         in_dict["power_thrust_table"]["power"]
@@ -656,7 +658,7 @@ def test_build_turbine_dict():
         pT=in_dict["pT"],
         rotor_diameter=in_dict["rotor_diameter"],
         TSR=in_dict["TSR"],
-        ref_density_cp_ct=in_dict["ref_density_cp_ct"],
+        ref_air_density=in_dict["ref_air_density"],
         ref_tilt_cp_ct=in_dict["ref_tilt_cp_ct"]
     )
 
@@ -665,7 +667,7 @@ def test_build_turbine_dict():
     )
 
     test_dict["turbine_type"] = in_dict["turbine_type"]
-    assert list(in_dict.keys()) == list(test_dict.keys())
+    assert set(in_dict.keys()) == set(test_dict.keys())
     for k in in_dict.keys():
         if type(in_dict[k]) is dict:
             for k2 in in_dict[k].keys():

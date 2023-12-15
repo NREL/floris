@@ -100,7 +100,7 @@ class Floris(BaseClass):
         self.farm.construct_turbine_TSRs()
         self.farm.construct_turbine_pPs()
         self.farm.construct_turbine_pTs()
-        self.farm.construct_turbine_ref_density_cp_cts()
+        self.farm.construct_turbine_ref_air_densities()
         self.farm.construct_turbine_ref_tilt_cp_cts()
         self.farm.construct_turbine_tilt_interps()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
@@ -166,14 +166,14 @@ class Floris(BaseClass):
         # Check for missing values add in version 3.2 and 3.4
         for turbine in self.farm.turbine_definitions:
 
-            if "ref_density_cp_ct" not in turbine.keys():
+            if "ref_air_density" not in turbine.keys():
                 error_messages.append(
-                    "From FLORIS v3.2, the turbine definition must include 'ref_density_cp_ct'. "
+                    "From FLORIS v3.2, the turbine definition must include 'ref_air_density'. "
                     "This value represents the air density at which the provided Cp and Ct "
                     "curves are defined. Previously, this was assumed to be 1.225 kg/m^3, "
                     "and other air density values applied were assumed to be a deviation "
                     "from the defined level. FLORIS now requires the user to explicitly "
-                    "define the reference density. Add 'ref_density_cp_ct' to your "
+                    "define the reference density. Add 'ref_air_density' to your "
                     "turbine definition and try again. For a description of the turbine inputs, "
                     "see https://nrel.github.io/floris/input_reference_turbine.html."
                 )

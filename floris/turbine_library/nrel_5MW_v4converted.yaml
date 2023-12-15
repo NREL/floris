@@ -5,7 +5,7 @@ pP: 1.88
 pT: 1.88
 rotor_diameter: 126.0
 TSR: 8.0
-ref_density_cp_ct: 1.225
+ref_air_density: 1.225
 ref_tilt_cp_ct: 5.0
 power_thrust_table:
   wind_speed:

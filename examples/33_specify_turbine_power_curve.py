@@ -70,7 +70,7 @@ powers = fi.get_farm_power()
 
 specified_powers = (
     np.array(turbine_data_dict["power_coefficient"])
-    *0.5*turbine_dict["ref_density_cp_ct"]
+    *0.5*turbine_dict["ref_air_density"]
     *turbine_dict["rotor_diameter"]**2*np.pi/4
     *np.array(turbine_data_dict["wind_speed"])**3
 )/1000

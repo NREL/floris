@@ -60,7 +60,7 @@ valid_properties = [
     "pT",
     "rotor_diameter",
     "TSR",
-    "ref_density_cp_ct",
+    "ref_air_density",
     "ref_tilt_cp_ct"
 ]
 

@@ -206,7 +206,7 @@ class SampleInputs:
             "pP": 1.88,
             "pT": 1.88,
             "generator_efficiency": 1.0,
-            "ref_density_cp_ct": 1.225,
+            "ref_air_density": 1.225,
             "ref_tilt_cp_ct": 5.0,
             "power_thrust_table": {
                 "power": [

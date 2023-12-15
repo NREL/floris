@@ -139,7 +139,7 @@ class TurbineInterface:
             }
             power_mw = {
                 k: power_multidim(
-                    ref_density_cp_ct=np.full(shape, self.turbine.ref_density_cp_ct),
+                    ref_air_density=np.full(shape, self.turbine.ref_air_density),
                     rotor_effective_velocities=wind_speeds.reshape(shape),
                     power_interp=power_interps[k],
                 ).flatten() / 1e6

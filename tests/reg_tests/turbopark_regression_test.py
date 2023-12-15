@@ -124,7 +124,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
-        floris.farm.ref_density_cp_cts,
+        floris.farm.ref_air_densities,
         velocities,
         yaw_angles,
         tilt_angles,
@@ -286,7 +286,7 @@ def test_regression_yaw(sample_inputs_fixture):
     )
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
-        floris.farm.ref_density_cp_cts,
+        floris.farm.ref_air_densities,
         velocities,
         yaw_angles,
         tilt_angles,
@@ -379,7 +379,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
 
     farm_eff_velocities = rotor_effective_velocity(
         floris.flow_field.air_density,
-        floris.farm.ref_density_cp_cts,
+        floris.farm.ref_air_densities,
         velocities,
         yaw_angles,
         tilt_angles,

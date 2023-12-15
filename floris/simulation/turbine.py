@@ -106,7 +106,7 @@ def compute_tilt_angles_for_floating_turbines(
 
 def rotor_effective_velocity(
     air_density: float,
-    ref_density_cp_ct: float,
+    ref_air_density: float,
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
@@ -144,7 +144,7 @@ def rotor_effective_velocity(
         method=average_method,
         cubature_weights=cubature_weights
     )
-    rotor_effective_velocities = (air_density/ref_density_cp_ct)**(1/3) * average_velocities
+    rotor_effective_velocities = (air_density/ref_air_density)**(1/3) * average_velocities
 
     # Compute the rotor effective velocity adjusting for yaw settings
     rotor_effective_velocities = _rotor_velocity_yaw_correction(
@@ -475,7 +475,7 @@ class Turbine(BaseClass):
         TSR (float): The Tip Speed Ratio of the turbine.
         generator_efficiency (float): The efficiency of the generator used to scale
             power production.
-        ref_density_cp_ct (float): The density at which the provided Cp and Ct curves are defined.
+        ref_air_density (float): The density at which the provided Cp and Ct curves are defined.
         ref_tilt_cp_ct (float): The implicit tilt of the turbine for which the Cp and Ct
             curves are defined. This is typically the nacelle tilt.
         power_thrust_table (dict[str, float]): Contains power coefficient and thrust coefficient
@@ -504,7 +504,7 @@ class Turbine(BaseClass):
     pT: float = field()
     TSR: float = field()
     generator_efficiency: float = field()
-    ref_density_cp_ct: float = field()
+    ref_air_density: float = field()
     ref_tilt_cp_ct: float = field()
     power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
 

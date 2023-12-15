@@ -636,7 +636,7 @@ class FlorisInterface(LoggingManager):
         )
 
         turbine_powers = power_multidim(
-            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
+            ref_air_density=self.floris.farm.ref_air_densities,
             rotor_effective_velocities=self.turbine_effective_velocities,
             power_interp=turbine_power_interps,
         )
@@ -684,7 +684,7 @@ class FlorisInterface(LoggingManager):
     def turbine_effective_velocities(self) -> NDArrayFloat:
         rotor_effective_velocities = rotor_effective_velocity(
             air_density=self.floris.flow_field.air_density,
-            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
+            ref_air_density=self.floris.farm.ref_air_densities,
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,

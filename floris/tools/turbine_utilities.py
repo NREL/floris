@@ -28,7 +28,7 @@ def build_turbine_dict(
     pT=1.88,
     rotor_diameter=126.0,
     TSR=8.0,
-    ref_density_cp_ct=1.225,
+    ref_air_density=1.225,
     ref_tilt_cp_ct=5.0
 ):
     """
@@ -67,7 +67,7 @@ def build_turbine_dict(
         pT (float): Cosine exponent for thrust loss to yaw [-]. Defaults to 1.88.
         rotor_diameter (float). Rotor diameter [m]. Defaults to 126.0.
         TSR (float). Turbine optimal tip-speed ratio [-]. Defaults to 8.0.
-        ref_density_cp_ct (float). Air density used to specify power and thrust
+        ref_air_density (float). Air density used to specify power and thrust
             curves [kg/m^3]. Defaults to 1.225.
         ref_tilt_cp_ct (float). Rotor tilt (due to shaft tilt and/or platform
             tilt) used when defining the power and thrust curves [deg]. Defaults
@@ -104,7 +104,7 @@ def build_turbine_dict(
         validity_mask = (Cp != 0) | (u != 0)
         p = np.zeros_like(Cp, dtype=float)
 
-        p[validity_mask] = Cp[validity_mask]*0.5*ref_density_cp_ct*A*u[validity_mask]**3 / 1000
+        p[validity_mask] = Cp[validity_mask]*0.5*ref_air_density*A*u[validity_mask]**3 / 1000
 
     else:
         raise KeyError(
@@ -133,7 +133,7 @@ def build_turbine_dict(
         Ct = np.zeros_like(T)
 
         Ct[validity_mask] = (T[validity_mask]*1000)/\
-                            (0.5*ref_density_cp_ct*A*u[validity_mask]**2)
+                            (0.5*ref_air_density*A*u[validity_mask]**2)
 
     else:
         raise KeyError(
@@ -155,7 +155,7 @@ def build_turbine_dict(
         "pT": pT,
         "rotor_diameter": rotor_diameter,
         "TSR": TSR,
-        "ref_density_cp_ct": ref_density_cp_ct,
+        "ref_air_density": ref_air_density,
         "ref_tilt_cp_ct": ref_tilt_cp_ct,
         "power_thrust_table": power_thrust_dict
     }
