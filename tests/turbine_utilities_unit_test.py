@@ -120,9 +120,13 @@ def test_check_smooth_power_curve():
     p1 = np.array([0, 1, 2, 3, 3, 3, 3, 2, 1], dtype=float)*1000 # smooth
     p2 = np.array([0, 1, 2, 3, 2.99, 3.01, 3, 2, 1], dtype=float)*1000 # non-smooth
     
-    p3 = p1
-    p3[5] = p3[5] + 1e-4 # smooth enough
+    p3 = p1.copy()
+    p3[5] = p3[5] + 9e-4  # just smooth enough
+
+    p4 = p1.copy()
+    p4[5] = p4[5] + 1.1e-3 # just not smooth enough
 
     assert check_smooth_power_curve(p1)
     assert not check_smooth_power_curve(p2)
     assert check_smooth_power_curve(p3)
+    assert not check_smooth_power_curve(p4)

@@ -177,16 +177,17 @@ def _find_nearest_value_for_wind_speed(test_vals, ws_vals, ws):
     idx = errs.argmin()
     return test_vals[idx]
 
-def check_smooth_power_curve(power):
+def check_smooth_power_curve(power, tolerance=0.001):
     """
     Check whether there are "wiggles" in the power signal.
     """
 
-    tol = 0.01 # kW, tolerance per point
-
-    dir_changes = np.sum(np.abs(np.diff(np.sign(np.diff(power)))))
+    dirs = np.where(
+        np.abs(np.diff(power)) > tolerance,
+        np.sign(np.diff(power)),
+        np.zeros(len(power)-1)
+    )
+    dir_changes = np.sum(np.abs(np.diff(dirs)))
     is_smooth = dir_changes <= 2
-
-    import ipdb; ipdb.set_trace()
 
     return is_smooth
