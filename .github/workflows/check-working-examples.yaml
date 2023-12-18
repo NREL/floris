@@ -47,6 +47,36 @@ jobs:
             continue
           fi
 
+          # Skip these examples until the wind rose, optimization package, and
+          # uncertainty interface are update to v4
+          if [[ $i == *08* ]]; then
+            continue
+          fi
+          if [[ $i == *10* ]]; then
+            continue
+          fi
+          if [[ $i == *11* ]]; then
+            continue
+          fi
+          if [[ $i == *12* ]]; then
+            continue
+          fi
+          if [[ $i == *13* ]]; then
+            continue
+          fi
+          if [[ $i == *14* ]]; then
+            continue
+          fi
+          if [[ $i == *15* ]]; then
+            continue
+          fi
+          if [[ $i == *16* ]]; then
+            continue
+          fi
+          if [[ $i == *20* ]]; then
+            continue
+          fi
+
           if ! python $i; then
             error_results="${error_results}"$'\n'" - ${i}"
             error_found=1

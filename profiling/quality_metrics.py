@@ -23,8 +23,13 @@ from linux_perf import perf
 from floris.simulation import Floris
 
 
-WIND_DIRECTIONS = np.arange(0, 360.0, 5)
-WIND_SPEEDS = np.arange(8.0, 12.0, 0.2)
+wd_grid, ws_grid = np.meshgrid(
+    np.arange(0, 360.0, 5),     # wind directions
+    np.arange(8.0, 12.0, 0.2),  # wind speeds
+    indexing="ij"
+)
+WIND_DIRECTIONS = wd_grid.flatten()
+WIND_SPEEDS = ws_grid.flatten()
 N_FINDEX = len(WIND_DIRECTIONS)
 
 N_TURBINES = 3

@@ -832,7 +832,8 @@ class FlorisInterface(LoggingManager):
         # Verify dimensions of the variable "freq"
         if np.shape(freq)[0] != self.floris.flow_field.n_findex:
             raise UserWarning(
-                "'freq' should be a one-dimensional array with dimensions (n_findex)."
+                "'freq' should be a one-dimensional array with dimensions (n_findex). "
+                f"Given shape is {np.shape(freq)}"
             )
 
         # Check if frequency vector sums to 1.0. If not, raise a warning
@@ -848,7 +849,7 @@ class FlorisInterface(LoggingManager):
         wind_directions = np.array(self.floris.flow_field.wind_directions, copy=True)
         farm_power = np.zeros(self.floris.flow_field.n_findex)
 
-        # Determine which wind speeds we must evaluate in floris
+        # Determine which wind speeds we must evaluate
         conditions_to_evaluate = wind_speeds >= cut_in_wind_speed
         if cut_out_wind_speed is not None:
             conditions_to_evaluate = conditions_to_evaluate & (wind_speeds < cut_out_wind_speed)
@@ -860,8 +861,10 @@ class FlorisInterface(LoggingManager):
             yaw_angles_subset = None
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[conditions_to_evaluate]
-            self.reinitialize(wind_speeds=wind_speeds_subset,
-                              wind_directions = wind_directions_subset)
+            self.reinitialize(
+                wind_speeds=wind_speeds_subset,
+                wind_directions=wind_directions_subset
+            )
             if no_wake:
                 self.calculate_no_wake(yaw_angles=yaw_angles_subset)
             else:

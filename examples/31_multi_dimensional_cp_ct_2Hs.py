@@ -46,9 +46,10 @@ fi.reinitialize(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
 fi_hs_1.reinitialize(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
 
 # Use a sweep of wind speeds
-wind_speeds = np.arange(5,20,1.)
-fi.reinitialize(wind_directions=[270.], wind_speeds=wind_speeds)
-fi_hs_1.reinitialize(wind_directions=[270.], wind_speeds=wind_speeds)
+wind_speeds = np.arange(5, 20, 1.0)
+wind_directions = 270.0 * np.ones_like(wind_speeds)
+fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi_hs_1.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
 
 # Calculate wakes with baseline yaw
 fi.calculate_wake()
@@ -63,8 +64,8 @@ fig, axarr = plt.subplots(1,3,sharex=True,figsize=(12,4))
 
 for t_idx in range(3):
     ax = axarr[t_idx]
-    ax.plot(wind_speeds, turbine_powers[0,:,t_idx], color='k', label='Hs=3.1 (5)')
-    ax.plot(wind_speeds, turbine_powers_hs_1[0,:,t_idx], color='r', label='Hs=1.0')
+    ax.plot(wind_speeds, turbine_powers[:,t_idx], color='k', label='Hs=3.1 (5)')
+    ax.plot(wind_speeds, turbine_powers_hs_1[:,t_idx], color='r', label='Hs=1.0')
     ax.grid(True)
     ax.set_xlabel('Wind Speed (m/s)')
     ax.set_title(f'Turbine {t_idx}')
