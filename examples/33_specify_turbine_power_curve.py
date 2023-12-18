@@ -42,14 +42,14 @@ turbine_data_dict = {
 turbine_dict = build_turbine_dict(
     turbine_data_dict,
     "example_turbine",
-    file_path=None,
+    file_name=None,
     generator_efficiency=1,
     hub_height=90,
     pP=1.88,
     pT=1.88,
     rotor_diameter=126,
     TSR=8,
-    air_density=1.225,
+    ref_air_density=1.225,
     ref_tilt=5
 )
 
@@ -62,7 +62,6 @@ fi.reinitialize(
     layout_y=[0],
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
-    wind_directions=wind_directions,
     turbine_type=[turbine_dict]
 )
 fi.calculate_wake()
