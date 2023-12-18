@@ -1,47 +1,45 @@
 ###
-# An ID for this type of turbine definition.
-# This is not currently used, but it will be enabled in the future. This should typically
-# match the root name of the file.
-
+# NREL 5MW reference turbine model for FLORIS v4.x. 
 # Data based on:
 # https://github.com/NREL/turbine-models/blob/master/Offshore/NREL_5MW_126_RWT.csv
 turbine_type: 'nrel_5MW'
 
 ###
-# Setting for generator losses to power.
+# Setting for generator losses to power [-].
 generator_efficiency: 1.0
 
 ###
-# Hub height.
+# Hub height [m].
 hub_height: 90.0
 
 ###
-# Cosine exponent for power loss due to yaw misalignment.
+# Cosine exponent for power loss due to yaw misalignment [-].
 pP: 1.88
 
 ###
-# Cosine exponent for power loss due to tilt.
+# Cosine exponent for power loss due to tilt [-].
 pT: 1.88
 
 ###
-# Rotor diameter.
+# Rotor diameter [m].
 rotor_diameter: 126.0
 
 ###
-# Tip speed ratio defined as linear blade tip speed normalized by the incoming wind speed.
+# Tip speed ratio defined as linear blade tip speed normalized by the incoming wind speed [-].
 TSR: 8.0
 
 ###
-# The air density at which the Cp and Ct curves are defined.
+# The air density at which the power_thrust_table curves are defined [kg/m^3].
 ref_air_density: 1.225
 
 ###
-# The tilt angle at which the Cp and Ct curves are defined. This is used to capture
-# the effects of a floating platform on a turbine's power and wake.
+# The tilt angle at which the the power_thrust_table curves are defined. This is used to capture
+# the effects of a floating platform on a turbine's power and wake [deg].
 ref_tilt: 5.0
 
 ###
-# Cp and Ct as a function of wind speed for the turbine's full range of operating conditions.
+# Absolute power [kW] and thrust coefficient [-] as a function of wind speed [m/s] for the turbine's
+# full range of operating conditions.
 power_thrust_table:
   power:
     - 0.0
