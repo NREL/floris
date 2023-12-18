@@ -94,12 +94,12 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
 
     # All list of strings from internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
-    farm_data["turbine_type"] = ["nrel_5MW", "iea_10MW", "iea_15MW", "x_20MW", "nrel_5MW"]
-    farm_data["layout_x"] = np.arange(0, 500, 100)
-    farm_data["layout_y"] = np.zeros(5)
+    farm_data["turbine_type"] = ["nrel_5MW", "iea_10MW", "iea_15MW", "nrel_5MW"]
+    farm_data["layout_x"] = np.arange(0, 400, 100)
+    farm_data["layout_y"] = np.zeros(4)
     farm = Farm.from_dict(farm_data)
-    assert len(farm.turbine_type) == 5
-    assert len(farm.turbine_definitions) == 5
+    assert len(farm.turbine_type) == 4
+    assert len(farm.turbine_definitions) == 4
 
     # String not found in internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
@@ -116,7 +116,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data["turbine_type"] = [turbine_def] * 5
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
-    Farm.from_dict(farm_data)
+    farm = Farm.from_dict(farm_data)
     assert len(farm.turbine_type) == 5
     assert len(farm.turbine_definitions) == 5
 
