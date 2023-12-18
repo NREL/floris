@@ -128,12 +128,12 @@ def rotor_effective_velocity(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        velocities = velocities[:, :, ix_filter]
-        yaw_angle = yaw_angle[:, :, ix_filter]
-        tilt_angle = tilt_angle[:, :, ix_filter]
-        ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
-        pP = pP[:, :, ix_filter]
-        pT = pT[:, :, ix_filter]
+        velocities = velocities[:, ix_filter]
+        yaw_angle = yaw_angle[:, ix_filter]
+        tilt_angle = tilt_angle[:, ix_filter]
+        ref_tilt_cp_ct = ref_tilt_cp_ct[:, ix_filter]
+        pP = pP[:, ix_filter]
+        pT = pT[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
 
     # Compute the rotor effective velocity adjusting for air density
@@ -204,7 +204,7 @@ def power(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        rotor_effective_velocities = rotor_effective_velocities[:, :, ix_filter]
+        rotor_effective_velocities = rotor_effective_velocities[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
 
     # Loop over each turbine type given to get power for all turbines

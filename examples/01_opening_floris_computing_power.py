@@ -42,42 +42,37 @@ print("\n========================= Single Wind Direction and Wind Speed ========
 fi.reinitialize(wind_directions=[270.0], wind_speeds=[8.0])
 
 # Set the yaw angles to 0
-yaw_angles = np.zeros([1, 2])  # 1 wind direction / speed, 2 turbines
+yaw_angles = np.zeros([1, 2])  # 1 wind direction and speed, 2 turbines
 fi.calculate_wake(yaw_angles=yaw_angles)
 
 # Get the turbine powers
 turbine_powers = fi.get_turbine_powers() / 1000.0
 
-# TODO what should we call this user/facing?
-print("The turbine power matrix should be of dimensions 1 FINDEX X 2 Turbines")
+print("The turbine power matrix should be of dimensions 1 findex X 2 Turbines")
 print(turbine_powers)
 print("Shape: ", turbine_powers.shape)
 
 # Single wind speed and multiple wind directions
 print("\n========================= Single Wind Direction and Multiple Wind Speeds ===============")
-# Note in v3 FLORIS wind directions and speeds would be expanded to all combinations
-# in v4 the assumption is that each entry wind direction and wind speed corresponds
-# to one condtions and wind directions and wind speeds arrays should be the same length
 
 wind_speeds = np.array([8.0, 9.0, 10.0])
 wind_directions = np.array([270.0, 270.0, 270.0])
 
 fi.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
-yaw_angles = np.zeros([3, 2])  # 9 wind directions/ speeds, 2 turbines
+yaw_angles = np.zeros([3, 2])  # 3 wind directions/ speeds, 2 turbines
 fi.calculate_wake(yaw_angles=yaw_angles)
 turbine_powers = fi.get_turbine_powers() / 1000.0
-print("The turbine power matrix should be of dimensions 9 FINDEX X 2 Turbines")
+print("The turbine power matrix should be of dimensions 3 findex X 2 Turbines")
 print(turbine_powers)
 print("Shape: ", turbine_powers.shape)
 
 # Multiple wind speeds and multiple wind directions
 print("\n========================= Multiple Wind Directions and Multiple Wind Speeds ============")
 
-# In the case want to consider each combination this needs to be broadcast out in advance
+# To consider each combination, this needs to be broadcast out in advance
 
 wind_speeds = np.tile([8.0, 9.0, 10.0], 3)
 wind_directions = np.repeat([260.0, 270.0, 280.0], 3)
-
 
 fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
 yaw_angles = np.zeros([9, 2])  # 9 wind directions/ speeds, 2 turbines

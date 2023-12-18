@@ -318,40 +318,26 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=1
         )
-
-        # TODO: update multidimensional turbine for 4D arrays
         if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
             and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
-            wd_dim = np.shape(template_shape)[0]
-            ws_dim = np.shape(template_shape)[1]
-            if wd_dim != 1 | ws_dim != 0:
-                self.turbine_fCts_sorted = np.take_along_axis(
-                    np.reshape(
-                        np.repeat(self.turbine_fCts, wd_dim * ws_dim),
-                        np.shape(template_shape)
-                    ),
-                    sorted_coord_indices,
-                    axis=2 # TODO: This should probably be 1
-                )
-                self.turbine_power_interps_sorted = np.take_along_axis(
-                    np.reshape(
-                        np.repeat(self.turbine_power_interps, wd_dim * ws_dim),
-                        np.shape(template_shape)
-                    ),
-                    sorted_coord_indices,
-                    axis=2 # TODO: This should probably be 1
-                )
-            else:
-                self.turbine_fCts_sorted = np.take_along_axis(
-                    np.reshape(self.turbine_fCts, np.shape(template_shape)),
-                    sorted_coord_indices,
-                    axis=1
-                )
-                self.turbine_power_interps_sorted = np.take_along_axis(
-                    np.reshape(self.turbine_power_interps, np.shape(template_shape)),
-                    sorted_coord_indices,
-                    axis=1
-                )
+            findex_dim = np.shape(template_shape)[0]
+
+            self.turbine_fCts_sorted = np.take_along_axis(
+                np.reshape(
+                    np.repeat(self.turbine_fCts, findex_dim),
+                    np.shape(template_shape)
+                ),
+                sorted_coord_indices,
+                axis=1
+            )
+            self.turbine_power_interps_sorted = np.take_along_axis(
+                np.reshape(
+                    np.repeat(self.turbine_power_interps, findex_dim),
+                    np.shape(template_shape)
+                ),
+                sorted_coord_indices,
+                axis=1
+            )
         self.rotor_diameters_sorted = np.take_along_axis(
             self.rotor_diameters * template_shape,
             sorted_coord_indices,

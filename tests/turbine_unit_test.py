@@ -40,17 +40,10 @@ from floris.turbine_library import build_turbine_dict
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
-# size 12 x 1 x 1 x 1
-# (in previous version stack was used in place of concatenate,
-# yielding 3 x 4 x 1 x 1 x 1 )
-WIND_CONDITION_BROADCAST = np.concatenate(
-    (
-        np.reshape(np.array(WIND_SPEEDS), (-1, 1, 1, 1)),  # Wind direction 0
-        np.reshape(np.array(WIND_SPEEDS), (-1, 1, 1, 1)),  # Wind direction 1
-        np.reshape(np.array(WIND_SPEEDS), (-1, 1, 1, 1)),  # Wind direction 2
-    ),
-    axis=0,
-)
+# size 16 x 1 x 1 x 1
+# 16 wind speed and wind direction combinations from conftest
+WIND_CONDITION_BROADCAST = np.reshape(np.array(WIND_SPEEDS), (-1, 1, 1, 1))
+
 INDEX_FILTER = [0, 2]
 
 
