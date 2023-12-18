@@ -27,7 +27,7 @@ import sys
 from ipaddress import v4_int_to_packed
 from pathlib import Path
 
-from floris.tools import build_turbine_dict
+from floris.tools import build_turbine_dict, check_smooth_power_curve
 from floris.utilities import load_yaml
 
 
@@ -71,9 +71,15 @@ if "ref_tilt_cp_ct" in v3_turbine_dict:
     turbine_properties["ref_tilt"] = v3_turbine_dict["ref_tilt_cp_ct"]
 
 # Convert to v4 and print new yaml
-build_turbine_dict(
+v4_turbine_dict = build_turbine_dict(
     power_thrust_table,
     v3_turbine_dict["turbine_type"],
     output_path,
     **turbine_properties
 )
+
+if not check_smooth_power_curve(v4_turbine_dict["power_thrust_table"]["power"], tolerance=0.001):
+    print(
+        "Non-smoothness detected in output power curve. ",
+        "Check above-rated power in generated v4 yaml file."
+    )

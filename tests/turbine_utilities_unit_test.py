@@ -126,7 +126,13 @@ def test_check_smooth_power_curve():
     p4 = p1.copy()
     p4[5] = p4[5] + 1.1e-3 # just not smooth enough
 
+    # Without a shutdown region
+    p5 = p1[:-3] # smooth
+    p6 = p2[:-3] # non-smooth
+
     assert check_smooth_power_curve(p1)
     assert not check_smooth_power_curve(p2)
     assert check_smooth_power_curve(p3)
     assert not check_smooth_power_curve(p4)
+    assert check_smooth_power_curve(p5)
+    assert not check_smooth_power_curve(p6)

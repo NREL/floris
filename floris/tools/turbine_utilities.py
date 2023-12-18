@@ -182,12 +182,17 @@ def check_smooth_power_curve(power, tolerance=0.001):
     Check whether there are "wiggles" in the power signal.
     """
 
+    if power[-1] < 0.95*max(power): # Cut-out or shutdown included
+        expected_changes = 2
+    else: # Shutdown appears not to be included
+        expected_changes = 1
+
     dirs = np.where(
         np.abs(np.diff(power)) > tolerance,
         np.sign(np.diff(power)),
         np.zeros(len(power)-1)
     )
     dir_changes = np.sum(np.abs(np.diff(dirs)))
-    is_smooth = dir_changes <= 2
+    is_smooth = dir_changes <= expected_changes
 
     return is_smooth
