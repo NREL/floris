@@ -554,7 +554,7 @@ def plot_rotor_values(
     cmap = plt.cm.get_cmap(name=cmap)
 
     if t_range is None:
-        t_range = range(values.shape[2])
+        t_range = range(values.shape[1])
 
     fig = plt.figure()
     axes = fig.subplots(n_rows, n_cols)

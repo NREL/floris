@@ -48,14 +48,16 @@ fi_floating: Floating turbine (tilt varies with wind speed)
 fi_fixed = FlorisInterface("inputs_floating/emgauss_fixed.yaml")
 fi_floating = FlorisInterface("inputs_floating/emgauss_floating.yaml")
 x, y = np.meshgrid(np.linspace(0, 4*630., 5), np.linspace(0, 3*630., 4))
+x = x.flatten()
+y = y.flatten()
 for fi in [fi_fixed, fi_floating]:
-    fi.reinitialize(layout_x=x.flatten(), layout_y=y.flatten())
+    fi.reinitialize(layout_x=x, layout_y=y)
 
 # Compute a single wind speed and direction, power and wakes
 for fi in [fi_fixed, fi_floating]:
     fi.reinitialize(
-        layout_x=x.flatten(),
-        layout_y=y.flatten(),
+        layout_x=x,
+        layout_y=y,
         wind_speeds=[10],
         wind_directions=[270]
     )
@@ -69,8 +71,8 @@ power_difference = powers_floating - powers_fixed
 fig, ax = plt.subplots()
 ax.set_aspect('equal', adjustable='box')
 sc = ax.scatter(
-    x.flatten(),
-    y.flatten(),
+    x,
+    y,
     c=power_difference.flatten()/1000,
     cmap="PuOr",
     vmin=-30,
@@ -83,7 +85,7 @@ ax.set_title("Power increase due to floating for each turbine.")
 plt.colorbar(sc, label="Increase (kW)")
 
 print("Power increase from floating over farm (10m/s, 270deg winds): {0:.2f} kW".\
-      format(power_difference.sum()/1000))
+    format(power_difference.sum()/1000))
 
 # Visualize flows (see also 02_visualizations.py)
 horizontal_planes = []
@@ -119,18 +121,19 @@ fig.suptitle("Floating farm")
 
 # Compute AEP (see 07_calc_aep_from_rose.py for details)
 df_wr = pd.read_csv("inputs/wind_rose.csv")
-wd_array = np.array(df_wr["wd"].unique(), dtype=float)
-ws_array = np.array(df_wr["ws"].unique(), dtype=float)
-
-wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing="ij")
+wd_grid, ws_grid = np.meshgrid(
+    np.array(df_wr["wd"].unique(), dtype=float),
+    np.array(df_wr["ws"].unique(), dtype=float),
+    indexing="ij"
+)
 freq_interp = NearestNDInterpolator(df_wr[["wd", "ws"]], df_wr["freq_val"])
-freq = freq_interp(wd_grid, ws_grid)
+freq = freq_interp(wd_grid, ws_grid).flatten()
 freq = freq / np.sum(freq)
 
 for fi in [fi_fixed, fi_floating]:
     fi.reinitialize(
-        wind_directions=wd_array,
-        wind_speeds=ws_array,
+        wind_directions=wd_grid.flatten(),
+        wind_speeds= ws_grid.flatten(),
     )
 
 # Compute the AEP
@@ -138,10 +141,9 @@ aep_fixed = fi_fixed.get_farm_AEP(freq=freq)
 aep_floating = fi_floating.get_farm_AEP(freq=freq)
 print("Farm AEP (fixed bottom): {:.3f} GWh".format(aep_fixed / 1.0e9))
 print("Farm AEP (floating): {:.3f} GWh".format(aep_floating / 1.0e9))
-print("Floating AEP increase: {0:.3f} GWh ({1:.2f}%)".\
-      format((aep_floating - aep_fixed) / 1.0e9,
-             (aep_floating - aep_fixed)/aep_fixed*100
-             )
+print(
+    "Floating AEP increase: {0:.3f} GWh ({1:.2f}%)".\
+    format((aep_floating - aep_fixed) / 1.0e9, (aep_floating - aep_fixed)/aep_fixed*100)
 )
 
 plt.show()
