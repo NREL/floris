@@ -77,14 +77,13 @@ def power_multidim(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        power_interp = power_interp[:, :, ix_filter]
-        rotor_effective_velocities = rotor_effective_velocities[:, :, ix_filter]
+        power_interp = power_interp[:, ix_filter]
+        rotor_effective_velocities = rotor_effective_velocities[:, ix_filter]
     # Loop over each turbine to get power for all turbines
     p = np.zeros(np.shape(rotor_effective_velocities))
-    for i, wd in enumerate(power_interp):
-        for j, ws in enumerate(wd):
-            for k, turb in enumerate(ws):
-                p[i, j, k] = power_interp[i, j, k](rotor_effective_velocities[i, j, k])
+    for i, findex in enumerate(power_interp):
+        for j, turb in enumerate(findex):
+            p[i, j] = power_interp[i, j](rotor_effective_velocities[i, j])
 
     return p * ref_density_cp_ct
 
@@ -138,13 +137,13 @@ def Ct_multidim(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        velocities = velocities[:, :, ix_filter]
-        yaw_angle = yaw_angle[:, :, ix_filter]
-        tilt_angle = tilt_angle[:, :, ix_filter]
-        ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
-        fCt = fCt[:, :, ix_filter]
-        turbine_type_map = turbine_type_map[:, :, ix_filter]
-        correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, :, ix_filter]
+        velocities = velocities[:, ix_filter]
+        yaw_angle = yaw_angle[:, ix_filter]
+        tilt_angle = tilt_angle[:, ix_filter]
+        ref_tilt_cp_ct = ref_tilt_cp_ct[:, ix_filter]
+        fCt = fCt[:, ix_filter]
+        turbine_type_map = turbine_type_map[:, ix_filter]
+        correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
     average_velocities = average_velocity(
         velocities,
@@ -165,10 +164,9 @@ def Ct_multidim(
 
     # Loop over each turbine to get thrust coefficient for all turbines
     thrust_coefficient = np.zeros(np.shape(average_velocities))
-    for i, wd in enumerate(fCt):
-        for j, ws in enumerate(wd):
-            for k, turb in enumerate(ws):
-                thrust_coefficient[i, j, k] = fCt[i, j, k](average_velocities[i, j, k])
+    for i, findex in enumerate(fCt):
+        for j, turb in enumerate(findex):
+            thrust_coefficient[i, j] = fCt[i, j](average_velocities[i, j])
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
     effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
     return effective_thrust
@@ -237,9 +235,9 @@ def axial_induction_multidim(
 
     # Then, process the input arguments as needed for this function
     if ix_filter is not None:
-        yaw_angle = yaw_angle[:, :, ix_filter]
-        tilt_angle = tilt_angle[:, :, ix_filter]
-        ref_tilt_cp_ct = ref_tilt_cp_ct[:, :, ix_filter]
+        yaw_angle = yaw_angle[:, ix_filter]
+        tilt_angle = tilt_angle[:, ix_filter]
+        ref_tilt_cp_ct = ref_tilt_cp_ct[:, ix_filter]
 
     return (
         0.5
@@ -272,20 +270,19 @@ def multidim_Ct_down_select(
     downselect_turbine_fCts = np.empty_like(turbine_fCts)
     # Loop over the wind directions, wind speeds, and turbines, finding the Ct interpolant
     # that is closest to the specified multi-dimensional condition.
-    for i, wd in enumerate(turbine_fCts):
-        for j, ws in enumerate(wd):
-            for k, turb in enumerate(ws):
-                # Get the interpolant keys in float type for comparison
-                keys_float = np.array([[float(v) for v in val] for val in turb.keys()])
+    for i, findex in enumerate(turbine_fCts):
+        for j, turb in enumerate(findex):
+            # Get the interpolant keys in float type for comparison
+            keys_float = np.array([[float(v) for v in val] for val in turb.keys()])
 
-                # Find the nearest key to the specified conditions.
-                key_vals = []
-                for ii, cond in enumerate(conditions.values()):
-                    key_vals.append(
-                        keys_float[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()]
-                    )
+            # Find the nearest key to the specified conditions.
+            key_vals = []
+            for ii, cond in enumerate(conditions.values()):
+                key_vals.append(
+                    keys_float[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()]
+                )
 
-                downselect_turbine_fCts[i, j, k] = turb[tuple(key_vals)]
+            downselect_turbine_fCts[i, j] = turb[tuple(key_vals)]
 
     return downselect_turbine_fCts
 
@@ -309,21 +306,20 @@ def multidim_power_down_select(
     downselect_power_interps = np.empty_like(power_interps)
     # Loop over the wind directions, wind speeds, and turbines, finding the power interpolant
     # that is closest to the specified multi-dimensional condition.
-    for i, wd in enumerate(power_interps):
-        for j, ws in enumerate(wd):
-            for k, turb in enumerate(ws):
-                # Get the interpolant keys in float type for comparison
-                keys_float = np.array([[float(v) for v in val] for val in turb.keys()])
+    for i, findex in enumerate(power_interps):
+        for j, turb in enumerate(findex):
+            # Get the interpolant keys in float type for comparison
+            keys_float = np.array([[float(v) for v in val] for val in turb.keys()])
 
-                # Find the nearest key to the specified conditions.
-                key_vals = []
-                for ii, cond in enumerate(conditions.values()):
-                    key_vals.append(
-                        keys_float[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()]
-                    )
+            # Find the nearest key to the specified conditions.
+            key_vals = []
+            for ii, cond in enumerate(conditions.values()):
+                key_vals.append(
+                    keys_float[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()]
+                )
 
-                # Use the constructed key to choose the correct interpolant
-                downselect_power_interps[i, j, k] = turb[tuple(key_vals)]
+            # Use the constructed key to choose the correct interpolant
+            downselect_power_interps[i, j] = turb[tuple(key_vals)]
 
     return downselect_power_interps
 

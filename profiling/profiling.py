@@ -50,15 +50,14 @@ if __name__=="__main__":
     sample_inputs.floris["wake"]["enable_transverse_velocities"] = True
 
     N_TURBINES = 100
-    N_WIND_DIRECTIONS = 72
-    N_WIND_SPEEDS = 25
+    N_FINDEX = 72 * 25  # Size of a characteristic wind rose
 
     TURBINE_DIAMETER = sample_inputs.floris["farm"]["turbine_type"][0]["rotor_diameter"]
     sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * i for i in range(N_TURBINES)]
     sample_inputs.floris["farm"]["layout_y"] = [0.0 for i in range(N_TURBINES)]
 
-    sample_inputs.floris["flow_field"]["wind_directions"] = N_WIND_DIRECTIONS * [270.0]
-    sample_inputs.floris["flow_field"]["wind_speeds"] = N_WIND_SPEEDS * [8.0]
+    sample_inputs.floris["flow_field"]["wind_directions"] = N_FINDEX * [270.0]
+    sample_inputs.floris["flow_field"]["wind_speeds"] = N_FINDEX * [8.0]
 
     N = 1
     for i in range(N):

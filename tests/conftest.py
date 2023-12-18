@@ -12,6 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
 
 import copy
 
@@ -54,17 +55,19 @@ def print_test_values(
     average_velocities: list,
     thrusts: list,
     powers: list,
-    axial_inductions: list
+    axial_inductions: list,
+    max_findex_print: int | None =None
 ):
-    n_wd, n_ws, n_turb = np.shape(average_velocities)
-    i=0
-    for j in range(n_ws):
+    n_findex, n_turb = np.shape(average_velocities)
+    if max_findex_print is not None:
+        n_findex = min(n_findex, max_findex_print)
+    for i in range(n_findex):
         print("[")
-        for k in range(n_turb):
+        for j in range(n_turb):
             print(
                 "    [{:.7f}, {:.7f}, {:.7f}, {:.7f}],".format(
-                    average_velocities[i,j,k], thrusts[i,j,k], powers[i,j,k],
-                    axial_inductions[i,j,k]
+                    average_velocities[i,j], thrusts[i,j], powers[i,j],
+                    axial_inductions[i,j]
                 )
             )
         print("],")
@@ -72,18 +75,45 @@ def print_test_values(
 
 WIND_DIRECTIONS = [
     270.0,
+    270.0,
+    270.0,
+    270.0,
+    360.0,
+    360.0,
+    360.0,
     360.0,
     285.0,
+    285.0,
+    285.0,
+    285.0,
+    315.0,
+    315.0,
+    315.0,
     315.0,
 ]
-N_WIND_DIRECTIONS = len(WIND_DIRECTIONS)
 WIND_SPEEDS = [
     8.0,
     9.0,
     10.0,
     11.0,
+    8.0,
+    9.0,
+    10.0,
+    11.0,
+    8.0,
+    9.0,
+    10.0,
+    11.0,
+    8.0,
+    9.0,
+    10.0,
+    11.0,
 ]
-N_WIND_SPEEDS = len(WIND_SPEEDS)
+
+# FINDEX is the length of the number of conditions, so it can be
+# len(WIND_DIRECTIONS) or len(WIND_SPEEDS
+N_FINDEX = len(WIND_DIRECTIONS)
+
 X_COORDS = [
     0.0,
     5 * 126.0,
@@ -120,7 +150,6 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
         turbine_coordinates=turbine_coordinates,
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
-        wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=TURBINE_GRID_RESOLUTION,
         time_series=TIME_SERIES
     )
@@ -128,19 +157,18 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
 @pytest.fixture
 def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
     turbine_coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
-    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES) )
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_FINDEX, N_TURBINES) )
     return FlowFieldGrid(
         turbine_coordinates=turbine_coordinates,
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
-        wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=[3,2,2]
     )
 
 @pytest.fixture
 def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
     turbine_coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
-    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES) )
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_FINDEX, N_TURBINES) )
     points_x = [0.0, 10.0]
     points_y = [0.0, 0.0]
     points_z = [1.0, 2.0]
@@ -148,7 +176,6 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
         turbine_coordinates=turbine_coordinates,
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
-        wind_speeds=np.array(WIND_SPEEDS),
         grid_resolution=None,
         time_series=False,
         points_x=points_x,

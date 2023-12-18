@@ -35,17 +35,21 @@ df_wr = pd.read_csv("inputs/wind_rose.csv")
 print("The wind rose dataframe looks as follows: \n\n {} \n".format(df_wr))
 
 # Derive the wind directions and speeds we need to evaluate in FLORIS
-wd_array = np.array(df_wr["wd"].unique(), dtype=float)
-ws_array = np.array(df_wr["ws"].unique(), dtype=float)
+wd_grid, ws_grid = np.meshgrid(
+    np.array(df_wr["wd"].unique(), dtype=float),    # wind directions
+    np.array(df_wr["ws"].unique(), dtype=float),    # wind speeds
+    indexing="ij"
+)
+wind_directions = wd_grid.flatten()
+wind_speeds = ws_grid.flatten()
 
 # Format the frequency array into the conventional FLORIS v3 format, which is
 # an np.array with shape (n_wind_directions, n_wind_speeds). To avoid having
 # to manually derive how the variables are sorted and how to reshape the
 # one-dimensional frequency array, we use a nearest neighbor interpolant. This
 # ensures the frequency values are mapped appropriately to the new 2D array.
-wd_grid, ws_grid = np.meshgrid(wd_array, ws_array, indexing="ij")
 freq_interp = NearestNDInterpolator(df_wr[["wd", "ws"]], df_wr["freq_val"])
-freq = freq_interp(wd_grid, ws_grid)
+freq = freq_interp(wd_grid, ws_grid).flatten()
 
 # Normalize the frequency array to sum to exactly 1.0
 freq = freq / np.sum(freq)
@@ -60,8 +64,8 @@ D = fi.floris.farm.rotor_diameters[0] # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=wd_array,
-    wind_speeds=ws_array,
+    wind_directions=wind_directions,
+    wind_speeds=wind_speeds,
 )
 
 # Compute the AEP using the default settings

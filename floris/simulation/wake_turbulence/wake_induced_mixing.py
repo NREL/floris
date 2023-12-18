@@ -82,6 +82,6 @@ class WakeInducedMixing(BaseModel):
                 the ith turbine.
         """
 
-        wake_induced_mixing = axial_induction_i[:,:,:,0,0] / downstream_distance_D_i**2
+        wake_induced_mixing = axial_induction_i[:,:,0,0] / downstream_distance_D_i**2
 
         return wake_induced_mixing

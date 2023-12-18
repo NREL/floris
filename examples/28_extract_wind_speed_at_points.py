@@ -52,7 +52,8 @@ ax[0].scatter(fi.layout_x, fi.layout_y, color="black", label="Turbine")
 
 # Set the wind direction to run 360 degrees
 wd_array = np.arange(0, 360, 1)
-fi.reinitialize(wind_directions=wd_array)
+ws_array = 8.0 * np.ones_like(wd_array)
+fi.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
 
 # Simulate a met mast in between the turbines
 if met_mast_option == 0:
@@ -81,7 +82,7 @@ ax[0].legend()
 
 # Plot the velocities
 for z_idx, z in enumerate(points_z):
-    ax[1].plot(wd_array, u_at_points[:, :, z_idx].flatten(), label=f'Speed at z={z} m')
+    ax[1].plot(wd_array, u_at_points[:, z_idx].flatten(), label=f'Speed at z={z} m')
 ax[1].grid()
 ax[1].legend()
 ax[1].set_xlabel('Wind Direction (deg)')

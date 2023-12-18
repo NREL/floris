@@ -104,18 +104,14 @@ class Floris(BaseClass):
         self.farm.construct_turbine_ref_tilt_cp_cts()
         self.farm.construct_turbine_tilt_interps()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
-        self.farm.set_yaw_angles(self.flow_field.n_wind_directions, self.flow_field.n_wind_speeds)
-        self.farm.set_tilt_to_ref_tilt(
-            self.flow_field.n_wind_directions,
-            self.flow_field.n_wind_speeds,
-        )
+        self.farm.set_yaw_angles(self.flow_field.n_findex)
+        self.farm.set_tilt_to_ref_tilt(self.flow_field.n_findex)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["turbine_grid_points"],
                 time_series=self.flow_field.time_series,
             )
@@ -124,7 +120,6 @@ class Floris(BaseClass):
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
                 time_series=self.flow_field.time_series,
                 grid_resolution=self.solver["turbine_grid_points"],
             )
@@ -133,7 +128,6 @@ class Floris(BaseClass):
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
                 grid_resolution=self.solver["flow_field_grid_points"],
                 time_series=self.flow_field.time_series,
             )
@@ -142,7 +136,6 @@ class Floris(BaseClass):
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                wind_speeds=self.flow_field.wind_speeds,
                 normal_vector=self.solver["normal_vector"],
                 planar_coordinate=self.solver["planar_coordinate"],
                 grid_resolution=self.solver["flow_field_grid_points"],
@@ -159,8 +152,7 @@ class Floris(BaseClass):
 
         if isinstance(self.grid, (TurbineGrid, TurbineCubatureGrid)):
             self.farm.expand_farm_properties(
-                self.flow_field.n_wind_directions,
-                self.flow_field.n_wind_speeds,
+                self.flow_field.n_findex,
                 self.grid.sorted_coord_indices
             )
 
@@ -301,7 +293,6 @@ class Floris(BaseClass):
             turbine_coordinates=self.farm.coordinates,
             turbine_diameters=self.farm.rotor_diameters,
             wind_directions=self.flow_field.wind_directions,
-            wind_speeds=self.flow_field.wind_speeds,
             grid_resolution=1,
             time_series=self.flow_field.time_series,
             x_center_of_rotation=self.grid.x_center_of_rotation,
@@ -322,7 +313,7 @@ class Floris(BaseClass):
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
-        return self.flow_field.u_sorted[:,:,:,0,0] # Remove turbine grid dimensions
+        return self.flow_field.u_sorted[:,:,0,0] # Remove turbine grid dimensions
 
     def solve_for_velocity_deficit_profiles(
         self,
@@ -378,7 +369,7 @@ class Floris(BaseClass):
         z = np.squeeze(z, axis=0) + reference_height
 
         u = self.solve_for_points(x.flatten(), y.flatten(), z.flatten())
-        u = np.reshape(u[0, 0, :], (n_lines, resolution))
+        u = np.reshape(u[0, :], (n_lines, resolution))
         velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
 
         velocity_deficit_profiles = []
