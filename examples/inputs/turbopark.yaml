@@ -1,7 +1,7 @@
 
 name: TurbOPark
 description: Three turbines using TurbOPark model
-floris_version: v3.0.0
+floris_version: v4.x
 
 logging:
   console:

@@ -12,7 +12,7 @@ description: Three turbines using Gauss Curl Hybrid model
 ###
 # The earliest verion of FLORIS this input file supports.
 # This is not currently only for the user's reference.
-floris_version: v3.0.0
+floris_version: v4.x
 
 ###
 # Configure the logging level and where to show the logs.

@@ -6,7 +6,7 @@ from floris.tools.floris_interface import FlorisInterface
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
-YAML_INPUT = TEST_DATA / "input_full_v3.yaml"
+YAML_INPUT = TEST_DATA / "input_full_v4.yaml"
 
 
 def test_read_yaml():

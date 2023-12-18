@@ -26,7 +26,7 @@ from floris.simulation import (
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
-YAML_INPUT = TEST_DATA / "input_full_v3.yaml"
+YAML_INPUT = TEST_DATA / "input_full_v4.yaml"
 DICT_INPUT = yaml.load(open(YAML_INPUT, "r"), Loader=yaml.SafeLoader)
 
 

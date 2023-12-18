@@ -1,7 +1,7 @@
 
 name: Jensen-Jimenez
 description: Three turbines using Jensen / Jimenez models
-floris_version: v3.0.0
+floris_version: v4.x
 
 logging:
   console:
