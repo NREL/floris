@@ -79,6 +79,7 @@ class Grid(ABC, BaseClass):
     n_wind_directions: int = field(init=False)
     n_wind_speeds: int = field(init=False)
     n_turbines: int = field(init=False)
+    grid_shape: tuple[int, int, int, int, int] = field(init=False)
     x_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
     y_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
     z_sorted: NDArrayFloat = field(init=False, validator=validate_5DArray_shape)
@@ -123,12 +124,16 @@ class Grid(ABC, BaseClass):
             isinstance(self, (TurbineGrid, TurbineCubatureGrid, PointsGrid)):
             return
         elif isinstance(value, Iterable) and isinstance(self, FlowFieldPlanarGrid):
-            assert type(value[0]) is int
-            assert type(value[1]) is int
+            if not (len(value) == 2 and all(isinstance(v, int) for v in value)):
+                raise TypeError(
+                    "`FlowFieldPlanarGrid` must have `grid_resolution` as an iterable of 2 `int`s.",
+                    value
+                )
         elif isinstance(value, Iterable) and isinstance(self, FlowFieldGrid):
-            assert type(value[0]) is int
-            assert type(value[1]) is int
-            assert type(value[2]) is int
+            if len(value) != 3 or all(isinstance(v, int) for v in value):
+                raise TypeError(
+                    "'FlowFieldGrid` must have `grid_resolution` as an iterable of 3 `int`s.", value
+                )
         else:
             raise TypeError("`grid_resolution` must be of type int or Iterable(int,)")
 
@@ -244,6 +249,7 @@ class TurbineGrid(Grid):
             ),
             dtype=floris_float_type
         )
+        self.grid_shape = template_grid.shape
         # Calculate the radial distance from the center of the turbine rotor.
         # If a grid resolution of 1 is selected, create a disc_grid of zeros, as
         # np.linspace would just return the starting value of -1 * disc_area_radius
@@ -365,6 +371,7 @@ class TurbineCubatureGrid(Grid):
             ),
             dtype=floris_float_type
         )
+        self.grid_shape = template_grid.shape
         _x = x[:, :, :, None, None] * template_grid
         _y = y[:, :, :, None, None] * template_grid
         _z = z[:, :, :, None, None] * template_grid
@@ -509,6 +516,7 @@ class FlowFieldGrid(Grid):
         First, sort the turbines so that we know the bounds in the correct orientation.
         Then, create the grid based on this wind-from-left orientation
         """
+        self.grid_shape = (self.n_wind_directions, self.n_wind_speeds, *self.grid_resolution)
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, self.x_center_of_rotation, self.y_center_of_rotation = rotate_coordinates_rel_west(
@@ -605,6 +613,9 @@ class FlowFieldPlanarGrid(Grid):
             if self.x2_bounds is None:
                 self.x2_bounds = (np.min(y) - 2 * max_diameter, np.max(y) + 2 * max_diameter)
 
+            grid_resolution = (self.grid_resolution[0], self.grid_resolution[1], 3)
+            self.grid_shape = (self.n_wind_directions, self.n_wind_speeds, *grid_resolution)
+
             # TODO figure out proper z spacing for GCH, currently set to +/- 10.0
             x_points, y_points, z_points = np.meshgrid(
                 np.linspace(self.x1_bounds[0], self.x1_bounds[1], int(self.grid_resolution[0])),
@@ -628,6 +639,9 @@ class FlowFieldPlanarGrid(Grid):
             if self.x2_bounds is None:
                 self.x2_bounds = (0.001, 6 * np.max(z))
 
+            grid_resolution = (1, self.grid_resolution[0], self.grid_resolution[1])
+            self.grid_shape = (self.n_wind_directions, self.n_wind_speeds, *grid_resolution)
+
             x_points, y_points, z_points = np.meshgrid(
                 np.array([float(self.planar_coordinate)]),
                 np.linspace(self.x1_bounds[0], self.x1_bounds[1], int(self.grid_resolution[0])),
@@ -645,6 +659,9 @@ class FlowFieldPlanarGrid(Grid):
 
             if self.x2_bounds is None:
                 self.x2_bounds = (0.001, 6 * np.max(z))
+
+            grid_resolution = (self.grid_resolution[0], 1, self.grid_resolution[1])
+            self.grid_shape = (self.n_wind_directions, self.n_wind_speeds, *grid_resolution)
 
             x_points, y_points, z_points = np.meshgrid(
                 np.linspace(self.x1_bounds[0], self.x1_bounds[1], int(self.grid_resolution[0])),
@@ -714,6 +731,7 @@ class PointsGrid(Grid):
         Set points for calculation based on a series of user-supplied coordinates.
         """
         point_coordinates = np.array(list(zip(self.points_x, self.points_y, self.points_z)))
+        self.grid_shape = (self.n_wind_directions, self.n_wind_speeds, self.points_x.shape[0], 1, 1)
 
         # These are the rotated coordinates of the wind turbines based on the wind direction
         x, y, z, _, _ = rotate_coordinates_rel_west(

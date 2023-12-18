@@ -47,10 +47,10 @@ class FlowField(BaseClass):
     heterogenous_inflow_config: dict = field(default=None)
     multidim_conditions: dict = field(default=None)
 
-    n_wind_directions: int = field(init=False)
     n_wind_speeds: int = field(init=False)
+    n_wind_directions: int = field(init=False)
     n_turbines: int = field(init=False, default=0)
-    grid_resolution: int = field(init=False, default=0)
+    grid_shape: tuple[int, int, int, int, int] = field(init=False, default=(0, 0, 0, 0, 0))
 
     u_initial_sorted: NDArrayFloat = array_5D_field
     v_initial_sorted: NDArrayFloat = array_5D_field
@@ -113,6 +113,18 @@ class FlowField(BaseClass):
                 "The het_map's wind direction dimension not equal to number of wind directions."
             )
 
+    @grid_shape.validator
+    def grid_shape_validator(self, attribute: attrs.Attribute, value: tuple) -> None:
+        """Validates that ``grid_shape`` is length-5 tuple of integers.
+
+        Args:
+            attribute (attrs.Attribute): The attrs Attribute data.
+            value (tuple): A length-5 tuple of integers.
+        """
+        if len(value) != 5:
+            raise ValueError("`grid_shape` must be a tuple of 5 integer values.")
+        if not all(isinstance(v, int) for v in value):
+            raise TypeError("`grid_shape` must be a tuple of 5 integer values.")
 
     def __attrs_post_init__(self) -> None:
         if self.heterogenous_inflow_config is not None:
@@ -132,7 +144,7 @@ class FlowField(BaseClass):
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
         self.n_turbines = grid.n_turbines
-        self.grid_resolution = grid.grid_resolution
+        self.grid_shape = grid.grid_shape
 
         wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
         dwind_profile_plane = (
