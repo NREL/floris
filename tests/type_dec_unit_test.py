@@ -62,13 +62,22 @@ class ArrayValidatorDemoClass(ValidateMixin):
     n_wind_directions: int = field(default=3)
     n_wind_speeds: int = field(default=4)
     n_turbines: int = field(default=10)
-    grid_resolution: int = field(default=3)
+    grid_shape: tuple[int, int, int, int, int] = field(init=False)
     three_dim_starts_as_one: NDArrayFloat = field(
         factory=lambda: np.array([]), validator=validate_3DArray_shape
     )
     five_dimensions_provided: NDArrayFloat = array_5D_field
     three_dimensions_provided: NDArrayFloat = array_3D_field
     mixed_dimensions_provided: NDArrayFloat = array_mixed_dim_field
+
+    def set_grid(self, grid_resolution: int):
+        self.grid_shape = (
+            self.n_wind_directions,
+            self.n_wind_speeds,
+            self.n_turbines,
+            grid_resolution,
+            grid_resolution
+        )
 
 
 def test_as_dict():
@@ -154,6 +163,7 @@ def test_array_validators():
 
     # Check initialization works
     demo = ArrayValidatorDemoClass()
+    demo.set_grid(3)
     demo.validate()
 
     # Check assignment with correct shape: 3 x 4 x 10 (x 3 x 3)

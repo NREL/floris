@@ -193,22 +193,20 @@ def validate_5DArray_shape(instance, attribute: Attribute, value: np.ndarray) ->
             N wind directions x N wind speeds x N turbines x N grid points x N grid points.
     """
     if not isinstance(value, np.ndarray):
-        print(type(value))
         raise TypeError(f"`{attribute.name}` is not a valid NumPy array type.")
 
     # Don't fail on the initialized empty array
     if value.size == 0:
         return
 
-    grid = instance.grid_resolution
-    shape = (instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines, grid, grid)
-    if value.shape != shape:
+    if value.shape != instance.grid_shape:
         broadcast_shape = (
             instance.n_wind_directions, instance.n_wind_speeds, instance.n_turbines, 1, 1
         )
         if value.shape != broadcast_shape:
             raise ValueError(
-                f"`{attribute.name}` should have shape: {shape}; not shape: {value.shape}"
+                f"`{attribute.name}` should have shape: {instance.grid_shape}; not shape: "
+                f"{value.shape}"
             )
 
 
