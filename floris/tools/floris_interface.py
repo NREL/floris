@@ -608,6 +608,7 @@ class FlorisInterface(LoggingManager):
             rotor_effective_velocities=self.turbine_effective_velocities,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
         )
         return turbine_powers
 

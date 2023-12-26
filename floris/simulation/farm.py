@@ -103,6 +103,8 @@ class Farm(BaseClass):
     turbine_power_interps: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
     turbine_power_interps_sorted: NDArrayFloat = field(init=False, factory=list)
 
+    turbine_power_thrust_tables: Dict[str, dict] = field(init=False, factory=list)
+
     rotor_diameters: NDArrayFloat = field(init=False, factory=list)
     rotor_diameters_sorted: NDArrayFloat = field(init=False, factory=list)
 
@@ -306,6 +308,11 @@ class Farm(BaseClass):
     def construct_turbine_power_interps(self):
         self.turbine_power_interps = {
             turb.turbine_type: turb.power_function for turb in self.turbine_map
+        }
+    
+    def construct_turbine_power_thrust_tables(self):
+        self.turbine_power_thrust_tables = {
+            turb.turbine_type: turb.power_thrust_table for turb in self.turbine_map
         }
 
     def construct_multidim_turbine_power_interps(self):

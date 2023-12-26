@@ -23,6 +23,8 @@ from attrs import define, field
 from scipy.interpolate import interp1d
 
 from floris.simulation import BaseClass
+from floris.simulation.turbine import SimpleTurbine
+
 from floris.type_dec import (
     floris_numeric_dict_converter,
     NDArrayBool,
@@ -169,8 +171,11 @@ def power(
     rotor_effective_velocities: NDArrayFloat,
     power_interp: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
+    turbine_power_thrust_tables: dict,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
 ) -> NDArrayFloat:
+    # TODO:
+    # prepares the input; then calls the power function
     """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
 
@@ -211,7 +216,12 @@ def power(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        p += power_interp[turb_type](rotor_effective_velocities) * (turbine_type_map == turb_type)
+        p += (power_interp[turb_type](
+                turbine_power_thrust_tables[turb_type],
+                rotor_effective_velocities
+             ) 
+             * (turbine_type_map == turb_type)
+        )
 
     return p
 
@@ -498,6 +508,7 @@ class Turbine(BaseClass):
             Required if `correct_cp_ct_for_tilt = True`. Defaults to None.
     """
     turbine_type: str = field()
+    turbine_function_model = SimpleTurbine
     rotor_diameter: float = field()
     hub_height: float = field()
     pP: float = field()
@@ -542,12 +553,13 @@ class Turbine(BaseClass):
         # self.wind_speed = self.wind_speed[duplicate_filter]
 
         wind_speeds = self.power_thrust_table["wind_speed"]
-        self.power_function = interp1d(
-            wind_speeds,
-            self.power_thrust_table["power"] * 1e3, # Convert to W
-            fill_value=0.0,
-            bounds_error=False,
-        )
+        # self.power_function = interp1d(
+        #     wind_speeds,
+        #     self.power_thrust_table["power"] * 1e3, # Convert to W
+        #     fill_value=0.0,
+        #     bounds_error=False,
+        # )
+        self.power_function = self.turbine_function_model.power
 
         """
         Given an array of wind speeds, this function returns an array of the

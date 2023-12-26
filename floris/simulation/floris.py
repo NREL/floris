@@ -95,6 +95,7 @@ class Floris(BaseClass):
         else:
             self.farm.construct_turbine_fCts()
             self.farm.construct_turbine_power_interps()
+            self.farm.construct_turbine_power_thrust_tables()
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()
         self.farm.construct_turbine_TSRs()
