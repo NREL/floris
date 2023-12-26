@@ -110,6 +110,7 @@ def sequential_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
@@ -126,6 +127,7 @@ def sequential_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights

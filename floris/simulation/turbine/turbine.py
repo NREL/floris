@@ -216,11 +216,12 @@ def power(
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        p += (power_interp[turb_type](
+        p += (
+            power_interp[turb_type](
                 turbine_power_thrust_tables[turb_type],
                 rotor_effective_velocities
-             ) 
-             * (turbine_type_map == turb_type)
+            ) 
+            * (turbine_type_map == turb_type)
         )
 
     return p
@@ -235,6 +236,7 @@ def Ct(
     tilt_interp: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
+    turbine_power_thrust_tables: dict,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None
@@ -306,7 +308,7 @@ def Ct(
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
         thrust_coefficient += (
-            fCt[turb_type](average_velocities)
+            fCt[turb_type](turbine_power_thrust_tables[turb_type], average_velocities)
             * (turbine_type_map == turb_type)
         )
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
@@ -323,6 +325,7 @@ def axial_induction(
     tilt_interp: NDArrayObject,  # (turbines)
     correct_cp_ct_for_tilt: NDArrayBool, # (findex, turbines)
     turbine_type_map: NDArrayObject, # (findex, turbines)
+    turbine_power_thrust_tables: dict, # (turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None
@@ -371,6 +374,7 @@ def axial_induction(
         tilt_interp,
         correct_cp_ct_for_tilt,
         turbine_type_map,
+        turbine_power_thrust_tables,
         ix_filter,
         average_method,
         cubature_weights
@@ -552,7 +556,7 @@ class Turbine(BaseClass):
         # self.thrust = self.thrust[duplicate_filter]
         # self.wind_speed = self.wind_speed[duplicate_filter]
 
-        wind_speeds = self.power_thrust_table["wind_speed"]
+        #wind_speeds = self.power_thrust_table["wind_speed"]
         # self.power_function = interp1d(
         #     wind_speeds,
         #     self.power_thrust_table["power"] * 1e3, # Convert to W
@@ -560,6 +564,7 @@ class Turbine(BaseClass):
         #     bounds_error=False,
         # )
         self.power_function = self.turbine_function_model.power
+        self.thrust_coefficient_function = self.turbine_function_model.thrust_coefficient
 
         """
         Given an array of wind speeds, this function returns an array of the
@@ -571,12 +576,12 @@ class Turbine(BaseClass):
         The fill_value arguments sets (upper, lower) bounds for any values
         outside of the input range.
         """
-        self.thrust_coefficient_function = interp1d(
-            wind_speeds,
-            self.power_thrust_table["thrust_coefficient"],
-            fill_value=(0.0001, 0.9999),
-            bounds_error=False,
-        )
+        # self.thrust_coefficient_function = interp1d(
+        #     wind_speeds,
+        #     self.power_thrust_table["thrust_coefficient"],
+        #     fill_value=(0.0001, 0.9999),
+        #     bounds_error=False,
+        # )
 
     def _initialize_tilt_interpolation(self) -> None:
         # TODO:
