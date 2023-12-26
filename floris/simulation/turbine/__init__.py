@@ -1,1 +1,2 @@
 from floris.simulation.turbine.simple_turbine import SimpleTurbine
+from floris.simulation.turbine.cosine_loss_turbine import CosineLossTurbine

@@ -23,7 +23,10 @@ from attrs import define, field
 from scipy.interpolate import interp1d
 
 from floris.simulation import BaseClass
-from floris.simulation.turbine import SimpleTurbine
+from floris.simulation.turbine import (
+    SimpleTurbine,
+    CosineLossTurbine
+)
 
 from floris.type_dec import (
     floris_numeric_dict_converter,
@@ -38,6 +41,7 @@ from floris.utilities import cosd
 
 POWER_THRUST_MODEL_MAP = {
     "simple": SimpleTurbine,
+    "cosine_loss": CosineLossTurbine
 }
 
 def _rotor_velocity_yaw_correction(
