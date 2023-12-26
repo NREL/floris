@@ -36,6 +36,10 @@ from floris.type_dec import (
 from floris.utilities import cosd
 
 
+POWER_THRUST_MODEL_MAP = {
+    "simple": SimpleTurbine,
+}
+
 def _rotor_velocity_yaw_correction(
     pP: float,
     yaw_angle: NDArrayFloat,
@@ -512,7 +516,6 @@ class Turbine(BaseClass):
             Required if `correct_cp_ct_for_tilt = True`. Defaults to None.
     """
     turbine_type: str = field()
-    turbine_function_model = SimpleTurbine
     rotor_diameter: float = field()
     hub_height: float = field()
     pP: float = field()
@@ -522,6 +525,7 @@ class Turbine(BaseClass):
     ref_air_density: float = field()
     ref_tilt: float = field()
     power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
+    power_thrust_model: str = field(default="simple")
 
     correct_cp_ct_for_tilt: bool = field(default=False)
     floating_tilt_table: dict[str, NDArrayFloat] | None = field(default=None)
@@ -536,8 +540,8 @@ class Turbine(BaseClass):
     # Initialized in the post_init function
     rotor_radius: float = field(init=False)
     rotor_area: float = field(init=False)
-    thrust_coefficient_function: interp1d = field(init=False)
-    power_function: interp1d = field(init=False)
+    thrust_coefficient_function: function = field(init=False)
+    power_function: function = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
@@ -563,8 +567,9 @@ class Turbine(BaseClass):
         #     fill_value=0.0,
         #     bounds_error=False,
         # )
-        self.power_function = self.turbine_function_model.power
-        self.thrust_coefficient_function = self.turbine_function_model.thrust_coefficient
+        turbine_function_model = POWER_THRUST_MODEL_MAP[self.power_thrust_model]
+        self.power_function = turbine_function_model.power
+        self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
 
         """
         Given an array of wind speeds, this function returns an array of the
