@@ -144,11 +144,13 @@ def test_regression_tandem(sample_inputs_fixture):
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
         farm_eff_velocities,
         floris.farm.turbine_power_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
@@ -159,6 +161,7 @@ def test_regression_tandem(sample_inputs_fixture):
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
@@ -306,11 +309,13 @@ def test_regression_yaw(sample_inputs_fixture):
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
         farm_eff_velocities,
         floris.farm.turbine_power_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
@@ -321,6 +326,7 @@ def test_regression_yaw(sample_inputs_fixture):
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
@@ -394,6 +400,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
         farm_eff_velocities,
         floris.farm.turbine_power_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
 
     # A "column" is oriented parallel to the wind direction

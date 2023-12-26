@@ -342,6 +342,7 @@ def full_flow_sequential_solver(
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
         )
         # Since we are filtering for the i'th turbine in the Ct function,
@@ -356,6 +357,7 @@ def full_flow_sequential_solver(
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
@@ -503,6 +505,7 @@ def cc_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
         )
@@ -516,6 +519,7 @@ def cc_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
@@ -534,6 +538,7 @@ def cc_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
@@ -748,6 +753,7 @@ def full_flow_cc_solver(
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             average_method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights
         )
@@ -762,6 +768,7 @@ def full_flow_cc_solver(
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights
@@ -899,6 +906,7 @@ def turbopark_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
         )
@@ -912,6 +920,7 @@ def turbopark_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
@@ -928,6 +937,7 @@ def turbopark_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
@@ -986,6 +996,7 @@ def turbopark_solver(
                     tilt_interp=farm.turbine_tilt_interps,
                     correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                     turbine_type_map=farm.turbine_type_map_sorted,
+                    turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
                     ix_filter=[ii],
                     average_method=grid.average_method,
                     cubature_weights=grid.cubature_weights
@@ -1181,6 +1192,7 @@ def empirical_gauss_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
@@ -1197,6 +1209,7 @@ def empirical_gauss_solver(
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
@@ -1384,6 +1397,7 @@ def full_flow_empirical_gauss_solver(
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
         )
         # Since we are filtering for the i'th turbine in the Ct function,
@@ -1398,6 +1412,7 @@ def full_flow_empirical_gauss_solver(
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
         )
         # Since we are filtering for the i'th turbine in the axial induction function,

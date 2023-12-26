@@ -20,7 +20,7 @@ from floris.simulation import (
     Ct,
     power,
 )
-from floris.simulation.turbine import rotor_effective_velocity
+from floris.simulation.turbine.turbine import rotor_effective_velocity
 from floris.tools import FlorisInterface
 from tests.conftest import (
     assert_results_arrays,
@@ -113,11 +113,13 @@ def test_calculate_no_wake(sample_inputs_fixture):
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
+        fi.floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
         farm_eff_velocities,
         fi.floris.farm.turbine_power_interps,
         fi.floris.farm.turbine_type_map,
+        fi.floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
@@ -128,6 +130,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
+        fi.floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
