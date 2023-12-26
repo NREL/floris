@@ -22,7 +22,7 @@ import pandas as pd
 
 from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
-from floris.simulation.turbine import (
+from floris.simulation.turbine.turbine import (
     average_velocity,
     axial_induction,
     Ct,

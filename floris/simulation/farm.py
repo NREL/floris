@@ -31,7 +31,7 @@ from floris.simulation import (
     Turbine,
     TurbineMultiDimensional,
 )
-from floris.simulation.turbine import compute_tilt_angles_for_floating_turbines
+from floris.simulation.turbine.turbine import compute_tilt_angles_for_floating_turbines
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
@@ -292,7 +292,7 @@ class Farm(BaseClass):
 
     def construct_turbine_fCts(self):
         self.turbine_fCts = {
-            turb.turbine_type: turb.fCt_interp for turb in self.turbine_map
+            turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbine_map
         }
 
     def construct_multidim_turbine_fCts(self):
@@ -305,7 +305,7 @@ class Farm(BaseClass):
 
     def construct_turbine_power_interps(self):
         self.turbine_power_interps = {
-            turb.turbine_type: turb.power_interp for turb in self.turbine_map
+            turb.turbine_type: turb.power_function for turb in self.turbine_map
         }
 
     def construct_multidim_turbine_power_interps(self):

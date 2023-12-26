@@ -37,7 +37,7 @@ isort:skip_file
 import floris.logging_manager
 
 from .base import BaseClass, BaseModel, State
-from .turbine import (
+from .turbine.turbine import (
     average_velocity,
     axial_induction,
     compute_tilt_angles_for_floating_turbines,

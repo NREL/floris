@@ -521,18 +521,18 @@ class Turbine(BaseClass):
     # Initialized in the post_init function
     rotor_radius: float = field(init=False)
     rotor_area: float = field(init=False)
-    fCt_interp: interp1d = field(init=False)
-    power_interp: interp1d = field(init=False)
+    thrust_coefficient_function: interp1d = field(init=False)
+    power_function: interp1d = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
-        self._initialize_power_thrust_interpolation()
+        self._initialize_power_thrust_functions()
         self.__post_init__()
 
     def __post_init__(self) -> None:
         self._initialize_tilt_interpolation()
 
-    def _initialize_power_thrust_interpolation(self) -> None:
+    def _initialize_power_thrust_functions(self) -> None:
         # TODO This validation for the power thrust tables should go in the turbine library
         # since it's preprocessing
         # Remove any duplicate wind speed entries
@@ -542,7 +542,7 @@ class Turbine(BaseClass):
         # self.wind_speed = self.wind_speed[duplicate_filter]
 
         wind_speeds = self.power_thrust_table["wind_speed"]
-        self.power_interp = interp1d(
+        self.power_function = interp1d(
             wind_speeds,
             self.power_thrust_table["power"] * 1e3, # Convert to W
             fill_value=0.0,
@@ -559,7 +559,7 @@ class Turbine(BaseClass):
         The fill_value arguments sets (upper, lower) bounds for any values
         outside of the input range.
         """
-        self.fCt_interp = interp1d(
+        self.thrust_coefficient_function = interp1d(
             wind_speeds,
             self.power_thrust_table["thrust_coefficient"],
             fill_value=(0.0001, 0.9999),
