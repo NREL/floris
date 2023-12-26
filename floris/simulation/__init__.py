@@ -38,13 +38,15 @@ import floris.logging_manager
 
 from .base import BaseClass, BaseModel, State
 from .turbine.turbine import (
-    average_velocity,
     axial_induction,
-    compute_tilt_angles_for_floating_turbines,
     Ct,
     power,
-    rotor_effective_velocity,
     Turbine
+)
+from.turbine.rotor_effective_velocity import (
+    average_velocity,
+    rotor_effective_velocity,
+    compute_tilt_angles_for_floating_turbines,
 )
 from .turbine_multi_dim import (
     axial_induction_multidim,

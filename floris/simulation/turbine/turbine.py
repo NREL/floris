@@ -37,142 +37,139 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import cosd
+from floris.simulation.turbine.rotor_effective_velocity import (
+    average_velocity,
+    compute_tilt_angles_for_floating_turbines
+)
 
 
-POWER_THRUST_MODEL_MAP = {
-    "simple": SimpleTurbine,
-    "cosine_loss": CosineLossTurbine
-}
+# def _rotor_velocity_yaw_correction(
+#     pP: float,
+#     yaw_angle: NDArrayFloat,
+#     rotor_effective_velocities: NDArrayFloat,
+# ) -> NDArrayFloat:
+#     # Compute the rotor effective velocity adjusting for yaw settings
+#     pW = pP / 3.0  # Convert from pP to w
+#     rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angle) ** pW
 
-def _rotor_velocity_yaw_correction(
-    pP: float,
-    yaw_angle: NDArrayFloat,
-    rotor_effective_velocities: NDArrayFloat,
-) -> NDArrayFloat:
-    # Compute the rotor effective velocity adjusting for yaw settings
-    pW = pP / 3.0  # Convert from pP to w
-    rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angle) ** pW
-
-    return rotor_effective_velocities
+#     return rotor_effective_velocities
 
 
-def _rotor_velocity_tilt_correction(
-    turbine_type_map: NDArrayObject,
-    tilt_angle: NDArrayFloat,
-    ref_tilt: NDArrayFloat,
-    pT: float,
-    tilt_interp: NDArrayObject,
-    correct_cp_ct_for_tilt: NDArrayBool,
-    rotor_effective_velocities: NDArrayFloat,
-) -> NDArrayFloat:
-    # Compute the tilt, if using floating turbines
-    old_tilt_angle = copy.deepcopy(tilt_angle)
-    tilt_angle = compute_tilt_angles_for_floating_turbines(
-        turbine_type_map,
-        tilt_angle,
-        tilt_interp,
-        rotor_effective_velocities,
-    )
-    # Only update tilt angle if requested (if the tilt isn't accounted for in the Cp curve)
-    tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
+# def _rotor_velocity_tilt_correction(
+#     turbine_type_map: NDArrayObject,
+#     tilt_angle: NDArrayFloat,
+#     ref_tilt: NDArrayFloat,
+#     pT: float,
+#     tilt_interp: NDArrayObject,
+#     correct_cp_ct_for_tilt: NDArrayBool,
+#     rotor_effective_velocities: NDArrayFloat,
+# ) -> NDArrayFloat:
+#     # Compute the tilt, if using floating turbines
+#     old_tilt_angle = copy.deepcopy(tilt_angle)
+#     tilt_angle = compute_tilt_angles_for_floating_turbines(
+#         turbine_type_map,
+#         tilt_angle,
+#         tilt_interp,
+#         rotor_effective_velocities,
+#     )
+#     # Only update tilt angle if requested (if the tilt isn't accounted for in the Cp curve)
+#     tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
 
-    # Compute the rotor effective velocity adjusting for tilt
-    relative_tilt = tilt_angle - ref_tilt
-    rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
-    return rotor_effective_velocities
-
-
-def compute_tilt_angles_for_floating_turbines(
-    turbine_type_map: NDArrayObject,
-    tilt_angle: NDArrayFloat,
-    tilt_interp: dict[str, interp1d],
-    rotor_effective_velocities: NDArrayFloat,
-) -> NDArrayFloat:
-    # Loop over each turbine type given to get tilt angles for all turbines
-    tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
-    turb_types = np.unique(turbine_type_map)
-    for turb_type in turb_types:
-        # If no tilt interpolation is specified, assume no modification to tilt
-        if tilt_interp[turb_type] is None:
-            # TODO should this be break? Should it be continue? Do we want to support mixed
-            # fixed-bottom and floating? Or non-tilting floating?
-            pass
-        # Using a masked array, apply the tilt angle for all turbines of the current
-        # type to the main tilt angle array
-        else:
-            tilt_angles += (
-                tilt_interp[turb_type](rotor_effective_velocities)
-                * (turbine_type_map == turb_type)
-            )
-
-    # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
-    # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
-    # definition contained  a wind_speed/tilt table definition)
-    if not tilt_angles.all() == 0.0:
-        tilt_angle = tilt_angles
-
-    return tilt_angle
+#     # Compute the rotor effective velocity adjusting for tilt
+#     relative_tilt = tilt_angle - ref_tilt
+#     rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
+#     return rotor_effective_velocities
 
 
-def rotor_effective_velocity(
-    air_density: float,
-    ref_air_density: float,
-    velocities: NDArrayFloat,
-    yaw_angle: NDArrayFloat,
-    tilt_angle: NDArrayFloat,
-    ref_tilt: NDArrayFloat,
-    pP: float,
-    pT: float,
-    tilt_interp: NDArrayObject,
-    correct_cp_ct_for_tilt: NDArrayBool,
-    turbine_type_map: NDArrayObject,
-    ix_filter: NDArrayInt | Iterable[int] | None = None,
-    average_method: str = "cubic-mean",
-    cubature_weights: NDArrayFloat | None = None
-) -> NDArrayFloat:
+# def compute_tilt_angles_for_floating_turbines(
+#     turbine_type_map: NDArrayObject,
+#     tilt_angle: NDArrayFloat,
+#     tilt_interp: dict[str, interp1d],
+#     rotor_effective_velocities: NDArrayFloat,
+# ) -> NDArrayFloat:
+#     # Loop over each turbine type given to get tilt angles for all turbines
+#     tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
+#     turb_types = np.unique(turbine_type_map)
+#     for turb_type in turb_types:
+#         # If no tilt interpolation is specified, assume no modification to tilt
+#         if tilt_interp[turb_type] is None:
+#             # TODO should this be break? Should it be continue? Do we want to support mixed
+#             # fixed-bottom and floating? Or non-tilting floating?
+#             pass
+#         # Using a masked array, apply the tilt angle for all turbines of the current
+#         # type to the main tilt angle array
+#         else:
+#             tilt_angles += (
+#                 tilt_interp[turb_type](rotor_effective_velocities)
+#                 * (turbine_type_map == turb_type)
+#             )
 
-    if isinstance(yaw_angle, list):
-        yaw_angle = np.array(yaw_angle)
-    if isinstance(tilt_angle, list):
-        tilt_angle = np.array(tilt_angle)
+#     # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
+#     # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
+#     # definition contained  a wind_speed/tilt table definition)
+#     if not tilt_angles.all() == 0.0:
+#         tilt_angle = tilt_angles
 
-    # Down-select inputs if ix_filter is given
-    if ix_filter is not None:
-        velocities = velocities[:, ix_filter]
-        yaw_angle = yaw_angle[:, ix_filter]
-        tilt_angle = tilt_angle[:, ix_filter]
-        ref_tilt = ref_tilt[:, ix_filter]
-        pP = pP[:, ix_filter]
-        pT = pT[:, ix_filter]
-        turbine_type_map = turbine_type_map[:, ix_filter]
+#     return tilt_angle
 
-    # Compute the rotor effective velocity adjusting for air density
-    # TODO: This correction is currently split across two functions: this one and `power`, where in
-    # `power` the returned power is multiplied by the reference air density
-    average_velocities = average_velocity(
-        velocities,
-        method=average_method,
-        cubature_weights=cubature_weights
-    )
-    rotor_effective_velocities = (air_density/ref_air_density)**(1/3) * average_velocities
 
-    # Compute the rotor effective velocity adjusting for yaw settings
-    rotor_effective_velocities = _rotor_velocity_yaw_correction(
-        pP, yaw_angle, rotor_effective_velocities
-    )
+# def rotor_effective_velocity(
+#     air_density: float,
+#     ref_air_density: float,
+#     velocities: NDArrayFloat,
+#     yaw_angle: NDArrayFloat,
+#     tilt_angle: NDArrayFloat,
+#     ref_tilt: NDArrayFloat,
+#     pP: float,
+#     pT: float,
+#     tilt_interp: NDArrayObject,
+#     correct_cp_ct_for_tilt: NDArrayBool,
+#     turbine_type_map: NDArrayObject,
+#     ix_filter: NDArrayInt | Iterable[int] | None = None,
+#     average_method: str = "cubic-mean",
+#     cubature_weights: NDArrayFloat | None = None
+# ) -> NDArrayFloat:
 
-    # Compute the tilt, if using floating turbines
-    rotor_effective_velocities = _rotor_velocity_tilt_correction(
-        turbine_type_map,
-        tilt_angle,
-        ref_tilt,
-        pT,
-        tilt_interp,
-        correct_cp_ct_for_tilt,
-        rotor_effective_velocities,
-    )
+#     if isinstance(yaw_angle, list):
+#         yaw_angle = np.array(yaw_angle)
+#     if isinstance(tilt_angle, list):
+#         tilt_angle = np.array(tilt_angle)
 
-    return rotor_effective_velocities
+#     # Down-select inputs if ix_filter is given
+#     if ix_filter is not None:
+#         velocities = velocities[:, ix_filter]
+#         yaw_angle = yaw_angle[:, ix_filter]
+#         tilt_angle = tilt_angle[:, ix_filter]
+#         ref_tilt = ref_tilt[:, ix_filter]
+#         pP = pP[:, ix_filter]
+#         pT = pT[:, ix_filter]
+#         turbine_type_map = turbine_type_map[:, ix_filter]
+
+#     # Compute the rotor effective velocity adjusting for air density
+#     average_velocities = average_velocity(
+#         velocities,
+#         method=average_method,
+#         cubature_weights=cubature_weights
+#     )
+#     rotor_effective_velocities = (air_density/ref_air_density)**(1/3) * average_velocities
+
+#     # Compute the rotor effective velocity adjusting for yaw settings
+#     rotor_effective_velocities = _rotor_velocity_yaw_correction(
+#         pP, yaw_angle, rotor_effective_velocities
+#     )
+
+#     # Compute the tilt, if using floating turbines
+#     rotor_effective_velocities = _rotor_velocity_tilt_correction(
+#         turbine_type_map,
+#         tilt_angle,
+#         ref_tilt,
+#         pT,
+#         tilt_interp,
+#         correct_cp_ct_for_tilt,
+#         rotor_effective_velocities,
+#     )
+
+#     return rotor_effective_velocities
 
 
 def power(
@@ -405,82 +402,15 @@ def axial_induction(
         )
     )
 
-
-def simple_mean(array, axis=0):
-    return np.mean(array, axis=axis)
-
-def cubic_mean(array, axis=0):
-    return np.cbrt(np.mean(array ** 3.0, axis=axis))
-
-def simple_cubature(array, cubature_weights, axis=0):
-    weights = cubature_weights.flatten()
-    weights = weights * len(weights) / np.sum(weights)
-    product = (array * weights[None, None, :, None])
-    return simple_mean(product, axis)
-
-def cubic_cubature(array, cubature_weights, axis=0):
-    weights = cubature_weights.flatten()
-    weights = weights * len(weights) / np.sum(weights)
-    return np.cbrt(np.mean((array**3.0 * weights[None, None, :, None]), axis=axis))
-
-def average_velocity(
-    velocities: NDArrayFloat,
-    ix_filter: NDArrayFilter | Iterable[int] | None = None,
-    method: str = "cubic-mean",
-    cubature_weights: NDArrayFloat | None = None
-) -> NDArrayFloat:
-    """This property calculates and returns the average of the velocity field
-    in turbine's rotor swept area. The average is calculated using the
-    user-specified method. This is a vectorized function, so it can be used
-    to calculate the average velocity for multiple turbines at once or
-    a single turbine.
-
-    **Note:** The velocity is scaled to an effective velocity by the yaw.
-
-    Args:
-        velocities (NDArrayFloat): The velocity field at each turbine; should be shape:
-            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
-        ix_filter (NDArrayFilter | Iterable[int] | None], optional): The boolean array, or
-            integer indices (as an iterable or array) to filter out before calculation.
-            Defaults to None.
-        method (str, optional): The method to use for averaging. Options are:
-            - "simple-mean": The simple mean of the velocities
-            - "cubic-mean": The cubic mean of the velocities
-            - "simple-cubature": A cubature integration of the velocities
-            - "cubic-cubature": A cubature integration of the cube of the velocities
-            Defaults to "cubic-mean".
-        cubature_weights (NDArrayFloat, optional): The cubature weights to use for the
-            cubature integration methods. Defaults to None.
-
-    Returns:
-        NDArrayFloat: The average velocity across the rotor(s).
-    """
-
-    # The input velocities are expected to be a 5 dimensional array with shape:
-    # (# findex, # turbines, grid resolution, grid resolution)
-
-    if ix_filter is not None:
-        velocities = velocities[:, ix_filter]
-
-    axis = tuple([2 + i for i in range(velocities.ndim - 2)])
-    if method == "simple-mean":
-        return simple_mean(velocities, axis)
-
-    elif method == "cubic-mean":
-        return cubic_mean(velocities, axis)
-
-    elif method == "simple-cubature":
-        if cubature_weights is None:
-            raise ValueError("cubature_weights is required for 'simple-cubature' method.")
-        return simple_cubature(velocities, cubature_weights, axis)
-
-    elif method == "cubic-cubature":
-        if cubature_weights is None:
-            raise ValueError("cubature_weights is required for 'cubic-cubature' method.")
-        return cubic_cubature(velocities, cubature_weights, axis)
-
-    else:
-        raise ValueError("Incorrect method given.")
+TURBINE_MODEL_MAP = {
+    "power_thrust_model": {
+        "simple": SimpleTurbine,
+        "cosine_loss": CosineLossTurbine
+    },
+#     "velocity_averaging_method": {
+#         "cubic-mean": cubic_mean
+#     } # BUG/TODO: THIS IS NOT YET PASSED THROUGH!
+}
 
 @define
 class Turbine(BaseClass):
@@ -571,7 +501,7 @@ class Turbine(BaseClass):
         #     fill_value=0.0,
         #     bounds_error=False,
         # )
-        turbine_function_model = POWER_THRUST_MODEL_MAP[self.power_thrust_model]
+        turbine_function_model = TURBINE_MODEL_MAP["power_thrust_model"][self.power_thrust_model]
         self.power_function = turbine_function_model.power
         self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
 

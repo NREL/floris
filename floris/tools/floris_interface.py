@@ -23,12 +23,11 @@ import pandas as pd
 from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
 from floris.simulation.turbine.turbine import (
-    average_velocity,
     axial_induction,
     Ct,
     power,
-    rotor_effective_velocity,
 )
+from floris.simulation.turbine.rotor_effective_velocity import average_velocity, rotor_effective_velocity
 from floris.simulation.turbine_multi_dim import multidim_power_down_select, power_multidim
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
