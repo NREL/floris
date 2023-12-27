@@ -138,28 +138,19 @@ def compute_tilt_angles_for_floating_turbines_map(
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Loop over each turbine type given to get tilt angles for all turbines
+    old_tilt_angles = copy.deepcopy(tilt_angles)
     tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # If no tilt interpolation is specified, assume no modification to tilt
-        if tilt_interps[turb_type] is None:
-            # TODO should this be break? Should it be continue? Do we want to support mixed
-            # fixed-bottom and floating? Or non-tilting floating?
-            pass
-        # Using a masked array, apply the tilt angle for all turbines of the current
-        # type to the main tilt angle array
-        else:
+        if tilt_interps[turb_type] is None: # Use passed tilt angles
+            tilt_angles += old_tilt_angles * (turbine_type_map == turb_type)
+        else: # Apply interpolated tilt angle
             tilt_angles += compute_tilt_angles_for_floating_turbines(
                 tilt_angles,
                 tilt_interps[turb_type],
                 rotor_effective_velocities
             ) * (turbine_type_map == turb_type)
-
-    # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
-    # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
-    # definition contained  a wind_speed/tilt table definition)
-    if not tilt_angles.all() == 0.0:
-        tilt_angle = tilt_angles
 
     return tilt_angles
 
