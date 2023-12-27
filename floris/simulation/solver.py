@@ -502,7 +502,7 @@ def cc_solver(
             farm.tilt_angles_sorted,
             farm.ref_tilts_sorted,
             farm.turbine_fCts,
-            tilt_interp=farm.turbine_tilt_interps,
+            tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
