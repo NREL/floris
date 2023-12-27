@@ -290,36 +290,42 @@ def Ct(
         turbine_type_map = turbine_type_map[:, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
-    average_velocities = average_velocity(
-        velocities,
-        method=average_method,
-        cubature_weights=cubature_weights
-    )
+    # average_velocities = average_velocity(
+    #     velocities,
+    #     method=average_method,
+    #     cubature_weights=cubature_weights
+    # )
 
     # Compute the tilt, if using floating turbines
-    old_tilt_angle = copy.deepcopy(tilt_angle)
-    tilt_angle = compute_tilt_angles_for_floating_turbines(
-        turbine_type_map,
-        tilt_angle,
-        tilt_interp,
-        average_velocities,
-    )
-    # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
-    tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
+    # # TODO: THIS GOES TO COSINE_LOSS MODEL
+    # old_tilt_angle = copy.deepcopy(tilt_angle)
+    # tilt_angle = compute_tilt_angles_for_floating_turbines(
+    #     turbine_type_map,
+    #     tilt_angle,
+    #     tilt_interp,
+    #     average_velocities,
+    # )
+    # # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
+    # tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
-    thrust_coefficient = np.zeros(np.shape(average_velocities))
+    thrust_coefficient = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
         thrust_coefficient += (
-            fCt[turb_type](turbine_power_thrust_tables[turb_type], average_velocities)
+            fCt[turb_type](
+                turbine_power_thrust_tables[turb_type],
+                velocities,
+            )
             * (turbine_type_map == turb_type)
         )
-    thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
-    effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt)
-    return effective_thrust
+    
+    # # TODO: THIS GOES TO COSINE_LOSS MODEL
+    # effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt)
+    
+    return thrust_coefficient
 
 
 def axial_induction(
