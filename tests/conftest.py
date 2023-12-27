@@ -203,12 +203,12 @@ class SampleInputs:
             "turbine_type": "nrel_5mw",
             "rotor_diameter": 126.0,
             "hub_height": 90.0,
-            "pP": 1.88,
-            "pT": 1.88,
             "generator_efficiency": 1.0,
-            "ref_air_density": 1.225,
-            "ref_tilt": 5.0,
             "power_thrust_table": {
+                "pP": 1.88,
+                "pT": 1.88,
+                "ref_air_density": 1.225,
+                "ref_tilt": 5.0,
                 "power": [
                     0.0,
                     0.0,
