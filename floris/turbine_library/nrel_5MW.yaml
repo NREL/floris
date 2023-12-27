@@ -22,8 +22,7 @@ hub_height: 90.0
 pP: 1.88
 
 ###
-# Cosine exponent for power loss due to tilt.
-pT: 1.88
+
 
 ###
 # Rotor diameter.

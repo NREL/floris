@@ -179,6 +179,8 @@ def power(
     turbine_type_map: NDArrayObject,
     turbine_power_thrust_tables: dict,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
+    average_method: str = "cubic-mean",
+    cubature_weights: NDArrayFloat | None = None
 ) -> NDArrayFloat:
     # TODO:
     # prepares the input; then calls the power function
@@ -219,16 +221,18 @@ def power(
     p = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
-        # Using a masked array, apply the thrust coefficient for all turbines of the current
-        # type to the main thrust coefficient array
-        p += (
-            power_interp[turb_type](
-                turbine_power_thrust_tables[turb_type],
-                velocities,
-                air_density
-            ) 
-            * (turbine_type_map == turb_type)
-        )
+        # Construct full set of possible keyword arguments for power()
+        power_model_kwargs = {
+            "power_thrust_table": turbine_power_thrust_tables[turb_type],
+            "velocities": velocities,
+            "air_density": air_density,
+            "average_method": average_method,
+            "cubature_weights": cubature_weights,
+        }
+
+        # Using a masked array, apply the power for all turbines of the current
+        # type to the main power
+        p += (power_interp[turb_type](**power_model_kwargs) * (turbine_type_map == turb_type))
 
     return p
 
@@ -312,14 +316,18 @@ def Ct(
     thrust_coefficient = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
+        # Construct full set of possible keyword arguments for thrust_coefficient()
+        thrust_model_kwargs = {
+            "power_thrust_table": turbine_power_thrust_tables[turb_type],
+            "velocities": velocities,
+            "average_method": average_method,
+            "cubature_weights": cubature_weights,
+        }
+
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
         thrust_coefficient += (
-            fCt[turb_type](
-                turbine_power_thrust_tables[turb_type],
-                velocities,
-            )
-            * (turbine_type_map == turb_type)
+            fCt[turb_type](**thrust_model_kwargs) * (turbine_type_map == turb_type)
         )
     
     # # TODO: THIS GOES TO COSINE_LOSS MODEL
@@ -412,7 +420,7 @@ def axial_induction(
 TURBINE_MODEL_MAP = {
     "power_thrust_model": {
         "simple": SimpleTurbine,
-        "cosine_loss": CosineLossTurbine
+        "cosine-loss": CosineLossTurbine
     },
 #     "velocity_averaging_method": {
 #         "cubic-mean": cubic_mean
@@ -459,8 +467,8 @@ class Turbine(BaseClass):
     turbine_type: str = field()
     rotor_diameter: float = field()
     hub_height: float = field()
-    pP: float = field()
-    pT: float = field()
+    #pP: float = field()
+    #pT: float = field()
     TSR: float = field()
     generator_efficiency: float = field()
     #ref_air_density: float = field()

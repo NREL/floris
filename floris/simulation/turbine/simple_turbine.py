@@ -6,9 +6,8 @@ from scipy.interpolate import interp1d
 import numpy as np
 
 from floris.simulation.turbine.rotor_effective_velocity import (
-    air_density_velocity_correction,
     average_velocity,
-    rotor_effective_velocity,
+    rotor_velocity_air_density_correction,
 )
 
 from floris.type_dec import (
@@ -28,7 +27,8 @@ class SimpleTurbine():
         velocities: NDArrayFloat,
         air_density: float,
         average_method: str = "cubic-mean",
-        cubature_weights: NDArrayFloat | None = None
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
     ):
         # Construct power interpolant
         power_interpolator = interp1d(
@@ -45,7 +45,7 @@ class SimpleTurbine():
             cubature_weights=cubature_weights,
         )
 
-        rotor_effective_velocities = air_density_velocity_correction(
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
             velocities=rotor_average_velocities,
             air_density=air_density,
             ref_air_density=power_thrust_table["ref_air_density"]
@@ -62,7 +62,8 @@ class SimpleTurbine():
         velocities: NDArrayFloat,
         # air_density: float,
         average_method: str = "cubic-mean",
-        cubature_weights: NDArrayFloat | None = None
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
     ):
         # Construct thrust coefficient interpolant
         thrust_coefficient_interpolator = interp1d(
