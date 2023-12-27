@@ -258,10 +258,10 @@ class Farm(BaseClass):
         self.TSRs = np.array([turb['TSR'] for turb in self.turbine_definitions])
 
     def construct_turbine_pPs(self):
-        self.pPs = np.array([turb['pP'] for turb in self.turbine_definitions])
+        self.pPs = np.array([turb['power_thrust_table']['pP'] for turb in self.turbine_definitions])
 
     def construct_turbine_pTs(self):
-        self.pTs = np.array([turb['pT'] for turb in self.turbine_definitions])
+        self.pTs = np.array([turb['power_thrust_table']['pT'] for turb in self.turbine_definitions])
 
     def construct_turbine_ref_air_densities(self):
         self.ref_air_densities = np.array([

@@ -18,21 +18,21 @@ from floris.type_dec import (
 )
 from floris.utilities import cosd
 
-def _rotor_velocity_yaw_correction(
+def rotor_velocity_yaw_correction(
     pP: float,
-    yaw_angle: NDArrayFloat,
+    yaw_angles: NDArrayFloat,
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Compute the rotor effective velocity adjusting for yaw settings
     pW = pP / 3.0  # Convert from pP to w
-    rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angle) ** pW
+    rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angles) ** pW
 
     return rotor_effective_velocities
 
 
-def _rotor_velocity_tilt_correction(
-    turbine_type_map: NDArrayObject,
-    tilt_angle: NDArrayFloat,
+def rotor_velocity_tilt_correction(
+    #turbine_type_map: NDArrayObject,
+    tilt_angles: NDArrayFloat,
     ref_tilt: NDArrayFloat,
     pT: float,
     tilt_interp: NDArrayObject,
@@ -40,18 +40,18 @@ def _rotor_velocity_tilt_correction(
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Compute the tilt, if using floating turbines
-    old_tilt_angle = copy.deepcopy(tilt_angle)
+    old_tilt_angle = copy.deepcopy(tilt_angles)
     tilt_angle = compute_tilt_angles_for_floating_turbines(
-        turbine_type_map,
-        tilt_angle,
+        #turbine_type_map,
+        tilt_angles,
         tilt_interp,
         rotor_effective_velocities,
     )
     # Only update tilt angle if requested (if the tilt isn't accounted for in the Cp curve)
-    tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
+    tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angle)
 
     # Compute the rotor effective velocity adjusting for tilt
-    relative_tilt = tilt_angle - ref_tilt
+    relative_tilt = tilt_angles - ref_tilt
     rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
     return rotor_effective_velocities
 
@@ -131,38 +131,56 @@ def average_velocity(
     else:
         raise ValueError("Incorrect method given.")
 
+# def compute_tilt_angles_for_floating_turbines(
+#     turbine_type_map: NDArrayObject,
+#     tilt_angle: NDArrayFloat,
+#     tilt_interp: dict[str, interp1d],
+#     rotor_effective_velocities: NDArrayFloat,
+# ) -> NDArrayFloat:
+#     # Loop over each turbine type given to get tilt angles for all turbines
+#     tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
+#     turb_types = np.unique(turbine_type_map)
+#     for turb_type in turb_types:
+#         # If no tilt interpolation is specified, assume no modification to tilt
+#         if tilt_interp[turb_type] is None:
+#             # TODO should this be break? Should it be continue? Do we want to support mixed
+#             # fixed-bottom and floating? Or non-tilting floating?
+#             pass
+#         # Using a masked array, apply the tilt angle for all turbines of the current
+#         # type to the main tilt angle array
+#         else:
+#             tilt_angles += (
+#                 tilt_interp[turb_type](rotor_effective_velocities)
+#                 * (turbine_type_map == turb_type)
+#             )
+
+#     # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
+#     # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
+#     # definition contained  a wind_speed/tilt table definition)
+#     if not tilt_angles.all() == 0.0:
+#         tilt_angle = tilt_angles
+
+#     return tilt_angle
+
 def compute_tilt_angles_for_floating_turbines(
-    turbine_type_map: NDArrayObject,
-    tilt_angle: NDArrayFloat,
+    tilt_angles: NDArrayFloat,
     tilt_interp: dict[str, interp1d],
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Loop over each turbine type given to get tilt angles for all turbines
-    tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
-    turb_types = np.unique(turbine_type_map)
-    for turb_type in turb_types:
-        # If no tilt interpolation is specified, assume no modification to tilt
-        if tilt_interp[turb_type] is None:
-            # TODO should this be break? Should it be continue? Do we want to support mixed
-            # fixed-bottom and floating? Or non-tilting floating?
-            pass
-        # Using a masked array, apply the tilt angle for all turbines of the current
-        # type to the main tilt angle array
-        else:
-            tilt_angles += (
-                tilt_interp[turb_type](rotor_effective_velocities)
-                * (turbine_type_map == turb_type)
-            )
+    # If no tilt interpolation is specified, assume no modification to tilt
+    if tilt_interp is None:
+        # TODO should this be break? Should it be continue? Do we want to support mixed
+        # fixed-bottom and floating? Or non-tilting floating?
+        pass
+    # Using a masked array, apply the tilt angle for all turbines of the current
+    # type to the main tilt angle array
+    else:
+        tilt_angles = tilt_interp(rotor_effective_velocities)
 
-    # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
-    # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
-    # definition contained  a wind_speed/tilt table definition)
-    if not tilt_angles.all() == 0.0:
-        tilt_angle = tilt_angles
+    return tilt_angles
 
-    return tilt_angle
-
-def air_density_velocity_correction(
+def rotor_velocity_air_density_correction(
     velocities: NDArrayFloat,
     air_density: float,
     ref_air_density: float,
@@ -212,12 +230,12 @@ def rotor_effective_velocity(
     rotor_effective_velocities = (air_density/ref_air_density)**(1/3) * average_velocities
 
     # Compute the rotor effective velocity adjusting for yaw settings
-    rotor_effective_velocities = _rotor_velocity_yaw_correction(
+    rotor_effective_velocities = rotor_velocity_yaw_correction(
         pP, yaw_angle, rotor_effective_velocities
     )
 
     # Compute the tilt, if using floating turbines
-    rotor_effective_velocities = _rotor_velocity_tilt_correction(
+    rotor_effective_velocities = rotor_velocity_tilt_correction(
         turbine_type_map,
         tilt_angle,
         ref_tilt,

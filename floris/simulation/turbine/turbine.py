@@ -175,12 +175,16 @@ from floris.simulation.turbine.rotor_effective_velocity import (
 def power(
     velocities: NDArrayFloat,
     air_density: float,
-    power_interp: dict[str, interp1d],
+    power_interps: dict[str, function],
+    yaw_angles: NDArrayFloat,
+    tilt_angles: NDArrayFloat,
+    tilt_interps: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
     turbine_power_thrust_tables: dict,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
-    cubature_weights: NDArrayFloat | None = None
+    cubature_weights: NDArrayFloat | None = None,
+    correct_cp_ct_for_tilt: bool = False,
 ) -> NDArrayFloat:
     # TODO:
     # prepares the input; then calls the power function
@@ -226,24 +230,28 @@ def power(
             "power_thrust_table": turbine_power_thrust_tables[turb_type],
             "velocities": velocities,
             "air_density": air_density,
+            "yaw_angles": yaw_angles,
+            "tilt_angles": tilt_angles,
+            "tilt_interp": tilt_interps[turb_type],
             "average_method": average_method,
             "cubature_weights": cubature_weights,
+            "correct_cp_ct_for_tilt": correct_cp_ct_for_tilt,
         }
 
         # Using a masked array, apply the power for all turbines of the current
         # type to the main power
-        p += (power_interp[turb_type](**power_model_kwargs) * (turbine_type_map == turb_type))
+        p += (power_interps[turb_type](**power_model_kwargs) * (turbine_type_map == turb_type))
 
     return p
 
 
 def Ct(
     velocities: NDArrayFloat,
-    yaw_angle: NDArrayFloat,
-    tilt_angle: NDArrayFloat,
+    yaw_angles: NDArrayFloat,
+    tilt_angles: NDArrayFloat,
     ref_tilt: NDArrayFloat,
     fCt: dict,
-    tilt_interp: NDArrayObject,
+    tilt_interps: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     turbine_power_thrust_tables: dict,
@@ -279,17 +287,17 @@ def Ct(
         NDArrayFloat: Coefficient of thrust for each requested turbine.
     """
 
-    if isinstance(yaw_angle, list):
-        yaw_angle = np.array(yaw_angle)
+    if isinstance(yaw_angles, list):
+        yaw_angles = np.array(yaw_angles)
 
-    if isinstance(tilt_angle, list):
-        tilt_angle = np.array(tilt_angle)
+    if isinstance(tilt_angles, list):
+        tilt_angles = np.array(tilt_angles)
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         velocities = velocities[:, ix_filter]
-        yaw_angle = yaw_angle[:, ix_filter]
-        tilt_angle = tilt_angle[:, ix_filter]
+        yaw_angles = yaw_angles[:, ix_filter]
+        tilt_angles = tilt_angles[:, ix_filter]
         ref_tilt = ref_tilt[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
@@ -320,8 +328,12 @@ def Ct(
         thrust_model_kwargs = {
             "power_thrust_table": turbine_power_thrust_tables[turb_type],
             "velocities": velocities,
+            "yaw_angles": yaw_angles,
+            "tilt_angles": tilt_angles,
+            "tilt_interp": tilt_interps[turb_type],
             "average_method": average_method,
             "cubature_weights": cubature_weights,
+            "correct_cp_ct_for_tilt": correct_cp_ct_for_tilt,
         }
 
         # Using a masked array, apply the thrust coefficient for all turbines of the current

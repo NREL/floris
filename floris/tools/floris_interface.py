@@ -606,9 +606,13 @@ class FlorisInterface(LoggingManager):
         turbine_powers = power(
             velocities=self.floris.flow_field.u,
             air_density=self.floris.flow_field.air_density,
-            power_interp=self.floris.farm.turbine_power_interps,
+            power_interps=self.floris.farm.turbine_power_interps,
+            yaw_angles=self.floris.farm.yaw_angles,
+            tilt_angles=self.floris.farm.tilt_angles,
+            tilt_interps=self.floris.farm.turbine_tilt_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
         )
         return turbine_powers
 
