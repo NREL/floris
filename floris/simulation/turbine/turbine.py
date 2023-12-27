@@ -486,7 +486,7 @@ class Turbine(BaseClass):
     #ref_air_density: float = field()
     #ref_tilt: float = field()
     power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
-    power_thrust_model: str = field(default="simple")
+    power_thrust_model: str = field(default="cosine-loss")
 
     correct_cp_ct_for_tilt: bool = field(default=False)
     floating_tilt_table: dict[str, NDArrayFloat] | None = field(default=None)

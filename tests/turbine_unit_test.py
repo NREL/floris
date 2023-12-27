@@ -36,7 +36,6 @@ from floris.simulation.turbine.rotor_effective_velocity import (
     cubic_cubature,
     simple_cubature,
 )
-from floris.tools import build_turbine_dict
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 

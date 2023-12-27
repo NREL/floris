@@ -18,28 +18,12 @@ generator_efficiency: 1.0
 hub_height: 90.0
 
 ###
-# # Cosine exponent for power loss due to yaw misalignment.
-# pP: 1.88
-
-###
-# # Cosine exponent for power loss due to tilt.
-# pT: 1.88
-
-###
 # Rotor diameter.
 rotor_diameter: 126.0
 
 ###
 # Tip speed ratio defined as linear blade tip speed normalized by the incoming wind speed.
 TSR: 8.0
-
-###
-#ref_air_density: 1.225
-
-###
-# The tilt angle at which the Cp and Ct curves are defined. This is used to capture
-# the effects of a floating platform on a turbine's power and wake.
-#ref_tilt: 5.0
 
 ###
 # Model for power and thrust curve interpretation.
