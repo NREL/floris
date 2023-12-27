@@ -1,14 +1,39 @@
+from __future__ import annotations
+
+from collections.abc import Iterable
+
 from scipy.interpolate import interp1d
 
-from floris.simulation.turbine.rotor_effective_velocity import rotor_effective_velocity
+from floris.simulation.turbine.rotor_effective_velocity import (
+    air_density_velocity_correction,
+    average_velocity,
+    rotor_effective_velocity,
+)
+
+from floris.type_dec import (
+    floris_numeric_dict_converter,
+    NDArrayBool,
+    NDArrayFilter,
+    NDArrayFloat,
+    NDArrayInt,
+    NDArrayObject,
+)
 
 class SimpleTurbine():
 
     @staticmethod
-    def power(turbine_model_parameters, velocities):
-
+    def power(
+        turbine_model_parameters: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None
+    ):
+        # Construct power interpolant
+        
         # TEMPORARY
         turbine_model_parameters = {"power_thrust_table": turbine_model_parameters}
+        turbine_model_parameters["ref_air_density"] = 1.225 # TEMP!!
         
         power_interpolator = interp1d(
             turbine_model_parameters["power_thrust_table"]["wind_speed"],
@@ -17,14 +42,21 @@ class SimpleTurbine():
             bounds_error=False,
         )
 
-        # TODO: covert from "raw" velocities to rotor effective velocities.
-        # rotor_effective_velocity(
+        # Compute the power-effective wind speed across the rotor
+        rotor_average_velocities = average_velocity(
+            velocities=velocities,
+            method=average_method,
+            cubature_weights=cubature_weights,
+        )
 
-
-        # )
+        rotor_effective_velocities = air_density_velocity_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=turbine_model_parameters["ref_air_density"]
+        )
         
-
-        power = power_interpolator(velocities)
+        # Compute power
+        power = power_interpolator(rotor_effective_velocities)
         
         return power
 

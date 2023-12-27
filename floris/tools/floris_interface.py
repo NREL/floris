@@ -600,11 +600,12 @@ class FlorisInterface(LoggingManager):
             )
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.
-        if (self.turbine_effective_velocities < 0.).any():
-            self.logger.warning("Some rotor effective velocities are negative.")
+        if (self.floris.flow_field.u < 0.).any():
+            self.logger.warning("Some point velocities at the rotor are negative.")
 
         turbine_powers = power(
-            rotor_effective_velocities=self.turbine_effective_velocities,
+            velocities=self.floris.flow_field.u,
+            air_density=self.floris.flow_field.air_density,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
@@ -680,24 +681,24 @@ class FlorisInterface(LoggingManager):
             cubature_weights=self.floris.grid.cubature_weights
         )
 
-    @property
-    def turbine_effective_velocities(self) -> NDArrayFloat:
-        rotor_effective_velocities = rotor_effective_velocity(
-            air_density=self.floris.flow_field.air_density,
-            ref_air_density=self.floris.farm.ref_air_densities,
-            velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt=self.floris.farm.ref_tilts,
-            pP=self.floris.farm.pPs,
-            pT=self.floris.farm.pTs,
-            tilt_interp=self.floris.farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-            average_method=self.floris.grid.average_method,
-            cubature_weights=self.floris.grid.cubature_weights
-        )
-        return rotor_effective_velocities
+    # @property
+    # def turbine_effective_velocities(self) -> NDArrayFloat:
+    #     rotor_effective_velocities = rotor_effective_velocity(
+    #         air_density=self.floris.flow_field.air_density,
+    #         ref_air_density=self.floris.farm.ref_air_densities,
+    #         velocities=self.floris.flow_field.u,
+    #         yaw_angle=self.floris.farm.yaw_angles,
+    #         tilt_angle=self.floris.farm.tilt_angles,
+    #         ref_tilt=self.floris.farm.ref_tilts,
+    #         pP=self.floris.farm.pPs,
+    #         pT=self.floris.farm.pTs,
+    #         tilt_interp=self.floris.farm.turbine_tilt_interps,
+    #         correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
+    #         turbine_type_map=self.floris.farm.turbine_type_map,
+    #         average_method=self.floris.grid.average_method,
+    #         cubature_weights=self.floris.grid.cubature_weights
+    #     )
+    #     return rotor_effective_velocities
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.floris.flow_field.turbulence_intensity_field

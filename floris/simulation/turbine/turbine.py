@@ -173,7 +173,8 @@ from floris.simulation.turbine.rotor_effective_velocity import (
 
 
 def power(
-    rotor_effective_velocities: NDArrayFloat,
+    velocities: NDArrayFloat,
+    air_density: float,
     power_interp: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
     turbine_power_thrust_tables: dict,
@@ -185,12 +186,14 @@ def power(
     given in Watts.
 
     Args:
-        rotor_effective_velocities (NDArrayFloat[wd, ws, turbines]): The rotor
-            effective velocities at a turbine. Includes the air density correction.
+        velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a
+            turbine. 
+        air_density (float): air density for simulation [kg/m^3]
         power_interp (dict[str, interp1d]): A dictionary of power interpolation functions for
             each turbine type.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
+        turbine_power_thrust_tables: Reference data for the power and thrust representation (RENAME?)
         ix_filter (NDArrayInt, optional): The boolean array, or
             integer indices to filter out before calculation. Defaults to None.
 
@@ -212,11 +215,11 @@ def power(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        rotor_effective_velocities = rotor_effective_velocities[:, ix_filter]
+        velocities = velocities[:, ix_filter, :, :]
         turbine_type_map = turbine_type_map[:, ix_filter]
 
     # Loop over each turbine type given to get power for all turbines
-    p = np.zeros(np.shape(rotor_effective_velocities))
+    p = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Using a masked array, apply the thrust coefficient for all turbines of the current
@@ -224,7 +227,8 @@ def power(
         p += (
             power_interp[turb_type](
                 turbine_power_thrust_tables[turb_type],
-                rotor_effective_velocities
+                velocities,
+                air_density
             ) 
             * (turbine_type_map == turb_type)
         )

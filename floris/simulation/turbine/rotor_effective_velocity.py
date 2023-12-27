@@ -162,6 +162,15 @@ def compute_tilt_angles_for_floating_turbines(
 
     return tilt_angle
 
+def air_density_velocity_correction(
+    velocities: NDArrayFloat,
+    air_density: float,
+    ref_air_density: float,
+) -> NDArrayFloat:
+    # Produce equivalent velocities at the reference air density
+    
+    return (air_density/ref_air_density)**(1/3) * velocities
+
 def rotor_effective_velocity(
     air_density: float,
     ref_air_density: float,

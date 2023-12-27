@@ -44,7 +44,7 @@ ref_tilt: 5.0
 
 ###
 # Model for power and thrust curve interpretation.
-power_thrust_model: 'cosine_loss'
+power_thrust_model: 'simple'
 
 ###
 # Cp and Ct as a function of wind speed for the turbine's full range of operating conditions.
