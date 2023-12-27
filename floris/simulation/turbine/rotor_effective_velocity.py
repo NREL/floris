@@ -41,7 +41,7 @@ def rotor_velocity_tilt_correction(
 ) -> NDArrayFloat:
     # Compute the tilt, if using floating turbines
     old_tilt_angle = copy.deepcopy(tilt_angles)
-    tilt_angle = compute_tilt_angles_for_floating_turbines(
+    tilt_angles = compute_tilt_angles_for_floating_turbines(
         #turbine_type_map,
         tilt_angles,
         tilt_interp,
@@ -131,36 +131,37 @@ def average_velocity(
     else:
         raise ValueError("Incorrect method given.")
 
-# def compute_tilt_angles_for_floating_turbines(
-#     turbine_type_map: NDArrayObject,
-#     tilt_angle: NDArrayFloat,
-#     tilt_interp: dict[str, interp1d],
-#     rotor_effective_velocities: NDArrayFloat,
-# ) -> NDArrayFloat:
-#     # Loop over each turbine type given to get tilt angles for all turbines
-#     tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
-#     turb_types = np.unique(turbine_type_map)
-#     for turb_type in turb_types:
-#         # If no tilt interpolation is specified, assume no modification to tilt
-#         if tilt_interp[turb_type] is None:
-#             # TODO should this be break? Should it be continue? Do we want to support mixed
-#             # fixed-bottom and floating? Or non-tilting floating?
-#             pass
-#         # Using a masked array, apply the tilt angle for all turbines of the current
-#         # type to the main tilt angle array
-#         else:
-#             tilt_angles += (
-#                 tilt_interp[turb_type](rotor_effective_velocities)
-#                 * (turbine_type_map == turb_type)
-#             )
+def compute_tilt_angles_for_floating_turbines_map(
+    turbine_type_map: NDArrayObject,
+    tilt_angles: NDArrayFloat,
+    tilt_interps: dict[str, interp1d],
+    rotor_effective_velocities: NDArrayFloat,
+) -> NDArrayFloat:
+    # Loop over each turbine type given to get tilt angles for all turbines
+    tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
+    turb_types = np.unique(turbine_type_map)
+    for turb_type in turb_types:
+        # If no tilt interpolation is specified, assume no modification to tilt
+        if tilt_interps[turb_type] is None:
+            # TODO should this be break? Should it be continue? Do we want to support mixed
+            # fixed-bottom and floating? Or non-tilting floating?
+            pass
+        # Using a masked array, apply the tilt angle for all turbines of the current
+        # type to the main tilt angle array
+        else:
+            tilt_angles += compute_tilt_angles_for_floating_turbines(
+                tilt_angles,
+                tilt_interps[turb_type],
+                rotor_effective_velocities
+            ) * (turbine_type_map == turb_type)
 
-#     # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
-#     # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
-#     # definition contained  a wind_speed/tilt table definition)
-#     if not tilt_angles.all() == 0.0:
-#         tilt_angle = tilt_angles
+    # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
+    # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
+    # definition contained  a wind_speed/tilt table definition)
+    if not tilt_angles.all() == 0.0:
+        tilt_angle = tilt_angles
 
-#     return tilt_angle
+    return tilt_angles
 
 def compute_tilt_angles_for_floating_turbines(
     tilt_angles: NDArrayFloat,

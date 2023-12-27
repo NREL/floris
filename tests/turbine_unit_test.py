@@ -32,6 +32,7 @@ from floris.simulation.turbine.rotor_effective_velocity import (
     rotor_velocity_tilt_correction,
     rotor_velocity_yaw_correction,
     compute_tilt_angles_for_floating_turbines,
+    compute_tilt_angles_for_floating_turbines_map,
     cubic_cubature,
     simple_cubature,
 )
@@ -543,16 +544,12 @@ def test_compute_tilt_angles_for_floating_turbines():
     truth_index = turbine_floating_data["floating_tilt_table"]["wind_speed"].index(wind_speed)
     tilt_truth = turbine_floating_data["floating_tilt_table"]["tilt"][truth_index]
     np.testing.assert_allclose(tilt, tilt_truth)
-
-    # TODO: The following no longer works, and is not expected to. Is the 
-    # functionality of being able to call compute_tilt_angles_for_floating_turbines
-    # on multiple turbines needed? If so, build wrapper.
     
     # Multiple turbines
-    tilt_N_turbines = compute_tilt_angles_for_floating_turbines(
+    tilt_N_turbines = compute_tilt_angles_for_floating_turbines_map(
         turbine_type_map=np.array(turbine_type_map),
-        tilt_angle=5.0*np.ones((1, N_TURBINES)),
-        tilt_interp={turbine_floating.turbine_type: turbine_floating.tilt_interp},
+        tilt_angles=5.0*np.ones((1, N_TURBINES)),
+        tilt_interps={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         rotor_effective_velocities=rotor_effective_velocities_N_TURBINES,
     )
 

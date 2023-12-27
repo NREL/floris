@@ -31,7 +31,9 @@ from floris.simulation import (
     Turbine,
     TurbineMultiDimensional,
 )
-from floris.simulation.turbine.turbine import compute_tilt_angles_for_floating_turbines
+from floris.simulation.turbine.rotor_effective_velocity import (
+    compute_tilt_angles_for_floating_turbines_map
+)
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
@@ -411,7 +413,7 @@ class Farm(BaseClass):
         )
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
-        tilt_angles = compute_tilt_angles_for_floating_turbines(
+        tilt_angles = compute_tilt_angles_for_floating_turbines_map(
             self.turbine_type_map_sorted,
             self.tilt_angles_sorted,
             self.turbine_tilt_interps,

@@ -204,6 +204,7 @@ class SampleInputs:
             "rotor_diameter": 126.0,
             "hub_height": 90.0,
             "generator_efficiency": 1.0,
+            "power_thrust_model": "cosine-loss",
             "power_thrust_table": {
                 "pP": 1.88,
                 "pT": 1.88,
