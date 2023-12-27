@@ -23,21 +23,16 @@ class SimpleTurbine():
 
     @staticmethod
     def power(
-        turbine_model_parameters: dict,
+        turbine_power_thrust_table: dict,
         velocities: NDArrayFloat,
         air_density: float,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None
     ):
         # Construct power interpolant
-        
-        # TEMPORARY
-        turbine_model_parameters = {"power_thrust_table": turbine_model_parameters}
-        turbine_model_parameters["ref_air_density"] = 1.225 # TEMP!!
-        
         power_interpolator = interp1d(
-            turbine_model_parameters["power_thrust_table"]["wind_speed"],
-            turbine_model_parameters["power_thrust_table"]["power"] * 1e3, # Convert to W
+            turbine_power_thrust_table["wind_speed"],
+            turbine_power_thrust_table["power"] * 1e3, # Convert to W
             fill_value=0.0,
             bounds_error=False,
         )
@@ -52,7 +47,7 @@ class SimpleTurbine():
         rotor_effective_velocities = air_density_velocity_correction(
             velocities=rotor_average_velocities,
             air_density=air_density,
-            ref_air_density=turbine_model_parameters["ref_air_density"]
+            ref_air_density=turbine_power_thrust_table["ref_air_density"]
         )
         
         # Compute power

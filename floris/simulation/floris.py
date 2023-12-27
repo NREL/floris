@@ -167,6 +167,10 @@ class Floris(BaseClass):
         # Check for missing values add in version 3.2 and 3.4
         for turbine in self.farm.turbine_definitions:
 
+            # TODO: Rebuild this to be more general; necessary keys may depend 
+            # on the turbine model!
+
+            """
             if "ref_air_density" not in turbine.keys():
                 error_messages.append(
                     "From FLORIS v3.2, the turbine definition must include 'ref_air_density'. "
@@ -187,6 +191,7 @@ class Floris(BaseClass):
                     "try again. For a description of the turbine inputs, "
                     "see https://nrel.github.io/floris/input_reference_turbine.html."
                 )
+            """
 
             if len(error_messages) > 0:
                 raise ValueError(

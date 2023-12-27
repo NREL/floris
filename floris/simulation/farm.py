@@ -265,12 +265,12 @@ class Farm(BaseClass):
 
     def construct_turbine_ref_air_densities(self):
         self.ref_air_densities = np.array([
-            turb['ref_air_density'] for turb in self.turbine_definitions
+            turb['power_thrust_table']['ref_air_density'] for turb in self.turbine_definitions
         ])
 
     def construct_turbine_ref_tilts(self):
         self.ref_tilts = np.array(
-            [turb['ref_tilt'] for turb in self.turbine_definitions]
+            [turb['power_thrust_table']['ref_tilt'] for turb in self.turbine_definitions]
         )
 
     def construct_turbine_correct_cp_ct_for_tilt(self):

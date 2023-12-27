@@ -210,9 +210,6 @@ def power(
     # based on the paper "Optimising yaw control at wind farm level" by
     # Ervin Bossanyi
 
-    # TODO: check this - where is it?
-    # P = 1/2 rho A V^3 Cp
-
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         velocities = velocities[:, ix_filter, :, :]
@@ -460,8 +457,8 @@ class Turbine(BaseClass):
     pT: float = field()
     TSR: float = field()
     generator_efficiency: float = field()
-    ref_air_density: float = field()
-    ref_tilt: float = field()
+    #ref_air_density: float = field()
+    #ref_tilt: float = field()
     power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
     power_thrust_model: str = field(default="simple")
 
@@ -553,11 +550,12 @@ class Turbine(BaseClass):
         Verify that the power and thrust tables are given with arrays of equal length
         to the wind speed array.
         """
-        if (len(value.keys()) != 3 or
-            set(value.keys()) != {"wind_speed", "power", "thrust_coefficient"}):
+        # if (len(value.keys()) != 3 or
+        #     set(value.keys()) != {"wind_speed", "power", "thrust_coefficient"}):
+        if not {"wind_speed", "power", "thrust_coefficient"} <= set(value.keys()):
             raise ValueError(
                 """
-                power_thrust_table dictionary must have the form:
+                power_thrust_table dictionary must contain:
                     {
                         "wind_speed": List[float],
                         "power": List[float],
