@@ -25,7 +25,7 @@ from scipy.interpolate import interp1d
 from floris.simulation import BaseClass
 from floris.simulation.turbine import (
     SimpleTurbine,
-    CosineLossTurbine
+    CosineLossTurbine,
 )
 
 from floris.type_dec import (
@@ -56,6 +56,7 @@ def power(
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
     correct_cp_ct_for_tilt: bool = False,
+    multidim_condition: tuple | None = None, # Assuming only one condition at a time?
 ) -> NDArrayFloat:
     # TODO:
     # prepares the input; then calls the power function
@@ -96,9 +97,17 @@ def power(
     p = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
+        # Handle possible multidimensional power thrust tables
+        if "power" in turbine_power_thrust_tables[turb_type]: # normal
+            power_thrust_table = turbine_power_thrust_tables[turb_type]
+        else: # assumed multidimensional, use multidim lookup
+            # Currently, only works for single mutlidim condition. May need to 
+            # loop in the case where there are multiple conditions.
+            power_thrust_table = turbine_power_thrust_tables[turb_type][multidim_condition]
+
         # Construct full set of possible keyword arguments for power()
         power_model_kwargs = {
-            "power_thrust_table": turbine_power_thrust_tables[turb_type],
+            "power_thrust_table": power_thrust_table,
             "velocities": velocities,
             "air_density": air_density,
             "yaw_angles": yaw_angles,
@@ -128,7 +137,8 @@ def Ct(
     turbine_power_thrust_tables: dict,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
-    cubature_weights: NDArrayFloat | None = None
+    cubature_weights: NDArrayFloat | None = None,
+    multidim_condition: tuple | None = None, # Assuming only one condition at a time?
 ) -> NDArrayFloat:
 
     """Thrust coefficient of a turbine incorporating the yaw angle.
@@ -177,9 +187,17 @@ def Ct(
     thrust_coefficient = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
+        # Handle possible multidimensional power thrust tables
+        if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]: # normal
+            power_thrust_table = turbine_power_thrust_tables[turb_type]
+        else: # assumed multidimensional, use multidim lookup
+            # Currently, only works for single mutlidim condition. May need to 
+            # loop in the case where there are multiple conditions.
+            power_thrust_table = turbine_power_thrust_tables[turb_type][multidim_condition]
+
         # Construct full set of possible keyword arguments for thrust_coefficient()
         thrust_model_kwargs = {
-            "power_thrust_table": turbine_power_thrust_tables[turb_type],
+            "power_thrust_table": power_thrust_table,
             "velocities": velocities,
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
@@ -210,7 +228,8 @@ def axial_induction(
     turbine_power_thrust_tables: dict, # (turbines)
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
-    cubature_weights: NDArrayFloat | None = None
+    cubature_weights: NDArrayFloat | None = None,
+    multidim_condition: tuple | None = None, # Assuming only one condition at a time?
 ) -> NDArrayFloat:
     """Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
@@ -262,7 +281,8 @@ def axial_induction(
         turbine_power_thrust_tables,
         ix_filter,
         average_method,
-        cubature_weights
+        cubature_weights,
+        multidim_condition
     )
 
     # Then, process the input arguments as needed for this function
@@ -282,6 +302,39 @@ def axial_induction(
             )
         )
     )
+
+def multidim_power_thrust_table_select(
+    multidim_power_thrust_table,
+    conditions,
+) -> list:
+    """
+    Args:
+        power_interps (NDArray[wd, ws, turbines]): The power interpolants generated from the
+            multi-dimensional Cp turbine data for all specified conditions.
+        conditions (dict): The conditions at which to determine which Ct interpolant to use.
+
+    Returns:
+        NDArray: The down selected power interpolants for the selected conditions.
+    """
+    # downselect_power_interps = np.empty_like(power_interps)
+    # # Loop over the wind directions, wind speeds, and turbines, finding the power interpolant
+    # # that is closest to the specified multi-dimensional condition.
+    # for i, findex in enumerate(power_interps):
+    #     for j, turb in enumerate(findex):
+    #         # Get the interpolant keys in float type for comparison
+    #         keys_float = np.array([[float(v) for v in val] for val in turb.keys()])
+
+    #         # Find the nearest key to the specified conditions.
+    #         key_vals = []
+    #         for ii, cond in enumerate(conditions.values()):
+    #             key_vals.append(
+    #                 keys_float[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()]
+    #             )
+
+    #         # Use the constructed key to choose the correct interpolant
+    #         downselect_power_interps[i, j] = turb[tuple(key_vals)]
+
+    return multidim_power_thrust_table[conditions]
 
 TURBINE_MODEL_MAP = {
     "power_thrust_model": {
@@ -369,39 +422,9 @@ class Turbine(BaseClass):
     def _initialize_power_thrust_functions(self) -> None:
         # TODO This validation for the power thrust tables should go in the turbine library
         # since it's preprocessing
-        # Remove any duplicate wind speed entries
-        # _, duplicate_filter = np.unique(self.wind_speed, return_index=True)
-        # self.power = self.power[duplicate_filter]
-        # self.thrust = self.thrust[duplicate_filter]
-        # self.wind_speed = self.wind_speed[duplicate_filter]
-
-        #wind_speeds = self.power_thrust_table["wind_speed"]
-        # self.power_function = interp1d(
-        #     wind_speeds,
-        #     self.power_thrust_table["power"] * 1e3, # Convert to W
-        #     fill_value=0.0,
-        #     bounds_error=False,
-        # )
         turbine_function_model = TURBINE_MODEL_MAP["power_thrust_model"][self.power_thrust_model]
         self.power_function = turbine_function_model.power
         self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
-
-        """
-        Given an array of wind speeds, this function returns an array of the
-        interpolated thrust coefficients from the power / thrust table used
-        to define the Turbine. The values are bound by the range of the input
-        values. Any requested wind speeds outside of the range of input wind
-        speeds are assigned Ct of 0.0001 or 0.9999.
-
-        The fill_value arguments sets (upper, lower) bounds for any values
-        outside of the input range.
-        """
-        # self.thrust_coefficient_function = interp1d(
-        #     wind_speeds,
-        #     self.power_thrust_table["thrust_coefficient"],
-        #     fill_value=(0.0001, 0.9999),
-        #     bounds_error=False,
-        # )
 
     def _initialize_tilt_interpolation(self) -> None:
         # TODO:

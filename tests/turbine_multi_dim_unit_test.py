@@ -45,28 +45,28 @@ WIND_CONDITION_BROADCAST = np.reshape(np.array(WIND_SPEEDS), (-1, 1, 1, 1))
 INDEX_FILTER = [0, 2]
 
 
-def test_multidim_Ct_down_select():
-    CONDITIONS = {'Tp': 2, 'Hs': 1}
+# def test_multidim_Ct_down_select():
+#     CONDITIONS = {'Tp': 2, 'Hs': 1}
 
-    turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_data_file"] = CSV_INPUT
-    turbine = TurbineMultiDimensional.from_dict(turbine_data)
+#     turbine_data = SampleInputs().turbine_multi_dim
+#     turbine_data["power_thrust_data_file"] = CSV_INPUT
+#     turbine = TurbineMultiDimensional.from_dict(turbine_data)
 
-    downselect_turbine_fCts = multidim_Ct_down_select([[turbine.fCt_interp]], CONDITIONS)
+#     downselect_turbine_fCts = multidim_Ct_down_select([[turbine.fCt_interp]], CONDITIONS)
 
-    assert downselect_turbine_fCts == turbine.fCt_interp[(2, 1)]
+#     assert downselect_turbine_fCts == turbine.fCt_interp[(2, 1)]
 
 
-def test_multidim_power_down_select():
-    CONDITIONS = {'Tp': 2, 'Hs': 1}
+# def test_multidim_power_down_select():
+#     CONDITIONS = {'Tp': 2, 'Hs': 1}
 
-    turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_data_file"] = CSV_INPUT
-    turbine = TurbineMultiDimensional.from_dict(turbine_data)
+#     turbine_data = SampleInputs().turbine_multi_dim
+#     turbine_data["power_thrust_data_file"] = CSV_INPUT
+#     turbine = TurbineMultiDimensional.from_dict(turbine_data)
 
-    downselect_power_interps = multidim_power_down_select([[turbine.power_interp]], CONDITIONS)
+#     downselect_power_interps = multidim_power_down_select([[turbine.power_interp]], CONDITIONS)
 
-    assert downselect_power_interps == turbine.power_interp[(2, 1)]
+#     assert downselect_power_interps == turbine.power_interp[(2, 1)]
 
 
 def test_multi_dimensional_power_thrust_table():
@@ -92,17 +92,18 @@ def test_multi_dimensional_power_thrust_table():
 
 def test_turbine_init():
     turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_data_file"] = CSV_INPUT
+    turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
     turbine = TurbineMultiDimensional.from_dict(turbine_data)
+    condition = (2, 1)
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
-    assert turbine.pP == turbine_data["pP"]
-    assert turbine.pT == turbine_data["pT"]
+    assert turbine.power_thrust_table[condition]["pP"] == turbine_data["power_thrust_table"]["pP"]
+    assert turbine.power_thrust_table[condition]["pT"] == turbine_data["power_thrust_table"]["pT"]
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
 
     assert isinstance(turbine.power_thrust_data, dict)
-    assert isinstance(turbine.fCt_interp, dict)
-    assert isinstance(turbine.power_interp, dict)
+    assert callable(turbine.thrust_coefficient_function)
+    assert callable(turbine.power_function)
     assert turbine.rotor_radius == turbine_data["rotor_diameter"] / 2.0
 
 

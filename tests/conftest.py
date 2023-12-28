@@ -380,9 +380,11 @@ class SampleInputs:
         self.turbine_floating["correct_cp_ct_for_tilt"] = True
 
         self.turbine_multi_dim = copy.deepcopy(self.turbine)
-        del self.turbine_multi_dim['power_thrust_table']
+        del self.turbine_multi_dim['power_thrust_table']['power']
+        del self.turbine_multi_dim['power_thrust_table']['thrust_coefficient']
+        del self.turbine_multi_dim['power_thrust_table']['wind_speed']
         self.turbine_multi_dim["multi_dimensional_cp_ct"] = True
-        self.turbine_multi_dim["power_thrust_data_file"] = ""
+        self.turbine_multi_dim['power_thrust_table']["power_thrust_data_file"] = ""
 
         self.farm = {
             "layout_x": X_COORDS,

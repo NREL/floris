@@ -30,6 +30,7 @@ from floris.simulation import (
     compute_tilt_angles_for_floating_turbines,
     Turbine,
 )
+
 from floris.type_dec import (
     convert_to_path,
     NDArrayBool,
@@ -441,7 +442,13 @@ class TurbineMultiDimensional(Turbine):
     condition_keys: list[str] = field(init=False, factory=list)
 
     def __attrs_post_init__(self) -> None:
-        super().__post_init__()
+        super().__attrs_post_init__()
+        self._initialize_power_thrust_table()
+
+    def _initialize_power_thrust_table(self):
+        # Collect reference information
+        power_thrust_table_ref = copy.deepcopy(self.power_thrust_table)
+        self.power_thrust_data_file = power_thrust_table_ref.pop("power_thrust_data_file")
 
         # Solidify the data file path and name
         self.power_thrust_data_file = self.turbine_library_path / self.power_thrust_data_file
@@ -452,10 +459,6 @@ class TurbineMultiDimensional(Turbine):
         # Build the multi-dimensional power/thrust table
         self.power_thrust_data = MultiDimensionalPowerThrustTable.from_dataframe(df)
 
-        # Create placeholders for the interpolation functions
-        self.fCt_interp = {}
-        self.power_interp = {}
-
         # Down-select the DataFrame to have just the ws, Cp, and Ct values
         index_col = df.columns.values[:-3]
         self.condition_keys = index_col.tolist()
@@ -463,36 +466,21 @@ class TurbineMultiDimensional(Turbine):
 
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
         # the Ct and power interpolants.
+        self.power_thrust_table = {} # Reset
         for key in df2.index.unique():
             # Select the correct ws/Cp/Ct data
             data = df2.loc[key]
 
             # Build the interpolants
-            wind_speeds = data['ws'].values
-            cp_interp = interp1d(
-                wind_speeds,
-                data['Cp'].values,
-                fill_value=(0.0, 1.0),
-                bounds_error=False,
-            )
-            self.power_interp.update({
-                key: interp1d(
-                    wind_speeds,
-                    (
-                        0.5 * self.rotor_area
-                        * cp_interp(wind_speeds)
-                        * self.generator_efficiency
-                        * wind_speeds ** 3
-                    ),
-                    bounds_error=False,
-                    fill_value=0
-                )
+            self.power_thrust_table.update({
+                key: {
+                    "wind_speeds": data['ws'].values,
+                    "power": (
+                        0.5 * self.rotor_area * data['Cp'].values * self.generator_efficiency
+                        * data['ws'].values ** 3
+                    ), # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
+                    "thrust_coefficient": data['Ct'].values,
+                    **power_thrust_table_ref
+                },
             })
-            self.fCt_interp.update({
-                key: interp1d(
-                    wind_speeds,
-                    data['Ct'].values,
-                    fill_value=(0.0001, 0.9999),
-                    bounds_error=False,
-                )
-            })
+            # Add reference information at the lower level
