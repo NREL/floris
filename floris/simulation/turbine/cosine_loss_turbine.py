@@ -6,6 +6,8 @@ from scipy.interpolate import interp1d
 import numpy as np
 import copy
 
+from floris.simulation import BaseModel
+
 from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
@@ -24,9 +26,8 @@ from floris.type_dec import (
 )
 from floris.utilities import cosd
 
-class CosineLossTurbine():
+class CosineLossTurbine(BaseModel):
 
-    @staticmethod
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -42,7 +43,7 @@ class CosineLossTurbine():
         # Construct power interpolant
         power_interpolator = interp1d(
             power_thrust_table["wind_speed"],
-            power_thrust_table["power"] * 1e3, # Convert to W
+            power_thrust_table["power"],
             fill_value=0.0,
             bounds_error=False,
         )
@@ -76,11 +77,10 @@ class CosineLossTurbine():
         )
         
         # Compute power
-        power = power_interpolator(rotor_effective_velocities)
+        power = power_interpolator(rotor_effective_velocities) * 1e3 # Convert to W
         
         return power
 
-    @staticmethod
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,

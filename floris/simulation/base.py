@@ -19,6 +19,7 @@ Defines the BaseClass parent class for all models to be based upon.
 
 from abc import abstractmethod
 from enum import Enum
+from selectors import BaseSelector
 from typing import (
     Any,
     Dict,
@@ -76,3 +77,16 @@ class BaseModel(BaseClass):
     @abstractmethod
     def function() -> None:
         raise NotImplementedError("BaseModel.function")
+
+@define
+class BaseTurbineModel(BaseClass):
+
+    @staticmethod
+    @abstractmethod
+    def power() -> None:
+        raise NotImplementedError("BaseTurbineModel.power")
+
+    @staticmethod
+    @abstractmethod
+    def thrust_coefficient() -> None:
+        raise NotImplementedError("BaseTurbineModel.thrust_coefficient")

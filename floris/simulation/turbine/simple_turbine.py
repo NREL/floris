@@ -5,6 +5,8 @@ from collections.abc import Iterable
 from scipy.interpolate import interp1d
 import numpy as np
 
+from floris.simulation import BaseModel
+
 from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     rotor_velocity_air_density_correction,
@@ -19,9 +21,8 @@ from floris.type_dec import (
     NDArrayObject,
 )
 
-class SimpleTurbine():
+class SimpleTurbine(BaseModel):
 
-    @staticmethod
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -33,7 +34,7 @@ class SimpleTurbine():
         # Construct power interpolant
         power_interpolator = interp1d(
             power_thrust_table["wind_speed"],
-            power_thrust_table["power"] * 1e3, # Convert to W
+            power_thrust_table["power"],
             fill_value=0.0,
             bounds_error=False,
         )
@@ -52,11 +53,10 @@ class SimpleTurbine():
         )
         
         # Compute power
-        power = power_interpolator(rotor_effective_velocities)
+        power = power_interpolator(rotor_effective_velocities) * 1e3 # Convert to W
         
         return power
 
-    @staticmethod
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
