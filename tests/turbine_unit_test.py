@@ -367,11 +367,11 @@ def test_axial_induction():
     wind_speed = 10.0
     ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 3, 3)), # 1 findex, 1 Turbine
-        yaw_angle=np.zeros((1, 1)),
-        tilt_angle=np.ones((1, 1)) * 5.0,
+        yaw_angles=np.zeros((1, 1)),
+        tilt_angles=np.ones((1, 1)) * 5.0,
         ref_tilt=np.ones((1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
-        tilt_interp={turbine.turbine_type: None},
+        tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
         turbine_type_map=turbine_type_map[0,0],
         turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
@@ -381,11 +381,11 @@ def test_axial_induction():
     # Multiple turbines with ix filter
     ai = axial_induction(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 12 x 4 x 3 x 3
-        yaw_angle=np.zeros((1, N_TURBINES)),
-        tilt_angle=np.ones((1, N_TURBINES)) * 5.0,
+        yaw_angles=np.zeros((1, N_TURBINES)),
+        tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
         ref_tilt=np.ones((1, N_TURBINES)) * 5.0,
         fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
-        tilt_interp={turbine.turbine_type: None},
+        tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
         turbine_type_map=turbine_type_map,
         turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
@@ -400,11 +400,11 @@ def test_axial_induction():
     # Single floating turbine; note that 'tilt_interp' is not set to None
     ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
-        yaw_angle=np.zeros((1, 1)),
-        tilt_angle=np.ones((1, 1)) * 5.0,
+        yaw_angles=np.zeros((1, 1)),
+        tilt_angles=np.ones((1, 1)) * 5.0,
         ref_tilt=np.ones((1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine_floating.thrust_coefficient_function},
-        tilt_interp={turbine_floating.turbine_type: turbine_floating.tilt_interp},
+        tilt_interps={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[True]]),
         turbine_type_map=turbine_type_map[0,0],
         turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},

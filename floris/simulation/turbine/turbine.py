@@ -350,11 +350,11 @@ def Ct(
 
 def axial_induction(
     velocities: NDArrayFloat,  # (findex, turbines, grid, grid)
-    yaw_angle: NDArrayFloat,  # (findex, turbines)
-    tilt_angle: NDArrayFloat,  # (findex, turbines)
+    yaw_angles: NDArrayFloat,  # (findex, turbines)
+    tilt_angles: NDArrayFloat,  # (findex, turbines)
     ref_tilt: NDArrayFloat,
     fCt: dict,  # (turbines)
-    tilt_interp: NDArrayObject,  # (turbines)
+    tilt_interps: NDArrayObject,  # (turbines)
     correct_cp_ct_for_tilt: NDArrayBool, # (findex, turbines)
     turbine_type_map: NDArrayObject, # (findex, turbines)
     turbine_power_thrust_tables: dict, # (turbines)
@@ -388,22 +388,22 @@ def axial_induction(
         Union[float, NDArrayFloat]: [description]
     """
 
-    if isinstance(yaw_angle, list):
-        yaw_angle = np.array(yaw_angle)
+    if isinstance(yaw_angles, list):
+        yaw_angles = np.array(yaw_angles)
 
     # TODO: Should the tilt_angle used for the return calculation be modified the same as the
     # tilt_angle in Ct, if the user has supplied a tilt/wind_speed table?
-    if isinstance(tilt_angle, list):
-        tilt_angle = np.array(tilt_angle)
+    if isinstance(tilt_angles, list):
+        tilt_angles = np.array(tilt_angles)
 
     # Get Ct first before modifying any data
     thrust_coefficient = Ct(
         velocities,
-        yaw_angle,
-        tilt_angle,
+        yaw_angles,
+        tilt_angles,
         ref_tilt,
         fCt,
-        tilt_interp,
+        tilt_interps,
         correct_cp_ct_for_tilt,
         turbine_type_map,
         turbine_power_thrust_tables,
@@ -414,17 +414,17 @@ def axial_induction(
 
     # Then, process the input arguments as needed for this function
     if ix_filter is not None:
-        yaw_angle = yaw_angle[:, ix_filter]
-        tilt_angle = tilt_angle[:, ix_filter]
+        yaw_angles = yaw_angles[:, ix_filter]
+        tilt_angles = tilt_angles[:, ix_filter]
         ref_tilt = ref_tilt[:, ix_filter]
 
     return (
         0.5
-        / (cosd(yaw_angle)
-        * cosd(tilt_angle - ref_tilt))
+        / (cosd(yaw_angles)
+        * cosd(tilt_angles - ref_tilt))
         * (
             1 - np.sqrt(
-                1 - thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt)
+                1 - thrust_coefficient * cosd(yaw_angles) * cosd(tilt_angles - ref_tilt)
             )
         )
     )
