@@ -5,7 +5,7 @@ from collections.abc import Iterable
 from scipy.interpolate import interp1d
 import numpy as np
 
-from floris.simulation.turbine.rotor_effective_velocity import (
+from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     rotor_velocity_air_density_correction,
 )

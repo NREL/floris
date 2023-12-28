@@ -31,7 +31,7 @@ from floris.simulation import (
     Turbine,
     TurbineMultiDimensional,
 )
-from floris.simulation.turbine.rotor_effective_velocity import (
+from floris.simulation.turbine.rotor_velocity import (
     compute_tilt_angles_for_floating_turbines_map
 )
 from floris.type_dec import (

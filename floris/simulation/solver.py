@@ -26,7 +26,7 @@ from floris.simulation import (
     PointsGrid,
     TurbineGrid,
 )
-from floris.simulation.turbine.rotor_effective_velocity import average_velocity
+from floris.simulation.turbine.rotor_velocity import average_velocity
 from floris.simulation.turbine_multi_dim import (
     axial_induction_multidim,
     Ct_multidim,

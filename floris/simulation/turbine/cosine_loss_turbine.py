@@ -6,9 +6,7 @@ from scipy.interpolate import interp1d
 import numpy as np
 import copy
 
-from floris.simulation.turbine import rotor_effective_velocity
-
-from floris.simulation.turbine.rotor_effective_velocity import (
+from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
     rotor_velocity_air_density_correction,

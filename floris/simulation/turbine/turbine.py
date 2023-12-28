@@ -37,139 +37,10 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import cosd
-from floris.simulation.turbine.rotor_effective_velocity import (
+from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines
 )
-
-
-# def _rotor_velocity_yaw_correction(
-#     pP: float,
-#     yaw_angle: NDArrayFloat,
-#     rotor_effective_velocities: NDArrayFloat,
-# ) -> NDArrayFloat:
-#     # Compute the rotor effective velocity adjusting for yaw settings
-#     pW = pP / 3.0  # Convert from pP to w
-#     rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angle) ** pW
-
-#     return rotor_effective_velocities
-
-
-# def _rotor_velocity_tilt_correction(
-#     turbine_type_map: NDArrayObject,
-#     tilt_angle: NDArrayFloat,
-#     ref_tilt: NDArrayFloat,
-#     pT: float,
-#     tilt_interp: NDArrayObject,
-#     correct_cp_ct_for_tilt: NDArrayBool,
-#     rotor_effective_velocities: NDArrayFloat,
-# ) -> NDArrayFloat:
-#     # Compute the tilt, if using floating turbines
-#     old_tilt_angle = copy.deepcopy(tilt_angle)
-#     tilt_angle = compute_tilt_angles_for_floating_turbines(
-#         turbine_type_map,
-#         tilt_angle,
-#         tilt_interp,
-#         rotor_effective_velocities,
-#     )
-#     # Only update tilt angle if requested (if the tilt isn't accounted for in the Cp curve)
-#     tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
-
-#     # Compute the rotor effective velocity adjusting for tilt
-#     relative_tilt = tilt_angle - ref_tilt
-#     rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
-#     return rotor_effective_velocities
-
-
-# def compute_tilt_angles_for_floating_turbines(
-#     turbine_type_map: NDArrayObject,
-#     tilt_angle: NDArrayFloat,
-#     tilt_interp: dict[str, interp1d],
-#     rotor_effective_velocities: NDArrayFloat,
-# ) -> NDArrayFloat:
-#     # Loop over each turbine type given to get tilt angles for all turbines
-#     tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
-#     turb_types = np.unique(turbine_type_map)
-#     for turb_type in turb_types:
-#         # If no tilt interpolation is specified, assume no modification to tilt
-#         if tilt_interp[turb_type] is None:
-#             # TODO should this be break? Should it be continue? Do we want to support mixed
-#             # fixed-bottom and floating? Or non-tilting floating?
-#             pass
-#         # Using a masked array, apply the tilt angle for all turbines of the current
-#         # type to the main tilt angle array
-#         else:
-#             tilt_angles += (
-#                 tilt_interp[turb_type](rotor_effective_velocities)
-#                 * (turbine_type_map == turb_type)
-#             )
-
-#     # TODO: Not sure if this is the best way to do this? Basically replaces the initialized
-#     # tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine
-#     # definition contained  a wind_speed/tilt table definition)
-#     if not tilt_angles.all() == 0.0:
-#         tilt_angle = tilt_angles
-
-#     return tilt_angle
-
-
-# def rotor_effective_velocity(
-#     air_density: float,
-#     ref_air_density: float,
-#     velocities: NDArrayFloat,
-#     yaw_angle: NDArrayFloat,
-#     tilt_angle: NDArrayFloat,
-#     ref_tilt: NDArrayFloat,
-#     pP: float,
-#     pT: float,
-#     tilt_interp: NDArrayObject,
-#     correct_cp_ct_for_tilt: NDArrayBool,
-#     turbine_type_map: NDArrayObject,
-#     ix_filter: NDArrayInt | Iterable[int] | None = None,
-#     average_method: str = "cubic-mean",
-#     cubature_weights: NDArrayFloat | None = None
-# ) -> NDArrayFloat:
-
-#     if isinstance(yaw_angle, list):
-#         yaw_angle = np.array(yaw_angle)
-#     if isinstance(tilt_angle, list):
-#         tilt_angle = np.array(tilt_angle)
-
-#     # Down-select inputs if ix_filter is given
-#     if ix_filter is not None:
-#         velocities = velocities[:, ix_filter]
-#         yaw_angle = yaw_angle[:, ix_filter]
-#         tilt_angle = tilt_angle[:, ix_filter]
-#         ref_tilt = ref_tilt[:, ix_filter]
-#         pP = pP[:, ix_filter]
-#         pT = pT[:, ix_filter]
-#         turbine_type_map = turbine_type_map[:, ix_filter]
-
-#     # Compute the rotor effective velocity adjusting for air density
-#     average_velocities = average_velocity(
-#         velocities,
-#         method=average_method,
-#         cubature_weights=cubature_weights
-#     )
-#     rotor_effective_velocities = (air_density/ref_air_density)**(1/3) * average_velocities
-
-#     # Compute the rotor effective velocity adjusting for yaw settings
-#     rotor_effective_velocities = _rotor_velocity_yaw_correction(
-#         pP, yaw_angle, rotor_effective_velocities
-#     )
-
-#     # Compute the tilt, if using floating turbines
-#     rotor_effective_velocities = _rotor_velocity_tilt_correction(
-#         turbine_type_map,
-#         tilt_angle,
-#         ref_tilt,
-#         pT,
-#         tilt_interp,
-#         correct_cp_ct_for_tilt,
-#         rotor_effective_velocities,
-#     )
-
-#     return rotor_effective_velocities
 
 
 def power(
@@ -302,24 +173,6 @@ def Ct(
         turbine_type_map = turbine_type_map[:, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
-    # average_velocities = average_velocity(
-    #     velocities,
-    #     method=average_method,
-    #     cubature_weights=cubature_weights
-    # )
-
-    # Compute the tilt, if using floating turbines
-    # # TODO: THIS GOES TO COSINE_LOSS MODEL
-    # old_tilt_angle = copy.deepcopy(tilt_angle)
-    # tilt_angle = compute_tilt_angles_for_floating_turbines(
-    #     turbine_type_map,
-    #     tilt_angle,
-    #     tilt_interp,
-    #     average_velocities,
-    # )
-    # # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
-    # tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
-
     # Loop over each turbine type given to get thrust coefficient for all turbines
     thrust_coefficient = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
@@ -341,9 +194,6 @@ def Ct(
         thrust_coefficient += (
             fCt[turb_type](**thrust_model_kwargs) * (turbine_type_map == turb_type)
         )
-    
-    # # TODO: THIS GOES TO COSINE_LOSS MODEL
-    # effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt)
     
     return thrust_coefficient
 
@@ -387,6 +237,9 @@ def axial_induction(
     Returns:
         Union[float, NDArrayFloat]: [description]
     """
+
+    # TODO: Should the axial induction factor be defined on the turbine submodel, as 
+    # thrust_coefficient() and power() are?
 
     if isinstance(yaw_angles, list):
         yaw_angles = np.array(yaw_angles)
