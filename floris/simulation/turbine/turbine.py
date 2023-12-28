@@ -418,6 +418,7 @@ def axial_induction(
         tilt_angles = tilt_angles[:, ix_filter]
         ref_tilt = ref_tilt[:, ix_filter]
 
+    # TODO: Cosine yaw loss hardcoded here!
     return (
         0.5
         / (cosd(yaw_angles)
