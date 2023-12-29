@@ -16,8 +16,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.simulation import turbine
-from floris.tools import build_turbine_dict, FlorisInterface
+from floris.simulation.turbine import build_cosine_loss_turbine_dict
+from floris.tools import FlorisInterface
 
 
 """
@@ -39,7 +39,7 @@ turbine_data_dict = {
     "thrust_coefficient":[0, 0.9, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.25, 0.2]
 }
 
-turbine_dict = build_turbine_dict(
+turbine_dict = build_cosine_loss_turbine_dict(
     turbine_data_dict,
     "example_turbine",
     file_name=None,
@@ -70,7 +70,7 @@ powers = fi.get_farm_power()
 
 specified_powers = (
     np.array(turbine_data_dict["power_coefficient"])
-    *0.5*turbine_dict["ref_air_density"]
+    *0.5*turbine_dict["power_thrust_table"]["ref_air_density"]
     *turbine_dict["rotor_diameter"]**2*np.pi/4
     *np.array(turbine_data_dict["wind_speed"])**3
 )/1000
