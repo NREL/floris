@@ -20,10 +20,10 @@ from pathlib import Path
 
 import attrs
 import numpy as np
+import pandas as pd
 from attrs import define, field
 from flatten_dict import flatten
 from scipy.interpolate import interp1d
-import pandas as pd
 
 from floris.simulation import BaseClass
 from floris.simulation.turbine import (
@@ -422,7 +422,7 @@ class Turbine(BaseClass):
     power_function: Callable = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
 
-    # Only used by mutlidimensional turbines 
+    # Only used by mutlidimensional turbines
     turbine_library_path: Path = field(
         default=Path(__file__).parents[2] / "turbine_library",
         converter=convert_to_path,
@@ -507,7 +507,7 @@ class Turbine(BaseClass):
                 },
             })
             # Add reference information at the lower level
-        
+
         # Set on-object version
         self.power_thrust_table = power_thrust_table_
 
@@ -522,12 +522,12 @@ class Turbine(BaseClass):
             if isinstance(list(value.keys())[0], tuple):
                 value = list(value.values())[0] # Check the first entry of multidim
             elif "power_thrust_data_file" in value.keys():
-                return None            
+                return None
             else:
                 raise ValueError(
                     "power_thrust_data_file must be defined if multi_dimensional_cp_ct is True."
                 )
-            
+
         if not {"wind_speed", "power", "thrust_coefficient"} <= set(value.keys()):
             raise ValueError(
                 """
