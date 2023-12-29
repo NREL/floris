@@ -12,8 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from collections.abc import Callable, Iterable
 import os.path
+from collections.abc import Callable, Iterable
 
 import numpy as np
 import yaml

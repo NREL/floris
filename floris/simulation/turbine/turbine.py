@@ -34,6 +34,7 @@ from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
 )
+from floris.simulation.turbine.turbine_utilities import select_multidim_condition
 from floris.type_dec import (
     convert_to_path,
     floris_numeric_dict_converter,
@@ -44,7 +45,6 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import cosd
-from floris.simulation.turbine.turbine_utilities import select_multidim_condition
 
 
 TURBINE_MODEL_MAP = {
@@ -91,7 +91,7 @@ def power(
             to determine a rotor-average wind speed. Defaults to "cubic-mean".
         cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to
             None.
-        multidim_condition (tuple | None): The condition tuple used to select the appropriate 
+        multidim_condition (tuple | None): The condition tuple used to select the appropriate
             thrust coefficient relationship for multidimensional power/thrust tables. Defaults to
             None.
 
@@ -171,7 +171,7 @@ def Ct(
 ) -> NDArrayFloat:
 
     """Thrust coefficient of a turbine.
-    The value is obtained from the coefficient of thrust specified by the callables specified 
+    The value is obtained from the coefficient of thrust specified by the callables specified
     in fCt.
 
     Args:
@@ -194,7 +194,7 @@ def Ct(
             to determine a rotor-average wind speed. Defaults to "cubic-mean".
         cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to
             None.
-        multidim_condition (tuple | None): The condition tuple used to select the appropriate 
+        multidim_condition (tuple | None): The condition tuple used to select the appropriate
             thrust coefficient relationship for multidimensional power/thrust tables. Defaults to
             None.
 
@@ -296,7 +296,7 @@ def axial_induction(
             to determine a rotor-average wind speed. Defaults to "cubic-mean".
         cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to
             None.
-        multidim_condition (tuple | None): The condition tuple used to select the appropriate 
+        multidim_condition (tuple | None): The condition tuple used to select the appropriate
             thrust coefficient relationship for multidimensional power/thrust tables. Defaults to
             None.
 

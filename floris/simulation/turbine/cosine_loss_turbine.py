@@ -15,17 +15,25 @@ from floris.simulation.turbine.rotor_velocity import (
     rotor_velocity_yaw_correction,
 )
 from floris.type_dec import (
-    floris_numeric_dict_converter,
-    NDArrayBool,
-    NDArrayFilter,
     NDArrayFloat,
-    NDArrayInt,
     NDArrayObject,
 )
 from floris.utilities import cosd
 
 
 class CosineLossTurbine(BaseModel):
+    """
+    Static class defining an actuator disk turbine model that may be misaligned with the flow.
+    Nonzero tilt and yaw angles are handled via cosine relationships, with the power lost to yawing
+    defined by the pP exponent. This turbine submodel is the default, and matches the turbine
+    model in FLORIS v3.
+
+    As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
+    which are called by power() and Ct() on turbine.py, respectively. This class is not intended
+    to be instantiated; it simply defines a library of static methods.
+
+    TODO: Should the turbine submodels each implement axial_induction()?
+    """
 
     def power(
         power_thrust_table: dict,

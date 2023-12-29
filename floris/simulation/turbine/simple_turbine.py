@@ -11,16 +11,21 @@ from floris.simulation.turbine.rotor_velocity import (
     rotor_velocity_air_density_correction,
 )
 from floris.type_dec import (
-    floris_numeric_dict_converter,
-    NDArrayBool,
-    NDArrayFilter,
     NDArrayFloat,
-    NDArrayInt,
-    NDArrayObject,
 )
 
 
 class SimpleTurbine(BaseModel):
+    """
+    Static class defining an actuator disk turbine model that is fully aligned with the flow. No
+    handling for yaw or tilt angles.
+
+    As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
+    which are called by power() and Ct() on turbine.py, respectively. This class is not intended
+    to be instantiated; it simply defines a library of static methods.
+
+    TODO: Should the turbine submodels each implement axial_induction()?
+    """
 
     def power(
         power_thrust_table: dict,
