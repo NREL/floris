@@ -86,5 +86,3 @@ class SimpleTurbine(BaseModel):
         thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
 
         return thrust_coefficient
-
-    # TODO: Implement prepare functions

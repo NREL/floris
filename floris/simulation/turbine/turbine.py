@@ -444,8 +444,6 @@ class Turbine(BaseClass):
             self.power_thrust_table = floris_numeric_dict_converter(self.power_thrust_table)
 
     def _initialize_power_thrust_functions(self) -> None:
-        # TODO This validation for the power thrust tables should go in the turbine library
-        # since it's preprocessing
         turbine_function_model = TURBINE_MODEL_MAP["power_thrust_model"][self.power_thrust_model]
         self.power_function = turbine_function_model.power
         self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
