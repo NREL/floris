@@ -1,2 +1,4 @@
 from floris.simulation.turbine.cosine_loss_turbine import CosineLossTurbine
 from floris.simulation.turbine.simple_turbine import SimpleTurbine
+
+from .turbine_utilities import build_cosine_loss_turbine_dict, check_smooth_power_curve

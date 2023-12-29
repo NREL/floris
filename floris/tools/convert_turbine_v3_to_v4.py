@@ -27,7 +27,7 @@ import sys
 from ipaddress import v4_int_to_packed
 from pathlib import Path
 
-from floris.tools import build_cosine_loss_turbine_dict, check_smooth_power_curve
+from floris.simulation.turbine import build_cosine_loss_turbine_dict, check_smooth_power_curve
 from floris.utilities import load_yaml
 
 
