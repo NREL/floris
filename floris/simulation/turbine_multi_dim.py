@@ -474,10 +474,10 @@ class TurbineMultiDimensional(Turbine):
             # Build the interpolants
             self.power_thrust_table.update({
                 key: {
-                    "wind_speeds": data['ws'].values,
+                    "wind_speed": data['ws'].values,
                     "power": (
                         0.5 * self.rotor_area * data['Cp'].values * self.generator_efficiency
-                        * data['ws'].values ** 3
+                        * data['ws'].values ** 3 * power_thrust_table_ref["ref_air_density"] / 1000
                     ), # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
                     "thrust_coefficient": data['Ct'].values,
                     **power_thrust_table_ref

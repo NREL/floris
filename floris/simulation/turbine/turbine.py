@@ -90,8 +90,14 @@ def power(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        velocities = velocities[:, ix_filter, :, :]
+        velocities = velocities[:, ix_filter]
+        yaw_angles = yaw_angles[:, ix_filter]
+        tilt_angles = tilt_angles[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
+        if type(correct_cp_ct_for_tilt) is bool:
+            pass
+        else:
+            correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
     # Loop over each turbine type given to get power for all turbines
     p = np.zeros(np.shape(velocities)[0:2])
@@ -120,7 +126,7 @@ def power(
 
         # Using a masked array, apply the power for all turbines of the current
         # type to the main power
-        p += (power_interps[turb_type](**power_model_kwargs) * (turbine_type_map == turb_type))
+        p += power_interps[turb_type](**power_model_kwargs) * (turbine_type_map == turb_type)
 
     return p
 
@@ -179,7 +185,7 @@ def Ct(
         velocities = velocities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
-        ref_tilt = ref_tilt[:, ix_filter]
+        ref_tilt = ref_tilt[:, ix_filter] # TODO: remove this argument; isn't used
         turbine_type_map = turbine_type_map[:, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
