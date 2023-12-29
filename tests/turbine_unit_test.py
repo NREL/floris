@@ -187,7 +187,6 @@ def test_ct():
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
-        ref_tilt=np.ones((1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
@@ -207,7 +206,6 @@ def test_ct():
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 12 x 4 x 3 x 3
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
-        ref_tilt=np.ones((1, N_TURBINES)) * 5.0,
         fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
@@ -229,7 +227,6 @@ def test_ct():
         velocities=wind_speed * np.ones((1, 1, 3, 3)), # One findex, one turbine
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
-        ref_tilt=np.ones((1, 1)) * 5.0,
         fCt={turbine.turbine_type: turbine_floating.thrust_coefficient_function},
         tilt_interps={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[True]]),

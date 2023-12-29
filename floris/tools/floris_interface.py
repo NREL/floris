@@ -652,7 +652,6 @@ class FlorisInterface(LoggingManager):
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt=self.floris.farm.ref_tilts,
             fCt=self.floris.farm.turbine_fCts,
             tilt_interp=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,

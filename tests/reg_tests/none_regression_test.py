@@ -125,7 +125,6 @@ def test_regression_tandem(sample_inputs_fixture):
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
         floris.farm.turbine_fCts,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,

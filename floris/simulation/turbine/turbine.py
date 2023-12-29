@@ -135,7 +135,6 @@ def Ct(
     velocities: NDArrayFloat,
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
-    ref_tilt: NDArrayFloat,
     fCt: dict,
     tilt_interps: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
@@ -185,9 +184,11 @@ def Ct(
         velocities = velocities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
-        ref_tilt = ref_tilt[:, ix_filter] # TODO: remove this argument; isn't used
         turbine_type_map = turbine_type_map[:, ix_filter]
-        correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
+        if type(correct_cp_ct_for_tilt) is bool:
+            pass
+        else:
+            correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     thrust_coefficient = np.zeros(np.shape(velocities)[0:2])
@@ -279,7 +280,6 @@ def axial_induction(
         velocities,
         yaw_angles,
         tilt_angles,
-        ref_tilt,
         fCt,
         tilt_interps,
         correct_cp_ct_for_tilt,
@@ -297,7 +297,8 @@ def axial_induction(
         tilt_angles = tilt_angles[:, ix_filter]
         ref_tilt = ref_tilt[:, ix_filter]
 
-    # TODO: Cosine yaw loss hardcoded here!
+    # TODO: Cosine yaw loss hardcoded here? Is this what we want?
+    # also, assumes the same ref_tilt throughout?
     return (
         0.5
         / (cosd(yaw_angles)
