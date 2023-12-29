@@ -650,14 +650,16 @@ class FlorisInterface(LoggingManager):
     def get_turbine_Cts(self) -> NDArrayFloat:
         turbine_Cts = Ct(
             velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            tilt_angle=self.floris.farm.tilt_angles,
+            yaw_angles=self.floris.farm.yaw_angles,
+            tilt_angles=self.floris.farm.tilt_angles,
             fCt=self.floris.farm.turbine_fCts,
-            tilt_interp=self.floris.farm.turbine_tilt_interps,
+            tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
             average_method=self.floris.grid.average_method,
             cubature_weights=self.floris.grid.cubature_weights,
+            multidim_condition=self.floris.flow_field.multidim_conditions
         )
         return turbine_Cts
 
@@ -671,8 +673,10 @@ class FlorisInterface(LoggingManager):
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
             average_method=self.floris.grid.average_method,
             cubature_weights=self.floris.grid.cubature_weights,
+            multidim_condition=self.floris.flow_field.multidim_conditions
         )
         return turbine_ais
 
