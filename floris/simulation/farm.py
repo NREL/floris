@@ -29,7 +29,6 @@ from floris.simulation import (
     BaseClass,
     State,
     Turbine,
-    TurbineMultiDimensional,
 )
 from floris.simulation.turbine.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
 from floris.type_dec import (
@@ -95,7 +94,7 @@ class Farm(BaseClass):
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    turbine_map: List[Turbine | TurbineMultiDimensional] = field(init=False, factory=list)
+    turbine_map: List[Turbine] = field(init=False, factory=list)
 
     turbine_type_map: NDArrayObject = field(init=False, factory=list)
     turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
@@ -283,18 +282,7 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        multi_key = "multi_dimensional_cp_ct"
-        if multi_key in self.turbine_definitions[0] and self.turbine_definitions[0][multi_key]:
-            self.turbine_map = []
-            for turb in self.turbine_definitions:
-                _turb = {**turb, **{"turbine_library_path": self.internal_turbine_library}}
-                try:
-                    self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
-                except FileNotFoundError:
-                    _turb["turbine_library_path"] = self.turbine_library_path
-                    self.turbine_map.append(TurbineMultiDimensional.from_dict(_turb))
-        else:
-            self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
+        self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
     def construct_turbine_fCts(self):
         self.turbine_fCts = {

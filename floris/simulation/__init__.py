@@ -48,9 +48,6 @@ from .turbine.rotor_velocity import (
     rotor_effective_velocity,
     compute_tilt_angles_for_floating_turbines,
 )
-from .turbine_multi_dim import (
-    TurbineMultiDimensional
-)
 from .farm import Farm
 from .grid import (
     FlowFieldGrid,
