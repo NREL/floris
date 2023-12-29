@@ -18,6 +18,7 @@ from floris.type_dec import (
 )
 from floris.utilities import cosd
 
+
 def rotor_velocity_yaw_correction(
     pP: float,
     yaw_angles: NDArrayFloat,
@@ -178,7 +179,7 @@ def rotor_velocity_air_density_correction(
     ref_air_density: float,
 ) -> NDArrayFloat:
     # Produce equivalent velocities at the reference air density
-    
+
     return (air_density/ref_air_density)**(1/3) * velocities
 
 def rotor_effective_velocity(

@@ -2,16 +2,14 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from scipy.interpolate import interp1d
 import numpy as np
+from scipy.interpolate import interp1d
 
 from floris.simulation import BaseModel
-
 from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     rotor_velocity_air_density_correction,
 )
-
 from floris.type_dec import (
     floris_numeric_dict_converter,
     NDArrayBool,
@@ -20,6 +18,7 @@ from floris.type_dec import (
     NDArrayInt,
     NDArrayObject,
 )
+
 
 class SimpleTurbine(BaseModel):
 
@@ -51,10 +50,10 @@ class SimpleTurbine(BaseModel):
             air_density=air_density,
             ref_air_density=power_thrust_table["ref_air_density"]
         )
-        
+
         # Compute power
         power = power_interpolator(rotor_effective_velocities) * 1e3 # Convert to W
-        
+
         return power
 
     def thrust_coefficient(
@@ -72,7 +71,7 @@ class SimpleTurbine(BaseModel):
             fill_value=0.0001,
             bounds_error=False,
         )
-        
+
         # Compute the effective wind speed across the rotor
         rotor_average_velocities = average_velocity(
             velocities=velocities,
@@ -81,11 +80,11 @@ class SimpleTurbine(BaseModel):
         )
 
         # TODO: Do we need an air density correction here?
-    
+
         thrust_coefficient = thrust_coefficient_interpolator(rotor_average_velocities)
 
         thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
-        
+
         return thrust_coefficient
-    
+
     # TODO: Implement prepare functions

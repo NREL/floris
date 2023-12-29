@@ -23,13 +23,13 @@ from floris.simulation import (
     Turbine,
     TurbineMultiDimensional,
 )
-from floris.simulation.turbine_multi_dim import (
-    MultiDimensionalPowerThrustTable,
-)
 from floris.simulation.turbine.turbine import (
+    axial_induction,
     Ct,
     power,
-    axial_induction
+)
+from floris.simulation.turbine_multi_dim import (
+    MultiDimensionalPowerThrustTable,
 )
 from tests.conftest import SampleInputs, WIND_SPEEDS
 

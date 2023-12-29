@@ -31,9 +31,7 @@ from floris.simulation import (
     Turbine,
     TurbineMultiDimensional,
 )
-from floris.simulation.turbine.rotor_velocity import (
-    compute_tilt_angles_for_floating_turbines_map
-)
+from floris.simulation.turbine.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
@@ -260,10 +258,14 @@ class Farm(BaseClass):
         self.TSRs = np.array([turb['TSR'] for turb in self.turbine_definitions])
 
     #def construct_turbine_pPs(self):
-    #    self.pPs = np.array([turb['power_thrust_table']['pP'] for turb in self.turbine_definitions])
+    #    self.pPs = np.array(
+    #         [turb['power_thrust_table']['pP'] for turb in self.turbine_definitions]
+    #    )
 
     #def construct_turbine_pTs(self):
-    #    self.pTs = np.array([turb['power_thrust_table']['pT'] for turb in self.turbine_definitions])
+    #    self.pTs = np.array(
+    #         [turb['power_thrust_table']['pT'] for turb in self.turbine_definitions]
+    #    )
 
     # def construct_turbine_ref_air_densities(self):
     #    self.ref_air_densities = np.array([
@@ -311,7 +313,7 @@ class Farm(BaseClass):
         self.turbine_power_interps = {
             turb.turbine_type: turb.power_function for turb in self.turbine_map
         }
-    
+
     def construct_turbine_power_thrust_tables(self):
         self.turbine_power_thrust_tables = {
             turb.turbine_type: turb.power_thrust_table for turb in self.turbine_map

@@ -167,7 +167,7 @@ class Floris(BaseClass):
         # Check for missing values add in version 3.2 and 3.4
         for turbine in self.farm.turbine_definitions:
 
-            # TODO: Rebuild this to be more general; necessary keys may depend 
+            # TODO: Rebuild this to be more general; necessary keys may depend
             # on the turbine model!
 
             """

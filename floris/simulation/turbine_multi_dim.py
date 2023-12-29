@@ -30,7 +30,6 @@ from floris.simulation import (
     compute_tilt_angles_for_floating_turbines,
     Turbine,
 )
-
 from floris.type_dec import (
     convert_to_path,
     NDArrayBool,

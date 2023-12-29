@@ -28,7 +28,6 @@ from floris.simulation import (
     power,
     Turbine,
 )
-
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
@@ -49,7 +48,10 @@ def test_turbine_init():
     assert turbine.power_thrust_table["pT"] == turbine_data["power_thrust_table"]["pT"]
     assert turbine.TSR == turbine_data["TSR"]
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
-    assert turbine.power_thrust_table["ref_air_density"] == turbine_data["power_thrust_table"]["ref_air_density"]
+    assert (
+        turbine.power_thrust_table["ref_air_density"]
+        == turbine_data["power_thrust_table"]["ref_air_density"]
+    )
     assert turbine.power_thrust_table["ref_tilt"] == turbine_data["power_thrust_table"]["ref_tilt"]
     assert np.array_equal(
         turbine.power_thrust_table["wind_speed"],

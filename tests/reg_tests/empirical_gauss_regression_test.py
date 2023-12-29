@@ -547,8 +547,6 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
 
     # farm_avg_velocities = average_velocity(floris.flow_field.u)
     velocities = floris.flow_field.u
-    yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
 
     # farm_eff_velocities = rotor_effective_velocity(
     #     floris.flow_field.air_density,

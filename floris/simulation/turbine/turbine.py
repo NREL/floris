@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import copy
-from collections.abc import Iterable
+from collections.abc import Iterable, Callable
 
 import attrs
 import numpy as np
@@ -24,10 +24,13 @@ from scipy.interpolate import interp1d
 
 from floris.simulation import BaseClass
 from floris.simulation.turbine import (
-    SimpleTurbine,
     CosineLossTurbine,
+    SimpleTurbine,
 )
-
+from floris.simulation.turbine.rotor_velocity import (
+    average_velocity,
+    compute_tilt_angles_for_floating_turbines,
+)
 from floris.type_dec import (
     floris_numeric_dict_converter,
     NDArrayBool,
@@ -37,16 +40,12 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import cosd
-from floris.simulation.turbine.rotor_velocity import (
-    average_velocity,
-    compute_tilt_angles_for_floating_turbines
-)
 
 
 def power(
     velocities: NDArrayFloat,
     air_density: float,
-    power_interps: dict[str, function],
+    power_interps: dict[str, Callable],
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
     tilt_interps: dict[str, interp1d],
@@ -65,13 +64,13 @@ def power(
 
     Args:
         velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a
-            turbine. 
+            turbine.
         air_density (float): air density for simulation [kg/m^3]
         power_interp (dict[str, interp1d]): A dictionary of power interpolation functions for
             each turbine type.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
-        turbine_power_thrust_tables: Reference data for the power and thrust representation (RENAME?)
+        turbine_power_thrust_tables: Reference data for the power and thrust representation
         ix_filter (NDArrayInt, optional): The boolean array, or
             integer indices to filter out before calculation. Defaults to None.
 
@@ -107,7 +106,7 @@ def power(
         if "power" in turbine_power_thrust_tables[turb_type]: # normal
             power_thrust_table = turbine_power_thrust_tables[turb_type]
         else: # assumed multidimensional, use multidim lookup
-            # Currently, only works for single mutlidim condition. May need to 
+            # Currently, only works for single mutlidim condition. May need to
             # loop in the case where there are multiple conditions.
             power_thrust_table = turbine_power_thrust_tables[turb_type][multidim_condition]
 
@@ -198,7 +197,7 @@ def Ct(
         if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]: # normal
             power_thrust_table = turbine_power_thrust_tables[turb_type]
         else: # assumed multidimensional, use multidim lookup
-            # Currently, only works for single mutlidim condition. May need to 
+            # Currently, only works for single mutlidim condition. May need to
             # loop in the case where there are multiple conditions.
             power_thrust_table = turbine_power_thrust_tables[turb_type][multidim_condition]
 
@@ -219,7 +218,7 @@ def Ct(
         thrust_coefficient += (
             fCt[turb_type](**thrust_model_kwargs) * (turbine_type_map == turb_type)
         )
-    
+
     return thrust_coefficient
 
 
@@ -264,7 +263,7 @@ def axial_induction(
         Union[float, NDArrayFloat]: [description]
     """
 
-    # TODO: Should the axial induction factor be defined on the turbine submodel, as 
+    # TODO: Should the axial induction factor be defined on the turbine submodel, as
     # thrust_coefficient() and power() are?
 
     if isinstance(yaw_angles, list):
@@ -415,8 +414,8 @@ class Turbine(BaseClass):
     # Initialized in the post_init function
     rotor_radius: float = field(init=False)
     rotor_area: float = field(init=False)
-    thrust_coefficient_function: function = field(init=False)
-    power_function: function = field(init=False)
+    thrust_coefficient_function: Callable = field(init=False)
+    power_function: Callable = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:

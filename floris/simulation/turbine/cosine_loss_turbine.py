@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+import copy
 from collections.abc import Iterable
 
-from scipy.interpolate import interp1d
 import numpy as np
-import copy
+from scipy.interpolate import interp1d
 
 from floris.simulation import BaseModel
-
 from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
@@ -15,7 +14,6 @@ from floris.simulation.turbine.rotor_velocity import (
     rotor_velocity_tilt_correction,
     rotor_velocity_yaw_correction,
 )
-
 from floris.type_dec import (
     floris_numeric_dict_converter,
     NDArrayBool,
@@ -25,6 +23,7 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import cosd
+
 
 class CosineLossTurbine(BaseModel):
 
@@ -75,10 +74,10 @@ class CosineLossTurbine(BaseModel):
             correct_cp_ct_for_tilt=correct_cp_ct_for_tilt,
             rotor_effective_velocities=rotor_effective_velocities,
         )
-        
+
         # Compute power
         power = power_interpolator(rotor_effective_velocities) * 1e3 # Convert to W
-        
+
         return power
 
     def thrust_coefficient(
@@ -100,7 +99,7 @@ class CosineLossTurbine(BaseModel):
             fill_value=0.0001,
             bounds_error=False,
         )
-        
+
         # Compute the effective wind speed across the rotor
         rotor_average_velocities = average_velocity(
             velocities=velocities,
@@ -123,6 +122,10 @@ class CosineLossTurbine(BaseModel):
         # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
         tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angles)
 
-        thrust_coefficient = thrust_coefficient * cosd(yaw_angles) * cosd(tilt_angles - power_thrust_table["ref_tilt"])
-        
+        thrust_coefficient = (
+            thrust_coefficient
+            * cosd(yaw_angles)
+            * cosd(tilt_angles - power_thrust_table["ref_tilt"])
+        )
+
         return thrust_coefficient

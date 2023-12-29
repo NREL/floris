@@ -1,15 +1,15 @@
 import numpy as np
 
-from floris.simulation.turbine import SimpleTurbine, CosineLossTurbine
+from floris.simulation.turbine import CosineLossTurbine, SimpleTurbine
 from floris.utilities import cosd
-
 from tests.conftest import SampleInputs, WIND_SPEEDS
+
 
 def test_submodel_attributes():
 
     assert hasattr(SimpleTurbine, "power")
     assert hasattr(SimpleTurbine, "thrust_coefficient")
-    
+
     assert hasattr(CosineLossTurbine, "power")
     assert hasattr(CosineLossTurbine, "thrust_coefficient")
 
@@ -77,8 +77,8 @@ def test_CosineLossTurbine():
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((1, n_turbines))
     yaw_angles_test = 20 * np.ones((1, n_turbines))
     tilt_angles_test = 0 * np.ones((1, n_turbines))
-    
-    
+
+
     # Check that power works as expected
     test_power = CosineLossTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
