@@ -24,16 +24,12 @@ from floris.simulation import (
     TurbineMultiDimensional,
 )
 from floris.simulation.turbine_multi_dim import (
-    axial_induction_multidim,
-    Ct_multidim,
-    multidim_Ct_down_select,
-    multidim_power_down_select,
     MultiDimensionalPowerThrustTable,
-    power_multidim,
 )
 from floris.simulation.turbine.turbine import (
     Ct,
     power,
+    axial_induction
 )
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
@@ -240,44 +236,43 @@ def test_axial_induction():
     N_TURBINES = 4
 
     turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_data_file"] = CSV_INPUT
+    turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
     turbine = TurbineMultiDimensional.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
+    condition = (2, 1)
 
     baseline_ai = 0.2646995
 
     # Single turbine
     wind_speed = 10.0
-    ai = axial_induction_multidim(
+    ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
-        yaw_angle=np.zeros((1, 1)),
-        tilt_angle=np.ones((1, 1)) * 5.0,
+        yaw_angles=np.zeros((1, 1)),
+        tilt_angles=np.ones((1, 1)) * 5.0,
         ref_tilt=np.ones((1, 1)) * 5.0,
-        fCt=np.array([[turbine.fCt_interp[(2, 1)]]]),
-        tilt_interp={turbine.turbine_type: None},
+        fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
+        tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
         turbine_type_map=turbine_type_map[0,0],
+        turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
+        multidim_condition=condition
     )
     np.testing.assert_allclose(ai, baseline_ai)
 
     # Multiple turbines with ix filter
-    ai = axial_induction_multidim(
+    ai = axial_induction(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
-        yaw_angle=np.zeros((1, N_TURBINES)),
-        tilt_angle=np.ones((1, N_TURBINES)) * 5.0,
+        yaw_angles=np.zeros((1, N_TURBINES)),
+        tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
         ref_tilt=np.ones((1, N_TURBINES)) * 5.0,
-        fCt=np.tile(
-            [turbine.fCt_interp[(2, 1)]],
-            (
-                np.shape(WIND_CONDITION_BROADCAST)[0],
-                N_TURBINES,
-            )
-        ),
-        tilt_interp={turbine.turbine_type: None},
+        fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
+        tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,
+        turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
+        multidim_condition=condition
     )
 
     assert len(ai[0]) == len(INDEX_FILTER)
