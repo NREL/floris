@@ -36,7 +36,7 @@ from floris.simulation import (
     full_flow_turbopark_solver,
     Grid,
     PointsGrid,
-    sequential_multidim_solver,
+    # sequential_multidim_solver,
     sequential_solver,
     State,
     TurbineCubatureGrid,
@@ -89,7 +89,7 @@ class Floris(BaseClass):
 
         # Initialize farm quantities that depend on other objects
         self.farm.construct_turbine_map()
-        if self.wake.model_strings['velocity_model'] == 'multidim_cp_ct':
+        if False: #self.wake.model_strings['velocity_model'] == 'multidim_cp_ct':
             self.farm.construct_multidim_turbine_fCts()
             self.farm.construct_multidim_turbine_power_interps()
         else:
@@ -247,13 +247,13 @@ class Floris(BaseClass):
                 self.grid,
                 self.wake
             )
-        elif vel_model=="multidim_cp_ct":
-            sequential_multidim_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+        # elif vel_model=="multidim_cp_ct":
+        #     sequential_multidim_solver(
+        #         self.farm,
+        #         self.flow_field,
+        #         self.grid,
+        #         self.wake
+        #     )
         else:
             sequential_solver(
                 self.farm,

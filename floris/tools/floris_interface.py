@@ -22,7 +22,7 @@ import pandas as pd
 
 from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
-from floris.simulation.turbine.rotor_velocity import average_velocity, rotor_effective_velocity
+from floris.simulation.turbine.rotor_velocity import average_velocity
 from floris.simulation.turbine.turbine import (
     axial_induction,
     Ct,
@@ -612,39 +612,40 @@ class FlorisInterface(LoggingManager):
             turbine_type_map=self.floris.farm.turbine_type_map,
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
+            multidim_condition=self.floris.flow_field.multidim_conditions
         )
         return turbine_powers
 
-    def get_turbine_powers_multidim(self) -> NDArrayFloat:
-        """Calculates the power at each turbine in the wind farm
-        when using multi-dimensional Cp/Ct turbine definitions.
+    # def get_turbine_powers_multidim(self) -> NDArrayFloat:
+    #     """Calculates the power at each turbine in the wind farm
+    #     when using multi-dimensional Cp/Ct turbine definitions.
 
-        Returns:
-            NDArrayFloat: Powers at each turbine.
-        """
+    #     Returns:
+    #         NDArrayFloat: Powers at each turbine.
+    #     """
 
-        # Confirm calculate wake has been run
-        if self.floris.state is not State.USED:
-            raise RuntimeError(
-                "Can't run function `FlorisInterface.get_turbine_powers_multidim` without "
-                "first running `FlorisInterface.calculate_wake`."
-            )
-        # Check for negative velocities, which could indicate bad model
-        # parameters or turbines very closely spaced.
-        if (self.turbine_effective_velocities < 0.).any():
-            self.logger.warning("Some rotor effective velocities are negative.")
+    #     # Confirm calculate wake has been run
+    #     if self.floris.state is not State.USED:
+    #         raise RuntimeError(
+    #             "Can't run function `FlorisInterface.get_turbine_powers_multidim` without "
+    #             "first running `FlorisInterface.calculate_wake`."
+    #         )
+    #     # Check for negative velocities, which could indicate bad model
+    #     # parameters or turbines very closely spaced.
+    #     if (self.turbine_effective_velocities < 0.).any():
+    #         self.logger.warning("Some rotor effective velocities are negative.")
 
-        turbine_power_interps = multidim_power_down_select(
-            self.floris.farm.turbine_power_interps,
-            self.floris.flow_field.multidim_conditions
-        )
+    #     turbine_power_interps = multidim_power_down_select(
+    #         self.floris.farm.turbine_power_interps,
+    #         self.floris.flow_field.multidim_conditions
+    #     )
 
-        turbine_powers = power_multidim(
-            ref_air_density=self.floris.farm.ref_air_densities,
-            rotor_effective_velocities=self.turbine_effective_velocities,
-            power_interp=turbine_power_interps,
-        )
-        return turbine_powers
+    #     turbine_powers = power_multidim(
+    #         ref_air_density=self.floris.farm.ref_air_densities,
+    #         rotor_effective_velocities=self.turbine_effective_velocities,
+    #         power_interp=turbine_power_interps,
+    #     )
+    #     return turbine_powers
 
     def get_turbine_Cts(self) -> NDArrayFloat:
         turbine_Cts = Ct(

@@ -329,8 +329,9 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=1
         )
-        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
-            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
+        if False:
+        # if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+        #    and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
             findex_dim = np.shape(template_shape)[0]
 
             self.turbine_fCts_sorted = np.take_along_axis(
@@ -424,8 +425,9 @@ class Farm(BaseClass):
         return tilt_angles
 
     def finalize(self, unsorted_indices):
-        if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
-            and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
+        if False:
+        # if 'multi_dimensional_cp_ct' in self.turbine_definitions[0].keys() \
+        #     and self.turbine_definitions[0]['multi_dimensional_cp_ct'] is True:
             self.turbine_fCts = np.take_along_axis(
                 self.turbine_fCts_sorted,
                 unsorted_indices[:,:,0,0],

@@ -72,7 +72,7 @@ yaw_angles = np.zeros([1, 2]) # 1 wind direction and wind speed, 2 turbines
 fi.calculate_wake(yaw_angles=yaw_angles)
 
 # Get the turbine powers
-turbine_powers = fi.get_turbine_powers_multidim() / 1000.0
+turbine_powers = fi.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 1 findex X 2 Turbines")
 print(turbine_powers)
 print("Shape: ",turbine_powers.shape)
