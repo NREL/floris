@@ -29,7 +29,7 @@ angle of the turbine based on wind speed.  This tilt angle is computed for each
 turbine based on effective velocity.  This tilt angle is then passed on
 to the respective wake model.
 
-The value of the parameter ref_tilt_cp_ct is the value of tilt at which the
+The value of the parameter ref_tilt is the value of tilt at which the
 ct/cp curves have been defined.
 
 With `correct_cp_ct_for_tilt` True, the difference between the current

@@ -42,7 +42,7 @@ from floris.utilities import cosd
 
 
 def power_multidim(
-    ref_density_cp_ct: float,
+    ref_air_density: float,
     rotor_effective_velocities: NDArrayFloat,
     power_interp: NDArrayObject,
     ix_filter: NDArrayInt | Iterable[int] | None = None,
@@ -51,7 +51,7 @@ def power_multidim(
     Cp/Ct values, adjusted for yaw and tilt. Value given in Watts.
 
     Args:
-        ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
+        ref_air_densities (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
         rotor_effective_velocities (NDArrayFloat[wd, ws, turbines, grid1, grid2]): The rotor
             effective velocities at a turbine.
         power_interp (NDArrayObject[wd, ws, turbines]): The power interpolation function
@@ -85,14 +85,14 @@ def power_multidim(
         for j, turb in enumerate(findex):
             p[i, j] = power_interp[i, j](rotor_effective_velocities[i, j])
 
-    return p * ref_density_cp_ct
+    return p * ref_air_density
 
 
 def Ct_multidim(
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
-    ref_tilt_cp_ct: NDArrayFloat,
+    ref_tilt: NDArrayFloat,
     fCt: list,
     tilt_interp: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
@@ -112,7 +112,7 @@ def Ct_multidim(
             a turbine.
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
         tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
-        ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
+        ref_tilt (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
             that the Cp/Ct tables are defined at.
         fCt (list): The thrust coefficient interpolation functions for each turbine.
         tilt_interp (Iterable[tuple]): The tilt interpolation functions for each
@@ -140,7 +140,7 @@ def Ct_multidim(
         velocities = velocities[:, ix_filter]
         yaw_angle = yaw_angle[:, ix_filter]
         tilt_angle = tilt_angle[:, ix_filter]
-        ref_tilt_cp_ct = ref_tilt_cp_ct[:, ix_filter]
+        ref_tilt = ref_tilt[:, ix_filter]
         fCt = fCt[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
@@ -168,7 +168,7 @@ def Ct_multidim(
         for j, turb in enumerate(findex):
             thrust_coefficient[i, j] = fCt[i, j](average_velocities[i, j])
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
-    effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
+    effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt)
     return effective_thrust
 
 
@@ -176,7 +176,7 @@ def axial_induction_multidim(
     velocities: NDArrayFloat,  # (wind directions, wind speeds, turbines, grid, grid)
     yaw_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
     tilt_angle: NDArrayFloat,  # (wind directions, wind speeds, turbines)
-    ref_tilt_cp_ct: NDArrayFloat,
+    ref_tilt: NDArrayFloat,
     fCt: list,  # (turbines)
     tilt_interp: NDArrayObject,  # (turbines)
     correct_cp_ct_for_tilt: NDArrayBool, # (wind directions, wind speeds, turbines)
@@ -193,7 +193,7 @@ def axial_induction_multidim(
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
         yaw_angle (NDArrayFloat[wd, ws, turbines]): The yaw angle for each turbine.
         tilt_angle (NDArrayFloat[wd, ws, turbines]): The tilt angle for each turbine.
-        ref_tilt_cp_ct (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
+        ref_tilt (NDArrayFloat[wd, ws, turbines]): The reference tilt angle for each turbine
             that the Cp/Ct tables are defined at.
         fCt (list): The thrust coefficient interpolation functions for each turbine.
         tilt_interp (Iterable[tuple]): The tilt interpolation functions for each
@@ -223,7 +223,7 @@ def axial_induction_multidim(
         velocities,
         yaw_angle,
         tilt_angle,
-        ref_tilt_cp_ct,
+        ref_tilt,
         fCt,
         tilt_interp,
         correct_cp_ct_for_tilt,
@@ -237,15 +237,15 @@ def axial_induction_multidim(
     if ix_filter is not None:
         yaw_angle = yaw_angle[:, ix_filter]
         tilt_angle = tilt_angle[:, ix_filter]
-        ref_tilt_cp_ct = ref_tilt_cp_ct[:, ix_filter]
+        ref_tilt = ref_tilt[:, ix_filter]
 
     return (
         0.5
         / (cosd(yaw_angle)
-        * cosd(tilt_angle - ref_tilt_cp_ct))
+        * cosd(tilt_angle - ref_tilt))
         * (
             1 - np.sqrt(
-                1 - thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
+                1 - thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt)
             )
         )
     )
@@ -396,7 +396,7 @@ class TurbineMultiDimensional(Turbine):
             tilt angle to power.
         generator_efficiency (:py:obj: float): The generator
             efficiency factor used to scale the power production.
-        ref_density_cp_ct (:py:obj: float): The density at which the provided
+        ref_air_density (:py:obj: float): The density at which the provided
             cp and ct is defined
         power_thrust_table (PowerThrustTable): A dictionary containing the
             following key-value pairs:

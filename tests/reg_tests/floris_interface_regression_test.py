@@ -93,11 +93,11 @@ def test_calculate_no_wake(sample_inputs_fixture):
     )
     farm_eff_velocities = rotor_effective_velocity(
         fi.floris.flow_field.air_density,
-        fi.floris.farm.ref_density_cp_cts,
+        fi.floris.farm.ref_air_densities,
         velocities,
         yaw_angles,
         tilt_angles,
-        fi.floris.farm.ref_tilt_cp_cts,
+        fi.floris.farm.ref_tilts,
         fi.floris.farm.pPs,
         fi.floris.farm.pTs,
         fi.floris.farm.turbine_tilt_interps,
@@ -108,14 +108,13 @@ def test_calculate_no_wake(sample_inputs_fixture):
         velocities,
         yaw_angles,
         tilt_angles,
-        fi.floris.farm.ref_tilt_cp_cts,
+        fi.floris.farm.ref_tilts,
         fi.floris.farm.turbine_fCts,
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
     )
     farm_powers = power(
-        fi.floris.farm.ref_density_cp_cts,
         farm_eff_velocities,
         fi.floris.farm.turbine_power_interps,
         fi.floris.farm.turbine_type_map,
@@ -124,7 +123,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         velocities,
         yaw_angles,
         tilt_angles,
-        fi.floris.farm.ref_tilt_cp_cts,
+        fi.floris.farm.ref_tilts,
         fi.floris.farm.turbine_fCts,
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,

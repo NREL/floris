@@ -105,7 +105,7 @@ def sequential_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -121,7 +121,7 @@ def sequential_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -280,8 +280,8 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construct_turbine_pPs()
     turbine_grid_farm.construct_turbine_pTs()
-    turbine_grid_farm.construct_turbine_ref_density_cp_cts()
-    turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
+    turbine_grid_farm.construct_turbine_ref_air_densities()
+    turbine_grid_farm.construct_turbine_ref_tilts()
     turbine_grid_farm.construct_turbine_tilt_interps()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
@@ -335,7 +335,7 @@ def full_flow_sequential_solver(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
             tilt_angle=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -349,7 +349,7 @@ def full_flow_sequential_solver(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
             tilt_angle=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -496,7 +496,7 @@ def cc_solver(
             turb_avg_vels,
             farm.yaw_angles_sorted,
             farm.tilt_angles_sorted,
-            farm.ref_tilt_cp_cts_sorted,
+            farm.ref_tilts_sorted,
             farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -509,7 +509,7 @@ def cc_solver(
             turb_avg_vels,
             farm.yaw_angles_sorted,
             farm.tilt_angles_sorted,
-            farm.ref_tilt_cp_cts_sorted,
+            farm.ref_tilts_sorted,
             farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -527,7 +527,7 @@ def cc_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -682,8 +682,8 @@ def full_flow_cc_solver(
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construct_turbine_pPs()
     turbine_grid_farm.construct_turbine_pTs()
-    turbine_grid_farm.construct_turbine_ref_density_cp_cts()
-    turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
+    turbine_grid_farm.construct_turbine_ref_air_densities()
+    turbine_grid_farm.construct_turbine_ref_tilts()
     turbine_grid_farm.construct_turbine_tilt_interps()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
@@ -741,7 +741,7 @@ def full_flow_cc_solver(
             velocities=turb_avg_vels,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
             tilt_angle=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -755,7 +755,7 @@ def full_flow_cc_solver(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
             tilt_angle=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -892,7 +892,7 @@ def turbopark_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -905,7 +905,7 @@ def turbopark_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -921,7 +921,7 @@ def turbopark_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -979,7 +979,7 @@ def turbopark_solver(
                     velocities=flow_field.u_sorted,
                     yaw_angle=farm.yaw_angles_sorted,
                     tilt_angle=farm.tilt_angles_sorted,
-                    ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+                    ref_tilt=farm.ref_tilts_sorted,
                     fCt=farm.turbine_fCts,
                     tilt_interp=farm.turbine_tilt_interps,
                     correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -1174,7 +1174,7 @@ def empirical_gauss_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -1190,7 +1190,7 @@ def empirical_gauss_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=farm.turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -1321,8 +1321,8 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_farm.construct_turbine_TSRs()
     turbine_grid_farm.construct_turbine_pPs()
     turbine_grid_farm.construct_turbine_pTs()
-    turbine_grid_farm.construct_turbine_ref_density_cp_cts()
-    turbine_grid_farm.construct_turbine_ref_tilt_cp_cts()
+    turbine_grid_farm.construct_turbine_ref_air_densities()
+    turbine_grid_farm.construct_turbine_ref_tilts()
     turbine_grid_farm.construct_turbine_tilt_interps()
     turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
     turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
@@ -1377,7 +1377,7 @@ def full_flow_empirical_gauss_solver(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
             tilt_angle=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -1391,7 +1391,7 @@ def full_flow_empirical_gauss_solver(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angle=turbine_grid_farm.yaw_angles_sorted,
             tilt_angle=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=turbine_grid_farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
             fCt=turbine_grid_farm.turbine_fCts,
             tilt_interp=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -1512,7 +1512,7 @@ def sequential_multidim_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=downselect_turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -1528,7 +1528,7 @@ def sequential_multidim_solver(
             velocities=flow_field.u_sorted,
             yaw_angle=farm.yaw_angles_sorted,
             tilt_angle=farm.tilt_angles_sorted,
-            ref_tilt_cp_ct=farm.ref_tilt_cp_cts_sorted,
+            ref_tilt=farm.ref_tilts_sorted,
             fCt=downselect_turbine_fCts,
             tilt_interp=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,

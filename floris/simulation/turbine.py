@@ -49,7 +49,7 @@ def _rotor_velocity_yaw_correction(
 def _rotor_velocity_tilt_correction(
     turbine_type_map: NDArrayObject,
     tilt_angle: NDArrayFloat,
-    ref_tilt_cp_ct: NDArrayFloat,
+    ref_tilt: NDArrayFloat,
     pT: float,
     tilt_interp: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
@@ -67,7 +67,7 @@ def _rotor_velocity_tilt_correction(
     tilt_angle = np.where(correct_cp_ct_for_tilt, tilt_angle, old_tilt_angle)
 
     # Compute the rotor effective velocity adjusting for tilt
-    relative_tilt = tilt_angle - ref_tilt_cp_ct
+    relative_tilt = tilt_angle - ref_tilt
     rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
     return rotor_effective_velocities
 
@@ -106,11 +106,11 @@ def compute_tilt_angles_for_floating_turbines(
 
 def rotor_effective_velocity(
     air_density: float,
-    ref_density_cp_ct: float,
+    ref_air_density: float,
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
-    ref_tilt_cp_ct: NDArrayFloat,
+    ref_tilt: NDArrayFloat,
     pP: float,
     pT: float,
     tilt_interp: NDArrayObject,
@@ -131,7 +131,7 @@ def rotor_effective_velocity(
         velocities = velocities[:, ix_filter]
         yaw_angle = yaw_angle[:, ix_filter]
         tilt_angle = tilt_angle[:, ix_filter]
-        ref_tilt_cp_ct = ref_tilt_cp_ct[:, ix_filter]
+        ref_tilt = ref_tilt[:, ix_filter]
         pP = pP[:, ix_filter]
         pT = pT[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
@@ -144,7 +144,7 @@ def rotor_effective_velocity(
         method=average_method,
         cubature_weights=cubature_weights
     )
-    rotor_effective_velocities = (air_density/ref_density_cp_ct)**(1/3) * average_velocities
+    rotor_effective_velocities = (air_density/ref_air_density)**(1/3) * average_velocities
 
     # Compute the rotor effective velocity adjusting for yaw settings
     rotor_effective_velocities = _rotor_velocity_yaw_correction(
@@ -155,7 +155,7 @@ def rotor_effective_velocity(
     rotor_effective_velocities = _rotor_velocity_tilt_correction(
         turbine_type_map,
         tilt_angle,
-        ref_tilt_cp_ct,
+        ref_tilt,
         pT,
         tilt_interp,
         correct_cp_ct_for_tilt,
@@ -166,7 +166,6 @@ def rotor_effective_velocity(
 
 
 def power(
-    ref_density_cp_ct: float,
     rotor_effective_velocities: NDArrayFloat,
     power_interp: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
@@ -176,9 +175,8 @@ def power(
     given in Watts.
 
     Args:
-        ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine
         rotor_effective_velocities (NDArrayFloat[wd, ws, turbines]): The rotor
-            effective velocities at a turbine.
+            effective velocities at a turbine. Includes the air density correction.
         power_interp (dict[str, interp1d]): A dictionary of power interpolation functions for
             each turbine type.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
@@ -215,14 +213,14 @@ def power(
         # type to the main thrust coefficient array
         p += power_interp[turb_type](rotor_effective_velocities) * (turbine_type_map == turb_type)
 
-    return p * ref_density_cp_ct
+    return p
 
 
 def Ct(
     velocities: NDArrayFloat,
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
-    ref_tilt_cp_ct: NDArrayFloat,
+    ref_tilt: NDArrayFloat,
     fCt: dict,
     tilt_interp: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
@@ -241,7 +239,7 @@ def Ct(
             a turbine.
         yaw_angle (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angle (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
-        ref_tilt_cp_ct (NDArrayFloat[findex, turbines]): The reference tilt angle for each turbine
+        ref_tilt (NDArrayFloat[findex, turbines]): The reference tilt angle for each turbine
             that the Cp/Ct tables are defined at.
         fCt (dict): The thrust coefficient interpolation functions for each turbine. Keys are
             the turbine type string and values are the interpolation functions.
@@ -270,7 +268,7 @@ def Ct(
         velocities = velocities[:, ix_filter]
         yaw_angle = yaw_angle[:, ix_filter]
         tilt_angle = tilt_angle[:, ix_filter]
-        ref_tilt_cp_ct = ref_tilt_cp_ct[:, ix_filter]
+        ref_tilt = ref_tilt[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
@@ -302,7 +300,7 @@ def Ct(
             * (turbine_type_map == turb_type)
         )
     thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
-    effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
+    effective_thrust = thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt)
     return effective_thrust
 
 
@@ -310,7 +308,7 @@ def axial_induction(
     velocities: NDArrayFloat,  # (findex, turbines, grid, grid)
     yaw_angle: NDArrayFloat,  # (findex, turbines)
     tilt_angle: NDArrayFloat,  # (findex, turbines)
-    ref_tilt_cp_ct: NDArrayFloat,
+    ref_tilt: NDArrayFloat,
     fCt: dict,  # (turbines)
     tilt_interp: NDArrayObject,  # (turbines)
     correct_cp_ct_for_tilt: NDArrayBool, # (findex, turbines)
@@ -327,7 +325,7 @@ def axial_induction(
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
         yaw_angle (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angle (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
-        ref_tilt_cp_ct (NDArrayFloat[findex, turbines]): The reference tilt angle for each turbine
+        ref_tilt (NDArrayFloat[findex, turbines]): The reference tilt angle for each turbine
             that the Cp/Ct tables are defined at.
         fCt (dict): The thrust coefficient interpolation functions for each turbine. Keys are
             the turbine type string and values are the interpolation functions.
@@ -358,7 +356,7 @@ def axial_induction(
         velocities,
         yaw_angle,
         tilt_angle,
-        ref_tilt_cp_ct,
+        ref_tilt,
         fCt,
         tilt_interp,
         correct_cp_ct_for_tilt,
@@ -372,15 +370,15 @@ def axial_induction(
     if ix_filter is not None:
         yaw_angle = yaw_angle[:, ix_filter]
         tilt_angle = tilt_angle[:, ix_filter]
-        ref_tilt_cp_ct = ref_tilt_cp_ct[:, ix_filter]
+        ref_tilt = ref_tilt[:, ix_filter]
 
     return (
         0.5
         / (cosd(yaw_angle)
-        * cosd(tilt_angle - ref_tilt_cp_ct))
+        * cosd(tilt_angle - ref_tilt))
         * (
             1 - np.sqrt(
-                1 - thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt_cp_ct)
+                1 - thrust_coefficient * cosd(yaw_angle) * cosd(tilt_angle - ref_tilt)
             )
         )
     )
@@ -477,8 +475,8 @@ class Turbine(BaseClass):
         TSR (float): The Tip Speed Ratio of the turbine.
         generator_efficiency (float): The efficiency of the generator used to scale
             power production.
-        ref_density_cp_ct (float): The density at which the provided Cp and Ct curves are defined.
-        ref_tilt_cp_ct (float): The implicit tilt of the turbine for which the Cp and Ct
+        ref_air_density (float): The density at which the provided Cp and Ct curves are defined.
+        ref_tilt (float): The implicit tilt of the turbine for which the Cp and Ct
             curves are defined. This is typically the nacelle tilt.
         power_thrust_table (dict[str, float]): Contains power coefficient and thrust coefficient
             values at a series of wind speeds to define the turbine performance.
@@ -506,8 +504,8 @@ class Turbine(BaseClass):
     pT: float = field()
     TSR: float = field()
     generator_efficiency: float = field()
-    ref_density_cp_ct: float = field()
-    ref_tilt_cp_ct: float = field()
+    ref_air_density: float = field()
+    ref_tilt: float = field()
     power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
 
     correct_cp_ct_for_tilt: bool = field(default=False)
@@ -544,22 +542,11 @@ class Turbine(BaseClass):
         # self.wind_speed = self.wind_speed[duplicate_filter]
 
         wind_speeds = self.power_thrust_table["wind_speed"]
-        cp_interp = interp1d(
-            wind_speeds,
-            self.power_thrust_table["power"],
-            fill_value=(0.0, 1.0),
-            bounds_error=False,
-        )
         self.power_interp = interp1d(
             wind_speeds,
-            (
-                0.5 * self.rotor_area
-                * cp_interp(wind_speeds)
-                * self.generator_efficiency
-                * wind_speeds ** 3
-            ),
+            self.power_thrust_table["power"] * 1e3, # Convert to W
+            fill_value=0.0,
             bounds_error=False,
-            fill_value=0
         )
 
         """
@@ -574,7 +561,7 @@ class Turbine(BaseClass):
         """
         self.fCt_interp = interp1d(
             wind_speeds,
-            self.power_thrust_table["thrust"],
+            self.power_thrust_table["thrust_coefficient"],
             fill_value=(0.0001, 0.9999),
             bounds_error=False,
         )
@@ -606,23 +593,29 @@ class Turbine(BaseClass):
         Verify that the power and thrust tables are given with arrays of equal length
         to the wind speed array.
         """
-        if len(value.keys()) != 3 or set(value.keys()) != {"wind_speed", "power", "thrust"}:
+        if (len(value.keys()) != 3 or
+            set(value.keys()) != {"wind_speed", "power", "thrust_coefficient"}):
             raise ValueError(
                 """
                 power_thrust_table dictionary must have the form:
                     {
                         "wind_speed": List[float],
                         "power": List[float],
-                        "thrust": List[float],
+                        "thrust_coefficient": List[float],
                     }
                 """
             )
 
-        if any(e.ndim > 1 for e in (value["power"], value["thrust"], value["wind_speed"])):
-            raise ValueError("power, thrust, and wind_speed inputs must be 1-D.")
+        if any(e.ndim > 1 for e in
+            (value["power"], value["thrust_coefficient"], value["wind_speed"])
+            ):
+            raise ValueError("power, thrust_coefficient, and wind_speed inputs must be 1-D.")
 
-        if len( {value["power"].size, value["thrust"].size, value["wind_speed"].size} ) > 1:
-            raise ValueError("power, thrust, and wind_speed tables must be the same size.")
+        if (len( {value["power"].size, value["thrust_coefficient"].size, value["wind_speed"].size} )
+            > 1):
+            raise ValueError(
+                "power, thrust_coefficient, and wind_speed tables must be the same size."
+            )
 
     @rotor_diameter.validator
     def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:

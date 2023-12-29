@@ -59,14 +59,14 @@ def test_farm_init_homogenous_turbines():
 def test_asdict(sample_inputs_fixture: SampleInputs):
     farm = Farm.from_dict(sample_inputs_fixture.farm)
     farm.construct_hub_heights()
-    farm.construct_turbine_ref_tilt_cp_cts()
+    farm.construct_turbine_ref_tilts()
     farm.set_yaw_angles(N_FINDEX)
     farm.set_tilt_to_ref_tilt(N_FINDEX)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
     new_farm.construct_hub_heights()
-    new_farm.construct_turbine_ref_tilt_cp_cts()
+    new_farm.construct_turbine_ref_tilts()
     new_farm.set_yaw_angles(N_FINDEX)
     new_farm.set_tilt_to_ref_tilt(N_FINDEX)
     dict2 = new_farm.as_dict()

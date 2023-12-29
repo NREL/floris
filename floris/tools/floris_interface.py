@@ -605,7 +605,6 @@ class FlorisInterface(LoggingManager):
             self.logger.warning("Some rotor effective velocities are negative.")
 
         turbine_powers = power(
-            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
             rotor_effective_velocities=self.turbine_effective_velocities,
             power_interp=self.floris.farm.turbine_power_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
@@ -637,7 +636,7 @@ class FlorisInterface(LoggingManager):
         )
 
         turbine_powers = power_multidim(
-            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
+            ref_air_density=self.floris.farm.ref_air_densities,
             rotor_effective_velocities=self.turbine_effective_velocities,
             power_interp=turbine_power_interps,
         )
@@ -648,7 +647,7 @@ class FlorisInterface(LoggingManager):
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
+            ref_tilt=self.floris.farm.ref_tilts,
             fCt=self.floris.farm.turbine_fCts,
             tilt_interp=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
@@ -663,7 +662,7 @@ class FlorisInterface(LoggingManager):
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
+            ref_tilt=self.floris.farm.ref_tilts,
             fCt=self.floris.farm.turbine_fCts,
             tilt_interp=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
@@ -685,11 +684,11 @@ class FlorisInterface(LoggingManager):
     def turbine_effective_velocities(self) -> NDArrayFloat:
         rotor_effective_velocities = rotor_effective_velocity(
             air_density=self.floris.flow_field.air_density,
-            ref_density_cp_ct=self.floris.farm.ref_density_cp_cts,
+            ref_air_density=self.floris.farm.ref_air_densities,
             velocities=self.floris.flow_field.u,
             yaw_angle=self.floris.farm.yaw_angles,
             tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt_cp_ct=self.floris.farm.ref_tilt_cp_cts,
+            ref_tilt=self.floris.farm.ref_tilts,
             pP=self.floris.farm.pPs,
             pT=self.floris.farm.pTs,
             tilt_interp=self.floris.farm.turbine_tilt_interps,

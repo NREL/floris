@@ -47,8 +47,13 @@ turbines = [
     if t.suffix == ".yaml" and ("multi_dim" not in t.stem)
 ]
 
+# TEMPORARY
+print(turbines)
+turbines = turbines[1:]
+# END TEMPORARY
+
 # Declare a set of figures for comparing cp and ct across models
-fig_cp_ct, axarr_cp_ct = plt.subplots(2,1,sharex=True,figsize=(10,10))
+fig_pow_ct, axarr_pow_ct = plt.subplots(2,1,sharex=True,figsize=(10,10))
 
 # For each turbine model available plot the basic info
 for t in turbines:
@@ -59,22 +64,22 @@ for t in turbines:
     # Since we are changing the turbine type, make a matching change to the reference wind height
     fi.assign_hub_height_to_ref_height()
 
-    # Plot cp and ct onto the fig_cp_ct plot
-    axarr_cp_ct[0].plot(
+    # Plot power and ct onto the fig_pow_ct plot
+    axarr_pow_ct[0].plot(
         fi.floris.farm.turbine_map[0].power_thrust_table["wind_speed"],
         fi.floris.farm.turbine_map[0].power_thrust_table["power"],label=t
     )
-    axarr_cp_ct[0].grid(True)
-    axarr_cp_ct[0].legend()
-    axarr_cp_ct[0].set_ylabel('Cp')
-    axarr_cp_ct[1].plot(
+    axarr_pow_ct[0].grid(True)
+    axarr_pow_ct[0].legend()
+    axarr_pow_ct[0].set_ylabel('Power (kW)')
+    axarr_pow_ct[1].plot(
         fi.floris.farm.turbine_map[0].power_thrust_table["wind_speed"],
-        fi.floris.farm.turbine_map[0].power_thrust_table["thrust"],label=t
+        fi.floris.farm.turbine_map[0].power_thrust_table["thrust_coefficient"],label=t
     )
-    axarr_cp_ct[1].grid(True)
-    axarr_cp_ct[1].legend()
-    axarr_cp_ct[1].set_ylabel('Ct')
-    axarr_cp_ct[1].set_xlabel('Wind Speed (m/s)')
+    axarr_pow_ct[1].grid(True)
+    axarr_pow_ct[1].legend()
+    axarr_pow_ct[1].set_ylabel('Ct (-)')
+    axarr_pow_ct[1].set_xlabel('Wind Speed (m/s)')
 
     # Create a figure
     fig, axarr = plt.subplots(1,2,figsize=(10,5))

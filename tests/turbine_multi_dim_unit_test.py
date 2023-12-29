@@ -122,7 +122,7 @@ def test_ct():
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1)),
         tilt_angle=np.ones((1, 1)) * 5.0,
-        ref_tilt_cp_ct=np.ones((1, 1)) * 5.0,
+        ref_tilt=np.ones((1, 1)) * 5.0,
         fCt=np.array([[turbine.fCt_interp[(2, 1)]]]),
         tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
@@ -137,7 +137,7 @@ def test_ct():
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
         yaw_angle=np.zeros((1, N_TURBINES)),
         tilt_angle=np.ones((1, N_TURBINES)) * 5.0,
-        ref_tilt_cp_ct=np.ones((1, N_TURBINES)) * 5.0,
+        ref_tilt=np.ones((1, N_TURBINES)) * 5.0,
         fCt=np.tile(
             [turbine.fCt_interp[(2, 1)]],
             (
@@ -189,7 +189,7 @@ def test_power():
     # Single turbine
     wind_speed = 10.0
     p = power_multidim(
-        ref_density_cp_ct=AIR_DENSITY,
+        ref_air_density=AIR_DENSITY,
         rotor_effective_velocities=wind_speed * np.ones((1, 1, 3, 3)),
         power_interp=np.array([[turbine.power_interp[(2, 1)]]]),
     )
@@ -209,7 +209,7 @@ def test_power():
     # Multiple turbines with ix filter
     rotor_effective_velocities = np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST
     p = power_multidim(
-        ref_density_cp_ct=AIR_DENSITY,
+        ref_air_density=AIR_DENSITY,
         rotor_effective_velocities=rotor_effective_velocities,
         power_interp=np.tile(
             [turbine.power_interp[(2, 1)]],
@@ -244,7 +244,7 @@ def test_axial_induction():
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
         yaw_angle=np.zeros((1, 1)),
         tilt_angle=np.ones((1, 1)) * 5.0,
-        ref_tilt_cp_ct=np.ones((1, 1)) * 5.0,
+        ref_tilt=np.ones((1, 1)) * 5.0,
         fCt=np.array([[turbine.fCt_interp[(2, 1)]]]),
         tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
@@ -257,7 +257,7 @@ def test_axial_induction():
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
         yaw_angle=np.zeros((1, N_TURBINES)),
         tilt_angle=np.ones((1, N_TURBINES)) * 5.0,
-        ref_tilt_cp_ct=np.ones((1, N_TURBINES)) * 5.0,
+        ref_tilt=np.ones((1, N_TURBINES)) * 5.0,
         fCt=np.tile(
             [turbine.fCt_interp[(2, 1)]],
             (
