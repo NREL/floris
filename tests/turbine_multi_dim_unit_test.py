@@ -21,7 +21,6 @@ import pytest
 
 from floris.simulation import (
     Turbine,
-    TurbineMultiDimensional,
 )
 from floris.simulation.turbine.turbine import (
     axial_induction,
@@ -44,31 +43,34 @@ WIND_CONDITION_BROADCAST = np.reshape(np.array(WIND_SPEEDS), (-1, 1, 1, 1))
 
 INDEX_FILTER = [0, 2]
 
-def test_multi_dimensional_power_thrust_table():
-    turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_data_file"] = CSV_INPUT
-    df_data = pd.read_csv(turbine_data["power_thrust_data_file"])
-    flattened_dict = MultiDimensionalPowerThrustTable.from_dataframe(df_data)
-    flattened_dict_base = {
-        ('Tp', '2', 'Hs', '1'): [],
-        ('Tp', '2', 'Hs', '5'): [],
-        ('Tp', '4', 'Hs', '1'): [],
-        ('Tp', '4', 'Hs', '5'): [],
-    }
-    assert flattened_dict == flattened_dict_base
+# NOTE: MultiDimensionalPowerThrustTable not used anywhere, so I'm commenting
+# this out.
 
-    # Test for initialization errors
-    for el in ("ws", "Cp", "Ct"):
-        df_data = pd.read_csv(turbine_data["power_thrust_data_file"])
-        df = df_data.drop(el, axis=1)
-        with pytest.raises(ValueError):
-            MultiDimensionalPowerThrustTable.from_dataframe(df)
+# def test_multi_dimensional_power_thrust_table():
+#     turbine_data = SampleInputs().turbine_multi_dim
+#     turbine_data["power_thrust_data_file"] = CSV_INPUT
+#     df_data = pd.read_csv(turbine_data["power_thrust_data_file"])
+#     flattened_dict = MultiDimensionalPowerThrustTable.from_dataframe(df_data)
+#     flattened_dict_base = {
+#         ('Tp', '2', 'Hs', '1'): [],
+#         ('Tp', '2', 'Hs', '5'): [],
+#         ('Tp', '4', 'Hs', '1'): [],
+#         ('Tp', '4', 'Hs', '5'): [],
+#     }
+#     assert flattened_dict == flattened_dict_base
+
+#     # Test for initialization errors
+#     for el in ("ws", "Cp", "Ct"):
+#         df_data = pd.read_csv(turbine_data["power_thrust_data_file"])
+#         df = df_data.drop(el, axis=1)
+#         with pytest.raises(ValueError):
+#             MultiDimensionalPowerThrustTable.from_dataframe(df)
 
 
 def test_turbine_init():
     turbine_data = SampleInputs().turbine_multi_dim
     turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
-    turbine = TurbineMultiDimensional.from_dict(turbine_data)
+    turbine = Turbine.from_dict(turbine_data)
     condition = (2, 1)
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
@@ -76,7 +78,7 @@ def test_turbine_init():
     assert turbine.power_thrust_table[condition]["pT"] == turbine_data["power_thrust_table"]["pT"]
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
 
-    assert isinstance(turbine.power_thrust_data, dict)
+    assert isinstance(turbine.power_thrust_table, dict)
     assert callable(turbine.thrust_coefficient_function)
     assert callable(turbine.power_function)
     assert turbine.rotor_radius == turbine_data["rotor_diameter"] / 2.0
@@ -87,7 +89,7 @@ def test_ct():
 
     turbine_data = SampleInputs().turbine_multi_dim
     turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
-    turbine = TurbineMultiDimensional.from_dict(turbine_data)
+    turbine = Turbine.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
     condition = (2, 1)
@@ -154,7 +156,7 @@ def test_power():
 
     turbine_data = SampleInputs().turbine_multi_dim
     turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
-    turbine = TurbineMultiDimensional.from_dict(turbine_data)
+    turbine = Turbine.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
     condition = (2, 1)
@@ -210,7 +212,7 @@ def test_axial_induction():
 
     turbine_data = SampleInputs().turbine_multi_dim
     turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
-    turbine = TurbineMultiDimensional.from_dict(turbine_data)
+    turbine = Turbine.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
     condition = (2, 1)

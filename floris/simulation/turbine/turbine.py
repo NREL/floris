@@ -16,11 +16,14 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Callable, Iterable
+from pathlib import Path
 
 import attrs
 import numpy as np
 from attrs import define, field
+from flatten_dict import flatten
 from scipy.interpolate import interp1d
+import pandas as pd
 
 from floris.simulation import BaseClass
 from floris.simulation.turbine import (
@@ -32,6 +35,7 @@ from floris.simulation.turbine.rotor_velocity import (
     compute_tilt_angles_for_floating_turbines,
 )
 from floris.type_dec import (
+    convert_to_path,
     floris_numeric_dict_converter,
     NDArrayBool,
     NDArrayFilter,
@@ -398,7 +402,7 @@ class Turbine(BaseClass):
     generator_efficiency: float = field()
     #ref_air_density: float = field()
     #ref_tilt: float = field()
-    power_thrust_table: dict[str, NDArrayFloat] = field(converter=floris_numeric_dict_converter)
+    power_thrust_table: dict = field(default={}) # conversion to numpy in __post_init__
     power_thrust_model: str = field(default="cosine-loss")
 
     correct_cp_ct_for_tilt: bool = field(default=False)
@@ -418,12 +422,26 @@ class Turbine(BaseClass):
     power_function: Callable = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
 
+    # Only used by mutlidimensional turbines 
+    turbine_library_path: Path = field(
+        default=Path(__file__).parents[2] / "turbine_library",
+        converter=convert_to_path,
+        validator=attrs.validators.instance_of(Path)
+    )
+
+    # Not to be provided by the user
+    condition_keys: list[str] = field(init=False, factory=list)
+
     def __attrs_post_init__(self) -> None:
         self._initialize_power_thrust_functions()
         self.__post_init__()
 
     def __post_init__(self) -> None:
         self._initialize_tilt_interpolation()
+        if self.multi_dimensional_cp_ct:
+            self._initialize_multidim_power_thrust_table()
+        else:
+            self.power_thrust_table = floris_numeric_dict_converter(self.power_thrust_table)
 
     def _initialize_power_thrust_functions(self) -> None:
         # TODO This validation for the power thrust tables should go in the turbine library
@@ -453,14 +471,63 @@ class Turbine(BaseClass):
                 bounds_error=False,
             )
 
+    def _initialize_multidim_power_thrust_table(self):
+        # Collect reference information
+        power_thrust_table_ref = copy.deepcopy(self.power_thrust_table)
+        self.power_thrust_data_file = power_thrust_table_ref.pop("power_thrust_data_file")
+
+        # Solidify the data file path and name
+        self.power_thrust_data_file = self.turbine_library_path / self.power_thrust_data_file
+
+        # Read in the multi-dimensional data supplied by the user.
+        df = pd.read_csv(self.power_thrust_data_file)
+
+        # Down-select the DataFrame to have just the ws, Cp, and Ct values
+        index_col = df.columns.values[:-3]
+        self.condition_keys = index_col.tolist()
+        df2 = df.set_index(index_col.tolist())
+
+        # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
+        # the Ct and power interpolants.
+        power_thrust_table_ = {} # Reset
+        for key in df2.index.unique():
+            # Select the correct ws/Cp/Ct data
+            data = df2.loc[key]
+
+            # Build the interpolants
+            power_thrust_table_.update({
+                key: {
+                    "wind_speed": data['ws'].values,
+                    "power": (
+                        0.5 * self.rotor_area * data['Cp'].values * self.generator_efficiency
+                        * data['ws'].values ** 3 * power_thrust_table_ref["ref_air_density"] / 1000
+                    ), # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
+                    "thrust_coefficient": data['Ct'].values,
+                    **power_thrust_table_ref
+                },
+            })
+            # Add reference information at the lower level
+        
+        # Set on-object version
+        self.power_thrust_table = power_thrust_table_
+
     @power_thrust_table.validator
     def check_power_thrust_table(self, instance: attrs.Attribute, value: dict) -> None:
         """
         Verify that the power and thrust tables are given with arrays of equal length
         to the wind speed array.
         """
-        # if (len(value.keys()) != 3 or
-        #     set(value.keys()) != {"wind_speed", "power", "thrust_coefficient"}):
+
+        if self.multi_dimensional_cp_ct:
+            if isinstance(list(value.keys())[0], tuple):
+                value = list(value.values())[0] # Check the first entry of multidim
+            elif "power_thrust_data_file" in value.keys():
+                return None            
+            else:
+                raise ValueError(
+                    "power_thrust_data_file must be defined if multi_dimensional_cp_ct is True."
+                )
+            
         if not {"wind_speed", "power", "thrust_coefficient"} <= set(value.keys()):
             raise ValueError(
                 """
@@ -471,17 +538,6 @@ class Turbine(BaseClass):
                         "thrust_coefficient": List[float],
                     }
                 """
-            )
-
-        if any(e.ndim > 1 for e in
-            (value["power"], value["thrust_coefficient"], value["wind_speed"])
-            ):
-            raise ValueError("power, thrust_coefficient, and wind_speed inputs must be 1-D.")
-
-        if (len( {value["power"].size, value["thrust_coefficient"].size, value["wind_speed"].size} )
-            > 1):
-            raise ValueError(
-                "power, thrust_coefficient, and wind_speed tables must be the same size."
             )
 
     @rotor_diameter.validator

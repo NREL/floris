@@ -142,12 +142,12 @@ class TurbineMultiDimensional(Turbine):
             whichever is being used to load turbine definitions.
             Defaults to the internal turbine library.
     """
-    multi_dimensional_cp_ct: bool = field(default=False)
-    power_thrust_table: dict = field(default={})
+    #multi_dimensional_cp_ct: bool = field(default=False)
+    #power_thrust_table: dict = field(default={})
     # TODO power_thrust_data_file is actually required and should not default to None.
     # However, the super class has optional attributes so a required attribute here breaks
     power_thrust_data_file: str = field(default=None)
-    power_thrust_data: MultiDimensionalPowerThrustTable = field(default=None)
+    #power_thrust_data: MultiDimensionalPowerThrustTable = field(default=None)
     turbine_library_path: Path = field(
         default=Path(__file__).parents[1] / "turbine_library",
         converter=convert_to_path,
@@ -159,44 +159,44 @@ class TurbineMultiDimensional(Turbine):
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
-        self._initialize_power_thrust_table()
+        #self._initialize_power_thrust_table()
 
-    def _initialize_power_thrust_table(self):
-        # Collect reference information
-        power_thrust_table_ref = copy.deepcopy(self.power_thrust_table)
-        self.power_thrust_data_file = power_thrust_table_ref.pop("power_thrust_data_file")
+    # def _initialize_power_thrust_table(self):
+    #     # Collect reference information
+    #     power_thrust_table_ref = copy.deepcopy(self.power_thrust_table)
+    #     self.power_thrust_data_file = power_thrust_table_ref.pop("power_thrust_data_file")
 
-        # Solidify the data file path and name
-        self.power_thrust_data_file = self.turbine_library_path / self.power_thrust_data_file
+    #     # Solidify the data file path and name
+    #     self.power_thrust_data_file = self.turbine_library_path / self.power_thrust_data_file
 
-        # Read in the multi-dimensional data supplied by the user.
-        df = pd.read_csv(self.power_thrust_data_file)
+    #     # Read in the multi-dimensional data supplied by the user.
+    #     df = pd.read_csv(self.power_thrust_data_file)
 
-        # Build the multi-dimensional power/thrust table
-        self.power_thrust_data = MultiDimensionalPowerThrustTable.from_dataframe(df)
+    #     # Build the multi-dimensional power/thrust table
+    #     self.power_thrust_data = MultiDimensionalPowerThrustTable.from_dataframe(df)
 
-        # Down-select the DataFrame to have just the ws, Cp, and Ct values
-        index_col = df.columns.values[:-3]
-        self.condition_keys = index_col.tolist()
-        df2 = df.set_index(index_col.tolist())
+    #     # Down-select the DataFrame to have just the ws, Cp, and Ct values
+    #     index_col = df.columns.values[:-3]
+    #     self.condition_keys = index_col.tolist()
+    #     df2 = df.set_index(index_col.tolist())
 
-        # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
-        # the Ct and power interpolants.
-        self.power_thrust_table = {} # Reset
-        for key in df2.index.unique():
-            # Select the correct ws/Cp/Ct data
-            data = df2.loc[key]
+    #     # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
+    #     # the Ct and power interpolants.
+    #     self.power_thrust_table = {} # Reset
+    #     for key in df2.index.unique():
+    #         # Select the correct ws/Cp/Ct data
+    #         data = df2.loc[key]
 
-            # Build the interpolants
-            self.power_thrust_table.update({
-                key: {
-                    "wind_speed": data['ws'].values,
-                    "power": (
-                        0.5 * self.rotor_area * data['Cp'].values * self.generator_efficiency
-                        * data['ws'].values ** 3 * power_thrust_table_ref["ref_air_density"] / 1000
-                    ), # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
-                    "thrust_coefficient": data['Ct'].values,
-                    **power_thrust_table_ref
-                },
-            })
-            # Add reference information at the lower level
+    #         # Build the interpolants
+    #         self.power_thrust_table.update({
+    #             key: {
+    #                 "wind_speed": data['ws'].values,
+    #                 "power": (
+    #                     0.5 * self.rotor_area * data['Cp'].values * self.generator_efficiency
+    #                     * data['ws'].values ** 3 * power_thrust_table_ref["ref_air_density"] / 1000
+    #                 ), # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
+    #                 "thrust_coefficient": data['Ct'].values,
+    #                 **power_thrust_table_ref
+    #             },
+    #         })
+    #         # Add reference information at the lower level
