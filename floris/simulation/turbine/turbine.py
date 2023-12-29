@@ -44,34 +44,15 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import cosd
+from floris.simulation.turbine.turbine_utilities import select_multidim_condition
 
 
-def _select_multidim_condition(
-    condition: dict | tuple,
-    specified_conditions: Iterable[tuple]
-) -> tuple:
-    """
-    Convert condition to the type expected by power_thrust_table and select
-    nearest specified condition
-    """
-    if type(condition) is tuple:
-        pass
-    elif type(condition) is dict:
-        condition = tuple(condition.values())
-    else:
-        raise TypeError("condition should be of type dict or tuple.")
-
-    # Find the nearest key to the specified conditions.
-    specified_conditions = np.array(specified_conditions)
-
-    # Find the nearest key to the specified conditions.
-    nearest_condition = np.zeros_like(condition)
-    for i, c in enumerate(condition):
-        nearest_condition[i] = (
-            specified_conditions[:, i][np.absolute(specified_conditions[:, i] - c).argmin()]
-        )
-
-    return tuple(nearest_condition)
+TURBINE_MODEL_MAP = {
+    "power_thrust_model": {
+        "simple": SimpleTurbine,
+        "cosine-loss": CosineLossTurbine
+    },
+}
 
 def power(
     velocities: NDArrayFloat,
@@ -137,7 +118,7 @@ def power(
         else: # assumed multidimensional, use multidim lookup
             # Currently, only works for single mutlidim condition. May need to
             # loop in the case where there are multiple conditions.
-            multidim_condition = _select_multidim_condition(
+            multidim_condition = select_multidim_condition(
                 multidim_condition,
                 list(turbine_power_thrust_tables[turb_type].keys())
             )
@@ -232,7 +213,7 @@ def Ct(
         else: # assumed multidimensional, use multidim lookup
             # Currently, only works for single mutlidim condition. May need to
             # loop in the case where there are multiple conditions.
-            multidim_condition = _select_multidim_condition(
+            multidim_condition = select_multidim_condition(
                 multidim_condition,
                 list(turbine_power_thrust_tables[turb_type].keys())
             )
@@ -345,16 +326,6 @@ def axial_induction(
             )
         )
     )
-
-TURBINE_MODEL_MAP = {
-    "power_thrust_model": {
-        "simple": SimpleTurbine,
-        "cosine-loss": CosineLossTurbine
-    },
-#     "velocity_averaging_method": {
-#         "cubic-mean": cubic_mean
-#     } # BUG/TODO: THIS IS NOT YET PASSED THROUGH!
-}
 
 @define
 class Turbine(BaseClass):
