@@ -27,9 +27,6 @@ from floris.simulation.turbine.turbine import (
     Ct,
     power,
 )
-from floris.simulation.turbine_multi_dim import (
-    MultiDimensionalPowerThrustTable,
-)
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
