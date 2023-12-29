@@ -22,7 +22,7 @@ import yaml
 from attrs import define, field
 
 from floris import logging_manager
-from floris.simulation import (
+from floris.simulation import (  # sequential_multidim_solver,
     BaseClass,
     cc_solver,
     empirical_gauss_solver,
@@ -36,7 +36,6 @@ from floris.simulation import (
     full_flow_turbopark_solver,
     Grid,
     PointsGrid,
-    # sequential_multidim_solver,
     sequential_solver,
     State,
     TurbineCubatureGrid,

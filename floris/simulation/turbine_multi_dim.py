@@ -40,6 +40,7 @@ from floris.type_dec import (
 )
 from floris.utilities import cosd
 
+
 @define
 class MultiDimensionalPowerThrustTable():
     """Helper class to convert the multi-dimensional inputs to a dictionary of objects.

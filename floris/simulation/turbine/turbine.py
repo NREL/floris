@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import copy
-from collections.abc import Iterable, Callable
+from collections.abc import Callable, Iterable
 
 import attrs
 import numpy as np
@@ -40,6 +40,7 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import cosd
+
 
 def _select_multidim_condition(
     condition: dict | tuple,
