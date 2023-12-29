@@ -53,7 +53,7 @@ turbines = [
     t for t in turbines
     if "converted" not in t
     if "updated" not in t
-    if "legacy" not in t 
+    if "legacy" not in t
     if t != "x_20MW"
 ]
 print(turbines)
