@@ -19,7 +19,7 @@ from collections.abc import Iterable
 import numpy as np
 from scipy.interpolate import interp1d
 
-from floris.simulation import BaseModel
+from floris.simulation import BaseTurbineModel
 from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     rotor_velocity_air_density_correction,
@@ -29,7 +29,7 @@ from floris.type_dec import (
 )
 
 
-class SimpleTurbine(BaseModel):
+class SimpleTurbine(BaseTurbineModel):
     """
     Static class defining an actuator disk turbine model that is fully aligned with the flow. No
     handling for yaw or tilt angles.

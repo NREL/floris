@@ -20,7 +20,7 @@ from collections.abc import Iterable
 import numpy as np
 from scipy.interpolate import interp1d
 
-from floris.simulation import BaseModel
+from floris.simulation import BaseTurbineModel
 from floris.simulation.turbine.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
@@ -35,7 +35,7 @@ from floris.type_dec import (
 from floris.utilities import cosd
 
 
-class CosineLossTurbine(BaseModel):
+class CosineLossTurbine(BaseTurbineModel):
     """
     Static class defining an actuator disk turbine model that may be misaligned with the flow.
     Nonzero tilt and yaw angles are handled via cosine relationships, with the power lost to yawing
