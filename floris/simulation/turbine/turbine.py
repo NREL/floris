@@ -57,7 +57,7 @@ TURBINE_MODEL_MAP = {
 def power(
     velocities: NDArrayFloat,
     air_density: float,
-    power_interps: dict[str, Callable],
+    power_functions: dict[str, Callable],
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
     tilt_interps: dict[str, interp1d],
@@ -76,7 +76,7 @@ def power(
         velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a
             turbine.
         air_density (float): air density for simulation [kg/m^3]
-        power_interp (dict[str, interp1d]): A dictionary of power interpolation functions for
+        power_function (dict[str, interp1d]): A dictionary of power interpolation functions for
             each turbine type.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
@@ -139,7 +139,7 @@ def power(
 
         # Using a masked array, apply the power for all turbines of the current
         # type to the main power
-        p += power_interps[turb_type](**power_model_kwargs) * (turbine_type_map == turb_type)
+        p += power_functions[turb_type](**power_model_kwargs) * (turbine_type_map == turb_type)
 
     return p
 

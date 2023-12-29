@@ -130,25 +130,25 @@ class TurbineInterface:
         """
         shape = (1, wind_speeds.size, 1)
         if self.turbine.multi_dimensional_cp_ct:
-            power_interps = {
+            power_functions = {
                 k: multidim_power_down_select(
-                    np.full(shape, self.turbine.power_interp),
+                    np.full(shape, self.turbine.power_function),
                     dict(zip(self.turbine.condition_keys, k)),
                 )
-                for k in self.turbine.power_interp
+                for k in self.turbine.power_function
             }
             power_mw = {
                 k: power_multidim(
                     ref_air_density=np.full(shape, self.turbine.ref_air_density),
                     rotor_effective_velocities=wind_speeds.reshape(shape),
-                    power_interp=power_interps[k],
+                    power_function=power_functions[k],
                 ).flatten() / 1e6
-                for k in self.turbine.power_interp
+                for k in self.turbine.power_function
             }
         else:
             power_mw = power(
                 rotor_effective_velocities=wind_speeds.reshape(shape),
-                power_interp={self.turbine.turbine_type: self.turbine.power_interp},
+                power_function={self.turbine.turbine_type: self.turbine.power_function},
                 turbine_type_map=np.full(shape, self.turbine.turbine_type)
             ).flatten() / 1e6
         return wind_speeds, power_mw

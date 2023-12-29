@@ -133,7 +133,7 @@ def test_regression_tandem(sample_inputs_fixture):
     farm_powers = power(
         velocities,
         floris.flow_field.air_density,
-        floris.farm.turbine_power_interps,
+        floris.farm.turbine_power_functions,
         floris.farm.yaw_angles,
         floris.farm.tilt_angles,
         floris.farm.turbine_tilt_interps,
@@ -287,7 +287,7 @@ def test_regression_yaw(sample_inputs_fixture):
     farm_powers = power(
         velocities,
         floris.flow_field.air_density,
-        floris.farm.turbine_power_interps,
+        floris.farm.turbine_power_functions,
         yaw_angles,
         tilt_angles,
         floris.farm.turbine_tilt_interps,
@@ -381,7 +381,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     farm_powers = power(
         velocities,
         floris.flow_field.air_density,
-        floris.farm.turbine_power_interps,
+        floris.farm.turbine_power_functions,
         yaw_angles,
         tilt_angles,
         floris.farm.turbine_tilt_interps,

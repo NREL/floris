@@ -104,7 +104,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
     farm_powers = power(
         velocities,
         fi.floris.flow_field.air_density,
-        fi.floris.farm.turbine_power_interps,
+        fi.floris.farm.turbine_power_functions,
         fi.floris.farm.yaw_angles,
         fi.floris.farm.tilt_angles,
         fi.floris.farm.turbine_tilt_interps,

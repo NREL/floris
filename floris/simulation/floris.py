@@ -90,10 +90,10 @@ class Floris(BaseClass):
         self.farm.construct_turbine_map()
         if False: #self.wake.model_strings['velocity_model'] == 'multidim_cp_ct':
             self.farm.construct_multidim_turbine_fCts()
-            self.farm.construct_multidim_turbine_power_interps()
+            self.farm.construct_multidim_turbine_power_functions()
         else:
             self.farm.construct_turbine_fCts()
-            self.farm.construct_turbine_power_interps()
+            self.farm.construct_turbine_power_functions()
             self.farm.construct_turbine_power_thrust_tables()
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()

@@ -605,7 +605,7 @@ class FlorisInterface(LoggingManager):
         turbine_powers = power(
             velocities=self.floris.flow_field.u,
             air_density=self.floris.flow_field.air_density,
-            power_interps=self.floris.farm.turbine_power_interps,
+            power_functions=self.floris.farm.turbine_power_functions,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
@@ -635,15 +635,15 @@ class FlorisInterface(LoggingManager):
     #     if (self.turbine_effective_velocities < 0.).any():
     #         self.logger.warning("Some rotor effective velocities are negative.")
 
-    #     turbine_power_interps = multidim_power_down_select(
-    #         self.floris.farm.turbine_power_interps,
+    #     turbine_power_functions = multidim_power_down_select(
+    #         self.floris.farm.turbine_power_functions,
     #         self.floris.flow_field.multidim_conditions
     #     )
 
     #     turbine_powers = power_multidim(
     #         ref_air_density=self.floris.farm.ref_air_densities,
     #         rotor_effective_velocities=self.turbine_effective_velocities,
-    #         power_interp=turbine_power_interps,
+    #         power_function=turbine_power_functions,
     #     )
     #     return turbine_powers
 

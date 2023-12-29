@@ -99,8 +99,8 @@ class Farm(BaseClass):
     turbine_type_map: NDArrayObject = field(init=False, factory=list)
     turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
 
-    turbine_power_interps: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
-    turbine_power_interps_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_power_functions: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
+    turbine_power_functions_sorted: NDArrayFloat = field(init=False, factory=list)
 
     turbine_power_thrust_tables: Dict[str, dict] = field(init=False, factory=list)
 
@@ -289,16 +289,16 @@ class Farm(BaseClass):
             turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbine_map
         }
 
-    def construct_multidim_turbine_fCts(self):
-        self.turbine_fCts = [turb.fCt_interp for turb in self.turbine_map]
+    # def construct_multidim_turbine_fCts(self):
+    #     self.turbine_fCts = [turb.fCt_interp for turb in self.turbine_map]
 
     def construct_turbine_tilt_interps(self):
         self.turbine_tilt_interps = {
             turb.turbine_type: turb.tilt_interp for turb in self.turbine_map
         }
 
-    def construct_turbine_power_interps(self):
-        self.turbine_power_interps = {
+    def construct_turbine_power_functions(self):
+        self.turbine_power_functions = {
             turb.turbine_type: turb.power_function for turb in self.turbine_map
         }
 
@@ -307,8 +307,8 @@ class Farm(BaseClass):
             turb.turbine_type: turb.power_thrust_table for turb in self.turbine_map
         }
 
-    def construct_multidim_turbine_power_interps(self):
-        self.turbine_power_interps = [turb.power_interp for turb in self.turbine_map]
+    # def construct_multidim_turbine_power_functions(self):
+    #     self.turbine_power_functions = [turb.power_function for turb in self.turbine_map]
 
     def expand_farm_properties(self, n_findex: int, sorted_coord_indices):
         template_shape = np.ones_like(sorted_coord_indices)
@@ -330,9 +330,9 @@ class Farm(BaseClass):
                 sorted_coord_indices,
                 axis=1
             )
-            self.turbine_power_interps_sorted = np.take_along_axis(
+            self.turbine_power_functions_sorted = np.take_along_axis(
                 np.reshape(
-                    np.repeat(self.turbine_power_interps, findex_dim),
+                    np.repeat(self.turbine_power_functions, findex_dim),
                     np.shape(template_shape)
                 ),
                 sorted_coord_indices,
@@ -421,8 +421,8 @@ class Farm(BaseClass):
                 unsorted_indices[:,:,0,0],
                 axis=1
             )
-            self.turbine_power_interps = np.take_along_axis(
-                self.turbine_power_interps_sorted,
+            self.turbine_power_functions = np.take_along_axis(
+                self.turbine_power_functions_sorted,
                 unsorted_indices[:,:,0,0],
                 axis=1
             )

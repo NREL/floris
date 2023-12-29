@@ -163,7 +163,7 @@ def test_power():
     p = power(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
         air_density=AIR_DENSITY,
-        power_interps={turbine.turbine_type: turbine.power_function},
+        power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, 1)), # 1 findex, 1 turbine
         tilt_angles=turbine.power_thrust_table[condition]["ref_tilt"] * np.ones((1, 1)),
         tilt_interps={turbine.turbine_type: turbine.tilt_interp},
@@ -181,7 +181,7 @@ def test_power():
     p = power(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
         air_density=AIR_DENSITY,
-        power_interps={turbine.turbine_type: turbine.power_function},
+        power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
         tilt_interps={turbine.turbine_type: turbine.tilt_interp},
