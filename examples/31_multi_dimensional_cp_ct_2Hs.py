@@ -56,8 +56,8 @@ fi.calculate_wake()
 fi_hs_1.calculate_wake()
 
 # Collect the turbine powers in kW
-turbine_powers = fi.get_turbine_powers_multidim()/1000.
-turbine_powers_hs_1 = fi_hs_1.get_turbine_powers_multidim()/1000.
+turbine_powers = fi.get_turbine_powers()/1000.
+turbine_powers_hs_1 = fi_hs_1.get_turbine_powers()/1000.
 
 # Plot the power in each case and the difference in power
 fig, axarr = plt.subplots(1,3,sharex=True,figsize=(12,4))
