@@ -225,4 +225,3 @@ def select_multidim_condition(
         )
 
     return tuple(nearest_condition)
-
