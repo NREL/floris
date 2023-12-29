@@ -76,13 +76,24 @@ def power(
         velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a
             turbine.
         air_density (float): air density for simulation [kg/m^3]
-        power_function (dict[str, interp1d]): A dictionary of power interpolation functions for
-            each turbine type.
+        power_functions (dict[str, interp1d]): A dictionary of power functions for
+            each turbine type. Keys are the turbine type and values are the callable functions.
+        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
+        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
+        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
+            turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
         turbine_power_thrust_tables: Reference data for the power and thrust representation
         ix_filter (NDArrayInt, optional): The boolean array, or
             integer indices to filter out before calculation. Defaults to None.
+        average_method (str, optional): The method for averaging over turbine rotor points
+            to determine a rotor-average wind speed. Defaults to "cubic-mean".
+        cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to
+            None.
+        multidim_condition (tuple | None): The condition tuple used to select the appropriate 
+            thrust coefficient relationship for multidimensional power/thrust tables. Defaults to
+            None.
 
     Returns:
         NDArrayFloat: The power, in Watts, for each turbine after adjusting for yaw and tilt.
@@ -159,20 +170,18 @@ def Ct(
     multidim_condition: tuple | None = None, # Assuming only one condition at a time?
 ) -> NDArrayFloat:
 
-    """Thrust coefficient of a turbine incorporating the yaw angle.
-    The value is interpolated from the coefficient of thrust vs
-    wind speed table using the rotor swept area average velocity.
+    """Thrust coefficient of a turbine.
+    The value is obtained from the coefficient of thrust specified by the callables specified 
+    in fCt.
 
     Args:
         velocities (NDArrayFloat[findex, turbines, grid1, grid2]): The velocity field at
             a turbine.
-        yaw_angle (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
-        tilt_angle (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
-        ref_tilt (NDArrayFloat[findex, turbines]): The reference tilt angle for each turbine
-            that the Cp/Ct tables are defined at.
-        fCt (dict): The thrust coefficient interpolation functions for each turbine. Keys are
-            the turbine type string and values are the interpolation functions.
-        tilt_interp (Iterable[tuple]): The tilt interpolation functions for each
+        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
+        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
+        fCt (dict): The thrust coefficient functions for each turbine. Keys are
+            the turbine type string and values are the callable functions.
+        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
         correct_cp_ct_for_tilt (NDArrayBool[findex, turbines]): Boolean for determining if the
             turbines Cp and Ct should be corrected for tilt.
@@ -181,6 +190,13 @@ def Ct(
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
             integer indices as an iterable of array to filter out before calculation.
             Defaults to None.
+        average_method (str, optional): The method for averaging over turbine rotor points
+            to determine a rotor-average wind speed. Defaults to "cubic-mean".
+        cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to
+            None.
+        multidim_condition (tuple | None): The condition tuple used to select the appropriate 
+            thrust coefficient relationship for multidimensional power/thrust tables. Defaults to
+            None.
 
     Returns:
         NDArrayFloat: Coefficient of thrust for each requested turbine.
@@ -261,13 +277,13 @@ def axial_induction(
     Args:
         velocities (NDArrayFloat): The velocity field at each turbine; should be shape:
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
-        yaw_angle (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
-        tilt_angle (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
+        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
+        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         ref_tilt (NDArrayFloat[findex, turbines]): The reference tilt angle for each turbine
             that the Cp/Ct tables are defined at.
-        fCt (dict): The thrust coefficient interpolation functions for each turbine. Keys are
-            the turbine type string and values are the interpolation functions.
-        tilt_interp (Iterable[tuple]): The tilt interpolation functions for each
+        fCt (dict): The thrust coefficient functions for each turbine. Keys are
+            the turbine type string and values are the callable functions.
+        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
         correct_cp_ct_for_tilt (NDArrayBool[findex, turbines]): Boolean for determining if the
             turbines Cp and Ct should be corrected for tilt.
@@ -276,6 +292,13 @@ def axial_induction(
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
             integer indices (as an array or iterable) to filter out before calculation.
             Defaults to None.
+        average_method (str, optional): The method for averaging over turbine rotor points
+            to determine a rotor-average wind speed. Defaults to "cubic-mean".
+        cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to
+            None.
+        multidim_condition (tuple | None): The condition tuple used to select the appropriate 
+            thrust coefficient relationship for multidimensional power/thrust tables. Defaults to
+            None.
 
     Returns:
         Union[float, NDArrayFloat]: [description]
@@ -337,14 +360,9 @@ class Turbine(BaseClass):
         turbine_type (str): An identifier for this type of turbine such as "NREL_5MW".
         rotor_diameter (float): The rotor diameter in meters.
         hub_height (float): The hub height in meters.
-        pP (float): The cosine exponent relating the yaw misalignment angle to turbine power.
-        pT (float): The cosine exponent relating the rotor tilt angle to turbine power.
         TSR (float): The Tip Speed Ratio of the turbine.
         generator_efficiency (float): The efficiency of the generator used to scale
             power production.
-        ref_air_density (float): The density at which the provided Cp and Ct curves are defined.
-        ref_tilt (float): The implicit tilt of the turbine for which the Cp and Ct
-            curves are defined. This is typically the nacelle tilt.
         power_thrust_table (dict[str, float]): Contains power coefficient and thrust coefficient
             values at a series of wind speeds to define the turbine performance.
             The dictionary must have the following three keys with equal length values:
@@ -353,6 +371,17 @@ class Turbine(BaseClass):
                     "power": List[float],
                     "thrust": List[float],
                 }
+            or, contain a key "power_thrust_data_file" pointing to the power/thrust data.
+            Optionally, power_thrust_table may include parameters for use in the turbine submodel,
+            for example:
+                pP (float): The cosine exponent relating the yaw misalignment angle to turbine
+                    power.
+                pT (float): The cosine exponent relating the rotor tilt angle to turbine
+                    power.
+                ref_air_density (float): The density at which the provided Cp and Ct curves are
+                    defined.
+                ref_tilt (float): The implicit tilt of the turbine for which the Cp and Ct
+                    curves are defined. This is typically the nacelle tilt.
         correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt
             usually for a floating turbine.
             Optional, defaults to False.
@@ -363,6 +392,8 @@ class Turbine(BaseClass):
                     "tilt": List[float],
                 }
             Required if `correct_cp_ct_for_tilt = True`. Defaults to None.
+        multi_dimensional_cp_ct (bool): Use a multidimensional power_thrust_table. Defaults to
+            False.
     """
     turbine_type: str = field()
     rotor_diameter: float = field()
@@ -384,7 +415,6 @@ class Turbine(BaseClass):
     # the turbine data inputs to keep the multidimensional Cp and Ct curve but switch them off
     # with multi_dimensional_cp_ct = False
     multi_dimensional_cp_ct: bool = field(default=False)
-    power_thrust_data_file: str = field(default=None)
 
     # Initialized in the post_init function
     rotor_radius: float = field(init=False)
@@ -392,6 +422,7 @@ class Turbine(BaseClass):
     thrust_coefficient_function: Callable = field(init=False)
     power_function: Callable = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
+    power_thrust_data_file: str = field(default=None)
 
     # Only used by mutlidimensional turbines
     turbine_library_path: Path = field(
