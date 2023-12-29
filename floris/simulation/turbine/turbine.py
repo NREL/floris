@@ -57,8 +57,6 @@ def power(
     correct_cp_ct_for_tilt: bool = False,
     multidim_condition: tuple | None = None, # Assuming only one condition at a time?
 ) -> NDArrayFloat:
-    # TODO:
-    # prepares the input; then calls the power function
     """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
 
@@ -308,39 +306,6 @@ def axial_induction(
             )
         )
     )
-
-def multidim_power_thrust_table_select(
-    multidim_power_thrust_table,
-    conditions,
-) -> list:
-    """
-    Args:
-        power_interps (NDArray[wd, ws, turbines]): The power interpolants generated from the
-            multi-dimensional Cp turbine data for all specified conditions.
-        conditions (dict): The conditions at which to determine which Ct interpolant to use.
-
-    Returns:
-        NDArray: The down selected power interpolants for the selected conditions.
-    """
-    # downselect_power_interps = np.empty_like(power_interps)
-    # # Loop over the wind directions, wind speeds, and turbines, finding the power interpolant
-    # # that is closest to the specified multi-dimensional condition.
-    # for i, findex in enumerate(power_interps):
-    #     for j, turb in enumerate(findex):
-    #         # Get the interpolant keys in float type for comparison
-    #         keys_float = np.array([[float(v) for v in val] for val in turb.keys()])
-
-    #         # Find the nearest key to the specified conditions.
-    #         key_vals = []
-    #         for ii, cond in enumerate(conditions.values()):
-    #             key_vals.append(
-    #                 keys_float[:, ii][np.absolute(keys_float[:, ii] - cond).argmin()]
-    #             )
-
-    #         # Use the constructed key to choose the correct interpolant
-    #         downselect_power_interps[i, j] = turb[tuple(key_vals)]
-
-    return multidim_power_thrust_table[conditions]
 
 TURBINE_MODEL_MAP = {
     "power_thrust_model": {

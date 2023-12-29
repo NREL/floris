@@ -27,11 +27,6 @@ from floris.simulation import (
     TurbineGrid,
 )
 from floris.simulation.turbine.rotor_velocity import average_velocity
-from floris.simulation.turbine_multi_dim import (
-    axial_induction_multidim,
-    Ct_multidim,
-    multidim_Ct_down_select,
-)
 from floris.simulation.wake import WakeModelManager
 from floris.simulation.wake_deflection.empirical_gauss import yaw_added_wake_mixing
 from floris.simulation.wake_deflection.gauss import (

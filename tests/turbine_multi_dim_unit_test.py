@@ -44,31 +44,6 @@ WIND_CONDITION_BROADCAST = np.reshape(np.array(WIND_SPEEDS), (-1, 1, 1, 1))
 
 INDEX_FILTER = [0, 2]
 
-
-# def test_multidim_Ct_down_select():
-#     CONDITIONS = {'Tp': 2, 'Hs': 1}
-
-#     turbine_data = SampleInputs().turbine_multi_dim
-#     turbine_data["power_thrust_data_file"] = CSV_INPUT
-#     turbine = TurbineMultiDimensional.from_dict(turbine_data)
-
-#     downselect_turbine_fCts = multidim_Ct_down_select([[turbine.fCt_interp]], CONDITIONS)
-
-#     assert downselect_turbine_fCts == turbine.fCt_interp[(2, 1)]
-
-
-# def test_multidim_power_down_select():
-#     CONDITIONS = {'Tp': 2, 'Hs': 1}
-
-#     turbine_data = SampleInputs().turbine_multi_dim
-#     turbine_data["power_thrust_data_file"] = CSV_INPUT
-#     turbine = TurbineMultiDimensional.from_dict(turbine_data)
-
-#     downselect_power_interps = multidim_power_down_select([[turbine.power_interp]], CONDITIONS)
-
-#     assert downselect_power_interps == turbine.power_interp[(2, 1)]
-
-
 def test_multi_dimensional_power_thrust_table():
     turbine_data = SampleInputs().turbine_multi_dim
     turbine_data["power_thrust_data_file"] = CSV_INPUT

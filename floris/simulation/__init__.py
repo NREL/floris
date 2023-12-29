@@ -49,8 +49,6 @@ from .turbine.rotor_velocity import (
     compute_tilt_angles_for_floating_turbines,
 )
 from .turbine_multi_dim import (
-    axial_induction_multidim,
-    Ct_multidim,
     TurbineMultiDimensional
 )
 from .farm import Farm
