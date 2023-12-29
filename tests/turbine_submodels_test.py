@@ -138,5 +138,3 @@ def test_CosineLossTurbine():
     )
     absolute_tilt = tilt_angles_test - turbine_data["power_thrust_table"]["ref_tilt"]
     assert test_Ct == baseline_Ct * cosd(yaw_angles_test) * cosd(absolute_tilt)
-
-
