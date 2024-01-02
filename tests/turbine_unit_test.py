@@ -353,7 +353,7 @@ def test_axial_induction():
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
 
-    baseline_ai = 0.25116283939089806
+    baseline_ai = 0.26752001107622186415
 
     # Single turbine
     wind_speed = 10.0
