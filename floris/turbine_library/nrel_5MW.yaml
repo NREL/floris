@@ -10,7 +10,7 @@ turbine_type: 'nrel_5MW'
 
 ###
 # Setting for generator losses to power.
-generator_efficiency: 1.0
+generator_efficiency: 0.944
 
 ###
 # Hub height.
@@ -18,7 +18,7 @@ hub_height: 90.0
 
 ###
 # Rotor diameter.
-rotor_diameter: 126.0
+rotor_diameter: 125.88
 
 ###
 # Tip speed ratio defined as linear blade tip speed normalized by the incoming wind speed.
