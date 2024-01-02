@@ -107,7 +107,11 @@ def build_cosine_loss_turbine_dict(
         validity_mask = (Cp != 0) | (u != 0)
         p = np.zeros_like(Cp, dtype=float)
 
-        p[validity_mask] = Cp[validity_mask]*0.5*ref_air_density*A*u[validity_mask]**3 / 1000
+        p[validity_mask] = (
+            Cp[validity_mask]
+            * 0.5 * ref_air_density * A * generator_efficiency
+            * u[validity_mask]**3 / 1000
+        )
 
     else:
         raise KeyError(
