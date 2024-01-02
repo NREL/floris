@@ -24,7 +24,7 @@ from floris.simulation.turbine import build_cosine_loss_turbine_dict, check_smoo
 def test_build_turbine_dict():
 
     v3_file_path = Path(__file__).resolve().parent / "data" / "nrel_5MW_v3legacy.yaml"
-    v4_file_path = Path(__file__).resolve().parent / "data" / "nrel_5MW.yaml"
+    v4_file_path = Path(__file__).resolve().parent / "data" / "nrel_5MW_v4converted.yaml"
     test_turb_name = "test_turbine_export"
     test_file_path = "."
 
