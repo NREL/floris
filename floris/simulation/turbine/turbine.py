@@ -22,17 +22,12 @@ import attrs
 import numpy as np
 import pandas as pd
 from attrs import define, field
-from flatten_dict import flatten
 from scipy.interpolate import interp1d
 
 from floris.simulation import BaseClass
 from floris.simulation.turbine import (
     CosineLossTurbine,
     SimpleTurbine,
-)
-from floris.simulation.turbine.rotor_velocity import (
-    average_velocity,
-    compute_tilt_angles_for_floating_turbines,
 )
 from floris.simulation.turbine.turbine_utilities import select_multidim_condition
 from floris.type_dec import (
@@ -202,12 +197,6 @@ def Ct(
         NDArrayFloat: Coefficient of thrust for each requested turbine.
     """
 
-    if isinstance(yaw_angles, list):
-        yaw_angles = np.array(yaw_angles)
-
-    if isinstance(tilt_angles, list):
-        tilt_angles = np.array(tilt_angles)
-
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         velocities = velocities[:, ix_filter]
@@ -257,15 +246,15 @@ def Ct(
 
 
 def axial_induction(
-    velocities: NDArrayFloat,  # (findex, turbines, grid, grid)
-    yaw_angles: NDArrayFloat,  # (findex, turbines)
-    tilt_angles: NDArrayFloat,  # (findex, turbines)
+    velocities: NDArrayFloat,
+    yaw_angles: NDArrayFloat,
+    tilt_angles: NDArrayFloat,
     ref_tilt: NDArrayFloat,
-    fCt: dict,  # (turbines)
-    tilt_interps: NDArrayObject,  # (turbines)
-    correct_cp_ct_for_tilt: NDArrayBool, # (findex, turbines)
-    turbine_type_map: NDArrayObject, # (findex, turbines)
-    turbine_power_thrust_tables: dict, # (turbines)
+    fCt: dict,
+    tilt_interps: NDArrayObject,
+    correct_cp_ct_for_tilt: NDArrayBool,
+    turbine_type_map: NDArrayObject,
+    turbine_power_thrust_tables: dict,
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
@@ -398,12 +387,8 @@ class Turbine(BaseClass):
     turbine_type: str = field()
     rotor_diameter: float = field()
     hub_height: float = field()
-    #pP: float = field()
-    #pT: float = field()
     TSR: float = field()
     generator_efficiency: float = field()
-    #ref_air_density: float = field()
-    #ref_tilt: float = field()
     power_thrust_table: dict = field(default={}) # conversion to numpy in __post_init__
     power_thrust_model: str = field(default="cosine-loss")
 

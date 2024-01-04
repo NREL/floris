@@ -22,7 +22,7 @@ import yaml
 from attrs import define, field
 
 from floris import logging_manager
-from floris.simulation import (  # sequential_multidim_solver,
+from floris.simulation import (
     BaseClass,
     cc_solver,
     empirical_gauss_solver,
@@ -86,19 +86,12 @@ class Floris(BaseClass):
 
         # Initialize farm quantities that depend on other objects
         self.farm.construct_turbine_map()
-        if False: #self.wake.model_strings['velocity_model'] == 'multidim_cp_ct':
-            self.farm.construct_multidim_turbine_fCts()
-            self.farm.construct_multidim_turbine_power_functions()
-        else:
-            self.farm.construct_turbine_fCts()
-            self.farm.construct_turbine_power_functions()
-            self.farm.construct_turbine_power_thrust_tables()
+        self.farm.construct_turbine_fCts()
+        self.farm.construct_turbine_power_functions()
+        self.farm.construct_turbine_power_thrust_tables()
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()
         self.farm.construct_turbine_TSRs()
-        # self.farm.construct_turbine_pPs()
-        # self.farm.construct_turbine_pTs()
-        # self.farm.construct_turbine_ref_air_densities()
         self.farm.construct_turbine_ref_tilts()
         self.farm.construct_turbine_tilt_interps()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
@@ -202,13 +195,6 @@ class Floris(BaseClass):
                 self.grid,
                 self.wake
             )
-        # elif vel_model=="multidim_cp_ct":
-        #     sequential_multidim_solver(
-        #         self.farm,
-        #         self.flow_field,
-        #         self.grid,
-        #         self.wake
-        #     )
         else:
             sequential_solver(
                 self.farm,

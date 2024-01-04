@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 import copy
-from collections.abc import Iterable
 
 import numpy as np
 from scipy.interpolate import interp1d

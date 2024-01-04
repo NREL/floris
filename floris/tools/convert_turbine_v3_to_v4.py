@@ -24,7 +24,6 @@ and is appended _v4.
 """
 
 import sys
-from ipaddress import v4_int_to_packed
 from pathlib import Path
 
 from floris.simulation.turbine import build_cosine_loss_turbine_dict, check_smooth_power_curve

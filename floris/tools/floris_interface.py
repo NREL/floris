@@ -600,7 +600,7 @@ class FlorisInterface(LoggingManager):
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.
         if (self.floris.flow_field.u < 0.).any():
-            self.logger.warning("Some point velocities at the rotor are negative.")
+            self.logger.warning("Some velocities at the rotor are negative.")
 
         turbine_powers = power(
             velocities=self.floris.flow_field.u,
@@ -615,37 +615,6 @@ class FlorisInterface(LoggingManager):
             multidim_condition=self.floris.flow_field.multidim_conditions
         )
         return turbine_powers
-
-    # def get_turbine_powers_multidim(self) -> NDArrayFloat:
-    #     """Calculates the power at each turbine in the wind farm
-    #     when using multi-dimensional Cp/Ct turbine definitions.
-
-    #     Returns:
-    #         NDArrayFloat: Powers at each turbine.
-    #     """
-
-    #     # Confirm calculate wake has been run
-    #     if self.floris.state is not State.USED:
-    #         raise RuntimeError(
-    #             "Can't run function `FlorisInterface.get_turbine_powers_multidim` without "
-    #             "first running `FlorisInterface.calculate_wake`."
-    #         )
-    #     # Check for negative velocities, which could indicate bad model
-    #     # parameters or turbines very closely spaced.
-    #     if (self.turbine_effective_velocities < 0.).any():
-    #         self.logger.warning("Some rotor effective velocities are negative.")
-
-    #     turbine_power_functions = multidim_power_down_select(
-    #         self.floris.farm.turbine_power_functions,
-    #         self.floris.flow_field.multidim_conditions
-    #     )
-
-    #     turbine_powers = power_multidim(
-    #         ref_air_density=self.floris.farm.ref_air_densities,
-    #         rotor_effective_velocities=self.turbine_effective_velocities,
-    #         power_function=turbine_power_functions,
-    #     )
-    #     return turbine_powers
 
     def get_turbine_Cts(self) -> NDArrayFloat:
         turbine_Cts = Ct(
@@ -687,25 +656,6 @@ class FlorisInterface(LoggingManager):
             method=self.floris.grid.average_method,
             cubature_weights=self.floris.grid.cubature_weights
         )
-
-    # @property
-    # def turbine_effective_velocities(self) -> NDArrayFloat:
-    #     rotor_effective_velocities = rotor_effective_velocity(
-    #         air_density=self.floris.flow_field.air_density,
-    #         ref_air_density=self.floris.farm.ref_air_densities,
-    #         velocities=self.floris.flow_field.u,
-    #         yaw_angle=self.floris.farm.yaw_angles,
-    #         tilt_angle=self.floris.farm.tilt_angles,
-    #         ref_tilt=self.floris.farm.ref_tilts,
-    #         pP=self.floris.farm.pPs,
-    #         pT=self.floris.farm.pTs,
-    #         tilt_interp=self.floris.farm.turbine_tilt_interps,
-    #         correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
-    #         turbine_type_map=self.floris.farm.turbine_type_map,
-    #         average_method=self.floris.grid.average_method,
-    #         cubature_weights=self.floris.grid.cubature_weights
-    #     )
-    #     return rotor_effective_velocities
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.floris.flow_field.turbulence_intensity_field

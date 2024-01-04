@@ -19,7 +19,6 @@ Defines the BaseClass parent class for all models to be based upon.
 
 from abc import abstractmethod
 from enum import Enum
-from selectors import BaseSelector
 from typing import (
     Any,
     Dict,

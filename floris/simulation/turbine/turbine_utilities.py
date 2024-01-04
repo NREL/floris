@@ -14,8 +14,7 @@
 
 from __future__ import annotations
 
-import os.path
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import yaml

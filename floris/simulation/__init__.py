@@ -67,7 +67,6 @@ from .solver import (
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     sequential_solver,
-    #sequential_multidim_solver,
     turbopark_solver,
 )
 from .floris import Floris
