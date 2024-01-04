@@ -31,6 +31,15 @@ floris.tools.visualization
 
    
    
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      VelocityProfilesFigure
+   
    
 
    

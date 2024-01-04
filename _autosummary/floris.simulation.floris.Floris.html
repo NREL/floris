@@ -559,8 +559,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -688,6 +686,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -699,6 +698,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -933,13 +933,16 @@ access other objects within the model.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.solve_for_points" title="floris.simulation.floris.Floris.solve_for_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_for_points</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.solve_for_viz" title="floris.simulation.floris.Floris.solve_for_viz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_for_viz</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.solve_for_velocity_deficit_profiles" title="floris.simulation.floris.Floris.solve_for_velocity_deficit_profiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_for_velocity_deficit_profiles</span></code></a></p></td>
+<td><p>Extract velocity deficit profiles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.solve_for_viz" title="floris.simulation.floris.Floris.solve_for_viz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve_for_viz</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.steady_state_atmospheric_condition" title="floris.simulation.floris.Floris.steady_state_atmospheric_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">steady_state_atmospheric_condition</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.steady_state_atmospheric_condition" title="floris.simulation.floris.Floris.steady_state_atmospheric_condition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">steady_state_atmospheric_condition</span></code></a></p></td>
 <td><p>Perform the steady-state wind farm wake calculations.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.to_file" title="floris.simulation.floris.Floris.to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_file</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.floris.Floris.to_file" title="floris.simulation.floris.Floris.to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_file</span></code></a></p></td>
 <td><p>Converts the <cite>Floris</cite> object to an input-ready YAML file at <cite>output_file_path</cite>.</p></td>
 </tr>
 </tbody>
@@ -1065,6 +1068,32 @@ initialize_domain() is required to be called before this function.</p>
 <dt class="sig sig-object py" id="floris.simulation.floris.Floris.solve_for_points">
 <span class="sig-name descname"><span class="pre">solve_for_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/floris.html#Floris.solve_for_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.floris.Floris.solve_for_points" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.floris.Floris.solve_for_velocity_deficit_profiles">
+<span class="sig-name descname"><span class="pre">solve_for_velocity_deficit_profiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downstream_dists</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">homogeneous_wind_speed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_rotor_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_height</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/floris.html#Floris.solve_for_velocity_deficit_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.floris.Floris.solve_for_velocity_deficit_profiles" title="Permalink to this definition">#</a></dt>
+<dd><p>Extract velocity deficit profiles. See
+<a class="reference internal" href="floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.sample_velocity_deficit_profiles" title="floris.tools.floris_interface.FlorisInterface.sample_velocity_deficit_profiles"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_velocity_deficit_profiles()</span></code></a>
+for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>direction</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>downstream_dists</strong> (<em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>] </em><em>| </em><em>list</em>) -- </p></li>
+<li><p><strong>profile_range</strong> (<em>numpy.ndarray</em><em>[</em><em>Any</em><em>, </em><em>numpy.dtype</em><em>[</em><em>numpy.float64</em><em>]</em><em>] </em><em>| </em><em>list</em>) -- </p></li>
+<li><p><strong>resolution</strong> (<em>int</em>) -- </p></li>
+<li><p><strong>homogeneous_wind_speed</strong> (<em>float</em>) -- </p></li>
+<li><p><strong>ref_rotor_diameter</strong> (<em>float</em>) -- </p></li>
+<li><p><strong>x_start</strong> (<em>float</em>) -- </p></li>
+<li><p><strong>y_start</strong> (<em>float</em>) -- </p></li>
+<li><p><strong>reference_height</strong> (<em>float</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.floris.Floris.finalize">

@@ -19,7 +19,6 @@ floris.simulation.wake\_combination.sosfs.SOSFS
       ~SOSFS.as_dict
       ~SOSFS.from_dict
       ~SOSFS.function
-      ~SOSFS.lock_num_eps
       ~SOSFS.prepare_function
    
    

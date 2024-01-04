@@ -19,7 +19,6 @@ floris.simulation.wake\_velocity.gauss.GaussVelocityDeficit
       ~GaussVelocityDeficit.as_dict
       ~GaussVelocityDeficit.from_dict
       ~GaussVelocityDeficit.function
-      ~GaussVelocityDeficit.lock_num_eps
       ~GaussVelocityDeficit.prepare_function
    
    

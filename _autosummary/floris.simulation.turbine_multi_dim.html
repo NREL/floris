@@ -559,8 +559,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -688,6 +686,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -699,6 +698,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -1115,7 +1115,7 @@ multi-dimensional Cp turbine data for all specified conditions.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine_multi_dim.</span></span><span class="sig-name descname"><span class="pre">TurbineMultiDimensional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TSR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_density_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_tilt_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_dimensional_cp_ct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/floris/floris/floris/turbine_library')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine_multi_dim.html#TurbineMultiDimensional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine_multi_dim.</span></span><span class="sig-name descname"><span class="pre">TurbineMultiDimensional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TSR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_density_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_tilt_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_dimensional_cp_ct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/floris/floris/floris/turbine_library')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine_multi_dim.html#TurbineMultiDimensional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional" title="Permalink to this definition">#</a></dt>
 <dd><p>Turbine is a class containing objects pertaining to the individual
 turbines.</p>
 <p>Turbine is a model class representing a particular wind turbine. It
@@ -1134,7 +1134,7 @@ tilt angle to power.</p></li>
 efficiency factor used to scale the power production.</p></li>
 <li><p><strong>(</strong> -- py:obj: float): The density at which the provided
 cp and ct is defined</p></li>
-<li><p><strong>power_thrust_table</strong> (<a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html#floris.simulation.turbine.PowerThrustTable" title="floris.simulation.turbine.PowerThrustTable"><em>PowerThrustTable</em></a>) -- <p>A dictionary containing the
+<li><p><strong>power_thrust_table</strong> (<em>PowerThrustTable</em>) -- <p>A dictionary containing the
 following key-value pairs:</p>
 <dl class="simple">
 <dt>power (:py:obj: List[float]): The coefficient of power at</dt><dd><p>different wind speeds.</p>
@@ -1172,12 +1172,21 @@ Defaults to the internal turbine library.</p></li>
 <li><p><strong>ref_density_cp_ct</strong> (<em>float</em>) -- </p></li>
 <li><p><strong>ref_tilt_cp_ct</strong> (<em>float</em>) -- </p></li>
 <li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
-<li><p><strong>floating_tilt_table</strong> (<a class="reference internal" href="floris.simulation.turbine.TiltTable.html#floris.simulation.turbine.TiltTable" title="floris.simulation.turbine.TiltTable"><em>TiltTable</em></a>) -- </p></li>
-<li><p><strong>floating_correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>floating_tilt_table</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>NDArrayFloat</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
 <li><p><strong>power_thrust_data</strong> (<a class="reference internal" href="floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable.html#floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable" title="floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable"><em>MultiDimensionalPowerThrustTable</em></a>) -- </p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct">
+<span class="sig-name descname"><span class="pre">multi_dimensional_cp_ct</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table">
+<span class="sig-name descname"><span class="pre">power_thrust_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data_file">
 <span class="sig-name descname"><span class="pre">power_thrust_data_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data_file" title="Permalink to this definition">#</a></dt>
@@ -1186,11 +1195,6 @@ Defaults to the internal turbine library.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data">
 <span class="sig-name descname"><span class="pre">power_thrust_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable.html#floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable" title="floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable"><span class="pre">MultiDimensionalPowerThrustTable</span></a></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct">
-<span class="sig-name descname"><span class="pre">multi_dimensional_cp_ct</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

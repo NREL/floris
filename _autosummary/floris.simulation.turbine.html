@@ -559,8 +559,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -688,6 +686,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -699,6 +698,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -950,14 +950,8 @@ title="Print to PDF"
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html#floris.simulation.turbine.PowerThrustTable" title="floris.simulation.turbine.PowerThrustTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PowerThrustTable</span></code></a></p></td>
-<td><p>Helper class to convert the dictionary and list-based inputs to a object of arrays.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="floris.simulation.turbine.TiltTable.html#floris.simulation.turbine.TiltTable" title="floris.simulation.turbine.TiltTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TiltTable</span></code></a></p></td>
-<td><p>Helper class to convert the dictionary and list-based inputs to a object of arrays.</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine" title="floris.simulation.turbine.Turbine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Turbine</span></code></a></p></td>
-<td><p>Turbine is a class containing objects pertaining to the individual turbines.</p></td>
+<td><p>A class containing the parameters and infrastructure to model a wind turbine's performance for a particular atmospheric condition.</p></td>
 </tr>
 </tbody>
 </table>
@@ -972,7 +966,7 @@ title="Print to PDF"
 <dd class="field-even"><ul class="simple">
 <li><p><strong>turbine_type_map</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>) -- </p></li>
 <li><p><strong>tilt_angle</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>tilt_interp</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>tilt_interp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>scipy.interpolate._interpolate.interp1d</em><em>]</em>) -- </p></li>
 <li><p><strong>rotor_effective_velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
 </ul>
 </dd>
@@ -1018,8 +1012,8 @@ given in Watts.</p>
 <li><p><strong>ref_density_cp_cts</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The reference density for each turbine</p></li>
 <li><p><strong>rotor_effective_velocities</strong> (<em>NDArrayFloat</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em>) -- The rotor
 effective velocities at a turbine.</p></li>
-<li><p><strong>power_interp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>NDArrayObject</em><em>[</em><em>wd</em><em>, </em><em>ws</em><em>, </em><em>turbines</em><em>]</em><em>]</em>) -- The power interpolation function
-for each turbine type as a dictionary.</p></li>
+<li><p><strong>power_interp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>interp1d</em><em>]</em>) -- A dictionary of power interpolation functions for
+each turbine type.</p></li>
 <li><p><strong>turbine_type_map</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>) -- (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
 each turbine.</p></li>
 <li><p><strong>ix_filter</strong> (<em>NDArrayInt</em><em>, </em><em>optional</em>) -- The boolean array, or
@@ -1173,125 +1167,54 @@ Defaults to None.</p></li>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="floris.simulation.turbine.PowerThrustTable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">PowerThrustTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thrust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#PowerThrustTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.PowerThrustTable" title="Permalink to this definition">#</a></dt>
-<dd><p>Helper class to convert the dictionary and list-based inputs to a object of arrays.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>power</strong> (<em>NDArrayFloat</em>) -- The power produced at a given wind speed.</p></li>
-<li><p><strong>thrust</strong> (<em>NDArrayFloat</em>) -- The thrust at a given wind speed.</p></li>
-<li><p><strong>wind_speed</strong> (<em>NDArrayFloat</em>) -- Wind speed values, m/s.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.</p></li>
-<li><p><strong>ValueError</strong> -- Raised if power, thrust, and wind_speed don't have the same number of values.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.PowerThrustTable.power">
-<span class="sig-name descname"><span class="pre">power</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.turbine.PowerThrustTable.power" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.PowerThrustTable.thrust">
-<span class="sig-name descname"><span class="pre">thrust</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.turbine.PowerThrustTable.thrust" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.PowerThrustTable.wind_speed">
-<span class="sig-name descname"><span class="pre">wind_speed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.turbine.PowerThrustTable.wind_speed" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="floris.simulation.turbine.TiltTable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">TiltTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tilt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#TiltTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.TiltTable" title="Permalink to this definition">#</a></dt>
-<dd><p>Helper class to convert the dictionary and list-based inputs to a object of arrays.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tilt</strong> (<em>NDArrayFloat</em>) -- The tilt angle at a given wind speed.</p></li>
-<li><p><strong>wind_speeds</strong> (<em>NDArrayFloat</em>) -- Wind speed values, m/s.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> -- Raised if tilt and wind_speeds are not all 1-d array-like shapes.</p></li>
-<li><p><strong>ValueError</strong> -- Raised if tilt and wind_speeds don't have the same number of values.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.TiltTable.tilt">
-<span class="sig-name descname"><span class="pre">tilt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.turbine.TiltTable.tilt" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.TiltTable.wind_speeds">
-<span class="sig-name descname"><span class="pre">wind_speeds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.turbine.TiltTable.wind_speeds" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Turbine">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">Turbine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TSR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_density_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_tilt_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_dimensional_cp_ct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#Turbine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.Turbine" title="Permalink to this definition">#</a></dt>
-<dd><p>Turbine is a class containing objects pertaining to the individual
-turbines.</p>
-<p>Turbine is a model class representing a particular wind turbine. It
-is largely a container of data and parameters, but also contains
-methods to probe properties for output.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine.</span></span><span class="sig-name descname"><span class="pre">Turbine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TSR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_density_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_tilt_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_dimensional_cp_ct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#Turbine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.Turbine" title="Permalink to this definition">#</a></dt>
+<dd><p>A class containing the parameters and infrastructure to model a wind turbine's performance
+for a particular atmospheric condition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>(</strong> (<em>rloc</em>) -- py:obj: float): The rotor diameter (m).</p></li>
-<li><p><strong>(</strong> -- py:obj: float): The hub height (m).</p></li>
-<li><p><strong>(</strong> -- py:obj: float): The cosine exponent relating the yaw
-misalignment angle to power.</p></li>
-<li><p><strong>(</strong> -- py:obj: float): The cosine exponent relating the rotor
-tilt angle to power.</p></li>
-<li><p><strong>(</strong> -- py:obj: float): The generator
-efficiency factor used to scale the power production.</p></li>
-<li><p><strong>(</strong> -- py:obj: float): The density at which the provided
-cp and ct is defined</p></li>
-<li><p><strong>power_thrust_table</strong> (<a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html#floris.simulation.turbine.PowerThrustTable" title="floris.simulation.turbine.PowerThrustTable"><em>PowerThrustTable</em></a>) -- <p>A dictionary containing the
-following key-value pairs:</p>
-<dl class="simple">
-<dt>power (:py:obj: List[float]): The coefficient of power at</dt><dd><p>different wind speeds.</p>
-</dd>
-<dt>thrust (:py:obj: List[float]): The coefficient of thrust</dt><dd><p>at different wind speeds.</p>
-</dd>
-<dt>wind_speed (:py:obj: List[float]): The wind speeds for</dt><dd><p>which the power and thrust values are provided (m/s).</p>
+<li><p><strong>turbine_type</strong> (<em>str</em>) -- An identifier for this type of turbine such as &quot;NREL_5MW&quot;.</p></li>
+<li><p><strong>rotor_diameter</strong> (<em>float</em>) -- The rotor diameter in meters.</p></li>
+<li><p><strong>hub_height</strong> (<em>float</em>) -- The hub height in meters.</p></li>
+<li><p><strong>pP</strong> (<em>float</em>) -- The cosine exponent relating the yaw misalignment angle to turbine power.</p></li>
+<li><p><strong>pT</strong> (<em>float</em>) -- The cosine exponent relating the rotor tilt angle to turbine power.</p></li>
+<li><p><strong>TSR</strong> (<em>float</em>) -- The Tip Speed Ratio of the turbine.</p></li>
+<li><p><strong>generator_efficiency</strong> (<em>float</em>) -- The efficiency of the generator used to scale
+power production.</p></li>
+<li><p><strong>ref_density_cp_ct</strong> (<em>float</em>) -- The density at which the provided Cp and Ct curves are defined.</p></li>
+<li><p><strong>ref_tilt_cp_ct</strong> (<em>float</em>) -- The implicit tilt of the turbine for which the Cp and Ct
+curves are defined. This is typically the nacelle tilt.</p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) -- <p>Contains power coefficient and thrust coefficient
+values at a series of wind speeds to define the turbine performance.
+The dictionary must have the following three keys with equal length values:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>&quot;wind_speeds&quot;: List[float],
+&quot;power&quot;: List[float],
+&quot;thrust&quot;: List[float],</p>
 </dd>
 </dl>
+<p>}</p>
+</div></blockquote>
 </p></li>
-<li><p><strong>ngrid</strong> (<em>int</em>, optional) -- The square root of the number
-of points to use on the turbine grid. This number will be
-squared so that the points can be evenly distributed.
-Defaults to 5.</p></li>
-<li><p><strong>(</strong> -- py:obj: float, optional): A value, from 0 to 1, that determines
-the width/height of the grid of points on the rotor as a ratio of
-the rotor radius.
-Defaults to 0.5.</p></li>
-<li><p><strong>turbine_type</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>rotor_diameter</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>hub_height</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>pP</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>pT</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>TSR</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>generator_efficiency</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>ref_density_cp_ct</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>ref_tilt_cp_ct</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
-<li><p><strong>floating_tilt_table</strong> (<a class="reference internal" href="floris.simulation.turbine.TiltTable.html#floris.simulation.turbine.TiltTable" title="floris.simulation.turbine.TiltTable"><em>TiltTable</em></a>) -- </p></li>
-<li><p><strong>floating_correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
-<li><p><strong>power_thrust_data_file</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- A flag to indicate whether to correct Cp and Ct for tilt
+usually for a floating turbine.
+Optional, defaults to False.</p></li>
+<li><p><strong>floating_tilt_table</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) -- <p>Look up table of tilt angles at a series of
+wind speeds. The dictionary must have the following keys with equal length values:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>&quot;wind_speeds&quot;: List[float],
+&quot;tilt&quot;: List[float],</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>Required if <cite>correct_cp_ct_for_tilt = True</cite>. Defaults to None.</p>
+</p></li>
 <li><p><strong>multi_dimensional_cp_ct</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>power_thrust_data_file</strong> (<em>str</em>) -- </p></li>
 </ul>
 </dd>
 </dl>
@@ -1342,7 +1265,7 @@ Defaults to 0.5.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.power_thrust_table">
-<span class="sig-name descname"><span class="pre">power_thrust_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html#floris.simulation.turbine.PowerThrustTable" title="floris.simulation.turbine.PowerThrustTable"><span class="pre">PowerThrustTable</span></a></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.power_thrust_table" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">power_thrust_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.power_thrust_table" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1352,22 +1275,17 @@ Defaults to 0.5.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.floating_tilt_table">
-<span class="sig-name descname"><span class="pre">floating_tilt_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.turbine.TiltTable.html#floris.simulation.turbine.TiltTable" title="floris.simulation.turbine.TiltTable"><span class="pre">TiltTable</span></a></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.floating_tilt_table" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.floating_correct_cp_ct_for_tilt">
-<span class="sig-name descname"><span class="pre">floating_correct_cp_ct_for_tilt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.floating_correct_cp_ct_for_tilt" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.power_thrust_data_file">
-<span class="sig-name descname"><span class="pre">power_thrust_data_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.power_thrust_data_file" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">floating_tilt_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.floating_tilt_table" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.multi_dimensional_cp_ct">
 <span class="sig-name descname"><span class="pre">multi_dimensional_cp_ct</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.multi_dimensional_cp_ct" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.power_thrust_data_file">
+<span class="sig-name descname"><span class="pre">power_thrust_data_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.power_thrust_data_file" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1378,11 +1296,6 @@ Defaults to 0.5.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.rotor_area">
 <span class="sig-name descname"><span class="pre">rotor_area</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.rotor_area" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.fCp_interp">
-<span class="sig-name descname"><span class="pre">fCp_interp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">interp1d</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.fCp_interp" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1400,10 +1313,23 @@ Defaults to 0.5.</p></li>
 <span class="sig-name descname"><span class="pre">tilt_interp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">interp1d</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.tilt_interp" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.fTilt_interp">
-<span class="sig-name descname"><span class="pre">fTilt_interp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">interp1d</span></em><a class="headerlink" href="#floris.simulation.turbine.Turbine.fTilt_interp" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.check_power_thrust_table">
+<span class="sig-name descname"><span class="pre">check_power_thrust_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#Turbine.check_power_thrust_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.Turbine.check_power_thrust_table" title="Permalink to this definition">#</a></dt>
+<dd><p>Verify that the power and thrust tables are given with arrays of equal length
+to the wind speed array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>instance</strong> (<em>Attribute</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>dict</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.reset_rotor_diameter_dependencies">
@@ -1461,8 +1387,8 @@ Defaults to 0.5.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.turbine.Turbine.check_floating_tilt_table">
 <span class="sig-name descname"><span class="pre">check_floating_tilt_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine.html#Turbine.check_floating_tilt_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine.Turbine.check_floating_tilt_table" title="Permalink to this definition">#</a></dt>
-<dd><p>Check that if the tile/wind_speed table is defined, that the tilt and
-wind_speed arrays are the same length so that the interpolation will work.</p>
+<dd><p>If the tilt / wind_speed table is defined, verify that the tilt and
+wind_speed arrays are the same length.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -1470,7 +1396,7 @@ wind_speed arrays are the same length so that the interpolation will work.</p>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>instance</strong> (<em>Attribute</em>) -- </p></li>
-<li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
 </ul>
 </dd>
 </dl>
@@ -1488,7 +1414,7 @@ if a tile/wind_speed table is also defined.</p>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>instance</strong> (<em>Attribute</em>) -- </p></li>
-<li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>bool</em>) -- </p></li>
 </ul>
 </dd>
 </dl>

@@ -19,7 +19,6 @@ floris.simulation.wake\_deflection.none.NoneVelocityDeflection
       ~NoneVelocityDeflection.as_dict
       ~NoneVelocityDeflection.from_dict
       ~NoneVelocityDeflection.function
-      ~NoneVelocityDeflection.lock_num_eps
       ~NoneVelocityDeflection.prepare_function
    
    

@@ -558,8 +558,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -687,6 +685,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -698,6 +697,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -876,6 +876,7 @@ title="Open an issue"
     <span class="n">define</span><span class="p">,</span>
     <span class="n">field</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">,</span>
+    <span class="n">setters</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggingManager</span>
@@ -912,12 +913,7 @@ title="Open an issue"
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># This is a numerical epsilon to prevent divide by zeros</span>
-    <span class="n">NUM_EPS</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
-
-<div class="viewcode-block" id="BaseModel.lock_num_eps"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.base.BaseModel.html#floris.simulation.base.BaseModel.lock_num_eps">[docs]</a>    <span class="nd">@NUM_EPS</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">lock_num_eps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="mf">0.001</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;NUM_EPS should remain a fixed value. Don&#39;t change this!&quot;</span><span class="p">)</span></div>
+    <span class="n">NUM_EPS</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">on_setattr</span><span class="o">=</span><span class="n">setters</span><span class="o">.</span><span class="n">frozen</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseModel.prepare_function"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.base.BaseModel.html#floris.simulation.base.BaseModel.prepare_function">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">prepare_function</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>

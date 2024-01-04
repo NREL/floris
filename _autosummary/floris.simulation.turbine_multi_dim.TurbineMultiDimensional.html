@@ -559,8 +559,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -688,6 +686,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -699,6 +698,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -904,7 +904,7 @@ title="Print to PDF"
 <h1>floris.simulation.turbine_multi_dim.TurbineMultiDimensional<a class="headerlink" href="#floris-simulation-turbine-multi-dim-turbinemultidimensional" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine_multi_dim.</span></span><span class="sig-name descname"><span class="pre">TurbineMultiDimensional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TSR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_density_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_tilt_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_dimensional_cp_ct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/floris/floris/floris/turbine_library')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine_multi_dim.html#TurbineMultiDimensional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.simulation.turbine_multi_dim.</span></span><span class="sig-name descname"><span class="pre">TurbineMultiDimensional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hub_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TSR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_density_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_tilt_cp_ct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_cp_ct_for_tilt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floating_tilt_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_dimensional_cp_ct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_thrust_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/floris/floris/floris/turbine_library')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/turbine_multi_dim.html#TurbineMultiDimensional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine" title="floris.simulation.turbine.Turbine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Turbine</span></code></a></p>
 <p>Turbine is a class containing objects pertaining to the individual
 turbines.</p>
@@ -924,7 +924,7 @@ tilt angle to power.</p></li>
 efficiency factor used to scale the power production.</p></li>
 <li><p><strong>(</strong> -- py:obj: float): The density at which the provided
 cp and ct is defined</p></li>
-<li><p><strong>power_thrust_table</strong> (<a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html#floris.simulation.turbine.PowerThrustTable" title="floris.simulation.turbine.PowerThrustTable"><em>PowerThrustTable</em></a>) -- <p>A dictionary containing the
+<li><p><strong>power_thrust_table</strong> (<em>PowerThrustTable</em>) -- <p>A dictionary containing the
 following key-value pairs:</p>
 <dl class="simple">
 <dt>power (:py:obj: List[float]): The coefficient of power at</dt><dd><p>different wind speeds.</p>
@@ -962,8 +962,7 @@ Defaults to the internal turbine library.</p></li>
 <li><p><strong>ref_density_cp_ct</strong> (<em>float</em>) -- </p></li>
 <li><p><strong>ref_tilt_cp_ct</strong> (<em>float</em>) -- </p></li>
 <li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
-<li><p><strong>floating_tilt_table</strong> (<a class="reference internal" href="floris.simulation.turbine.TiltTable.html#floris.simulation.turbine.TiltTable" title="floris.simulation.turbine.TiltTable"><em>TiltTable</em></a>) -- </p></li>
-<li><p><strong>floating_correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>floating_tilt_table</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>NDArrayFloat</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
 <li><p><strong>power_thrust_data</strong> (<a class="reference internal" href="floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable.html#floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable" title="floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable"><em>MultiDimensionalPowerThrustTable</em></a>) -- </p></li>
 </ul>
 </dd>
@@ -975,21 +974,24 @@ Defaults to the internal turbine library.</p></li>
 <td><p>Creates a YAML friendly dictionary that can be saved for future reloading.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_floating_tilt_table" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_floating_tilt_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_floating_tilt_table</span></code></a></p></td>
-<td><p>Check that if the tile/wind_speed table is defined, that the tilt and wind_speed arrays are the same length so that the interpolation will work.</p></td>
+<td><p>If the tilt / wind_speed table is defined, verify that the tilt and wind_speed arrays are the same length.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_for_cp_ct_correct_flag_if_floating" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_for_cp_ct_correct_flag_if_floating"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_for_cp_ct_correct_flag_if_floating</span></code></a></p></td>
 <td><p>Check that the boolean flag exists for correcting Cp/Ct for tilt if a tile/wind_speed table is also defined.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.from_dict" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_power_thrust_table" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_power_thrust_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_power_thrust_table</span></code></a></p></td>
+<td><p>Verify that the power and thrust tables are given with arrays of equal length to the wind speed array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.from_dict" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></p></td>
 <td><p>Maps a data dictionary to an <cite>attr</cite>-defined class.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_area" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_rotor_area</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_area" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_rotor_area</span></code></a></p></td>
 <td><p>Resets the <cite>rotor_radius</cite> value to trigger the recalculation of <cite>rotor_diameter</cite>, <cite>rotor_radius</cite> and <cite>rotor_area</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_diameter_dependencies" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_diameter_dependencies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_rotor_diameter_dependencies</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_diameter_dependencies" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_diameter_dependencies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_rotor_diameter_dependencies</span></code></a></p></td>
 <td><p>Resets the <cite>rotor_radius</cite> and <cite>rotor_area</cite> attributes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_radius" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_rotor_radius</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_radius" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.reset_rotor_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_rotor_radius</span></code></a></p></td>
 <td><p>Resets the <cite>rotor_diameter</cite> value to trigger the recalculation of <cite>rotor_diameter</cite>, <cite>rotor_radius</cite> and <cite>rotor_area</cite>.</p></td>
 </tr>
 </tbody>
@@ -1012,74 +1014,75 @@ Defaults to the internal turbine library.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.correct_cp_ct_for_tilt" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.correct_cp_ct_for_tilt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correct_cp_ct_for_tilt</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCp_interp" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCp_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fCp_interp</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCt_interp" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCt_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fCt_interp</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCt_interp" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCt_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fCt_interp</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_tilt_table" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_tilt_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floating_tilt_table</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fTilt_interp" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fTilt_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fTilt_interp</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.generator_efficiency" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.generator_efficiency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator_efficiency</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_correct_cp_ct_for_tilt" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_correct_cp_ct_for_tilt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floating_correct_cp_ct_for_tilt</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.hub_height" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.hub_height"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hub_height</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_tilt_table" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_tilt_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floating_tilt_table</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.generator_efficiency" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.generator_efficiency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator_efficiency</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.hub_height" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.hub_height"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hub_height</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.logger" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.logger" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p>Returns the logger manager object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multi_dimensional_cp_ct</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multi_dimensional_cp_ct</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.pP" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.pP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pP</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.pP" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.pP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pP</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.pT" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.pT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pT</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.pT" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.pT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pT</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_interp" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power_interp</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_interp" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power_interp</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data_file" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power_thrust_data_file</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data_file" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power_thrust_data_file</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power_thrust_table</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power_thrust_table</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.ref_density_cp_ct" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.ref_density_cp_ct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ref_density_cp_ct</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.ref_density_cp_ct" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.ref_density_cp_ct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ref_density_cp_ct</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.ref_tilt_cp_ct" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.ref_tilt_cp_ct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ref_tilt_cp_ct</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.ref_tilt_cp_ct" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.ref_tilt_cp_ct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ref_tilt_cp_ct</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_area" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotor_area</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_area" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotor_area</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_diameter" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_diameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotor_diameter</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_diameter" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_diameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotor_diameter</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_radius" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotor_radius</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_radius" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.rotor_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotor_radius</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.state" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.state" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.tilt_interp" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.tilt_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilt_interp</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.tilt_interp" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.tilt_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tilt_interp</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.turbine_type" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.turbine_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_type</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.turbine_type" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.turbine_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_type</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct">
+<span class="sig-name descname"><span class="pre">multi_dimensional_cp_ct</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table">
+<span class="sig-name descname"><span class="pre">power_thrust_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data_file">
 <span class="sig-name descname"><span class="pre">power_thrust_data_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data_file" title="Permalink to this definition">#</a></dt>
@@ -1088,11 +1091,6 @@ Defaults to the internal turbine library.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data">
 <span class="sig-name descname"><span class="pre">power_thrust_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable.html#floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable" title="floris.simulation.turbine_multi_dim.MultiDimensionalPowerThrustTable"><span class="pre">MultiDimensionalPowerThrustTable</span></a></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_data" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct">
-<span class="sig-name descname"><span class="pre">multi_dimensional_cp_ct</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.multi_dimensional_cp_ct" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1133,8 +1131,8 @@ removed from the export.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_floating_tilt_table">
 <span class="sig-name descname"><span class="pre">check_floating_tilt_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_floating_tilt_table" title="Permalink to this definition">#</a></dt>
-<dd><p>Check that if the tile/wind_speed table is defined, that the tilt and
-wind_speed arrays are the same length so that the interpolation will work.</p>
+<dd><p>If the tilt / wind_speed table is defined, verify that the tilt and
+wind_speed arrays are the same length.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -1142,7 +1140,7 @@ wind_speed arrays are the same length so that the interpolation will work.</p>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>instance</strong> (<em>Attribute</em>) -- </p></li>
-<li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
 </ul>
 </dd>
 </dl>
@@ -1160,7 +1158,25 @@ if a tile/wind_speed table is also defined.</p>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>instance</strong> (<em>Attribute</em>) -- </p></li>
-<li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>bool</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_power_thrust_table">
+<span class="sig-name descname"><span class="pre">check_power_thrust_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.check_power_thrust_table" title="Permalink to this definition">#</a></dt>
+<dd><p>Verify that the power and thrust tables are given with arrays of equal length
+to the wind speed array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>instance</strong> (<em>Attribute</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>dict</em>) -- </p></li>
 </ul>
 </dd>
 </dl>
@@ -1172,28 +1188,13 @@ if a tile/wind_speed table is also defined.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCp_interp">
-<span class="sig-name descname"><span class="pre">fCp_interp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">interp1d</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCp_interp" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCt_interp">
 <span class="sig-name descname"><span class="pre">fCt_interp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">interp1d</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fCt_interp" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fTilt_interp">
-<span class="sig-name descname"><span class="pre">fTilt_interp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">interp1d</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.fTilt_interp" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_correct_cp_ct_for_tilt">
-<span class="sig-name descname"><span class="pre">floating_correct_cp_ct_for_tilt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_correct_cp_ct_for_tilt" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_tilt_table">
-<span class="sig-name descname"><span class="pre">floating_tilt_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.turbine.TiltTable.html#floris.simulation.turbine.TiltTable" title="floris.simulation.turbine.TiltTable"><span class="pre">TiltTable</span></a></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_tilt_table" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">floating_tilt_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArrayFloat</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.floating_tilt_table" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1245,11 +1246,6 @@ The data dictionary to be mapped.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_interp">
 <span class="sig-name descname"><span class="pre">power_interp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">interp1d</span></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_interp" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table">
-<span class="sig-name descname"><span class="pre">power_thrust_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html#floris.simulation.turbine.PowerThrustTable" title="floris.simulation.turbine.PowerThrustTable"><span class="pre">PowerThrustTable</span></a></em><a class="headerlink" href="#floris.simulation.turbine_multi_dim.TurbineMultiDimensional.power_thrust_table" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

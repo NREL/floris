@@ -36,6 +36,7 @@ floris.tools.floris\_interface.FlorisInterface
       ~FlorisInterface.get_turbine_powers_multidim
       ~FlorisInterface.reinitialize
       ~FlorisInterface.sample_flow_at_points
+      ~FlorisInterface.sample_velocity_deficit_profiles
    
    
 

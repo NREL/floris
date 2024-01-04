@@ -558,8 +558,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -687,6 +685,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -698,6 +697,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -862,7 +862,6 @@ title="Open an issue"
 
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">import</span> <span class="nn">attrs</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -871,8 +870,7 @@ title="Open an issue"
 
 <span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="n">BaseClass</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">floris_array_converter</span><span class="p">,</span>
-    <span class="n">FromDictMixin</span><span class="p">,</span>
+    <span class="n">floris_numeric_dict_converter</span><span class="p">,</span>
     <span class="n">NDArrayBool</span><span class="p">,</span>
     <span class="n">NDArrayFilter</span><span class="p">,</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
@@ -915,22 +913,19 @@ title="Open an issue"
     <span class="n">tilt_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span> <span class="n">tilt_angle</span><span class="p">,</span> <span class="n">old_tilt_angle</span><span class="p">)</span>
 
     <span class="c1"># Compute the rotor effective velocity adjusting for tilt</span>
-    <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">rotor_effective_velocities</span>
-        <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">tilt_angle</span> <span class="o">-</span> <span class="n">ref_tilt_cp_ct</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">pT</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">relative_tilt</span> <span class="o">=</span> <span class="n">tilt_angle</span> <span class="o">-</span> <span class="n">ref_tilt_cp_ct</span>
+    <span class="n">rotor_effective_velocities</span> <span class="o">=</span> <span class="n">rotor_effective_velocities</span> <span class="o">*</span> <span class="n">cosd</span><span class="p">(</span><span class="n">relative_tilt</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">pT</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rotor_effective_velocities</span>
 
 
 <div class="viewcode-block" id="compute_tilt_angles_for_floating_turbines"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.compute_tilt_angles_for_floating_turbines.html#floris.simulation.turbine.compute_tilt_angles_for_floating_turbines">[docs]</a><span class="k">def</span> <span class="nf">compute_tilt_angles_for_floating_turbines</span><span class="p">(</span>
     <span class="n">turbine_type_map</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
     <span class="n">tilt_angle</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
-    <span class="n">tilt_interp</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
+    <span class="n">tilt_interp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">interp1d</span><span class="p">],</span>
     <span class="n">rotor_effective_velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
     <span class="c1"># Loop over each turbine type given to get tilt angles for all turbines</span>
     <span class="n">tilt_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">rotor_effective_velocities</span><span class="p">))</span>
-    <span class="n">tilt_interp</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">tilt_interp</span><span class="p">)</span>
     <span class="n">turb_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">turbine_type_map</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">turb_type</span> <span class="ow">in</span> <span class="n">turb_types</span><span class="p">:</span>
         <span class="c1"># If no tilt interpolation is specified, assume no modification to tilt</span>
@@ -949,7 +944,7 @@ title="Open an issue"
     <span class="c1"># TODO: Not sure if this is the best way to do this? Basically replaces the initialized</span>
     <span class="c1"># tilt_angles if there are non-zero tilt angles calculated above (meaning that the turbine</span>
     <span class="c1"># definition contained  a wind_speed/tilt table definition)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">tilt_angles</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tilt_angles</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
         <span class="n">tilt_angle</span> <span class="o">=</span> <span class="n">tilt_angles</span>
 
     <span class="k">return</span> <span class="n">tilt_angle</span></div>
@@ -1019,7 +1014,7 @@ title="Open an issue"
 <div class="viewcode-block" id="power"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.power.html#floris.simulation.turbine.power">[docs]</a><span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
     <span class="n">ref_density_cp_ct</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">rotor_effective_velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
-    <span class="n">power_interp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NDArrayObject</span><span class="p">],</span>
+    <span class="n">power_interp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">interp1d</span><span class="p">],</span>
     <span class="n">turbine_type_map</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
     <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
@@ -1030,8 +1025,8 @@ title="Open an issue"
 <span class="sd">        ref_density_cp_cts (NDArrayFloat[wd, ws, turbines]): The reference density for each turbine</span>
 <span class="sd">        rotor_effective_velocities (NDArrayFloat[wd, ws, turbines]): The rotor</span>
 <span class="sd">            effective velocities at a turbine.</span>
-<span class="sd">        power_interp (dict[str, NDArrayObject[wd, ws, turbines]]): The power interpolation function</span>
-<span class="sd">            for each turbine type as a dictionary.</span>
+<span class="sd">        power_interp (dict[str, interp1d]): A dictionary of power interpolation functions for</span>
+<span class="sd">            each turbine type.</span>
 <span class="sd">        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for</span>
 <span class="sd">            each turbine.</span>
 <span class="sd">        ix_filter (NDArrayInt, optional): The boolean array, or</span>
@@ -1064,10 +1059,7 @@ title="Open an issue"
     <span class="k">for</span> <span class="n">turb_type</span> <span class="ow">in</span> <span class="n">turb_types</span><span class="p">:</span>
         <span class="c1"># Using a masked array, apply the thrust coefficient for all turbines of the current</span>
         <span class="c1"># type to the main thrust coefficient array</span>
-        <span class="n">p</span> <span class="o">+=</span> <span class="p">(</span>
-            <span class="n">power_interp</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">rotor_effective_velocities</span><span class="p">)</span>
-            <span class="o">*</span> <span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">p</span> <span class="o">+=</span> <span class="n">power_interp</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="n">rotor_effective_velocities</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">p</span> <span class="o">*</span> <span class="n">ref_density_cp_ct</span></div>
 
@@ -1305,113 +1297,43 @@ title="Open an issue"
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incorrect method given.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PowerThrustTable"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html#floris.simulation.turbine.PowerThrustTable">[docs]</a><span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">PowerThrustTable</span><span class="p">(</span><span class="n">FromDictMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper class to convert the dictionary and list-based inputs to a object of arrays.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        power (NDArrayFloat): The power produced at a given wind speed.</span>
-<span class="sd">        thrust (NDArrayFloat): The thrust at a given wind speed.</span>
-<span class="sd">        wind_speed (NDArrayFloat): Wind speed values, m/s.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        ValueError: Raised if the power, thrust, and wind_speed are not all 1-d array-like shapes.</span>
-<span class="sd">        ValueError: Raised if power, thrust, and wind_speed don&#39;t have the same number of values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">power</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="n">floris_array_converter</span><span class="p">)</span>
-    <span class="n">thrust</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="n">floris_array_converter</span><span class="p">)</span>
-    <span class="n">wind_speed</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="n">floris_array_converter</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Validate the power, thrust, and wind speed inputs.</span>
-
-        <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrust</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power, thrust, and wind_speed inputs must be 1-D.&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrust</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="o">.</span><span class="n">size</span><span class="p">}</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power, thrust, and wind_speed tables must be the same size.&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Remove any duplicate wind speed entries</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">duplicate_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">[</span><span class="n">duplicate_filter</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">thrust</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thrust</span><span class="p">[</span><span class="n">duplicate_filter</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speed</span><span class="p">[</span><span class="n">duplicate_filter</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="TiltTable"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html#floris.simulation.turbine.TiltTable">[docs]</a><span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">TiltTable</span><span class="p">(</span><span class="n">FromDictMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper class to convert the dictionary and list-based inputs to a object of arrays.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        tilt (NDArrayFloat): The tilt angle at a given wind speed.</span>
-<span class="sd">        wind_speeds (NDArrayFloat): Wind speed values, m/s.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        ValueError: Raised if tilt and wind_speeds are not all 1-d array-like shapes.</span>
-<span class="sd">        ValueError: Raised if tilt and wind_speeds don&#39;t have the same number of values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tilt</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">floris_array_converter</span><span class="p">)</span>
-    <span class="n">wind_speeds</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">floris_array_converter</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Validate the power, thrust, and wind speed inputs.</span>
-
-        <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tilt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tilt and wind_speed inputs must be 1-D.&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">tilt</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span><span class="o">.</span><span class="n">size</span><span class="p">})</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tilt and wind_speed tables must be the same size.&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Remove any duplicate wind speed entries</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">duplicate_filter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tilt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tilt</span><span class="p">[</span><span class="n">duplicate_filter</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">duplicate_filter</span><span class="p">]</span></div>
-
-
 <div class="viewcode-block" id="Turbine"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine">[docs]</a><span class="nd">@define</span>
 <span class="k">class</span> <span class="nc">Turbine</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Turbine is a class containing objects pertaining to the individual</span>
-<span class="sd">    turbines.</span>
+<span class="sd">    A class containing the parameters and infrastructure to model a wind turbine&#39;s performance</span>
+<span class="sd">    for a particular atmospheric condition.</span>
 
-<span class="sd">    Turbine is a model class representing a particular wind turbine. It</span>
-<span class="sd">    is largely a container of data and parameters, but also contains</span>
-<span class="sd">    methods to probe properties for output.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        rotor_diameter (:py:obj: float): The rotor diameter (m).</span>
-<span class="sd">        hub_height (:py:obj: float): The hub height (m).</span>
-<span class="sd">        pP (:py:obj: float): The cosine exponent relating the yaw</span>
-<span class="sd">            misalignment angle to power.</span>
-<span class="sd">        pT (:py:obj: float): The cosine exponent relating the rotor</span>
-<span class="sd">            tilt angle to power.</span>
-<span class="sd">        generator_efficiency (:py:obj: float): The generator</span>
-<span class="sd">            efficiency factor used to scale the power production.</span>
-<span class="sd">        ref_density_cp_ct (:py:obj: float): The density at which the provided</span>
-<span class="sd">            cp and ct is defined</span>
-<span class="sd">        power_thrust_table (PowerThrustTable): A dictionary containing the</span>
-<span class="sd">            following key-value pairs:</span>
-
-<span class="sd">            power (:py:obj: List[float]): The coefficient of power at</span>
-<span class="sd">                different wind speeds.</span>
-<span class="sd">            thrust (:py:obj: List[float]): The coefficient of thrust</span>
-<span class="sd">                at different wind speeds.</span>
-<span class="sd">            wind_speed (:py:obj: List[float]): The wind speeds for</span>
-<span class="sd">                which the power and thrust values are provided (m/s).</span>
-<span class="sd">        ngrid (*int*, optional): The square root of the number</span>
-<span class="sd">            of points to use on the turbine grid. This number will be</span>
-<span class="sd">            squared so that the points can be evenly distributed.</span>
-<span class="sd">            Defaults to 5.</span>
-<span class="sd">        rloc (:py:obj: float, optional): A value, from 0 to 1, that determines</span>
-<span class="sd">            the width/height of the grid of points on the rotor as a ratio of</span>
-<span class="sd">            the rotor radius.</span>
-<span class="sd">            Defaults to 0.5.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        turbine_type (str): An identifier for this type of turbine such as &quot;NREL_5MW&quot;.</span>
+<span class="sd">        rotor_diameter (float): The rotor diameter in meters.</span>
+<span class="sd">        hub_height (float): The hub height in meters.</span>
+<span class="sd">        pP (float): The cosine exponent relating the yaw misalignment angle to turbine power.</span>
+<span class="sd">        pT (float): The cosine exponent relating the rotor tilt angle to turbine power.</span>
+<span class="sd">        TSR (float): The Tip Speed Ratio of the turbine.</span>
+<span class="sd">        generator_efficiency (float): The efficiency of the generator used to scale</span>
+<span class="sd">            power production.</span>
+<span class="sd">        ref_density_cp_ct (float): The density at which the provided Cp and Ct curves are defined.</span>
+<span class="sd">        ref_tilt_cp_ct (float): The implicit tilt of the turbine for which the Cp and Ct</span>
+<span class="sd">            curves are defined. This is typically the nacelle tilt.</span>
+<span class="sd">        power_thrust_table (dict[str, float]): Contains power coefficient and thrust coefficient</span>
+<span class="sd">            values at a series of wind speeds to define the turbine performance.</span>
+<span class="sd">            The dictionary must have the following three keys with equal length values:</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;wind_speeds&quot;: List[float],</span>
+<span class="sd">                    &quot;power&quot;: List[float],</span>
+<span class="sd">                    &quot;thrust&quot;: List[float],</span>
+<span class="sd">                }</span>
+<span class="sd">        correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt</span>
+<span class="sd">            usually for a floating turbine.</span>
+<span class="sd">            Optional, defaults to False.</span>
+<span class="sd">        floating_tilt_table (dict[str, float]): Look up table of tilt angles at a series of</span>
+<span class="sd">            wind speeds. The dictionary must have the following keys with equal length values:</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;wind_speeds&quot;: List[float],</span>
+<span class="sd">                    &quot;tilt&quot;: List[float],</span>
+<span class="sd">                }</span>
+<span class="sd">            Required if `correct_cp_ct_for_tilt = True`. Defaults to None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">turbine_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">rotor_diameter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">hub_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
@@ -1421,53 +1343,56 @@ title="Open an issue"
     <span class="n">generator_efficiency</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">ref_density_cp_ct</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">ref_tilt_cp_ct</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
-    <span class="n">power_thrust_table</span><span class="p">:</span> <span class="n">PowerThrustTable</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">floating_tilt_table</span><span class="p">:</span> <span class="n">TiltTable</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">floating_correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">power_thrust_data_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">multi_dimensional_cp_ct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NDArrayFloat</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">floris_numeric_dict_converter</span><span class="p">)</span>
 
-    <span class="c1"># rloc: float = float_attrib()  # TODO: goes here or on the Grid?</span>
-    <span class="c1"># use_points_on_perimeter: bool = bool_attrib()</span>
+    <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">floating_tilt_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NDArrayFloat</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Even though this Turbine class does not support the multidimensional features as they</span>
+    <span class="c1"># are implemented in TurbineMultiDim, providing the following two attributes here allows</span>
+    <span class="c1"># the turbine data inputs to keep the multidimensional Cp and Ct curve but switch them off</span>
+    <span class="c1"># with multi_dimensional_cp_ct = False</span>
+    <span class="n">multi_dimensional_cp_ct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">power_thrust_data_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="c1"># Initialized in the post_init function</span>
     <span class="n">rotor_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">rotor_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">fCp_interp</span><span class="p">:</span> <span class="n">interp1d</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">fCt_interp</span><span class="p">:</span> <span class="n">interp1d</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">power_interp</span><span class="p">:</span> <span class="n">interp1d</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">tilt_interp</span><span class="p">:</span> <span class="n">interp1d</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">fTilt_interp</span><span class="p">:</span> <span class="n">interp1d</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-
-    <span class="c1"># For the following parameters, use default values if not user-specified</span>
-    <span class="c1"># self.rloc = float(input_dictionary[&quot;rloc&quot;]) if &quot;rloc&quot; in input_dictionary else 0.5</span>
-    <span class="c1"># if &quot;use_points_on_perimeter&quot; in input_dictionary:</span>
-    <span class="c1">#     self.use_points_on_perimeter = bool(input_dictionary[&quot;use_points_on_perimeter&quot;])</span>
-    <span class="c1"># else:</span>
-    <span class="c1">#     self.use_points_on_perimeter = False</span>
+    <span class="n">tilt_interp</span><span class="p">:</span> <span class="n">interp1d</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_power_thrust_interpolation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
 
-        <span class="c1"># Post-init initialization for the power curve interpolation functions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">PowerThrustTable</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">)</span>
-        <span class="n">wind_speeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="o">.</span><span class="n">wind_speed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fCp_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_tilt_interpolation</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_power_thrust_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># TODO This validation for the power thrust tables should go in the turbine library</span>
+        <span class="c1"># since it&#39;s preprocessing</span>
+        <span class="c1"># Remove any duplicate wind speed entries</span>
+        <span class="c1"># _, duplicate_filter = np.unique(self.wind_speed, return_index=True)</span>
+        <span class="c1"># self.power = self.power[duplicate_filter]</span>
+        <span class="c1"># self.thrust = self.thrust[duplicate_filter]</span>
+        <span class="c1"># self.wind_speed = self.wind_speed[duplicate_filter]</span>
+
+        <span class="n">wind_speeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">]</span>
+        <span class="n">cp_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
             <span class="n">wind_speeds</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="o">.</span><span class="n">power</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;power&quot;</span><span class="p">],</span>
             <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
             <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">inner_power</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotor_area</span>
-            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fCp_interp</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
-            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_efficiency</span>
-            <span class="o">*</span> <span class="n">wind_speeds</span> <span class="o">**</span> <span class="mi">3</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">power_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
             <span class="n">wind_speeds</span><span class="p">,</span>
-            <span class="n">inner_power</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotor_area</span>
+                <span class="o">*</span> <span class="n">cp_interp</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_efficiency</span>
+                <span class="o">*</span> <span class="n">wind_speeds</span> <span class="o">**</span> <span class="mi">3</span>
+            <span class="p">),</span>
             <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span>
         <span class="p">)</span>
@@ -1484,28 +1409,55 @@ title="Open an issue"
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fCt_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
             <span class="n">wind_speeds</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="o">.</span><span class="n">thrust</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;thrust&quot;</span><span class="p">],</span>
             <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.9999</span><span class="p">),</span>
             <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_initialize_tilt_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># TODO:</span>
+        <span class="c1"># Remove any duplicate wind speed entries</span>
+        <span class="c1"># _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)</span>
+        <span class="c1"># self.tilt = self.tilt[duplicate_filter]</span>
+        <span class="c1"># self.wind_speeds = self.wind_speeds[duplicate_filter]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="o">=</span> <span class="n">floris_numeric_dict_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">)</span>
+
         <span class="c1"># If defined, create a tilt interpolation function for floating turbines.</span>
         <span class="c1"># fill_value currently set to apply the min or max tilt angles if outside</span>
         <span class="c1"># of the interpolation range.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="o">=</span> <span class="n">TiltTable</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fTilt_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="o">.</span><span class="n">tilt</span><span class="p">,</span>
-                <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="o">.</span><span class="n">tilt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tilt_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">],</span>
+                <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
                 <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tilt_interp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fTilt_interp</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_correct_cp_ct_for_tilt</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fTilt_interp</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tilt_interp</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Turbine.check_power_thrust_table"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine.check_power_thrust_table">[docs]</a>    <span class="nd">@power_thrust_table</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">check_power_thrust_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify that the power and thrust tables are given with arrays of equal length</span>
+<span class="sd">        to the wind speed array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="p">{</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">,</span> <span class="s2">&quot;power&quot;</span><span class="p">,</span> <span class="s2">&quot;thrust&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                power_thrust_table dictionary must have the form:</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;wind_speed&quot;: List[float],</span>
+<span class="sd">                        &quot;power&quot;: List[float],</span>
+<span class="sd">                        &quot;thrust&quot;: List[float],</span>
+<span class="sd">                    }</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;power&quot;</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;thrust&quot;</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">])):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power, thrust, and wind_speed inputs must be 1-D.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="p">{</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;power&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;thrust&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">}</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power, thrust, and wind_speed tables must be the same size.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Turbine.reset_rotor_diameter_dependencies"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine.reset_rotor_diameter_dependencies">[docs]</a>    <span class="nd">@rotor_diameter</span><span class="o">.</span><span class="n">validator</span>
     <span class="k">def</span> <span class="nf">reset_rotor_diameter_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1533,36 +1485,45 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">rotor_radius</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span></div>
 
 <div class="viewcode-block" id="Turbine.check_floating_tilt_table"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine.check_floating_tilt_table">[docs]</a>    <span class="nd">@floating_tilt_table</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">check_floating_tilt_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">check_floating_tilt_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check that if the tile/wind_speed table is defined, that the tilt and</span>
-<span class="sd">        wind_speed arrays are the same length so that the interpolation will work.</span>
+<span class="sd">        If the tilt / wind_speed table is defined, verify that the tilt and</span>
+<span class="sd">        wind_speed arrays are the same length.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">])</span>
-                <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">[</span><span class="s2">&quot;wind_speeds&quot;</span><span class="p">])</span>
-            <span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;tilt and wind_speeds must be the same length for the interpolation to work.&quot;</span>
-                <span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
 
-<div class="viewcode-block" id="Turbine.check_for_cp_ct_correct_flag_if_floating"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine.check_for_cp_ct_correct_flag_if_floating">[docs]</a>    <span class="nd">@floating_correct_cp_ct_for_tilt</span><span class="o">.</span><span class="n">validator</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="p">{</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">,</span> <span class="s2">&quot;tilt&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                floating_tilt_table dictionary must have the form:</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;wind_speed&quot;: List[float],</span>
+<span class="sd">                        &quot;tilt&quot;: List[float],</span>
+<span class="sd">                    }</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">])):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tilt and wind_speed inputs must be 1-D.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="p">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">])}</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tilt and wind_speed inputs must be the same size.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Turbine.check_for_cp_ct_correct_flag_if_floating"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.turbine.Turbine.html#floris.simulation.turbine.Turbine.check_for_cp_ct_correct_flag_if_floating">[docs]</a>    <span class="nd">@correct_cp_ct_for_tilt</span><span class="o">.</span><span class="n">validator</span>
     <span class="k">def</span> <span class="nf">check_for_cp_ct_correct_flag_if_floating</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span>
-        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check that the boolean flag exists for correcting Cp/Ct for tilt</span>
 <span class="sd">        if a tile/wind_speed table is also defined.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_correct_cp_ct_for_tilt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;If a floating tilt/wind_speed table is defined, the boolean flag&quot;</span>
-                    <span class="s2">&quot;floating_correct_cp_ct_for_tilt must also be defined.&quot;</span>
-                <span class="p">)</span></div></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;To enable the Cp and Ct tilt correction, a tilt table must be given.&quot;</span>
+            <span class="p">)</span></div></div>
 </pre></div>
 
             </article>

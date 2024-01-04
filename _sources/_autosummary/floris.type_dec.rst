@@ -17,6 +17,7 @@
    
       convert_to_path
       floris_array_converter
+      floris_numeric_dict_converter
       iter_validator
    
    

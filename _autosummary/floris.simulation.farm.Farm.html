@@ -559,8 +559,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -688,6 +686,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -699,6 +698,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -988,25 +988,25 @@ path relative to the file that is running the analysis.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_fCts" title="floris.simulation.farm.Farm.construct_turbine_fCts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_fCts</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_fTilts" title="floris.simulation.farm.Farm.construct_turbine_fTilts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_fTilts</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_map" title="floris.simulation.farm.Farm.construct_turbine_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_map</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_map" title="floris.simulation.farm.Farm.construct_turbine_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_map</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_pPs" title="floris.simulation.farm.Farm.construct_turbine_pPs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_pPs</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_pPs" title="floris.simulation.farm.Farm.construct_turbine_pPs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_pPs</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_pTs" title="floris.simulation.farm.Farm.construct_turbine_pTs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_pTs</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_pTs" title="floris.simulation.farm.Farm.construct_turbine_pTs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_pTs</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_power_interps" title="floris.simulation.farm.Farm.construct_turbine_power_interps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_power_interps</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_power_interps" title="floris.simulation.farm.Farm.construct_turbine_power_interps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_power_interps</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_ref_density_cp_cts" title="floris.simulation.farm.Farm.construct_turbine_ref_density_cp_cts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_ref_density_cp_cts</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_ref_density_cp_cts" title="floris.simulation.farm.Farm.construct_turbine_ref_density_cp_cts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_ref_density_cp_cts</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_ref_tilt_cp_cts" title="floris.simulation.farm.Farm.construct_turbine_ref_tilt_cp_cts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_ref_tilt_cp_cts</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_ref_tilt_cp_cts" title="floris.simulation.farm.Farm.construct_turbine_ref_tilt_cp_cts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_ref_tilt_cp_cts</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.construct_turbine_tilt_interps" title="floris.simulation.farm.Farm.construct_turbine_tilt_interps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_turbine_tilt_interps</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.expand_farm_properties" title="floris.simulation.farm.Farm.expand_farm_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_farm_properties</span></code></a></p></td>
@@ -1053,7 +1053,7 @@ path relative to the file that is running the analysis.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.turbine_fCts_sorted" title="floris.simulation.farm.Farm.turbine_fCts_sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_fCts_sorted</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.turbine_fTilts" title="floris.simulation.farm.Farm.turbine_fTilts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_fTilts</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.turbine_tilt_interps" title="floris.simulation.farm.Farm.turbine_tilt_interps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">turbine_tilt_interps</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.simulation.farm.Farm.yaw_angles" title="floris.simulation.farm.Farm.yaw_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">yaw_angles</span></code></a></p></td>
@@ -1184,8 +1184,8 @@ path relative to the file that is running the analysis.</p></li>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.simulation.farm.Farm.turbine_fTilts">
-<span class="sig-name descname"><span class="pre">turbine_fTilts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#floris.simulation.farm.Farm.turbine_fTilts" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.turbine_tilt_interps">
+<span class="sig-name descname"><span class="pre">turbine_tilt_interps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">interp1d</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#floris.simulation.farm.Farm.turbine_tilt_interps" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1444,8 +1444,8 @@ path relative to the file that is running the analysis.</p></li>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_fTilts">
-<span class="sig-name descname"><span class="pre">construct_turbine_fTilts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_fTilts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_fTilts" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.simulation.farm.Farm.construct_turbine_tilt_interps">
+<span class="sig-name descname"><span class="pre">construct_turbine_tilt_interps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/simulation/farm.html#Farm.construct_turbine_tilt_interps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.simulation.farm.Farm.construct_turbine_tilt_interps" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

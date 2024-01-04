@@ -559,8 +559,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -688,6 +686,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -699,6 +698,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -1369,6 +1369,48 @@ watt-hours.</p>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>3DArrayFloat containing wind speed with dimensions
 (# of wind directions, # of wind speeds, # of sample points)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.tools.floris_interface.FlorisInterface.sample_velocity_deficit_profiles">
+<span class="sig-name descname"><span class="pre">sample_velocity_deficit_profiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cross-stream'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downstream_dists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">homogeneous_wind_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_rotor_diameter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/tools/floris_interface.html#FlorisInterface.sample_velocity_deficit_profiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.tools.floris_interface.FlorisInterface.sample_velocity_deficit_profiles" title="Permalink to this definition">#</a></dt>
+<dd><p>Extract velocity deficit profiles at a set of downstream distances from a starting point
+(usually a turbine location). For each downstream distance, a profile is sampled along
+a line in either the cross-stream direction (x2) or the vertical direction (x3).
+Velocity deficit is here defined as (homogeneous_wind_speed - u)/homogeneous_wind_speed,
+where u is the wake velocity obtained when wind_shear = 0.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>direction</strong> (<em>str</em>) -- At each downstream location, this is the direction in which to sample the
+profile. Either <cite>cross-stream</cite> or <cite>vertical</cite>.</p></li>
+<li><p><strong>downstream_dists</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>, </em><em>list</em><em>]</em><em>]</em>) -- A list/array of streamwise locations for where to sample the profiles.
+Default starting point is (0.0, 0.0, reference_height).</p></li>
+<li><p><strong>profile_range</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>, </em><em>list</em><em>]</em><em>]</em>) -- Determines the extent of the line along which the profiles are sampled.
+The range is defined about a point which lies some distance directly downstream of
+the starting point.</p></li>
+<li><p><strong>resolution</strong> (<em>int</em>) -- Number of sample points in each profile.</p></li>
+<li><p><strong>wind_direction</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- A single wind direction.</p></li>
+<li><p><strong>homogeneous_wind_speed</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- A single wind speed. It is called homogeneous since 'wind_shear'
+is temporarily set to 0.0 in this method.</p></li>
+<li><p><strong>ref_rotor_diameter</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- A reference rotor diameter which is used to normalize the
+coordinates.</p></li>
+<li><p><strong>x_start</strong> (<em>float</em>) -- x-coordinate of starting point.</p></li>
+<li><p><strong>y_start</strong> (<em>float</em>) -- y-coordinate of starting point.</p></li>
+<li><p><strong>reference_height</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) -- If <cite>direction</cite> is cross-stream, then <cite>reference_height</cite> defines the
+height of the horizontal plane in which the velocity profiles are sampled.
+If <cite>direction</cite> is vertical, then the velocity is sampled along the vertical
+direction with the <cite>profile_range</cite> being relative to the <cite>reference_height</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of pandas DataFrame objects where each DataFrame represents one velocity deficit
+profile.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</p>
 </dd>
 </dl>
 </dd></dl>

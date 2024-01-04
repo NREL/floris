@@ -23,6 +23,7 @@ floris.simulation.floris.Floris
       ~Floris.from_file
       ~Floris.initialize_domain
       ~Floris.solve_for_points
+      ~Floris.solve_for_velocity_deficit_profiles
       ~Floris.solve_for_viz
       ~Floris.steady_state_atmospheric_condition
       ~Floris.to_file

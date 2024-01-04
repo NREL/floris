@@ -558,8 +558,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -687,6 +685,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -698,6 +697,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -871,11 +871,9 @@ title="Open an issue"
 <span class="kn">from</span> <span class="nn">flatten_dict</span> <span class="kn">import</span> <span class="n">flatten</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 
-<span class="c1"># import floris.simulation.turbine as turbine</span>
 <span class="kn">from</span> <span class="nn">floris.simulation</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">average_velocity</span><span class="p">,</span>
     <span class="n">compute_tilt_angles_for_floating_turbines</span><span class="p">,</span>
-    <span class="n">TiltTable</span><span class="p">,</span>
     <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
@@ -1277,9 +1275,12 @@ title="Open an issue"
 <span class="sd">            whichever is being used to load turbine definitions.</span>
 <span class="sd">            Defaults to the internal turbine library.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multi_dimensional_cp_ct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">{})</span>
+    <span class="c1"># TODO power_thrust_data_file is actually required and should not default to None.</span>
+    <span class="c1"># However, the super class has optional attributes so a required attribute here breaks</span>
     <span class="n">power_thrust_data_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">power_thrust_data</span><span class="p">:</span> <span class="n">MultiDimensionalPowerThrustTable</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">multi_dimensional_cp_ct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">turbine_library_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;turbine_library&quot;</span><span class="p">,</span>
         <span class="n">converter</span><span class="o">=</span><span class="n">convert_to_path</span><span class="p">,</span>
@@ -1289,26 +1290,9 @@ title="Open an issue"
     <span class="c1"># Not to be provided by the user</span>
     <span class="n">condition_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
-    <span class="c1"># rloc: float = float_attrib()  # TODO: goes here or on the Grid?</span>
-    <span class="c1"># use_points_on_perimeter: bool = bool_attrib()</span>
-
-    <span class="c1"># Initialized in the post_init function</span>
-    <span class="c1"># rotor_radius: float = field(init=False)</span>
-    <span class="c1"># rotor_area: float = field(init=False)</span>
-    <span class="c1"># fCp_interp: interp1d = field(init=False)</span>
-    <span class="c1"># fCt_interp: interp1d = field(init=False)</span>
-    <span class="c1"># power_interp: interp1d = field(init=False)</span>
-    <span class="c1"># tilt_interp: interp1d = field(init=False)</span>
-
-
-    <span class="c1"># For the following parameters, use default values if not user-specified</span>
-    <span class="c1"># self.rloc = float(input_dictionary[&quot;rloc&quot;]) if &quot;rloc&quot; in input_dictionary else 0.5</span>
-    <span class="c1"># if &quot;use_points_on_perimeter&quot; in input_dictionary:</span>
-    <span class="c1">#     self.use_points_on_perimeter = bool(input_dictionary[&quot;use_points_on_perimeter&quot;])</span>
-    <span class="c1"># else:</span>
-    <span class="c1">#     self.use_points_on_perimeter = False</span>
-
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+
         <span class="c1"># Solidify the data file path and name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_data_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_library_path</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_data_file</span>
 
@@ -1335,22 +1319,21 @@ title="Open an issue"
 
             <span class="c1"># Build the interpolants</span>
             <span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ws&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fCp_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+            <span class="n">cp_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
                 <span class="n">wind_speeds</span><span class="p">,</span>
                 <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Cp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
                 <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
                 <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">inner_power</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotor_area</span>
-                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fCp_interp</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
-                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_efficiency</span>
-                <span class="o">*</span> <span class="n">wind_speeds</span> <span class="o">**</span> <span class="mi">3</span>
-            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">power_interp</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
                 <span class="n">key</span><span class="p">:</span> <span class="n">interp1d</span><span class="p">(</span>
                     <span class="n">wind_speeds</span><span class="p">,</span>
-                    <span class="n">inner_power</span><span class="p">,</span>
+                    <span class="p">(</span>
+                        <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotor_area</span>
+                        <span class="o">*</span> <span class="n">cp_interp</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_efficiency</span>
+                        <span class="o">*</span> <span class="n">wind_speeds</span> <span class="o">**</span> <span class="mi">3</span>
+                    <span class="p">),</span>
                     <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span>
                 <span class="p">)</span>
@@ -1362,25 +1345,7 @@ title="Open an issue"
                     <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.9999</span><span class="p">),</span>
                     <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="p">})</span>
-
-        <span class="c1"># If defined, create a tilt interpolation function for floating turbines.</span>
-        <span class="c1"># fill_value currently set to apply the min or max tilt angles if outside</span>
-        <span class="c1"># of the interpolation range.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="o">=</span> <span class="n">TiltTable</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fTilt_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="o">.</span><span class="n">tilt</span><span class="p">,</span>
-                <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="o">.</span><span class="n">tilt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
-                <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tilt_interp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fTilt_interp</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_correct_cp_ct_for_tilt</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fTilt_interp</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tilt_interp</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span> <span class="o">=</span> <span class="kc">False</span></div>
+            <span class="p">})</span></div>
 </pre></div>
 
             </article>

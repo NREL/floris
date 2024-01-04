@@ -558,8 +558,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -687,6 +685,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -698,6 +697,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -953,7 +953,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -969,7 +969,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1128,7 +1128,7 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_pTs</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_density_cp_cts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_tilt_cp_cts</span><span class="p">()</span>
-    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_fTilts</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_tilt_interps</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
 
@@ -1185,7 +1185,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1199,7 +1199,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1347,7 +1347,7 @@ title="Open an issue"
             <span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
@@ -1360,7 +1360,7 @@ title="Open an issue"
             <span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1378,7 +1378,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1533,7 +1533,7 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_pTs</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_density_cp_cts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_tilt_cp_cts</span><span class="p">()</span>
-    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_fTilts</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_tilt_interps</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
 
@@ -1594,7 +1594,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">average_method</span><span class="o">=</span><span class="n">turbine_grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
@@ -1608,7 +1608,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1745,7 +1745,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">average_method</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
@@ -1758,7 +1758,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1774,7 +1774,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -1831,7 +1831,7 @@ title="Open an issue"
                     <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
                     <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
                     <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-                    <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+                    <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
                     <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
                     <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
                     <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
@@ -2063,7 +2063,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -2079,7 +2079,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -2209,7 +2209,7 @@ title="Open an issue"
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_pTs</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_density_cp_cts</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_ref_tilt_cp_cts</span><span class="p">()</span>
-    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_fTilts</span><span class="p">()</span>
+    <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_tilt_interps</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">construct_turbine_correct_cp_ct_for_tilt</span><span class="p">()</span>
     <span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">set_tilt_to_ref_tilt</span><span class="p">(</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_directions</span><span class="p">,</span> <span class="n">flow_field</span><span class="o">.</span><span class="n">n_wind_speeds</span><span class="p">)</span>
 
@@ -2267,7 +2267,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -2281,7 +2281,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -2404,7 +2404,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">downselect_turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
@@ -2420,7 +2420,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts_sorted</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="n">downselect_turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt_sorted</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="n">ix_filter</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>

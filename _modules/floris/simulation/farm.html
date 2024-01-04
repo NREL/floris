@@ -558,8 +558,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -687,6 +685,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -698,6 +697,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -930,7 +930,7 @@ title="Open an issue"
     <span class="n">turbine_fCts</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">interp1d</span><span class="p">]</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="n">interp1d</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
     <span class="n">turbine_fCts_sorted</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
-    <span class="n">turbine_fTilts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">turbine_tilt_interps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">interp1d</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
     <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">yaw_angles_sorted</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1144,8 +1144,10 @@ title="Open an issue"
 <div class="viewcode-block" id="Farm.construct_multidim_turbine_fCts"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_multidim_turbine_fCts">[docs]</a>    <span class="k">def</span> <span class="nf">construct_multidim_turbine_fCts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_fCts</span> <span class="o">=</span> <span class="p">[</span><span class="n">turb</span><span class="o">.</span><span class="n">fCt_interp</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Farm.construct_turbine_fTilts"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_turbine_fTilts">[docs]</a>    <span class="k">def</span> <span class="nf">construct_turbine_fTilts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">turbine_fTilts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">turb</span><span class="o">.</span><span class="n">turbine_type</span><span class="p">,</span> <span class="n">turb</span><span class="o">.</span><span class="n">fTilt_interp</span><span class="p">)</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span><span class="p">]</span></div>
+<div class="viewcode-block" id="Farm.construct_turbine_tilt_interps"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_turbine_tilt_interps">[docs]</a>    <span class="k">def</span> <span class="nf">construct_turbine_tilt_interps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">turbine_tilt_interps</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">turb</span><span class="o">.</span><span class="n">turbine_type</span><span class="p">:</span> <span class="n">turb</span><span class="o">.</span><span class="n">tilt_interp</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span>
+        <span class="p">}</span></div>
 
 <div class="viewcode-block" id="Farm.construct_turbine_power_interps"><a class="viewcode-back" href="../../../_autosummary/floris.simulation.farm.Farm.html#floris.simulation.farm.Farm.construct_turbine_power_interps">[docs]</a>    <span class="k">def</span> <span class="nf">construct_turbine_power_interps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_power_interps</span> <span class="o">=</span> <span class="p">{</span>
@@ -1269,7 +1271,7 @@ title="Open an issue"
         <span class="n">tilt_angles</span> <span class="o">=</span> <span class="n">compute_tilt_angles_for_floating_turbines</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type_map_sorted</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">rotor_effective_velocities</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">tilt_angles</span></div>

@@ -36,6 +36,7 @@ floris.tools.floris\_interface\_legacy\_reader.FlorisInterfaceLegacyV2
       ~FlorisInterfaceLegacyV2.get_turbine_powers_multidim
       ~FlorisInterfaceLegacyV2.reinitialize
       ~FlorisInterfaceLegacyV2.sample_flow_at_points
+      ~FlorisInterfaceLegacyV2.sample_velocity_deficit_profiles
    
    
 

@@ -37,8 +37,6 @@ floris.simulation.turbine
       :template: custom-class-template.rst
       :nosignatures:
    
-      PowerThrustTable
-      TiltTable
       Turbine
    
    

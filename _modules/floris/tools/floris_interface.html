@@ -558,8 +558,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -687,6 +685,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -698,6 +697,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -1502,7 +1502,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
             <span class="n">average_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
@@ -1517,7 +1517,7 @@ title="Open an issue"
             <span class="n">tilt_angle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles</span><span class="p">,</span>
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts</span><span class="p">,</span>
             <span class="n">fCt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fCts</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
             <span class="n">average_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
@@ -1544,7 +1544,7 @@ title="Open an issue"
             <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">ref_tilt_cp_cts</span><span class="p">,</span>
             <span class="n">pP</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">pPs</span><span class="p">,</span>
             <span class="n">pT</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">pTs</span><span class="p">,</span>
-            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_fTilts</span><span class="p">,</span>
+            <span class="n">tilt_interp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
             <span class="n">correct_cp_ct_for_tilt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
             <span class="n">turbine_type_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_type_map</span><span class="p">,</span>
             <span class="n">average_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">average_method</span><span class="p">,</span>
@@ -1840,6 +1840,130 @@ title="Open an issue"
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;x, y, and z must be the same size&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solve_for_points</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FlorisInterface.sample_velocity_deficit_profiles"><a class="viewcode-back" href="../../../_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.sample_velocity_deficit_profiles">[docs]</a>    <span class="k">def</span> <span class="nf">sample_velocity_deficit_profiles</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cross-stream&#39;</span><span class="p">,</span>
+            <span class="n">downstream_dists</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">profile_range</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="n">wind_direction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">homogeneous_wind_speed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">ref_rotor_diameter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">x_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">y_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">reference_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract velocity deficit profiles at a set of downstream distances from a starting point</span>
+<span class="sd">        (usually a turbine location). For each downstream distance, a profile is sampled along</span>
+<span class="sd">        a line in either the cross-stream direction (x2) or the vertical direction (x3).</span>
+<span class="sd">        Velocity deficit is here defined as (homogeneous_wind_speed - u)/homogeneous_wind_speed,</span>
+<span class="sd">        where u is the wake velocity obtained when wind_shear = 0.0.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            direction: At each downstream location, this is the direction in which to sample the</span>
+<span class="sd">                profile. Either `cross-stream` or `vertical`.</span>
+<span class="sd">            downstream_dists: A list/array of streamwise locations for where to sample the profiles.</span>
+<span class="sd">                Default starting point is (0.0, 0.0, reference_height).</span>
+<span class="sd">            profile_range: Determines the extent of the line along which the profiles are sampled.</span>
+<span class="sd">                The range is defined about a point which lies some distance directly downstream of</span>
+<span class="sd">                the starting point.</span>
+<span class="sd">            resolution: Number of sample points in each profile.</span>
+<span class="sd">            wind_direction: A single wind direction.</span>
+<span class="sd">            homogeneous_wind_speed: A single wind speed. It is called homogeneous since &#39;wind_shear&#39;</span>
+<span class="sd">                is temporarily set to 0.0 in this method.</span>
+<span class="sd">            ref_rotor_diameter: A reference rotor diameter which is used to normalize the</span>
+<span class="sd">                coordinates.</span>
+<span class="sd">            x_start: x-coordinate of starting point.</span>
+<span class="sd">            y_start: y-coordinate of starting point.</span>
+<span class="sd">            reference_height: If `direction` is cross-stream, then `reference_height` defines the</span>
+<span class="sd">                height of the horizontal plane in which the velocity profiles are sampled.</span>
+<span class="sd">                If `direction` is vertical, then the velocity is sampled along the vertical</span>
+<span class="sd">                direction with the `profile_range` being relative to the `reference_height`.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of pandas DataFrame objects where each DataFrame represents one velocity deficit</span>
+<span class="sd">            profile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">direction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;cross-stream&#39;</span><span class="p">,</span> <span class="s1">&#39;vertical&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`direction` must be either `cross-stream` or `vertical`.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ref_rotor_diameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">unique_rotor_diameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">rotor_diameters</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_rotor_diameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ref_rotor_diameter</span> <span class="o">=</span> <span class="n">unique_rotor_diameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Please provide a `ref_rotor_diameter`. This is needed to normalize the &quot;</span>
+                    <span class="s2">&quot;coordinates. Could not select a value automatically since the number of &quot;</span>
+                    <span class="s2">&quot;unique rotor diameters in the turbine layout is not 1. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Found the following rotor diameters: </span><span class="si">{</span><span class="n">unique_rotor_diameters</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">downstream_dists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">downstream_dists</span> <span class="o">=</span> <span class="n">ref_rotor_diameter</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">profile_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">profile_range</span> <span class="o">=</span> <span class="n">ref_rotor_diameter</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+        <span class="n">wind_directions_copy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">wind_speeds_copy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">wind_shear_copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_shear</span>
+
+        <span class="k">if</span> <span class="n">wind_direction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_directions_copy</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">wind_direction</span> <span class="o">=</span> <span class="n">wind_directions_copy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Could not determine a wind direction for which to sample the velocity &quot;</span>
+                    <span class="s2">&quot;profiles. Either provide a single `wind_direction` as an argument to this &quot;</span>
+                    <span class="s2">&quot;method, or initialize the Floris object with a single wind direction.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">homogeneous_wind_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_speeds_copy</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">homogeneous_wind_speed</span> <span class="o">=</span> <span class="n">wind_speeds_copy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;`homogeneous_wind_speed` not provided. Setting it to the following wind speed &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;found in the current flow field: </span><span class="si">{</span><span class="n">wind_speeds_copy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> m/s. Note that the &quot;</span>
+                    <span class="s2">&quot;inflow is always homogeneous when calculating the velocity deficit profiles. &quot;</span>
+                    <span class="s2">&quot;This is done by temporarily setting `wind_shear` to 0.0&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Could not determine a wind speed for which to sample the velocity &quot;</span>
+                    <span class="s2">&quot;profiles. Provide a single `homogeneous_wind_speed` to this method.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">reference_height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reference_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span>
+            <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="n">wind_direction</span><span class="p">],</span>
+            <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="n">homogeneous_wind_speed</span><span class="p">],</span>
+            <span class="n">wind_shear</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">velocity_deficit_profiles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solve_for_velocity_deficit_profiles</span><span class="p">(</span>
+            <span class="n">direction</span><span class="p">,</span>
+            <span class="n">downstream_dists</span><span class="p">,</span>
+            <span class="n">profile_range</span><span class="p">,</span>
+            <span class="n">resolution</span><span class="p">,</span>
+            <span class="n">homogeneous_wind_speed</span><span class="p">,</span>
+            <span class="n">ref_rotor_diameter</span><span class="p">,</span>
+            <span class="n">x_start</span><span class="p">,</span>
+            <span class="n">y_start</span><span class="p">,</span>
+            <span class="n">reference_height</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span>
+            <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions_copy</span><span class="p">,</span>
+            <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds_copy</span><span class="p">,</span>
+            <span class="n">wind_shear</span><span class="o">=</span><span class="n">wind_shear_copy</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">velocity_deficit_profiles</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

@@ -563,8 +563,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.turbine.rotor_effective_velocity.html">floris.simulation.turbine.rotor_effective_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.turbine.simple_cubature.html">floris.simulation.turbine.simple_cubature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.turbine.simple_mean.html">floris.simulation.turbine.simple_mean</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.turbine.PowerThrustTable.html">floris.simulation.turbine.PowerThrustTable</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.turbine.TiltTable.html">floris.simulation.turbine.TiltTable</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.turbine.Turbine.html">floris.simulation.turbine.Turbine</a></li>
 </ul>
 </li>
@@ -692,6 +690,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.tools.visualization.visualize_cut_plane.html">floris.tools.visualization.visualize_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.tools.visualization.visualize_heterogeneous_cut_plane.html">floris.tools.visualization.visualize_heterogeneous_cut_plane</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.tools.visualization.visualize_quiver.html">floris.tools.visualization.visualize_quiver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.tools.visualization.VelocityProfilesFigure.html">floris.tools.visualization.VelocityProfilesFigure</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -703,6 +702,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.type_dec.html">floris.type_dec</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.type_dec.convert_to_path.html">floris.type_dec.convert_to_path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.type_dec.floris_array_converter.html">floris.type_dec.floris_array_converter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.type_dec.floris_numeric_dict_converter.html">floris.type_dec.floris_numeric_dict_converter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.type_dec.iter_validator.html">floris.type_dec.iter_validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.type_dec.FromDictMixin.html">floris.type_dec.FromDictMixin</a></li>
 </ul>
@@ -1111,11 +1111,11 @@ are going to be compared.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW_floating
-nrel_5MW
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_10MW
 iea_15MW_multi_dim_cp_ct
-iea_10MW
+nrel_5MW
 iea_15MW
+iea_15MW_floating
 </pre></div>
 </div>
 </div>
@@ -1135,11 +1135,11 @@ arguments.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW_floating
-nrel_5MW
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_10MW
 iea_15MW_multi_dim_cp_ct
-iea_10MW
+nrel_5MW
 iea_15MW
+iea_15MW_floating
 x_20MW
 </pre></div>
 </div>
@@ -1167,7 +1167,7 @@ a multi-dimensional turbine in relation to the standard 15 MW example.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f3a49ee079e66795bd59d691de351ebd70d80ad369f886d99ec785dc7b1b821a.png" src="_images/f3a49ee079e66795bd59d691de351ebd70d80ad369f886d99ec785dc7b1b821a.png" />
+<img alt="_images/54473a851cb9aea295752a984b0603093015865526965b042e4a01bc5d94e32f.png" src="_images/54473a851cb9aea295752a984b0603093015865526965b042e4a01bc5d94e32f.png" />
 </div>
 </div>
 <p>Alternatively, these can all be ploted individually with:</p>
@@ -1194,11 +1194,11 @@ a multi-dimensional turbine in relation to the standard 15 MW example.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                  Turbine | Rotor Diameter (m) | Hub Height (m) | Air Density (ρ)
 ---------------------------------------------------------------------------------
-        iea_15MW_floating |             242.24 |          150.0 |           1.225
-                 nrel_5MW |             126.00 |           90.0 |           1.225
- iea_15MW_multi_dim_cp_ct |             242.24 |          150.0 |           1.225
                  iea_10MW |             198.00 |          119.0 |           1.225
+ iea_15MW_multi_dim_cp_ct |             242.24 |          150.0 |           1.225
+                 nrel_5MW |             126.00 |           90.0 |           1.225
                  iea_15MW |             242.24 |          150.0 |           1.225
+        iea_15MW_floating |             242.24 |          150.0 |           1.225
                    x_20MW |             252.00 |          165.0 |           1.225
 </pre></div>
 </div>

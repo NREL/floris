@@ -19,7 +19,6 @@ floris.simulation.wake\_deflection.gauss.GaussVelocityDeflection
       ~GaussVelocityDeflection.as_dict
       ~GaussVelocityDeflection.from_dict
       ~GaussVelocityDeflection.function
-      ~GaussVelocityDeflection.lock_num_eps
       ~GaussVelocityDeflection.prepare_function
    
    

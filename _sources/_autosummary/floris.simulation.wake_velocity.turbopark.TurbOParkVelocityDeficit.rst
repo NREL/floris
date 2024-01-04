@@ -19,7 +19,6 @@ floris.simulation.wake\_velocity.turbopark.TurbOParkVelocityDeficit
       ~TurbOParkVelocityDeficit.as_dict
       ~TurbOParkVelocityDeficit.from_dict
       ~TurbOParkVelocityDeficit.function
-      ~TurbOParkVelocityDeficit.lock_num_eps
       ~TurbOParkVelocityDeficit.prepare_function
    
    

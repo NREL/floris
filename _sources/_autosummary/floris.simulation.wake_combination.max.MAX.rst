@@ -19,7 +19,6 @@ floris.simulation.wake\_combination.max.MAX
       ~MAX.as_dict
       ~MAX.from_dict
       ~MAX.function
-      ~MAX.lock_num_eps
       ~MAX.prepare_function
    
    

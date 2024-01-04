@@ -29,13 +29,13 @@ floris.simulation.farm.Farm
       ~Farm.construct_turbine_TSRs
       ~Farm.construct_turbine_correct_cp_ct_for_tilt
       ~Farm.construct_turbine_fCts
-      ~Farm.construct_turbine_fTilts
       ~Farm.construct_turbine_map
       ~Farm.construct_turbine_pPs
       ~Farm.construct_turbine_pTs
       ~Farm.construct_turbine_power_interps
       ~Farm.construct_turbine_ref_density_cp_cts
       ~Farm.construct_turbine_ref_tilt_cp_cts
+      ~Farm.construct_turbine_tilt_interps
       ~Farm.expand_farm_properties
       ~Farm.finalize
       ~Farm.from_dict
@@ -58,7 +58,7 @@ floris.simulation.farm.Farm
       ~Farm.turbine_definitions
       ~Farm.turbine_fCts
       ~Farm.turbine_fCts_sorted
-      ~Farm.turbine_fTilts
+      ~Farm.turbine_tilt_interps
       ~Farm.yaw_angles
       ~Farm.yaw_angles_sorted
       ~Farm.tilt_angles
