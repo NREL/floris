@@ -30,7 +30,7 @@ from floris.simulation import (
     State,
     Turbine,
 )
-from floris.simulation.turbine.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
+from floris.simulation.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,

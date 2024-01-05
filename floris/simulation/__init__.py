@@ -43,7 +43,7 @@ from .turbine.turbine import (
     power,
     Turbine
 )
-from .turbine.rotor_velocity import (
+from .rotor_velocity import (
     average_velocity,
     rotor_effective_velocity,
     compute_tilt_angles_for_floating_turbines,

@@ -26,7 +26,7 @@ from floris.simulation import (
     PointsGrid,
     TurbineGrid,
 )
-from floris.simulation.turbine.rotor_velocity import average_velocity
+from floris.simulation.rotor_velocity import average_velocity
 from floris.simulation.wake import WakeModelManager
 from floris.simulation.wake_deflection.empirical_gauss import yaw_added_wake_mixing
 from floris.simulation.wake_deflection.gauss import (

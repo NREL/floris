@@ -1,9 +1,30 @@
 import numpy as np
 
-from floris.simulation.turbine import CosineLossTurbine, SimpleTurbine
+from floris.simulation.turbine.performance_models import (
+    CosineLossTurbine,
+    SimpleTurbine,
+    rotor_velocity_air_density_correction,
+)
 from floris.utilities import cosd
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
+def test_rotor_velocity_air_density_correction():
+
+    wind_speed = 10.
+    ref_air_density = 1.225
+    test_density = 1.2
+
+    test_speed = rotor_velocity_air_density_correction(wind_speed, ref_air_density, ref_air_density)
+    assert test_speed == wind_speed
+
+    test_speed = rotor_velocity_air_density_correction(wind_speed, test_density, test_density)
+    assert test_speed == wind_speed
+
+    test_speed = rotor_velocity_air_density_correction(0., test_density, ref_air_density)
+    assert test_speed == 0.
+
+    test_speed = rotor_velocity_air_density_correction(wind_speed, test_density, ref_air_density)
+    assert np.allclose((test_speed/wind_speed)**3, test_density/ref_air_density)
 
 def test_submodel_attributes():
 
