@@ -76,16 +76,3 @@ class BaseModel(BaseClass):
     @abstractmethod
     def function() -> None:
         raise NotImplementedError("BaseModel.function")
-
-@define
-class BaseTurbineModel(BaseClass):
-
-    @staticmethod
-    @abstractmethod
-    def power() -> None:
-        raise NotImplementedError("BaseTurbineModel.power")
-
-    @staticmethod
-    @abstractmethod
-    def thrust_coefficient() -> None:
-        raise NotImplementedError("BaseTurbineModel.thrust_coefficient")

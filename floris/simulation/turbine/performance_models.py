@@ -15,15 +15,22 @@
 from __future__ import annotations
 
 import copy
+from abc import abstractmethod
+from enum import Enum
+from typing import (
+    Any,
+    Dict,
+    Final,
+)
 
 import numpy as np
+from attrs import define, field
 from scipy.interpolate import interp1d
 
-from floris.simulation import BaseTurbineModel
-from floris.simulation.turbine.rotor_velocity import (
+from floris.simulation import BaseClass
+from floris.simulation.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
-    rotor_velocity_air_density_correction,
     rotor_velocity_tilt_correction,
     rotor_velocity_yaw_correction,
 )
@@ -34,6 +41,119 @@ from floris.type_dec import (
 from floris.utilities import cosd
 
 
+def rotor_velocity_air_density_correction(
+    velocities: NDArrayFloat,
+    air_density: float,
+    ref_air_density: float,
+) -> NDArrayFloat:
+    # Produce equivalent velocities at the reference air density
+    # TODO: This could go on BaseTurbineModel
+    return (air_density/ref_air_density)**(1/3) * velocities
+
+
+@define
+class BaseTurbineModel(BaseClass):
+    """
+    Base class for turbine submodels. All turbine submodels must implement static power() and
+    thrust_coefficient() methods, which are called by power() and Ct() through the interface in
+    the turbine.py module.
+
+    Args:
+        BaseClass (_type_): _description_
+
+    Raises:
+        NotImplementedError: _description_
+        NotImplementedError: _description_
+    """
+    @staticmethod
+    @abstractmethod
+    def power() -> None:
+        raise NotImplementedError("BaseTurbineModel.power")
+
+    @staticmethod
+    @abstractmethod
+    def thrust_coefficient() -> None:
+        raise NotImplementedError("BaseTurbineModel.thrust_coefficient")
+
+
+@define
+class SimpleTurbine(BaseTurbineModel):
+    """
+    Static class defining an actuator disk turbine model that is fully aligned with the flow. No
+    handling for yaw or tilt angles.
+
+    As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
+    which are called by power() and Ct() on turbine.py, respectively. This class is not intended
+    to be instantiated; it simply defines a library of static methods.
+
+    TODO: Should the turbine submodels each implement axial_induction()?
+    """
+
+    def power(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        # Construct power interpolant
+        power_interpolator = interp1d(
+            power_thrust_table["wind_speed"],
+            power_thrust_table["power"],
+            fill_value=0.0,
+            bounds_error=False,
+        )
+
+        # Compute the power-effective wind speed across the rotor
+        rotor_average_velocities = average_velocity(
+            velocities=velocities,
+            method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=power_thrust_table["ref_air_density"]
+        )
+
+        # Compute power
+        power = power_interpolator(rotor_effective_velocities) * 1e3 # Convert to W
+
+        return power
+
+    def thrust_coefficient(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        # Construct thrust coefficient interpolant
+        thrust_coefficient_interpolator = interp1d(
+            power_thrust_table["wind_speed"],
+            power_thrust_table["thrust_coefficient"],
+            fill_value=0.0001,
+            bounds_error=False,
+        )
+
+        # Compute the effective wind speed across the rotor
+        rotor_average_velocities = average_velocity(
+            velocities=velocities,
+            method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        # TODO: Do we need an air density correction here?
+
+        thrust_coefficient = thrust_coefficient_interpolator(rotor_average_velocities)
+        thrust_coefficient = np.clip(thrust_coefficient, 0.0001, 0.9999)
+
+        return thrust_coefficient
+
+
+@define
 class CosineLossTurbine(BaseTurbineModel):
     """
     Static class defining an actuator disk turbine model that may be misaligned with the flow.
