@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import yaml
 
-from floris.simulation.turbine import build_cosine_loss_turbine_dict, check_smooth_power_curve
+from floris.turbine_library import build_cosine_loss_turbine_dict, check_smooth_power_curve
 
 
 def test_build_turbine_dict():

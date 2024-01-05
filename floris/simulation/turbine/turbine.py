@@ -29,7 +29,6 @@ from floris.simulation.turbine import (
     CosineLossTurbine,
     SimpleTurbine,
 )
-from floris.simulation.turbine.turbine_utilities import select_multidim_condition
 from floris.type_dec import (
     convert_to_path,
     floris_numeric_dict_converter,
@@ -48,6 +47,35 @@ TURBINE_MODEL_MAP = {
         "cosine-loss": CosineLossTurbine
     },
 }
+
+
+def select_multidim_condition(
+    condition: dict | tuple,
+    specified_conditions: Iterable[tuple]
+) -> tuple:
+    """
+    Convert condition to the type expected by power_thrust_table and select
+    nearest specified condition
+    """
+    if type(condition) is tuple:
+        pass
+    elif type(condition) is dict:
+        condition = tuple(condition.values())
+    else:
+        raise TypeError("condition should be of type dict or tuple.")
+
+    # Find the nearest key to the specified conditions.
+    specified_conditions = np.array(specified_conditions)
+
+    # Find the nearest key to the specified conditions.
+    nearest_condition = np.zeros_like(condition)
+    for i, c in enumerate(condition):
+        nearest_condition[i] = (
+            specified_conditions[:, i][np.absolute(specified_conditions[:, i] - c).argmin()]
+        )
+
+    return tuple(nearest_condition)
+
 
 def power(
     velocities: NDArrayFloat,
@@ -328,16 +356,9 @@ def axial_induction(
 
     # TODO: Cosine yaw loss hardcoded here? Is this what we want?
     # also, assumes the same ref_tilt throughout?
-    return (
-        0.5
-        / (cosd(yaw_angles)
-        * cosd(tilt_angles - ref_tilt))
-        * (
-            1 - np.sqrt(
-                1 - thrust_coefficient * cosd(yaw_angles) * cosd(tilt_angles - ref_tilt)
-            )
-        )
-    )
+    misalignment_loss = cosd(yaw_angles) * cosd(tilt_angles - ref_tilt)
+    return 0.5 / misalignment_loss * (1 - np.sqrt(1 - thrust_coefficient * misalignment_loss))
+
 
 @define
 class Turbine(BaseClass):
