@@ -5,8 +5,8 @@ pP: 1.88
 pT: 1.88
 rotor_diameter: 242.24
 TSR: 8.0
-ref_density_cp_ct: 1.225
-ref_tilt_cp_ct: 6.0
+ref_air_density: 1.225
+ref_tilt: 6.0
 multi_dimensional_cp_ct: True
 power_thrust_data_file: 'iea_15MW_multi_dim_Tp_Hs.csv'
 floating_tilt_table:

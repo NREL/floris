@@ -112,7 +112,7 @@ class TurbineInterface:
             return cls(turbine=TurbineMultiDimensional.from_dict(config_dict))
         return cls(turbine=Turbine.from_dict(config_dict))
 
-    def  power_curve(
+    def power_curve(
         self,
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
     ) -> tuple[NDArrayFloat, NDArrayFloat] | tuple[NDArrayFloat, dict[tuple, NDArrayFloat]]:
@@ -128,7 +128,7 @@ class TurbineInterface:
                 Returns the wind speed array and the power array, or the wind speed array and a
                 dictionary of the multidimensional parameters and their associated power arrays.
         """
-        shape = (1, wind_speeds.size, 1)
+        shape = (wind_speeds.size, 1)
         if self.turbine.multi_dimensional_cp_ct:
             power_interps = {
                 k: multidim_power_down_select(
@@ -168,8 +168,8 @@ class TurbineInterface:
             tuple[NDArrayFloat, NDArrayFloat]
                 Returns the wind speed array and the thrust coefficient array.
         """
-        shape = (1, wind_speeds.size, 1)
-        shape_single = (1, 1, 1)
+        shape = (wind_speeds.size, 1)
+        shape_single = (1, 1)
         if self.turbine.multi_dimensional_cp_ct:
             fCt_interps = {
                 k: multidim_Ct_down_select(
