@@ -78,13 +78,19 @@ if __name__ == "__main__":
         **turbine_properties
     )
 
-    if not check_smooth_power_curve(v4_turbine_dict["power_thrust_table"]["power"], tolerance=0.001):
+    if not check_smooth_power_curve(
+        v4_turbine_dict["power_thrust_table"]["power"],
+        tolerance=0.001
+    ):
         print(
             "Non-smoothness detected in output power curve. ",
             "Check above-rated power in generated v4 yaml file."
         )
 
-    if not check_smooth_power_curve(v4_turbine_dict["power_thrust_table"]["power"], tolerance=0.001):
+    if not check_smooth_power_curve(
+        v4_turbine_dict["power_thrust_table"]["power"],
+        tolerance=0.001
+    ):
         print(
             "Non-smoothness detected in output power curve. ",
             "Check above-rated power in generated v4 yaml file."

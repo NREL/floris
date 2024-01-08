@@ -2,11 +2,12 @@ import numpy as np
 
 from floris.simulation.turbine.performance_models import (
     CosineLossTurbine,
-    SimpleTurbine,
     rotor_velocity_air_density_correction,
+    SimpleTurbine,
 )
 from floris.utilities import cosd
 from tests.conftest import SampleInputs, WIND_SPEEDS
+
 
 def test_rotor_velocity_air_density_correction():
 
