@@ -69,7 +69,9 @@ power_floating_defined_floating = fi_floating_defined_floating.get_turbine_power
 # Grab Ct
 ct_fixed = fi_fixed.get_turbine_thrust_coefficients().flatten()
 ct_floating = fi_floating.get_turbine_thrust_coefficients().flatten()
-ct_floating_defined_floating = fi_floating_defined_floating.get_turbine_thrust_coefficients().flatten()
+ct_floating_defined_floating = (
+    fi_floating_defined_floating.get_turbine_thrust_coefficients().flatten()
+)
 
 # Grab turbine tilt angles
 eff_vels = fi_fixed.turbine_average_velocities
