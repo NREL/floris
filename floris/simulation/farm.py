@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import copy
+from collections.abc import Callable
 from pathlib import Path
 from typing import (
     Any,
@@ -80,8 +81,12 @@ class Farm(BaseClass):
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
 
-    turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
-    turbine_fCts_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_fCts: Dict[str, Callable] | List[Callable] = field(init=False, factory=list)
+    #turbine_fCts_sorted: NDArrayFloat = field(init=False, factory=list)
+
+    turbine_axial_induction_functions: Dict[str, Callable] | List[Callable] = \
+        field(init=False, factory=list)
+    #turbine_axial_induction_functions_sorted: NDArrayFloat = field(init=False, factory=list)
 
     turbine_tilt_interps: dict[str, interp1d] = field(init=False, factory=dict)
 
@@ -99,8 +104,8 @@ class Farm(BaseClass):
     turbine_type_map: NDArrayObject = field(init=False, factory=list)
     turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
 
-    turbine_power_functions: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
-    turbine_power_functions_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_power_functions: Dict[str, Callable] | List[Callable] = field(init=False, factory=list)
+    #turbine_power_functions_sorted: NDArrayFloat = field(init=False, factory=list)
 
     turbine_power_thrust_tables: Dict[str, dict] = field(init=False, factory=list)
 
@@ -263,6 +268,11 @@ class Farm(BaseClass):
     def construct_turbine_ct_functions(self):
         self.turbine_fCts = {
             turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbine_map
+        }
+
+    def construct_turbine_axial_induction_functions(self):
+        self.turbine_axial_induction_functions = {
+            turb.turbine_type: turb.axial_induction_function for turb in self.turbine_map
         }
 
     def construct_turbine_tilt_interps(self):

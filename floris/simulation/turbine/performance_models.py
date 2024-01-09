@@ -152,6 +152,23 @@ class SimpleTurbine(BaseTurbineModel):
 
         return thrust_coefficient
 
+    def axial_induction(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+
+        thrust_coefficient = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
+        )
+        
+        return (1 - np.sqrt(1 - thrust_coefficient))/2
+
 
 @define
 class CosineLossTurbine(BaseTurbineModel):
@@ -224,7 +241,6 @@ class CosineLossTurbine(BaseTurbineModel):
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
-        # air_density: float,
         yaw_angles: NDArrayFloat,
         tilt_angles: NDArrayFloat,
         tilt_interp: NDArrayObject,
@@ -270,3 +286,29 @@ class CosineLossTurbine(BaseTurbineModel):
         )
 
         return thrust_coefficient
+
+    def axial_induction(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        yaw_angles: NDArrayFloat,
+        tilt_angles: NDArrayFloat,
+        tilt_interp: NDArrayObject,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        correct_cp_ct_for_tilt: bool = False,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+
+        thrust_coefficient = CosineLossTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            yaw_angles=yaw_angles,
+            tilt_angles=tilt_angles,
+            tilt_interp=tilt_interp,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
+            correct_cp_ct_for_tilt=correct_cp_ct_for_tilt
+        )
+
+        misalignment_loss = cosd(yaw_angles) * cosd(tilt_angles - power_thrust_table["ref_tilt"])
+        return 0.5 / misalignment_loss * (1 - np.sqrt(1 - thrust_coefficient * misalignment_loss))

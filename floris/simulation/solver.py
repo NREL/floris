@@ -117,8 +117,7 @@ def sequential_solver(
             velocities=flow_field.u_sorted,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
-            ref_tilt=farm.ref_tilts_sorted,
-            fCt=farm.turbine_fCts,
+            axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -272,6 +271,7 @@ def full_flow_sequential_solver(
 
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_ct_functions()
+    turbine_grid_farm.construct_turbine_axial_induction_functions()
     turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_rotor_diameters()
@@ -344,8 +344,7 @@ def full_flow_sequential_solver(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
+            axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
@@ -505,8 +504,7 @@ def cc_solver(
             turb_avg_vels,
             farm.yaw_angles_sorted,
             farm.tilt_angles_sorted,
-            farm.ref_tilts_sorted,
-            farm.turbine_fCts,
+            farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -524,8 +522,7 @@ def cc_solver(
             velocities=flow_field.u_sorted,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
-            ref_tilt=farm.ref_tilts_sorted,
-            fCt=farm.turbine_fCts,
+            axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -674,6 +671,7 @@ def full_flow_cc_solver(
 
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_ct_functions()
+    turbine_grid_farm.construct_turbine_axial_induction_functions()
     turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_rotor_diameters()
@@ -750,8 +748,7 @@ def full_flow_cc_solver(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
+            axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
@@ -917,8 +914,7 @@ def turbopark_solver(
             velocities=flow_field.u_sorted,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
-            ref_tilt=farm.ref_tilts_sorted,
-            fCt=farm.turbine_fCts,
+            axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -1187,8 +1183,7 @@ def empirical_gauss_solver(
             velocities=flow_field.u_sorted,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
-            ref_tilt=farm.ref_tilts_sorted,
-            fCt=farm.turbine_fCts,
+            axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -1313,6 +1308,7 @@ def full_flow_empirical_gauss_solver(
 
     turbine_grid_farm.construct_turbine_map()
     turbine_grid_farm.construct_turbine_ct_functions()
+    turbine_grid_farm.construct_turbine_axial_induction_functions()
     turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_rotor_diameters()
@@ -1386,8 +1382,7 @@ def full_flow_empirical_gauss_solver(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
-            ref_tilt=turbine_grid_farm.ref_tilts_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
+            axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,

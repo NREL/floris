@@ -99,7 +99,7 @@ def power(
         velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a
             turbine.
         air_density (float): air density for simulation [kg/m^3]
-        power_functions (dict[str, interp1d]): A dictionary of power functions for
+        power_functions (dict[str, Callable]): A dictionary of power functions for
             each turbine type. Keys are the turbine type and values are the callable functions.
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
@@ -277,8 +277,7 @@ def axial_induction(
     velocities: NDArrayFloat,
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
-    ref_tilt: NDArrayFloat,
-    fCt: dict,
+    axial_induction_functions: dict,
     tilt_interps: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
@@ -321,43 +320,92 @@ def axial_induction(
         Union[float, NDArrayFloat]: [description]
     """
 
-    # TODO: Should the axial induction factor be defined on the turbine submodel, as
-    # thrust_coefficient() and power() are?
+    # # TODO: Should the axial induction factor be defined on the turbine submodel, as
+    # # thrust_coefficient() and power() are?
 
-    if isinstance(yaw_angles, list):
-        yaw_angles = np.array(yaw_angles)
+    # if isinstance(yaw_angles, list):
+    #     yaw_angles = np.array(yaw_angles)
 
-    # TODO: Should the tilt_angle used for the return calculation be modified the same as the
-    # tilt_angle in Ct, if the user has supplied a tilt/wind_speed table?
-    if isinstance(tilt_angles, list):
-        tilt_angles = np.array(tilt_angles)
+    # # TODO: Should the tilt_angle used for the return calculation be modified the same as the
+    # # tilt_angle in Ct, if the user has supplied a tilt/wind_speed table?
+    # if isinstance(tilt_angles, list):
+    #     tilt_angles = np.array(tilt_angles)
 
-    # Get Ct first before modifying any data
-    thrust_coefficient = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        fCt,
-        tilt_interps,
-        correct_cp_ct_for_tilt,
-        turbine_type_map,
-        turbine_power_thrust_tables,
-        ix_filter,
-        average_method,
-        cubature_weights,
-        multidim_condition
-    )
-
-    # Then, process the input arguments as needed for this function
+    # Down-select inputs if ix_filter is given
     if ix_filter is not None:
+        velocities = velocities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
-        ref_tilt = ref_tilt[:, ix_filter]
+        turbine_type_map = turbine_type_map[:, ix_filter]
+        if type(correct_cp_ct_for_tilt) is bool:
+            pass
+        else:
+            correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
-    # TODO: Cosine yaw loss hardcoded here? Is this what we want?
-    # also, assumes the same ref_tilt throughout?
-    misalignment_loss = cosd(yaw_angles) * cosd(tilt_angles - ref_tilt)
-    return 0.5 / misalignment_loss * (1 - np.sqrt(1 - thrust_coefficient * misalignment_loss))
+    # Loop over each turbine type given to get axial induction for all turbines
+    axial_induction = np.zeros(np.shape(velocities)[0:2])
+    turb_types = np.unique(turbine_type_map)
+    for turb_type in turb_types:
+        # Handle possible multidimensional power thrust tables
+        if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]: # normal
+            power_thrust_table = turbine_power_thrust_tables[turb_type]
+        else: # assumed multidimensional, use multidim lookup
+            # Currently, only works for single mutlidim condition. May need to
+            # loop in the case where there are multiple conditions.
+            multidim_condition = select_multidim_condition(
+                multidim_condition,
+                list(turbine_power_thrust_tables[turb_type].keys())
+            )
+            power_thrust_table = turbine_power_thrust_tables[turb_type][multidim_condition]
+
+        # Construct full set of possible keyword arguments for thrust_coefficient()
+        axial_induction_model_kwargs = {
+            "power_thrust_table": power_thrust_table,
+            "velocities": velocities,
+            "yaw_angles": yaw_angles,
+            "tilt_angles": tilt_angles,
+            "tilt_interp": tilt_interps[turb_type],
+            "average_method": average_method,
+            "cubature_weights": cubature_weights,
+            "correct_cp_ct_for_tilt": correct_cp_ct_for_tilt,
+        }
+
+        # Using a masked array, apply the thrust coefficient for all turbines of the current
+        # type to the main thrust coefficient array
+        axial_induction += (
+            axial_induction_functions[turb_type](**axial_induction_model_kwargs)
+            * (turbine_type_map == turb_type)
+        )
+
+    return axial_induction
+
+
+    # # Get Ct first before modifying any data
+    # thrust_coefficient = Ct(
+    #     velocities,
+    #     yaw_angles,
+    #     tilt_angles,
+    #     fCt,
+    #     tilt_interps,
+    #     correct_cp_ct_for_tilt,
+    #     turbine_type_map,
+    #     turbine_power_thrust_tables,
+    #     ix_filter,
+    #     average_method,
+    #     cubature_weights,
+    #     multidim_condition
+    # )
+
+    # # Then, process the input arguments as needed for this function
+    # if ix_filter is not None:
+    #     yaw_angles = yaw_angles[:, ix_filter]
+    #     tilt_angles = tilt_angles[:, ix_filter]
+    #     ref_tilt = ref_tilt[:, ix_filter]
+
+    # # TODO: Cosine yaw loss hardcoded here? Is this what we want?
+    # # also, assumes the same ref_tilt throughout?
+    # misalignment_loss = cosd(yaw_angles) * cosd(tilt_angles - ref_tilt)
+    # return 0.5 / misalignment_loss * (1 - np.sqrt(1 - thrust_coefficient * misalignment_loss))
 
 
 @define
@@ -426,6 +474,7 @@ class Turbine(BaseClass):
     rotor_radius: float = field(init=False)
     rotor_area: float = field(init=False)
     thrust_coefficient_function: Callable = field(init=False)
+    axial_induction_function: Callable = field(init=False)
     power_function: Callable = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
     power_thrust_data_file: str = field(default=None)
@@ -453,8 +502,10 @@ class Turbine(BaseClass):
 
     def _initialize_power_thrust_functions(self) -> None:
         turbine_function_model = TURBINE_MODEL_MAP["power_thrust_model"][self.power_thrust_model]
-        self.power_function = turbine_function_model.power
         self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
+        self.axial_induction_function = turbine_function_model.axial_induction
+        self.power_function = turbine_function_model.power
+        
 
     def _initialize_tilt_interpolation(self) -> None:
         # TODO:

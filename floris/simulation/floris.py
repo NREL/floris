@@ -87,6 +87,7 @@ class Floris(BaseClass):
         # Initialize farm quantities that depend on other objects
         self.farm.construct_turbine_map()
         self.farm.construct_turbine_ct_functions()
+        self.farm.construct_turbine_axial_induction_functions()
         self.farm.construct_turbine_power_functions()
         self.farm.construct_turbine_power_thrust_tables()
         self.farm.construct_hub_heights()
