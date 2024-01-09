@@ -39,8 +39,8 @@ import floris.logging_manager
 from .base import BaseClass, BaseModel, State
 from .turbine.turbine import (
     axial_induction,
-    Ct,
     power,
+    thrust_coefficient,
     Turbine
 )
 from .rotor_velocity import (

@@ -55,8 +55,8 @@ def rotor_velocity_air_density_correction(
 class BaseTurbineModel(BaseClass):
     """
     Base class for turbine submodels. All turbine submodels must implement static power() and
-    thrust_coefficient() methods, which are called by power() and Ct() through the interface in
-    the turbine.py module.
+    thrust_coefficient() methods, which are called by power() and thrust_coefficient() through the
+    interface in the turbine.py module.
 
     Args:
         BaseClass (_type_): _description_
@@ -83,8 +83,8 @@ class SimpleTurbine(BaseTurbineModel):
     handling for yaw or tilt angles.
 
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
-    which are called by power() and Ct() on turbine.py, respectively. This class is not intended
-    to be instantiated; it simply defines a library of static methods.
+    which are called by power() and thrust_coefficient() on turbine.py, respectively. This class is
+    not intended to be instantiated; it simply defines a library of static methods.
 
     TODO: Should the turbine submodels each implement axial_induction()?
     """
@@ -179,8 +179,8 @@ class CosineLossTurbine(BaseTurbineModel):
     model in FLORIS v3.
 
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
-    which are called by power() and Ct() on turbine.py, respectively. This class is not intended
-    to be instantiated; it simply defines a library of static methods.
+    which are called by power() and thrust_coefficient() on turbine.py, respectively. This class is
+    not intended to be instantiated; it simply defines a library of static methods.
 
     TODO: Should the turbine submodels each implement axial_induction()?
     """

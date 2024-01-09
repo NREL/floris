@@ -18,12 +18,12 @@ import numpy as np
 
 from floris.simulation import (
     axial_induction,
-    Ct,
     Farm,
     FlowField,
     FlowFieldGrid,
     FlowFieldPlanarGrid,
     PointsGrid,
+    thrust_coefficient,
     TurbineGrid,
 )
 from floris.simulation.rotor_velocity import average_velocity
@@ -96,11 +96,11 @@ def sequential_solver(
         u_i = flow_field.u_sorted[:, i:i+1]
         v_i = flow_field.v_sorted[:, i:i+1]
 
-        ct_i = Ct(
+        ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
-            fCt=farm.turbine_fCts,
+            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -110,7 +110,7 @@ def sequential_solver(
             cubature_weights=grid.cubature_weights,
             multidim_condition=flow_field.multidim_conditions
         )
-        # Since we are filtering for the i'th turbine in the Ct function,
+        # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
@@ -326,18 +326,18 @@ def full_flow_sequential_solver(
         u_i = turbine_grid_flow_field.u_sorted[:, i:i+1]
         v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
 
-        ct_i = Ct(
+        ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
+            thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
         )
-        # Since we are filtering for the i'th turbine in the Ct function,
+        # Since we are filtering for the i'th turbine in the thrust_coefficient function,
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
@@ -487,11 +487,11 @@ def cc_solver(
         )
 
         turb_avg_vels = average_velocity(turb_inflow_field)
-        turb_Cts = Ct(
+        turb_Cts = thrust_coefficient(
             turb_avg_vels,
             farm.yaw_angles_sorted,
             farm.tilt_angles_sorted,
-            farm.turbine_fCts,
+            farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -730,11 +730,11 @@ def full_flow_cc_solver(
         v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
 
         turb_avg_vels = average_velocity(turbine_grid_flow_field.u_sorted)
-        turb_Cts = Ct(
+        turb_Cts = thrust_coefficient(
             velocities=turb_avg_vels,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
+            thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
@@ -881,11 +881,11 @@ def turbopark_solver(
         u_i = flow_field.u_sorted[:, :, i:i+1]
         v_i = flow_field.v_sorted[:, :, i:i+1]
 
-        Cts = Ct(
+        Cts = thrust_coefficient(
             velocities=flow_field.u_sorted,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
-            fCt=farm.turbine_fCts,
+            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -894,11 +894,11 @@ def turbopark_solver(
             cubature_weights=grid.cubature_weights
         )
 
-        ct_i = Ct(
+        ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
-            fCt=farm.turbine_fCts,
+            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -907,7 +907,7 @@ def turbopark_solver(
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
         )
-        # Since we are filtering for the i'th turbine in the Ct function,
+        # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
@@ -968,11 +968,11 @@ def turbopark_solver(
 
                 yaw_ii = farm.yaw_angles_sorted[:, ii:ii+1, None, None]
                 turbulence_intensity_ii = turbine_turbulence_intensity[:, ii:ii+1]
-                ct_ii = Ct(
+                ct_ii = thrust_coefficient(
                     velocities=flow_field.u_sorted,
                     yaw_angles=farm.yaw_angles_sorted,
                     tilt_angles=farm.tilt_angles_sorted,
-                    fCt=farm.turbine_fCts,
+                    thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
                     tilt_interps=farm.turbine_tilt_interps,
                     correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                     turbine_type_map=farm.turbine_type_map_sorted,
@@ -1163,11 +1163,11 @@ def empirical_gauss_solver(
         flow_field.u_sorted[:, i:i+1]
         flow_field.v_sorted[:, i:i+1]
 
-        ct_i = Ct(
+        ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
-            fCt=farm.turbine_fCts,
+            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
@@ -1176,7 +1176,7 @@ def empirical_gauss_solver(
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights
         )
-        # Since we are filtering for the i'th turbine in the Ct function,
+        # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
@@ -1364,18 +1364,18 @@ def full_flow_empirical_gauss_solver(
         turbine_grid_flow_field.u_sorted[:, i:i+1]
         turbine_grid_flow_field.v_sorted[:, i:i+1]
 
-        ct_i = Ct(
+        ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
-            fCt=turbine_grid_farm.turbine_fCts,
+            thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
         )
-        # Since we are filtering for the i'th turbine in the Ct function,
+        # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(

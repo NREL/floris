@@ -627,8 +627,8 @@ class UncertaintyInterface(LoggingManager):
     def get_turbine_layout(self, z=False):
         return self.fi.get_turbine_layout(z=z)
 
-    def get_turbine_Cts(self):
-        return self.fi.get_turbine_Cts()
+    def get_turbine_thrust_coefficients(self):
+        return self.fi.get_turbine_thrust_coefficients()
 
     def get_turbine_ais(self):
         return self.fi.get_turbine_ais()

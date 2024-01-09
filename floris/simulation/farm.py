@@ -81,12 +81,11 @@ class Farm(BaseClass):
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
 
-    turbine_fCts: Dict[str, Callable] | List[Callable] = field(init=False, factory=list)
-    #turbine_fCts_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_thrust_coefficient_functions: Dict[str, Callable] | List[Callable] = \
+        field(init=False, factory=list)
 
     turbine_axial_induction_functions: Dict[str, Callable] | List[Callable] = \
         field(init=False, factory=list)
-    #turbine_axial_induction_functions_sorted: NDArrayFloat = field(init=False, factory=list)
 
     turbine_tilt_interps: dict[str, interp1d] = field(init=False, factory=dict)
 
@@ -105,7 +104,6 @@ class Farm(BaseClass):
     turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
 
     turbine_power_functions: Dict[str, Callable] | List[Callable] = field(init=False, factory=list)
-    #turbine_power_functions_sorted: NDArrayFloat = field(init=False, factory=list)
 
     turbine_power_thrust_tables: Dict[str, dict] = field(init=False, factory=list)
 
@@ -266,7 +264,7 @@ class Farm(BaseClass):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
     def construct_turbine_ct_functions(self):
-        self.turbine_fCts = {
+        self.turbine_thrust_coefficient_functions = {
             turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbine_map
         }
 

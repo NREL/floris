@@ -25,8 +25,8 @@ from floris.simulation import Floris, State
 from floris.simulation.rotor_velocity import average_velocity
 from floris.simulation.turbine.turbine import (
     axial_induction,
-    Ct,
     power,
+    thrust_coefficient,
 )
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
@@ -616,12 +616,12 @@ class FlorisInterface(LoggingManager):
         )
         return turbine_powers
 
-    def get_turbine_Cts(self) -> NDArrayFloat:
-        turbine_Cts = Ct(
+    def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
+        turbine_thrust_coefficients = thrust_coefficient(
             velocities=self.floris.flow_field.u,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
-            fCt=self.floris.farm.turbine_fCts,
+            thrust_coefficient_functions=self.floris.farm.turbine_thrust_coefficient_functions,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
@@ -630,15 +630,14 @@ class FlorisInterface(LoggingManager):
             cubature_weights=self.floris.grid.cubature_weights,
             multidim_condition=self.floris.flow_field.multidim_conditions
         )
-        return turbine_Cts
+        return turbine_thrust_coefficients
 
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.floris.flow_field.u,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
-            ref_tilt=self.floris.farm.ref_tilts,
-            fCt=self.floris.farm.turbine_fCts,
+            axial_induction_functions=self.floris.farm.turbine_axial_induction_functions,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,

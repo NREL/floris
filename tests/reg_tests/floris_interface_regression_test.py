@@ -17,8 +17,8 @@ import numpy as np
 from floris.simulation import (
     average_velocity,
     axial_induction,
-    Ct,
     power,
+    thrust_coefficient,
 )
 from floris.simulation.rotor_velocity import rotor_effective_velocity
 from floris.tools import FlorisInterface
@@ -91,11 +91,11 @@ def test_calculate_no_wake(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_cts = Ct(
+    farm_cts = thrust_coefficient(
         velocities,
         yaw_angles,
         tilt_angles,
-        fi.floris.farm.turbine_fCts,
+        fi.floris.farm.turbine_thrust_coefficient_functions,
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,

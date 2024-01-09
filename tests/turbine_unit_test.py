@@ -24,8 +24,8 @@ import yaml
 from floris.simulation import (
     average_velocity,
     axial_induction,
-    Ct,
     power,
+    thrust_coefficient,
     Turbine,
 )
 from tests.conftest import SampleInputs, WIND_SPEEDS
@@ -185,11 +185,11 @@ def test_ct():
     # Single turbine
     # yaw angle / fCt are (n_findex, n turbine)
     wind_speed = 10.0
-    thrust = Ct(
+    thrust = thrust_coefficient(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
-        fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
+        thrust_coefficient_functions={turbine.turbine_type: turbine.thrust_coefficient_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
         turbine_type_map=turbine_type_map[:,0],
@@ -204,11 +204,11 @@ def test_ct():
 
     # Multiple turbines with index filter
     # 4 turbines with 3 x 3 grid arrays
-    thrusts = Ct(
+    thrusts = thrust_coefficient(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 12 x 4 x 3 x 3
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
-        fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
+        thrust_coefficient_functions={turbine.turbine_type: turbine.thrust_coefficient_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
         turbine_type_map=turbine_type_map,
@@ -225,11 +225,13 @@ def test_ct():
         )
 
     # Single floating turbine; note that 'tilt_interp' is not set to None
-    thrust = Ct(
+    thrust = thrust_coefficient(
         velocities=wind_speed * np.ones((1, 1, 3, 3)), # One findex, one turbine
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
-        fCt={turbine.turbine_type: turbine_floating.thrust_coefficient_function},
+        thrust_coefficient_functions={
+            turbine.turbine_type: turbine_floating.thrust_coefficient_function
+        },
         tilt_interps={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         correct_cp_ct_for_tilt=np.array([[True]]),
         turbine_type_map=turbine_type_map[:,0],

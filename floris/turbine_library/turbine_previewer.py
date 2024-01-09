@@ -22,8 +22,8 @@ import numpy as np
 from attrs import define, field
 
 from floris.simulation.turbine.turbine import (
-    Ct,
     power,
+    thrust_coefficient,
     Turbine,
 )
 from floris.type_dec import convert_to_path, NDArrayFloat
@@ -141,7 +141,7 @@ class TurbineInterface:
             ).flatten() / 1e6
         return wind_speeds, power_mw
 
-    def Ct_curve(
+    def thrust_coefficient_curve(
         self,
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
     ) -> tuple[NDArrayFloat, NDArrayFloat]:
@@ -159,11 +159,13 @@ class TurbineInterface:
         shape = (wind_speeds.size, 1)
         if self.turbine.multi_dimensional_cp_ct:
             ct_curve = {
-                k: Ct(
+                k: thrust_coefficient(
                     velocities=wind_speeds.reshape(shape),
                     yaw_angles=np.zeros(shape),
                     tilt_angles=np.full(shape, v["ref_tilt"]),
-                    fCt={self.turbine.turbine_type: self.turbine.thrust_coefficient_function},
+                    thrust_coefficient_functions={
+                        self.turbine.turbine_type: self.turbine.thrust_coefficient_function
+                    },
                     tilt_interps={self.turbine.turbine_type: self.turbine.tilt_interp},
                     correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
                     turbine_type_map=np.full(shape, self.turbine.turbine_type),
@@ -172,11 +174,13 @@ class TurbineInterface:
                 for k,v in self.turbine.power_thrust_table.items()
             }
         else:
-            ct_curve = Ct(
+            ct_curve = thrust_coefficient(
                 velocities=wind_speeds.reshape(shape),
                 yaw_angles=np.zeros(shape),
                 tilt_angles=np.full(shape, self.turbine.power_thrust_table["ref_tilt"]),
-                fCt={self.turbine.turbine_type: self.turbine.thrust_coefficient_function},
+                thrust_coefficient_functions={
+                    self.turbine.turbine_type: self.turbine.thrust_coefficient_function
+                },
                 tilt_interps={self.turbine.turbine_type: self.turbine.tilt_interp},
                 correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
                 turbine_type_map=np.full(shape, self.turbine.turbine_type),
@@ -256,7 +260,7 @@ class TurbineInterface:
 
         fig.tight_layout()
 
-    def plot_Ct_curve(
+    def plot_thrust_coefficient_curve(
         self,
         wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
         fig_kwargs: dict | None =  None,
@@ -282,7 +286,7 @@ class TurbineInterface:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
                 a tuple of the Figure and Axes objects are returned.
         """
-        wind_speeds, thrust = self.Ct_curve(wind_speeds=wind_speeds)
+        wind_speeds, thrust = self.thrust_coefficient_curve(wind_speeds=wind_speeds)
 
         # Initialize kwargs if None
         fig_kwargs = {} if fig_kwargs is None else fig_kwargs
@@ -329,8 +333,7 @@ class TurbineInterface:
 class TurbineLibrary:
     turbine_map: dict[str: TurbineInterface] = field(factory=dict)
     power_curves: dict[str, tuple[NDArrayFloat, NDArrayFloat]] = field(factory=dict)
-    Cp_curves: dict[str, tuple[NDArrayFloat, NDArrayFloat]] = field(factory=dict)
-    Ct_curves: dict[str, tuple[NDArrayFloat, NDArrayFloat]] = field(factory=dict)
+    thrust_coefficient_curves: dict[str, tuple[NDArrayFloat, NDArrayFloat]] = field(factory=dict)
 
     def load_internal_library(self, which: list[str] = [], exclude: list[str] = []) -> None:
         """Loads all of the turbine configurations from ``floris/floris/turbine_libary``,
@@ -396,19 +399,19 @@ class TurbineLibrary:
             name: t.power_curve(wind_speeds) for name, t in self.turbine_map.items()
         }
 
-    def compute_Ct_curves(
+    def compute_thrust_coefficient_curves(
             self,
             wind_speeds: NDArrayFloat = DEFAULT_WIND_SPEEDS,
         ) -> None:
         """Computes the thrust curves for each turbine in ``turbine_map`` and sets the
-        ``Ct_curves`` attribute.
+        ``thrust_coefficient_curves`` attribute.
 
         Args:
             wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to
                 0 m/s -> 40 m/s, every 0.5 m/s.
         """
-        self.Ct_curves = {
-            name: t.Ct_curve(wind_speeds) for name, t in self.turbine_map.items()
+        self.thrust_coefficient_curves = {
+            name: t.thrust_coefficient_curve(wind_speeds) for name, t in self.turbine_map.items()
         }
 
     def plot_power_curves(
@@ -504,7 +507,7 @@ class TurbineLibrary:
         if show:
             fig.tight_layout()
 
-    def plot_Ct_curves(
+    def plot_thrust_coefficient_curves(
         self,
         fig: plt.Figure | None = None,
         ax: plt.Axes | None = None,
@@ -543,8 +546,8 @@ class TurbineLibrary:
             None | tuple[plt.Figure, plt.Axes]: None, if :py:attr:`return_fig` is False, otherwise
                 a tuple of the Figure and Axes objects are returned.
         """
-        if self.Ct_curves == {} or wind_speeds is None:
-            self.compute_Ct_curves(wind_speeds=wind_speeds)
+        if self.thrust_coefficient_curves == {} or wind_speeds is None:
+            self.compute_thrust_coefficient_curves(wind_speeds=wind_speeds)
 
         which = [*self.turbine_map] if which == [] else which
 
@@ -566,7 +569,7 @@ class TurbineLibrary:
         min_windspeed = 0
         max_windspeed = 0
         max_thrust = 0
-        for name, (ws, t) in self.Ct_curves.items():
+        for name, (ws, t) in self.thrust_coefficient_curves.items():
             if name in exclude or name not in which:
                 continue
             if isinstance(t, dict):
@@ -805,7 +808,7 @@ class TurbineLibrary:
             wind_speeds=wind_speeds,
             plot_kwargs=plot_kwargs,
         )
-        self.plot_Ct_curves(
+        self.plot_thrust_coefficient_curves(
             fig,
             ax3,
             which=which,

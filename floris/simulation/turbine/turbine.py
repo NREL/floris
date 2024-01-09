@@ -178,12 +178,12 @@ def power(
     return p
 
 
-def Ct(
+def thrust_coefficient(
     velocities: NDArrayFloat,
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
-    fCt: dict,
-    tilt_interps: NDArrayObject,
+    thrust_coefficient_functions: dict[str, Callable],
+    tilt_interps: dict[str, interp1d],
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
     turbine_power_thrust_tables: dict,
@@ -195,15 +195,15 @@ def Ct(
 
     """Thrust coefficient of a turbine.
     The value is obtained from the coefficient of thrust specified by the callables specified
-    in fCt.
+    in the thrust_coefficient_functions.
 
     Args:
         velocities (NDArrayFloat[findex, turbines, grid1, grid2]): The velocity field at
             a turbine.
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
-        fCt (dict): The thrust coefficient functions for each turbine. Keys are
-            the turbine type string and values are the callable functions.
+        thrust_coefficient_functions (dict): The thrust coefficient functions for each turbine. Keys
+            are the turbine type string and values are the callable functions.
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
         correct_cp_ct_for_tilt (NDArrayBool[findex, turbines]): Boolean for determining if the
@@ -267,7 +267,8 @@ def Ct(
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
         thrust_coefficient += (
-            fCt[turb_type](**thrust_model_kwargs) * (turbine_type_map == turb_type)
+            thrust_coefficient_functions[turb_type](**thrust_model_kwargs)
+            * (turbine_type_map == turb_type)
         )
 
     return thrust_coefficient
@@ -295,9 +296,7 @@ def axial_induction(
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
-        ref_tilt (NDArrayFloat[findex, turbines]): The reference tilt angle for each turbine
-            that the Cp/Ct tables are defined at.
-        fCt (dict): The thrust coefficient functions for each turbine. Keys are
+        axial_induction_functions (dict): The axial induction functions for each turbine. Keys are
             the turbine type string and values are the callable functions.
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
@@ -319,17 +318,6 @@ def axial_induction(
     Returns:
         Union[float, NDArrayFloat]: [description]
     """
-
-    # # TODO: Should the axial induction factor be defined on the turbine submodel, as
-    # # thrust_coefficient() and power() are?
-
-    # if isinstance(yaw_angles, list):
-    #     yaw_angles = np.array(yaw_angles)
-
-    # # TODO: Should the tilt_angle used for the return calculation be modified the same as the
-    # # tilt_angle in Ct, if the user has supplied a tilt/wind_speed table?
-    # if isinstance(tilt_angles, list):
-    #     tilt_angles = np.array(tilt_angles)
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
@@ -378,34 +366,6 @@ def axial_induction(
         )
 
     return axial_induction
-
-
-    # # Get Ct first before modifying any data
-    # thrust_coefficient = Ct(
-    #     velocities,
-    #     yaw_angles,
-    #     tilt_angles,
-    #     fCt,
-    #     tilt_interps,
-    #     correct_cp_ct_for_tilt,
-    #     turbine_type_map,
-    #     turbine_power_thrust_tables,
-    #     ix_filter,
-    #     average_method,
-    #     cubature_weights,
-    #     multidim_condition
-    # )
-
-    # # Then, process the input arguments as needed for this function
-    # if ix_filter is not None:
-    #     yaw_angles = yaw_angles[:, ix_filter]
-    #     tilt_angles = tilt_angles[:, ix_filter]
-    #     ref_tilt = ref_tilt[:, ix_filter]
-
-    # # TODO: Cosine yaw loss hardcoded here? Is this what we want?
-    # # also, assumes the same ref_tilt throughout?
-    # misalignment_loss = cosd(yaw_angles) * cosd(tilt_angles - ref_tilt)
-    # return 0.5 / misalignment_loss * (1 - np.sqrt(1 - thrust_coefficient * misalignment_loss))
 
 
 @define
@@ -545,7 +505,7 @@ class Turbine(BaseClass):
         df2 = df.set_index(index_col.tolist())
 
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
-        # the Ct and power interpolants.
+        # the thrust_coefficient and power interpolants.
         power_thrust_table_ = {} # Reset
         for key in df2.index.unique():
             # Select the correct ws/Cp/Ct data

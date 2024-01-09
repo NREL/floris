@@ -171,8 +171,8 @@ class Floris(BaseClass):
             self.farm.correct_cp_ct_for_tilt.any():
             self.logger.warning(
                 "The current model does not account for vertical wake deflection due to " +
-                "tilt. Corrections to Cp and Ct can be included, but no vertical wake " +
-                "deflection will occur."
+                "tilt. Corrections to power and thrust coefficient can be included, but no " +
+                "vertical wake deflection will occur."
             )
 
         if vel_model=="cc":
