@@ -263,7 +263,7 @@ class Farm(BaseClass):
     def construct_turbine_map(self):
         self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
 
-    def construct_turbine_ct_functions(self):
+    def construct_turbine_thrust_coefficient_functions(self):
         self.turbine_thrust_coefficient_functions = {
             turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbine_map
         }
