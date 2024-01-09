@@ -166,7 +166,7 @@ class SimpleTurbine(BaseTurbineModel):
             average_method=average_method,
             cubature_weights=cubature_weights,
         )
-        
+
         return (1 - np.sqrt(1 - thrust_coefficient))/2
 
 

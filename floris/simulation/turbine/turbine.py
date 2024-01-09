@@ -505,7 +505,7 @@ class Turbine(BaseClass):
         self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
         self.axial_induction_function = turbine_function_model.axial_induction
         self.power_function = turbine_function_model.power
-        
+
 
     def _initialize_tilt_interpolation(self) -> None:
         # TODO:
