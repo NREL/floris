@@ -12,7 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
-from floris.simulation.turbine.performance_models import (
+from floris.simulation.turbine.operation_models import (
     CosineLossTurbine,
     SimpleTurbine,
 )

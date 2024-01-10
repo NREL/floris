@@ -1,6 +1,6 @@
 import numpy as np
 
-from floris.simulation.turbine.performance_models import (
+from floris.simulation.turbine.operation_models import (
     CosineLossTurbine,
     rotor_velocity_air_density_correction,
     SimpleTurbine,

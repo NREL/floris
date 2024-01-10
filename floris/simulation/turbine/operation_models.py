@@ -52,11 +52,11 @@ def rotor_velocity_air_density_correction(
 
 
 @define
-class BaseTurbineModel(BaseClass):
+class BaseOperationModel(BaseClass):
     """
-    Base class for turbine submodels. All turbine submodels must implement static power() and
-    thrust_coefficient() methods, which are called by power() and thrust_coefficient() through the
-    interface in the turbine.py module.
+    Base class for turbine operation models. All turbine operation models must implement static
+    power(), thrust_coefficient(), and axial_induction() methods, which are called by power() and
+    thrust_coefficient() through the interface in the turbine.py module.
 
     Args:
         BaseClass (_type_): _description_
@@ -68,16 +68,20 @@ class BaseTurbineModel(BaseClass):
     @staticmethod
     @abstractmethod
     def power() -> None:
-        raise NotImplementedError("BaseTurbineModel.power")
+        raise NotImplementedError("BaseOperationModel.power")
 
     @staticmethod
     @abstractmethod
     def thrust_coefficient() -> None:
-        raise NotImplementedError("BaseTurbineModel.thrust_coefficient")
+        raise NotImplementedError("BaseOperationModel.thrust_coefficient")
 
+    @staticmethod
+    @abstractmethod
+    def axial_induction() -> None:
+        raise NotImplementedError("BaseOperationModel.axial_induction")
 
 @define
-class SimpleTurbine(BaseTurbineModel):
+class SimpleTurbine(BaseOperationModel):
     """
     Static class defining an actuator disk turbine model that is fully aligned with the flow. No
     handling for yaw or tilt angles.
@@ -171,7 +175,7 @@ class SimpleTurbine(BaseTurbineModel):
 
 
 @define
-class CosineLossTurbine(BaseTurbineModel):
+class CosineLossTurbine(BaseOperationModel):
     """
     Static class defining an actuator disk turbine model that may be misaligned with the flow.
     Nonzero tilt and yaw angles are handled via cosine relationships, with the power lost to yawing
