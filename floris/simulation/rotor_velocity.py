@@ -17,13 +17,10 @@ from __future__ import annotations
 import copy
 from collections.abc import Iterable
 
-import attrs
 import numpy as np
-from attrs import define, field
 from scipy.interpolate import interp1d
 
 from floris.type_dec import (
-    floris_numeric_dict_converter,
     NDArrayBool,
     NDArrayFilter,
     NDArrayFloat,
@@ -40,13 +37,12 @@ def rotor_velocity_yaw_correction(
 ) -> NDArrayFloat:
     # Compute the rotor effective velocity adjusting for yaw settings
     pW = pP / 3.0  # Convert from pP to w
+    # TODO: cosine loss hard coded
     rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angles) ** pW
 
     return rotor_effective_velocities
 
-
 def rotor_velocity_tilt_correction(
-    #turbine_type_map: NDArrayObject,
     tilt_angles: NDArrayFloat,
     ref_tilt: NDArrayFloat,
     pT: float,
@@ -57,7 +53,6 @@ def rotor_velocity_tilt_correction(
     # Compute the tilt, if using floating turbines
     old_tilt_angle = copy.deepcopy(tilt_angles)
     tilt_angles = compute_tilt_angles_for_floating_turbines(
-        #turbine_type_map,
         tilt_angles,
         tilt_interp,
         rotor_effective_velocities,
@@ -66,6 +61,7 @@ def rotor_velocity_tilt_correction(
     tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angle)
 
     # Compute the rotor effective velocity adjusting for tilt
+    # TODO: cosine loss hard coded
     relative_tilt = tilt_angles - ref_tilt
     rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
     return rotor_effective_velocities
@@ -120,7 +116,7 @@ def average_velocity(
         NDArrayFloat: The average velocity across the rotor(s).
     """
 
-    # The input velocities are expected to be a 5 dimensional array with shape:
+    # The input velocities are expected to be a 4 dimensional array with shape:
     # (# findex, # turbines, grid resolution, grid resolution)
 
     if ix_filter is not None:
@@ -187,15 +183,6 @@ def compute_tilt_angles_for_floating_turbines(
 
     return tilt_angles
 
-def rotor_velocity_air_density_correction(
-    velocities: NDArrayFloat,
-    air_density: float,
-    ref_air_density: float,
-) -> NDArrayFloat:
-    # Produce equivalent velocities at the reference air density
-
-    return (air_density/ref_air_density)**(1/3) * velocities
-
 def rotor_effective_velocity(
     air_density: float,
     ref_air_density: float,
@@ -238,7 +225,9 @@ def rotor_effective_velocity(
 
     # Compute the rotor effective velocity adjusting for yaw settings
     rotor_effective_velocities = rotor_velocity_yaw_correction(
-        pP, yaw_angle, rotor_effective_velocities
+        pP,
+        yaw_angle,
+        rotor_effective_velocities
     )
 
     # Compute the tilt, if using floating turbines

@@ -36,14 +36,14 @@ isort:skip_file
 
 import floris.logging_manager
 
-from .base import BaseClass, BaseModel, BaseTurbineModel, State
+from .base import BaseClass, BaseModel, State
 from .turbine.turbine import (
     axial_induction,
-    Ct,
     power,
+    thrust_coefficient,
     Turbine
 )
-from .turbine.rotor_velocity import (
+from .rotor_velocity import (
     average_velocity,
     rotor_effective_velocity,
     compute_tilt_angles_for_floating_turbines,
@@ -67,7 +67,6 @@ from .solver import (
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     sequential_solver,
-    #sequential_multidim_solver,
     turbopark_solver,
 )
 from .floris import Floris

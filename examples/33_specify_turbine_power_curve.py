@@ -16,8 +16,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.simulation.turbine import build_cosine_loss_turbine_dict
 from floris.tools import FlorisInterface
+from floris.turbine_library import build_cosine_loss_turbine_dict
 
 
 """

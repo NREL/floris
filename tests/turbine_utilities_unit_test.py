@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import yaml
 
-from floris.simulation.turbine import build_cosine_loss_turbine_dict, check_smooth_power_curve
+from floris.turbine_library import build_cosine_loss_turbine_dict, check_smooth_power_curve
 
 
 def test_build_turbine_dict():
@@ -26,7 +26,6 @@ def test_build_turbine_dict():
     v3_file_path = Path(__file__).resolve().parent / "data" / "nrel_5MW_v3legacy.yaml"
     v4_file_path = Path(__file__).resolve().parent / "data" / "nrel_5MW_v4converted.yaml"
     test_turb_name = "test_turbine_export"
-    test_file_path = "."
 
     in_dict_v3 = yaml.safe_load( open(v3_file_path, "r") )
 
@@ -40,7 +39,6 @@ def test_build_turbine_dict():
     test_dict = build_cosine_loss_turbine_dict(
         turbine_data_dict,
         test_turb_name,
-        file_name=os.path.join(test_file_path, test_turb_name+".yaml"),
         generator_efficiency=in_dict_v3["generator_efficiency"],
         hub_height=in_dict_v3["hub_height"],
         pP=in_dict_v3["pP"],
@@ -82,7 +80,6 @@ def test_build_turbine_dict():
     test_dict_2 = build_cosine_loss_turbine_dict(
         turbine_data_dict,
         test_turb_name,
-        file_name=os.path.join(test_file_path, test_turb_name+".yaml"),
         generator_efficiency=in_dict_v4["generator_efficiency"],
         hub_height=in_dict_v4["hub_height"],
         pP=in_dict_v4["power_thrust_table"]["pP"],

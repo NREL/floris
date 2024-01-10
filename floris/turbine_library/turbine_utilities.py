@@ -14,8 +14,7 @@
 
 from __future__ import annotations
 
-import os.path
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import yaml
@@ -204,30 +203,3 @@ def check_smooth_power_curve(power, tolerance=0.001):
     is_smooth = dir_changes <= expected_changes
 
     return is_smooth
-
-def select_multidim_condition(
-    condition: dict | tuple,
-    specified_conditions: Iterable[tuple]
-) -> tuple:
-    """
-    Convert condition to the type expected by power_thrust_table and select
-    nearest specified condition
-    """
-    if type(condition) is tuple:
-        pass
-    elif type(condition) is dict:
-        condition = tuple(condition.values())
-    else:
-        raise TypeError("condition should be of type dict or tuple.")
-
-    # Find the nearest key to the specified conditions.
-    specified_conditions = np.array(specified_conditions)
-
-    # Find the nearest key to the specified conditions.
-    nearest_condition = np.zeros_like(condition)
-    for i, c in enumerate(condition):
-        nearest_condition[i] = (
-            specified_conditions[:, i][np.absolute(specified_conditions[:, i] - c).argmin()]
-        )
-
-    return tuple(nearest_condition)

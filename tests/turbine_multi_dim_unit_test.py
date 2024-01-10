@@ -24,8 +24,8 @@ from floris.simulation import (
 )
 from floris.simulation.turbine.turbine import (
     axial_induction,
-    Ct,
     power,
+    thrust_coefficient,
 )
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
@@ -94,11 +94,11 @@ def test_ct():
     # Single turbine
     # yaw angle / fCt are (n wind direction, n wind speed, n turbine)
     wind_speed = 10.0
-    thrust = Ct(
+    thrust = thrust_coefficient(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
-        fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
+        thrust_coefficient_functions={turbine.turbine_type: turbine.thrust_coefficient_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
         turbine_type_map=turbine_type_map[:,0],
@@ -110,11 +110,11 @@ def test_ct():
 
     # Multiple turbines with index filter
     # 4 turbines with 3 x 3 grid arrays
-    thrusts = Ct(
+    thrusts = thrust_coefficient(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
-        fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
+        thrust_coefficient_functions={turbine.turbine_type: turbine.thrust_coefficient_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
         turbine_type_map=turbine_type_map,
@@ -222,8 +222,7 @@ def test_axial_induction():
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
-        ref_tilt=np.ones((1, 1)) * 5.0,
-        fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
+        axial_induction_functions={turbine.turbine_type: turbine.axial_induction_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
         turbine_type_map=turbine_type_map[0,0],
@@ -237,8 +236,7 @@ def test_axial_induction():
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
-        ref_tilt=np.ones((1, N_TURBINES)) * 5.0,
-        fCt={turbine.turbine_type: turbine.thrust_coefficient_function},
+        axial_induction_functions={turbine.turbine_type: turbine.axial_induction_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
         turbine_type_map=turbine_type_map,

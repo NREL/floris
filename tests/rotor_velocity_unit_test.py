@@ -1,12 +1,11 @@
 import numpy as np
 
 from floris.simulation import Turbine
-from floris.simulation.turbine.rotor_velocity import (
+from floris.simulation.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
     compute_tilt_angles_for_floating_turbines_map,
     cubic_cubature,
-    rotor_velocity_air_density_correction,
     rotor_velocity_tilt_correction,
     rotor_velocity_yaw_correction,
     simple_cubature,
@@ -157,24 +156,6 @@ def test_compute_tilt_angles_for_floating_turbines():
     truth_index = turbine_floating_data["floating_tilt_table"]["wind_speed"].index(wind_speed)
     tilt_truth = turbine_floating_data["floating_tilt_table"]["tilt"][truth_index]
     np.testing.assert_allclose(tilt_N_turbines, [[tilt_truth] * N_TURBINES])
-
-def test_rotor_velocity_air_density_correction():
-
-    wind_speed = 10.
-    ref_air_density = 1.225
-    test_density = 1.2
-
-    test_speed = rotor_velocity_air_density_correction(wind_speed, ref_air_density, ref_air_density)
-    assert test_speed == wind_speed
-
-    test_speed = rotor_velocity_air_density_correction(wind_speed, test_density, test_density)
-    assert test_speed == wind_speed
-
-    test_speed = rotor_velocity_air_density_correction(0., test_density, ref_air_density)
-    assert test_speed == 0.
-
-    test_speed = rotor_velocity_air_density_correction(wind_speed, test_density, ref_air_density)
-    assert np.allclose((test_speed/wind_speed)**3, test_density/ref_air_density)
 
 def test_simple_cubature():
 
