@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import copy
 from abc import abstractmethod
-from enum import Enum
 from typing import (
     Any,
     Dict,
