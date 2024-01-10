@@ -17,10 +17,10 @@ import numpy as np
 from floris.simulation import (
     average_velocity,
     axial_induction,
-    Ct,
     power,
+    thrust_coefficient,
 )
-from floris.simulation.turbine import rotor_effective_velocity
+from floris.simulation.rotor_velocity import rotor_effective_velocity
 from floris.tools import FlorisInterface
 from tests.conftest import (
     assert_results_arrays,
@@ -91,43 +91,35 @@ def test_calculate_no_wake(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        fi.floris.flow_field.air_density,
-        fi.floris.farm.ref_air_densities,
+    farm_cts = thrust_coefficient(
         velocities,
         yaw_angles,
         tilt_angles,
-        fi.floris.farm.ref_tilts,
-        fi.floris.farm.pPs,
-        fi.floris.farm.pTs,
+        fi.floris.farm.turbine_thrust_coefficient_functions,
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        fi.floris.farm.ref_tilts,
-        fi.floris.farm.turbine_fCts,
-        fi.floris.farm.turbine_tilt_interps,
-        fi.floris.farm.correct_cp_ct_for_tilt,
-        fi.floris.farm.turbine_type_map,
+        fi.floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        farm_eff_velocities,
-        fi.floris.farm.turbine_power_interps,
+        velocities,
+        fi.floris.flow_field.air_density,
+        fi.floris.farm.turbine_power_functions,
+        fi.floris.farm.yaw_angles,
+        fi.floris.farm.tilt_angles,
+        fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.turbine_type_map,
+        fi.floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
         tilt_angles,
-        fi.floris.farm.ref_tilts,
-        fi.floris.farm.turbine_fCts,
+        fi.floris.farm.turbine_axial_induction_functions,
         fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
+        fi.floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):

@@ -36,7 +36,6 @@ from floris.simulation import (
     full_flow_turbopark_solver,
     Grid,
     PointsGrid,
-    sequential_multidim_solver,
     sequential_solver,
     State,
     TurbineCubatureGrid,
@@ -87,18 +86,13 @@ class Floris(BaseClass):
 
         # Initialize farm quantities that depend on other objects
         self.farm.construct_turbine_map()
-        if self.wake.model_strings['velocity_model'] == 'multidim_cp_ct':
-            self.farm.construct_multidim_turbine_fCts()
-            self.farm.construct_multidim_turbine_power_interps()
-        else:
-            self.farm.construct_turbine_fCts()
-            self.farm.construct_turbine_power_interps()
+        self.farm.construct_turbine_thrust_coefficient_functions()
+        self.farm.construct_turbine_axial_induction_functions()
+        self.farm.construct_turbine_power_functions()
+        self.farm.construct_turbine_power_thrust_tables()
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()
         self.farm.construct_turbine_TSRs()
-        self.farm.construct_turbine_pPs()
-        self.farm.construct_turbine_pTs()
-        self.farm.construct_turbine_ref_air_densities()
         self.farm.construct_turbine_ref_tilts()
         self.farm.construct_turbine_tilt_interps()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
@@ -177,8 +171,8 @@ class Floris(BaseClass):
             self.farm.correct_cp_ct_for_tilt.any():
             self.logger.warning(
                 "The current model does not account for vertical wake deflection due to " +
-                "tilt. Corrections to Cp and Ct can be included, but no vertical wake " +
-                "deflection will occur."
+                "tilt. Corrections to power and thrust coefficient can be included, but no " +
+                "vertical wake deflection will occur."
             )
 
         if vel_model=="cc":
@@ -197,13 +191,6 @@ class Floris(BaseClass):
             )
         elif vel_model=="empirical_gauss":
             empirical_gauss_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
-        elif vel_model=="multidim_cp_ct":
-            sequential_multidim_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,

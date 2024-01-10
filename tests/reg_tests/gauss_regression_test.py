@@ -17,10 +17,10 @@ import numpy as np
 from floris.simulation import (
     average_velocity,
     axial_induction,
-    Ct,
     Floris,
     power,
     rotor_effective_velocity,
+    thrust_coefficient,
 )
 from tests.conftest import (
     assert_results_arrays,
@@ -269,43 +269,35 @@ def test_regression_tandem(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_air_densities,
+    farm_cts = thrust_coefficient(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.pPs,
-        floris.farm.pTs,
+        floris.farm.turbine_thrust_coefficient_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_tilt_interps,
-        floris.farm.correct_cp_ct_for_tilt,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
+        velocities,
+        floris.flow_field.air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
+        floris.farm.turbine_axial_induction_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
@@ -430,43 +422,35 @@ def test_regression_yaw(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_air_densities,
+    farm_cts = thrust_coefficient(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.pPs,
-        floris.farm.pTs,
+        floris.farm.turbine_thrust_coefficient_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_tilt_interps,
-        floris.farm.correct_cp_ct_for_tilt,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
+        velocities,
+        floris.flow_field.air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
+        floris.farm.turbine_axial_induction_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
@@ -516,43 +500,35 @@ def test_regression_gch(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_air_densities,
+    farm_cts = thrust_coefficient(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.pPs,
-        floris.farm.pTs,
+        floris.farm.turbine_thrust_coefficient_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_tilt_interps,
-        floris.farm.correct_cp_ct_for_tilt,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
+        velocities,
+        floris.flow_field.air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
+        floris.farm.turbine_axial_induction_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
@@ -598,43 +574,35 @@ def test_regression_gch(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_air_densities,
+    farm_cts = thrust_coefficient(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.pPs,
-        floris.farm.pTs,
+        floris.farm.turbine_thrust_coefficient_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_tilt_interps,
-        floris.farm.correct_cp_ct_for_tilt,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
+        velocities,
+        floris.flow_field.air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
+        floris.farm.turbine_axial_induction_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
@@ -687,43 +655,35 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_air_densities,
+    farm_cts = thrust_coefficient(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.pPs,
-        floris.farm.pTs,
+        floris.farm.turbine_thrust_coefficient_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_tilt_interps,
-        floris.farm.correct_cp_ct_for_tilt,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
+        velocities,
+        floris.flow_field.air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
+        floris.farm.turbine_axial_induction_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
@@ -775,43 +735,35 @@ def test_regression_secondary_steering(sample_inputs_fixture):
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_air_densities,
+    farm_cts = thrust_coefficient(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.pPs,
-        floris.farm.pTs,
+        floris.farm.turbine_thrust_coefficient_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_tilt_interps,
-        floris.farm.correct_cp_ct_for_tilt,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
+        velocities,
+        floris.flow_field.air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.turbine_fCts,
+        floris.farm.turbine_axial_induction_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     for i in range(n_findex):
         for j in range(n_turbines):
@@ -873,23 +825,15 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
 
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_air_densities,
+    farm_powers = power(
         velocities,
+        floris.flow_field.air_density,
+        floris.farm.turbine_power_functions,
         yaw_angles,
         tilt_angles,
-        floris.farm.ref_tilts,
-        floris.farm.pPs,
-        floris.farm.pTs,
         floris.farm.turbine_tilt_interps,
-        floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_powers = power(
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
 
     # A "column" is oriented parallel to the wind direction

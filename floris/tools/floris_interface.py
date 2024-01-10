@@ -22,14 +22,12 @@ import pandas as pd
 
 from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
-from floris.simulation.turbine import (
-    average_velocity,
+from floris.simulation.rotor_velocity import average_velocity
+from floris.simulation.turbine.turbine import (
     axial_induction,
-    Ct,
     power,
-    rotor_effective_velocity,
+    thrust_coefficient,
 )
-from floris.simulation.turbine_multi_dim import multidim_power_down_select, power_multidim
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
 
@@ -601,74 +599,52 @@ class FlorisInterface(LoggingManager):
             )
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.
-        if (self.turbine_effective_velocities < 0.).any():
-            self.logger.warning("Some rotor effective velocities are negative.")
+        if (self.floris.flow_field.u < 0.).any():
+            self.logger.warning("Some velocities at the rotor are negative.")
 
         turbine_powers = power(
-            rotor_effective_velocities=self.turbine_effective_velocities,
-            power_interp=self.floris.farm.turbine_power_interps,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-        )
-        return turbine_powers
-
-    def get_turbine_powers_multidim(self) -> NDArrayFloat:
-        """Calculates the power at each turbine in the wind farm
-        when using multi-dimensional Cp/Ct turbine definitions.
-
-        Returns:
-            NDArrayFloat: Powers at each turbine.
-        """
-
-        # Confirm calculate wake has been run
-        if self.floris.state is not State.USED:
-            raise RuntimeError(
-                "Can't run function `FlorisInterface.get_turbine_powers_multidim` without "
-                "first running `FlorisInterface.calculate_wake`."
-            )
-        # Check for negative velocities, which could indicate bad model
-        # parameters or turbines very closely spaced.
-        if (self.turbine_effective_velocities < 0.).any():
-            self.logger.warning("Some rotor effective velocities are negative.")
-
-        turbine_power_interps = multidim_power_down_select(
-            self.floris.farm.turbine_power_interps,
-            self.floris.flow_field.multidim_conditions
-        )
-
-        turbine_powers = power_multidim(
-            ref_air_density=self.floris.farm.ref_air_densities,
-            rotor_effective_velocities=self.turbine_effective_velocities,
-            power_interp=turbine_power_interps,
-        )
-        return turbine_powers
-
-    def get_turbine_Cts(self) -> NDArrayFloat:
-        turbine_Cts = Ct(
             velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt=self.floris.farm.ref_tilts,
-            fCt=self.floris.farm.turbine_fCts,
-            tilt_interp=self.floris.farm.turbine_tilt_interps,
+            air_density=self.floris.flow_field.air_density,
+            power_functions=self.floris.farm.turbine_power_functions,
+            yaw_angles=self.floris.farm.yaw_angles,
+            tilt_angles=self.floris.farm.tilt_angles,
+            tilt_interps=self.floris.farm.turbine_tilt_interps,
+            turbine_type_map=self.floris.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
+            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
+            multidim_condition=self.floris.flow_field.multidim_conditions
+        )
+        return turbine_powers
+
+    def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
+        turbine_thrust_coefficients = thrust_coefficient(
+            velocities=self.floris.flow_field.u,
+            yaw_angles=self.floris.farm.yaw_angles,
+            tilt_angles=self.floris.farm.tilt_angles,
+            thrust_coefficient_functions=self.floris.farm.turbine_thrust_coefficient_functions,
+            tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
             average_method=self.floris.grid.average_method,
             cubature_weights=self.floris.grid.cubature_weights,
+            multidim_condition=self.floris.flow_field.multidim_conditions
         )
-        return turbine_Cts
+        return turbine_thrust_coefficients
 
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt=self.floris.farm.ref_tilts,
-            fCt=self.floris.farm.turbine_fCts,
-            tilt_interp=self.floris.farm.turbine_tilt_interps,
+            yaw_angles=self.floris.farm.yaw_angles,
+            tilt_angles=self.floris.farm.tilt_angles,
+            axial_induction_functions=self.floris.farm.turbine_axial_induction_functions,
+            tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.floris.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
             average_method=self.floris.grid.average_method,
             cubature_weights=self.floris.grid.cubature_weights,
+            multidim_condition=self.floris.flow_field.multidim_conditions
         )
         return turbine_ais
 
@@ -679,25 +655,6 @@ class FlorisInterface(LoggingManager):
             method=self.floris.grid.average_method,
             cubature_weights=self.floris.grid.cubature_weights
         )
-
-    @property
-    def turbine_effective_velocities(self) -> NDArrayFloat:
-        rotor_effective_velocities = rotor_effective_velocity(
-            air_density=self.floris.flow_field.air_density,
-            ref_air_density=self.floris.farm.ref_air_densities,
-            velocities=self.floris.flow_field.u,
-            yaw_angle=self.floris.farm.yaw_angles,
-            tilt_angle=self.floris.farm.tilt_angles,
-            ref_tilt=self.floris.farm.ref_tilts,
-            pP=self.floris.farm.pPs,
-            pT=self.floris.farm.pTs,
-            tilt_interp=self.floris.farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-            average_method=self.floris.grid.average_method,
-            cubature_weights=self.floris.grid.cubature_weights
-        )
-        return rotor_effective_velocities
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.floris.flow_field.turbulence_intensity_field

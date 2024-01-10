@@ -12,13 +12,15 @@
 
 # See https://floris.readthedocs.io for documentation
 
-import os.path
+from __future__ import annotations
+
+from collections.abc import Iterable
 
 import numpy as np
 import yaml
 
 
-def build_turbine_dict(
+def build_cosine_loss_turbine_dict(
     turbine_data_dict,
     turbine_name,
     file_name=None,
@@ -142,6 +144,10 @@ def build_turbine_dict(
 
     # Build the turbine dict
     power_thrust_dict = {
+        "ref_air_density": ref_air_density,
+        "ref_tilt": ref_tilt,
+        "pP": pP,
+        "pT": pT,
         "wind_speed": u.tolist(),
         "power": p.tolist(),
         "thrust_coefficient": Ct.tolist()
@@ -151,12 +157,9 @@ def build_turbine_dict(
         "turbine_type": turbine_name,
         "generator_efficiency": generator_efficiency,
         "hub_height": hub_height,
-        "pP": pP,
-        "pT": pT,
         "rotor_diameter": rotor_diameter,
         "TSR": TSR,
-        "ref_air_density": ref_air_density,
-        "ref_tilt": ref_tilt,
+        "power_thrust_model": "cosine-loss",
         "power_thrust_table": power_thrust_dict
     }
 

@@ -1,13 +1,14 @@
 turbine_type: nrel_5MW
 generator_efficiency: 1.0
 hub_height: 90.0
-pP: 1.88
-pT: 1.88
 rotor_diameter: 126.0
 TSR: 8.0
-ref_air_density: 1.225
-ref_tilt: 5.0
+power_thrust_model: cosine-loss
 power_thrust_table:
+  ref_air_density: 1.225
+  ref_tilt: 5.0
+  pP: 1.88
+  pT: 1.88
   wind_speed:
   - 0.0
   - 2.0

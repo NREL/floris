@@ -3,13 +3,13 @@
 turbine_type: 'iea_10MW'
 generator_efficiency: 1.0
 hub_height: 119.0
-pP: 1.88
-pT: 1.88
 rotor_diameter: 198.0
 TSR: 8.0
-ref_air_density: 1.225
-ref_tilt: 6.0
 power_thrust_table:
+  ref_air_density: 1.225
+  ref_tilt: 6.0
+  pP: 1.88
+  pT: 1.88
   power:
     - 0.000000
     - 0.000000
