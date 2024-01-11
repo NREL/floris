@@ -11,3 +11,20 @@
 # the License.
 
 # See https://floris.readthedocs.io for documentation
+
+
+class TimeSeries:
+    """
+    In FLORIS v4, the TimeSeries class is used to drive FLORIS and optimization
+    operations in which the inflow is by a sequence of wind speed, wind directino
+    and turbulence intensitity values
+
+    """
+
+    def __init__(
+        self,
+    ):
+        """
+        TODO: Write this later
+        """
+        pass

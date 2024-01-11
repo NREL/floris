@@ -12,19 +12,17 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from floris.tools import TimeSeries, WindRose
 
-class WindRose:
-    """
-    In FLORIS v4, the WindRose class is used to drive FLORIS and optimization
-    operations in which the inflow is characterized by the frequency of
-    binned wind speed, wind direction and turbulence intensity values
 
-    """
+# import pytest
 
-    def __init__(
-        self,
-    ):
-        """
-        TODO: Write this later
-        """
-        pass
+
+def test_wind_rose_instantiation():
+    wind_rose = WindRose()
+    wind_rose
+
+
+def test_time_series_instantiation():
+    time_series = TimeSeries
+    time_series
