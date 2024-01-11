@@ -324,7 +324,7 @@ class HelixTurbine(BaseOperationModel):
 
     Feel free to put any Helix tuning parameters into here (they can be added to the turbine yaml).
     Also, feel free to add any commanded inputs to power(), thrust_coefficient(), or
-    axial_induction(). For this operation model to receive those arguements, they'll need to be 
+    axial_induction(). For this operation model to receive those arguements, they'll need to be
     added to the kwargs dictionaries in the respective functions on turbine.py. They won't affect
     the other operation models.
     """

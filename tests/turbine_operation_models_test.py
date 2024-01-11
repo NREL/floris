@@ -254,4 +254,4 @@ def test_HelixTurbine():
         # Any other necessary arguments...
     )
 
-    assert np.allclose(test_power, baseline_ai)
+    assert np.allclose(test_ai, baseline_ai)
