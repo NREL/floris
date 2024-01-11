@@ -315,3 +315,36 @@ class CosineLossTurbine(BaseOperationModel):
 
         misalignment_loss = cosd(yaw_angles) * cosd(tilt_angles - power_thrust_table["ref_tilt"])
         return 0.5 / misalignment_loss * (1 - np.sqrt(1 - thrust_coefficient * misalignment_loss))
+
+@define
+class HelixTurbine(BaseOperationModel):
+    """
+    power_thrust_table is a dictionary (normally defined on the turbine input yaml)
+    that contains the parameters necessary to evaluate power(), thrust(), and axial_induction().
+
+    Feel free to put any Helix tuning parameters into here (they can be added to the turbine yaml).
+    Also, feel free to add any commanded inputs to power(), thrust_coefficient(), or
+    axial_induction(). For this operation model to receive those arguements, they'll need to be 
+    added to the kwargs dictionaries in the respective functions on turbine.py. They won't affect
+    the other operation models.
+    """
+    def power(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        return 0 # Placeholder until code is built out
+
+    def thrust_coefficient(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        return 0 # Placeholder until code is built out
+
+    def axial_induction(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        return 0 # Placeholder until code is built out

@@ -2,6 +2,7 @@ import numpy as np
 
 from floris.simulation.turbine.operation_models import (
     CosineLossTurbine,
+    HelixTurbine,
     rotor_velocity_air_density_correction,
     SimpleTurbine,
 )
@@ -31,9 +32,15 @@ def test_submodel_attributes():
 
     assert hasattr(SimpleTurbine, "power")
     assert hasattr(SimpleTurbine, "thrust_coefficient")
+    assert hasattr(SimpleTurbine, "axial_induction")
 
     assert hasattr(CosineLossTurbine, "power")
     assert hasattr(CosineLossTurbine, "thrust_coefficient")
+    assert hasattr(CosineLossTurbine, "axial_induction")
+
+    assert hasattr(HelixTurbine, "power")
+    assert hasattr(HelixTurbine, "thrust_coefficient")
+    assert hasattr(HelixTurbine, "axial_induction")
 
 def test_SimpleTurbine():
 
@@ -213,3 +220,38 @@ def test_CosineLossTurbine():
     )
     absolute_tilt = tilt_angles_test - turbine_data["power_thrust_table"]["ref_tilt"]
     assert test_Ct == baseline_Ct * cosd(yaw_angles_test) * cosd(absolute_tilt)
+
+def test_HelixTurbine():
+
+    n_turbines = 1
+    wind_speed = 10.0
+    turbine_data = SampleInputs().turbine
+
+    # Will want to update these
+    baseline_Ct = 0
+    baseline_power = 0
+    baseline_ai = 0
+
+    test_Ct = HelixTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        # Any other necessary arguments...
+    )
+
+    assert np.allclose(test_Ct, baseline_Ct)
+
+    test_power = HelixTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        # Any other necessary arguments...
+    )
+
+    assert np.allclose(test_power, baseline_power)
+
+    test_ai = HelixTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        # Any other necessary arguments...
+    )
+
+    assert np.allclose(test_power, baseline_ai)
