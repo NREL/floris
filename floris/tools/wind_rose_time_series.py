@@ -41,6 +41,15 @@ class WindRose:
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
 
+        # Also save gridded versions
+        self.wd_grid, self.ws_grid = np.meshgrid(
+            self.wind_directions, self.wind_speeds, indexing="ij"
+        )
+
+        # Save flat versions of each as well
+        self.wd_flat = self.wd_grid.flatten()
+        self.ws_flat = self.ws_grid.flatten()
+
         # If freq_table is not None, confirm it has correct dimension,
         # otherwise initialze to uniform probability
         if freq_table is not None:
@@ -55,6 +64,9 @@ class WindRose:
         # Normalize freq table
         self.freq_table = self.freq_table / np.sum(self.freq_table)
 
+        # Save a flatten version
+        self.freq_table_flat = self.freq_table.flatten()
+
         # If TI table is not None, confirm dimension
         # otherwise leave it None
         if ti_table is not None:
@@ -62,7 +74,11 @@ class WindRose:
                 raise ValueError("ti_table first dimension must equal len(wind_directions)")
             if not ti_table.shape[1] == len(wind_speeds):
                 raise ValueError("ti_table second dimension must equal len(wind_speeds)")
-        self.ti_table = ti_table
+            self.ti_table = ti_table
+            self.ti_table_flat = self.ti_table.flatten()
+        else:
+            self.ti_table = None
+            self.ti_table_flat = None
 
         # If price_table is not None, confirm it has correct dimension,
         # otherwise initialze to all ones
@@ -74,6 +90,43 @@ class WindRose:
             self.price_table = price_table
         else:
             self.price_table = np.ones((len(wind_directions), len(wind_speeds)))
+        # Save a flatten version
+        self.price_table_flat = self.price_table.flatten()
+
+    def _unpack(self):
+        """
+        Unpack the values in a form which is ready for FLORIS' reinitialize function
+        """
+
+        # The unpacked versions start as the flat version of each
+        wind_directions_unpack = self.wd_flat.copy()
+        wind_speeds_unpack = self.ws_flat.copy()
+        freq_table_unpack = self.freq_table_flat.copy()
+
+        # Get a mask of combinations that are more than 0 occurences
+        self.unpack_mask = freq_table_unpack > 0.0
+
+        # Now mask thes values to as to only compute values with occurence over 0
+        wind_directions_unpack = wind_directions_unpack[self.unpack_mask]
+        wind_speeds_unpack = wind_speeds_unpack[self.unpack_mask]
+        freq_table_unpack = freq_table_unpack[self.unpack_mask]
+
+        # Repeat for turbulence intensity if not none
+        if self.ti_table_flat is not None:
+            ti_table_unpack = self.ti_table_flat[self.unpack_mask]
+        else:
+            ti_table_unpack = None
+
+        # Now get unpacked price table
+        price_table_unpack = self.price_table_flat[self.unpack_mask]
+
+        return (
+            wind_directions_unpack,
+            wind_speeds_unpack,
+            freq_table_unpack,
+            ti_table_unpack,
+            price_table_unpack,
+        )
 
 
 class TimeSeries:
@@ -106,6 +159,17 @@ class TimeSeries:
 
         # Record findex
         self.n_findex = len(self.wind_directions)
+
+    def _unpack(self):
+        """
+        Unpack the time series data to floris' reinitialize function
+        """
+        return (
+            self.wind_directions.copy(),
+            self.wind_speeds.copy(),
+            self.turbulence_intensity.copy(),
+            self.prices.copy(),
+        )
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
         """
