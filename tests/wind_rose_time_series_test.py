@@ -73,13 +73,33 @@ def test_wind_rose_unpack():
         freq_table_unpack,
         ti_table_unpack,
         price_table_unpack,
-    ) = wind_rose._unpack()
+    ) = wind_rose.unpack()
 
     # Given the above frequency table, would only expect the
     # (270 deg, 6 m/s) and (280 deg, 7 m/s) rows
     np.testing.assert_allclose(wind_directions_unpack, [270, 280])
     np.testing.assert_allclose(wind_speeds_unpack, [6, 7])
     np.testing.assert_allclose(freq_table_unpack, [0.5, 0.5])
+
+
+def test_wind_rose_resample():
+    wind_directions = np.array([0, 2, 4, 6, 8, 10])
+    wind_speeds = np.array([8])
+    freq_table = np.array([[1.0], [1.0], [1.0], [1.0], [1.0], [1.0]])
+
+    wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
+
+    # Test that resampling with a new step size returns the same
+    wind_rose_resample = wind_rose.resample_wind_rose()
+
+    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_resample.wind_directions)
+    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_resample.wind_speeds)
+    np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_resample.freq_table_flat)
+
+    # Now test resampling the wind direction to 5 deg bins
+    wind_rose_resample = wind_rose.resample_wind_rose(wd_step=5.0)
+    np.testing.assert_allclose(wind_rose_resample.wind_directions, [0, 5, 10])
+    np.testing.assert_allclose(wind_rose_resample.freq_table_flat, [2 / 6, 2 / 6, 2 / 6])
 
 
 def test_wrap_wind_directions_near_360():
