@@ -1,6 +1,6 @@
 # NREL 5MW reference wind turbine.
 # Data based on:
-# TODO: update URL
+# https://github.com/NREL/turbine-models/blob/master/Offshore/NREL_5MW_126_RWT_corrected.csv
 
 ###
 # An ID for this type of turbine definition.
