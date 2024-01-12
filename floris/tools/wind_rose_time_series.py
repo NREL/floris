@@ -36,6 +36,11 @@ class WindRose:
         """
         TODO: Write this later
         """
+        if not isinstance(wind_directions, np.ndarray):
+            raise TypeError("wind_directions must be a NumPy array")
+
+        if not isinstance(wind_speeds, np.ndarray):
+            raise TypeError("wind_directions must be a NumPy array")
 
         # Save the wind speeds and directions
         self.wind_directions = wind_directions
@@ -106,7 +111,7 @@ class WindRose:
         else:
             self.price_table_flat = None
 
-    def _unpack(self):
+    def unpack(self):
         """
         Unpack the values in a form which is ready for FLORIS' reinitialize function
         """
@@ -144,13 +149,34 @@ class WindRose:
             price_table_unpack,
         )
 
-    def resample_wind_speeds(self):
-        # TODO: Need to figure this out
-        pass
+    def resample_wind_rose(self, ws_step=None, wd_step=None):
+        # Returns a resampled version of the wind rose using new ws_step and wd_step
 
-    def resample_wind_direction(self):
-        # TODO: Need to figure this out
-        pass
+        # Use the bin weights feature in TimeSeries to resample the wind rose
+
+        # If ws_step or wd_step, not specied use current values
+        if ws_step is None:
+            if len(self.wind_speeds) >= 2:
+                ws_step = self.wind_speeds[1] - self.wind_speeds[0]
+            else:
+                # It doesn't matter, just set to 1
+                ws_step = 1
+        if wd_step is None:
+            if len(self.wind_directions) >= 2:
+                wd_step = self.wind_directions[1] - self.wind_directions[0]
+            else:
+                # It doesn't matter, just set to 1
+                wd_step = 1
+
+        # Pass the flat versions of each quantity to build a TimeSeries model
+        time_series = TimeSeries(
+            self.wd_flat, self.ws_flat, self.ti_table_flat, self.price_table_flat
+        )
+
+        # Now build a new wind rose using the new steps
+        return time_series.to_wind_rose(
+            wd_step=wd_step, ws_step=ws_step, bin_weights=self.freq_table_flat
+        )
 
 
 class TimeSeries:
@@ -184,13 +210,19 @@ class TimeSeries:
         # Record findex
         self.n_findex = len(self.wind_directions)
 
-    def _unpack(self):
+    def unpack(self):
         """
         Unpack the time series data to floris' reinitialize function
         """
+
+        # to match wind_rose, make a uniform frequency
+        uniform_frequency = np.ones_like(self.wind_directions)
+        uniform_frequency = uniform_frequency / uniform_frequency.sum()
+
         return (
             self.wind_directions.copy(),
             self.wind_speeds.copy(),
+            uniform_frequency,
             self.turbulence_intensity.copy(),
             self.prices.copy(),
         )
@@ -206,7 +238,9 @@ class TimeSeries:
         wind_directions_wrapped[mask] = wind_directions_wrapped[mask] - 360.0
         return wind_directions_wrapped
 
-    def to_wind_rose(self, wd_step=2.0, ws_step=1.0, wd_edges=None, ws_edges=None):
+    def to_wind_rose(
+        self, wd_step=2.0, ws_step=1.0, wd_edges=None, ws_edges=None, bin_weights=None
+    ):
         """
         TODO: Write this later
         """
@@ -258,6 +292,11 @@ class TimeSeries:
                 "freq_val": np.ones(len(wind_directions_wrapped)),
             }
         )
+
+        # If bin_weights are passed in, apply these to the frequency
+        # this is mostly used when resampling the wind rose
+        if bin_weights is not None:
+            df = df.assign(freq_val=df["freq_val"] * bin_weights)
 
         # If turbulence_intensity is not none, add to dataframe
         if self.turbulence_intensity is not None:
