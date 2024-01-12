@@ -41,15 +41,6 @@ class WindRose:
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
 
-        # Also save gridded versions
-        self.wd_grid, self.ws_grid = np.meshgrid(
-            self.wind_directions, self.wind_speeds, indexing="ij"
-        )
-
-        # Save flat versions of each as well
-        self.wd_flat = self.wd_grid.flatten()
-        self.ws_flat = self.ws_grid.flatten()
-
         # If freq_table is not None, confirm it has correct dimension,
         # otherwise initialze to uniform probability
         if freq_table is not None:
@@ -64,9 +55,6 @@ class WindRose:
         # Normalize freq table
         self.freq_table = self.freq_table / np.sum(self.freq_table)
 
-        # Save a flatten version
-        self.freq_table_flat = self.freq_table.flatten()
-
         # If TI table is not None, confirm dimension
         # otherwise leave it None
         if ti_table is not None:
@@ -75,10 +63,9 @@ class WindRose:
             if not ti_table.shape[1] == len(wind_speeds):
                 raise ValueError("ti_table second dimension must equal len(wind_speeds)")
             self.ti_table = ti_table
-            self.ti_table_flat = self.ti_table.flatten()
+
         else:
             self.ti_table = None
-            self.ti_table_flat = None
 
         # If price_table is not None, confirm it has correct dimension,
         # otherwise initialze to all ones
@@ -89,9 +76,35 @@ class WindRose:
                 raise ValueError("price_table second dimension must equal len(wind_speeds)")
             self.price_table = price_table
         else:
-            self.price_table = np.ones((len(wind_directions), len(wind_speeds)))
-        # Save a flatten version
-        self.price_table_flat = self.price_table.flatten()
+            self.price_table = None
+
+        # Build the gridded and flatten versions
+        self._build_gridded_and_flattened_version()
+
+    def _build_gridded_and_flattened_version(self):
+        # Gridded wind speed and direction
+        self.wd_grid, self.ws_grid = np.meshgrid(
+            self.wind_directions, self.wind_speeds, indexing="ij"
+        )
+
+        # Flat wind speed and direction
+        self.wd_flat = self.wd_grid.flatten()
+        self.ws_flat = self.ws_grid.flatten()
+
+        # Flat frequency table
+        self.freq_table_flat = self.freq_table.flatten()
+
+        # TI table
+        if self.ti_table is not None:
+            self.ti_table_flat = self.ti_table.flatten()
+        else:
+            self.ti_table_flat = None
+
+        # Price table
+        if self.price_table is not None:
+            self.price_table_flat = self.price_table.flatten()
+        else:
+            self.price_table_flat = None
 
     def _unpack(self):
         """
@@ -118,7 +131,10 @@ class WindRose:
             ti_table_unpack = None
 
         # Now get unpacked price table
-        price_table_unpack = self.price_table_flat[self.unpack_mask]
+        if self.price_table_flat is not None:
+            price_table_unpack = self.price_table_flat[self.unpack_mask]
+        else:
+            price_table_unpack = None
 
         return (
             wind_directions_unpack,
@@ -127,6 +143,14 @@ class WindRose:
             ti_table_unpack,
             price_table_unpack,
         )
+
+    def resample_wind_speeds(self):
+        # TODO: Need to figure this out
+        pass
+
+    def resample_wind_direction(self):
+        # TODO: Need to figure this out
+        pass
 
 
 class TimeSeries:
