@@ -25,7 +25,6 @@ from tests.conftest import SampleInputs
 def test_build_turbine_dict():
 
     turbine_data_v3 = SampleInputs().v3type_turbine
-    test_turb_name = "test_turbine"
 
     # Mocked up turbine data
     turbine_data_dict = {
@@ -36,7 +35,7 @@ def test_build_turbine_dict():
 
     test_dict = build_cosine_loss_turbine_dict(
         turbine_data_dict,
-        test_turb_name,
+        "test_turbine",
         generator_efficiency=turbine_data_v3["generator_efficiency"],
         hub_height=turbine_data_v3["hub_height"],
         pP=turbine_data_v3["pP"],
@@ -54,6 +53,7 @@ def test_build_turbine_dict():
 
     P = (
         0.5 * turbine_data_v3["ref_density_cp_ct"]
+        * turbine_data_v3["generator_efficiency"]
         * (np.pi * turbine_data_v3["rotor_diameter"]**2/4)
         * Cp * ws**3
     )
@@ -84,7 +84,7 @@ def test_build_turbine_dict():
 
     test_dict_2 = build_cosine_loss_turbine_dict(
         turbine_data_dict,
-        test_turb_name,
+        "test_turbine",
         generator_efficiency=turbine_data_v4["generator_efficiency"],
         hub_height=turbine_data_v4["hub_height"],
         pP=turbine_data_v4["power_thrust_table"]["pP"],
