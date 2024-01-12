@@ -12,17 +12,119 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import numpy as np
+import pytest
+
 from floris.tools import TimeSeries, WindRose
 
 
-# import pytest
-
-
-def test_wind_rose_instantiation():
-    wind_rose = WindRose()
-    wind_rose
-
-
 def test_time_series_instantiation():
-    time_series = TimeSeries
+    wind_directions = np.array([6, 7, 8])
+    wind_speeds = np.array([100, 120, 130])
+    time_series = TimeSeries(wind_directions, wind_speeds)
     time_series
+
+
+def test_time_series_wrong_dimensions():
+    wind_directions = np.array([6, 7])
+    wind_speeds = np.array([100, 120, 130])
+    with pytest.raises(ValueError):
+        TimeSeries(wind_directions, wind_speeds)
+
+
+def test_wind_rose_wrong_dimensions():
+    wind_directions = np.array([6, 7])
+    wind_speeds = np.array([100, 120, 130])
+
+    # This should be ok:
+    _ = WindRose(wind_directions, wind_speeds)
+
+    # This should be ok
+    _ = WindRose(wind_directions, wind_speeds, np.ones((2, 3)))
+
+    # This should raise an error
+    with pytest.raises(ValueError):
+        WindRose(wind_directions, wind_speeds, np.ones((3, 3)))
+
+
+def test_wrap_wind_directions_near_360():
+    wd_step = 5.0
+    wd_values = np.array([0, 180, 357, 357.5, 358])
+    time_series = TimeSeries(np.array([0]), np.array([0]))
+
+    wd_wrapped = time_series._wrap_wind_directions_near_360(wd_values, wd_step)
+
+    expected_result = np.array([0, 180, 357, -wd_step / 2.0, -2.0])
+    assert np.allclose(wd_wrapped, expected_result)
+
+
+def test_time_series_to_wind_rose():
+    # Test just 1 wind speed
+    wind_directions = np.array([259.8, 260.2, 264.3])
+    wind_speeds = np.array([5.0, 5.0, 5.1])
+    time_series = TimeSeries(wind_directions, wind_speeds)
+    wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
+
+    # The wind directions should be 260, 262 and 264
+    assert np.allclose(wind_rose.wind_directions, [260, 262, 264])
+
+    # Freq table should have dimension of 3 wd x 1 ws
+    freq_table = wind_rose.freq_table
+    assert freq_table.shape[0] == 3
+    assert freq_table.shape[1] == 1
+
+    # The frequencies should [2/3, 0, 1/3]
+    assert np.allclose(freq_table.squeeze(), [2 / 3, 0, 1 / 3])
+
+    # Test just 2 wind speeds
+    wind_directions = np.array([259.8, 260.2, 264.3])
+    wind_speeds = np.array([5.0, 5.0, 6.1])
+    time_series = TimeSeries(wind_directions, wind_speeds)
+    wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
+
+    # The wind directions should be 260, 262 and 264
+    assert np.allclose(wind_rose.wind_directions, [260, 262, 264])
+
+    # The wind speeds should be 5 and 6
+    assert np.allclose(wind_rose.wind_speeds, [5, 6])
+
+    # Freq table should have dimension of 3 wd x 2 ws
+    freq_table = wind_rose.freq_table
+    assert freq_table.shape[0] == 3
+    assert freq_table.shape[1] == 2
+
+    # The frequencies should [2/3, 0, 1/3]
+    assert freq_table[0, 0] == 2 / 3
+    assert freq_table[2, 1] == 1 / 3
+
+
+def test_time_series_to_wind_rose_wrapping():
+    wind_directions = np.arange(0.0, 360.0, 0.25)
+    wind_speeds = 8.0 * np.ones_like(wind_directions)
+    time_series = TimeSeries(wind_directions, wind_speeds)
+    wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
+
+    # Expert for the first bin in this case to be 0, and the final to be 358
+    # and both to have equal numbers of points
+    np.testing.assert_almost_equal(wind_rose.wind_directions[0], 0)
+    np.testing.assert_almost_equal(wind_rose.wind_directions[-1], 358)
+    np.testing.assert_almost_equal(wind_rose.freq_table[0, 0], wind_rose.freq_table[-1, 0])
+
+
+def test_time_series_to_wind_rose_with_ti():
+    wind_directions = np.array([259.8, 260.2, 260.3, 260.1])
+    wind_speeds = np.array([5.0, 5.0, 5.1, 7.2])
+    turbulence_intensity = np.array([0.5, 1.0, 1.5, 2.0])
+    time_series = TimeSeries(
+        wind_directions, wind_speeds, turbulence_intensity=turbulence_intensity
+    )
+    wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
+
+    # Turbulence intensity should average to 1 in the 5 m/s bin and 2 in the 7 m/s bin
+    ti_table = wind_rose.ti_table
+    np.testing.assert_almost_equal(ti_table[0, 0], 1)
+    np.testing.assert_almost_equal(ti_table[0, 2], 2)
+
+    # The 6 m/s bin should be empty
+    freq_table = wind_rose.freq_table
+    np.testing.assert_almost_equal(freq_table[0, 1], 0)
