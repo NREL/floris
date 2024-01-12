@@ -19,32 +19,67 @@ from floris.tools import TimeSeries, WindRose
 
 
 def test_time_series_instantiation():
-    wind_directions = np.array([6, 7, 8])
-    wind_speeds = np.array([100, 120, 130])
+    wind_directions = np.array([270, 280, 290])
+    wind_speeds = np.array([5, 5, 5])
     time_series = TimeSeries(wind_directions, wind_speeds)
     time_series
 
 
 def test_time_series_wrong_dimensions():
-    wind_directions = np.array([6, 7])
-    wind_speeds = np.array([100, 120, 130])
+    wind_directions = np.array([270, 280, 290])
+    wind_speeds = np.array([5, 5])
     with pytest.raises(ValueError):
         TimeSeries(wind_directions, wind_speeds)
 
 
 def test_wind_rose_wrong_dimensions():
-    wind_directions = np.array([6, 7])
-    wind_speeds = np.array([100, 120, 130])
+    wind_directions = np.array([270, 280, 290])
+    wind_speeds = np.array([6, 7])
 
     # This should be ok:
     _ = WindRose(wind_directions, wind_speeds)
 
     # This should be ok
-    _ = WindRose(wind_directions, wind_speeds, np.ones((2, 3)))
+    _ = WindRose(wind_directions, wind_speeds, np.ones((3, 2)))
 
     # This should raise an error
     with pytest.raises(ValueError):
         WindRose(wind_directions, wind_speeds, np.ones((3, 3)))
+
+
+def test_wind_rose_grid():
+    wind_directions = np.array([270, 280, 290])
+    wind_speeds = np.array([6, 7])
+
+    wind_rose = WindRose(wind_directions, wind_speeds)
+
+    # Wd grid has same dimensions as freq table
+    assert wind_rose.wd_grid.shape == wind_rose.freq_table.shape
+
+    # Flattening process occurs wd first
+    np.testing.assert_allclose(wind_rose.wd_flat, [270, 270, 280, 280, 290, 290])
+
+
+def test_wind_rose_unpack():
+    wind_directions = np.array([270, 280, 290])
+    wind_speeds = np.array([6, 7])
+    freq_table = np.array([[1.0, 0.0], [0, 1.0], [0, 0]])
+
+    wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
+
+    (
+        wind_directions_unpack,
+        wind_speeds_unpack,
+        freq_table_unpack,
+        ti_table_unpack,
+        price_table_unpack,
+    ) = wind_rose._unpack()
+
+    # Given the above frequency table, would only expect the
+    # (270 deg, 6 m/s) and (280 deg, 7 m/s) rows
+    np.testing.assert_allclose(wind_directions_unpack, [270, 280])
+    np.testing.assert_allclose(wind_speeds_unpack, [6, 7])
+    np.testing.assert_allclose(freq_table_unpack, [0.5, 0.5])
 
 
 def test_wrap_wind_directions_near_360():
