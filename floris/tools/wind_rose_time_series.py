@@ -12,6 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas.api.types import CategoricalDtype
@@ -149,7 +151,7 @@ class WindRose:
             price_table_unpack,
         )
 
-    def resample_wind_rose(self, ws_step=None, wd_step=None):
+    def resample_wind_rose(self, wd_step=None, ws_step=None):
         # Returns a resampled version of the wind rose using new ws_step and wd_step
 
         # Use the bin weights feature in TimeSeries to resample the wind rose
@@ -177,6 +179,77 @@ class WindRose:
         return time_series.to_wind_rose(
             wd_step=wd_step, ws_step=ws_step, bin_weights=self.freq_table_flat
         )
+
+    def plot_wind_rose(
+        self,
+        ax=None,
+        color_map="viridis_r",
+        wd_step=15.0,
+        ws_step=5.0,
+        legend_kwargs={},
+    ):
+        """
+        This method creates a wind rose plot showing the frequency of occurance
+        of the specified wind direction and wind speed bins. If no axis is
+        provided, a new one is created.
+
+        **Note**: Based on code provided by Patrick Murphy from the University
+        of Colorado Boulder.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the wind rose is plotted. Defaults to None.
+            color_map (str, optional): Colormap to use. Defaults to 'viridis_r'.
+            ws_step
+            wd_step
+            legend_kwargs (dict, optional): Keyword arguments to be passed to
+                ax.legend().
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted wind rose.
+        """
+
+        # Get a resampled wind_rose
+        wind_rose_resample = self.resample_wind_rose(wd_step, ws_step)
+        wd_bins = wind_rose_resample.wind_directions
+        ws_bins = wind_rose_resample.wind_speeds
+        freq_table = wind_rose_resample.freq_table
+
+        print(ws_bins)
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots(subplot_kw={"polar": True})
+
+        # Get a color array
+        color_array = cm.get_cmap(color_map, len(ws_bins))
+
+        for wd_idx, wd in enumerate(wd_bins):
+            rects = []
+            freq_table_sub = freq_table[wd_idx, :].flatten()
+            for ws_idx, ws in reversed(list(enumerate(ws_bins))):
+                plot_val = freq_table_sub[:ws_idx].sum()
+                rects.append(
+                    ax.bar(
+                        np.radians(wd),
+                        plot_val,
+                        width=0.9 * np.radians(wd_step),
+                        color=color_array(ws_idx),
+                        edgecolor="k",
+                    )
+                )
+            # break
+
+        # Configure the plot
+        ax.legend(reversed(rects), ws_bins, **legend_kwargs)
+        ax.set_theta_direction(-1)
+        ax.set_theta_offset(np.pi / 2.0)
+        ax.set_theta_zero_location("N")
+        ax.set_xticks(np.arange(0, 2 * np.pi, np.pi / 4))
+        ax.set_xticklabels(["N", "NE", "E", "SE", "S", "SW", "W", "NW"])
+
+        return ax
 
 
 class TimeSeries:
@@ -329,8 +402,8 @@ class TimeSeries:
         df = (
             df.assign(wd_bin=df["wd_bin"].astype(wd_cat))
             .assign(ws_bin=df["ws_bin"].astype(ws_cat))
-            .groupby(["wd_bin", "ws_bin"])
-            .agg([np.sum, np.mean])
+            .groupby(["wd_bin", "ws_bin"], observed=False)
+            .agg(["sum", "mean"])
         )
         # Flatten and combine levels using an underscore
         df.columns = ["_".join(col) for col in df.columns]
