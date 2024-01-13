@@ -19,7 +19,16 @@ import pandas as pd
 from pandas.api.types import CategoricalDtype
 
 
-class WindRose:
+# Define the super lass that WindRose and TimeSeries inherit
+class WindData:
+    def __init__():
+        pass
+
+    def unpack_for_reinitialize(self):
+        pass
+
+
+class WindRose(WindData):
     """
     In FLORIS v4, the WindRose class is used to drive FLORIS and optimization
     operations in which the inflow is characterized by the frequency of
@@ -113,7 +122,7 @@ class WindRose:
         else:
             self.price_table_flat = None
 
-    def unpack(self):
+    def unpack(self, mask_0_occurence=True):
         """
         Unpack the values in a form which is ready for FLORIS' reinitialize function
         """
@@ -124,7 +133,10 @@ class WindRose:
         freq_table_unpack = self.freq_table_flat.copy()
 
         # Get a mask of combinations that are more than 0 occurences
-        self.unpack_mask = freq_table_unpack > 0.0
+        if mask_0_occurence:
+            self.unpack_mask = freq_table_unpack > 0.0
+        else:
+            self.unpack_mask = [True for i in range(len(wind_directions_unpack))]
 
         # Now mask thes values to as to only compute values with occurence over 0
         wind_directions_unpack = wind_directions_unpack[self.unpack_mask]
@@ -133,13 +145,13 @@ class WindRose:
 
         # Repeat for turbulence intensity if not none
         if self.ti_table_flat is not None:
-            ti_table_unpack = self.ti_table_flat[self.unpack_mask]
+            ti_table_unpack = self.ti_table_flat[self.unpack_mask].copy()
         else:
             ti_table_unpack = None
 
         # Now get unpacked price table
         if self.price_table_flat is not None:
-            price_table_unpack = self.price_table_flat[self.unpack_mask]
+            price_table_unpack = self.price_table_flat[self.unpack_mask].copy()
         else:
             price_table_unpack = None
 
@@ -150,6 +162,20 @@ class WindRose:
             ti_table_unpack,
             price_table_unpack,
         )
+
+    def unpack_for_reinitialize(self, mask_0_occurence=True):
+        """
+        Return only the variables need for reinitialize
+        """
+        (
+            wind_directions_unpack,
+            wind_speeds_unpack,
+            _,
+            ti_table_unpack,
+            _,
+        ) = self.unpack(mask_0_occurence)
+
+        return wind_directions_unpack, wind_speeds_unpack, ti_table_unpack
 
     def resample_wind_rose(self, wd_step=None, ws_step=None):
         # Returns a resampled version of the wind rose using new ws_step and wd_step
@@ -216,8 +242,6 @@ class WindRose:
         ws_bins = wind_rose_resample.wind_speeds
         freq_table = wind_rose_resample.freq_table
 
-        print(ws_bins)
-
         # Set up figure
         if ax is None:
             _, ax = plt.subplots(subplot_kw={"polar": True})
@@ -252,7 +276,7 @@ class WindRose:
         return ax
 
 
-class TimeSeries:
+class TimeSeries(WindData):
     """
     In FLORIS v4, the TimeSeries class is used to drive FLORIS and optimization
     operations in which the inflow is by a sequence of wind speed, wind directino
@@ -296,9 +320,23 @@ class TimeSeries:
             self.wind_directions.copy(),
             self.wind_speeds.copy(),
             uniform_frequency,
-            self.turbulence_intensity.copy(),
-            self.prices.copy(),
+            self.turbulence_intensity,  # can be none so can't copy
+            self.prices,  # can be none so can't copy
         )
+
+    def unpack_for_reinitialize(self):
+        """
+        Return only the variables need for reinitialize
+        """
+        (
+            wind_directions_unpack,
+            wind_speeds_unpack,
+            _,
+            ti_table_unpack,
+            _,
+        ) = self.unpack()
+
+        return wind_directions_unpack, wind_speeds_unpack, ti_table_unpack
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
         """
