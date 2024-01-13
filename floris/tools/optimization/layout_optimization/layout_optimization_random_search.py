@@ -222,7 +222,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.random_seed = random_seed
 
         # Confirm the relegation_number is valid
-        if relegation_number >= n_individuals / 2:
+        if relegation_number > n_individuals / 2:
             raise ValueError("relegation_number must be less than n_individuals / 2.")
         self.relegation_number = relegation_number
 
@@ -276,8 +276,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             self.freq,
             self._get_geoyaw_angles()
         )
-        del self.x # Deleting to avoid confusion, since not updated
-        del self.y # Deleting to avoid confusion, since not updated
+        #del self.x # Deleting to avoid confusion, since not updated
+        #del self.y # Deleting to avoid confusion, since not updated
 
         # Initialize the aep statistics
         self.aep_mean = self.aep_initial
