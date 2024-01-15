@@ -146,6 +146,14 @@ mast across all wind directions (at a fixed free stream wind speed).
 Try different values for met_mast_option to vary the location of the met mast within
 the two-turbine farm.
 
+### 32_plot_velocity_deficit_profiles.py
+This example illustrates how to plot velocity deficit profiles at several locations
+downstream of a turbine. Here we use the following definition:
+
+    velocity_deficit = (homogeneous_wind_speed - u) / homogeneous_wind_speed
+        , where u is the wake velocity obtained when the incoming wind speed is the
+        same at all heights and equal to `homogeneous_wind_speed`.
+
 ### 29_floating_vs_fixedbottom_farm.py
 
 Compares a fixed-bottom wind farm (with a gridded layout) to a floating
@@ -172,7 +180,13 @@ This example builds on example 30. Specifically, fictional data for varying Cp/C
 wave period, Ts, and wave height, Hs, is used to show the difference in power performance for
 different wave heights.
 
-### 32_turbines_off.py
+### 32_specify_turbine_power_curve.py
+
+This example demonstrates how to generate a turbine dictionary or yaml input file based on
+a specified power and thrust curve. The power and thrust curves may be specified as power
+and thrust coefficients or as absolute values.
+
+### 33_turbines_off.py
 
 This example demonstrates how to shut off some turbines during a simulation.
 

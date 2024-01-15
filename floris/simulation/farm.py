@@ -85,7 +85,7 @@ class Farm(BaseClass):
     turbine_fCts: Dict[str, interp1d] | List[interp1d] = field(init=False, factory=list)
     turbine_fCts_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    turbine_fTilts: list = field(init=False, factory=list)
+    turbine_tilt_interps: dict[str, interp1d] = field(init=False, factory=dict)
 
     turbines_off: NDArrayBool = field(init=False)
     turbines_off_sorted: NDArrayBool = field(init=False)
@@ -307,8 +307,10 @@ class Farm(BaseClass):
     def construct_multidim_turbine_fCts(self):
         self.turbine_fCts = [turb.fCt_interp for turb in self.turbine_map]
 
-    def construct_turbine_fTilts(self):
-        self.turbine_fTilts = [(turb.turbine_type, turb.fTilt_interp) for turb in self.turbine_map]
+    def construct_turbine_tilt_interps(self):
+        self.turbine_tilt_interps = {
+            turb.turbine_type: turb.tilt_interp for turb in self.turbine_map
+        }
 
     def construct_turbine_power_interps(self):
         self.turbine_power_interps = {
@@ -438,7 +440,7 @@ class Farm(BaseClass):
         tilt_angles = compute_tilt_angles_for_floating_turbines(
             self.turbine_type_map_sorted,
             self.tilt_angles_sorted,
-            self.turbine_fTilts,
+            self.turbine_tilt_interps,
             rotor_effective_velocities,
         )
         return tilt_angles

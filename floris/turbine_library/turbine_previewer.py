@@ -12,6 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
+
 from pathlib import Path
 
 import attrs
@@ -185,7 +187,7 @@ class TurbineInterface:
                     tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
                     ref_tilt_cp_ct=np.full(shape_single, self.turbine.ref_tilt_cp_ct),
                     fCt=fCt_interps[k],
-                    tilt_interp=[(self.turbine.turbine_type, self.turbine.fTilt_interp)],
+                    tilt_interp={self.turbine.turbine_type: self.turbine.tilt_interp},
                     correct_cp_ct_for_tilt=np.zeros(shape_single, dtype=bool),
                     turbine_type_map=np.full(shape_single, self.turbine.turbine_type)
                 ).flatten()
@@ -199,7 +201,7 @@ class TurbineInterface:
                 tilt_angle=np.full(shape, self.turbine.ref_tilt_cp_ct),
                 ref_tilt_cp_ct=np.full(shape, self.turbine.ref_tilt_cp_ct),
                 fCt={self.turbine.turbine_type: self.turbine.fCt_interp},
-                tilt_interp=[(self.turbine.turbine_type, self.turbine.fTilt_interp)],
+                tilt_interp={self.turbine.turbine_type: self.turbine.tilt_interp},
                 correct_cp_ct_for_tilt=np.zeros(shape, dtype=bool),
                 turbine_type_map=np.full(shape, self.turbine.turbine_type),
             ).flatten()
