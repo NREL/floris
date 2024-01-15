@@ -359,6 +359,9 @@ def axial_induction(
         Union[float, NDArrayFloat]: [description]
     """
 
+    if isinstance(turbines_off, list):
+        turbines_off = np.array(turbines_off)
+
     if isinstance(yaw_angle, list):
         yaw_angle = np.array(yaw_angle)
 
