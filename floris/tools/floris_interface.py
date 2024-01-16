@@ -890,55 +890,14 @@ class FlorisInterface(LoggingManager):
         # Get freq directly from wind_data
         freq = wind_data.unpack_freq()
 
-        # Verify dimensions of the variable "freq"
-        if np.shape(freq)[0] != self.floris.flow_field.n_findex:
-            raise UserWarning(
-                "'freq' should be a one-dimensional array with dimensions (n_findex). "
-                f"Given shape is {np.shape(freq)}"
-            )
-
-        # Check if frequency vector sums to 1.0. If not, raise a warning
-        if np.abs(np.sum(freq) - 1.0) > 0.001:
-            self.logger.warning(
-                "WARNING: The frequency array provided to get_farm_AEP() " "does not sum to 1.0."
-            )
-
-        # Copy the full wind speed array from the floris object and initialize
-        # the the farm_power variable as an empty array.
-        wind_speeds = np.array(self.floris.flow_field.wind_speeds, copy=True)
-        wind_directions = np.array(self.floris.flow_field.wind_directions, copy=True)
-        farm_power = np.zeros(self.floris.flow_field.n_findex)
-
-        # Determine which wind speeds we must evaluate
-        conditions_to_evaluate = wind_speeds >= cut_in_wind_speed
-        if cut_out_wind_speed is not None:
-            conditions_to_evaluate = conditions_to_evaluate & (wind_speeds < cut_out_wind_speed)
-
-        # Evaluate the conditions in floris
-        if np.any(conditions_to_evaluate):
-            wind_speeds_subset = wind_speeds[conditions_to_evaluate]
-            wind_directions_subset = wind_directions[conditions_to_evaluate]
-            yaw_angles_subset = None
-            if yaw_angles is not None:
-                yaw_angles_subset = yaw_angles[conditions_to_evaluate]
-            self.reinitialize(
-                wind_speeds=wind_speeds_subset, wind_directions=wind_directions_subset
-            )
-            if no_wake:
-                self.calculate_no_wake(yaw_angles=yaw_angles_subset)
-            else:
-                self.calculate_wake(yaw_angles=yaw_angles_subset)
-            farm_power[conditions_to_evaluate] = self.get_farm_power(
-                turbine_weights=turbine_weights
-            )
-
-        # Finally, calculate AEP in GWh
-        aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
-
-        # Reset the FLORIS object to the full wind speed array
-        self.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
-
-        return aep
+        return self.get_farm_AEP(
+            freq,
+            cut_in_wind_speed=cut_in_wind_speed,
+            cut_out_wind_speed=cut_out_wind_speed,
+            yaw_angles=yaw_angles,
+            turbine_weights=turbine_weights,
+            no_wake=no_wake,
+        )
 
     def sample_flow_at_points(self, x: NDArrayFloat, y: NDArrayFloat, z: NDArrayFloat):
         """
