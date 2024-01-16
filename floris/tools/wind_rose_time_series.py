@@ -185,6 +185,19 @@ class WindRose(WindData):
 
         return wind_directions_unpack, wind_speeds_unpack, ti_table_unpack
 
+    def unpack_freq(self):
+        """Unpack frequency weighting"""
+
+        (
+            _,
+            _,
+            freq_table_unpack,
+            _,
+            _,
+        ) = self.unpack()
+
+        return freq_table_unpack
+
     def resample_wind_rose(self, wd_step=None, ws_step=None):
         # Returns a resampled version of the wind rose using new ws_step and wd_step
 
@@ -345,6 +358,19 @@ class TimeSeries(WindData):
         ) = self.unpack()
 
         return wind_directions_unpack, wind_speeds_unpack, ti_table_unpack
+
+    def unpack_freq(self):
+        """Unpack frequency weighting"""
+
+        (
+            _,
+            _,
+            freq_table_unpack,
+            _,
+            _,
+        ) = self.unpack()
+
+        return freq_table_unpack
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
         """
