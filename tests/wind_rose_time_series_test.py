@@ -65,6 +65,7 @@ def test_wind_rose_unpack():
     wind_speeds = np.array([6, 7])
     freq_table = np.array([[1.0, 0.0], [0, 1.0], [0, 0]])
 
+    # First test using default assumption only non-zero frequency cases computed
     wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
 
     (
@@ -80,6 +81,20 @@ def test_wind_rose_unpack():
     np.testing.assert_allclose(wind_directions_unpack, [270, 280])
     np.testing.assert_allclose(wind_speeds_unpack, [6, 7])
     np.testing.assert_allclose(freq_table_unpack, [0.5, 0.5])
+
+    # Now test computing 0-freq cases too
+    wind_rose = WindRose(wind_directions, wind_speeds, freq_table, compute_zero_freq_occurence=True)
+
+    (
+        wind_directions_unpack,
+        wind_speeds_unpack,
+        freq_table_unpack,
+        ti_table_unpack,
+        price_table_unpack,
+    ) = wind_rose.unpack()
+
+    # Expect now to compute all combinations
+    np.testing.assert_allclose(wind_directions_unpack, [270, 270, 280, 280, 290, 290])
 
 
 def test_wind_rose_resample():
