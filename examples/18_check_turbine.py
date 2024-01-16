@@ -47,18 +47,6 @@ turbines = [
     if t.suffix == ".yaml" and ("multi_dim" not in t.stem)
 ]
 
-# TEMPORARY
-print(turbines)
-turbines = [
-    t for t in turbines
-    if "converted" not in t
-    if "updated" not in t
-    if "legacy" not in t
-    if t != "x_20MW"
-]
-print(turbines)
-# END TEMPORARY
-
 # Declare a set of figures for comparing cp and ct across models
 fig_pow_ct, axarr_pow_ct = plt.subplots(2,1,sharex=True,figsize=(10,10))
 

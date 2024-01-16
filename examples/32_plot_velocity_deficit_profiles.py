@@ -64,7 +64,7 @@ def annotate_coordinate_system(x_origin, y_origin, quiver_length):
     plt.text(x[1], y[1], '$x_2$', bbox={'facecolor': 'white'})
 
 if __name__ == '__main__':
-    D = 126.0 # Turbine diameter
+    D = 125.88 # Turbine diameter
     hub_height = 90.0
     homogeneous_wind_speed = 8.0
 

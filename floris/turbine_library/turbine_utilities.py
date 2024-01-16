@@ -24,11 +24,11 @@ def build_cosine_loss_turbine_dict(
     turbine_data_dict,
     turbine_name,
     file_name=None,
-    generator_efficiency=1.0,
+    generator_efficiency=0.944,
     hub_height=90.0,
     pP=1.88,
     pT=1.88,
-    rotor_diameter=126.0,
+    rotor_diameter=125.88,
     TSR=8.0,
     ref_air_density=1.225,
     ref_tilt=5.0
@@ -106,7 +106,11 @@ def build_cosine_loss_turbine_dict(
         validity_mask = (Cp != 0) | (u != 0)
         p = np.zeros_like(Cp, dtype=float)
 
-        p[validity_mask] = Cp[validity_mask]*0.5*ref_air_density*A*u[validity_mask]**3 / 1000
+        p[validity_mask] = (
+            Cp[validity_mask]
+            * 0.5 * ref_air_density * A * generator_efficiency
+            * u[validity_mask]**3 / 1000
+        )
 
     else:
         raise KeyError(
