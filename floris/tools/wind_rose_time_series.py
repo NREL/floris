@@ -43,6 +43,7 @@ class WindRose(WindData):
         freq_table=None,
         ti_table=None,
         price_table=None,
+        compute_zero_freq_occurence=False,
     ):
         """
         TODO: Write this later
@@ -94,6 +95,9 @@ class WindRose(WindData):
         else:
             self.price_table = None
 
+        # Save whether zero occurence cases should be computed
+        self.compute_zero_freq_occurence = compute_zero_freq_occurence
+
         # Build the gridded and flatten versions
         self._build_gridded_and_flattened_version()
 
@@ -122,7 +126,14 @@ class WindRose(WindData):
         else:
             self.price_table_flat = None
 
-    def unpack(self, mask_0_occurence=True):
+        # Set mask to non-zero frequency cases depending on compute_zero_freq_occurence
+        if self.compute_zero_freq_occurence:
+            # If computing zero freq occurences, then this is all True
+            self.non_zero_freq_mask = [True for i in range(len(self.freq_table_flat))]
+        else:
+            self.non_zero_freq_mask = self.freq_table_flat > 0.0
+
+    def unpack(self):
         """
         Unpack the values in a form which is ready for FLORIS' reinitialize function
         """
@@ -132,26 +143,20 @@ class WindRose(WindData):
         wind_speeds_unpack = self.ws_flat.copy()
         freq_table_unpack = self.freq_table_flat.copy()
 
-        # Get a mask of combinations that are more than 0 occurences
-        if mask_0_occurence:
-            self.unpack_mask = freq_table_unpack > 0.0
-        else:
-            self.unpack_mask = [True for i in range(len(wind_directions_unpack))]
-
-        # Now mask thes values to as to only compute values with occurence over 0
-        wind_directions_unpack = wind_directions_unpack[self.unpack_mask]
-        wind_speeds_unpack = wind_speeds_unpack[self.unpack_mask]
-        freq_table_unpack = freq_table_unpack[self.unpack_mask]
+        # Now mask thes values according to self.non_zero_freq_mask
+        wind_directions_unpack = wind_directions_unpack[self.non_zero_freq_mask]
+        wind_speeds_unpack = wind_speeds_unpack[self.non_zero_freq_mask]
+        freq_table_unpack = freq_table_unpack[self.non_zero_freq_mask]
 
         # Repeat for turbulence intensity if not none
         if self.ti_table_flat is not None:
-            ti_table_unpack = self.ti_table_flat[self.unpack_mask].copy()
+            ti_table_unpack = self.ti_table_flat[self.non_zero_freq_mask].copy()
         else:
             ti_table_unpack = None
 
         # Now get unpacked price table
         if self.price_table_flat is not None:
-            price_table_unpack = self.price_table_flat[self.unpack_mask].copy()
+            price_table_unpack = self.price_table_flat[self.non_zero_freq_mask].copy()
         else:
             price_table_unpack = None
 
@@ -163,7 +168,7 @@ class WindRose(WindData):
             price_table_unpack,
         )
 
-    def unpack_for_reinitialize(self, mask_0_occurence=True):
+    def unpack_for_reinitialize(self):
         """
         Return only the variables need for reinitialize
         """
@@ -173,7 +178,7 @@ class WindRose(WindData):
             _,
             ti_table_unpack,
             _,
-        ) = self.unpack(mask_0_occurence)
+        ) = self.unpack()
 
         return wind_directions_unpack, wind_speeds_unpack, ti_table_unpack
 
