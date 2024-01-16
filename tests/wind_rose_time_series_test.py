@@ -82,6 +82,9 @@ def test_wind_rose_unpack():
     np.testing.assert_allclose(wind_speeds_unpack, [6, 7])
     np.testing.assert_allclose(freq_table_unpack, [0.5, 0.5])
 
+    # In this case n_findex == 2
+    assert wind_rose.n_findex == 2
+
     # Now test computing 0-freq cases too
     wind_rose = WindRose(wind_directions, wind_speeds, freq_table, compute_zero_freq_occurence=True)
 
@@ -95,6 +98,9 @@ def test_wind_rose_unpack():
 
     # Expect now to compute all combinations
     np.testing.assert_allclose(wind_directions_unpack, [270, 270, 280, 280, 290, 290])
+
+    # In this case n_findex == 6
+    assert wind_rose.n_findex == 6
 
 
 def test_wind_rose_resample():

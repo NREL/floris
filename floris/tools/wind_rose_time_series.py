@@ -133,6 +133,9 @@ class WindRose(WindData):
         else:
             self.non_zero_freq_mask = self.freq_table_flat > 0.0
 
+        # N_findex should only be the calculated cases
+        self.n_findex = np.sum(self.non_zero_freq_mask)
+
     def unpack(self):
         """
         Unpack the values in a form which is ready for FLORIS' reinitialize function
