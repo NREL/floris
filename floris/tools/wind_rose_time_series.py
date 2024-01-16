@@ -20,12 +20,38 @@ from pandas.api.types import CategoricalDtype
 
 
 # Define the super lass that WindRose and TimeSeries inherit
+# Define functions here that are either the same for both WindRose and
+# TimeSeries or will be overloaded
 class WindData:
     def __init__():
         pass
 
     def unpack_for_reinitialize(self):
-        pass
+        """
+        Return only the variables need for reinitialize
+        """
+        (
+            wind_directions_unpack,
+            wind_speeds_unpack,
+            _,
+            ti_table_unpack,
+            _,
+        ) = self.unpack()
+
+        return wind_directions_unpack, wind_speeds_unpack, ti_table_unpack
+
+    def unpack_freq(self):
+        """Unpack frequency weighting"""
+
+        (
+            _,
+            _,
+            freq_table_unpack,
+            _,
+            _,
+        ) = self.unpack()
+
+        return freq_table_unpack
 
 
 class WindRose(WindData):
@@ -170,33 +196,6 @@ class WindRose(WindData):
             ti_table_unpack,
             price_table_unpack,
         )
-
-    def unpack_for_reinitialize(self):
-        """
-        Return only the variables need for reinitialize
-        """
-        (
-            wind_directions_unpack,
-            wind_speeds_unpack,
-            _,
-            ti_table_unpack,
-            _,
-        ) = self.unpack()
-
-        return wind_directions_unpack, wind_speeds_unpack, ti_table_unpack
-
-    def unpack_freq(self):
-        """Unpack frequency weighting"""
-
-        (
-            _,
-            _,
-            freq_table_unpack,
-            _,
-            _,
-        ) = self.unpack()
-
-        return freq_table_unpack
 
     def resample_wind_rose(self, wd_step=None, ws_step=None):
         # Returns a resampled version of the wind rose using new ws_step and wd_step
@@ -344,33 +343,6 @@ class TimeSeries(WindData):
             self.turbulence_intensity,  # can be none so can't copy
             self.prices,  # can be none so can't copy
         )
-
-    def unpack_for_reinitialize(self):
-        """
-        Return only the variables need for reinitialize
-        """
-        (
-            wind_directions_unpack,
-            wind_speeds_unpack,
-            _,
-            ti_table_unpack,
-            _,
-        ) = self.unpack()
-
-        return wind_directions_unpack, wind_speeds_unpack, ti_table_unpack
-
-    def unpack_freq(self):
-        """Unpack frequency weighting"""
-
-        (
-            _,
-            _,
-            freq_table_unpack,
-            _,
-            _,
-        ) = self.unpack()
-
-        return freq_table_unpack
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
         """

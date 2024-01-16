@@ -103,6 +103,26 @@ def test_wind_rose_unpack():
     assert wind_rose.n_findex == 6
 
 
+def test_unpack_for_reinitialize():
+    wind_directions = np.array([270, 280, 290])
+    wind_speeds = np.array([6, 7])
+    freq_table = np.array([[1.0, 0.0], [0, 1.0], [0, 0]])
+
+    # First test using default assumption only non-zero frequency cases computed
+    wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
+
+    (
+        wind_directions_unpack,
+        wind_speeds_unpack,
+        ti_table_unpack,
+    ) = wind_rose.unpack_for_reinitialize()
+
+    # Given the above frequency table, would only expect the
+    # (270 deg, 6 m/s) and (280 deg, 7 m/s) rows
+    np.testing.assert_allclose(wind_directions_unpack, [270, 280])
+    np.testing.assert_allclose(wind_speeds_unpack, [6, 7])
+
+
 def test_wind_rose_resample():
     wind_directions = np.array([0, 2, 4, 6, 8, 10])
     wind_speeds = np.array([8])
