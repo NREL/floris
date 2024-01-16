@@ -474,7 +474,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         opt_stop_time = opt_start_time + self.total_optimization_seconds
         sim_time = 0
 
-        self.aep_candidate_log = [self.aep_candidate] # TODO: Not recording initial correctly?
+        self.aep_candidate_log = [self.aep_candidate.copy()]
         self.num_aep_calls_log = []
         self._num_aep_calls = [0]*self.n_individuals
 
