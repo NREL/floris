@@ -329,7 +329,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             jump_dist = np.min([self.xmax-self.xmin, self.ymax-self.ymin])/2
             jump_prob = 0.05
 
-            d = np.append(np.linspace(0.5*self.D, 2.0*self.D, 151), jump_dist)
+            d = np.append(np.linspace(0.0, 2.0*self.D, 99), jump_dist)
             p = np.append((1-jump_prob)/len(d)*np.ones(len(d)-1), jump_prob)
             p = p / p.sum()
             dist_pmf = {"d":d, "p":p}
