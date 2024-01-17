@@ -60,6 +60,18 @@ class WindRose(WindData):
     operations in which the inflow is characterized by the frequency of
     binned wind speed, wind direction and turbulence intensity values
 
+    Args:
+        wind_directions: NumPy array of wind directions (NDArrayFloat).
+        wind_speeds: NumPy array of wind speeds (NDArrayFloat).
+        freq_table: Frequency table for binned wind direction, wind speed
+            values (NDArrayFloat, optional).  Defaults to None.
+        ti_table: Turbulence intensity table for binned wind direction, wind
+            speed values (NDArrayFloat, optional).  Defaults to None.
+        price_table: Price table for binned binned wind direction, wind
+            speed values (NDArrayFloat, optional).  Defaults to None.
+        compute_zero_freq_occurrence: Flag indicating whether to compute zero
+            frequency occurrences (bool, optional).  Defaults to False.
+
     """
 
     def __init__(
@@ -71,9 +83,6 @@ class WindRose(WindData):
         price_table=None,
         compute_zero_freq_occurence=False,
     ):
-        """
-        TODO: Write this later
-        """
         if not isinstance(wind_directions, np.ndarray):
             raise TypeError("wind_directions must be a NumPy array")
 
@@ -128,6 +137,11 @@ class WindRose(WindData):
         self._build_gridded_and_flattened_version()
 
     def _build_gridded_and_flattened_version(self):
+        """
+        Given the wind direction and speed array, build the gridded versions
+        covering all combinations, and then flatten versions which put all
+        combinations into 1D array
+        """
         # Gridded wind speed and direction
         self.wd_grid, self.ws_grid = np.meshgrid(
             self.wind_directions, self.wind_speeds, indexing="ij"
@@ -164,7 +178,8 @@ class WindRose(WindData):
 
     def unpack(self):
         """
-        Unpack the values in a form which is ready for FLORIS' reinitialize function
+        Unpack the flattened versions of the matrices and return the values
+        accounting for the non_zero_freq_mask
         """
 
         # The unpacked versions start as the flat version of each
@@ -198,11 +213,21 @@ class WindRose(WindData):
         )
 
     def resample_wind_rose(self, wd_step=None, ws_step=None):
-        # Returns a resampled version of the wind rose using new ws_step and wd_step
+        """
+        Resamples the wind rose by by wd_step and/or ws_step
 
-        # Use the bin weights feature in TimeSeries to resample the wind rose
+        Args:
+            wd_step: Step size for wind direction resampling (float, optional).
+            ws_step: Step size for wind speed resampling (float, optional).
 
-        # If ws_step or wd_step, not specied use current values
+        Returns:
+            WindRose: Resampled wind rose based on the provided or default step sizes.
+
+        Notes:
+            - Returns a resampled version of the wind rose using new `ws_step` and `wd_step`.
+            - Uses the bin weights feature in TimeSeries to resample the wind rose.
+            - If `ws_step` or `wd_step` is not specified, it uses the current values.
+        """
         if ws_step is None:
             if len(self.wind_speeds) >= 2:
                 ws_step = self.wind_speeds[1] - self.wind_speeds[0]
@@ -246,8 +271,8 @@ class WindRose(WindData):
             ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
                 on which the wind rose is plotted. Defaults to None.
             color_map (str, optional): Colormap to use. Defaults to 'viridis_r'.
-            ws_step
-            wd_step
+            wd_step: Step size for wind direction  (float, optional).
+            ws_step: Step size for wind speed  (float, optional).
             legend_kwargs (dict, optional): Keyword arguments to be passed to
                 ax.legend().
 
@@ -283,7 +308,6 @@ class WindRose(WindData):
                         edgecolor="k",
                     )
                 )
-            # break
 
         # Configure the plot
         ax.legend(reversed(rects), ws_bins, **legend_kwargs)
@@ -299,8 +323,16 @@ class WindRose(WindData):
 class TimeSeries(WindData):
     """
     In FLORIS v4, the TimeSeries class is used to drive FLORIS and optimization
-    operations in which the inflow is by a sequence of wind speed, wind directino
+    operations in which the inflow is by a sequence of wind direction, wind speed
     and turbulence intensitity values
+
+    Args:
+        wind_directions: NumPy array of wind directions (NDArrayFloat).
+        wind_speeds: NumPy array of wind speeds (NDArrayFloat).
+        turbulence_intensity:  NumPy array of wind speeds (NDArrayFloat, optional).
+            Defatuls to None
+        prices:  NumPy array of electricity prices (NDArrayFloat, optional).
+            Defatuls to None
 
     """
 
@@ -311,10 +343,6 @@ class TimeSeries(WindData):
         turbulence_intensity=None,
         prices=None,
     ):
-        """
-        TODO: Write this later
-        """
-
         # Wind speeds and wind directions must be the same length
         if len(wind_directions) != len(wind_speeds):
             raise ValueError("wind_directions and wind_speeds must be the same length")
@@ -329,7 +357,7 @@ class TimeSeries(WindData):
 
     def unpack(self):
         """
-        Unpack the time series data to floris' reinitialize function
+        Unpack the time series data in a manner consistent with wind rose unpack
         """
 
         # to match wind_rose, make a uniform frequency
@@ -346,9 +374,17 @@ class TimeSeries(WindData):
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
         """
-        use wd_step to produce a wrapped version of wind_directions
-        where values that are between [360 - wd_step/2.0,360] get mapped
-        to negative numbers for binning
+        Wraps the wind directions using `wd_step` to produce a wrapped version
+        where values between [360 - wd_step/2.0, 360] get mapped to negative numbers
+        for binning.
+
+        Args:
+            wind_directions (NDArrayFloat): NumPy array of wind directions.
+            wd_step (float): Step size for wind direction.
+
+        Returns:
+            NDArrayFloat: Wrapped version of wind directions.
+
         """
         wind_directions_wrapped = wind_directions.copy()
         mask = wind_directions_wrapped >= 360 - wd_step / 2.0
@@ -359,7 +395,25 @@ class TimeSeries(WindData):
         self, wd_step=2.0, ws_step=1.0, wd_edges=None, ws_edges=None, bin_weights=None
     ):
         """
-        TODO: Write this later
+        Converts the TimeSeries data to a WindRose.
+
+        Args:
+            wd_step (float, optional): Step size for wind direction (default is 2.0).
+            ws_step (float, optional): Step size for wind speed (default is 1.0).
+            wd_edges (NDArrayFloat, optional): Custom wind direction edges. Defaults to None.
+            ws_edges (NDArrayFloat, optional): Custom wind speed edges. Defaults to None.
+            bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
+                are primarily used by the resample resample_wind_rose function.
+                Defaults to None.
+
+        Returns:
+            WindRose: A WindRose object based on the TimeSeries data.
+
+        Notes:
+            - If `wd_edges` is defined, it uses it to produce the bin centers.
+            - If `wd_edges` is not defined, it determines `wd_edges` from the step and data.
+            - If `ws_edges` is defined, it uses it for wind speed edges.
+            - If `ws_edges` is not defined, it determines `ws_edges` from the step and data.
         """
 
         # If wd_edges is defined, then use it to produce the bin centers
