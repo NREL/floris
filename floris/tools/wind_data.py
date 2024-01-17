@@ -22,7 +22,7 @@ from pandas.api.types import CategoricalDtype
 # Define the super lass that WindRose and TimeSeries inherit
 # Define functions here that are either the same for both WindRose and
 # TimeSeries or will be overloaded
-class WindData:
+class WindDataBase:
     def __init__():
         pass
 
@@ -54,7 +54,7 @@ class WindData:
         return freq_table_unpack
 
 
-class WindRose(WindData):
+class WindRose(WindDataBase):
     """
     In FLORIS v4, the WindRose class is used to drive FLORIS and optimization
     operations in which the inflow is characterized by the frequency of
@@ -320,7 +320,7 @@ class WindRose(WindData):
         return ax
 
 
-class TimeSeries(WindData):
+class TimeSeries(WindDataBase):
     """
     In FLORIS v4, the TimeSeries class is used to drive FLORIS and optimization
     operations in which the inflow is by a sequence of wind direction, wind speed

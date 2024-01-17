@@ -46,9 +46,9 @@ from .visualization import (
     visualize_cut_plane,
     visualize_quiver,
 )
-from .wind_rose_time_series import (
+from .wind_data import (
     TimeSeries,
-    WindData,
+    WindDataBase,
     WindRose,
 )
 
