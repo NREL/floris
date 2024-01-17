@@ -94,7 +94,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
 
     # All list of strings from internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
-    farm_data["turbine_type"] = ["nrel_5MW", "iea_10MW", "iea_15MW", "x_20MW", "nrel_5MW"]
+    farm_data["turbine_type"] = ["nrel_5MW", "iea_10MW", "iea_15MW", "nrel_5MW", "nrel_5MW"]
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
     farm = Farm.from_dict(farm_data)
