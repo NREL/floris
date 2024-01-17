@@ -26,7 +26,7 @@ from floris.utilities import wrap_360
 # Generate a random time series of wind speeds, wind directions and turbulence intensities
 N = 500
 wd_array = wrap_360(270 * np.ones(N) + np.random.randn(N) * 20)
-ws_array = np.clip(8 * np.ones(N) + np.random.randn(N) * 8, 0, 50)
+ws_array = np.clip(8 * np.ones(N) + np.random.randn(N) * 8, 3, 50)
 ti_array = np.clip(0.1 * np.ones(N) + np.random.randn(N) * 0.05, 0, 0.25)
 
 fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(7, 4))
@@ -67,5 +67,10 @@ fi_wind_rose.calculate_wake()
 time_series_power = fi_time_series.get_farm_power()
 wind_rose_power = fi_wind_rose.get_farm_power()
 
-print(time_series_power.shape)
-print(wind_rose_power.shape)
+time_series_aep = fi_time_series.get_farm_AEP_with_wind_data(time_series)
+wind_rose_aep = fi_wind_rose.get_farm_AEP_with_wind_data(wind_rose)
+
+print(f"AEP from TimeSeries {time_series_aep / 1e9:.2f} GWh")
+print(f"AEP from WindRose {wind_rose_aep / 1e9:.2f} GWh")
+
+plt.show()
