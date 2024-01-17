@@ -23,6 +23,14 @@ from floris.tools import (
 from floris.utilities import wrap_360
 
 
+"""
+This example is meant to be temporary and may be updated by a later pull request. Before we
+release v4, we intend to propagate the TimeSeries and WindRose objects through the other relevant
+examples, and change this example to demonstrate more advanced (as yet, not implemented)
+functionality of the WindData objects (such as electricity pricing etc).
+"""
+
+
 # Generate a random time series of wind speeds, wind directions and turbulence intensities
 N = 500
 wd_array = wrap_360(270 * np.ones(N) + np.random.randn(N) * 20)
