@@ -657,11 +657,13 @@ def calculate_horizontal_plane_with_turbines(
         # Grab the turbine layout
         layout_x = copy.deepcopy(fi.layout_x)
         layout_y = copy.deepcopy(fi.layout_y)
+        turbine_types = copy.deepcopy(fi.floris.farm.turbine_type)
         D = fi.floris.farm.rotor_diameters_sorted[0, 0, 0]
 
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
+        turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
         yaw_angles = np.append(yaw_angles, np.zeros([len(wd), len(ws), 1]), axis=2)
 
         # Get a grid of points test test
@@ -694,7 +696,7 @@ def calculate_horizontal_plane_with_turbines(
                 # Place the test turbine at this location and calculate wake
                 layout_x_test[-1] = x
                 layout_y_test[-1] = y
-                fi.reinitialize(layout_x = layout_x_test, layout_y = layout_y_test)
+                fi.reinitialize(layout_x = layout_x_test, layout_y = layout_y_test, turbine_type = turbine_types_test)
                 fi.calculate_wake(yaw_angles=yaw_angles)
 
                 # Get the velocity of that test turbines central point
