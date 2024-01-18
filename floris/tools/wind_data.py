@@ -78,11 +78,14 @@ class WindRose(WindDataBase):
         wind_directions: NumPy array of wind directions (NDArrayFloat).
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
         freq_table: Frequency table for binned wind direction, wind speed
-            values (NDArrayFloat, optional).  Defaults to None.
+            values (NDArrayFloat, optional).   Must have dimension
+            (n_wind_directions, n_wind_speeds).  Defaults to None.
         ti_table: Turbulence intensity table for binned wind direction, wind
-            speed values (NDArrayFloat, optional).  Defaults to None.
+            speed values (NDArrayFloat, optional).   Must have dimension
+            (n_wind_directions, n_wind_speeds). Defaults to None.
         price_table: Price table for binned binned wind direction, wind
-            speed values (NDArrayFloat, optional).  Defaults to None.
+            speed values (NDArrayFloat, optional).  Must have dimension
+            (n_wind_directions, n_wind_speeds).  Defaults to None.
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
 
@@ -92,10 +95,10 @@ class WindRose(WindDataBase):
         self,
         wind_directions: NDArrayFloat,
         wind_speeds: NDArrayFloat,
-        freq_table: NDArrayFloat | None=None,
-        ti_table: NDArrayFloat | None=None,
-        price_table: NDArrayFloat | None=None,
-        compute_zero_freq_occurrence: bool=False,
+        freq_table: NDArrayFloat | None = None,
+        ti_table: NDArrayFloat | None = None,
+        price_table: NDArrayFloat | None = None,
+        compute_zero_freq_occurrence: bool = False,
     ):
         if not isinstance(wind_directions, np.ndarray):
             raise TypeError("wind_directions must be a NumPy array")
@@ -240,12 +243,12 @@ class WindRose(WindDataBase):
         if ws_step is None:
             if len(self.wind_speeds) >= 2:
                 ws_step = self.wind_speeds[1] - self.wind_speeds[0]
-            else: # wind rose will have only a single wind speed, and we assume a ws_step of 1
+            else:  # wind rose will have only a single wind speed, and we assume a ws_step of 1
                 ws_step = 1.0
         if wd_step is None:
             if len(self.wind_directions) >= 2:
                 wd_step = self.wind_directions[1] - self.wind_directions[0]
-            else: # wind rose will have only a single wind direction, and we assume a wd_step of 1
+            else:  # wind rose will have only a single wind direction, and we assume a wd_step of 1
                 wd_step = 1.0
 
         # Pass the flat versions of each quantity to build a TimeSeries model
@@ -347,8 +350,8 @@ class TimeSeries(WindDataBase):
         self,
         wind_directions: NDArrayFloat,
         wind_speeds: NDArrayFloat,
-        turbulence_intensity: NDArrayFloat | None=None,
-        prices: NDArrayFloat | None=None,
+        turbulence_intensity: NDArrayFloat | None = None,
+        prices: NDArrayFloat | None = None,
     ):
         # Wind speeds and wind directions must be the same length
         if len(wind_directions) != len(wind_speeds):
