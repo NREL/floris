@@ -123,10 +123,7 @@ class WindRose(WindDataBase):
                 raise ValueError("ti_table first dimension must equal len(wind_directions)")
             if not ti_table.shape[1] == len(wind_speeds):
                 raise ValueError("ti_table second dimension must equal len(wind_speeds)")
-            self.ti_table = ti_table
-
-        else:
-            self.ti_table = None
+        self.ti_table = ti_table
 
         # If price_table is not None, confirm it has correct dimension,
         # otherwise initialze to all ones
@@ -135,10 +132,8 @@ class WindRose(WindDataBase):
                 raise ValueError("price_table first dimension must equal len(wind_directions)")
             if not price_table.shape[1] == len(wind_speeds):
                 raise ValueError("price_table second dimension must equal len(wind_speeds)")
-            self.price_table = price_table
-        else:
-            self.price_table = None
-
+        self.price_table = price_table
+        
         # Save whether zero occurence cases should be computed
         self.compute_zero_freq_occurence = compute_zero_freq_occurence
 

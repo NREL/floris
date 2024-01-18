@@ -28,11 +28,9 @@ from floris.simulation.turbine.turbine import (
     power,
     thrust_coefficient,
 )
+from floris.tools.wind_data import WindDataBase
 from floris.tools.cut_plane import CutPlane
 from floris.type_dec import NDArrayFloat
-
-
-# from floris.tools import WindData
 
 
 class FlorisInterface(LoggingManager):
@@ -191,7 +189,7 @@ class FlorisInterface(LoggingManager):
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
         heterogenous_inflow_config=None,
-        wind_data=None,
+        wind_data: type[WindDataBase] | None = None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -400,7 +398,10 @@ class FlorisInterface(LoggingManager):
 
         # Compute the cutplane
         horizontal_plane = CutPlane(
-            df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1], "z"
+            df,
+            self.floris.grid.grid_resolution[0],
+            self.floris.grid.grid_resolution[1],
+            "z",
         )
 
         # Reset the fi object back to the turbine grid configuration
@@ -784,7 +785,7 @@ class FlorisInterface(LoggingManager):
         # Check if frequency vector sums to 1.0. If not, raise a warning
         if np.abs(np.sum(freq) - 1.0) > 0.001:
             self.logger.warning(
-                "WARNING: The frequency array provided to get_farm_AEP() " "does not sum to 1.0."
+                "WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0."
             )
 
         # Copy the full wind speed array from the floris object and initialize

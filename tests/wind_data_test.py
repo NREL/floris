@@ -17,12 +17,12 @@ import pytest
 
 from floris.tools import TimeSeries, WindRose, WindDataBase
 
-class TestClass(WindDataBase):
+class ChildClassTest(WindDataBase):
     def __init__(self):
         pass
 
 def test_bad_inheritance():
-    test_class = TestClass()
+    test_class = ChildClassTest()
     with pytest.raises(NotImplementedError):
         test_class.unpack()
 
