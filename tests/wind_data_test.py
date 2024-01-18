@@ -27,35 +27,48 @@ class ChildClassTest(WindDataBase):
         pass
 
 def test_bad_inheritance():
+    """
+    Verifies that a child class of WindDataBase must implement the unpack method.
+    """
     test_class = ChildClassTest()
     with pytest.raises(NotImplementedError):
         test_class.unpack()
 
+
 def test_time_series_instantiation():
     wind_directions = np.array([270, 280, 290])
     wind_speeds = np.array([5, 5, 5])
-    time_series = TimeSeries(wind_directions, wind_speeds)
-    time_series
+    TimeSeries(wind_directions, wind_speeds)
 
 
 def test_time_series_wrong_dimensions():
+    """
+    Verifies that the TimeSeries class errors when the input wind directions and wind speeds
+    have different lengths.
+    """
     wind_directions = np.array([270, 280, 290])
     wind_speeds = np.array([5, 5])
     with pytest.raises(ValueError):
         TimeSeries(wind_directions, wind_speeds)
 
 
-def test_wind_rose_wrong_dimensions():
+def test_wind_rose_init():
+    """
+    The wind directions and wind speeds can have any length, but the frequency
+    array must have shape (n wind directions, n wind speeds)
+    """
     wind_directions = np.array([270, 280, 290])
     wind_speeds = np.array([6, 7])
 
-    # This should be ok:
+    # This should be ok
     _ = WindRose(wind_directions, wind_speeds)
 
-    # This should be ok
+    # This should be ok since the frequency array shape matches the wind directions
+    # and wind speeds
     _ = WindRose(wind_directions, wind_speeds, np.ones((3, 2)))
 
-    # This should raise an error
+    # This should raise an error since the frequency array shape does not
+    # match the wind directions and wind speeds
     with pytest.raises(ValueError):
         WindRose(wind_directions, wind_speeds, np.ones((3, 3)))
 
@@ -66,10 +79,11 @@ def test_wind_rose_grid():
 
     wind_rose = WindRose(wind_directions, wind_speeds)
 
-    # Wd grid has same dimensions as freq table
+    # Wind direction grid has the same dimensions as the frequency table
     assert wind_rose.wd_grid.shape == wind_rose.freq_table.shape
 
     # Flattening process occurs wd first
+    # This is each wind direction for each wind speed:
     np.testing.assert_allclose(wind_rose.wd_flat, [270, 270, 280, 280, 290, 290])
 
 
@@ -89,13 +103,14 @@ def test_wind_rose_unpack():
         price_table_unpack,
     ) = wind_rose.unpack()
 
-    # Given the above frequency table, would only expect the
-    # (270 deg, 6 m/s) and (280 deg, 7 m/s) rows
+    # Given the above frequency table with zeros for a few elements,
+    # we expect only the (270 deg, 6 m/s) and (280 deg, 7 m/s) rows
     np.testing.assert_allclose(wind_directions_unpack, [270, 280])
     np.testing.assert_allclose(wind_speeds_unpack, [6, 7])
     np.testing.assert_allclose(freq_table_unpack, [0.5, 0.5])
 
-    # In this case n_findex == 2
+    # In this case n_findex is the length of the wind combinations that are
+    # non-zero frequency
     assert wind_rose.n_findex == 2
 
     # Now test computing 0-freq cases too
@@ -117,7 +132,7 @@ def test_wind_rose_unpack():
     # Expect now to compute all combinations
     np.testing.assert_allclose(wind_directions_unpack, [270, 270, 280, 280, 290, 290])
 
-    # In this case n_findex == 6
+    # In this case n_findex is the total number of wind combinations
     assert wind_rose.n_findex == 6
 
 
@@ -179,15 +194,18 @@ def test_time_series_to_wind_rose():
     time_series = TimeSeries(wind_directions, wind_speeds)
     wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
 
-    # The wind directions should be 260, 262 and 264
+    # The wind directions should be 260, 262 and 264 because they're binned
+    # to the nearest 2 deg increment
     assert np.allclose(wind_rose.wind_directions, [260, 262, 264])
 
-    # Freq table should have dimension of 3 wd x 1 ws
+    # Freq table should have dimension of 3 wd x 1 ws because the wind speeds
+    # are all binned to the same value given the `ws_step` size
     freq_table = wind_rose.freq_table
     assert freq_table.shape[0] == 3
     assert freq_table.shape[1] == 1
 
     # The frequencies should [2/3, 0, 1/3]
+    # TODO this one I dont follow, @paul or @misha?
     assert np.allclose(freq_table.squeeze(), [2 / 3, 0, 1 / 3])
 
     # Test just 2 wind speeds
@@ -230,7 +248,9 @@ def test_time_series_to_wind_rose_with_ti():
     wind_speeds = np.array([5.0, 5.0, 5.1, 7.2])
     turbulence_intensity = np.array([0.5, 1.0, 1.5, 2.0])
     time_series = TimeSeries(
-        wind_directions, wind_speeds, turbulence_intensity=turbulence_intensity
+        wind_directions,
+        wind_speeds,
+        turbulence_intensity=turbulence_intensity,
     )
     wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
 
