@@ -213,6 +213,15 @@ class FlorisInterface(LoggingManager):
         # turbulence intensity using the unpack_for_reinitialize
         # method
         if wind_data is not None:
+            if (
+                (wind_directions is not None)
+                or (wind_speeds is not None)
+                or (turbulence_intensity is not None)
+            ):
+                raise ValueError(
+                    "If wind_data is passed to reinitialize, then do not pass wind_directions, "
+                    "wind_speeds or turbulence_intensity as this is redundant"
+                )
             wind_directions, wind_speeds, turbulence_intensity = wind_data.unpack_for_reinitialize()
 
         ## FlowField
