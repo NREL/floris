@@ -181,7 +181,7 @@ class FlorisInterface(LoggingManager):
         wind_shear: float | None = None,
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
-        turbulence_intensity: float | None = None,
+        turbulence_intensity: list[float] | NDArrayFloat | None = None,
         # turbulence_kinetic_energy=None,
         air_density: float | None = None,
         # wake: WakeModelManager = None,
@@ -224,6 +224,24 @@ class FlorisInterface(LoggingManager):
             flow_field_dict["air_density"] = air_density
         if heterogenous_inflow_config is not None:
             flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
+
+        # Handle a special case where:
+        #   wind_speeds | wind_directions are not None
+        #   turbulence_intensity is None
+        #   len(turbulence intensity) != len(wind_directions)
+        #   turbulence_intensity is uniform
+        #   in this case, automatically resize turbulence intensity
+        #    This is the case where user is assuming same ti across all findex
+        if ((wind_speeds is not None) or (wind_directions is not None)) and (
+            turbulence_intensity is None
+        ):
+            if len(flow_field_dict["turbulence_intensity"]) != len(
+                flow_field_dict["wind_directions"]
+            ):
+                if len(np.unique(flow_field_dict["turbulence_intensity"])) == 1:
+                    flow_field_dict["turbulence_intensity"] = flow_field_dict[
+                        "turbulence_intensity"
+                    ][0] * np.ones_like(flow_field_dict["wind_directions"])
 
         ## Farm
         if layout_x is not None:
