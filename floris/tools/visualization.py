@@ -696,7 +696,11 @@ def calculate_horizontal_plane_with_turbines(
                 # Place the test turbine at this location and calculate wake
                 layout_x_test[-1] = x
                 layout_y_test[-1] = y
-                fi.reinitialize(layout_x = layout_x_test, layout_y = layout_y_test, turbine_type = turbine_types_test)
+                fi.reinitialize(
+                    layout_x=layout_x_test, 
+                    layout_y=layout_y_test, 
+                    turbine_type=turbine_types_test
+                )
                 fi.calculate_wake(yaw_angles=yaw_angles)
 
                 # Get the velocity of that test turbines central point
