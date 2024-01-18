@@ -26,9 +26,10 @@ This example demonstrates how to perform a yaw optimization using parallel compu
 ...
 """
 
+
 def load_floris():
     # Load the default example floris object
-    fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+    fi = FlorisInterface("inputs/gch.yaml")  # GCH model matched to the default "legacy_gauss" of V2
     # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
     # Specify wind farm layout and update in the floris object
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     fi_aep.reinitialize(
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
-        turbulence_intensity=0.08  # Assume 8% turbulence intensity
+        turbulence_intensity=[0.08],  # Assume 8% turbulence intensity
     )
 
     # Pour this into a parallel computing interface
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     fi_opt.reinitialize(
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
-        turbulence_intensity=0.08  # Assume 8% turbulence intensity
+        turbulence_intensity=[0.08],  # Assume 8% turbulence intensity
     )
 
     # Pour this into a parallel computing interface
@@ -126,8 +127,6 @@ if __name__ == "__main__":
         exclude_downstream_turbines=True,
         exploit_layout_symmetry=False,
     )
-
-
 
     # Assume linear ramp up at 5-6 m/s and ramp down at 13-14 m/s,
     # add to table for linear interpolant
@@ -172,27 +171,27 @@ if __name__ == "__main__":
     # Now calculate helpful variables and then plot wind rose information
     farm_energy_bl = np.multiply(freq_grid, farm_power_bl)
     farm_energy_opt = np.multiply(freq_grid, farm_power_opt)
-    df = pd.DataFrame({
-        "wd": wd_grid.flatten(),
-        "ws": ws_grid.flatten(),
-        "freq_val": freq_grid.flatten(),
-        "farm_power_baseline": farm_power_bl.flatten(),
-        "farm_power_opt": farm_power_opt.flatten(),
-        "farm_power_relative": farm_power_opt.flatten() / farm_power_bl.flatten(),
-        "farm_energy_baseline": farm_energy_bl.flatten(),
-        "farm_energy_opt": farm_energy_opt.flatten(),
-        "energy_uplift": (farm_energy_opt - farm_energy_bl).flatten(),
-        "rel_energy_uplift": farm_energy_opt.flatten() / np.sum(farm_energy_bl)
-    })
+    df = pd.DataFrame(
+        {
+            "wd": wd_grid.flatten(),
+            "ws": ws_grid.flatten(),
+            "freq_val": freq_grid.flatten(),
+            "farm_power_baseline": farm_power_bl.flatten(),
+            "farm_power_opt": farm_power_opt.flatten(),
+            "farm_power_relative": farm_power_opt.flatten() / farm_power_bl.flatten(),
+            "farm_energy_baseline": farm_energy_bl.flatten(),
+            "farm_energy_opt": farm_energy_opt.flatten(),
+            "energy_uplift": (farm_energy_opt - farm_energy_bl).flatten(),
+            "rel_energy_uplift": farm_energy_opt.flatten() / np.sum(farm_energy_bl),
+        }
+    )
 
     # Plot power and AEP uplift across wind direction
     wd_step = np.diff(fi_aep.floris.flow_field.wind_directions)[0]  # Useful variable for plotting
     fig, ax = plt.subplots(nrows=3, sharex=True)
 
     df_8ms = df[df["ws"] == 8.0].reset_index(drop=True)
-    pow_uplift = 100 * (
-        df_8ms["farm_power_opt"] / df_8ms["farm_power_baseline"] - 1
-    )
+    pow_uplift = 100 * (df_8ms["farm_power_opt"] / df_8ms["farm_power_baseline"] - 1)
     ax[0].bar(
         x=df_8ms["wd"],
         height=pow_uplift,

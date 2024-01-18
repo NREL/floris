@@ -33,7 +33,8 @@ flow_field:
     Hs: 3.01
   air_density: 1.225
   reference_wind_height: -1 # -1 is code for use the hub height
-  turbulence_intensity: 0.06
+  turbulence_intensity:
+  - 0.06
   wind_directions:
   - 270.0
   wind_shear: 0.12
