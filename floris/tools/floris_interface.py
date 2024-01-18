@@ -28,8 +28,8 @@ from floris.simulation.turbine.turbine import (
     power,
     thrust_coefficient,
 )
-from floris.tools.wind_data import WindDataBase
 from floris.tools.cut_plane import CutPlane
+from floris.tools.wind_data import WindDataBase
 from floris.type_dec import NDArrayFloat
 
 
@@ -839,11 +839,9 @@ class FlorisInterface(LoggingManager):
         direction, frequency of occurrence, and yaw offset.
 
         Args:
-            freq (NDArrayFloat): NumPy array with shape (n_findex)
-                with the frequencies of each wind direction and
-                wind speed combination. These frequencies should typically sum
-                up to 1.0 and are used to weigh the wind farm power for every
-                condition in calculating the wind farm's AEP.
+            wind_data: (type(WindDataBase)): TimeSeries or WindRose object containing
+                the wind conditions over which to calculate the AEP. Should match the wind_data
+                object passed to reinitialize().
             cut_in_wind_speed (float, optional): Wind speed in m/s below which
                 any calculations are ignored and the wind farm is known to
                 produce 0.0 W of power. Note that to prevent problems with the
@@ -874,8 +872,6 @@ class FlorisInterface(LoggingManager):
                 quantities without calculating the wake or adding the wake to
                 the flow field. This can be useful when quantifying the loss
                 in AEP due to wakes. Defaults to *False*.
-            wind_data: (WindData, optional): Should be the same same object
-                passed to reinitialize
 
         Returns:
             float:
@@ -884,9 +880,8 @@ class FlorisInterface(LoggingManager):
         """
 
         # Verify the wind_data object matches FLORIS' initialization
-        if wind_data is not None:
-            if wind_data.n_findex != self.floris.flow_field.n_findex:
-                raise ValueError("WindData object and floris do not have same findex")
+        if wind_data.n_findex != self.floris.flow_field.n_findex:
+            raise ValueError("WindData object and floris do not have same findex")
 
         # Get freq directly from wind_data
         freq = wind_data.unpack_freq()

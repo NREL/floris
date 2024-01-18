@@ -15,7 +15,12 @@
 import numpy as np
 import pytest
 
-from floris.tools import TimeSeries, WindRose, WindDataBase
+from floris.tools import (
+    TimeSeries,
+    WindDataBase,
+    WindRose,
+)
+
 
 class ChildClassTest(WindDataBase):
     def __init__(self):
