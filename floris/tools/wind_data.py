@@ -375,8 +375,8 @@ class TimeSeries(WindDataBase):
             self.wind_directions,
             self.wind_speeds,
             uniform_frequency,
-            self.turbulence_intensity,  # can be none so can't copy
-            self.prices,  # can be none so can't copy
+            self.turbulence_intensity,
+            self.prices,
         )
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
