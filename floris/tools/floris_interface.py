@@ -29,10 +29,8 @@ from floris.simulation.turbine.turbine import (
     thrust_coefficient,
 )
 from floris.tools.cut_plane import CutPlane
+from floris.tools.wind_data import WindDataBase
 from floris.type_dec import NDArrayFloat
-
-
-# from floris.tools import WindData
 
 
 class FlorisInterface(LoggingManager):
@@ -131,7 +129,12 @@ class FlorisInterface(LoggingManager):
         """
 
         if yaw_angles is None:
-            yaw_angles = np.zeros((self.floris.flow_field.n_findex, self.floris.farm.n_turbines))
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
         self.floris.farm.yaw_angles = yaw_angles
 
         # # TODO is this required?
@@ -165,7 +168,12 @@ class FlorisInterface(LoggingManager):
         """
 
         if yaw_angles is None:
-            yaw_angles = np.zeros((self.floris.flow_field.n_findex, self.floris.farm.n_turbines))
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
         self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
@@ -191,7 +199,7 @@ class FlorisInterface(LoggingManager):
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
         heterogenous_inflow_config=None,
-        wind_data=None,
+        wind_data: type[WindDataBase] | None = None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -205,6 +213,15 @@ class FlorisInterface(LoggingManager):
         # turbulence intensity using the unpack_for_reinitialize
         # method
         if wind_data is not None:
+            if (
+                (wind_directions is not None)
+                or (wind_speeds is not None)
+                or (turbulence_intensity is not None)
+            ):
+                raise ValueError(
+                    "If wind_data is passed to reinitialize, then do not pass wind_directions, "
+                    "wind_speeds or turbulence_intensity as this is redundant"
+                )
             wind_directions, wind_speeds, turbulence_intensity = wind_data.unpack_for_reinitialize()
 
         ## FlowField
@@ -418,7 +435,10 @@ class FlorisInterface(LoggingManager):
 
         # Compute the cutplane
         horizontal_plane = CutPlane(
-            df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1], "z"
+            df,
+            self.floris.grid.grid_resolution[0],
+            self.floris.grid.grid_resolution[1],
+            "z",
         )
 
         # Reset the fi object back to the turbine grid configuration
@@ -723,11 +743,17 @@ class FlorisInterface(LoggingManager):
         if turbine_weights is None:
             # Default to equal weighing of all turbines when turbine_weights is None
             turbine_weights = np.ones(
-                (self.floris.flow_field.n_findex, self.floris.farm.n_turbines)
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
             )
         elif len(np.shape(turbine_weights)) == 1:
             # Deal with situation when 1D array is provided
-            turbine_weights = np.tile(turbine_weights, (self.floris.flow_field.n_findex, 1))
+            turbine_weights = np.tile(
+                turbine_weights,
+                (self.floris.flow_field.n_findex, 1),
+            )
 
         # Calculate all turbine powers and apply weights
         turbine_powers = self.get_turbine_powers()
@@ -802,7 +828,7 @@ class FlorisInterface(LoggingManager):
         # Check if frequency vector sums to 1.0. If not, raise a warning
         if np.abs(np.sum(freq) - 1.0) > 0.001:
             self.logger.warning(
-                "WARNING: The frequency array provided to get_farm_AEP() " "does not sum to 1.0."
+                "WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0."
             )
 
         # Copy the full wind speed array from the floris object and initialize
@@ -824,7 +850,8 @@ class FlorisInterface(LoggingManager):
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[conditions_to_evaluate]
             self.reinitialize(
-                wind_speeds=wind_speeds_subset, wind_directions=wind_directions_subset
+                wind_speeds=wind_speeds_subset,
+                wind_directions=wind_directions_subset,
             )
             if no_wake:
                 self.calculate_no_wake(yaw_angles=yaw_angles_subset)
@@ -856,11 +883,9 @@ class FlorisInterface(LoggingManager):
         direction, frequency of occurrence, and yaw offset.
 
         Args:
-            freq (NDArrayFloat): NumPy array with shape (n_findex)
-                with the frequencies of each wind direction and
-                wind speed combination. These frequencies should typically sum
-                up to 1.0 and are used to weigh the wind farm power for every
-                condition in calculating the wind farm's AEP.
+            wind_data: (type(WindDataBase)): TimeSeries or WindRose object containing
+                the wind conditions over which to calculate the AEP. Should match the wind_data
+                object passed to reinitialize().
             cut_in_wind_speed (float, optional): Wind speed in m/s below which
                 any calculations are ignored and the wind farm is known to
                 produce 0.0 W of power. Note that to prevent problems with the
@@ -891,8 +916,6 @@ class FlorisInterface(LoggingManager):
                 quantities without calculating the wake or adding the wake to
                 the flow field. This can be useful when quantifying the loss
                 in AEP due to wakes. Defaults to *False*.
-            wind_data: (WindData, optional): Should be the same same object
-                passed to reinitialize
 
         Returns:
             float:
@@ -901,9 +924,8 @@ class FlorisInterface(LoggingManager):
         """
 
         # Verify the wind_data object matches FLORIS' initialization
-        if wind_data is not None:
-            if wind_data.n_findex != self.floris.flow_field.n_findex:
-                raise ValueError("WindData object and floris do not have same findex")
+        if wind_data.n_findex != self.floris.flow_field.n_findex:
+            raise ValueError("WindData object and floris do not have same findex")
 
         # Get freq directly from wind_data
         freq = wind_data.unpack_freq()

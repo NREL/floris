@@ -12,19 +12,33 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
+
+from abc import abstractmethod
+
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas.api.types import CategoricalDtype
 
+from floris.type_dec import NDArrayFloat
 
-# Define the super lass that WindRose and TimeSeries inherit
-# Define functions here that are either the same for both WindRose and
-# TimeSeries or will be overloaded
+
 class WindDataBase:
-    def __init__():
-        pass
+    """
+    Super class that WindRose and TimeSeries inherit from, enforcing the implementation of
+    unpack() on the child classes and providing the general functions unpack_for_reinitialize() and
+    unpack_freq().
+    """
+
+    @abstractmethod
+    def unpack(self):
+        """
+        Placeholder for child classes of WindDataBase, which each need to implement the unpack()
+        method.
+        """
+        raise NotImplementedError("unpack() not implemented on {0}".format(self.__class__.__name__))
 
     def unpack_for_reinitialize(self):
         """
@@ -64,11 +78,14 @@ class WindRose(WindDataBase):
         wind_directions: NumPy array of wind directions (NDArrayFloat).
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
         freq_table: Frequency table for binned wind direction, wind speed
-            values (NDArrayFloat, optional).  Defaults to None.
+            values (NDArrayFloat, optional).   Must have dimension
+            (n_wind_directions, n_wind_speeds).  Defaults to None.
         ti_table: Turbulence intensity table for binned wind direction, wind
-            speed values (NDArrayFloat, optional).  Defaults to None.
+            speed values (NDArrayFloat, optional).   Must have dimension
+            (n_wind_directions, n_wind_speeds). Defaults to None.
         price_table: Price table for binned binned wind direction, wind
-            speed values (NDArrayFloat, optional).  Defaults to None.
+            speed values (NDArrayFloat, optional).  Must have dimension
+            (n_wind_directions, n_wind_speeds).  Defaults to None.
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
 
@@ -76,18 +93,18 @@ class WindRose(WindDataBase):
 
     def __init__(
         self,
-        wind_directions,
-        wind_speeds,
-        freq_table=None,
-        ti_table=None,
-        price_table=None,
-        compute_zero_freq_occurence=False,
+        wind_directions: NDArrayFloat,
+        wind_speeds: NDArrayFloat,
+        freq_table: NDArrayFloat | None = None,
+        ti_table: NDArrayFloat | None = None,
+        price_table: NDArrayFloat | None = None,
+        compute_zero_freq_occurrence: bool = False,
     ):
         if not isinstance(wind_directions, np.ndarray):
             raise TypeError("wind_directions must be a NumPy array")
 
         if not isinstance(wind_speeds, np.ndarray):
-            raise TypeError("wind_directions must be a NumPy array")
+            raise TypeError("wind_speeds must be a NumPy array")
 
         # Save the wind speeds and directions
         self.wind_directions = wind_directions
@@ -114,10 +131,7 @@ class WindRose(WindDataBase):
                 raise ValueError("ti_table first dimension must equal len(wind_directions)")
             if not ti_table.shape[1] == len(wind_speeds):
                 raise ValueError("ti_table second dimension must equal len(wind_speeds)")
-            self.ti_table = ti_table
-
-        else:
-            self.ti_table = None
+        self.ti_table = ti_table
 
         # If price_table is not None, confirm it has correct dimension,
         # otherwise initialze to all ones
@@ -126,12 +140,10 @@ class WindRose(WindDataBase):
                 raise ValueError("price_table first dimension must equal len(wind_directions)")
             if not price_table.shape[1] == len(wind_speeds):
                 raise ValueError("price_table second dimension must equal len(wind_speeds)")
-            self.price_table = price_table
-        else:
-            self.price_table = None
+        self.price_table = price_table
 
-        # Save whether zero occurence cases should be computed
-        self.compute_zero_freq_occurence = compute_zero_freq_occurence
+        # Save whether zero occurrence cases should be computed
+        self.compute_zero_freq_occurrence = compute_zero_freq_occurrence
 
         # Build the gridded and flatten versions
         self._build_gridded_and_flattened_version()
@@ -166,9 +178,9 @@ class WindRose(WindDataBase):
         else:
             self.price_table_flat = None
 
-        # Set mask to non-zero frequency cases depending on compute_zero_freq_occurence
-        if self.compute_zero_freq_occurence:
-            # If computing zero freq occurences, then this is all True
+        # Set mask to non-zero frequency cases depending on compute_zero_freq_occurrence
+        if self.compute_zero_freq_occurrence:
+            # If computing zero freq occurrences, then this is all True
             self.non_zero_freq_mask = [True for i in range(len(self.freq_table_flat))]
         else:
             self.non_zero_freq_mask = self.freq_table_flat > 0.0
@@ -231,15 +243,13 @@ class WindRose(WindDataBase):
         if ws_step is None:
             if len(self.wind_speeds) >= 2:
                 ws_step = self.wind_speeds[1] - self.wind_speeds[0]
-            else:
-                # It doesn't matter, just set to 1
-                ws_step = 1
+            else:  # wind rose will have only a single wind speed, and we assume a ws_step of 1
+                ws_step = 1.0
         if wd_step is None:
             if len(self.wind_directions) >= 2:
                 wd_step = self.wind_directions[1] - self.wind_directions[0]
-            else:
-                # It doesn't matter, just set to 1
-                wd_step = 1
+            else:  # wind rose will have only a single wind direction, and we assume a wd_step of 1
+                wd_step = 1.0
 
         # Pass the flat versions of each quantity to build a TimeSeries model
         time_series = TimeSeries(
@@ -260,7 +270,7 @@ class WindRose(WindDataBase):
         legend_kwargs={},
     ):
         """
-        This method creates a wind rose plot showing the frequency of occurance
+        This method creates a wind rose plot showing the frequency of occurrence
         of the specified wind direction and wind speed bins. If no axis is
         provided, a new one is created.
 
@@ -324,24 +334,24 @@ class TimeSeries(WindDataBase):
     """
     In FLORIS v4, the TimeSeries class is used to drive FLORIS and optimization
     operations in which the inflow is by a sequence of wind direction, wind speed
-    and turbulence intensitity values
+    and turbulence intensity values
 
     Args:
         wind_directions: NumPy array of wind directions (NDArrayFloat).
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
         turbulence_intensity:  NumPy array of wind speeds (NDArrayFloat, optional).
-            Defatuls to None
+            Defaults to None
         prices:  NumPy array of electricity prices (NDArrayFloat, optional).
-            Defatuls to None
+            Defaults to None
 
     """
 
     def __init__(
         self,
-        wind_directions,
-        wind_speeds,
-        turbulence_intensity=None,
-        prices=None,
+        wind_directions: NDArrayFloat,
+        wind_speeds: NDArrayFloat,
+        turbulence_intensity: NDArrayFloat | None = None,
+        prices: NDArrayFloat | None = None,
     ):
         # Wind speeds and wind directions must be the same length
         if len(wind_directions) != len(wind_speeds):
@@ -365,11 +375,11 @@ class TimeSeries(WindDataBase):
         uniform_frequency = uniform_frequency / uniform_frequency.sum()
 
         return (
-            self.wind_directions.copy(),
-            self.wind_speeds.copy(),
+            self.wind_directions,
+            self.wind_speeds,
             uniform_frequency,
-            self.turbulence_intensity,  # can be none so can't copy
-            self.prices,  # can be none so can't copy
+            self.turbulence_intensity,
+            self.prices,
         )
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
