@@ -27,7 +27,7 @@ from floris.type_dec import NDArrayFloat
 
 class WindDataBase:
     """
-    Super class that WindRose and TimeSeries inherit from, enforcing the implmentaton of
+    Super class that WindRose and TimeSeries inherit from, enforcing the implementation of
     unpack() on the child classes and providing the general functions unpack_for_reinitialize() and
     unpack_freq().
     """
@@ -95,7 +95,7 @@ class WindRose(WindDataBase):
         freq_table: NDArrayFloat | None=None,
         ti_table: NDArrayFloat | None=None,
         price_table: NDArrayFloat | None=None,
-        compute_zero_freq_occurence: bool=False,
+        compute_zero_freq_occurrence: bool=False,
     ):
         if not isinstance(wind_directions, np.ndarray):
             raise TypeError("wind_directions must be a NumPy array")
@@ -139,8 +139,8 @@ class WindRose(WindDataBase):
                 raise ValueError("price_table second dimension must equal len(wind_speeds)")
         self.price_table = price_table
 
-        # Save whether zero occurence cases should be computed
-        self.compute_zero_freq_occurence = compute_zero_freq_occurence
+        # Save whether zero occurrence cases should be computed
+        self.compute_zero_freq_occurrence = compute_zero_freq_occurrence
 
         # Build the gridded and flatten versions
         self._build_gridded_and_flattened_version()
@@ -175,9 +175,9 @@ class WindRose(WindDataBase):
         else:
             self.price_table_flat = None
 
-        # Set mask to non-zero frequency cases depending on compute_zero_freq_occurence
-        if self.compute_zero_freq_occurence:
-            # If computing zero freq occurences, then this is all True
+        # Set mask to non-zero frequency cases depending on compute_zero_freq_occurrence
+        if self.compute_zero_freq_occurrence:
+            # If computing zero freq occurrences, then this is all True
             self.non_zero_freq_mask = [True for i in range(len(self.freq_table_flat))]
         else:
             self.non_zero_freq_mask = self.freq_table_flat > 0.0
@@ -267,7 +267,7 @@ class WindRose(WindDataBase):
         legend_kwargs={},
     ):
         """
-        This method creates a wind rose plot showing the frequency of occurance
+        This method creates a wind rose plot showing the frequency of occurrence
         of the specified wind direction and wind speed bins. If no axis is
         provided, a new one is created.
 
@@ -331,15 +331,15 @@ class TimeSeries(WindDataBase):
     """
     In FLORIS v4, the TimeSeries class is used to drive FLORIS and optimization
     operations in which the inflow is by a sequence of wind direction, wind speed
-    and turbulence intensitity values
+    and turbulence intensity values
 
     Args:
         wind_directions: NumPy array of wind directions (NDArrayFloat).
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
         turbulence_intensity:  NumPy array of wind speeds (NDArrayFloat, optional).
-            Defatuls to None
+            Defaults to None
         prices:  NumPy array of electricity prices (NDArrayFloat, optional).
-            Defatuls to None
+            Defaults to None
 
     """
 

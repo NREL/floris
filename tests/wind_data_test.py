@@ -99,7 +99,12 @@ def test_wind_rose_unpack():
     assert wind_rose.n_findex == 2
 
     # Now test computing 0-freq cases too
-    wind_rose = WindRose(wind_directions, wind_speeds, freq_table, compute_zero_freq_occurence=True)
+    wind_rose = WindRose(
+        wind_directions,
+        wind_speeds,
+        freq_table,
+        compute_zero_freq_occurrence=True
+    )
 
     (
         wind_directions_unpack,
