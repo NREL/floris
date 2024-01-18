@@ -56,10 +56,7 @@ def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ng
 
 # @profile
 def sequential_solver(
-    farm: Farm,
-    flow_field: FlowField,
-    grid: TurbineGrid,
-    model_manager: WakeModelManager
+    farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager
 ) -> None:
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.
@@ -76,25 +73,36 @@ def sequential_solver(
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
-    turbine_turbulence_intensity = (
-        flow_field.turbulence_intensity
-        * np.ones((flow_field.n_findex, farm.n_turbines, 1, 1))
-    )
-    ambient_turbulence_intensity = flow_field.turbulence_intensity
+    # Set up turbulence arrays
+    turbine_turbulence_intensity = flow_field.turbulence_intensity[
+        :, np.newaxis, np.newaxis, np.newaxis
+    ]
+    turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
+
+    # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
+    # with extra dimension to reach 4d
+    ambient_turbulence_intensity = flow_field.turbulence_intensity.copy()[
+        :, np.newaxis, np.newaxis, np.newaxis
+    ]
+
+    # Old code
+    # turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones(
+    #     (flow_field.n_findex, farm.n_turbines, 1, 1)
+    # )
+    # ambient_turbulence_intensity = flow_field.turbulence_intensity
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
-
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, i:i+1], axis=(2, 3))
+        x_i = np.mean(grid.x_sorted[:, i : i + 1], axis=(2, 3))
         x_i = x_i[:, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, i:i+1], axis=(2, 3))
+        y_i = np.mean(grid.y_sorted[:, i : i + 1], axis=(2, 3))
         y_i = y_i[:, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
+        z_i = np.mean(grid.z_sorted[:, i : i + 1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        u_i = flow_field.u_sorted[:, i:i+1]
-        v_i = flow_field.v_sorted[:, i:i+1]
+        u_i = flow_field.u_sorted[:, i : i + 1]
+        v_i = flow_field.v_sorted[:, i : i + 1]
 
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
@@ -108,7 +116,7 @@ def sequential_solver(
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
-            multidim_condition=flow_field.multidim_conditions
+            multidim_condition=flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
@@ -125,16 +133,16 @@ def sequential_solver(
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
-            multidim_condition=flow_field.multidim_conditions
+            multidim_condition=flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
         axial_induction_i = axial_induction_i[:, 0:1, None, None]
-        turbulence_intensity_i = turbine_turbulence_intensity[:, i:i+1]
-        yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
-        hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
-        rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
-        TSR_i = farm.TSRs_sorted[:, i:i+1, None, None]
+        turbulence_intensity_i = turbine_turbulence_intensity[:, i : i + 1]
+        yaw_angle_i = farm.yaw_angles_sorted[:, i : i + 1, None, None]
+        hub_height_i = farm.hub_heights_sorted[:, i : i + 1, None, None]
+        rotor_diameter_i = farm.rotor_diameters_sorted[:, i : i + 1, None, None]
+        TSR_i = farm.TSRs_sorted[:, i : i + 1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -144,8 +152,8 @@ def sequential_solver(
                 u_i,
                 v_i,
                 flow_field.u_initial_sorted,
-                grid.y_sorted[:, i:i+1] - y_i,
-                grid.z_sorted[:, i:i+1],
+                grid.y_sorted[:, i : i + 1] - y_i,
+                grid.z_sorted[:, i : i + 1],
                 rotor_diameter_i,
                 hub_height_i,
                 ct_i,
@@ -189,12 +197,14 @@ def sequential_solver(
                 u_i,
                 turbulence_intensity_i,
                 v_i,
-                flow_field.w_sorted[:, i:i+1],
-                v_wake[:, i:i+1],
-                w_wake[:, i:i+1],
+                flow_field.w_sorted[:, i : i + 1],
+                v_wake[:, i : i + 1],
+                w_wake[:, i : i + 1],
             )
             gch_gain = 2
-            turbine_turbulence_intensity[:, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
+            turbine_turbulence_intensity[:, i : i + 1] = (
+                turbulence_intensity_i + gch_gain * I_mixing
+            )
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
@@ -212,8 +222,7 @@ def sequential_solver(
         )
 
         wake_field = model_manager.combination_model.function(
-            wake_field,
-            velocity_deficit * flow_field.u_initial_sorted
+            wake_field, velocity_deficit * flow_field.u_initial_sorted
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
@@ -225,10 +234,9 @@ def sequential_solver(
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
-        area_overlap = (
-            np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3))
-            / (grid.grid_resolution * grid.grid_resolution)
-        )
+        area_overlap = np.sum(
+            velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3)
+        ) / (grid.grid_resolution * grid.grid_resolution)
         area_overlap = area_overlap[:, :, None, None]
 
         # Modify wake added turbulence by wake area overlap
@@ -243,8 +251,7 @@ def sequential_solver(
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt( ti_added ** 2 + ambient_turbulence_intensity ** 2 ),
-            turbine_turbulence_intensity
+            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -253,8 +260,7 @@ def sequential_solver(
 
     flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
-        turbine_turbulence_intensity,
-        axis=(2,3)
+        turbine_turbulence_intensity, axis=(2, 3)
     )[:, :, None, None]
 
 
@@ -262,9 +268,8 @@ def full_flow_sequential_solver(
     farm: Farm,
     flow_field: FlowField,
     flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
-    model_manager: WakeModelManager
+    model_manager: WakeModelManager,
 ) -> None:
-
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
@@ -300,13 +305,9 @@ def full_flow_sequential_solver(
 
     # Use full flow_field here to use the full grid in the wake models
     deflection_model_args = model_manager.deflection_model.prepare_function(
-        flow_field_grid,
-        flow_field
+        flow_field_grid, flow_field
     )
-    deficit_model_args = model_manager.velocity_model.prepare_function(
-        flow_field_grid,
-        flow_field
-    )
+    deficit_model_args = model_manager.velocity_model.prepare_function(flow_field_grid, flow_field)
 
     wake_field = np.zeros_like(flow_field.u_initial_sorted)
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
@@ -314,17 +315,16 @@ def full_flow_sequential_solver(
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(flow_field_grid.n_turbines):
-
         # Get the current turbine quantities
-        x_i = np.mean(turbine_grid.x_sorted[:, i:i+1], axis=(2, 3))
+        x_i = np.mean(turbine_grid.x_sorted[:, i : i + 1], axis=(2, 3))
         x_i = x_i[:, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, i:i+1], axis=(2, 3))
+        y_i = np.mean(turbine_grid.y_sorted[:, i : i + 1], axis=(2, 3))
         y_i = y_i[:, :, None, None]
-        z_i = np.mean(turbine_grid.z_sorted[:, i:i+1], axis=(2, 3))
+        z_i = np.mean(turbine_grid.z_sorted[:, i : i + 1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        u_i = turbine_grid_flow_field.u_sorted[:, i:i+1]
-        v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
+        u_i = turbine_grid_flow_field.u_sorted[:, i : i + 1]
+        v_i = turbine_grid_flow_field.v_sorted[:, i : i + 1]
 
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
@@ -354,12 +354,13 @@ def full_flow_sequential_solver(
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
         axial_induction_i = axial_induction_i[:, 0:1, None, None]
-        turbulence_intensity_i = \
-            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]
-        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i:i+1, None, None]
-        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i:i+1, None, None]
-        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i:i+1, None, None]
-        TSR_i = turbine_grid_farm.TSRs_sorted[:, i:i+1, None, None]
+        turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[
+            :, i : i + 1
+        ]
+        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i : i + 1, None, None]
+        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i : i + 1, None, None]
+        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i : i + 1, None, None]
+        TSR_i = turbine_grid_farm.TSRs_sorted[:, i : i + 1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -369,8 +370,8 @@ def full_flow_sequential_solver(
                 u_i,
                 v_i,
                 turbine_grid_flow_field.u_initial_sorted,
-                turbine_grid.y_sorted[:, i:i+1] - y_i,
-                turbine_grid.z_sorted[:, i:i+1],
+                turbine_grid.y_sorted[:, i : i + 1] - y_i,
+                turbine_grid.z_sorted[:, i : i + 1],
                 rotor_diameter_i,
                 hub_height_i,
                 ct_i,
@@ -425,8 +426,7 @@ def full_flow_sequential_solver(
         )
 
         wake_field = model_manager.combination_model.function(
-            wake_field,
-            velocity_deficit * flow_field.u_initial_sorted
+            wake_field, velocity_deficit * flow_field.u_initial_sorted
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -435,10 +435,7 @@ def full_flow_sequential_solver(
 
 
 def cc_solver(
-    farm: Farm,
-    flow_field: FlowField,
-    grid: TurbineGrid,
-    model_manager: WakeModelManager
+    farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager
 ) -> None:
     # <<interface>>
     deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field)
@@ -450,10 +447,17 @@ def cc_solver(
     turb_u_wake = np.zeros_like(flow_field.u_initial_sorted)
     turb_inflow_field = copy.deepcopy(flow_field.u_initial_sorted)
 
-    turbine_turbulence_intensity = (
-        flow_field.turbulence_intensity * np.ones((flow_field.n_findex, farm.n_turbines, 1, 1))
-    )
-    ambient_turbulence_intensity = flow_field.turbulence_intensity
+    # Set up turbulence arrays
+    turbine_turbulence_intensity = flow_field.turbulence_intensity[
+        :, np.newaxis, np.newaxis, np.newaxis
+    ]
+    turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
+
+    # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
+    # with extra dimension to reach 4d
+    ambient_turbulence_intensity = flow_field.turbulence_intensity.copy()[
+        :, np.newaxis, np.newaxis, np.newaxis
+    ]
 
     shape = (farm.n_turbines,) + np.shape(flow_field.u_initial_sorted)
     Ctmp = np.zeros((shape))
@@ -464,16 +468,15 @@ def cc_solver(
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
-
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, i:i+1], axis=(2, 3))
+        x_i = np.mean(grid.x_sorted[:, i : i + 1], axis=(2, 3))
         x_i = x_i[:, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, i:i+1], axis=(2, 3))
+        y_i = np.mean(grid.y_sorted[:, i : i + 1], axis=(2, 3))
         y_i = y_i[:, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
+        z_i = np.mean(grid.z_sorted[:, i : i + 1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
+        rotor_diameter_i = farm.rotor_diameters_sorted[:, i : i + 1, None, None]
 
         mask2 = (
             (grid.x_sorted < x_i + 0.01)
@@ -482,8 +485,7 @@ def cc_solver(
             * (grid.y_sorted > y_i - 0.51 * rotor_diameter_i)
         )
         turb_inflow_field = (
-            turb_inflow_field * ~mask2
-            + (flow_field.u_initial_sorted - turb_u_wake) * mask2
+            turb_inflow_field * ~mask2 + (flow_field.u_initial_sorted - turb_u_wake) * mask2
         )
 
         turb_avg_vels = average_velocity(turb_inflow_field)
@@ -497,7 +499,7 @@ def cc_solver(
             turbine_type_map=farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
         )
         turb_Cts = turb_Cts[:, :, None, None]
         turb_aIs = axial_induction(
@@ -511,12 +513,12 @@ def cc_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
         )
         turb_aIs = turb_aIs[:, :, None, None]
 
-        u_i = turb_inflow_field[:, i:i+1]
-        v_i = flow_field.v_sorted[:, i:i+1]
+        u_i = turb_inflow_field[:, i : i + 1]
+        v_i = flow_field.v_sorted[:, i : i + 1]
 
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
@@ -529,15 +531,15 @@ def cc_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
         )
 
         axial_induction_i = axial_induction_i[:, :, None, None]
 
-        turbulence_intensity_i = turbine_turbulence_intensity[:, i:i+1]
-        yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
-        hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
-        TSR_i = farm.TSRs_sorted[:, i:i+1, None, None]
+        turbulence_intensity_i = turbine_turbulence_intensity[:, i : i + 1]
+        yaw_angle_i = farm.yaw_angles_sorted[:, i : i + 1, None, None]
+        hub_height_i = farm.hub_heights_sorted[:, i : i + 1, None, None]
+        TSR_i = farm.TSRs_sorted[:, i : i + 1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -547,11 +549,11 @@ def cc_solver(
                 u_i,
                 v_i,
                 flow_field.u_initial_sorted,
-                grid.y_sorted[:, i:i+1] - y_i,
-                grid.z_sorted[:, i:i+1],
+                grid.y_sorted[:, i : i + 1] - y_i,
+                grid.z_sorted[:, i : i + 1],
                 rotor_diameter_i,
                 hub_height_i,
-                turb_Cts[:, i:i+1],
+                turb_Cts[:, i : i + 1],
                 TSR_i,
                 axial_induction_i,
                 flow_field.wind_shear,
@@ -566,7 +568,7 @@ def cc_solver(
             y_i,
             effective_yaw_i,
             turbulence_intensity_i,
-            turb_Cts[:, i:i+1],
+            turb_Cts[:, i : i + 1],
             rotor_diameter_i,
             **deflection_model_args,
         )
@@ -582,7 +584,7 @@ def cc_solver(
                 rotor_diameter_i,
                 hub_height_i,
                 yaw_angle_i,
-                turb_Cts[:, i:i+1],
+                turb_Cts[:, i : i + 1],
                 TSR_i,
                 axial_induction_i,
                 flow_field.wind_shear,
@@ -594,12 +596,14 @@ def cc_solver(
                 u_i,
                 turbulence_intensity_i,
                 v_i,
-                flow_field.w_sorted[:, i:i+1],
-                v_wake[:, i:i+1],
-                w_wake[:, i:i+1],
+                flow_field.w_sorted[:, i : i + 1],
+                v_wake[:, i : i + 1],
+                w_wake[:, i : i + 1],
             )
             gch_gain = 1.0
-            turbine_turbulence_intensity[:, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
+            turbine_turbulence_intensity[:, i : i + 1] = (
+                turbulence_intensity_i + gch_gain * I_mixing
+            )
 
         turb_u_wake, Ctmp = model_manager.velocity_model.function(
             i,
@@ -618,17 +622,12 @@ def cc_solver(
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensity,
-            grid.x_sorted,
-            x_i,
-            rotor_diameter_i,
-            turb_aIs
+            ambient_turbulence_intensity, grid.x_sorted, x_i, rotor_diameter_i, turb_aIs
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
         area_overlap = 1 - (
-            np.sum(turb_u_wake <= 0.05, axis=(2, 3))
-            / (grid.grid_resolution * grid.grid_resolution)
+            np.sum(turb_u_wake <= 0.05, axis=(2, 3)) / (grid.grid_resolution * grid.grid_resolution)
         )
         area_overlap = area_overlap[:, :, None, None]
 
@@ -644,8 +643,7 @@ def cc_solver(
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt(ti_added ** 2 + ambient_turbulence_intensity ** 2),
-            turbine_turbulence_intensity
+            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
         )
 
         flow_field.v_sorted += v_wake
@@ -654,8 +652,7 @@ def cc_solver(
 
     flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
-        turbine_turbulence_intensity,
-        axis=(2,3)
+        turbine_turbulence_intensity, axis=(2, 3)
     )
 
 
@@ -700,13 +697,9 @@ def full_flow_cc_solver(
 
     # Use full flow_field here to use the full grid in the wake models
     deflection_model_args = model_manager.deflection_model.prepare_function(
-        flow_field_grid,
-        flow_field
+        flow_field_grid, flow_field
     )
-    deficit_model_args = model_manager.velocity_model.prepare_function(
-        flow_field_grid,
-        flow_field
-    )
+    deficit_model_args = model_manager.velocity_model.prepare_function(flow_field_grid, flow_field)
 
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
@@ -717,17 +710,16 @@ def full_flow_cc_solver(
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(flow_field_grid.n_turbines):
-
         # Get the current turbine quantities
-        x_i = np.mean(turbine_grid.x_sorted[:, i:i+1], axis=(2, 3))
+        x_i = np.mean(turbine_grid.x_sorted[:, i : i + 1], axis=(2, 3))
         x_i = x_i[:, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, i:i+1], axis=(2, 3))
+        y_i = np.mean(turbine_grid.y_sorted[:, i : i + 1], axis=(2, 3))
         y_i = y_i[:, :, None, None]
-        z_i = np.mean(turbine_grid.z_sorted[:, i:i+1], axis=(2, 3))
+        z_i = np.mean(turbine_grid.z_sorted[:, i : i + 1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        u_i = turbine_grid_flow_field.u_sorted[:, i:i+1]
-        v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
+        u_i = turbine_grid_flow_field.u_sorted[:, i : i + 1]
+        v_i = turbine_grid_flow_field.v_sorted[:, i : i + 1]
 
         turb_avg_vels = average_velocity(turbine_grid_flow_field.u_sorted)
         turb_Cts = thrust_coefficient(
@@ -740,7 +732,7 @@ def full_flow_cc_solver(
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             average_method=turbine_grid.average_method,
-            cubature_weights=turbine_grid.cubature_weights
+            cubature_weights=turbine_grid.cubature_weights,
         )
         turb_Cts = turb_Cts[:, :, None, None]
 
@@ -755,16 +747,17 @@ def full_flow_cc_solver(
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=turbine_grid.average_method,
-            cubature_weights=turbine_grid.cubature_weights
+            cubature_weights=turbine_grid.cubature_weights,
         )
         axial_induction_i = axial_induction_i[:, :, None, None]
 
-        turbulence_intensity_i = \
-            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]
-        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i:i+1, None, None]
-        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i:i+1, None, None]
-        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i:i+1, None, None]
-        TSR_i = turbine_grid_farm.TSRs_sorted[:, i:i+1, None, None]
+        turbulence_intensity_i = turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[
+            :, i : i + 1
+        ]
+        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i : i + 1, None, None]
+        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i : i + 1, None, None]
+        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i : i + 1, None, None]
+        TSR_i = turbine_grid_farm.TSRs_sorted[:, i : i + 1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
@@ -774,11 +767,11 @@ def full_flow_cc_solver(
                 u_i,
                 v_i,
                 turbine_grid_flow_field.u_initial_sorted,
-                turbine_grid.y_sorted[:, i:i+1] - y_i,
-                turbine_grid.z_sorted[:, i:i+1],
+                turbine_grid.y_sorted[:, i : i + 1] - y_i,
+                turbine_grid.z_sorted[:, i : i + 1],
                 rotor_diameter_i,
                 hub_height_i,
-                turb_Cts[:, i:i+1],
+                turb_Cts[:, i : i + 1],
                 TSR_i,
                 axial_induction_i,
                 flow_field.wind_shear,
@@ -793,7 +786,7 @@ def full_flow_cc_solver(
             y_i,
             effective_yaw_i,
             turbulence_intensity_i,
-            turb_Cts[:, i:i+1],
+            turb_Cts[:, i : i + 1],
             rotor_diameter_i,
             **deflection_model_args,
         )
@@ -809,7 +802,7 @@ def full_flow_cc_solver(
                 rotor_diameter_i,
                 hub_height_i,
                 yaw_angle_i,
-                turb_Cts[:, i:i+1],
+                turb_Cts[:, i : i + 1],
                 TSR_i,
                 axial_induction_i,
                 flow_field.wind_shear,
@@ -839,10 +832,7 @@ def full_flow_cc_solver(
 
 
 def turbopark_solver(
-    farm: Farm,
-    flow_field: FlowField,
-    grid: TurbineGrid,
-    model_manager: WakeModelManager
+    farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager
 ) -> None:
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.
@@ -862,24 +852,35 @@ def turbopark_solver(
     velocity_deficit = np.zeros(shape)
     deflection_field = np.zeros_like(flow_field.u_initial_sorted)
 
-    turbine_turbulence_intensity = (
-        flow_field.turbulence_intensity
-        * np.ones((flow_field.n_findex, farm.n_turbines, 1, 1))
-    )
-    ambient_turbulence_intensity = flow_field.turbulence_intensity
+    # Set up turbulence arrays
+    turbine_turbulence_intensity = flow_field.turbulence_intensity[
+        :, np.newaxis, np.newaxis, np.newaxis
+    ]
+    turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
+
+    # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
+    # with extra dimension to reach 4d
+    ambient_turbulence_intensity = flow_field.turbulence_intensity.copy()[
+        :, np.newaxis, np.newaxis, np.newaxis
+    ]
+
+    # turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones(
+    #     (flow_field.n_findex, farm.n_turbines, 1, 1)
+    # )
+    # ambient_turbulence_intensity = flow_field.turbulence_intensity
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, i:i+1], axis=(2, 3))
+        x_i = np.mean(grid.x_sorted[:, i : i + 1], axis=(2, 3))
         x_i = x_i[:, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, i:i+1], axis=(2, 3))
+        y_i = np.mean(grid.y_sorted[:, i : i + 1], axis=(2, 3))
         y_i = y_i[:, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
+        z_i = np.mean(grid.z_sorted[:, i : i + 1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        u_i = flow_field.u_sorted[:, :, i:i+1]
-        v_i = flow_field.v_sorted[:, :, i:i+1]
+        u_i = flow_field.u_sorted[:, :, i : i + 1]
+        v_i = flow_field.v_sorted[:, :, i : i + 1]
 
         Cts = thrust_coefficient(
             velocities=flow_field.u_sorted,
@@ -891,7 +892,7 @@ def turbopark_solver(
             turbine_type_map=farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
         )
 
         ct_i = thrust_coefficient(
@@ -905,7 +906,7 @@ def turbopark_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
         )
         # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
@@ -921,28 +922,27 @@ def turbopark_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
         axial_induction_i = axial_induction_i[:, 0:1, None, None]
-        turbulence_intensity_i = turbine_turbulence_intensity[:, i:i+1]
-        yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
-        hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
-        rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
-        TSR_i = farm.TSRs_sorted[:, i:i+1, None, None]
+        turbulence_intensity_i = turbine_turbulence_intensity[:, i : i + 1]
+        yaw_angle_i = farm.yaw_angles_sorted[:, i : i + 1, None, None]
+        hub_height_i = farm.hub_heights_sorted[:, i : i + 1, None, None]
+        rotor_diameter_i = farm.rotor_diameters_sorted[:, i : i + 1, None, None]
+        TSR_i = farm.TSRs_sorted[:, i : i + 1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
-
 
         if model_manager.enable_secondary_steering:
             added_yaw = wake_added_yaw(
                 u_i,
                 v_i,
                 flow_field.u_initial_sorted,
-                grid.y_sorted[:, i:i+1] - y_i,
-                grid.z_sorted[:, i:i+1],
+                grid.y_sorted[:, i : i + 1] - y_i,
+                grid.z_sorted[:, i : i + 1],
                 rotor_diameter_i,
                 hub_height_i,
                 ct_i,
@@ -961,13 +961,13 @@ def turbopark_solver(
                 "and perform a thorough examination of the results."
             )
             for ii in range(i):
-                x_ii = np.mean(grid.x_sorted[:, ii:ii+1], axis=(2, 3))
+                x_ii = np.mean(grid.x_sorted[:, ii : ii + 1], axis=(2, 3))
                 x_ii = x_ii[:, :, None, None]
-                y_ii = np.mean(grid.y_sorted[:, ii:ii+1], axis=(2, 3))
+                y_ii = np.mean(grid.y_sorted[:, ii : ii + 1], axis=(2, 3))
                 y_ii = y_ii[:, :, None, None]
 
-                yaw_ii = farm.yaw_angles_sorted[:, ii:ii+1, None, None]
-                turbulence_intensity_ii = turbine_turbulence_intensity[:, ii:ii+1]
+                yaw_ii = farm.yaw_angles_sorted[:, ii : ii + 1, None, None]
+                turbulence_intensity_ii = turbine_turbulence_intensity[:, ii : ii + 1]
                 ct_ii = thrust_coefficient(
                     velocities=flow_field.u_sorted,
                     yaw_angles=farm.yaw_angles_sorted,
@@ -979,10 +979,10 @@ def turbopark_solver(
                     turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
                     ix_filter=[ii],
                     average_method=grid.average_method,
-                    cubature_weights=grid.cubature_weights
+                    cubature_weights=grid.cubature_weights,
                 )
                 ct_ii = ct_ii[:, 0:1, None, None]
-                rotor_diameter_ii = farm.rotor_diameters_sorted[:, ii:ii+1, None, None]
+                rotor_diameter_ii = farm.rotor_diameters_sorted[:, ii : ii + 1, None, None]
 
                 deflection_field_ii = model_manager.deflection_model.function(
                     x_ii,
@@ -994,7 +994,7 @@ def turbopark_solver(
                     **deflection_model_args,
                 )
 
-                deflection_field[:, ii:ii+1, :, :] = deflection_field_ii[:, i:i+1, :, :]
+                deflection_field[:, ii : ii + 1, :, :] = deflection_field_ii[:, i : i + 1, :, :]
 
         if model_manager.enable_transverse_velocities:
             v_wake, w_wake = calculate_transverse_velocity(
@@ -1018,12 +1018,14 @@ def turbopark_solver(
                 u_i,
                 turbulence_intensity_i,
                 v_i,
-                flow_field.w_sorted[:, :, i:i+1],
-                v_wake[:, :, i:i+1],
-                w_wake[:, :, i:i+1],
+                flow_field.w_sorted[:, :, i : i + 1],
+                v_wake[:, :, i : i + 1],
+                w_wake[:, :, i : i + 1],
             )
             gch_gain = 2
-            turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
+            turbine_turbulence_intensity[:, :, i : i + 1] = (
+                turbulence_intensity_i + gch_gain * I_mixing
+            )
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
@@ -1040,26 +1042,20 @@ def turbopark_solver(
         )
 
         wake_field = model_manager.combination_model.function(
-            wake_field,
-            velocity_deficit * flow_field.u_initial_sorted
+            wake_field, velocity_deficit * flow_field.u_initial_sorted
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensity,
-            grid.x_sorted,
-            x_i,
-            rotor_diameter_i,
-            axial_induction_i
+            ambient_turbulence_intensity, grid.x_sorted, x_i, rotor_diameter_i, axial_induction_i
         )
 
         # TODO: leaving this in for GCH quantities; will need to find another way to
         # compute area_overlap as the current wake deficit is solved for only upstream
         # turbines; could use WAT_upstream
         # Calculate wake overlap for wake-added turbulence (WAT)
-        area_overlap = (
-            np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3))
-            / (grid.grid_resolution * grid.grid_resolution)
-        )
+        area_overlap = np.sum(
+            velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3)
+        ) / (grid.grid_resolution * grid.grid_resolution)
         area_overlap = area_overlap[:, :, None, None]
 
         # Modify wake added turbulence by wake area overlap
@@ -1074,8 +1070,7 @@ def turbopark_solver(
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt( ti_added ** 2 + ambient_turbulence_intensity ** 2 ),
-            turbine_turbulence_intensity
+            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -1084,8 +1079,7 @@ def turbopark_solver(
 
     flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
-        turbine_turbulence_intensity,
-        axis=(2, 3)
+        turbine_turbulence_intensity, axis=(2, 3)
     )
 
 
@@ -1093,16 +1087,13 @@ def full_flow_turbopark_solver(
     farm: Farm,
     flow_field: FlowField,
     flow_field_grid: FlowFieldGrid,
-    model_manager: WakeModelManager
+    model_manager: WakeModelManager,
 ) -> None:
     raise NotImplementedError("Plotting for the TurbOPark model is not currently implemented.")
 
 
 def empirical_gauss_solver(
-    farm: Farm,
-    flow_field: FlowField,
-    grid: TurbineGrid,
-    model_manager: WakeModelManager
+    farm: Farm, flow_field: FlowField, grid: TurbineGrid, model_manager: WakeModelManager
 ) -> NDArrayFloat:
     """
     Algorithm:
@@ -1125,7 +1116,6 @@ def empirical_gauss_solver(
         NDArrayFloat: wake induced mixing field primarily for use in the full-flow EmGauss solver
     """
 
-
     # <<interface>>
     deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field)
     deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field)
@@ -1135,33 +1125,31 @@ def empirical_gauss_solver(
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
-    x_locs = np.mean(grid.x_sorted, axis=(2, 3))[:,:,None]
-    downstream_distance_D = x_locs - np.transpose(x_locs, axes=(0,2,1))
-    downstream_distance_D = downstream_distance_D / \
-        np.repeat(farm.rotor_diameters_sorted[:,:,None], grid.n_turbines, axis=-1)
-    downstream_distance_D = np.maximum(downstream_distance_D, 0.1) # For ease
-    # Initialize the mixing factor model using TI if specified
-    initial_mixing_factor = model_manager.turbulence_model.atmospheric_ti_gain*\
-            flow_field.turbulence_intensity*np.eye(grid.n_turbines)
-    mixing_factor = np.repeat(
-        initial_mixing_factor[None,:,:],
-        flow_field.n_findex,
-        axis=0
+    x_locs = np.mean(grid.x_sorted, axis=(2, 3))[:, :, None]
+    downstream_distance_D = x_locs - np.transpose(x_locs, axes=(0, 2, 1))
+    downstream_distance_D = downstream_distance_D / np.repeat(
+        farm.rotor_diameters_sorted[:, :, None], grid.n_turbines, axis=-1
     )
+    downstream_distance_D = np.maximum(downstream_distance_D, 0.1)  # For ease
+    # Initialize the mixing factor model using TI if specified
+    initial_mixing_factor = model_manager.turbulence_model.atmospheric_ti_gain * np.eye(
+        grid.n_turbines
+    )
+    mixing_factor = np.repeat(initial_mixing_factor[None, :, :], flow_field.n_findex, axis=0)
+    mixing_factor = mixing_factor * flow_field.turbulence_intensity[:, None, None]
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
-
         # Get the current turbine quantities
-        x_i = np.mean(grid.x_sorted[:, i:i+1], axis=(2, 3))
+        x_i = np.mean(grid.x_sorted[:, i : i + 1], axis=(2, 3))
         x_i = x_i[:, :, None, None]
-        y_i = np.mean(grid.y_sorted[:, i:i+1], axis=(2, 3))
+        y_i = np.mean(grid.y_sorted[:, i : i + 1], axis=(2, 3))
         y_i = y_i[:, :, None, None]
-        z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
+        z_i = np.mean(grid.z_sorted[:, i : i + 1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        flow_field.u_sorted[:, i:i+1]
-        flow_field.v_sorted[:, i:i+1]
+        flow_field.u_sorted[:, i : i + 1]
+        flow_field.v_sorted[:, i : i + 1]
 
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
@@ -1174,7 +1162,7 @@ def empirical_gauss_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
         )
         # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
@@ -1190,49 +1178,43 @@ def empirical_gauss_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
         axial_induction_i = axial_induction_i[:, 0:1, None, None]
-        yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
-        hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
-        rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
+        yaw_angle_i = farm.yaw_angles_sorted[:, i : i + 1, None, None]
+        hub_height_i = farm.hub_heights_sorted[:, i : i + 1, None, None]
+        rotor_diameter_i = farm.rotor_diameters_sorted[:, i : i + 1, None, None]
 
         # Secondary steering not currently implemented in EmGauss model
         # effective_yaw_i = np.zeros_like(yaw_angle_i)
         # effective_yaw_i += yaw_angle_i
 
         average_velocities = average_velocity(
-            flow_field.u_sorted,
-            method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            flow_field.u_sorted, method=grid.average_method, cubature_weights=grid.cubature_weights
         )
         tilt_angle_i = farm.calculate_tilt_for_eff_velocities(average_velocities)
-        tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
+        tilt_angle_i = tilt_angle_i[:, i : i + 1, None, None]
 
         if model_manager.enable_secondary_steering:
-            raise NotImplementedError(
-                "Secondary steering not available for this model.")
+            raise NotImplementedError("Secondary steering not available for this model.")
 
         if model_manager.enable_transverse_velocities:
-            raise NotImplementedError(
-                "Transverse velocities not used in this model.")
+            raise NotImplementedError("Transverse velocities not used in this model.")
 
         if model_manager.enable_yaw_added_recovery:
             # Influence of yawing on turbine's own wake
-            mixing_factor[:, i:i+1, i] += \
-                yaw_added_wake_mixing(
-                    axial_induction_i,
-                    yaw_angle_i,
-                    1,
-                    model_manager.deflection_model.yaw_added_mixing_gain
-                )
+            mixing_factor[:, i : i + 1, i] += yaw_added_wake_mixing(
+                axial_induction_i,
+                yaw_angle_i,
+                1,
+                model_manager.deflection_model.yaw_added_mixing_gain,
+            )
 
         # Extract total wake induced mixing for turbine i
         mixing_i = np.linalg.norm(
-            mixing_factor[:, i:i+1, :, None],
-            ord=2, axis=2, keepdims=True
+            mixing_factor[:, i : i + 1, :, None], ord=2, axis=2, keepdims=True
         )
 
         # Model calculations
@@ -1245,7 +1227,7 @@ def empirical_gauss_solver(
             mixing_i,
             ct_i,
             rotor_diameter_i,
-            **deflection_model_args
+            **deflection_model_args,
         )
 
         # NOTE: exponential
@@ -1262,30 +1244,28 @@ def empirical_gauss_solver(
             ct_i,
             hub_height_i,
             rotor_diameter_i,
-            **deficit_model_args
+            **deficit_model_args,
         )
 
         wake_field = model_manager.combination_model.function(
-            wake_field,
-            velocity_deficit * flow_field.u_initial_sorted
+            wake_field, velocity_deficit * flow_field.u_initial_sorted
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
-        area_overlap = np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3))\
-            / (grid.grid_resolution * grid.grid_resolution)
+        area_overlap = np.sum(
+            velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3)
+        ) / (grid.grid_resolution * grid.grid_resolution)
 
         # Compute wake induced mixing factor
-        mixing_factor[:,:,i] += \
-            area_overlap * model_manager.turbulence_model.function(
-                axial_induction_i, downstream_distance_D[:,:,i]
-            )
+        mixing_factor[:, :, i] += area_overlap * model_manager.turbulence_model.function(
+            axial_induction_i, downstream_distance_D[:, :, i]
+        )
         if model_manager.enable_yaw_added_recovery:
-            mixing_factor[:,:,i] += \
-                area_overlap * yaw_added_wake_mixing(
+            mixing_factor[:, :, i] += area_overlap * yaw_added_wake_mixing(
                 axial_induction_i,
                 yaw_angle_i,
-                downstream_distance_D[:,:,i],
-                model_manager.deflection_model.yaw_added_mixing_gain
+                downstream_distance_D[:, :, i],
+                model_manager.deflection_model.yaw_added_mixing_gain,
             )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -1299,9 +1279,8 @@ def full_flow_empirical_gauss_solver(
     farm: Farm,
     flow_field: FlowField,
     flow_field_grid: FlowFieldGrid,
-    model_manager: WakeModelManager
+    model_manager: WakeModelManager,
 ) -> None:
-
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
@@ -1326,16 +1305,12 @@ def full_flow_empirical_gauss_solver(
         time_series=turbine_grid_flow_field.time_series,
     )
     turbine_grid_farm.expand_farm_properties(
-        turbine_grid_flow_field.n_findex,
-        turbine_grid.sorted_coord_indices
+        turbine_grid_flow_field.n_findex, turbine_grid.sorted_coord_indices
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize(turbine_grid.sorted_indices)
     wim_field = empirical_gauss_solver(
-        turbine_grid_farm,
-        turbine_grid_flow_field,
-        turbine_grid,
-        model_manager
+        turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager
     )
 
     ### Referring to the quantities from above, calculate the wake in the full grid
@@ -1352,17 +1327,16 @@ def full_flow_empirical_gauss_solver(
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(flow_field_grid.n_turbines):
-
         # Get the current turbine quantities
-        x_i = np.mean(turbine_grid.x_sorted[:, i:i+1], axis=(2,3))
+        x_i = np.mean(turbine_grid.x_sorted[:, i : i + 1], axis=(2, 3))
         x_i = x_i[:, :, None, None]
-        y_i = np.mean(turbine_grid.y_sorted[:, i:i+1], axis=(2,3))
+        y_i = np.mean(turbine_grid.y_sorted[:, i : i + 1], axis=(2, 3))
         y_i = y_i[:, :, None, None]
-        z_i = np.mean(turbine_grid.z_sorted[:, i:i+1], axis=(2,3))
+        z_i = np.mean(turbine_grid.z_sorted[:, i : i + 1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        turbine_grid_flow_field.u_sorted[:, i:i+1]
-        turbine_grid_flow_field.v_sorted[:, i:i+1]
+        turbine_grid_flow_field.u_sorted[:, i : i + 1]
+        turbine_grid_flow_field.v_sorted[:, i : i + 1]
 
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
@@ -1392,28 +1366,26 @@ def full_flow_empirical_gauss_solver(
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
         axial_induction_i = axial_induction_i[:, 0:1, None, None]
-        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i:i+1, None, None]
-        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i:i+1, None, None]
-        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i:i+1, None, None]
-        wake_induced_mixing_i = wim_field[:, i:i+1, :, None].sum(axis=2, keepdims=1)
+        yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i : i + 1, None, None]
+        hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i : i + 1, None, None]
+        rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i : i + 1, None, None]
+        wake_induced_mixing_i = wim_field[:, i : i + 1, :, None].sum(axis=2, keepdims=1)
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
 
         average_velocities = average_velocity(
             turbine_grid_flow_field.u_sorted,
             method=turbine_grid.average_method,
-            cubature_weights=turbine_grid.cubature_weights
+            cubature_weights=turbine_grid.cubature_weights,
         )
         tilt_angle_i = turbine_grid_farm.calculate_tilt_for_eff_velocities(average_velocities)
-        tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
+        tilt_angle_i = tilt_angle_i[:, i : i + 1, None, None]
 
         if model_manager.enable_secondary_steering:
-            raise NotImplementedError(
-                "Secondary steering not available for this model.")
+            raise NotImplementedError("Secondary steering not available for this model.")
 
         if model_manager.enable_transverse_velocities:
-            raise NotImplementedError(
-                "Transverse velocities not used in this model.")
+            raise NotImplementedError("Transverse velocities not used in this model.")
 
         # Model calculations
         # NOTE: exponential
@@ -1425,7 +1397,7 @@ def full_flow_empirical_gauss_solver(
             wake_induced_mixing_i,
             ct_i,
             rotor_diameter_i,
-            **deflection_model_args
+            **deflection_model_args,
         )
 
         # NOTE: exponential
@@ -1442,12 +1414,11 @@ def full_flow_empirical_gauss_solver(
             ct_i,
             hub_height_i,
             rotor_diameter_i,
-            **deficit_model_args
+            **deficit_model_args,
         )
 
         wake_field = model_manager.combination_model.function(
-            wake_field,
-            velocity_deficit * flow_field.u_initial_sorted
+            wake_field, velocity_deficit * flow_field.u_initial_sorted
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
