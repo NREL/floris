@@ -129,7 +129,12 @@ class FlorisInterface(LoggingManager):
         """
 
         if yaw_angles is None:
-            yaw_angles = np.zeros((self.floris.flow_field.n_findex, self.floris.farm.n_turbines))
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
         self.floris.farm.yaw_angles = yaw_angles
 
         # # TODO is this required?
@@ -163,7 +168,12 @@ class FlorisInterface(LoggingManager):
         """
 
         if yaw_angles is None:
-            yaw_angles = np.zeros((self.floris.flow_field.n_findex, self.floris.farm.n_turbines))
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
         self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
@@ -706,11 +716,17 @@ class FlorisInterface(LoggingManager):
         if turbine_weights is None:
             # Default to equal weighing of all turbines when turbine_weights is None
             turbine_weights = np.ones(
-                (self.floris.flow_field.n_findex, self.floris.farm.n_turbines)
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
             )
         elif len(np.shape(turbine_weights)) == 1:
             # Deal with situation when 1D array is provided
-            turbine_weights = np.tile(turbine_weights, (self.floris.flow_field.n_findex, 1))
+            turbine_weights = np.tile(
+                turbine_weights,
+                (self.floris.flow_field.n_findex, 1),
+            )
 
         # Calculate all turbine powers and apply weights
         turbine_powers = self.get_turbine_powers()
@@ -807,7 +823,8 @@ class FlorisInterface(LoggingManager):
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[conditions_to_evaluate]
             self.reinitialize(
-                wind_speeds=wind_speeds_subset, wind_directions=wind_directions_subset
+                wind_speeds=wind_speeds_subset,
+                wind_directions=wind_directions_subset,
             )
             if no_wake:
                 self.calculate_no_wake(yaw_angles=yaw_angles_subset)
