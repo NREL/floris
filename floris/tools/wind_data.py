@@ -12,6 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
+
 from abc import abstractmethod
 
 import matplotlib.cm as cm
