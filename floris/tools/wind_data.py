@@ -369,8 +369,8 @@ class TimeSeries(WindDataBase):
         uniform_frequency = uniform_frequency / uniform_frequency.sum()
 
         return (
-            self.wind_directions.copy(),
-            self.wind_speeds.copy(),
+            self.wind_directions,
+            self.wind_speeds,
             uniform_frequency,
             self.turbulence_intensity,  # can be none so can't copy
             self.prices,  # can be none so can't copy
