@@ -26,6 +26,7 @@ class ChildClassTest(WindDataBase):
     def __init__(self):
         pass
 
+
 def test_bad_inheritance():
     """
     Verifies that a child class of WindDataBase must implement the unpack method.
@@ -115,10 +116,7 @@ def test_wind_rose_unpack():
 
     # Now test computing 0-freq cases too
     wind_rose = WindRose(
-        wind_directions,
-        wind_speeds,
-        freq_table,
-        compute_zero_freq_occurrence=True
+        wind_directions, wind_speeds, freq_table, compute_zero_freq_occurrence=True
     )
 
     (
@@ -204,8 +202,8 @@ def test_time_series_to_wind_rose():
     assert freq_table.shape[0] == 3
     assert freq_table.shape[1] == 1
 
-    # The frequencies should [2/3, 0, 1/3]
-    # TODO this one I dont follow, @paul or @misha?
+    # The frequencies should [2/3, 0, 1/3] given that 2 of the data points
+    # fall in the 260 deg bin, 0 in the 262 deg bin and 1 in the 264 deg bin
     assert np.allclose(freq_table.squeeze(), [2 / 3, 0, 1 / 3])
 
     # Test just 2 wind speeds
