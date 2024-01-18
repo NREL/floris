@@ -39,7 +39,7 @@ class FlowField(BaseClass):
     wind_veer: float = field(converter=float)
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
-    turbulence_intensity: float = field(converter=float)
+    turbulence_intensity: float = field(converter=floris_array_converter)
     reference_wind_height: float = field(converter=float)
     time_series: bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
@@ -65,6 +65,22 @@ class FlowField(BaseClass):
     turbulence_intensity_field_sorted_avg: NDArrayFloat = field(
         init=False, factory=lambda: np.array([])
     )
+
+    @turbulence_intensity.validator
+    def turbulence_intensity_validator(
+        self, instance: attrs.Attribute, value: NDArrayFloat
+    ) -> None:
+        try:
+            # Check the turbulence intensity is either length 1 or n_findex
+            if len(value) != 1 and len(value) != self.n_findex:
+                raise ValueError("turbulence_intensities should either be length 1 or n_findex")
+        except TypeError as te:
+            # Handle the TypeError here
+            print(f"Caught a TypeError: {te}")
+            raise TypeError(
+                "turbulence_intensities must be provided as a list or array.  To specify a uniform",
+                " turbulence intensity, specify as an array of legnth 1",
+            )
 
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
@@ -103,14 +119,16 @@ class FlowField(BaseClass):
                 "The het_map's first dimension not equal to the FLORIS first dimension."
             )
 
-
     def __attrs_post_init__(self) -> None:
         if self.heterogenous_inflow_config is not None:
             self.generate_heterogeneous_wind_map()
 
+        # If turbulence_intensity is length 1, then convert it to a uniform array of
+        # length n_findex
+        if len(self.turbulence_intensity) == 1:
+            self.turbulence_intensity = self.turbulence_intensity * np.ones(self.n_findex)
 
     def initialize_velocity_field(self, grid: Grid) -> None:
-
         # Create an initial wind profile as a function of height. The values here will
         # be multiplied with the wind speeds to give the initial wind field.
         # Since we use grid.z, this is a vertical plane for each turbine
@@ -125,11 +143,7 @@ class FlowField(BaseClass):
         dwind_profile_plane = (
             self.wind_shear
             * (1 / self.reference_wind_height) ** self.wind_shear
-            * np.power(
-                grid.z_sorted,
-                (self.wind_shear - 1),
-                where=grid.z_sorted != 0.0
-            )
+            * np.power(grid.z_sorted, (self.wind_shear - 1), where=grid.z_sorted != 0.0)
         )
         # If no heterogeneous inflow defined, then set all speeds ups to 1.0
         if self.het_map is None:
@@ -138,10 +152,11 @@ class FlowField(BaseClass):
         # If heterogeneous flow data is given, the speed ups at the defined
         # grid locations are determined in either 2 or 3 dimensions.
         else:
-            bounds = np.array(list(zip(
-                self.heterogenous_inflow_config['x'],
-                self.heterogenous_inflow_config['y']
-            )))
+            bounds = np.array(
+                list(
+                    zip(self.heterogenous_inflow_config["x"], self.heterogenous_inflow_config["y"])
+                )
+            )
             hull = ConvexHull(bounds)
             polygon = Polygon(bounds[hull.vertices])
             path = mpltPath.Path(polygon.boundary.coords)
@@ -163,16 +178,14 @@ class FlowField(BaseClass):
 
             if len(self.het_map[0].points[0]) == 2:
                 speed_ups = self.calculate_speed_ups(
-                    self.het_map,
-                    grid.x_sorted_inertial_frame,
-                    grid.y_sorted_inertial_frame
+                    self.het_map, grid.x_sorted_inertial_frame, grid.y_sorted_inertial_frame
                 )
             elif len(self.het_map[0].points[0]) == 3:
                 speed_ups = self.calculate_speed_ups(
                     self.het_map,
                     grid.x_sorted_inertial_frame,
                     grid.y_sorted_inertial_frame,
-                    grid.z_sorted
+                    grid.z_sorted,
                 )
 
         # Create the sheer-law wind profile
@@ -185,26 +198,23 @@ class FlowField(BaseClass):
         self.dudz_initial_sorted = (self.wind_speeds.T * dwind_profile_plane.T).T * speed_ups
 
         self.v_initial_sorted = np.zeros(
-            np.shape(self.u_initial_sorted),
-            dtype=self.u_initial_sorted.dtype
+            np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype
         )
         self.w_initial_sorted = np.zeros(
-            np.shape(self.u_initial_sorted),
-            dtype=self.u_initial_sorted.dtype
+            np.shape(self.u_initial_sorted), dtype=self.u_initial_sorted.dtype
         )
 
         self.u_sorted = self.u_initial_sorted.copy()
         self.v_sorted = self.v_initial_sorted.copy()
         self.w_sorted = self.w_initial_sorted.copy()
 
-        self.turbulence_intensity_field = self.turbulence_intensity * np.ones(
-            (
-                self.n_findex,
-                grid.n_turbines,
-                1,
-                1,
-            )
+        self.turbulence_intensity_field = self.turbulence_intensity[
+            :, np.newaxis, np.newaxis, np.newaxis
+        ]
+        self.turbulence_intensity_field = np.repeat(
+            self.turbulence_intensity_field, grid.n_turbines, axis=1
         )
+
         self.turbulence_intensity_field_sorted = self.turbulence_intensity_field.copy()
 
     def finalize(self, unsorted_indices):
@@ -213,12 +223,8 @@ class FlowField(BaseClass):
         self.w = np.take_along_axis(self.w_sorted, unsorted_indices, axis=1)
 
         self.turbulence_intensity_field = np.mean(
-            np.take_along_axis(
-                self.turbulence_intensity_field_sorted,
-                unsorted_indices,
-                axis=1
-            ),
-            axis=(2,3)
+            np.take_along_axis(self.turbulence_intensity_field_sorted, unsorted_indices, axis=1),
+            axis=(2, 3),
         )
 
     def calculate_speed_ups(self, het_map, x, y, z=None):
@@ -226,7 +232,7 @@ class FlowField(BaseClass):
             # Calculate the 3-dimensional speed ups; squeeze is needed as the generator
             # adds an extra dimension
             speed_ups = np.squeeze(
-                [het_map[i](x[i:i+1], y[i:i+1], z[i:i+1]) for i in range( len(het_map))],
+                [het_map[i](x[i : i + 1], y[i : i + 1], z[i : i + 1]) for i in range(len(het_map))],
                 axis=1,
             )
 
@@ -234,7 +240,7 @@ class FlowField(BaseClass):
             # Calculate the 2-dimensional speed ups; squeeze is needed as the generator
             # adds an extra dimension
             speed_ups = np.squeeze(
-                [het_map[i](x[i:i+1], y[i:i+1]) for i in range(len(het_map))],
+                [het_map[i](x[i : i + 1], y[i : i + 1]) for i in range(len(het_map))],
                 axis=1,
             )
 
@@ -257,10 +263,10 @@ class FlowField(BaseClass):
                 - **y**: A list of y locations at which the speed up factors are defined.
                 - **z** (optional): A list of z locations at which the speed up factors are defined.
         """
-        speed_multipliers = self.heterogenous_inflow_config['speed_multipliers']
-        x = self.heterogenous_inflow_config['x']
-        y = self.heterogenous_inflow_config['y']
-        z = self.heterogenous_inflow_config['z']
+        speed_multipliers = self.heterogenous_inflow_config["speed_multipliers"]
+        x = self.heterogenous_inflow_config["x"]
+        y = self.heterogenous_inflow_config["y"]
+        z = self.heterogenous_inflow_config["z"]
 
         if z is not None:
             # Compute the 3-dimensional interpolants for each wind direction
