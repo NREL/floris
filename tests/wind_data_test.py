@@ -15,8 +15,16 @@
 import numpy as np
 import pytest
 
-from floris.tools import TimeSeries, WindRose
+from floris.tools import TimeSeries, WindRose, WindDataBase
 
+class TestClass(WindDataBase):
+    def __init__(self):
+        pass
+
+def test_bad_inheritance():
+    test_class = TestClass()
+    with pytest.raises(NotImplementedError):
+        test_class.unpack()
 
 def test_time_series_instantiation():
     wind_directions = np.array([270, 280, 290])

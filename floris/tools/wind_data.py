@@ -12,6 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from abc import abstractmethod
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,6 +26,14 @@ from pandas.api.types import CategoricalDtype
 class WindDataBase:
     def __init__():
         pass
+
+    @abstractmethod
+    def unpack(self):
+        """
+        Placeholder for child classes of WindDataBase, which each need to implement the unpack()
+        method.
+        """
+        raise NotImplementedError("unpack() not implemented on {0}".format(self.__class__.__name__))
 
     def unpack_for_reinitialize(self):
         """
