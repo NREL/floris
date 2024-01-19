@@ -44,7 +44,7 @@ flow_field:
       - -300.
       - 300.
   reference_wind_height: -1
-  turbulence_intensity:
+  turbulence_intensities:
   - 0.06
   wind_directions:
   - 270.0

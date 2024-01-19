@@ -29,7 +29,7 @@ farm:
 flow_field:
   air_density: 1.225
   reference_wind_height: 90.0 # Since multiple defined turbines, must specify explicitly the reference wind height
-  turbulence_intensity:
+  turbulence_intensities:
   - 0.06
   wind_directions:
   - 270.0
