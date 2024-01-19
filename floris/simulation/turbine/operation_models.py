@@ -340,12 +340,17 @@ class SimpleDeratingTurbine(BaseOperationModel):
         base_powers = SimpleTurbine.power(
             power_thrust_table=power_thrust_table,
             velocities=velocities,
-            air_density=air_density
+            air_density=air_density,
+            average_method=average_method,
+            cubature_weights=cubature_weights
         )
         if power_setpoints is None:
             return base_powers
         else:
             return np.minimum(base_powers, power_setpoints)
+
+        # TODO: would we like special handling of zero power setpoints
+        # (mixed with non-zero values) to speed up computation in that case?
 
     def thrust_coefficient(
         power_thrust_table: dict,
@@ -359,27 +364,38 @@ class SimpleDeratingTurbine(BaseOperationModel):
         base_thrust_coefficients = SimpleTurbine.thrust_coefficient(
             power_thrust_table=power_thrust_table,
             velocities=velocities,
+            average_method=average_method,
+            cubature_weights=cubature_weights
         )
         if power_setpoints is None:
             return base_thrust_coefficients
         else:
-            # Compute the relative power; return relative thrust coefficient.
-            return 0
-        return 0 # Placeholder until code is built out
+            # Assume thrust coefficient scales directly with power
+            base_powers = SimpleTurbine.power(
+                power_thrust_table=power_thrust_table,
+                velocities=velocities,
+                air_density=air_density
+            )
+            power_fractions = power_setpoints / base_powers
+            thrust_coefficients = power_fractions * base_thrust_coefficients
+            return np.minimum(base_thrust_coefficients, thrust_coefficients)
 
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
+        air_density: float,
         power_setpoints: NDArrayFloat,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        base_axial_inductions = SimpleTurbine.axial_induction(
+        thrust_coefficient = SimpleDeratingTurbine.thrust_coefficient(
             power_thrust_table=power_thrust_table,
             velocities=velocities,
+            air_density=air_density,
+            power_setpoints=power_setpoints,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
         )
-        if power_setpoints is None:
-            return base_axial_inductions
-        else:
-            return 0
+
+        return (1 - np.sqrt(1 - thrust_coefficient))/2

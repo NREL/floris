@@ -227,11 +227,6 @@ def test_SimpleDeratingTurbine():
     wind_speed = 10.0
     turbine_data = SampleInputs().turbine
 
-    # Will want to update these
-    baseline_Ct = 0
-    baseline_power = 0
-    baseline_ai = 0
-
     # Check that for no specified derating, matches SimpleTurbine
     test_Ct = SimpleDeratingTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
@@ -296,5 +291,53 @@ def test_SimpleDeratingTurbine():
     assert np.allclose(test_ai, 0)
 
     # When power setpoints are less than available, results should be less than when no setpoint
-    
-    # BUILD OUT THESE TESTS
+    wind_speed = 20 # High, so that turbine is above rated nominally
+    derated_power = 4.0e6
+    rated_power = 5.0e6
+    test_power = SimpleDeratingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+
+    rated_power = 5.0e6
+    test_Ct = SimpleDeratingTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+    base_Ct = SimpleTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+    assert np.allclose(test_Ct, derated_power/rated_power * base_Ct) # Is this correct?
+
+    # Mixed below and above rated
+    n_turbines = 2
+    wind_speeds_test = np.ones((1, n_turbines, 3, 3))
+    wind_speeds_test[0,0,:,:] = 20.0 # Above rated
+    wind_speeds_test[0,1,:,:] = 5.0 # Well below eated
+    test_power = SimpleDeratingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds_test, # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+    base_power = SimpleTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds_test, # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+
+    assert test_power[0,0] < base_power[0,0]
+    assert test_power[0,0] == derated_power
+
+    assert test_power[0,1] == base_power[0,1]
+    assert test_power[0,1] < derated_power
+
+    # Build out further tests
