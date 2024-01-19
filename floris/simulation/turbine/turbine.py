@@ -27,6 +27,7 @@ from scipy.interpolate import interp1d
 from floris.simulation import BaseClass
 from floris.simulation.turbine import (
     CosineLossTurbine,
+    SimpleDeratingTurbine,
     SimpleTurbine,
 )
 from floris.type_dec import (
@@ -44,14 +45,14 @@ from floris.utilities import cosd
 TURBINE_MODEL_MAP = {
     "power_thrust_model": {
         "simple": SimpleTurbine,
-        "cosine-loss": CosineLossTurbine
+        "cosine-loss": CosineLossTurbine,
+        "simple-derating": SimpleDeratingTurbine,
     },
 }
 
 
 def select_multidim_condition(
-    condition: dict | tuple,
-    specified_conditions: Iterable[tuple]
+    condition: dict | tuple, specified_conditions: Iterable[tuple]
 ) -> tuple:
     """
     Convert condition to the type expected by power_thrust_table and select
@@ -70,9 +71,9 @@ def select_multidim_condition(
     # Find the nearest key to the specified conditions.
     nearest_condition = np.zeros_like(condition)
     for i, c in enumerate(condition):
-        nearest_condition[i] = (
-            specified_conditions[:, i][np.absolute(specified_conditions[:, i] - c).argmin()]
-        )
+        nearest_condition[i] = specified_conditions[:, i][
+            np.absolute(specified_conditions[:, i] - c).argmin()
+        ]
 
     return tuple(nearest_condition)
 
@@ -90,7 +91,7 @@ def power(
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
     correct_cp_ct_for_tilt: bool = False,
-    multidim_condition: tuple | None = None, # Assuming only one condition at a time?
+    multidim_condition: tuple | None = None,  # Assuming only one condition at a time?
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
@@ -147,14 +148,13 @@ def power(
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Handle possible multidimensional power thrust tables
-        if "power" in turbine_power_thrust_tables[turb_type]: # normal
+        if "power" in turbine_power_thrust_tables[turb_type]:  # normal
             power_thrust_table = turbine_power_thrust_tables[turb_type]
-        else: # assumed multidimensional, use multidim lookup
+        else:  # assumed multidimensional, use multidim lookup
             # Currently, only works for single mutlidim condition. May need to
             # loop in the case where there are multiple conditions.
             multidim_condition = select_multidim_condition(
-                multidim_condition,
-                list(turbine_power_thrust_tables[turb_type].keys())
+                multidim_condition, list(turbine_power_thrust_tables[turb_type].keys())
             )
             power_thrust_table = turbine_power_thrust_tables[turb_type][multidim_condition]
 
@@ -190,9 +190,8 @@ def thrust_coefficient(
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
-    multidim_condition: tuple | None = None, # Assuming only one condition at a time?
+    multidim_condition: tuple | None = None,  # Assuming only one condition at a time?
 ) -> NDArrayFloat:
-
     """Thrust coefficient of a turbine.
     The value is obtained from the coefficient of thrust specified by the callables specified
     in the thrust_coefficient_functions.
@@ -241,14 +240,13 @@ def thrust_coefficient(
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Handle possible multidimensional power thrust tables
-        if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]: # normal
+        if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]:  # normal
             power_thrust_table = turbine_power_thrust_tables[turb_type]
-        else: # assumed multidimensional, use multidim lookup
+        else:  # assumed multidimensional, use multidim lookup
             # Currently, only works for single mutlidim condition. May need to
             # loop in the case where there are multiple conditions.
             multidim_condition = select_multidim_condition(
-                multidim_condition,
-                list(turbine_power_thrust_tables[turb_type].keys())
+                multidim_condition, list(turbine_power_thrust_tables[turb_type].keys())
             )
             power_thrust_table = turbine_power_thrust_tables[turb_type][multidim_condition]
 
@@ -266,9 +264,8 @@ def thrust_coefficient(
 
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        thrust_coefficient += (
-            thrust_coefficient_functions[turb_type](**thrust_model_kwargs)
-            * (turbine_type_map == turb_type)
+        thrust_coefficient += thrust_coefficient_functions[turb_type](**thrust_model_kwargs) * (
+            turbine_type_map == turb_type
         )
 
     return thrust_coefficient
@@ -286,7 +283,7 @@ def axial_induction(
     ix_filter: NDArrayFilter | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
-    multidim_condition: tuple | None = None, # Assuming only one condition at a time?
+    multidim_condition: tuple | None = None,  # Assuming only one condition at a time?
 ) -> NDArrayFloat:
     """Axial induction factor of the turbine incorporating
     the thrust coefficient and yaw angle.
@@ -335,14 +332,13 @@ def axial_induction(
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Handle possible multidimensional power thrust tables
-        if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]: # normal
+        if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]:  # normal
             power_thrust_table = turbine_power_thrust_tables[turb_type]
-        else: # assumed multidimensional, use multidim lookup
+        else:  # assumed multidimensional, use multidim lookup
             # Currently, only works for single mutlidim condition. May need to
             # loop in the case where there are multiple conditions.
             multidim_condition = select_multidim_condition(
-                multidim_condition,
-                list(turbine_power_thrust_tables[turb_type].keys())
+                multidim_condition, list(turbine_power_thrust_tables[turb_type].keys())
             )
             power_thrust_table = turbine_power_thrust_tables[turb_type][multidim_condition]
 
@@ -360,9 +356,8 @@ def axial_induction(
 
         # Using a masked array, apply the thrust coefficient for all turbines of the current
         # type to the main thrust coefficient array
-        axial_induction += (
-            axial_induction_functions[turb_type](**axial_induction_model_kwargs)
-            * (turbine_type_map == turb_type)
+        axial_induction += axial_induction_functions[turb_type](**axial_induction_model_kwargs) * (
+            turbine_type_map == turb_type
         )
 
     return axial_induction
@@ -413,12 +408,13 @@ class Turbine(BaseClass):
         multi_dimensional_cp_ct (bool): Use a multidimensional power_thrust_table. Defaults to
             False.
     """
+
     turbine_type: str = field()
     rotor_diameter: float = field()
     hub_height: float = field()
     TSR: float = field()
     generator_efficiency: float = field()
-    power_thrust_table: dict = field(default={}) # conversion to numpy in __post_init__
+    power_thrust_table: dict = field(default={})  # conversion to numpy in __post_init__
     power_thrust_model: str = field(default="cosine-loss")
 
     correct_cp_ct_for_tilt: bool = field(default=False)
@@ -443,7 +439,7 @@ class Turbine(BaseClass):
     turbine_library_path: Path = field(
         default=Path(__file__).parents[2] / "turbine_library",
         converter=convert_to_path,
-        validator=attrs.validators.instance_of(Path)
+        validator=attrs.validators.instance_of(Path),
     )
 
     # Not to be provided by the user
@@ -465,7 +461,6 @@ class Turbine(BaseClass):
         self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
         self.axial_induction_function = turbine_function_model.axial_induction
         self.power_function = turbine_function_model.power
-
 
     def _initialize_tilt_interpolation(self) -> None:
         # TODO:
@@ -506,23 +501,30 @@ class Turbine(BaseClass):
 
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
         # the thrust_coefficient and power interpolants.
-        power_thrust_table_ = {} # Reset
+        power_thrust_table_ = {}  # Reset
         for key in df2.index.unique():
             # Select the correct ws/Cp/Ct data
             data = df2.loc[key]
 
             # Build the interpolants
-            power_thrust_table_.update({
-                key: {
-                    "wind_speed": data['ws'].values,
-                    "power": (
-                        0.5 * self.rotor_area * data['Cp'].values * self.generator_efficiency
-                        * data['ws'].values ** 3 * power_thrust_table_ref["ref_air_density"] / 1000
-                    ), # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
-                    "thrust_coefficient": data['Ct'].values,
-                    **power_thrust_table_ref
-                },
-            })
+            power_thrust_table_.update(
+                {
+                    key: {
+                        "wind_speed": data["ws"].values,
+                        "power": (
+                            0.5
+                            * self.rotor_area
+                            * data["Cp"].values
+                            * self.generator_efficiency
+                            * data["ws"].values ** 3
+                            * power_thrust_table_ref["ref_air_density"]
+                            / 1000
+                        ),  # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
+                        "thrust_coefficient": data["Ct"].values,
+                        **power_thrust_table_ref,
+                    },
+                }
+            )
             # Add reference information at the lower level
 
         # Set on-object version
@@ -537,7 +539,7 @@ class Turbine(BaseClass):
 
         if self.multi_dimensional_cp_ct:
             if isinstance(list(value.keys())[0], tuple):
-                value = list(value.values())[0] # Check the first entry of multidim
+                value = list(value.values())[0]  # Check the first entry of multidim
             elif "power_thrust_data_file" in value.keys():
                 return None
             else:
@@ -564,7 +566,7 @@ class Turbine(BaseClass):
         with attrs.validators.disabled():
             # Reset the values
             self.rotor_radius = value / 2.0
-            self.rotor_area = np.pi * self.rotor_radius ** 2.0
+            self.rotor_area = np.pi * self.rotor_radius**2.0
 
     @rotor_radius.validator
     def reset_rotor_radius(self, instance: attrs.Attribute, value: float) -> None:
@@ -605,20 +607,16 @@ class Turbine(BaseClass):
         if any(len(np.shape(e)) > 1 for e in (value["tilt"], value["wind_speed"])):
             raise ValueError("tilt and wind_speed inputs must be 1-D.")
 
-        if len( {len(value["tilt"]), len(value["wind_speed"])} ) > 1:
+        if len({len(value["tilt"]), len(value["wind_speed"])}) > 1:
             raise ValueError("tilt and wind_speed inputs must be the same size.")
 
     @correct_cp_ct_for_tilt.validator
     def check_for_cp_ct_correct_flag_if_floating(
-        self,
-        instance: attrs.Attribute,
-        value: bool
+        self, instance: attrs.Attribute, value: bool
     ) -> None:
         """
         Check that the boolean flag exists for correcting Cp/Ct for tilt
         if a tile/wind_speed table is also defined.
         """
         if self.correct_cp_ct_for_tilt and self.floating_tilt_table is None:
-            raise ValueError(
-                "To enable the Cp and Ct tilt correction, a tilt table must be given."
-            )
+            raise ValueError("To enable the Cp and Ct tilt correction, a tilt table must be given.")
