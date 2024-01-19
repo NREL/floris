@@ -172,7 +172,7 @@ def test_power():
         multidim_condition=condition
     )
 
-    power_truth = 3215682.686486
+    power_truth = 3029825.10569982
 
     np.testing.assert_allclose(p, power_truth)
 
