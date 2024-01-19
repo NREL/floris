@@ -39,7 +39,7 @@ class FlowField(BaseClass):
     wind_veer: float = field(converter=float)
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
-    turbulence_intensity: float = field(converter=floris_array_converter)
+    turbulence_intensities: float = field(converter=floris_array_converter)
     reference_wind_height: float = field(converter=float)
     time_series: bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
@@ -66,8 +66,8 @@ class FlowField(BaseClass):
         init=False, factory=lambda: np.array([])
     )
 
-    @turbulence_intensity.validator
-    def turbulence_intensity_validator(
+    @turbulence_intensities.validator
+    def turbulence_intensities_validator(
         self, instance: attrs.Attribute, value: NDArrayFloat
     ) -> None:
         try:
@@ -125,8 +125,8 @@ class FlowField(BaseClass):
 
         # If turbulence_intensity is length 1, then convert it to a uniform array of
         # length n_findex
-        if len(self.turbulence_intensity) == 1:
-            self.turbulence_intensity = self.turbulence_intensity * np.ones(self.n_findex)
+        if len(self.turbulence_intensities) == 1:
+            self.turbulence_intensities = self.turbulence_intensities[0] * np.ones(self.n_findex)
 
     def initialize_velocity_field(self, grid: Grid) -> None:
         # Create an initial wind profile as a function of height. The values here will
@@ -208,7 +208,7 @@ class FlowField(BaseClass):
         self.v_sorted = self.v_initial_sorted.copy()
         self.w_sorted = self.w_initial_sorted.copy()
 
-        self.turbulence_intensity_field = self.turbulence_intensity[
+        self.turbulence_intensity_field = self.turbulence_intensities[
             :, np.newaxis, np.newaxis, np.newaxis
         ]
         self.turbulence_intensity_field = np.repeat(

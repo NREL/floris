@@ -74,22 +74,16 @@ def sequential_solver(
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
     # Set up turbulence arrays
-    turbine_turbulence_intensity = flow_field.turbulence_intensity[
+    turbine_turbulence_intensity = flow_field.turbulence_intensities[
         :, np.newaxis, np.newaxis, np.newaxis
     ]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
     # with extra dimension to reach 4d
-    ambient_turbulence_intensity = flow_field.turbulence_intensity.copy()[
+    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()[
         :, np.newaxis, np.newaxis, np.newaxis
     ]
-
-    # Old code
-    # turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones(
-    #     (flow_field.n_findex, farm.n_turbines, 1, 1)
-    # )
-    # ambient_turbulence_intensity = flow_field.turbulence_intensity
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
@@ -226,7 +220,7 @@ def sequential_solver(
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensity,
+            ambient_turbulence_intensities,
             grid.x_sorted,
             x_i,
             rotor_diameter_i,
@@ -251,7 +245,7 @@ def sequential_solver(
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
+            np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbine_turbulence_intensity
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -448,14 +442,14 @@ def cc_solver(
     turb_inflow_field = copy.deepcopy(flow_field.u_initial_sorted)
 
     # Set up turbulence arrays
-    turbine_turbulence_intensity = flow_field.turbulence_intensity[
+    turbine_turbulence_intensity = flow_field.turbulence_intensities[
         :, np.newaxis, np.newaxis, np.newaxis
     ]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
 
-    # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
+    # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensities
     # with extra dimension to reach 4d
-    ambient_turbulence_intensity = flow_field.turbulence_intensity.copy()[
+    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()[
         :, np.newaxis, np.newaxis, np.newaxis
     ]
 
@@ -622,7 +616,7 @@ def cc_solver(
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensity, grid.x_sorted, x_i, rotor_diameter_i, turb_aIs
+            ambient_turbulence_intensities, grid.x_sorted, x_i, rotor_diameter_i, turb_aIs
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
@@ -643,7 +637,7 @@ def cc_solver(
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
+            np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbine_turbulence_intensity
         )
 
         flow_field.v_sorted += v_wake
@@ -853,21 +847,16 @@ def turbopark_solver(
     deflection_field = np.zeros_like(flow_field.u_initial_sorted)
 
     # Set up turbulence arrays
-    turbine_turbulence_intensity = flow_field.turbulence_intensity[
+    turbine_turbulence_intensity = flow_field.turbulence_intensities[
         :, np.newaxis, np.newaxis, np.newaxis
     ]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
 
-    # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
+    # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensities
     # with extra dimension to reach 4d
-    ambient_turbulence_intensity = flow_field.turbulence_intensity.copy()[
+    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()[
         :, np.newaxis, np.newaxis, np.newaxis
     ]
-
-    # turbine_turbulence_intensity = flow_field.turbulence_intensity * np.ones(
-    #     (flow_field.n_findex, farm.n_turbines, 1, 1)
-    # )
-    # ambient_turbulence_intensity = flow_field.turbulence_intensity
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
@@ -1046,7 +1035,7 @@ def turbopark_solver(
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensity, grid.x_sorted, x_i, rotor_diameter_i, axial_induction_i
+            ambient_turbulence_intensities, grid.x_sorted, x_i, rotor_diameter_i, axial_induction_i
         )
 
         # TODO: leaving this in for GCH quantities; will need to find another way to
@@ -1070,7 +1059,7 @@ def turbopark_solver(
 
         # Combine turbine TIs with WAT
         turbine_turbulence_intensity = np.maximum(
-            np.sqrt(ti_added**2 + ambient_turbulence_intensity**2), turbine_turbulence_intensity
+            np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbine_turbulence_intensity
         )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
@@ -1136,7 +1125,7 @@ def empirical_gauss_solver(
         grid.n_turbines
     )
     mixing_factor = np.repeat(initial_mixing_factor[None, :, :], flow_field.n_findex, axis=0)
-    mixing_factor = mixing_factor * flow_field.turbulence_intensity[:, None, None]
+    mixing_factor = mixing_factor * flow_field.turbulence_intensities[:, None, None]
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
