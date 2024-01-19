@@ -139,8 +139,7 @@ class YawOptimization(LoggingManager):
                     "were derived from the floris object."
                 )
                 print(
-                    "INFO: The inherent yaw angles in the floris object "
-                    "are not all 0.0 degrees."
+                    "INFO: The inherent yaw angles in the floris object " "are not all 0.0 degrees."
                 )
 
         # Set optimization bounds
@@ -237,8 +236,8 @@ class YawOptimization(LoggingManager):
                 (
                     self.fi.floris.flow_field.n_wind_directions,
                     self.fi.floris.flow_field.n_wind_speeds,
-                    1
-                )
+                    1,
+                ),
             )
 
         if len(np.shape(variable)) == 2:
@@ -260,7 +259,7 @@ class YawOptimization(LoggingManager):
         exploit_layout_symmetry == True.
         """
         # Initialize which turbines to optimize for
-        self.turbs_to_opt = (self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001)
+        self.turbs_to_opt = self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001
 
         # Initialize subset variables as full set
         self.fi_subset = self.fi.copy()
@@ -311,9 +310,9 @@ class YawOptimization(LoggingManager):
             combined_bounds = np.concatenate(
                 (
                     np.expand_dims(minimum_yaw_angle_subset, axis=3),
-                    np.expand_dims(maximum_yaw_angle_subset, axis=3)
+                    np.expand_dims(maximum_yaw_angle_subset, axis=3),
                 ),
-                axis=3
+                axis=3,
             )
             # Overwrite all values that are not allowed to be 0.0 with bound value closest to zero
             ids_closest = np.expand_dims(np.argmin(np.abs(combined_bounds), axis=3), axis=3)
@@ -339,20 +338,22 @@ class YawOptimization(LoggingManager):
         """
         lb = np.min(self._minimum_yaw_angle_subset)
         ub = np.max(self._maximum_yaw_angle_subset)
-        self._normalization_length = (ub - lb)
+        self._normalization_length = ub - lb
         self._x0_subset_norm = self._x0_subset / self._normalization_length
         self._minimum_yaw_angle_subset_norm = (
-            self._minimum_yaw_angle_subset
-            / self._normalization_length
+            self._minimum_yaw_angle_subset / self._normalization_length
         )
         self._maximum_yaw_angle_subset_norm = (
-            self._maximum_yaw_angle_subset
-            / self._normalization_length
+            self._maximum_yaw_angle_subset / self._normalization_length
         )
 
-    def _calculate_farm_power(self, yaw_angles=None, wd_array=None, turbine_weights=None,
-            heterogeneous_speed_multipliers=None
-        ):
+    def _calculate_farm_power(
+        self,
+        yaw_angles=None,
+        wd_array=None,
+        turbine_weights=None,
+        heterogeneous_speed_multipliers=None,
+    ):
         """
         Calculate the wind farm power production assuming the predefined
         probability distribution (self.unc_options/unc_pmf), with the
@@ -373,8 +374,9 @@ class YawOptimization(LoggingManager):
         if turbine_weights is None:
             turbine_weights = self._turbine_weights_subset
         if heterogeneous_speed_multipliers is not None:
-            fi_subset.floris.flow_field.\
-                heterogenous_inflow_config['speed_multipliers'] = heterogeneous_speed_multipliers
+            fi_subset.floris.flow_field.heterogenous_inflow_config[
+                "speed_multipliers"
+            ] = heterogeneous_speed_multipliers
 
         # Ensure format [incompatible with _subset notation]
         yaw_angles = self._unpack_variable(yaw_angles, subset=True)
@@ -451,9 +453,11 @@ class YawOptimization(LoggingManager):
 
             wd_array = self.fi.floris.flow_field.wind_directions
             sym_step = df.iloc[0]["wd_range"][1]
-            if ((0.0 not in wd_array) or(sym_step not in wd_array)):
-                print("Floris wind direction array does not " +
-                      "intersect {:.1f} and {:.1f}.".format(0.0, sym_step))
+            if (0.0 not in wd_array) or (sym_step not in wd_array):
+                print(
+                    "Floris wind direction array does not "
+                    + "intersect {:.1f} and {:.1f}.".format(0.0, sym_step)
+                )
                 print("Exploitation of symmetry has been disabled.")
                 return
 
@@ -466,8 +470,9 @@ class YawOptimization(LoggingManager):
                 print("Exploitation of symmetry has been disabled.")
 
             self._sym_mapping_extrap = np.array(
-                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0]
-                for x in wd_array_remn], dtype=int)
+                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0] for x in wd_array_remn],
+                dtype=int,
+            )
 
             self._sym_mapping_reduce = copy.deepcopy(ids_minimal)
             self._sym_df = df
@@ -498,10 +503,7 @@ class YawOptimization(LoggingManager):
             # Now process turbine mapping
             wd_array = self.fi.floris.flow_field.wind_directions
             for ii, dfrow in self._sym_df.iloc[1::].iterrows():
-                ids = (
-                    (wd_array >= dfrow["wd_range"][0]) &
-                    (wd_array < dfrow["wd_range"][1])
-                )
+                ids = (wd_array >= dfrow["wd_range"][0]) & (wd_array < dfrow["wd_range"][1])
                 tmap = np.argsort(dfrow["turbine_mapping"])
                 full_array[ids, :, :] = full_array[ids, :, :][:, :, tmap]
         else:
@@ -518,11 +520,8 @@ class YawOptimization(LoggingManager):
 
         # Now verify solutions for convergence, if necessary
         if self.verify_convergence:
-            yaw_angles_opt_subset, farm_power_opt_subset = (
-                self._verify_solutions_for_convergence(
-                    farm_power_opt_subset,
-                    yaw_angles_opt_subset
-                )
+            yaw_angles_opt_subset, farm_power_opt_subset = self._verify_solutions_for_convergence(
+                farm_power_opt_subset, yaw_angles_opt_subset
             )
 
         # Finalization step for optimization: undo reduction step
@@ -530,20 +529,26 @@ class YawOptimization(LoggingManager):
         self.yaw_angles_opt = self._unreduce_variable(yaw_angles_opt_subset)
 
         # Produce output table
-        ti = np.min(self.fi.floris.flow_field.turbulence_intensity)
+        ti = np.min(self.fi.floris.flow_field.turbulence_intensities)
         df_list = []
         num_wind_directions = len(self.fi.floris.flow_field.wind_directions)
         for ii, wind_speed in enumerate(self.fi.floris.flow_field.wind_speeds):
-            df_list.append(pd.DataFrame({
-                "wind_direction": self.fi.floris.flow_field.wind_directions,
-                "wind_speed": wind_speed * np.ones(num_wind_directions),
-                "turbulence_intensity": ti * np.ones(num_wind_directions),
-                "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
-                "farm_power_opt": None if self.farm_power_opt is None \
-                                       else self.farm_power_opt[:, ii],
-                "farm_power_baseline": None if self.farm_power_baseline is None \
-                                            else self.farm_power_baseline[:, ii],
-            }))
+            df_list.append(
+                pd.DataFrame(
+                    {
+                        "wind_direction": self.fi.floris.flow_field.wind_directions,
+                        "wind_speed": wind_speed * np.ones(num_wind_directions),
+                        "turbulence_intensities": ti * np.ones(num_wind_directions),
+                        "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
+                        "farm_power_opt": None
+                        if self.farm_power_opt is None
+                        else self.farm_power_opt[:, ii],
+                        "farm_power_baseline": None
+                        if self.farm_power_baseline is None
+                        else self.farm_power_baseline[:, ii],
+                    }
+                )
+            )
         df_opt = pd.concat(df_list, axis=0)
 
         return df_opt
@@ -640,13 +645,12 @@ class YawOptimization(LoggingManager):
         farm_power = self._calculate_farm_power(
             yaw_angles=yaw_angles_verify,
             wd_array=np.tile(wd_array_nominal, n_turbs),
-            turbine_weights=np.tile(self._turbs_to_opt_subset, sp)
+            turbine_weights=np.tile(self._turbs_to_opt_subset, sp),
         )
 
         # Calculate power uplift for optimal solutions
         uplift_o = 100 * (
-            np.tile(farm_power_opt_subset, (n_turbs, 1)) /
-            farm_power_baseline_verify - 1.0
+            np.tile(farm_power_opt_subset, (n_turbs, 1)) / farm_power_baseline_verify - 1.0
         )
 
         # Calculate power uplift for all cases we evaluated
@@ -664,29 +668,19 @@ class YawOptimization(LoggingManager):
         )
 
         # Overwrite yaw angles that insufficiently increased farm power with baseline values
-        yaw_angles_opt_subset[ids_to_simplify] = (
-            yaw_angles_baseline_subset[ids_to_simplify]
-        )
+        yaw_angles_opt_subset[ids_to_simplify] = yaw_angles_baseline_subset[ids_to_simplify]
 
         n = len(ids_to_simplify[0])
         if n > 0:
             # Yaw angles notably changed: recalculate farm powers
-            farm_power_opt_subset_new = (
-                self._calculate_farm_power(yaw_angles_opt_subset)
-            )
+            farm_power_opt_subset_new = self._calculate_farm_power(yaw_angles_opt_subset)
 
             if verbose:
                 # Calculate old uplift for all conditions
-                dP_old = 100.0 * (
-                    farm_power_opt_subset /
-                    farm_power_baseline_subset
-                ) - 100.0
+                dP_old = 100.0 * (farm_power_opt_subset / farm_power_baseline_subset) - 100.0
 
                 # Calculate new uplift for all conditions
-                dP_new = 100.0 * (
-                    farm_power_opt_subset_new /
-                    farm_power_baseline_subset
-                ) - 100.0
+                dP_new = 100.0 * (farm_power_opt_subset_new / farm_power_baseline_subset) - 100.0
 
                 # Calculate differences in power uplift
                 diff_uplift = dP_old - dP_new
@@ -694,22 +688,23 @@ class YawOptimization(LoggingManager):
                 jj = (ids_max_loss[0][0], ids_max_loss[1][0])
                 ws_array_nominal = self.fi_subset.floris.flow_field.wind_speeds
                 print(
-                    "Nullified the optimal yaw offset for {:d}".format(n) +
-                    " conditions and turbines."
-                 )
+                    "Nullified the optimal yaw offset for {:d}".format(n)
+                    + " conditions and turbines."
+                )
                 print(
-                     "Simplifying the yaw angles for these conditions lead " +
-                     "to a maximum change in wake-steering power uplift from "
-                     + "{:.5f}% to {:.5f}% at ".format(dP_old[jj], dP_new[jj])
-                     + " WD = {:.1f} deg and WS = {:.1f} m/s.".format(
-                        wd_array_nominal[jj[0]], ws_array_nominal[jj[1]],
+                    "Simplifying the yaw angles for these conditions lead "
+                    + "to a maximum change in wake-steering power uplift from "
+                    + "{:.5f}% to {:.5f}% at ".format(dP_old[jj], dP_new[jj])
+                    + " WD = {:.1f} deg and WS = {:.1f} m/s.".format(
+                        wd_array_nominal[jj[0]],
+                        ws_array_nominal[jj[1]],
                     )
                 )
 
                 t = timerpc() - start_time
                 print(
-                    "Time spent to verify the convergence of the optimal " +
-                    "yaw angles: {:.3f} s.".format(t)
+                    "Time spent to verify the convergence of the optimal "
+                    + "yaw angles: {:.3f} s.".format(t)
                 )
 
             # Return optimal solutions to the user

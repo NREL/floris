@@ -240,11 +240,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
         """
         if ti is None:
             print(
-                "Computing wind speed = "
-                + str(ws)
-                + " m/s, wind direction = "
-                + str(wd)
-                + " deg."
+                "Computing wind speed = " + str(ws) + " m/s, wind direction = " + str(wd) + " deg."
             )
         else:
             print(
@@ -264,7 +260,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
                 self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
             else:
                 self.fi.reinitialize_flow_field(
-                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
+                    wind_direction=wd, wind_speed=ws, turbulence_intensities=ti
                 )
             # calculate baseline power
             self.fi.calculate_wake(yaw_angles=self.yaw_angles_baseline)
@@ -348,11 +344,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
         """
         if ti is None:
             print(
-                "Computing wind speed = "
-                + str(ws)
-                + " m/s, wind direction = "
-                + str(wd)
-                + " deg."
+                "Computing wind speed = " + str(ws) + " m/s, wind direction = " + str(wd) + " deg."
             )
         else:
             print(
@@ -372,7 +364,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
                 self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
             else:
                 self.fi.reinitialize_flow_field(
-                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
+                    wind_direction=wd, wind_speed=ws, turbulence_intensities=ti
                 )
 
             self.initial_farm_power = initial_farm_power
@@ -400,7 +392,7 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
                 self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
             else:
                 self.fi.reinitialize_flow_field(
-                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
+                    wind_direction=wd, wind_speed=ws, turbulence_intensities=ti
                 )
             opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
             self.fi.calculate_wake(yaw_angles=opt_yaw_angles)
@@ -500,7 +492,6 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
                 for df_base_one in executor.map(
                     self._calc_baseline_power_one_case, self.ws.values, self.wd.values
                 ):
-
                     # add variables to dataframe
                     df_base = df_base.append(df_base_one)
             else:
@@ -510,7 +501,6 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
                     self.wd.values,
                     self.ti.values,
                 ):
-
                     # add variables to dataframe
                     df_base = df_base.append(df_base_one)
 
@@ -575,7 +565,6 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
                     self.wd.values,
                     self.df_base.power_baseline.values,
                 ):
-
                     # add variables to dataframe
                     df_opt = df_opt.append(df_opt_one)
             else:
@@ -586,7 +575,6 @@ class YawOptimizationWindRoseParallel(YawOptimizationWindRose, LoggingManager):
                     self.df_base.power_baseline.values,
                     self.ti.values,
                 ):
-
                     # add variables to dataframe
                     df_opt = df_opt.append(df_opt_one)
 

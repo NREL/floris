@@ -60,7 +60,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
         unc_options=None,
         turbine_weights=None,
         exclude_downstream_turbines=False,
-        clustering_wake_slope=0.30
+        clustering_wake_slope=0.30,
     ):
         """
         Instantiate YawOptimizationWindRoseParallel object with a
@@ -217,7 +217,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
             turbine_weights=turbine_weights,
             calc_init_power=False,
             exclude_downstream_turbines=exclude_downstream_turbines,
-            clustering_wake_slope=clustering_wake_slope
+            clustering_wake_slope=clustering_wake_slope,
         )
         self.clustering_wake_slope = clustering_wake_slope
 
@@ -258,11 +258,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
         """
         if ti is None:
             print(
-                "Computing wind speed = "
-                + str(ws)
-                + " m/s, wind direction = "
-                + str(wd)
-                + " deg."
+                "Computing wind speed = " + str(ws) + " m/s, wind direction = " + str(wd) + " deg."
             )
         else:
             print(
@@ -282,7 +278,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
                 self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
             else:
                 self.fi.reinitialize_flow_field(
-                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
+                    wind_direction=wd, wind_speed=ws, turbulence_intensities=ti
                 )
             # calculate baseline power
             self.fi.calculate_wake(yaw_angles=self.yaw_angles_baseline)
@@ -366,11 +362,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
         """
         if ti is None:
             print(
-                "Computing wind speed = "
-                + str(ws)
-                + " m/s, wind direction = "
-                + str(wd)
-                + " deg."
+                "Computing wind speed = " + str(ws) + " m/s, wind direction = " + str(wd) + " deg."
             )
         else:
             print(
@@ -390,7 +382,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
                 self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
             else:
                 self.fi.reinitialize_flow_field(
-                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
+                    wind_direction=wd, wind_speed=ws, turbulence_intensities=ti
                 )
 
             self.initial_farm_power = initial_farm_power
@@ -420,10 +412,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
                 self.x0 = np.array(x0_full)[cl]
                 self.fi = copy.deepcopy(fi_full)
                 self.fi.reinitialize_flow_field(
-                    layout_array=[
-                        np.array(fi_full.layout_x)[cl],
-                        np.array(fi_full.layout_y)[cl]
-                    ]
+                    layout_array=[np.array(fi_full.layout_x)[cl], np.array(fi_full.layout_y)[cl]]
                 )
                 opt_yaw_angles[cl] = self._optimize()
 
@@ -435,10 +424,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
             self.x0 = x0_full
             self.fi = fi_full
             self.fi.reinitialize_flow_field(
-                layout_array=[
-                    np.array(fi_full.layout_x),
-                    np.array(fi_full.layout_y)
-                ]
+                layout_array=[np.array(fi_full.layout_x), np.array(fi_full.layout_y)]
             )
 
             if np.sum(np.abs(opt_yaw_angles)) == 0:
@@ -463,7 +449,7 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
                 self.fi.reinitialize_flow_field(wind_direction=wd, wind_speed=ws)
             else:
                 self.fi.reinitialize_flow_field(
-                    wind_direction=wd, wind_speed=ws, turbulence_intensity=ti
+                    wind_direction=wd, wind_speed=ws, turbulence_intensities=ti
                 )
             opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
             self.fi.calculate_wake(yaw_angles=opt_yaw_angles)
@@ -563,7 +549,6 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
                 for df_base_one in executor.map(
                     self._calc_baseline_power_one_case, self.ws.values, self.wd.values
                 ):
-
                     # add variables to dataframe
                     df_base = df_base.append(df_base_one)
             else:
@@ -573,7 +558,6 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
                     self.wd.values,
                     self.ti.values,
                 ):
-
                     # add variables to dataframe
                     df_base = df_base.append(df_base_one)
 
@@ -638,7 +622,6 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
                     self.wd.values,
                     self.df_base.power_baseline.values,
                 ):
-
                     # add variables to dataframe
                     df_opt = df_opt.append(df_opt_one)
             else:
@@ -649,7 +632,6 @@ class YawOptimizationWindRoseParallelClustered(YawOptimizationWindRoseClustered,
                     self.df_base.power_baseline.values,
                     self.ti.values,
                 ):
-
                     # add variables to dataframe
                     df_opt = df_opt.append(df_opt_one)
 
