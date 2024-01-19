@@ -339,7 +339,7 @@ class TimeSeries(WindDataBase):
     Args:
         wind_directions: NumPy array of wind directions (NDArrayFloat).
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
-        turbulence_intensity:  NumPy array of wind speeds (NDArrayFloat, optional).
+        turbulence_intensities:  NumPy array of wind speeds (NDArrayFloat, optional).
             Defaults to None
         prices:  NumPy array of electricity prices (NDArrayFloat, optional).
             Defaults to None
@@ -350,7 +350,7 @@ class TimeSeries(WindDataBase):
         self,
         wind_directions: NDArrayFloat,
         wind_speeds: NDArrayFloat,
-        turbulence_intensity: NDArrayFloat | None = None,
+        turbulence_intensities: NDArrayFloat | None = None,
         prices: NDArrayFloat | None = None,
     ):
         # Wind speeds and wind directions must be the same length
@@ -359,7 +359,7 @@ class TimeSeries(WindDataBase):
 
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
-        self.turbulence_intensity = turbulence_intensity
+        self.turbulence_intensities = turbulence_intensities
         self.prices = prices
 
         # Record findex
@@ -378,7 +378,7 @@ class TimeSeries(WindDataBase):
             self.wind_directions,
             self.wind_speeds,
             uniform_frequency,
-            self.turbulence_intensity,
+            self.turbulence_intensities,
             self.prices,
         )
 
@@ -480,8 +480,8 @@ class TimeSeries(WindDataBase):
             df = df.assign(freq_val=df["freq_val"] * bin_weights)
 
         # If turbulence_intensity is not none, add to dataframe
-        if self.turbulence_intensity is not None:
-            df = df.assign(turbulence_intensity=self.turbulence_intensity)
+        if self.turbulence_intensities is not None:
+            df = df.assign(turbulence_intensities=self.turbulence_intensities)
 
         # If prices is not none, add to dataframe
         if self.prices is not None:
@@ -522,8 +522,8 @@ class TimeSeries(WindDataBase):
         freq_table = freq_table.reshape((len(wd_centers), len(ws_centers)))
 
         # If turbulence intensity is not none, compute the table
-        if self.turbulence_intensity is not None:
-            ti_table = df["turbulence_intensity_mean"].values.copy()
+        if self.turbulence_intensities is not None:
+            ti_table = df["turbulence_intensities_mean"].values.copy()
             ti_table = ti_table.reshape((len(wd_centers), len(ws_centers)))
         else:
             ti_table = None
