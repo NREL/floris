@@ -58,9 +58,9 @@ def test_asdict(flow_field_fixture: FlowField, turbine_grid_fixture: TurbineGrid
     assert dict1 == dict2
 
 
-def test_turbulence_intensity_to_n_findex(flow_field_fixture, turbine_grid_fixture):
+def test_turbulence_intensities_to_n_findex(flow_field_fixture, turbine_grid_fixture):
     # Assert tubulence intensity has same length as n_findex
-    assert len(flow_field_fixture.turbulence_intensity) == flow_field_fixture.n_findex
+    assert len(flow_field_fixture.turbulence_intensities) == flow_field_fixture.n_findex
 
     # Assert turbulence_intensity_field is the correct shape
     flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
@@ -70,6 +70,6 @@ def test_turbulence_intensity_to_n_findex(flow_field_fixture, turbine_grid_fixtu
     for findex in range(N_FINDEX):
         for t in range(N_TURBINES):
             assert (
-                flow_field_fixture.turbulence_intensity[findex]
+                flow_field_fixture.turbulence_intensities[findex]
                 == flow_field_fixture.turbulence_intensity_field[findex, t, 0, 0]
             )
