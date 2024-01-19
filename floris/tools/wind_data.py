@@ -329,6 +329,65 @@ class WindRose(WindDataBase):
 
         return ax
 
+    def assign_ti_using_wd_ws_function(self, func):
+        """
+        Use the passed in function to new assign values to turbulence_intensities
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument and wind_speeds as second argument and returns
+                turbulence_intensities
+        """
+        self.ti_table = func(self.wd_grid, self.ws_grid)
+        self._build_gridded_and_flattened_version()
+
+    def assign_ti_using_Iref(self, Iref):
+        """
+        Define TI as a function of wind speed by specifying an Iref value as in the
+        IEC standard appraoch
+
+        Args:
+            Iref (float): Reference turbulence level, values range [0,1]
+        """
+        if (Iref < 0) or (Iref > 1):
+            raise ValueError("Iref must be >= 0 and <=1")
+
+        def iref_func(wind_directions, wind_speeds):
+            sigma_1 = Iref * (0.75 * wind_speeds + 5.6)
+            return sigma_1 / wind_speeds
+
+        self.assign_ti_using_wd_ws_function(iref_func)
+
+    def plot_ti_over_ws(
+        self,
+        ax=None,
+        marker=".",
+        ls="None",
+        color="k",
+    ):
+        """
+        Scatter plot the turbulence_intensities against wind_speeds
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the wind rose is plotted. Defaults to None.
+            plot_kwargs (dict, optional): Keyword arguments to be passed to
+                ax.plot().
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted wind rose.
+        """
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots()
+
+        ax.plot(self.ws_flat, self.ti_table_flat, marker=marker, ls=ls, color=color)
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Turbulence Intensity (%)")
+        ax.grid(True)
+
 
 class TimeSeries(WindDataBase):
     """
@@ -409,6 +468,34 @@ class TimeSeries(WindDataBase):
         mask = wind_directions_wrapped >= 360 - wd_step / 2.0
         wind_directions_wrapped[mask] = wind_directions_wrapped[mask] - 360.0
         return wind_directions_wrapped
+
+    def assign_ti_using_wd_ws_function(self, func):
+        """
+        Use the passed in function to new assign values to turbulence_intensities
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument and wind_speeds as second argument and returns
+                turbulence_intensities
+        """
+        self.turbulence_intensities = func(self.wind_directions, self.wind_speeds)
+
+    def assign_ti_using_Iref(self, Iref):
+        """
+        Define TI as a function of wind speed by specifying an Iref value as in the
+        IEC standard appraoch
+
+        Args:
+            Iref (float): Reference turbulence level, values range [0,1]
+        """
+        if (Iref < 0) or (Iref > 1):
+            raise ValueError("Iref must be >= 0 and <=1")
+
+        def iref_func(wind_directions, wind_speeds):
+            sigma_1 = Iref * (0.75 * wind_speeds + 5.6)
+            return sigma_1 / wind_speeds
+
+        self.assign_ti_using_wd_ws_function(iref_func)
 
     def to_wind_rose(
         self, wd_step=2.0, ws_step=1.0, wd_edges=None, ws_edges=None, bin_weights=None
