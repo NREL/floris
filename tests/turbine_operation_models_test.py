@@ -232,26 +232,62 @@ def test_SimpleDeratingTurbine():
     baseline_power = 0
     baseline_ai = 0
 
+    # Check that for no specified derating, matches SimpleTurbine
     test_Ct = SimpleDeratingTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         power_setpoints=None,
     )
-
-    assert np.allclose(test_Ct, baseline_Ct)
+    base_Ct = SimpleTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+    assert np.allclose(test_Ct, base_Ct)
 
     test_power = SimpleDeratingTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         power_setpoints=None,
     )
-
-    assert np.allclose(test_power, baseline_power)
+    base_power = SimpleTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+    assert np.allclose(test_power, base_power)
 
     test_ai = SimpleDeratingTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         power_setpoints=None,
     )
+    base_ai = SimpleTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+    assert np.allclose(test_ai, base_ai)
 
-    assert np.allclose(test_ai, baseline_ai)
+    # When power_setpoints are 0, turbine is shut down.
+    test_Ct = SimpleDeratingTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        power_setpoints=np.zeros((1, n_turbines)),
+    )
+    assert np.allclose(test_Ct, 0)
+
+    test_power = SimpleDeratingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        power_setpoints=np.zeros((1, n_turbines)),
+    )
+    assert np.allclose(test_power, 0)
+
+    test_ai = SimpleDeratingTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        power_setpoints=np.zeros((1, n_turbines)),
+    )
+    assert np.allclose(test_ai, 0)
+
+    # When power setpoints are less than available, results should be less than when no setpoint
+    
+    # BUILD OUT THESE TESTS
