@@ -357,6 +357,15 @@ class TimeSeries(WindDataBase):
         if len(wind_directions) != len(wind_speeds):
             raise ValueError("wind_directions and wind_speeds must be the same length")
 
+        # If turbulence intensity is not none, must be same length as wind speed and
+        # wind directions
+        if (turbulence_intensities is not None) and (
+            len(turbulence_intensities) != len(wind_directions)
+        ):
+            raise ValueError(
+                "wind_directions and wind_speeds and turbulence_intensities must be the same length"
+            )
+
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
         self.turbulence_intensities = turbulence_intensities
