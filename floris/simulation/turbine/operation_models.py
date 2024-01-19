@@ -331,23 +331,55 @@ class SimpleDeratingTurbine(BaseOperationModel):
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
-        power_setpoints: NDArrayFloat,
+        air_density: float,
+        power_setpoints: NDArrayFloat | None,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        return 0 # Placeholder until code is built out
+        base_powers = SimpleTurbine.power(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            air_density=air_density
+        )
+        if power_setpoints is None:
+            return base_powers
+        else:
+            return np.minimum(base_powers, power_setpoints)
 
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
+        air_density: float,
         power_setpoints: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
     ):
+        base_thrust_coefficients = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+        )
+        if power_setpoints is None:
+            return base_thrust_coefficients
+        else:
+            # Compute the relative power; return relative thrust coefficient.
+            return 0
         return 0 # Placeholder until code is built out
 
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
         power_setpoints: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        return 0 # Placeholder until code is built out
+        base_axial_inductions = SimpleTurbine.axial_induction(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+        )
+        if power_setpoints is None:
+            return base_axial_inductions
+        else:
+            return 0

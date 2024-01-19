@@ -236,6 +236,7 @@ def test_SimpleDeratingTurbine():
     test_Ct = SimpleDeratingTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
         power_setpoints=None,
     )
     base_Ct = SimpleTurbine.thrust_coefficient(
@@ -247,17 +248,20 @@ def test_SimpleDeratingTurbine():
     test_power = SimpleDeratingTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
         power_setpoints=None,
     )
     base_power = SimpleTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
     )
     assert np.allclose(test_power, base_power)
 
     test_ai = SimpleDeratingTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
         power_setpoints=None,
     )
     base_ai = SimpleTurbine.axial_induction(
@@ -270,6 +274,7 @@ def test_SimpleDeratingTurbine():
     test_Ct = SimpleDeratingTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
         power_setpoints=np.zeros((1, n_turbines)),
     )
     assert np.allclose(test_Ct, 0)
@@ -277,6 +282,7 @@ def test_SimpleDeratingTurbine():
     test_power = SimpleDeratingTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
         power_setpoints=np.zeros((1, n_turbines)),
     )
     assert np.allclose(test_power, 0)
@@ -284,6 +290,7 @@ def test_SimpleDeratingTurbine():
     test_ai = SimpleDeratingTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
         power_setpoints=np.zeros((1, n_turbines)),
     )
     assert np.allclose(test_ai, 0)
