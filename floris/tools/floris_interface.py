@@ -76,10 +76,9 @@ class FlorisInterface(LoggingManager):
 
         # Make a check on reference height and provide a helpful warning
         unique_heights = np.unique(np.round(self.floris.farm.hub_heights, decimals=6))
-        if ((
-            len(unique_heights) == 1) and
-            (np.abs(self.floris.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6
-        )):
+        if (len(unique_heights) == 1) and (
+            np.abs(self.floris.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6
+        ):
             err_msg = (
                 "The only unique hub-height is not the equal to the specified reference "
                 "wind height. If this was unintended use -1 as the reference hub height to "
@@ -99,7 +98,6 @@ class FlorisInterface(LoggingManager):
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
     def assign_hub_height_to_ref_height(self):
-
         # Confirm can do this operation
         unique_heights = np.unique(self.floris.farm.hub_heights)
         if len(unique_heights) > 1:
@@ -119,6 +117,7 @@ class FlorisInterface(LoggingManager):
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         # tilt_angles: NDArrayFloat | list[float] | None = None,
+        power_setpoints: NDArrayFloat | list[float] | None = None,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -127,16 +126,16 @@ class FlorisInterface(LoggingManager):
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
+            power_setpoints (NDArrayFloat | list[float] | None, optional): Turbine power setpoints.
+                Defaults to None.
         """
 
         if yaw_angles is None:
-            yaw_angles = np.zeros(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines
-                )
-            )
+            yaw_angles = np.zeros((self.floris.flow_field.n_findex, self.floris.farm.n_turbines))
         self.floris.farm.yaw_angles = yaw_angles
+
+        # None should be ok
+        self.floris.farm.power_setpoints = power_setpoints
 
         # # TODO is this required?
         # if tilt_angles is not None:
@@ -169,12 +168,7 @@ class FlorisInterface(LoggingManager):
         """
 
         if yaw_angles is None:
-            yaw_angles = np.zeros(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines
-                )
-            )
+            yaw_angles = np.zeros((self.floris.flow_field.n_findex, self.floris.farm.n_turbines))
         self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
@@ -271,7 +265,7 @@ class FlorisInterface(LoggingManager):
             :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w
         """
         # Get results vectors
-        if (normal_vector == "z"):
+        if normal_vector == "z":
             x_flat = self.floris.grid.x_sorted_inertial_frame[0].flatten()
             y_flat = self.floris.grid.y_sorted_inertial_frame[0].flatten()
             z_flat = self.floris.grid.z_sorted_inertial_frame[0].flatten()
@@ -401,10 +395,7 @@ class FlorisInterface(LoggingManager):
 
         # Compute the cutplane
         horizontal_plane = CutPlane(
-            df,
-            self.floris.grid.grid_resolution[0],
-            self.floris.grid.grid_resolution[1],
-            "z"
+            df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1], "z"
         )
 
         # Reset the fi object back to the turbine grid configuration
@@ -599,7 +590,7 @@ class FlorisInterface(LoggingManager):
             )
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.
-        if (self.floris.flow_field.u < 0.).any():
+        if (self.floris.flow_field.u < 0.0).any():
             self.logger.warning("Some velocities at the rotor are negative.")
 
         turbine_powers = power(
@@ -612,7 +603,7 @@ class FlorisInterface(LoggingManager):
             turbine_type_map=self.floris.farm.turbine_type_map,
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
-            multidim_condition=self.floris.flow_field.multidim_conditions
+            multidim_condition=self.floris.flow_field.multidim_conditions,
         )
         return turbine_powers
 
@@ -628,7 +619,7 @@ class FlorisInterface(LoggingManager):
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
             average_method=self.floris.grid.average_method,
             cubature_weights=self.floris.grid.cubature_weights,
-            multidim_condition=self.floris.flow_field.multidim_conditions
+            multidim_condition=self.floris.flow_field.multidim_conditions,
         )
         return turbine_thrust_coefficients
 
@@ -644,7 +635,7 @@ class FlorisInterface(LoggingManager):
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
             average_method=self.floris.grid.average_method,
             cubature_weights=self.floris.grid.cubature_weights,
-            multidim_condition=self.floris.flow_field.multidim_conditions
+            multidim_condition=self.floris.flow_field.multidim_conditions,
         )
         return turbine_ais
 
@@ -653,7 +644,7 @@ class FlorisInterface(LoggingManager):
         return average_velocity(
             velocities=self.floris.flow_field.u,
             method=self.floris.grid.average_method,
-            cubature_weights=self.floris.grid.cubature_weights
+            cubature_weights=self.floris.grid.cubature_weights,
         )
 
     def get_turbine_TIs(self) -> NDArrayFloat:
@@ -709,20 +700,11 @@ class FlorisInterface(LoggingManager):
         if turbine_weights is None:
             # Default to equal weighing of all turbines when turbine_weights is None
             turbine_weights = np.ones(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines
-                )
+                (self.floris.flow_field.n_findex, self.floris.farm.n_turbines)
             )
         elif len(np.shape(turbine_weights)) == 1:
             # Deal with situation when 1D array is provided
-            turbine_weights = np.tile(
-                turbine_weights,
-                (
-                    self.floris.flow_field.n_findex,
-                    1
-                )
-            )
+            turbine_weights = np.tile(turbine_weights, (self.floris.flow_field.n_findex, 1))
 
         # Calculate all turbine powers and apply weights
         turbine_powers = self.get_turbine_powers()
@@ -796,8 +778,7 @@ class FlorisInterface(LoggingManager):
         # Check if frequency vector sums to 1.0. If not, raise a warning
         if np.abs(np.sum(freq) - 1.0) > 0.001:
             self.logger.warning(
-                "WARNING: The frequency array provided to get_farm_AEP() "
-                "does not sum to 1.0."
+                "WARNING: The frequency array provided to get_farm_AEP() " "does not sum to 1.0."
             )
 
         # Copy the full wind speed array from the floris object and initialize
@@ -819,15 +800,14 @@ class FlorisInterface(LoggingManager):
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[conditions_to_evaluate]
             self.reinitialize(
-                wind_speeds=wind_speeds_subset,
-                wind_directions=wind_directions_subset
+                wind_speeds=wind_speeds_subset, wind_directions=wind_directions_subset
             )
             if no_wake:
                 self.calculate_no_wake(yaw_angles=yaw_angles_subset)
             else:
                 self.calculate_wake(yaw_angles=yaw_angles_subset)
-            farm_power[conditions_to_evaluate] = (
-                self.get_farm_power(turbine_weights=turbine_weights)
+            farm_power[conditions_to_evaluate] = self.get_farm_power(
+                turbine_weights=turbine_weights
             )
 
         # Finally, calculate AEP in GWh
@@ -859,17 +839,17 @@ class FlorisInterface(LoggingManager):
         return self.floris.solve_for_points(x, y, z)
 
     def sample_velocity_deficit_profiles(
-            self,
-            direction: str = 'cross-stream',
-            downstream_dists: NDArrayFloat | list = None,
-            profile_range: NDArrayFloat | list = None,
-            resolution: int = 100,
-            wind_direction: float = None,
-            homogeneous_wind_speed: float = None,
-            ref_rotor_diameter: float = None,
-            x_start: float = 0.0,
-            y_start: float = 0.0,
-            reference_height: float = None,
+        self,
+        direction: str = "cross-stream",
+        downstream_dists: NDArrayFloat | list = None,
+        profile_range: NDArrayFloat | list = None,
+        resolution: int = 100,
+        wind_direction: float = None,
+        homogeneous_wind_speed: float = None,
+        ref_rotor_diameter: float = None,
+        x_start: float = 0.0,
+        y_start: float = 0.0,
+        reference_height: float = None,
     ) -> list[pd.DataFrame]:
         """
         Extract velocity deficit profiles at a set of downstream distances from a starting point
@@ -903,7 +883,7 @@ class FlorisInterface(LoggingManager):
             profile.
         """
 
-        if direction not in ['cross-stream', 'vertical']:
+        if direction not in ["cross-stream", "vertical"]:
             raise ValueError("`direction` must be either `cross-stream` or `vertical`.")
 
         if ref_rotor_diameter is None:
