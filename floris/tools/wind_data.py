@@ -79,13 +79,17 @@ class WindRose(WindDataBase):
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
         freq_table: Frequency table for binned wind direction, wind speed
             values (NDArrayFloat, optional).   Must have dimension
-            (n_wind_directions, n_wind_speeds).  Defaults to None.
+            (n_wind_directions, n_wind_speeds).  Defaults to None in which case
+            uniform frequency of all bins is assumed.
         ti_table: Turbulence intensity table for binned wind direction, wind
             speed values (NDArrayFloat, optional).   Must have dimension
-            (n_wind_directions, n_wind_speeds). Defaults to None.
-        price_table: Price table for binned binned wind direction, wind
+            (n_wind_directions, n_wind_speeds). Defaults to None (no change to
+            turbulence intensity)
+        value_table: Value table for binned wind direction, wind
             speed values (NDArrayFloat, optional).  Must have dimension
-            (n_wind_directions, n_wind_speeds).  Defaults to None.
+            (n_wind_directions, n_wind_speeds).  Defaults to None in which case
+            uniform values are assumed.  Value can be used to weight power in
+            each bin to compute the total value of the energy produced
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
 
@@ -97,7 +101,7 @@ class WindRose(WindDataBase):
         wind_speeds: NDArrayFloat,
         freq_table: NDArrayFloat | None = None,
         ti_table: NDArrayFloat | None = None,
-        price_table: NDArrayFloat | None = None,
+        value_table: NDArrayFloat | None = None,
         compute_zero_freq_occurrence: bool = False,
     ):
         if not isinstance(wind_directions, np.ndarray):
@@ -133,14 +137,14 @@ class WindRose(WindDataBase):
                 raise ValueError("ti_table second dimension must equal len(wind_speeds)")
         self.ti_table = ti_table
 
-        # If price_table is not None, confirm it has correct dimension,
+        # If value_table is not None, confirm it has correct dimension,
         # otherwise initialze to all ones
-        if price_table is not None:
-            if not price_table.shape[0] == len(wind_directions):
-                raise ValueError("price_table first dimension must equal len(wind_directions)")
-            if not price_table.shape[1] == len(wind_speeds):
-                raise ValueError("price_table second dimension must equal len(wind_speeds)")
-        self.price_table = price_table
+        if value_table is not None:
+            if not value_table.shape[0] == len(wind_directions):
+                raise ValueError("value_table first dimension must equal len(wind_directions)")
+            if not value_table.shape[1] == len(wind_speeds):
+                raise ValueError("value_table second dimension must equal len(wind_speeds)")
+        self.value_table = value_table
 
         # Save whether zero occurrence cases should be computed
         self.compute_zero_freq_occurrence = compute_zero_freq_occurrence
@@ -172,11 +176,11 @@ class WindRose(WindDataBase):
         else:
             self.ti_table_flat = None
 
-        # Price table
-        if self.price_table is not None:
-            self.price_table_flat = self.price_table.flatten()
+        # value table
+        if self.value_table is not None:
+            self.value_table_flat = self.value_table.flatten()
         else:
-            self.price_table_flat = None
+            self.value_table_flat = None
 
         # Set mask to non-zero frequency cases depending on compute_zero_freq_occurrence
         if self.compute_zero_freq_occurrence:
@@ -210,18 +214,18 @@ class WindRose(WindDataBase):
         else:
             ti_table_unpack = None
 
-        # Now get unpacked price table
-        if self.price_table_flat is not None:
-            price_table_unpack = self.price_table_flat[self.non_zero_freq_mask].copy()
+        # Now get unpacked value table
+        if self.value_table_flat is not None:
+            value_table_unpack = self.value_table_flat[self.non_zero_freq_mask].copy()
         else:
-            price_table_unpack = None
+            value_table_unpack = None
 
         return (
             wind_directions_unpack,
             wind_speeds_unpack,
             freq_table_unpack,
             ti_table_unpack,
-            price_table_unpack,
+            value_table_unpack,
         )
 
     def resample_wind_rose(self, wd_step=None, ws_step=None):
@@ -253,7 +257,7 @@ class WindRose(WindDataBase):
 
         # Pass the flat versions of each quantity to build a TimeSeries model
         time_series = TimeSeries(
-            self.wd_flat, self.ws_flat, self.ti_table_flat, self.price_table_flat
+            self.wd_flat, self.ws_flat, self.ti_table_flat, self.value_table_flat
         )
 
         # Now build a new wind rose using the new steps
@@ -400,7 +404,7 @@ class TimeSeries(WindDataBase):
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
         turbulence_intensities:  NumPy array of wind speeds (NDArrayFloat, optional).
             Defaults to None
-        prices:  NumPy array of electricity prices (NDArrayFloat, optional).
+        values:  NumPy array of electricity values (NDArrayFloat, optional).
             Defaults to None
 
     """
@@ -410,25 +414,28 @@ class TimeSeries(WindDataBase):
         wind_directions: NDArrayFloat,
         wind_speeds: NDArrayFloat,
         turbulence_intensities: NDArrayFloat | None = None,
-        prices: NDArrayFloat | None = None,
+        values: NDArrayFloat | None = None,
     ):
         # Wind speeds and wind directions must be the same length
         if len(wind_directions) != len(wind_speeds):
             raise ValueError("wind_directions and wind_speeds must be the same length")
 
-        # If turbulence intensity is not none, must be same length as wind speed and
-        # wind directions
-        if (turbulence_intensities is not None) and (
-            len(turbulence_intensities) != len(wind_directions)
-        ):
-            raise ValueError(
-                "wind_directions and wind_speeds and turbulence_intensities must be the same length"
-            )
+        # If turbulence_intensities is not None, must be same length as wind_directions
+        if turbulence_intensities is not None:
+            if len(wind_directions) != len(turbulence_intensities):
+                raise ValueError(
+                    "wind_directions and turbulence_intensities must be the same length"
+                )
+
+        # If values is not None, must be same length as wind_directions
+        if values is not None:
+            if len(wind_directions) != len(values):
+                raise ValueError("wind_directions and values must be the same length")
 
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
         self.turbulence_intensities = turbulence_intensities
-        self.prices = prices
+        self.values = values
 
         # Record findex
         self.n_findex = len(self.wind_directions)
@@ -447,7 +454,7 @@ class TimeSeries(WindDataBase):
             self.wind_speeds,
             uniform_frequency,
             self.turbulence_intensities,
-            self.prices,
+            self.values,
         )
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
@@ -541,7 +548,7 @@ class TimeSeries(WindDataBase):
             )
 
             # Only keep the range with values in it
-            wd_edges = wd_edges[wd_edges + wd_step >= wind_directions_wrapped.min()]
+            wd_edges = wd_edges[wd_edges + wd_step > wind_directions_wrapped.min()]
             wd_edges = wd_edges[wd_edges - wd_step <= wind_directions_wrapped.max()]
 
         # Define the centers from the edges
@@ -555,7 +562,7 @@ class TimeSeries(WindDataBase):
             ws_edges = np.arange(0.0 - ws_step / 2.0, 50.0, ws_step)
 
             # Only keep the range with values in it
-            ws_edges = ws_edges[ws_edges + ws_step >= self.wind_speeds.min()]
+            ws_edges = ws_edges[ws_edges + ws_step > self.wind_speeds.min()]
             ws_edges = ws_edges[ws_edges - ws_step <= self.wind_speeds.max()]
 
         # Define the centers from the edges
@@ -575,13 +582,13 @@ class TimeSeries(WindDataBase):
         if bin_weights is not None:
             df = df.assign(freq_val=df["freq_val"] * bin_weights)
 
-        # If turbulence_intensity is not none, add to dataframe
+        # If turbulence_intensities is not none, add to dataframe
         if self.turbulence_intensities is not None:
             df = df.assign(turbulence_intensities=self.turbulence_intensities)
 
-        # If prices is not none, add to dataframe
-        if self.prices is not None:
-            df = df.assign(prices=self.prices)
+        # If values is not none, add to dataframe
+        if self.values is not None:
+            df = df.assign(values=self.values)
 
         # Bin wind speed and wind direction and then group things up
         df = (
@@ -624,12 +631,12 @@ class TimeSeries(WindDataBase):
         else:
             ti_table = None
 
-        # If prices is not none, compute the table
-        if self.prices is not None:
-            price_table = df["prices_mean"].values.copy()
-            price_table = price_table.reshape((len(wd_centers), len(ws_centers)))
+        # If values is not none, compute the table
+        if self.values is not None:
+            value_table = df["values_mean"].values.copy()
+            value_table = value_table.reshape((len(wd_centers), len(ws_centers)))
         else:
-            price_table = None
+            value_table = None
 
         # Return a WindRose
-        return WindRose(wd_centers, ws_centers, freq_table, ti_table, price_table)
+        return WindRose(wd_centers, ws_centers, freq_table, ti_table, value_table)
