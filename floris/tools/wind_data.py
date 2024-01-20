@@ -79,13 +79,16 @@ class WindRose(WindDataBase):
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
         freq_table: Frequency table for binned wind direction, wind speed
             values (NDArrayFloat, optional).   Must have dimension
-            (n_wind_directions, n_wind_speeds).  Defaults to None.
+            (n_wind_directions, n_wind_speeds).  Defaults to None in which case
+            uniform frequency of all bins is assumed.
         ti_table: Turbulence intensity table for binned wind direction, wind
             speed values (NDArrayFloat, optional).   Must have dimension
-            (n_wind_directions, n_wind_speeds). Defaults to None.
+            (n_wind_directions, n_wind_speeds). Defaults to None (no change to
+            turbulence intensity)
         price_table: Price table for binned binned wind direction, wind
             speed values (NDArrayFloat, optional).  Must have dimension
-            (n_wind_directions, n_wind_speeds).  Defaults to None.
+            (n_wind_directions, n_wind_speeds).  Defaults to None in which case
+            uniform prices are assumed.
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
 
