@@ -101,7 +101,7 @@ def test_wind_rose_unpack():
         wind_speeds_unpack,
         freq_table_unpack,
         ti_table_unpack,
-        price_table_unpack,
+        value_table_unpack,
     ) = wind_rose.unpack()
 
     # Given the above frequency table with zeros for a few elements,
@@ -124,7 +124,7 @@ def test_wind_rose_unpack():
         wind_speeds_unpack,
         freq_table_unpack,
         ti_table_unpack,
-        price_table_unpack,
+        value_table_unpack,
     ) = wind_rose.unpack()
 
     # Expect now to compute all combinations
