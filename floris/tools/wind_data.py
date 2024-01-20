@@ -459,7 +459,7 @@ class TimeSeries(WindDataBase):
             )
 
             # Only keep the range with values in it
-            wd_edges = wd_edges[wd_edges + wd_step >= wind_directions_wrapped.min()]
+            wd_edges = wd_edges[wd_edges + wd_step > wind_directions_wrapped.min()]
             wd_edges = wd_edges[wd_edges - wd_step <= wind_directions_wrapped.max()]
 
         # Define the centers from the edges
@@ -473,7 +473,7 @@ class TimeSeries(WindDataBase):
             ws_edges = np.arange(0.0 - ws_step / 2.0, 50.0, ws_step)
 
             # Only keep the range with values in it
-            ws_edges = ws_edges[ws_edges + ws_step >= self.wind_speeds.min()]
+            ws_edges = ws_edges[ws_edges + ws_step > self.wind_speeds.min()]
             ws_edges = ws_edges[ws_edges - ws_step <= self.wind_speeds.max()]
 
         # Define the centers from the edges
