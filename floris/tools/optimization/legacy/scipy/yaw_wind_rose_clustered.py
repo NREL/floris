@@ -223,14 +223,15 @@ class YawOptimizationWindRoseClustered(YawOptimizationWindRose, LoggingManager):
         )
         self.clustering_wake_slope = clustering_wake_slope
 
+
     def _cluster_turbines(self):
         wind_directions = self.fi.floris.farm.wind_direction
-        if np.std(wind_directions) > 0.001:
+        if (np.std(wind_directions) > 0.001):
             raise ValueError("Wind directions must be uniform for clustering algorithm.")
         self.clusters = cluster_turbines(
             fi=self.fi,
             wind_direction=self.fi.floris.farm.wind_direction[0],
-            wake_slope=self.clustering_wake_slope,
+            wake_slope=self.clustering_wake_slope
         )
 
     def plot_clusters(self):
@@ -239,8 +240,9 @@ class YawOptimizationWindRoseClustered(YawOptimizationWindRose, LoggingManager):
                 fi=self.fi,
                 wind_direction=wd,
                 wake_slope=self.clustering_wake_slope,
-                plot_lines=True,
+                plot_lines=True
             )
+
 
     def optimize(self):
         """
@@ -366,7 +368,10 @@ class YawOptimizationWindRoseClustered(YawOptimizationWindRose, LoggingManager):
                 self.x0 = x0_full
                 self.fi = fi_full
                 self.fi.reinitialize_flow_field(
-                    layout_array=[np.array(fi_full.layout_x), np.array(fi_full.layout_y)]
+                    layout_array=[
+                        np.array(fi_full.layout_x),
+                        np.array(fi_full.layout_y)
+                    ]
                 )
 
                 if np.sum(np.abs(opt_yaw_angles)) == 0:
