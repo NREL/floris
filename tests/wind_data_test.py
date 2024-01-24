@@ -17,9 +17,9 @@ import pytest
 
 from floris.tools import (
     TimeSeries,
-    WindDataBase,
     WindRose,
 )
+from floris.tools.wind_data import WindDataBase
 
 
 class ChildClassTest(WindDataBase):
