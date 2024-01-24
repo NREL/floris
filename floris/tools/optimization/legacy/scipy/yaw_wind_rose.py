@@ -303,7 +303,11 @@ class YawOptimizationWindRose(Optimization):
             unc_options=self.unc_options,
         )
 
-        return -1.0 * np.dot(self.turbine_weights, turbine_powers) / self.initial_farm_power
+        return (
+            -1.0
+            * np.dot(self.turbine_weights, turbine_powers)
+            / self.initial_farm_power
+        )
 
     def _set_opt_bounds(self, minimum_yaw_angle, maximum_yaw_angle):
         """
@@ -340,7 +344,7 @@ class YawOptimizationWindRose(Optimization):
         self.fi.reinitialize_flow_field(
             wind_speed=wind_map.input_speed,
             wind_direction=wind_map.input_direction,
-            turbulence_intensities=wind_map.input_ti,
+            turbulence_intensity=wind_map.input_ti,
         )
         return opt_yaw_angles
 
@@ -365,7 +369,9 @@ class YawOptimizationWindRose(Optimization):
                 fi=self.fi, wind_direction=self.fi.floris.farm.wind_direction[0]
             )
             downstream_turbines = np.array(downstream_turbines, dtype=int)
-            self.turbs_to_opt = [i for i in self.turbs_to_opt if i not in downstream_turbines]
+            self.turbs_to_opt = [
+                i for i in self.turbs_to_opt if i not in downstream_turbines
+            ]
 
         # Set up a template yaw angles array with default solutions. The default
         # solutions are either 0.0 or the allowable yaw angle closest to 0.0 deg.
@@ -375,7 +381,9 @@ class YawOptimizationWindRose(Optimization):
         yaw_angles_template = np.zeros(self.nturbs, dtype=float)
         for ti in range(self.nturbs):
             if (self.bnds[ti][0] > 0.0) | (self.bnds[ti][1] < 0.0):
-                yaw_angles_template[ti] = self.bnds[ti][np.argmin(np.abs(self.bnds[ti]))]
+                yaw_angles_template[ti] = self.bnds[ti][
+                    np.argmin(np.abs(self.bnds[ti]))
+                ]
         self.yaw_angles_template = yaw_angles_template
 
         # Derive normalized initial condition and bounds
@@ -385,8 +393,12 @@ class YawOptimizationWindRose(Optimization):
         )
         self.bnds_norm = [
             (
-                self._norm(self.bnds[i][0], self.minimum_yaw_angle, self.maximum_yaw_angle),
-                self._norm(self.bnds[i][1], self.minimum_yaw_angle, self.maximum_yaw_angle),
+                self._norm(
+                    self.bnds[i][0], self.minimum_yaw_angle, self.maximum_yaw_angle
+                ),
+                self._norm(
+                    self.bnds[i][1], self.minimum_yaw_angle, self.maximum_yaw_angle
+                ),
             )
             for i in self.turbs_to_opt
         ]
@@ -560,14 +572,17 @@ class YawOptimizationWindRose(Optimization):
             self.yaw_angles_baseline = yaw_angles_baseline
         else:
             self.yaw_angles_baseline = [
-                turbine.yaw_angle for turbine in self.fi.floris.farm.turbine_map.turbines
+                turbine.yaw_angle
+                for turbine in self.fi.floris.farm.turbine_map.turbines
             ]
             if any(np.abs(self.yaw_angles_baseline) > 0.0):
                 print(
                     "INFO: Baseline yaw angles were not specified and were derived "
                     "from the floris object."
                 )
-                print("INFO: The inherent yaw angles in the floris object are not all 0.0 degrees.")
+                print(
+                    "INFO: The inherent yaw angles in the floris object are not all 0.0 degrees."
+                )
 
         self.bnds = bnds
         if bnds is not None:
@@ -584,9 +599,13 @@ class YawOptimizationWindRose(Optimization):
                 if (self.bnds[ti][0] > 0.0) | (self.bnds[ti][1] < 0.0):
                     self.x0[ti] = np.mean(self.bnds[ti])
 
-        if any(np.array(self.yaw_angles_baseline) < np.array([b[0] for b in self.bnds])):
+        if any(
+            np.array(self.yaw_angles_baseline) < np.array([b[0] for b in self.bnds])
+        ):
             print("INFO: yaw_angles_baseline exceed lower bound constraints.")
-        if any(np.array(self.yaw_angles_baseline) > np.array([b[1] for b in self.bnds])):
+        if any(
+            np.array(self.yaw_angles_baseline) > np.array([b[1] for b in self.bnds])
+        ):
             print("INFO: yaw_angles_baseline in FLORIS exceed upper bound constraints.")
         if any(np.array(self.x0) < np.array([b[0] for b in self.bnds])):
             raise ValueError("Initial guess x0 exceeds lower bound constraints.")
@@ -755,7 +774,9 @@ class YawOptimizationWindRose(Optimization):
                     )
 
                 # calculate baseline power
-                self.fi.calculate_wake(yaw_angles=self.yaw_angles_baseline, no_wake=False)
+                self.fi.calculate_wake(
+                    yaw_angles=self.yaw_angles_baseline, no_wake=False
+                )
                 power_base = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
@@ -763,7 +784,9 @@ class YawOptimizationWindRose(Optimization):
                 )
 
                 # calculate power for no wake case
-                self.fi.calculate_wake(yaw_angles=self.yaw_angles_baseline, no_wake=True)
+                self.fi.calculate_wake(
+                    yaw_angles=self.yaw_angles_baseline, no_wake=True
+                )
                 power_no_wake = self.fi.get_turbine_power(
                     include_unc=self.include_unc,
                     unc_pmfs=self.unc_pmfs,
