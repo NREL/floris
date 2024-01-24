@@ -11,7 +11,11 @@ from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptim
 from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInterface
 
 
-def _load_local_floris_object(fi_dict, unc_pmfs=None, fix_yaw_in_relative_frame=False):
+def _load_local_floris_object(
+    fi_dict,
+    unc_pmfs=None,
+    fix_yaw_in_relative_frame=False
+):
     # Load local FLORIS object
     if unc_pmfs is None:
         fi = FlorisInterface(fi_dict)
@@ -72,7 +76,7 @@ class ParallelComputingInterface(LoggingManager):
         interface="multiprocessing",  # Options are 'multiprocessing', 'mpi4py' or 'concurrent'
         use_mpi4py=None,
         propagate_flowfield_from_workers=False,
-        print_timings=False,
+        print_timings=False
     ):
         """A wrapper around the nominal floris_interface class that adds
         parallel computing to common FlorisInterface properties.
@@ -112,17 +116,14 @@ class ParallelComputingInterface(LoggingManager):
 
         if interface == "mpi4py":
             import mpi4py.futures as mp
-
             self._PoolExecutor = mp.MPIPoolExecutor
         elif interface == "multiprocessing":
             import multiprocessing as mp
-
             self._PoolExecutor = mp.Pool
             if max_workers is None:
                 max_workers = mp.cpu_count()
         elif interface == "concurrent":
             from concurrent.futures import ProcessPoolExecutor
-
             self._PoolExecutor = ProcessPoolExecutor
         else:
             raise UserWarning(
@@ -214,13 +215,11 @@ class ParallelComputingInterface(LoggingManager):
     def _preprocessing(self, yaw_angles=None):
         # Format yaw angles
         if yaw_angles is None:
-            yaw_angles = np.zeros(
-                (
-                    self.fi.floris.flow_field.n_wind_directions,
-                    self.fi.floris.flow_field.n_wind_speeds,
-                    self.fi.floris.farm.n_turbines,
-                )
-            )
+            yaw_angles = np.zeros((
+                self.fi.floris.flow_field.n_wind_directions,
+                self.fi.floris.flow_field.n_wind_speeds,
+                self.fi.floris.farm.n_turbines
+            ))
 
         # Prepare settings
         n_wind_direction_splits = self.n_wind_direction_splits
@@ -233,10 +232,12 @@ class ParallelComputingInterface(LoggingManager):
         # Prepare the input arguments for parallel execution
         fi_dict = self.fi.floris.as_dict()
         wind_direction_id_splits = np.array_split(
-            np.arange(self.fi.floris.flow_field.n_wind_directions), n_wind_direction_splits
+            np.arange(self.fi.floris.flow_field.n_wind_directions),
+            n_wind_direction_splits
         )
         wind_speed_id_splits = np.array_split(
-            np.arange(self.fi.floris.flow_field.n_wind_speeds), n_wind_speed_splits
+            np.arange(self.fi.floris.flow_field.n_wind_speeds),
+            n_wind_speed_splits
         )
         multiargs = []
         for wd_id_split in wind_direction_id_splits:
@@ -244,7 +245,7 @@ class ParallelComputingInterface(LoggingManager):
                 fi_dict_split = copy.deepcopy(fi_dict)
                 wind_directions = self.fi.floris.flow_field.wind_directions[wd_id_split]
                 wind_speeds = self.fi.floris.flow_field.wind_speeds[ws_id_split]
-                yaw_angles_subset = yaw_angles[wd_id_split[0] : wd_id_split[-1] + 1, ws_id_split, :]
+                yaw_angles_subset = yaw_angles[wd_id_split[0]:wd_id_split[-1]+1, ws_id_split, :]
                 fi_dict_split["flow_field"]["wind_directions"] = wind_directions
                 fi_dict_split["flow_field"]["wind_speeds"] = wind_speeds
 
@@ -256,7 +257,7 @@ class ParallelComputingInterface(LoggingManager):
                         fi_dict_split,
                         self.fi.fi.het_map,
                         self.fi.unc_pmfs,
-                        self.fi.fix_yaw_in_relative_frame,
+                        self.fi.fix_yaw_in_relative_frame
                     )
                 multiargs.append((fi_information, yaw_angles_subset))
 
@@ -270,15 +271,16 @@ class ParallelComputingInterface(LoggingManager):
                     [
                         eval("f.{:s}".format(field))
                         for f in subset[
-                            wii * self.n_wind_direction_splits : (wii + 1)
+                            wii
+                            * self.n_wind_direction_splits:(wii+1)
                             * self.n_wind_direction_splits
                         ]
                     ],
-                    axis=0,
+                    axis=0
                 )
                 for wii in range(self.n_wind_speed_splits)
             ],
-            axis=1,
+            axis=1
         )
 
     def _postprocessing(self, output):
@@ -290,14 +292,12 @@ class ParallelComputingInterface(LoggingManager):
         turbine_powers = np.concatenate(
             [
                 np.concatenate(
-                    power_subsets[
-                        self.n_wind_speed_splits * (ii) : self.n_wind_speed_splits * (ii + 1)
-                    ],
-                    axis=1,
+                    power_subsets[self.n_wind_speed_splits*(ii):self.n_wind_speed_splits*(ii+1)],
+                    axis=1
                 )
                 for ii in range(self.n_wind_direction_splits)
             ],
-            axis=0,
+            axis=0
         )
 
         # Optionally, also merge flow field dictionaries from individual floris solutions
@@ -310,7 +310,8 @@ class ParallelComputingInterface(LoggingManager):
             self.floris.flow_field.v = self._merge_subsets("v", flowfield_subsets)
             self.floris.flow_field.w = self._merge_subsets("w", flowfield_subsets)
             self.floris.flow_field.turbulence_intensity_field = self._merge_subsets(
-                "turbulence_intensity_field", flowfield_subsets
+                "turbulence_intensity_field",
+                flowfield_subsets
             )
 
         return turbine_powers
@@ -333,7 +334,9 @@ class ParallelComputingInterface(LoggingManager):
                 out = p.starmap(_get_turbine_powers_serial, multiargs)
             else:
                 out = p.map(
-                    _get_turbine_powers_serial, [j[0] for j in multiargs], [j[1] for j in multiargs]
+                    _get_turbine_powers_serial,
+                    [j[0] for j in multiargs],
+                    [j[1] for j in multiargs]
                 )
                 # out = list(out)
         t_execution = timerpc() - t1
@@ -363,7 +366,7 @@ class ParallelComputingInterface(LoggingManager):
                 (
                     self.fi.floris.flow_field.n_wind_directions,
                     self.fi.floris.flow_field.n_wind_speeds,
-                    self.fi.floris.farm.n_turbines,
+                    self.fi.floris.farm.n_turbines
                 )
             )
         elif len(np.shape(turbine_weights)) == 1:
@@ -373,8 +376,8 @@ class ParallelComputingInterface(LoggingManager):
                 (
                     self.fi.floris.flow_field.n_wind_directions,
                     self.fi.floris.flow_field.n_wind_speeds,
-                    1,
-                ),
+                    1
+                )
             )
 
         # Calculate all turbine powers and apply weights
@@ -447,7 +450,7 @@ class ParallelComputingInterface(LoggingManager):
                 cut_out_wind_speed=cut_out_wind_speed,
                 yaw_angles=yaw_angles,
                 turbine_weights=turbine_weights,
-                no_wake=no_wake,
+                no_wake=no_wake
             )
 
         # Verify dimensions of the variable "freq"
@@ -484,8 +487,8 @@ class ParallelComputingInterface(LoggingManager):
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
             self.fi.reinitialize(wind_speeds=wind_speeds_subset)
-            farm_power[:, conditions_to_evaluate] = self.get_farm_power(
-                yaw_angles=yaw_angles_subset, turbine_weights=turbine_weights
+            farm_power[:, conditions_to_evaluate] = (
+                self.get_farm_power(yaw_angles=yaw_angles_subset, turbine_weights=turbine_weights)
             )
 
         # Finally, calculate AEP in GWh
@@ -502,13 +505,14 @@ class ParallelComputingInterface(LoggingManager):
         maximum_yaw_angle=25.0,
         yaw_angles_baseline=None,
         x0=None,
-        Ny_passes=[5, 4],
+        Ny_passes=[5,4],
         turbine_weights=None,
         exclude_downstream_turbines=True,
         exploit_layout_symmetry=True,
         verify_convergence=False,
         print_worker_progress=False,  # Recommended disabled to avoid clutter. Useful for debugging
     ):
+
         # Prepare the inputs to each core for multiprocessing module
         t0 = timerpc()
         multiargs = self._preprocessing()
@@ -551,10 +555,8 @@ class ParallelComputingInterface(LoggingManager):
         t2 = timerpc()
 
         # Combine all solutions from multiprocessing into single dataframe
-        df_opt = (
-            pd.concat(df_opt_splits, axis=0)
-            .reset_index(drop=True)
-            .sort_values(by=["wind_direction", "wind_speed", "turbulence_intensity"])
+        df_opt = pd.concat(df_opt_splits, axis=0).reset_index(drop=True).sort_values(
+            by=["wind_direction", "wind_speed", "turbulence_intensity"]
         )
         t3 = timerpc()
 

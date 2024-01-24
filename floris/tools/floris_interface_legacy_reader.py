@@ -64,6 +64,7 @@ class FlorisInterfaceLegacyV2(FlorisInterface):
     """
 
     def __init__(self, configuration: dict | str | Path, het_map=None):
+
         if not isinstance(configuration, (str, Path, dict)):
             raise TypeError("The Floris `configuration` must of type 'dict', 'str', or 'Path'.")
 
@@ -112,7 +113,7 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
     dict_floris["farm"] = {
         "layout_x": fp["layout_x"],
         "layout_y": fp["layout_y"],
-        "turbine_type": ["nrel_5MW"],  # Placeholder
+        "turbine_type": ["nrel_5MW"]  # Placeholder
     }
 
     ref_height = fp["specified_wind_height"]
@@ -167,9 +168,15 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
     turbulence_subdict = copy.deepcopy(wtp)
 
     # Save parameter settings to wake dictionary
-    dict_floris["wake"]["wake_velocity_parameters"] = {velocity_model_str: velocity_subdict}
-    dict_floris["wake"]["wake_deflection_parameters"] = {deflection_model: deflection_subdict}
-    dict_floris["wake"]["wake_turbulence_parameters"] = {turbulence_model: turbulence_subdict}
+    dict_floris["wake"]["wake_velocity_parameters"] = {
+        velocity_model_str: velocity_subdict
+    }
+    dict_floris["wake"]["wake_deflection_parameters"] = {
+        deflection_model: deflection_subdict
+    }
+    dict_floris["wake"]["wake_turbulence_parameters"] = {
+        turbulence_model: turbulence_subdict
+    }
 
     # Finally add turbine information
     dict_turbine = {
@@ -181,7 +188,7 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
         "rotor_diameter": tp["rotor_diameter"],
         "TSR": tp["TSR"],
         "power_thrust_table": tp["power_thrust_table"],
-        "ref_air_density": 1.225,  # This was implicit in the former input file
+        "ref_air_density": 1.225 # This was implicit in the former input file
     }
 
     return dict_floris, dict_turbine
@@ -201,12 +208,16 @@ if __name__ == "__main__":
         The file format is changed from JSON to YAML and all inputs are mapped, as needed."
 
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument(
-        "-i", "--input-file", nargs=1, required=True, help="Path to the legacy input file"
-    )
-    parser.add_argument(
-        "-o", "--output-file", nargs="?", default=None, help="Path to write the output file"
-    )
+    parser.add_argument("-i",
+                        "--input-file",
+                        nargs=1,
+                        required=True,
+                        help="Path to the legacy input file")
+    parser.add_argument("-o",
+                        "--output-file",
+                        nargs="?",
+                        default=None,
+                        help="Path to write the output file")
     args = parser.parse_args()
 
     # Specify paths
