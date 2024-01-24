@@ -50,11 +50,14 @@ class TurbOParkVelocityDeficit(BaseModel):
     def __attrs_post_init__(self) -> None:
         lookup_table_matlab_file = Path(__file__).parent / "turbopark_lookup_table.mat"
         lookup_table_file = scipy.io.loadmat(lookup_table_matlab_file)
-        dist = lookup_table_file["overlap_lookup_table"][0][0][0][0]
-        radius_down = lookup_table_file["overlap_lookup_table"][0][0][1][0]
-        overlap_gauss = lookup_table_file["overlap_lookup_table"][0][0][2]
+        dist = lookup_table_file['overlap_lookup_table'][0][0][0][0]
+        radius_down = lookup_table_file['overlap_lookup_table'][0][0][1][0]
+        overlap_gauss = lookup_table_file['overlap_lookup_table'][0][0][2]
         self.overlap_gauss_interp = RegularGridInterpolator(
-            (dist, radius_down), overlap_gauss, method="linear", bounds_error=False
+            (dist, radius_down),
+            overlap_gauss,
+            method='linear',
+            bounds_error=False
         )
 
     def prepare_function(
@@ -62,6 +65,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         grid: Grid,
         flow_field: FlowField,
     ) -> Dict[str, Any]:
+
         kwargs = {
             "x": grid.x_sorted,
             "y": grid.y_sorted,
@@ -97,7 +101,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         # subsequent runtime warnings.
         # Here self.NUM_EPS is to avoid precision issues with masking, and is slightly
         # larger than 0.0
-        downstream_mask = x_i - x >= self.NUM_EPS
+        downstream_mask = (x_i - x >= self.NUM_EPS)
         x_dist = (x_i - x) * downstream_mask / rotor_diameters
 
         # Radial distance between turbine i and the center lines of wakes from all
@@ -110,7 +114,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         # Characteristic wake widths from all turbines relative to turbine i
         dw = characteristic_wake_width(x_dist, ambient_turbulence_intensities, Cts, self.A)
         epsilon = 0.25 * np.sqrt(
-            np.min(0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts), 3, keepdims=True)
+            np.min( 0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts), 3, keepdims=True )
         )
         sigma = rotor_diameters * (epsilon + dw)
 
@@ -127,15 +131,11 @@ class TurbOParkVelocityDeficit(BaseModel):
         delta_image = np.empty(np.shape(u_initial)) * np.nan
 
         # Compute deficits for real turbines and for mirrored (image) turbines
-        delta_real = (
-            C
-            * wtg_overlapping
-            * self.overlap_gauss_interp((r_dist / sigma, rotor_diameter_i / 2 / sigma))
+        delta_real = C * wtg_overlapping * self.overlap_gauss_interp(
+            (r_dist / sigma, rotor_diameter_i / 2 / sigma)
         )
-        delta_image = (
-            C
-            * wtg_overlapping
-            * self.overlap_gauss_interp((r_dist_image / sigma, rotor_diameter_i / 2 / sigma))
+        delta_image = C * wtg_overlapping * self.overlap_gauss_interp(
+            (r_dist_image / sigma, rotor_diameter_i / 2 / sigma)
         )
         delta = np.concatenate((delta_real, delta_image), axis=1)
 
@@ -156,12 +156,10 @@ def precalculate_overlap():
     for i in range(len(dist)):
         for j in range(len(radius_down)):
             if radius_down[j] > 0:
-
                 def fun(r, theta):
                     return r * np.exp(
-                        -1 * (r**2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta)) / 2
+                        -1 * (r ** 2 + dist[i] ** 2 - 2 * dist[i] * r * np.cos(theta)) / 2
                     )
-
                 out = integrate.dblquad(fun, 0, radius_down[j], lambda x: 0, lambda x: 2 * np.pi)[0]
                 out = out / (np.pi * radius_down[j] ** 2)
             else:
@@ -181,17 +179,12 @@ def characteristic_wake_width(x_dist, TI, Cts, A):
     alpha = TI * c1
     beta = c2 * TI / np.sqrt(Cts)
 
-    dw = (
-        A
-        * TI
-        / beta
-        * (
-            np.sqrt((alpha + beta * x_dist) ** 2 + 1)
-            - np.sqrt(1 + alpha**2)
-            - np.log(
-                ((np.sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha)
-                / ((np.sqrt(1 + alpha**2) + 1) * (alpha + beta * x_dist))
-            )
+    dw = A * TI / beta * (
+        np.sqrt((alpha + beta * x_dist) ** 2 + 1)
+        - np.sqrt(1 + alpha ** 2)
+        - np.log(
+            ((np.sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha)
+            / ((np.sqrt(1 + alpha ** 2) + 1) * (alpha + beta * x_dist))
         )
     )
 
