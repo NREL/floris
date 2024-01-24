@@ -56,7 +56,7 @@ def print_test_values(
     thrusts: list,
     powers: list,
     axial_inductions: list,
-    max_findex_print: int | None = None,
+    max_findex_print: int | None =None
 ):
     n_findex, n_turb = np.shape(average_velocities)
     if max_findex_print is not None:
@@ -66,7 +66,8 @@ def print_test_values(
         for j in range(n_turb):
             print(
                 "    [{:.7f}, {:.7f}, {:.7f}, {:.7f}],".format(
-                    average_velocities[i, j], thrusts[i, j], powers[i, j], axial_inductions[i, j]
+                    average_velocities[i,j], thrusts[i,j], powers[i,j],
+                    axial_inductions[i,j]
                 )
             )
         print("],")
@@ -113,9 +114,21 @@ WIND_SPEEDS = [
 # len(WIND_DIRECTIONS) or len(WIND_SPEEDS
 N_FINDEX = len(WIND_DIRECTIONS)
 
-X_COORDS = [0.0, 5 * 126.0, 10 * 126.0]
-Y_COORDS = [0.0, 0.0, 0.0]
-Z_COORDS = [90.0, 90.0, 90.0]
+X_COORDS = [
+    0.0,
+    5 * 126.0,
+    10 * 126.0
+]
+Y_COORDS = [
+    0.0,
+    0.0,
+    0.0
+]
+Z_COORDS = [
+    90.0,
+    90.0,
+    90.0
+]
 N_TURBINES = len(X_COORDS)
 ROTOR_DIAMETER = 126.0
 TURBINE_GRID_RESOLUTION = 2
@@ -124,42 +137,38 @@ TIME_SERIES = False
 
 ## Unit test fixtures
 
-
 @pytest.fixture
 def flow_field_fixture(sample_inputs_fixture):
     flow_field_dict = sample_inputs_fixture.flow_field
     return FlowField.from_dict(flow_field_dict)
 
-
 @pytest.fixture
 def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
     turbine_coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
-    rotor_diameters = ROTOR_DIAMETER * np.ones((N_TURBINES))
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_TURBINES) )
     return TurbineGrid(
         turbine_coordinates=turbine_coordinates,
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         grid_resolution=TURBINE_GRID_RESOLUTION,
-        time_series=TIME_SERIES,
+        time_series=TIME_SERIES
     )
-
 
 @pytest.fixture
 def flow_field_grid_fixture(sample_inputs_fixture) -> FlowFieldGrid:
     turbine_coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
-    rotor_diameters = ROTOR_DIAMETER * np.ones((N_FINDEX, N_TURBINES))
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_FINDEX, N_TURBINES) )
     return FlowFieldGrid(
         turbine_coordinates=turbine_coordinates,
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
-        grid_resolution=[3, 2, 2],
+        grid_resolution=[3,2,2]
     )
-
 
 @pytest.fixture
 def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
     turbine_coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
-    rotor_diameters = ROTOR_DIAMETER * np.ones((N_FINDEX, N_TURBINES))
+    rotor_diameters = ROTOR_DIAMETER * np.ones( (N_FINDEX, N_TURBINES) )
     points_x = [0.0, 10.0]
     points_y = [0.0, 0.0]
     points_z = [1.0, 2.0]
@@ -174,12 +183,10 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
         points_z=points_z,
     )
 
-
 @pytest.fixture
 def floris_fixture():
     sample_inputs = SampleInputs()
     return Floris(sample_inputs.floris)
-
 
 @pytest.fixture
 def sample_inputs_fixture():
@@ -372,7 +379,7 @@ class SampleInputs:
                     50.0,
                 ],
             },
-            "TSR": 8.0,
+            "TSR": 8.0
         }
 
         self.turbine_floating = copy.deepcopy(self.turbine)
@@ -391,13 +398,17 @@ class SampleInputs:
         self.turbine_floating["correct_cp_ct_for_tilt"] = True
 
         self.turbine_multi_dim = copy.deepcopy(self.turbine)
-        del self.turbine_multi_dim["power_thrust_table"]["power"]
-        del self.turbine_multi_dim["power_thrust_table"]["thrust_coefficient"]
-        del self.turbine_multi_dim["power_thrust_table"]["wind_speed"]
+        del self.turbine_multi_dim['power_thrust_table']['power']
+        del self.turbine_multi_dim['power_thrust_table']['thrust_coefficient']
+        del self.turbine_multi_dim['power_thrust_table']['wind_speed']
         self.turbine_multi_dim["multi_dimensional_cp_ct"] = True
-        self.turbine_multi_dim["power_thrust_table"]["power_thrust_data_file"] = ""
+        self.turbine_multi_dim['power_thrust_table']["power_thrust_data_file"] = ""
 
-        self.farm = {"layout_x": X_COORDS, "layout_y": Y_COORDS, "turbine_type": [self.turbine]}
+        self.farm = {
+            "layout_x": X_COORDS,
+            "layout_y": Y_COORDS,
+            "turbine_type": [self.turbine]
+        }
 
         self.flow_field = {
             "wind_speeds": WIND_SPEEDS,
@@ -424,7 +435,7 @@ class SampleInputs:
                     "beta": 0.077,
                     "dm": 1.0,
                     "ka": 0.38,
-                    "kb": 0.004,
+                    "kb": 0.004
                 },
                 "jimenez": {
                     "ad": 0.0,
@@ -432,15 +443,20 @@ class SampleInputs:
                     "kd": 0.05,
                 },
                 "empirical_gauss": {
-                    "horizontal_deflection_gain_D": 3.0,
-                    "vertical_deflection_gain_D": -1,
-                    "deflection_rate": 30,
-                    "mixing_gain_deflection": 0.0,
-                    "yaw_added_mixing_gain": 0.0,
+                   "horizontal_deflection_gain_D": 3.0,
+                   "vertical_deflection_gain_D": -1,
+                   "deflection_rate": 30,
+                   "mixing_gain_deflection": 0.0,
+                   "yaw_added_mixing_gain": 0.0
                 },
             },
             "wake_velocity_parameters": {
-                "gauss": {"alpha": 0.58, "beta": 0.077, "ka": 0.38, "kb": 0.004},
+                "gauss": {
+                    "alpha": 0.58,
+                    "beta": 0.077,
+                    "ka": 0.38,
+                    "kb": 0.004
+                },
                 "jensen": {
                     "we": 0.05,
                 },
@@ -452,15 +468,18 @@ class SampleInputs:
                     "a_f": 3.11,
                     "b_f": -0.68,
                     "c_f": 2.41,
-                    "alpha_mod": 1.0,
+                    "alpha_mod": 1.0
                 },
-                "turbopark": {"A": 0.04, "sigma_max_rel": 4.0},
+                "turbopark": {
+                    "A": 0.04,
+                    "sigma_max_rel": 4.0
+                },
                 "empirical_gauss": {
                     "wake_expansion_rates": [0.023, 0.008],
                     "breakpoints_D": [10],
                     "sigma_0_D": 0.28,
                     "smoothing_length_D": 2.0,
-                    "mixing_gain_velocity": 2.0,
+                    "mixing_gain_velocity": 2.0
                 },
             },
             "wake_turbulence_parameters": {
@@ -468,9 +487,11 @@ class SampleInputs:
                     "initial": 0.1,
                     "constant": 0.5,
                     "ai": 0.8,
-                    "downstream": -0.32,
+                    "downstream": -0.32
                 },
-                "wake_induced_mixing": {"atmospheric_ti_gain": 0.0},
+                "wake_induced_mixing": {
+                    "atmospheric_ti_gain": 0.0
+                }
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,

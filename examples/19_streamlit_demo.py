@@ -24,6 +24,7 @@ from floris.tools.visualization import visualize_cut_plane
 # import seaborn as sns
 
 
+
 # """
 # This example demonstrates an interactive visual comparison of FLORIS
 # wake models using streamlit
@@ -44,16 +45,21 @@ wind_speed = 8.0
 st.set_page_config(layout="wide")
 
 # Parameters
-D = 126.0  # Assume for convenience
-floris_model_list = ["jensen", "gch", "cc", "turbopark"]
-color_dict = {"jensen": "k", "gch": "b", "cc": "r", "turbopark": "c"}
+D = 126. # Assume for convenience
+floris_model_list = ['jensen','gch','cc','turbopark']
+color_dict = {
+    'jensen':'k',
+    'gch':'b',
+    'cc':'r',
+    'turbopark':'c'
+}
 
 # Streamlit inputs
 n_turbine_per_row = st.sidebar.slider("Turbines per row", 1, 8, 2, step=1)
-n_row = st.sidebar.slider("Number of rows", 1, 8, 1, step=1)
-spacing = st.sidebar.slider("Turbine spacing (D)", 3.0, 10.0, 6.0, step=0.5)
-wind_direction = st.sidebar.slider("Wind Direction", 240.0, 300.0, 270.0, step=1.0)
-wind_speed = st.sidebar.slider("Wind Speed", 4.0, 15.0, 8.0, step=0.25)
+n_row = st.sidebar.slider("Number of rows", 1, 8,1, step=1)
+spacing = st.sidebar.slider("Turbine spacing (D)", 3., 10., 6., step=0.5)
+wind_direction = st.sidebar.slider("Wind Direction", 240., 300., 270., step=1.)
+wind_speed = st.sidebar.slider("Wind Speed", 4., 15., 8., step=0.25)
 turbulence_intensity = st.sidebar.slider("Turbulence Intensity", 0.01, 0.25, 0.06, step=0.01)
 floris_models = st.sidebar.multiselect("FLORIS Models", floris_model_list, floris_model_list)
 # floris_models_viz = st.sidebar.multiselect(
@@ -61,8 +67,8 @@ floris_models = st.sidebar.multiselect("FLORIS Models", floris_model_list, flori
 #     floris_model_list,
 #     floris_model_list
 # )
-desc_yaw = st.sidebar.checkbox("Descending yaw pattern?", value=False)
-front_turbine_yaw = st.sidebar.slider("Upstream yaw angle", -30.0, 30.0, 0.0, step=0.5)
+desc_yaw = st.sidebar.checkbox("Descending yaw pattern?",value=False)
+front_turbine_yaw = st.sidebar.slider("Upstream yaw angle", -30., 30., 0., step=0.5)
 
 # Define the layout
 X = []
@@ -73,18 +79,19 @@ for x_idx in range(n_turbine_per_row):
         X.append(D * spacing * x_idx)
         Y.append(D * spacing * y_idx)
 
-turbine_labels = ["T%02d" % i for i in range(len(X))]
+turbine_labels = ['T%02d' % i for i in range(len(X))]
 
 # Set up the yaw angle values
-yaw_angles_base = np.zeros([1, 1, len(X)])
+yaw_angles_base = np.zeros([1,1,len(X)])
 
-yaw_angles_yaw = np.zeros([1, 1, len(X)])
+yaw_angles_yaw = np.zeros([1,1,len(X)])
 if not desc_yaw:
-    yaw_angles_yaw[:, :, :n_row] = front_turbine_yaw
+    yaw_angles_yaw[:,:,:n_row] = front_turbine_yaw
 else:
-    decreasing_pattern = np.linspace(front_turbine_yaw, 0, n_turbine_per_row)
+    decreasing_pattern = np.linspace(front_turbine_yaw,0,n_turbine_per_row)
     for i in range(n_turbine_per_row):
-        yaw_angles_yaw[:, :, i * n_row : (i + 1) * n_row] = decreasing_pattern[i]
+        yaw_angles_yaw[:,:,i*n_row:(i+1)*n_row] = decreasing_pattern[i]
+
 
 
 # Get a few quanitities
@@ -96,7 +103,7 @@ floris_models_viz = [m for m in floris_models_viz if "turbo" not in m]
 num_models_to_viz = len(floris_models_viz)
 
 # Set up the visualization plot
-fig_viz, axarr_viz = plt.subplots(num_models_to_viz, 2)
+fig_viz, axarr_viz = plt.subplots(num_models_to_viz,2)
 
 # Set up the turbine power plot
 fig_turb_pow, ax_turb_pow = plt.subplots()
@@ -106,8 +113,9 @@ farm_power_results = []
 
 # Now complete all these plots in a loop
 for fm in floris_models:
+
     # Analyze the base case==================================================
-    print("Loading: ", fm)
+    print('Loading: ',fm)
     fi = FlorisInterface("inputs/%s.yaml" % fm)
 
     # Set the layout, wind direction and wind speed
@@ -120,22 +128,22 @@ for fm in floris_models:
     )
 
     fi.calculate_wake(yaw_angles=yaw_angles_base)
-    turbine_powers = fi.get_turbine_powers() / 1000.0
+    turbine_powers = fi.get_turbine_powers() / 1000.
     ax_turb_pow.plot(
         turbine_labels,
         turbine_powers.flatten(),
         color=color_dict[fm],
-        ls="-",
-        marker="s",
-        label="%s - baseline" % fm,
+        ls='-',
+        marker='s',
+        label='%s - baseline' % fm
     )
     ax_turb_pow.grid(True)
     ax_turb_pow.legend()
-    ax_turb_pow.set_xlabel("Turbine")
-    ax_turb_pow.set_ylabel("Power (kW)")
+    ax_turb_pow.set_xlabel('Turbine')
+    ax_turb_pow.set_ylabel('Power (kW)')
 
     # Save the farm power
-    farm_power_results.append((fm, "base", np.sum(turbine_powers)))
+    farm_power_results.append((fm,'base',np.sum(turbine_powers)))
 
     # If in viz list also visualize
     if fm in floris_models_viz:
@@ -143,12 +151,15 @@ for fm in floris_models:
         ax = axarr_viz[ax_idx, 0]
 
         horizontal_plane_gch = fi.calculate_horizontal_plane(
-            x_resolution=100, y_resolution=100, yaw_angles=yaw_angles_base, height=90.0
+            x_resolution=100,
+            y_resolution=100,
+            yaw_angles=yaw_angles_base,
+            height=90.0
         )
-        visualize_cut_plane(horizontal_plane_gch, ax=ax, title="%s - baseline" % fm)
+        visualize_cut_plane(horizontal_plane_gch, ax=ax, title='%s - baseline' % fm)
 
     # Analyze the yawed case==================================================
-    print("Loading: ", fm)
+    print('Loading: ',fm)
     fi = FlorisInterface("inputs/%s.yaml" % fm)
 
     # Set the layout, wind direction and wind speed
@@ -161,22 +172,22 @@ for fm in floris_models:
     )
 
     fi.calculate_wake(yaw_angles=yaw_angles_yaw)
-    turbine_powers = fi.get_turbine_powers() / 1000.0
+    turbine_powers = fi.get_turbine_powers() / 1000.
     ax_turb_pow.plot(
         turbine_labels,
         turbine_powers.flatten(),
         color=color_dict[fm],
-        ls="--",
-        marker="o",
-        label="%s - yawed" % fm,
+        ls='--',
+        marker='o',
+        label='%s - yawed' % fm
     )
     ax_turb_pow.grid(True)
     ax_turb_pow.legend()
-    ax_turb_pow.set_xlabel("Turbine")
-    ax_turb_pow.set_ylabel("Power (kW)")
+    ax_turb_pow.set_xlabel('Turbine')
+    ax_turb_pow.set_ylabel('Power (kW)')
 
     # Save the farm power
-    farm_power_results.append((fm, "yawed", np.sum(turbine_powers)))
+    farm_power_results.append((fm,'yawed',np.sum(turbine_powers)))
 
     # If in viz list also visualize
     if fm in floris_models_viz:
@@ -184,9 +195,12 @@ for fm in floris_models:
         ax = axarr_viz[ax_idx, 1]
 
         horizontal_plane_gch = fi.calculate_horizontal_plane(
-            x_resolution=100, y_resolution=100, yaw_angles=yaw_angles_yaw, height=90.0
+            x_resolution=100,
+            y_resolution=100,
+            yaw_angles=yaw_angles_yaw,
+            height=90.0
         )
-        visualize_cut_plane(horizontal_plane_gch, ax=ax, title="%s - yawed" % fm)
+        visualize_cut_plane(horizontal_plane_gch, ax=ax, title='%s - yawed' % fm)
 
 st.header("Visualizations")
 st.write(fig_viz)

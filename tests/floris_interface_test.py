@@ -199,7 +199,7 @@ def test_get_farm_aep_with_conditions():
     # In this case farm_aep should match farm powers
     np.testing.assert_allclose(farm_aep, aep)
 
-    # Confirm n_findex reset after the operation
+    #Confirm n_findex reset after the operation
     assert n_findex == fi.floris.flow_field.n_findex
 
 
