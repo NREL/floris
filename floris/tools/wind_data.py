@@ -345,13 +345,14 @@ class WindRose(WindDataBase):
         self.ti_table = func(self.wd_grid, self.ws_grid)
         self._build_gridded_and_flattened_version()
 
-    def assign_ti_using_IEC_method(self, Iref=0.12, offset=3.8):
+    def assign_ti_using_IEC_method(self, Iref=0.08, offset=3.8):
         """
         Define TI as a function of wind speed by specifying an Iref and offset
         value as in theIEC standard appraoch
 
         Args:
-            Iref (float): Reference turbulence level. Default = 0.12
+            Iref (float): Reference turbulence level. Default = 0.08.
+                Note this value is lower than IEC standard but matches observations
             offset (float): Offset value to equation.  Default = 3.8
         """
         if (Iref < 0) or (Iref > 1):
@@ -488,14 +489,14 @@ class TimeSeries(WindDataBase):
         """
         self.turbulence_intensities = func(self.wind_directions, self.wind_speeds)
 
-    def assign_ti_using_IEC_method(self, Iref=0.12, offset=3.8):
+    def assign_ti_using_IEC_method(self, Iref=0.08, offset=3.8):
         """
-        Define TI as a function of wind speed by specifying an Iref and
-        offset value as in the
-        IEC standard appraoch
+        Define TI as a function of wind speed by specifying an Iref and offset
+        value as in theIEC standard appraoch
 
         Args:
-            Iref (float): Reference turbulence level. Default = 0.12
+            Iref (float): Reference turbulence level. Default = 0.08.
+                Note this value is lower than IEC standard but matches observations
             offset (float): Offset value to equation.  Default = 3.8
         """
         if (Iref < 0) or (Iref > 1):
