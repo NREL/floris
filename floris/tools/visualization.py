@@ -697,8 +697,8 @@ def calculate_horizontal_plane_with_turbines(
                 layout_x_test[-1] = x
                 layout_y_test[-1] = y
                 fi.reinitialize(
-                    layout_x=layout_x_test, 
-                    layout_y=layout_y_test, 
+                    layout_x=layout_x_test,
+                    layout_y=layout_y_test,
                     turbine_type=turbine_types_test
                 )
                 fi.calculate_wake(yaw_angles=yaw_angles)
