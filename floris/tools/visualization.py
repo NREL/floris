@@ -663,7 +663,14 @@ def calculate_horizontal_plane_with_turbines(
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
-        turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
+
+        # Declare turbine types with an extra turbine in
+        # case of special one type useage
+        if len(layout_x) > 1 and len(turbine_types) == 1:
+            # Convert to list length len(layout_x) + 1
+            turbine_types_test = [turbine_types[0] for i in range(len(layout_x))] + ['nrel_5MW']
+        else:
+            turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
         yaw_angles = np.append(yaw_angles, np.zeros([len(wd), len(ws), 1]), axis=2)
 
         # Get a grid of points test test
