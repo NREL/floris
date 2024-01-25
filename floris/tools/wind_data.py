@@ -345,19 +345,20 @@ class WindRose(WindDataBase):
         self.ti_table = func(self.wd_grid, self.ws_grid)
         self._build_gridded_and_flattened_version()
 
-    def assign_ti_using_Iref(self, Iref):
+    def assign_ti_using_IEC_method(self, Iref=0.12, offset=3.8):
         """
-        Define TI as a function of wind speed by specifying an Iref value as in the
-        IEC standard appraoch
+        Define TI as a function of wind speed by specifying an Iref and offset
+        value as in theIEC standard appraoch
 
         Args:
-            Iref (float): Reference turbulence level, values range [0,1]
+            Iref (float): Reference turbulence level. Default = 0.12
+            offset (float): Offset value to equation.  Default = 3.8
         """
         if (Iref < 0) or (Iref > 1):
             raise ValueError("Iref must be >= 0 and <=1")
 
         def iref_func(wind_directions, wind_speeds):
-            sigma_1 = Iref * (0.75 * wind_speeds + 5.6)
+            sigma_1 = Iref * (0.75 * wind_speeds + offset)
             return sigma_1 / wind_speeds
 
         self.assign_ti_using_wd_ws_function(iref_func)
@@ -487,19 +488,21 @@ class TimeSeries(WindDataBase):
         """
         self.turbulence_intensities = func(self.wind_directions, self.wind_speeds)
 
-    def assign_ti_using_Iref(self, Iref):
+    def assign_ti_using_IEC_method(self, Iref=0.12, offset=3.8):
         """
-        Define TI as a function of wind speed by specifying an Iref value as in the
+        Define TI as a function of wind speed by specifying an Iref and
+        offset value as in the
         IEC standard appraoch
 
         Args:
-            Iref (float): Reference turbulence level, values range [0,1]
+            Iref (float): Reference turbulence level. Default = 0.12
+            offset (float): Offset value to equation.  Default = 3.8
         """
         if (Iref < 0) or (Iref > 1):
             raise ValueError("Iref must be >= 0 and <=1")
 
         def iref_func(wind_directions, wind_speeds):
-            sigma_1 = Iref * (0.75 * wind_speeds + 5.6)
+            sigma_1 = Iref * (0.75 * wind_speeds + offset)
             return sigma_1 / wind_speeds
 
         self.assign_ti_using_wd_ws_function(iref_func)

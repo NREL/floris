@@ -49,7 +49,7 @@ ax.set_title("Turbulence Intensity defined by custom function")
 
 # Now use the IEC Iref approach:
 Iref = 0.08
-wind_rose.assign_ti_using_Iref(Iref)
+wind_rose.assign_ti_using_IEC_method(Iref)
 fig, ax = plt.subplots()
 wind_rose.plot_ti_over_ws(ax)
 ax.set_title(f"Turbulence Intensity defined by Iref = {Iref:0.2}")
@@ -60,7 +60,7 @@ N = 100
 wind_directions = 270 * np.ones(N)
 wind_speeds = np.linspace(5, 15, N)
 time_series = TimeSeries(wind_directions=wind_directions, wind_speeds=wind_speeds)
-time_series.assign_ti_using_Iref(Iref=Iref)
+time_series.assign_ti_using_IEC_method(Iref=Iref)
 
 fig, axarr = plt.subplots(2, 1, sharex=True, figsize=(7, 8))
 ax = axarr[0]
