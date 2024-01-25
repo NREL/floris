@@ -24,7 +24,7 @@ from floris.utilities import wrap_360
 
 
 """
-Demonstrate usage of ti generating and plotting functionality
+Demonstrate usage of ti generating and plotting functionality in the WindRose class
 """
 
 
@@ -32,6 +32,7 @@ Demonstrate usage of ti generating and plotting functionality
 wind_directions = np.array([250, 260, 270])
 wind_speeds = np.array([5, 6, 7, 8, 9, 10])
 
+# Declare a WindRose object
 wind_rose = WindRose(wind_directions=wind_directions, wind_speeds=wind_speeds)
 
 
