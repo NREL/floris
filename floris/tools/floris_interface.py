@@ -29,6 +29,7 @@ from floris.simulation.turbine.turbine import (
     thrust_coefficient,
 )
 from floris.tools.cut_plane import CutPlane
+from floris.tools.wind_data import WindDataBase
 from floris.type_dec import NDArrayFloat
 
 
@@ -131,7 +132,12 @@ class FlorisInterface(LoggingManager):
         """
 
         if yaw_angles is None:
-            yaw_angles = np.zeros((self.floris.flow_field.n_findex, self.floris.farm.n_turbines))
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
         self.floris.farm.yaw_angles = yaw_angles
 
         # None should be ok
@@ -168,7 +174,12 @@ class FlorisInterface(LoggingManager):
         """
 
         if yaw_angles is None:
-            yaw_angles = np.zeros((self.floris.flow_field.n_findex, self.floris.farm.n_turbines))
+            yaw_angles = np.zeros(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
         self.floris.farm.yaw_angles = yaw_angles
 
         # Initialize solution space
@@ -194,6 +205,7 @@ class FlorisInterface(LoggingManager):
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
         heterogenous_inflow_config=None,
+        wind_data: type[WindDataBase] | None = None,
     ):
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
@@ -201,6 +213,22 @@ class FlorisInterface(LoggingManager):
         farm_dict = floris_dict["farm"]
 
         # Make the given changes
+
+        # First check if wind data is not None,
+        # if not, get wind speeds, wind direction and
+        # turbulence intensity using the unpack_for_reinitialize
+        # method
+        if wind_data is not None:
+            if (
+                (wind_directions is not None)
+                or (wind_speeds is not None)
+                or (turbulence_intensity is not None)
+            ):
+                raise ValueError(
+                    "If wind_data is passed to reinitialize, then do not pass wind_directions, "
+                    "wind_speeds or turbulence_intensity as this is redundant."
+                )
+            wind_directions, wind_speeds, turbulence_intensity = wind_data.unpack_for_reinitialize()
 
         ## FlowField
         if wind_speeds is not None:
@@ -395,7 +423,10 @@ class FlorisInterface(LoggingManager):
 
         # Compute the cutplane
         horizontal_plane = CutPlane(
-            df, self.floris.grid.grid_resolution[0], self.floris.grid.grid_resolution[1], "z"
+            df,
+            self.floris.grid.grid_resolution[0],
+            self.floris.grid.grid_resolution[1],
+            "z",
         )
 
         # Reset the fi object back to the turbine grid configuration
@@ -700,11 +731,17 @@ class FlorisInterface(LoggingManager):
         if turbine_weights is None:
             # Default to equal weighing of all turbines when turbine_weights is None
             turbine_weights = np.ones(
-                (self.floris.flow_field.n_findex, self.floris.farm.n_turbines)
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
             )
         elif len(np.shape(turbine_weights)) == 1:
             # Deal with situation when 1D array is provided
-            turbine_weights = np.tile(turbine_weights, (self.floris.flow_field.n_findex, 1))
+            turbine_weights = np.tile(
+                turbine_weights,
+                (self.floris.flow_field.n_findex, 1),
+            )
 
         # Calculate all turbine powers and apply weights
         turbine_powers = self.get_turbine_powers()
@@ -762,6 +799,7 @@ class FlorisInterface(LoggingManager):
                 the flow field. This can be useful when quantifying the loss
                 in AEP due to wakes. Defaults to *False*.
 
+
         Returns:
             float:
                 The Annual Energy Production (AEP) for the wind farm in
@@ -778,7 +816,7 @@ class FlorisInterface(LoggingManager):
         # Check if frequency vector sums to 1.0. If not, raise a warning
         if np.abs(np.sum(freq) - 1.0) > 0.001:
             self.logger.warning(
-                "WARNING: The frequency array provided to get_farm_AEP() " "does not sum to 1.0."
+                "WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0."
             )
 
         # Copy the full wind speed array from the floris object and initialize
@@ -800,7 +838,8 @@ class FlorisInterface(LoggingManager):
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[conditions_to_evaluate]
             self.reinitialize(
-                wind_speeds=wind_speeds_subset, wind_directions=wind_directions_subset
+                wind_speeds=wind_speeds_subset,
+                wind_directions=wind_directions_subset,
             )
             if no_wake:
                 self.calculate_no_wake(yaw_angles=yaw_angles_subset)
@@ -817,6 +856,76 @@ class FlorisInterface(LoggingManager):
         self.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
 
         return aep
+
+    def get_farm_AEP_with_wind_data(
+        self,
+        wind_data,
+        cut_in_wind_speed=0.001,
+        cut_out_wind_speed=None,
+        yaw_angles=None,
+        turbine_weights=None,
+        no_wake=False,
+    ) -> float:
+        """
+        Estimate annual energy production (AEP) for distributions of wind speed, wind
+        direction, frequency of occurrence, and yaw offset.
+
+        Args:
+            wind_data: (type(WindDataBase)): TimeSeries or WindRose object containing
+                the wind conditions over which to calculate the AEP. Should match the wind_data
+                object passed to reinitialize().
+            cut_in_wind_speed (float, optional): Wind speed in m/s below which
+                any calculations are ignored and the wind farm is known to
+                produce 0.0 W of power. Note that to prevent problems with the
+                wake models at negative / zero wind speeds, this variable must
+                always have a positive value. Defaults to 0.001 [m/s].
+            cut_out_wind_speed (float, optional): Wind speed above which the
+                wind farm is known to produce 0.0 W of power. If None is
+                specified, will assume that the wind farm does not cut out
+                at high wind speeds. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional):
+                The relative turbine yaw angles in degrees. If None is
+                specified, will assume that the turbine yaw angles are all
+                zero degrees for all conditions. Defaults to None.
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the power production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                objective function. If None, this  is an array with all values
+                1.0 and with shape equal to (n_findex,
+                n_turbines). Defaults to None.
+            no_wake: (bool, optional): When *True* updates the turbine
+                quantities without calculating the wake or adding the wake to
+                the flow field. This can be useful when quantifying the loss
+                in AEP due to wakes. Defaults to *False*.
+
+        Returns:
+            float:
+                The Annual Energy Production (AEP) for the wind farm in
+                watt-hours.
+        """
+
+        # Verify the wind_data object matches FLORIS' initialization
+        if wind_data.n_findex != self.floris.flow_field.n_findex:
+            raise ValueError("WindData object and floris do not have same findex")
+
+        # Get freq directly from wind_data
+        freq = wind_data.unpack_freq()
+
+        return self.get_farm_AEP(
+            freq,
+            cut_in_wind_speed=cut_in_wind_speed,
+            cut_out_wind_speed=cut_out_wind_speed,
+            yaw_angles=yaw_angles,
+            turbine_weights=turbine_weights,
+            no_wake=no_wake,
+        )
 
     def sample_flow_at_points(self, x: NDArrayFloat, y: NDArrayFloat, z: NDArrayFloat):
         """

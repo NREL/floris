@@ -46,18 +46,21 @@ from .visualization import (
     visualize_cut_plane,
     visualize_quiver,
 )
-from .wind_rose import WindRose
+from .wind_data import (
+    TimeSeries,
+    WindRose,
+)
 
 
 # from floris.tools import (
-    # cut_plane,
-    # floris_interface,
-    # interface_utilities,
-    # layout_functions,
-    # optimization,
-    # plotting,
-    # power_rose,
-    # rews,
-    # visualization,
-    # wind_rose,
+#     cut_plane,
+#     floris_interface,
+#     interface_utilities,
+#     layout_functions,
+#     optimization,
+#     plotting,
+#     power_rose,
+#     rews,
+#     visualization,
+#     wind_rose,
 # )
