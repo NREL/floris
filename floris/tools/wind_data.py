@@ -42,7 +42,7 @@ class WindDataBase:
 
     def unpack_for_reinitialize(self):
         """
-        Return only the variables need for reinitialize
+        Return only the variables need for FlorisInterface.reinitialize
         """
         (
             wind_directions_unpack,
@@ -115,7 +115,7 @@ class WindRose(WindDataBase):
         self.wind_speeds = wind_speeds
 
         # If freq_table is not None, confirm it has correct dimension,
-        # otherwise initialze to uniform probability
+        # otherwise initialize to uniform probability
         if freq_table is not None:
             if not freq_table.shape[0] == len(wind_directions):
                 raise ValueError("freq_table first dimension must equal len(wind_directions)")
@@ -138,7 +138,7 @@ class WindRose(WindDataBase):
         self.ti_table = ti_table
 
         # If value_table is not None, confirm it has correct dimension,
-        # otherwise initialze to all ones
+        # otherwise initialize to all ones
         if value_table is not None:
             if not value_table.shape[0] == len(wind_directions):
                 raise ValueError("value_table first dimension must equal len(wind_directions)")
