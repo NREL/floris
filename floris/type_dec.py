@@ -44,6 +44,21 @@ NDArrayBool = npt.NDArray[np.bool_]
 
 ### Custom callables for attrs objects and functions
 
+def floris_numeric_or_float_converter(data: Any) -> Any:
+    # Convert numeric data to a float if not-iterable, or else
+    # apply the floris_array_converter
+    try:
+        iter(data)
+    except TypeError:
+        # Not iterable
+        try:
+            return float(data)
+        except TypeError as e:
+            raise TypeError(e.args[0] + f". Data given: {data}")
+    else:
+        # Iterable
+        return floris_array_converter(data)
+
 def floris_array_converter(data: Iterable) -> np.ndarray:
     # Verify that `data` is iterable.
     # For scalar quantities, np.array() creates a 0-dimensional array.
@@ -61,7 +76,7 @@ def floris_array_converter(data: Iterable) -> np.ndarray:
 
 def floris_numeric_dict_converter(data: dict) -> dict:
     try:
-        return {k: floris_array_converter(v) for k, v in data.items()}
+        return {k: floris_numeric_or_float_converter(v) for k, v in data.items()}
     except TypeError as e:
         raise TypeError(e.args[0] + f". Data given: {data}")
 
