@@ -26,7 +26,8 @@ farm:
 flow_field:
   air_density: 1.225
   reference_wind_height: 90.0
-  turbulence_intensities: 0.06
+  turbulence_intensities:
+  - 0.06
   wind_directions:
   - 270.0
   wind_shear: 0.12
