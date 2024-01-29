@@ -78,7 +78,7 @@ def sequential_solver(
 
     # Set up turbulence arrays
     turbine_turbulence_intensity = flow_field.turbulence_intensities[
-        :, np.newaxis, np.newaxis, np.newaxis
+        :, None, None, None
     ]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
 

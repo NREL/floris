@@ -219,7 +219,7 @@ class FlowField(BaseClass):
         self.w_sorted = self.w_initial_sorted.copy()
 
         self.turbulence_intensity_field = self.turbulence_intensities[
-            :, np.newaxis, np.newaxis, np.newaxis
+            :, None, None, None
         ]
         self.turbulence_intensity_field = np.repeat(
             self.turbulence_intensity_field, grid.n_turbines, axis=1
