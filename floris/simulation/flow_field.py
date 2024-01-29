@@ -76,10 +76,11 @@ class FlowField(BaseClass):
                 raise ValueError("turbulence_intensities should either be length 1 or n_findex")
         except TypeError as te:
             # Handle the TypeError here
-            print(f"Caught a TypeError: {te}")
+
             raise TypeError(
                 "turbulence_intensities must be provided as a list or array.  To specify a uniform",
                 " turbulence intensity, specify as an array of legnth 1",
+                f"Full TypeError Output: {te}"
             )
 
     @wind_directions.validator
