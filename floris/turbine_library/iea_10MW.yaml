@@ -1,5 +1,6 @@
 # Data based on:
 # https://github.com/NREL/turbine-models/blob/master/Offshore/IEA_10MW_198_RWT.csv
+# Note: Generator efficiency of 94% used. Small power variations above rated removed.
 turbine_type: 'iea_10MW'
 generator_efficiency: 0.94
 hub_height: 119.0
@@ -24,16 +25,16 @@ power_thrust_table:
     - 7392.13274
     - 8514.32824
     - 9691.10578
-    - 10000.002
-    - 10000.002
-    - 10000.002
-    - 10000.002
-    - 10000.002
-    - 10000.002
-    - 10000.002
-    - 10000.002
-    - 10000.002
-    - 10000.003
+    - 10000.00
+    - 10000.00
+    - 10000.00
+    - 10000.00
+    - 10000.00
+    - 10000.00
+    - 10000.00
+    - 10000.00
+    - 10000.00
+    - 10000.00
     - 0.0
     - 0.0
   thrust_coefficient:
