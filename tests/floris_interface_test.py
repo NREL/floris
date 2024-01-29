@@ -250,3 +250,10 @@ def test_reinitailize_ti():
                 280.0,
             ],
         )
+
+    # Test that applying a 1D array of length 1 is allowed for ti
+    fi.reinitialize(turbulence_intensities=[0.12])
+
+    # Test that applying a float however raises an error
+    with pytest.raises(TypeError):
+        fi.reinitialize(turbulence_intensities=0.12)
