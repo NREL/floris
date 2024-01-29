@@ -39,7 +39,7 @@ class FlowField(BaseClass):
     wind_veer: float = field(converter=float)
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
-    turbulence_intensities: float = field(converter=floris_array_converter)
+    turbulence_intensities: NDArrayFloat = field(converter=floris_array_converter)
     reference_wind_height: float = field(converter=float)
     time_series: bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
