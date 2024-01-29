@@ -45,6 +45,14 @@ NDArrayBool = npt.NDArray[np.bool_]
 ### Custom callables for attrs objects and functions
 
 def floris_array_converter(data: Iterable) -> np.ndarray:
+    # Verify that `data` is iterable.
+    # For scalar quantities, np.array() creates a 0-dimensional array.
+    try:
+        iter(data)
+    except TypeError as e:
+        raise TypeError(e.args[0] + f". Data given: {data}")
+
+    # Create a numpy array from the input data and cast to floris_float_type.
     try:
         a = np.array(data, dtype=floris_float_type)
     except TypeError as e:
