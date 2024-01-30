@@ -82,9 +82,8 @@ def sequential_solver(
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
     # with extra dimension to reach 4d
-    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()[
-        :, np.newaxis, np.newaxis, np.newaxis
-    ]
+    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()
+    ambient_turbulence_intensities = ambient_turbulence_intensities[:, None, None, None]
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
@@ -459,9 +458,8 @@ def cc_solver(
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensities
     # with extra dimension to reach 4d
-    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()[
-        :, np.newaxis, np.newaxis, np.newaxis
-    ]
+    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()
+    ambient_turbulence_intensities = ambient_turbulence_intensities[:, None, None, None]
 
     shape = (farm.n_turbines,) + np.shape(flow_field.u_initial_sorted)
     Ctmp = np.zeros((shape))
@@ -626,7 +624,11 @@ def cc_solver(
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensities, grid.x_sorted, x_i, rotor_diameter_i, turb_aIs
+            ambient_turbulence_intensities,
+            grid.x_sorted,
+            x_i,
+            rotor_diameter_i,
+            turb_aIs
         )
 
         # Calculate wake overlap for wake-added turbulence (WAT)
@@ -871,9 +873,8 @@ def turbopark_solver(
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensities
     # with extra dimension to reach 4d
-    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()[
-        :, np.newaxis, np.newaxis, np.newaxis
-    ]
+    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()
+    ambient_turbulence_intensities = ambient_turbulence_intensities[:, None, None, None]
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines
     for i in range(grid.n_turbines):
@@ -1052,7 +1053,11 @@ def turbopark_solver(
         )
 
         wake_added_turbulence_intensity = model_manager.turbulence_model.function(
-            ambient_turbulence_intensities, grid.x_sorted, x_i, rotor_diameter_i, axial_induction_i
+            ambient_turbulence_intensities,
+            grid.x_sorted,
+            x_i,
+            rotor_diameter_i,
+            axial_induction_i
         )
 
         # TODO: leaving this in for GCH quantities; will need to find another way to
@@ -1146,7 +1151,11 @@ def empirical_gauss_solver(
     initial_mixing_factor = model_manager.turbulence_model.atmospheric_ti_gain * np.eye(
         grid.n_turbines
     )
-    mixing_factor = np.repeat(initial_mixing_factor[None, :, :], flow_field.n_findex, axis=0)
+    mixing_factor = np.repeat(
+        initial_mixing_factor[None, :, :],
+        flow_field.n_findex,
+        axis=0
+    )
     mixing_factor = mixing_factor * flow_field.turbulence_intensities[:, None, None]
 
     # Calculate the velocity deficit sequentially from upstream to downstream turbines

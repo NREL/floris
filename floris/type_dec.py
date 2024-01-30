@@ -61,7 +61,7 @@ def floris_numeric_or_float_converter(data: Any) -> Any:
 
 def floris_array_converter(data: Iterable) -> np.ndarray:
     # Verify that `data` is iterable.
-    # For scalar quantities, np.array() creates a 0-dimensional array.
+    # Note that for scalar quantities, np.array() creates a 0-dimensional array.
     try:
         iter(data)
     except TypeError as e:
