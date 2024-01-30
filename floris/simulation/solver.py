@@ -77,9 +77,7 @@ def sequential_solver(
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
     # Set up turbulence arrays
-    turbine_turbulence_intensity = flow_field.turbulence_intensities[
-        :, None, None, None
-    ]
+    turbine_turbulence_intensity = flow_field.turbulence_intensities[:, None, None, None]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
@@ -456,9 +454,7 @@ def cc_solver(
     turb_inflow_field = copy.deepcopy(flow_field.u_initial_sorted)
 
     # Set up turbulence arrays
-    turbine_turbulence_intensity = flow_field.turbulence_intensities[
-        :, np.newaxis, np.newaxis, np.newaxis
-    ]
+    turbine_turbulence_intensity = flow_field.turbulence_intensities[:, None, None, None]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensities
@@ -870,9 +866,7 @@ def turbopark_solver(
     deflection_field = np.zeros_like(flow_field.u_initial_sorted)
 
     # Set up turbulence arrays
-    turbine_turbulence_intensity = flow_field.turbulence_intensities[
-        :, np.newaxis, np.newaxis, np.newaxis
-    ]
+    turbine_turbulence_intensity = flow_field.turbulence_intensities[:, None, None, None]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensities
