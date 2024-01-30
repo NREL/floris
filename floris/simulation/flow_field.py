@@ -70,18 +70,12 @@ class FlowField(BaseClass):
     def turbulence_intensities_validator(
         self, instance: attrs.Attribute, value: NDArrayFloat
     ) -> None:
-        try:
-            # Check the turbulence intensity is either length 1 or n_findex
-            if len(value) != 1 and len(value) != self.n_findex:
-                raise ValueError("turbulence_intensities should either be length 1 or n_findex")
-        except TypeError as te:
-            # Handle the TypeError here
 
-            raise TypeError(
-                "turbulence_intensities must be provided as a list or array.  To specify a uniform",
-                " turbulence intensity, specify as an array of legnth 1",
-                f"Full TypeError Output: {te}"
-            )
+        # Check the turbulence intensity is either length 1 or n_findex
+        if len(value) != 1 and len(value) != self.n_findex:
+            raise ValueError("turbulence_intensities should either be length 1 or n_findex")
+
+
 
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
