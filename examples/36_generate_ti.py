@@ -24,7 +24,8 @@ from floris.utilities import wrap_360
 
 
 """
-Demonstrate usage of ti generating and plotting functionality in the WindRose class
+Demonstrate usage of TI generating and plotting functionality in the WindRose
+and TimeSeries classes
 """
 
 

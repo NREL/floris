@@ -335,7 +335,7 @@ class WindRose(WindDataBase):
 
     def assign_ti_using_wd_ws_function(self, func):
         """
-        Use the passed in function to new assign values to turbulence_intensities
+        Use the passed in function to assign new values to turbulence_intensities
 
         Args:
             func (function): Function which accepts wind_directions as its

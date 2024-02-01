@@ -24,8 +24,8 @@ from floris.utilities import wrap_360
 
 
 """
-Demonstrate the new behavior in T4 where TI is an array rather than a float.
-Set up an array of two turbines and sweep TI while hold wd/ws constant.
+Demonstrate the new behavior in V4 where TI is an array rather than a float.
+Set up an array of two turbines and sweep TI while holding wd/ws constant.
 Use the TimeSeries object to drive the FLORIS calculations.
 """
 

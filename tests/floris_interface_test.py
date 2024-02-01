@@ -215,7 +215,8 @@ def test_reinitailize_ti():
     )
 
     # Now confirm can change wind speeds and directions shape without changing
-    # turbulence intensity since it is uniform this allowed
+    # turbulence intensity since this is allowed when the turbulence
+    # intensities are uniform
     # raises n_findex to 4
     fi.reinitialize(
         wind_speeds=[8.0, 8.0, 8.0, 8.0],
