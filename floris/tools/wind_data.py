@@ -352,12 +352,12 @@ class WindRose(WindDataBase):
 
         Args:
             Iref (float): Reference turbulence level, defined as the expected
-                value of TI at 15 m/s. Default = 0.08. Note this value is
+                value of TI at 15 m/s. Default = 0.07. Note this value is
                 lower than the values of Iref for turbulence classes A, B, and
                 C in the IEC standard (0.16, 0.14, and 0.12, respectively), but
                 produces TI values more in line with those typically used in
                 FLORIS. When the default Iref and offset are used, the TI at
-                8 m/s is 9.8%.
+                8 m/s is 8.6%.
             offset (float): Offset value to equation. Default = 3.8, as defined
                 in the IEC standard to give the expected value of TI for
                 each wind speed.
@@ -503,12 +503,12 @@ class TimeSeries(WindDataBase):
 
         Args:
             Iref (float): Reference turbulence level, defined as the expected
-                value of TI at 15 m/s. Default = 0.08. Note this value is
+                value of TI at 15 m/s. Default = 0.07. Note this value is
                 lower than the values of Iref for turbulence classes A, B, and
                 C in the IEC standard (0.16, 0.14, and 0.12, respectively), but
                 produces TI values more in line with those typically used in
                 FLORIS. When the default Iref and offset are used, the TI at
-                8 m/s is 9.8%.
+                8 m/s is 8.6%.
             offset (float): Offset value to equation. Default = 3.8, as defined
                 in the IEC standard to give the expected value of TI for
                 each wind speed.

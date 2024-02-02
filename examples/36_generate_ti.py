@@ -50,10 +50,10 @@ ax.set_title("Turbulence Intensity defined by custom function")
 
 # Now use the normal turbulence model approach from the IEC 61400-1 standard,
 # wherein TI is defined as a function of wind speed:
-# Iref is defined as the TI value at 15 m/s. Note that Iref = 0.08 is lower
+# Iref is defined as the TI value at 15 m/s. Note that Iref = 0.07 is lower
 # than the values of Iref used in the IEC standard, but produces TI values more
-# in line with those typically used in FLORIS (TI=9.8% at 8 m/s).
-Iref = 0.08
+# in line with those typically used in FLORIS (TI=8.6% at 8 m/s).
+Iref = 0.07
 wind_rose.assign_ti_using_IEC_method(Iref)
 fig, ax = plt.subplots()
 wind_rose.plot_ti_over_ws(ax)
