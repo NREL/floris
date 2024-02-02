@@ -47,22 +47,14 @@ fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0], wind_data=time_series)
 fi.calculate_wake()
 turbine_power = fi.get_turbine_powers()
 
-fig, axarr = plt.subplots(5, 1, sharex=True, figsize=(5, 9))
+fig, axarr = plt.subplots(2, 1, sharex=True, figsize=(6, 6))
 ax = axarr[0]
-ax.plot(wd_array, color="k")
-ax.set_ylabel("Wind Direction")
+ax.plot(ti_array*100, turbine_power[:, 0]/1000, color="k")
+ax.set_ylabel("Front turbine power [kW]")
 ax = axarr[1]
-ax.plot(ws_array, color="k")
-ax.set_ylabel("Wind Speed")
-ax = axarr[2]
-ax.plot(ti_array, color="k")
-ax.set_ylabel("Turbulence Intensity")
-ax = axarr[3]
-ax.plot(turbine_power[:, 0], color="k")
-ax.set_ylabel("Front Turbine")
-ax = axarr[4]
-ax.plot(turbine_power[:, 1], color="k")
-ax.set_ylabel("Rear Turbine")
+ax.plot(ti_array*100, turbine_power[:, 1]/1000, color="k")
+ax.set_ylabel("Rear turbine power [kW]")
+ax.set_xlabel("Turbulence intensity [%]")
 
 for ax in axarr:
     ax.grid(True)
