@@ -253,18 +253,21 @@ class FlorisInterface(LoggingManager):
         #   turbulence_intensities is None
         #   len(turbulence intensity) != len(wind_directions)
         #   turbulence_intensities is uniform
-        #   in this case, automatically resize turbulence intensity
-        #    This is the case where user is assuming same ti across all findex
-        if ((wind_speeds is not None) or (wind_directions is not None)) and (
-            turbulence_intensities is None
+        # In this case, automatically resize turbulence intensity
+        # This is the case where user is assuming same TI across all findex
+        if (
+            (wind_speeds is not None or wind_directions is not None)
+            and turbulence_intensities is None
+            and (
+                len(flow_field_dict["turbulence_intensities"])
+                != len(flow_field_dict["wind_directions"])
+            )
+            and len(np.unique(flow_field_dict["turbulence_intensities"])) == 1
         ):
-            if len(flow_field_dict["turbulence_intensities"]) != len(
-                flow_field_dict["wind_directions"]
-            ):
-                if len(np.unique(flow_field_dict["turbulence_intensities"])) == 1:
-                    flow_field_dict["turbulence_intensities"] = flow_field_dict[
-                        "turbulence_intensities"
-                    ][0] * np.ones_like(flow_field_dict["wind_directions"])
+            flow_field_dict["turbulence_intensities"] = (
+                flow_field_dict["turbulence_intensities"][0]
+                * np.ones_like(flow_field_dict["wind_directions"])
+            )
 
         ## Farm
         if layout_x is not None:
