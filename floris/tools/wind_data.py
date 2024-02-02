@@ -396,7 +396,7 @@ class WindRose(WindDataBase):
         if ax is None:
             _, ax = plt.subplots()
 
-        ax.plot(self.ws_flat, self.ti_table_flat, marker=marker, ls=ls, color=color)
+        ax.plot(self.ws_flat, self.ti_table_flat*100, marker=marker, ls=ls, color=color)
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Turbulence Intensity (%)")
         ax.grid(True)
