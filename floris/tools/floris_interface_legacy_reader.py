@@ -123,7 +123,7 @@ def _convert_v24_dictionary_to_v3(dict_legacy):
     dict_floris["flow_field"] = {
         "air_density": fp["air_density"],
         "reference_wind_height": ref_height,
-        "turbulence_intensities": fp["turbulence_intensities"][0],
+        "turbulence_intensity": fp["turbulence_intensity"][0],
         "wind_directions": [fp["wind_direction"]],
         "wind_shear": fp["wind_shear"],
         "wind_speeds": [fp["wind_speed"]],

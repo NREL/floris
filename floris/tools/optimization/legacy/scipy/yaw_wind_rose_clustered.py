@@ -319,7 +319,7 @@ class YawOptimizationWindRoseClustered(YawOptimizationWindRose, LoggingManager):
                     self.fi.reinitialize_flow_field(
                         wind_direction=[self.wd[i]],
                         wind_speed=[self.ws[i]],
-                        turbulence_intensities=[self.ti[i]],
+                        turbulence_intensity=self.ti[i],
                     )
 
                 # Set initial farm power
@@ -355,7 +355,7 @@ class YawOptimizationWindRoseClustered(YawOptimizationWindRose, LoggingManager):
                     self.fi.reinitialize_flow_field(
                         layout_array=[
                             np.array(fi_full.layout_x)[cl],
-                            np.array(fi_full.layout_y)[cl],
+                            np.array(fi_full.layout_y)[cl]
                         ]
                     )
                     opt_yaw_angles[cl] = self._optimize()
@@ -400,7 +400,7 @@ class YawOptimizationWindRoseClustered(YawOptimizationWindRose, LoggingManager):
                     self.fi.reinitialize_flow_field(
                         wind_direction=[self.wd[i]],
                         wind_speed=[self.ws[i]],
-                        turbulence_intensities=[self.ti[i]],
+                        turbulence_intensity=self.ti[i],
                     )
                 opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
                 self.fi.calculate_wake(yaw_angles=opt_yaw_angles)

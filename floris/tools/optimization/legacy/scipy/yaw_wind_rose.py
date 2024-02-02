@@ -243,7 +243,7 @@ class YawOptimizationWindRose(Optimization):
                     self.fi.reinitialize_flow_field(
                         wind_direction=[self.wd[i]],
                         wind_speed=[self.ws[i]],
-                        turbulence_intensities=[self.ti[i]],
+                        turbulence_intensity=self.ti[i],
                     )
 
                 # initial power
@@ -262,7 +262,7 @@ class YawOptimizationWindRose(Optimization):
                     self.fi.reinitialize_flow_field(
                         wind_direction=[self.wd[i]],
                         wind_speed=[self.ws[i]],
-                        turbulence_intensities=[self.ti[i]],
+                        turbulence_intensity=self.ti[i],
                     )
                 self.fi.calculate_wake(yaw_angles=self.yaw_angles_baseline)
                 power_init = self.fi.get_turbine_power(
@@ -770,7 +770,7 @@ class YawOptimizationWindRose(Optimization):
                     self.fi.reinitialize_flow_field(
                         wind_direction=[self.wd[i]],
                         wind_speed=[self.ws[i]],
-                        turbulence_intensities=[self.ti[i]],
+                        turbulence_intensity=self.ti[i],
                     )
 
                 # calculate baseline power
@@ -913,7 +913,7 @@ class YawOptimizationWindRose(Optimization):
                     self.fi.reinitialize_flow_field(
                         wind_direction=[self.wd[i]],
                         wind_speed=[self.ws[i]],
-                        turbulence_intensities=[self.ti[i]],
+                        turbulence_intensity=self.ti[i],
                     )
 
                 self.initial_farm_power = self.initial_farm_powers[i]
@@ -945,7 +945,7 @@ class YawOptimizationWindRose(Optimization):
                     self.fi.reinitialize_flow_field(
                         wind_direction=[self.wd[i]],
                         wind_speed=[self.ws[i]],
-                        turbulence_intensities=[self.ti[i]],
+                        turbulence_intensity=self.ti[i],
                     )
                 opt_yaw_angles = np.array(self.yaw_angles_template, copy=True)
                 self.fi.calculate_wake(yaw_angles=opt_yaw_angles)
