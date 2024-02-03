@@ -142,8 +142,15 @@ class FlorisInterface(LoggingManager):
             )
         self.floris.farm.yaw_angles = yaw_angles
 
-        # None should be ok
+        if power_setpoints is None:
+            power_setpoints = 1E12 * np.ones(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
         self.floris.farm.power_setpoints = power_setpoints
+
 
         # # TODO is this required?
         # if tilt_angles is not None:
