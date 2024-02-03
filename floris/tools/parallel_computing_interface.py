@@ -166,7 +166,7 @@ class ParallelComputingInterface(LoggingManager):
         wind_shear=None,
         wind_veer=None,
         reference_wind_height=None,
-        turbulence_intensity=None,
+        turbulence_intensities=None,
         air_density=None,
         layout=None,
         layout_x=None,
@@ -193,7 +193,7 @@ class ParallelComputingInterface(LoggingManager):
             wind_shear=wind_shear,
             wind_veer=wind_veer,
             reference_wind_height=reference_wind_height,
-            turbulence_intensity=turbulence_intensity,
+            turbulence_intensities=turbulence_intensities,
             air_density=air_density,
             layout_x=layout_x,
             layout_y=layout_y,
@@ -550,7 +550,7 @@ class ParallelComputingInterface(LoggingManager):
                     [j[7] for j in multiargs],
                     [j[8] for j in multiargs],
                     [j[9] for j in multiargs],
-                    [j[10] for j in multiargs]
+                    [j[10] for j in multiargs],
                 )
         t2 = timerpc()
 

@@ -1,12 +1,13 @@
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from floris.tools.floris_interface import FlorisInterface
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
-YAML_INPUT = TEST_DATA / "input_full_v3.yaml"
+YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 
 def test_read_yaml():
@@ -200,3 +201,60 @@ def test_get_farm_aep_with_conditions():
 
     #Confirm n_findex reset after the operation
     assert n_findex == fi.floris.flow_field.n_findex
+
+
+def test_reinitailize_ti():
+    fi = FlorisInterface(configuration=YAML_INPUT)
+
+    # Set wind directions and wind speeds and turbulence intensitities
+    # with n_findex = 3
+    fi.reinitialize(
+        wind_speeds=[8.0, 8.0, 8.0],
+        wind_directions=[240.0, 250.0, 260.0],
+        turbulence_intensities=[0.1, 0.1, 0.1],
+    )
+
+    # Now confirm can change wind speeds and directions shape without changing
+    # turbulence intensity since this is allowed when the turbulence
+    # intensities are uniform
+    # raises n_findex to 4
+    fi.reinitialize(
+        wind_speeds=[8.0, 8.0, 8.0, 8.0],
+        wind_directions=[
+            240.0,
+            250.0,
+            260.0,
+            270.0,
+        ],
+    )
+
+    # Confirm turbulence_intensities now length 4 with single unique value
+    np.testing.assert_allclose(fi.floris.flow_field.turbulence_intensities, [0.1, 0.1, 0.1, 0.1])
+
+    # Now should be able to change turbulence intensity to changing, so long as length 4
+    fi.reinitialize(turbulence_intensities=[0.08, 0.09, 0.1, 0.11])
+
+    # However the wrong length should raise an error
+    with pytest.raises(ValueError):
+        fi.reinitialize(turbulence_intensities=[0.08, 0.09, 0.1])
+
+    # Also, now that TI is not a single unique value, it can not be left default when changing
+    # shape of wind speeds and directions
+    with pytest.raises(ValueError):
+        fi.reinitialize(
+            wind_speeds=[8.0, 8.0, 8.0, 8.0, 8.0],
+            wind_directions=[
+                240.0,
+                250.0,
+                260.0,
+                270.0,
+                280.0,
+            ],
+        )
+
+    # Test that applying a 1D array of length 1 is allowed for ti
+    fi.reinitialize(turbulence_intensities=[0.12])
+
+    # Test that applying a float however raises an error
+    with pytest.raises(TypeError):
+        fi.reinitialize(turbulence_intensities=0.12)

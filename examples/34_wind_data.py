@@ -50,7 +50,7 @@ ax.set_ylabel("Turbulence Intensity")
 
 
 # Build the time series
-time_series = TimeSeries(wd_array, ws_array)  # , turbulence_intensity=ti_array)
+time_series = TimeSeries(wd_array, ws_array, turbulence_intensities=ti_array)
 
 # Now build the wind rose
 wind_rose = time_series.to_wind_rose()

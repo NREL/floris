@@ -333,6 +333,74 @@ class WindRose(WindDataBase):
 
         return ax
 
+    def assign_ti_using_wd_ws_function(self, func):
+        """
+        Use the passed in function to assign new values to turbulence_intensities
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument and wind_speeds as second argument and returns
+                turbulence_intensities
+        """
+        self.ti_table = func(self.wd_grid, self.ws_grid)
+        self._build_gridded_and_flattened_version()
+
+    def assign_ti_using_IEC_method(self, Iref=0.07, offset=3.8):
+        """
+        Define TI as a function of wind speed by specifying an Iref and offset
+        value as in the normal turbulence model in the IEC 61400-1 standard
+
+        Args:
+            Iref (float): Reference turbulence level, defined as the expected
+                value of TI at 15 m/s. Default = 0.07. Note this value is
+                lower than the values of Iref for turbulence classes A, B, and
+                C in the IEC standard (0.16, 0.14, and 0.12, respectively), but
+                produces TI values more in line with those typically used in
+                FLORIS. When the default Iref and offset are used, the TI at
+                8 m/s is 8.6%.
+            offset (float): Offset value to equation. Default = 3.8, as defined
+                in the IEC standard to give the expected value of TI for
+                each wind speed.
+        """
+        if (Iref < 0) or (Iref > 1):
+            raise ValueError("Iref must be >= 0 and <=1")
+
+        def iref_func(wind_directions, wind_speeds):
+            sigma_1 = Iref * (0.75 * wind_speeds + offset)
+            return sigma_1 / wind_speeds
+
+        self.assign_ti_using_wd_ws_function(iref_func)
+
+    def plot_ti_over_ws(
+        self,
+        ax=None,
+        marker=".",
+        ls="None",
+        color="k",
+    ):
+        """
+        Scatter plot the turbulence_intensities against wind_speeds
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the wind rose is plotted. Defaults to None.
+            plot_kwargs (dict, optional): Keyword arguments to be passed to
+                ax.plot().
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted wind rose.
+        """
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots()
+
+        ax.plot(self.ws_flat, self.ti_table_flat*100, marker=marker, ls=ls, color=color)
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Turbulence Intensity (%)")
+        ax.grid(True)
+
 
 class TimeSeries(WindDataBase):
     """
@@ -343,7 +411,7 @@ class TimeSeries(WindDataBase):
     Args:
         wind_directions: NumPy array of wind directions (NDArrayFloat).
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
-        turbulence_intensity:  NumPy array of wind speeds (NDArrayFloat, optional).
+        turbulence_intensities:  NumPy array of wind speeds (NDArrayFloat, optional).
             Defaults to None
         values:  NumPy array of electricity values (NDArrayFloat, optional).
             Defaults to None
@@ -354,26 +422,28 @@ class TimeSeries(WindDataBase):
         self,
         wind_directions: NDArrayFloat,
         wind_speeds: NDArrayFloat,
-        turbulence_intensity: NDArrayFloat | None = None,
+        turbulence_intensities: NDArrayFloat | None = None,
         values: NDArrayFloat | None = None,
     ):
         # Wind speeds and wind directions must be the same length
         if len(wind_directions) != len(wind_speeds):
             raise ValueError("wind_directions and wind_speeds must be the same length")
 
-        # If turbulence_intensity is not None, must be same length as wind_directions
-        if turbulence_intensity is not None:
-            if len(wind_directions) != len(turbulence_intensity):
-                raise ValueError("wind_directions and turbulence_intensity must be the same length")
+        # If turbulence_intensities is not None, must be same length as wind_directions
+        if turbulence_intensities is not None:
+            if len(wind_directions) != len(turbulence_intensities):
+                raise ValueError(
+                    "wind_directions and turbulence_intensities must be the same length"
+                )
 
-        # If turbulence_intensity is not None, must be same length as wind_directions
+        # If values is not None, must be same length as wind_directions
         if values is not None:
             if len(wind_directions) != len(values):
                 raise ValueError("wind_directions and values must be the same length")
 
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
-        self.turbulence_intensity = turbulence_intensity
+        self.turbulence_intensities = turbulence_intensities
         self.values = values
 
         # Record findex
@@ -392,7 +462,7 @@ class TimeSeries(WindDataBase):
             self.wind_directions,
             self.wind_speeds,
             uniform_frequency,
-            self.turbulence_intensity,
+            self.turbulence_intensities,
             self.values,
         )
 
@@ -414,6 +484,43 @@ class TimeSeries(WindDataBase):
         mask = wind_directions_wrapped >= 360 - wd_step / 2.0
         wind_directions_wrapped[mask] = wind_directions_wrapped[mask] - 360.0
         return wind_directions_wrapped
+
+    def assign_ti_using_wd_ws_function(self, func):
+        """
+        Use the passed in function to new assign values to turbulence_intensities
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument and wind_speeds as second argument and returns
+                turbulence_intensities
+        """
+        self.turbulence_intensities = func(self.wind_directions, self.wind_speeds)
+
+    def assign_ti_using_IEC_method(self, Iref=0.07, offset=3.8):
+        """
+        Define TI as a function of wind speed by specifying an Iref and offset
+        value as in the normal turbulence model in the IEC 61400-1 standard
+
+        Args:
+            Iref (float): Reference turbulence level, defined as the expected
+                value of TI at 15 m/s. Default = 0.07. Note this value is
+                lower than the values of Iref for turbulence classes A, B, and
+                C in the IEC standard (0.16, 0.14, and 0.12, respectively), but
+                produces TI values more in line with those typically used in
+                FLORIS. When the default Iref and offset are used, the TI at
+                8 m/s is 8.6%.
+            offset (float): Offset value to equation. Default = 3.8, as defined
+                in the IEC standard to give the expected value of TI for
+                each wind speed.
+        """
+        if (Iref < 0) or (Iref > 1):
+            raise ValueError("Iref must be >= 0 and <=1")
+
+        def iref_func(wind_directions, wind_speeds):
+            sigma_1 = Iref * (0.75 * wind_speeds + offset)
+            return sigma_1 / wind_speeds
+
+        self.assign_ti_using_wd_ws_function(iref_func)
 
     def to_wind_rose(
         self, wd_step=2.0, ws_step=1.0, wd_edges=None, ws_edges=None, bin_weights=None
@@ -493,9 +600,9 @@ class TimeSeries(WindDataBase):
         if bin_weights is not None:
             df = df.assign(freq_val=df["freq_val"] * bin_weights)
 
-        # If turbulence_intensity is not none, add to dataframe
-        if self.turbulence_intensity is not None:
-            df = df.assign(turbulence_intensity=self.turbulence_intensity)
+        # If turbulence_intensities is not none, add to dataframe
+        if self.turbulence_intensities is not None:
+            df = df.assign(turbulence_intensities=self.turbulence_intensities)
 
         # If values is not none, add to dataframe
         if self.values is not None:
@@ -536,8 +643,8 @@ class TimeSeries(WindDataBase):
         freq_table = freq_table.reshape((len(wd_centers), len(ws_centers)))
 
         # If turbulence intensity is not none, compute the table
-        if self.turbulence_intensity is not None:
-            ti_table = df["turbulence_intensity_mean"].values.copy()
+        if self.turbulence_intensities is not None:
+            ti_table = df["turbulence_intensities_mean"].values.copy()
             ti_table = ti_table.reshape((len(wd_centers), len(ws_centers)))
         else:
             ti_table = None
