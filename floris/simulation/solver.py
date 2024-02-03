@@ -76,12 +76,12 @@ def sequential_solver(
     v_wake = np.zeros_like(flow_field.v_initial_sorted)
     w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
-    # Set up turbulence arrays
+    # Expand input turbulence intensity to 4d for (n_turbines, grid, grid)
     turbine_turbulence_intensity = flow_field.turbulence_intensities[:, None, None, None]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
-    # with extra dimension to reach 4d
+    # with dimensions expanded for (n_turbines, grid, grid)
     ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()
     ambient_turbulence_intensities = ambient_turbulence_intensities[:, None, None, None]
 
