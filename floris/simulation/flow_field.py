@@ -39,7 +39,7 @@ class FlowField(BaseClass):
     wind_veer: float = field(converter=float)
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
-    turbulence_intensity: float = field(converter=float)
+    turbulence_intensities: NDArrayFloat = field(converter=floris_array_converter)
     reference_wind_height: float = field(converter=float)
     time_series: bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
@@ -65,6 +65,17 @@ class FlowField(BaseClass):
     turbulence_intensity_field_sorted_avg: NDArrayFloat = field(
         init=False, factory=lambda: np.array([])
     )
+
+    @turbulence_intensities.validator
+    def turbulence_intensities_validator(
+        self, instance: attrs.Attribute, value: NDArrayFloat
+    ) -> None:
+
+        # Check the turbulence intensity is either length 1 or n_findex
+        if len(value) != 1 and len(value) != self.n_findex:
+            raise ValueError("turbulence_intensities should either be length 1 or n_findex")
+
+
 
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
@@ -108,6 +119,10 @@ class FlowField(BaseClass):
         if self.heterogenous_inflow_config is not None:
             self.generate_heterogeneous_wind_map()
 
+        # If turbulence_intensity is length 1, then convert it to a uniform array of
+        # length n_findex
+        if len(self.turbulence_intensities) == 1:
+            self.turbulence_intensities = self.turbulence_intensities[0] * np.ones(self.n_findex)
 
     def initialize_velocity_field(self, grid: Grid) -> None:
 
@@ -197,14 +212,13 @@ class FlowField(BaseClass):
         self.v_sorted = self.v_initial_sorted.copy()
         self.w_sorted = self.w_initial_sorted.copy()
 
-        self.turbulence_intensity_field = self.turbulence_intensity * np.ones(
-            (
-                self.n_findex,
-                grid.n_turbines,
-                1,
-                1,
-            )
+        self.turbulence_intensity_field = self.turbulence_intensities[:, None, None, None]
+        self.turbulence_intensity_field = np.repeat(
+            self.turbulence_intensity_field,
+            grid.n_turbines,
+            axis=1
         )
+
         self.turbulence_intensity_field_sorted = self.turbulence_intensity_field.copy()
 
     def finalize(self, unsorted_indices):

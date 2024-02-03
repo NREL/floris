@@ -244,11 +244,11 @@ def test_time_series_to_wind_rose_wrapping():
 def test_time_series_to_wind_rose_with_ti():
     wind_directions = np.array([259.8, 260.2, 260.3, 260.1])
     wind_speeds = np.array([5.0, 5.0, 5.1, 7.2])
-    turbulence_intensity = np.array([0.5, 1.0, 1.5, 2.0])
+    turbulence_intensities = np.array([0.5, 1.0, 1.5, 2.0])
     time_series = TimeSeries(
         wind_directions,
         wind_speeds,
-        turbulence_intensity=turbulence_intensity,
+        turbulence_intensities=turbulence_intensities,
     )
     wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
 

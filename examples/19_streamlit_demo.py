@@ -124,7 +124,7 @@ for fm in floris_models:
         layout_y=Y,
         wind_speeds=[wind_speed],
         wind_directions=[wind_direction],
-        turbulence_intensity=turbulence_intensity
+        turbulence_intensities=[turbulence_intensity],
     )
 
     fi.calculate_wake(yaw_angles=yaw_angles_base)
@@ -168,7 +168,7 @@ for fm in floris_models:
         layout_y=Y,
         wind_speeds=[wind_speed],
         wind_directions=[wind_direction],
-        turbulence_intensity=turbulence_intensity
+        turbulence_intensities=[turbulence_intensity],
     )
 
     fi.calculate_wake(yaw_angles=yaw_angles_yaw)

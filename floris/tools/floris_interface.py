@@ -195,7 +195,7 @@ class FlorisInterface(LoggingManager):
         wind_shear: float | None = None,
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
-        turbulence_intensity: float | None = None,
+        turbulence_intensities: list[float] | NDArrayFloat | None = None,
         # turbulence_kinetic_energy=None,
         air_density: float | None = None,
         # wake: WakeModelManager = None,
@@ -222,13 +222,17 @@ class FlorisInterface(LoggingManager):
             if (
                 (wind_directions is not None)
                 or (wind_speeds is not None)
-                or (turbulence_intensity is not None)
+                or (turbulence_intensities is not None)
             ):
                 raise ValueError(
                     "If wind_data is passed to reinitialize, then do not pass wind_directions, "
-                    "wind_speeds or turbulence_intensity as this is redundant."
+                    "wind_speeds or turbulence_intensities as this is redundant"
                 )
-            wind_directions, wind_speeds, turbulence_intensity = wind_data.unpack_for_reinitialize()
+            (
+                wind_directions,
+                wind_speeds,
+                turbulence_intensities,
+            ) = wind_data.unpack_for_reinitialize()
 
         ## FlowField
         if wind_speeds is not None:
@@ -241,12 +245,33 @@ class FlorisInterface(LoggingManager):
             flow_field_dict["wind_veer"] = wind_veer
         if reference_wind_height is not None:
             flow_field_dict["reference_wind_height"] = reference_wind_height
-        if turbulence_intensity is not None:
-            flow_field_dict["turbulence_intensity"] = turbulence_intensity
+        if turbulence_intensities is not None:
+            flow_field_dict["turbulence_intensities"] = turbulence_intensities
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
         if heterogenous_inflow_config is not None:
             flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
+
+        # Handle a special case where:
+        #   wind_speeds | wind_directions are not None
+        #   turbulence_intensities is None
+        #   len(turbulence intensity) != len(wind_directions)
+        #   turbulence_intensities is uniform
+        # In this case, automatically resize turbulence intensity
+        # This is the case where user is assuming same TI across all findex
+        if (
+            (wind_speeds is not None or wind_directions is not None)
+            and turbulence_intensities is None
+            and (
+                len(flow_field_dict["turbulence_intensities"])
+                != len(flow_field_dict["wind_directions"])
+            )
+            and len(np.unique(flow_field_dict["turbulence_intensities"])) == 1
+        ):
+            flow_field_dict["turbulence_intensities"] = (
+                flow_field_dict["turbulence_intensities"][0]
+                * np.ones_like(flow_field_dict["wind_directions"])
+            )
 
         ## Farm
         if layout_x is not None:

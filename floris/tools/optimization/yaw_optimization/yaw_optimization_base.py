@@ -530,20 +530,26 @@ class YawOptimization(LoggingManager):
         self.yaw_angles_opt = self._unreduce_variable(yaw_angles_opt_subset)
 
         # Produce output table
-        ti = np.min(self.fi.floris.flow_field.turbulence_intensity)
+        ti = np.min(self.fi.floris.flow_field.turbulence_intensities)
         df_list = []
         num_wind_directions = len(self.fi.floris.flow_field.wind_directions)
         for ii, wind_speed in enumerate(self.fi.floris.flow_field.wind_speeds):
-            df_list.append(pd.DataFrame({
-                "wind_direction": self.fi.floris.flow_field.wind_directions,
-                "wind_speed": wind_speed * np.ones(num_wind_directions),
-                "turbulence_intensity": ti * np.ones(num_wind_directions),
-                "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
-                "farm_power_opt": None if self.farm_power_opt is None \
-                                       else self.farm_power_opt[:, ii],
-                "farm_power_baseline": None if self.farm_power_baseline is None \
-                                            else self.farm_power_baseline[:, ii],
-            }))
+            df_list.append(
+                pd.DataFrame(
+                    {
+                        "wind_direction": self.fi.floris.flow_field.wind_directions,
+                        "wind_speed": wind_speed * np.ones(num_wind_directions),
+                        "turbulence_intensities": ti * np.ones(num_wind_directions),
+                        "yaw_angles_opt": list(self.yaw_angles_opt[:, ii, :]),
+                        "farm_power_opt": None
+                        if self.farm_power_opt is None
+                        else self.farm_power_opt[:, ii],
+                        "farm_power_baseline": None
+                        if self.farm_power_baseline is None
+                        else self.farm_power_baseline[:, ii],
+                    }
+                )
+            )
         df_opt = pd.concat(df_list, axis=0)
 
         return df_opt

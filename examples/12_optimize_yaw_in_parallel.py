@@ -63,7 +63,7 @@ if __name__ == "__main__":
     fi_aep.reinitialize(
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
-        turbulence_intensity=0.08  # Assume 8% turbulence intensity
+        turbulence_intensities=[0.08],  # Assume 8% turbulence intensity
     )
 
     # Pour this into a parallel computing interface
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     fi_opt.reinitialize(
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
-        turbulence_intensity=0.08  # Assume 8% turbulence intensity
+        turbulence_intensities=[0.08],  # Assume 8% turbulence intensity
     )
 
     # Pour this into a parallel computing interface
