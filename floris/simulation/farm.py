@@ -92,6 +92,9 @@ class Farm(BaseClass):
     tilt_angles: NDArrayFloat = field(init=False)
     tilt_angles_sorted: NDArrayFloat = field(init=False)
 
+    power_setpoints: NDArrayFloat = field(init=False)
+    power_setpoints_sorted: NDArrayFloat = field(init=False)
+
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
 
@@ -233,6 +236,11 @@ class Farm(BaseClass):
             sorted_indices[:, :, 0, 0],
             axis=1,
         )
+        self.power_setpoints_sorted = np.take_along_axis(
+            self.power_setpoints,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
         self.state = State.INITIALIZED
 
     def construct_hub_heights(self):
@@ -340,6 +348,10 @@ class Farm(BaseClass):
             np.ones((n_findex, self.n_turbines))
             * self.ref_tilts
         )
+
+    def set_power_setpoints(self, n_findex: int):
+        self.power_setpoints = 1E12 * np.ones((n_findex, self.n_turbines))
+        self.power_setpoints_sorted = 1E12 * np.ones((n_findex, self.n_turbines))
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
         tilt_angles = compute_tilt_angles_for_floating_turbines_map(
