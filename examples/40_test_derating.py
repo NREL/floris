@@ -14,6 +14,7 @@
 
 
 import numpy as np
+import yaml
 
 from floris.tools import FlorisInterface
 
@@ -23,7 +24,16 @@ Example to test out derating of turbines
 """
 
 # Grab model of FLORIS using de-rate style NREL 5MW turbines
-fi = FlorisInterface("inputs/gch_simple_derating.yaml")
+fi = FlorisInterface("inputs/gch.yaml")
+
+with open(str(
+    fi.floris.as_dict()["farm"]["turbine_library_path"] /
+    (fi.floris.as_dict()["farm"]["turbine_type"][0] + ".yaml")
+)) as t:
+    turbine_type = yaml.safe_load(t)
+turbine_type["power_thrust_model"] = "simple-derating"
+
+fi.reinitialize(turbine_type=[turbine_type])
 
 # Convert to a simple two turbine layout
 fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
