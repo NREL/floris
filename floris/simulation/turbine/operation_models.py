@@ -39,6 +39,7 @@ from floris.type_dec import (
 )
 from floris.utilities import cosd
 
+
 POWER_SETPOINT_DEFAULT = 1e12
 
 def rotor_velocity_air_density_correction(
@@ -412,11 +413,11 @@ class MixedOperationTurbine(BaseOperationModel):
 
         if (power_setpoints_mask & yaw_angles_mask).any():
             raise ValueError((
-                "Power setpoints and yaw angles are incompatible." 
+                "Power setpoints and yaw angles are incompatible."
                 "If yaw_angles entry is nonzero, power_setpoints must be greater than"
                 " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
             ))
-        
+
         powers = np.zeros_like(power_setpoints)
         powers[yaw_angles_mask] += CosineLossTurbine.power(
             yaw_angles=yaw_angles,
@@ -439,11 +440,11 @@ class MixedOperationTurbine(BaseOperationModel):
 
         if (power_setpoints_mask & yaw_angles_mask).any():
             raise ValueError((
-                "Power setpoints and yaw angles are incompatible." 
+                "Power setpoints and yaw angles are incompatible."
                 "If yaw_angles entry is nonzero, power_setpoints must be greater than"
                 " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
             ))
-        
+
         thrust_coefficients = np.zeros_like(power_setpoints)
         thrust_coefficients[yaw_angles_mask] += CosineLossTurbine.thrust_coefficient(
             yaw_angles=yaw_angles,
@@ -455,7 +456,7 @@ class MixedOperationTurbine(BaseOperationModel):
         )[power_setpoints_mask]
 
         return thrust_coefficients
-    
+
     def axial_induction(
         yaw_angles: NDArrayFloat,
         power_setpoints: NDArrayFloat,
@@ -466,11 +467,11 @@ class MixedOperationTurbine(BaseOperationModel):
 
         if (power_setpoints_mask & yaw_angles_mask).any():
             raise ValueError((
-                "Power setpoints and yaw angles are incompatible." 
+                "Power setpoints and yaw angles are incompatible."
                 "If yaw_angles entry is nonzero, power_setpoints must be greater than"
                 " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
             ))
-        
+
         axial_inductions = np.zeros_like(power_setpoints)
         axial_inductions[yaw_angles_mask] += CosineLossTurbine.axial_induction(
             yaw_angles=yaw_angles,

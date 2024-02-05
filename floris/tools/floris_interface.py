@@ -23,12 +23,12 @@ import pandas as pd
 from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
 from floris.simulation.rotor_velocity import average_velocity
+from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.simulation.turbine.turbine import (
     axial_induction,
     power,
     thrust_coefficient,
 )
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.tools.cut_plane import CutPlane
 from floris.tools.wind_data import WindDataBase
 from floris.type_dec import NDArrayFloat
