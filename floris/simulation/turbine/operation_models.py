@@ -410,6 +410,7 @@ class MixedOperationTurbine(BaseOperationModel):
     ):
         yaw_angles_mask = yaw_angles > 0
         power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+        neither_mask = np.logical_not(yaw_angles_mask) & np.logical_not(power_setpoints_mask)
 
         if (power_setpoints_mask & yaw_angles_mask).any():
             raise ValueError((
@@ -427,6 +428,9 @@ class MixedOperationTurbine(BaseOperationModel):
             power_setpoints=power_setpoints,
             **kwargs
         )[power_setpoints_mask]
+        powers[neither_mask] += SimpleTurbine.power(
+            **kwargs
+        )[neither_mask]
 
         return powers
 
@@ -437,6 +441,7 @@ class MixedOperationTurbine(BaseOperationModel):
     ):
         yaw_angles_mask = yaw_angles > 0
         power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+        neither_mask = np.logical_not(yaw_angles_mask) & np.logical_not(power_setpoints_mask)
 
         if (power_setpoints_mask & yaw_angles_mask).any():
             raise ValueError((
@@ -454,6 +459,9 @@ class MixedOperationTurbine(BaseOperationModel):
             power_setpoints=power_setpoints,
             **kwargs
         )[power_setpoints_mask]
+        thrust_coefficients[neither_mask] += SimpleTurbine.thrust_coefficient(
+            **kwargs
+        )[neither_mask]
 
         return thrust_coefficients
 
@@ -464,6 +472,7 @@ class MixedOperationTurbine(BaseOperationModel):
     ):
         yaw_angles_mask = yaw_angles > 0
         power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+        neither_mask = np.logical_not(yaw_angles_mask) & np.logical_not(power_setpoints_mask)
 
         if (power_setpoints_mask & yaw_angles_mask).any():
             raise ValueError((
@@ -481,5 +490,8 @@ class MixedOperationTurbine(BaseOperationModel):
             power_setpoints=power_setpoints,
             **kwargs
         )[power_setpoints_mask]
+        axial_inductions[neither_mask] += SimpleTurbine.axial_induction(
+            **kwargs
+        )[neither_mask]
 
         return axial_inductions
