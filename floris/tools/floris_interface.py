@@ -664,6 +664,7 @@ class FlorisInterface(LoggingManager):
             power_functions=self.floris.farm.turbine_power_functions,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
+            power_setpoints=self.floris.farm.power_setpoints,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,

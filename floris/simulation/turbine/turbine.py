@@ -85,6 +85,7 @@ def power(
     power_functions: dict[str, Callable],
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
+    power_setpoints: NDArrayFloat,
     tilt_interps: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
     turbine_power_thrust_tables: dict,
@@ -105,6 +106,8 @@ def power(
             each turbine type. Keys are the turbine type and values are the callable functions.
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
+        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
+            turbine [W].
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
@@ -138,6 +141,7 @@ def power(
         velocities = velocities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
+        power_setpoints = power_setpoints[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         if type(correct_cp_ct_for_tilt) is bool:
             pass
@@ -167,6 +171,7 @@ def power(
             "air_density": air_density,
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
+            "power_setpoints": power_setpoints,
             "tilt_interp": tilt_interps[turb_type],
             "average_method": average_method,
             "cubature_weights": cubature_weights,
@@ -182,8 +187,10 @@ def power(
 
 def thrust_coefficient(
     velocities: NDArrayFloat,
+    air_density: float,
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
+    power_setpoints: NDArrayFloat,
     thrust_coefficient_functions: dict[str, Callable],
     tilt_interps: dict[str, interp1d],
     correct_cp_ct_for_tilt: NDArrayBool,
@@ -202,8 +209,11 @@ def thrust_coefficient(
     Args:
         velocities (NDArrayFloat[findex, turbines, grid1, grid2]): The velocity field at
             a turbine.
+        air_density (float): air density for simulation [kg/m^3]
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
+        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
+            turbine [W].
         thrust_coefficient_functions (dict): The thrust coefficient functions for each turbine. Keys
             are the turbine type string and values are the callable functions.
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
@@ -232,6 +242,7 @@ def thrust_coefficient(
         velocities = velocities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
+        power_setpoints = power_setpoints[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         if type(correct_cp_ct_for_tilt) is bool:
             pass
@@ -258,8 +269,10 @@ def thrust_coefficient(
         thrust_model_kwargs = {
             "power_thrust_table": power_thrust_table,
             "velocities": velocities,
+            "air_density": air_density,
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
+            "power_setpoints": power_setpoints,
             "tilt_interp": tilt_interps[turb_type],
             "average_method": average_method,
             "cubature_weights": cubature_weights,
@@ -278,8 +291,10 @@ def thrust_coefficient(
 
 def axial_induction(
     velocities: NDArrayFloat,
+    air_density: float,
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
+    power_setpoints: NDArrayFloat,
     axial_induction_functions: dict,
     tilt_interps: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
@@ -298,6 +313,8 @@ def axial_induction(
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
+        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
+            turbine [W].
         axial_induction_functions (dict): The axial induction functions for each turbine. Keys are
             the turbine type string and values are the callable functions.
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
@@ -326,6 +343,7 @@ def axial_induction(
         velocities = velocities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
+        power_setpoints = power_setpoints[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         if type(correct_cp_ct_for_tilt) is bool:
             pass
@@ -352,8 +370,10 @@ def axial_induction(
         axial_induction_model_kwargs = {
             "power_thrust_table": power_thrust_table,
             "velocities": velocities,
+            "air_density": air_density,
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
+            "power_setpoints": power_setpoints,
             "tilt_interp": tilt_interps[turb_type],
             "average_method": average_method,
             "cubature_weights": cubature_weights,

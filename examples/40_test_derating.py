@@ -33,12 +33,16 @@ with open(str(
     turbine_type = yaml.safe_load(t)
 turbine_type["power_thrust_model"] = "simple-derating"
 
-fi.reinitialize(turbine_type=[turbine_type])
-
-# Convert to a simple two turbine layout
-fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+# Convert to a simple two turbine layout with derating turbines
+fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])
 
 # Set the wind directions and speeds to be constant over n_findex = N time steps
 N = 50
 fi.reinitialize(wind_directions=270 * np.ones(N), wind_speeds=8.0 * np.ones(N))
 fi.calculate_wake()
+turbine_powers_orig = fi.get_turbine_powers()
+
+# Add derating
+power_setpoints = np.tile(np.linspace(0, 6e3, N), 2).reshape(N, 2)
+fi.calculate_wake(power_setpoints=power_setpoints)
+turbine_powers_derated= fi.get_turbine_powers()
