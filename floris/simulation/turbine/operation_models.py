@@ -39,6 +39,7 @@ from floris.type_dec import (
 )
 from floris.utilities import cosd
 
+POWER_SETPOINT_DEFAULT = 1e12
 
 def rotor_velocity_air_density_correction(
     velocities: NDArrayFloat,
@@ -397,3 +398,87 @@ class SimpleDeratingTurbine(BaseOperationModel):
         )
 
         return (1 - np.sqrt(1 - thrust_coefficient))/2
+
+@define
+class MixedOperationTurbine(BaseOperationModel):
+
+    def power(
+        yaw_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        **kwargs
+    ):
+        yaw_angles_mask = yaw_angles > 0
+        power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+
+        if (power_setpoints_mask & yaw_angles_mask).any():
+            raise ValueError((
+                "Power setpoints and yaw angles are incompatible." 
+                "If yaw_angles entry is nonzero, power_setpoints must be greater than"
+                " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
+            ))
+        
+        powers = np.zeros_like(power_setpoints)
+        powers[yaw_angles_mask] += CosineLossTurbine.power(
+            yaw_angles=yaw_angles,
+            **kwargs
+        )[yaw_angles_mask]
+        powers[power_setpoints_mask] += SimpleDeratingTurbine.power(
+            power_setpoints=power_setpoints,
+            **kwargs
+        )[power_setpoints_mask]
+
+        return powers
+
+    def thrust_coefficient(
+        yaw_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        **kwargs
+    ):
+        yaw_angles_mask = yaw_angles > 0
+        power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+
+        if (power_setpoints_mask & yaw_angles_mask).any():
+            raise ValueError((
+                "Power setpoints and yaw angles are incompatible." 
+                "If yaw_angles entry is nonzero, power_setpoints must be greater than"
+                " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
+            ))
+        
+        thrust_coefficients = np.zeros_like(power_setpoints)
+        thrust_coefficients[yaw_angles_mask] += CosineLossTurbine.thrust_coefficient(
+            yaw_angles=yaw_angles,
+            **kwargs
+        )[yaw_angles_mask]
+        thrust_coefficients[power_setpoints_mask] += SimpleDeratingTurbine.thrust_coefficient(
+            power_setpoints=power_setpoints,
+            **kwargs
+        )[power_setpoints_mask]
+
+        return thrust_coefficients
+    
+    def axial_induction(
+        yaw_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        **kwargs
+    ):
+        yaw_angles_mask = yaw_angles > 0
+        power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+
+        if (power_setpoints_mask & yaw_angles_mask).any():
+            raise ValueError((
+                "Power setpoints and yaw angles are incompatible." 
+                "If yaw_angles entry is nonzero, power_setpoints must be greater than"
+                " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
+            ))
+        
+        axial_inductions = np.zeros_like(power_setpoints)
+        axial_inductions[yaw_angles_mask] += CosineLossTurbine.axial_induction(
+            yaw_angles=yaw_angles,
+            **kwargs
+        )[yaw_angles_mask]
+        axial_inductions[power_setpoints_mask] += SimpleDeratingTurbine.axial_induction(
+            power_setpoints=power_setpoints,
+            **kwargs
+        )[power_setpoints_mask]
+
+        return axial_inductions

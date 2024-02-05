@@ -27,6 +27,7 @@ from scipy.interpolate import interp1d
 from floris.simulation import BaseClass
 from floris.simulation.turbine import (
     CosineLossTurbine,
+    MixedOperationTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
 )
@@ -47,6 +48,7 @@ TURBINE_MODEL_MAP = {
         "simple": SimpleTurbine,
         "cosine-loss": CosineLossTurbine,
         "simple-derating": SimpleDeratingTurbine,
+        "mixed": MixedOperationTurbine,
     },
 }
 

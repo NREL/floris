@@ -31,7 +31,7 @@ with open(str(
     (fi.floris.as_dict()["farm"]["turbine_type"][0] + ".yaml")
 )) as t:
     turbine_type = yaml.safe_load(t)
-turbine_type["power_thrust_model"] = "simple-derating"
+turbine_type["power_thrust_model"] = "mixed"#"simple-derating"
 
 # Convert to a simple two turbine layout with derating turbines
 fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])

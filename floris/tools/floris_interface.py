@@ -28,6 +28,7 @@ from floris.simulation.turbine.turbine import (
     power,
     thrust_coefficient,
 )
+from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.tools.cut_plane import CutPlane
 from floris.tools.wind_data import WindDataBase
 from floris.type_dec import NDArrayFloat
@@ -143,7 +144,7 @@ class FlorisInterface(LoggingManager):
         self.floris.farm.yaw_angles = yaw_angles
 
         if power_setpoints is None:
-            power_setpoints = 1E12 * np.ones(
+            power_setpoints = POWER_SETPOINT_DEFAULT * np.ones(
                 (
                     self.floris.flow_field.n_findex,
                     self.floris.farm.n_turbines,
