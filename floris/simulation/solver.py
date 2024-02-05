@@ -1002,8 +1002,10 @@ def turbopark_solver(
                 turbulence_intensity_ii = turbine_turbulence_intensity[:, ii:ii+1]
                 ct_ii = thrust_coefficient(
                     velocities=flow_field.u_sorted,
+                    air_density=flow_field.air_density,
                     yaw_angles=farm.yaw_angles_sorted,
                     tilt_angles=farm.tilt_angles_sorted,
+                    power_setpoints=farm.power_setpoints_sorted,
                     thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
                     tilt_interps=farm.turbine_tilt_interps,
                     correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
