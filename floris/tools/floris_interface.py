@@ -676,8 +676,10 @@ class FlorisInterface(LoggingManager):
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
             velocities=self.floris.flow_field.u,
+            air_density=self.floris.flow_field.air_density,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
+            power_setpoints=self.floris.farm.power_setpoints,
             thrust_coefficient_functions=self.floris.farm.turbine_thrust_coefficient_functions,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
@@ -692,8 +694,10 @@ class FlorisInterface(LoggingManager):
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.floris.flow_field.u,
+            air_density=self.floris.flow_field.air_density,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
+            power_setpoints=self.floris.farm.power_setpoints,
             axial_induction_functions=self.floris.farm.turbine_axial_induction_functions,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
