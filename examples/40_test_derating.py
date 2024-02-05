@@ -31,7 +31,7 @@ with open(str(
     (fi.floris.as_dict()["farm"]["turbine_type"][0] + ".yaml")
 )) as t:
     turbine_type = yaml.safe_load(t)
-turbine_type["power_thrust_model"] = "mixed"#"simple-derating"
+turbine_type["power_thrust_model"] = "simple-derating"
 
 # Convert to a simple two turbine layout with derating turbines
 fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])
@@ -63,5 +63,40 @@ ax.legend()
 ax.set_xlim([0, 6e3])
 ax.set_xlabel("Power setpoint (kW)")
 ax.set_ylabel("Power produced (kW)")
+
+# Second example showing mixed model use.
+turbine_type["power_thrust_model"] = "mixed"
+yaw_angles = np.array([
+    [0.0, 0.0],
+    [0.0, 0.0],
+    [20.0, 10.0],
+    [0.0, 10.0],
+    [20.0, 0.0]
+])
+power_setpoints = np.array([
+    [1e12, 1e12],
+    [2e6, 1e6],
+    [1e12, 1e12],
+    [2e6, 1e12],
+    [1e12, 1e6]
+])
+fi.reinitialize(
+    wind_directions=270 * np.ones(len(yaw_angles)),
+    wind_speeds=10.0 * np.ones(len(yaw_angles)),
+    turbine_type=[turbine_type]*2
+)
+fi.calculate_wake(yaw_angles=yaw_angles, power_setpoints=power_setpoints)
+turbine_powers = fi.get_turbine_powers()
+print(turbine_powers)
+
+
+"""
+TODO: BAD ERROR RAISED:
+fi.reinitialize(
+    wind_directions=270 * np.ones_like(yaw_angles),
+    wind_speeds=10.0 * np.ones_like(yaw_angles),
+    turbine_type=[turbine_type]*2
+)
+"""
 
 plt.show()

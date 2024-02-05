@@ -368,7 +368,7 @@ def test_MixedOperationTurbine():
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
     )
-    
+
     assert np.allclose(test_Ct, base_Ct)
 
     test_power = MixedOperationTurbine.power(
@@ -498,5 +498,3 @@ def test_MixedOperationTurbine():
             tilt_angles=tilt_angles_nom,
             tilt_interp=None
         )
-
-
