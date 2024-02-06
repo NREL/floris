@@ -74,11 +74,11 @@ yaw_angles = np.array([
     [20.0, 0.0]
 ])
 power_setpoints = np.array([
-    [1e12, 1e12],
+    [None, None],
     [2e6, 1e6],
-    [1e12, 1e12],
-    [2e6, 1e12],
-    [1e12, 1e6]
+    [None, None],
+    [2e6, None,],
+    [None, 1e6]
 ])
 fi.reinitialize(
     wind_directions=270 * np.ones(len(yaw_angles)),

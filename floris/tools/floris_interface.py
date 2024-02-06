@@ -31,7 +31,7 @@ from floris.simulation.turbine.turbine import (
 )
 from floris.tools.cut_plane import CutPlane
 from floris.tools.wind_data import WindDataBase
-from floris.type_dec import NDArrayFloat
+from floris.type_dec import floris_array_converter, NDArrayFloat
 
 
 class FlorisInterface(LoggingManager):
@@ -121,7 +121,7 @@ class FlorisInterface(LoggingManager):
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         # tilt_angles: NDArrayFloat | list[float] | None = None,
-        power_setpoints: NDArrayFloat | list[float] | None = None,
+        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -131,7 +131,8 @@ class FlorisInterface(LoggingManager):
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
             power_setpoints (NDArrayFloat | list[float] | None, optional): Turbine power setpoints.
-                Defaults to None.
+                May be specified with some float values and some None values; power maximization
+                will be assumed for any None value. Defaults to None.
         """
 
         if yaw_angles is None:
@@ -150,6 +151,15 @@ class FlorisInterface(LoggingManager):
                     self.floris.farm.n_turbines,
                 )
             )
+        else:
+            power_setpoints = np.array(power_setpoints)
+
+        # Convert any None values to the default power setpoint
+        power_setpoints[power_setpoints == np.full(power_setpoints.shape, None)] = (
+            POWER_SETPOINT_DEFAULT
+        )
+        power_setpoints = floris_array_converter(power_setpoints)
+
         self.floris.farm.power_setpoints = power_setpoints
 
 
