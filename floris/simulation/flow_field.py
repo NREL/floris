@@ -71,6 +71,12 @@ class FlowField(BaseClass):
         self, instance: attrs.Attribute, value: NDArrayFloat
     ) -> None:
 
+        # Check that the array is 1-dimensional
+        if value.ndim != 1:
+            raise ValueError(
+                "wind_directions must have 1-dimension"
+            )
+
         # Check the turbulence intensity is either length 1 or n_findex
         if len(value) != 1 and len(value) != self.n_findex:
             raise ValueError("turbulence_intensities should either be length 1 or n_findex")
