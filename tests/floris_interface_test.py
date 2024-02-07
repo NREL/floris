@@ -3,6 +3,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.tools.floris_interface import FlorisInterface
 
 
@@ -30,6 +31,22 @@ def test_calculate_wake():
     fi.calculate_wake(yaw_angles=yaw_angles)
     assert fi.floris.farm.yaw_angles == yaw_angles
 
+    power_setpoints = 1e6*np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    fi.calculate_wake(power_setpoints=power_setpoints)
+    assert fi.floris.farm.power_setpoints == power_setpoints
+
+    fi.calculate_wake(power_setpoints=None)
+    assert fi.floris.farm.power_setpoints == (
+        POWER_SETPOINT_DEFAULT * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    )
+
+    fi.reinitialize(layout_x=[0, 0], layout_y=[0, 1000])
+    power_setpoints = np.array([[1e6, None]])
+    fi.calculate_wake(power_setpoints=power_setpoints)
+    assert np.allclose(
+        fi.floris.farm.power_setpoints,
+        np.array([[power_setpoints[0, 0], POWER_SETPOINT_DEFAULT]])
+    )
 
 def test_calculate_no_wake():
     """

@@ -1,8 +1,12 @@
 import numpy as np
+import pytest
 
 from floris.simulation.turbine.operation_models import (
     CosineLossTurbine,
+    MixedOperationTurbine,
+    POWER_SETPOINT_DEFAULT,
     rotor_velocity_air_density_correction,
+    SimpleDeratingTurbine,
     SimpleTurbine,
 )
 from floris.utilities import cosd
@@ -31,9 +35,19 @@ def test_submodel_attributes():
 
     assert hasattr(SimpleTurbine, "power")
     assert hasattr(SimpleTurbine, "thrust_coefficient")
+    assert hasattr(SimpleTurbine, "axial_induction")
 
     assert hasattr(CosineLossTurbine, "power")
     assert hasattr(CosineLossTurbine, "thrust_coefficient")
+    assert hasattr(CosineLossTurbine, "axial_induction")
+
+    assert hasattr(SimpleDeratingTurbine, "power")
+    assert hasattr(SimpleDeratingTurbine, "thrust_coefficient")
+    assert hasattr(SimpleDeratingTurbine, "axial_induction")
+
+    assert hasattr(MixedOperationTurbine, "power")
+    assert hasattr(MixedOperationTurbine, "thrust_coefficient")
+    assert hasattr(MixedOperationTurbine, "axial_induction")
 
 def test_SimpleTurbine():
 
@@ -213,3 +227,274 @@ def test_CosineLossTurbine():
     )
     absolute_tilt = tilt_angles_test - turbine_data["power_thrust_table"]["ref_tilt"]
     assert test_Ct == baseline_Ct * cosd(yaw_angles_test) * cosd(absolute_tilt)
+
+def test_SimpleDeratingTurbine():
+
+    n_turbines = 1
+    wind_speed = 10.0
+    turbine_data = SampleInputs().turbine
+
+    # Check that for no specified derating, matches SimpleTurbine
+    test_Ct = SimpleDeratingTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=None,
+    )
+    base_Ct = SimpleTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+    assert np.allclose(test_Ct, base_Ct)
+
+    test_power = SimpleDeratingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=None,
+    )
+    base_power = SimpleTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+    )
+    assert np.allclose(test_power, base_power)
+
+    test_ai = SimpleDeratingTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=None,
+    )
+    base_ai = SimpleTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+    assert np.allclose(test_ai, base_ai)
+
+    # When power_setpoints are 0, turbine is shut down.
+    test_Ct = SimpleDeratingTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.zeros((1, n_turbines)),
+    )
+    assert np.allclose(test_Ct, 0)
+
+    test_power = SimpleDeratingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.zeros((1, n_turbines)),
+    )
+    assert np.allclose(test_power, 0)
+
+    test_ai = SimpleDeratingTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.zeros((1, n_turbines)),
+    )
+    assert np.allclose(test_ai, 0)
+
+    # When power setpoints are less than available, results should be less than when no setpoint
+    wind_speed = 20 # High, so that turbine is above rated nominally
+    derated_power = 4.0e6
+    rated_power = 5.0e6
+    test_power = SimpleDeratingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+
+    rated_power = 5.0e6
+    test_Ct = SimpleDeratingTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+    base_Ct = SimpleTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+    assert np.allclose(test_Ct, derated_power/rated_power * base_Ct) # Is this correct?
+
+    # Mixed below and above rated
+    n_turbines = 2
+    wind_speeds_test = np.ones((1, n_turbines, 3, 3))
+    wind_speeds_test[0,0,:,:] = 20.0 # Above rated
+    wind_speeds_test[0,1,:,:] = 5.0 # Well below eated
+    test_power = SimpleDeratingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds_test, # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+    base_power = SimpleTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds_test, # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=derated_power * np.ones((1, n_turbines)),
+    )
+
+    assert test_power[0,0] < base_power[0,0]
+    assert test_power[0,0] == derated_power
+
+    assert test_power[0,1] == base_power[0,1]
+    assert test_power[0,1] < derated_power
+
+def test_MixedOperationTurbine():
+
+    n_turbines = 1
+    wind_speed = 10.0
+    turbine_data = SampleInputs().turbine
+    tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((1, n_turbines))
+
+    # Check that for no specified derating or yaw angle, matches SimpleTurbine
+    test_Ct = MixedOperationTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((1, n_turbines)),
+        yaw_angles=np.zeros((1, n_turbines)),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_Ct = SimpleTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+
+    assert np.allclose(test_Ct, base_Ct)
+
+    test_power = MixedOperationTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((1, n_turbines)),
+        yaw_angles=np.zeros((1, n_turbines)),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_power = SimpleTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+    )
+    assert np.allclose(test_power, base_power)
+
+    test_ai = MixedOperationTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((1, n_turbines)),
+        yaw_angles=np.zeros((1, n_turbines)),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_ai = SimpleTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+    assert np.allclose(test_ai, base_ai)
+
+    # Check that when power_setpoints are set, matches SimpleDeratingTurbine,
+    # while when yaw angles are set, matches CosineLossTurbine
+    n_turbines = 2
+    derated_power = 2.0e6
+
+    test_Ct = MixedOperationTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.array([[POWER_SETPOINT_DEFAULT, derated_power]]),
+        yaw_angles=np.array([[20.0, 0.0]]),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_Ct_dr = SimpleDeratingTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.array([[POWER_SETPOINT_DEFAULT, derated_power]]),
+    )
+    base_Ct_yaw = CosineLossTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        yaw_angles=np.array([[20.0, 0.0]]),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_Ct = np.array([[base_Ct_yaw[0,0], base_Ct_dr[0,1]]])
+    assert np.allclose(test_Ct, base_Ct)
+
+    # Do the same as above for power()
+    test_power = MixedOperationTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.array([[POWER_SETPOINT_DEFAULT, derated_power]]),
+        yaw_angles=np.array([[20.0, 0.0]]),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_power_dr = SimpleDeratingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.array([[POWER_SETPOINT_DEFAULT, derated_power]]),
+    )
+    base_power_yaw = CosineLossTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        yaw_angles=np.array([[20.0, 0.0]]),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_power = np.array([[base_power_yaw[0,0], base_power_dr[0,1]]])
+    assert np.allclose(test_power, base_power)
+
+    # Finally, check axial induction
+    test_ai = MixedOperationTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.array([[POWER_SETPOINT_DEFAULT, derated_power]]),
+        yaw_angles=np.array([[20.0, 0.0]]),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_ai_dr = SimpleDeratingTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        power_setpoints=np.array([[POWER_SETPOINT_DEFAULT, derated_power]]),
+    )
+    base_ai_yaw = CosineLossTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        yaw_angles=np.array([[20.0, 0.0]]),
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    )
+    base_ai = np.array([[base_ai_yaw[0,0], base_ai_dr[0,1]]])
+    assert np.allclose(test_ai, base_ai)
+
+    # Check error raised when both yaw and power setpoints are set
+    with pytest.raises(ValueError):
+        # Second turbine has both a power setpoint and a yaw angle
+        MixedOperationTurbine.thrust_coefficient(
+            power_thrust_table=turbine_data["power_thrust_table"],
+            velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+            air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+            power_setpoints=np.array([[POWER_SETPOINT_DEFAULT, derated_power]]),
+            yaw_angles=np.array([[0.0, 20.0]]),
+            tilt_angles=tilt_angles_nom,
+            tilt_interp=None
+        )

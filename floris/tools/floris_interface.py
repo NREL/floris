@@ -23,6 +23,7 @@ import pandas as pd
 from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
 from floris.simulation.rotor_velocity import average_velocity
+from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.simulation.turbine.turbine import (
     axial_induction,
     power,
@@ -30,7 +31,7 @@ from floris.simulation.turbine.turbine import (
 )
 from floris.tools.cut_plane import CutPlane
 from floris.tools.wind_data import WindDataBase
-from floris.type_dec import NDArrayFloat
+from floris.type_dec import floris_array_converter, NDArrayFloat
 
 
 class FlorisInterface(LoggingManager):
@@ -120,6 +121,7 @@ class FlorisInterface(LoggingManager):
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         # tilt_angles: NDArrayFloat | list[float] | None = None,
+        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -128,6 +130,9 @@ class FlorisInterface(LoggingManager):
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
+            power_setpoints (NDArrayFloat | list[float] | None, optional): Turbine power setpoints.
+                May be specified with some float values and some None values; power maximization
+                will be assumed for any None value. Defaults to None.
         """
 
         if yaw_angles is None:
@@ -138,6 +143,24 @@ class FlorisInterface(LoggingManager):
                 )
             )
         self.floris.farm.yaw_angles = yaw_angles
+
+        if power_setpoints is None:
+            power_setpoints = POWER_SETPOINT_DEFAULT * np.ones(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
+        else:
+            power_setpoints = np.array(power_setpoints)
+
+        # Convert any None values to the default power setpoint
+        power_setpoints[
+            power_setpoints == np.full(power_setpoints.shape, None)
+        ] = POWER_SETPOINT_DEFAULT
+        power_setpoints = floris_array_converter(power_setpoints)
+
+        self.floris.farm.power_setpoints = power_setpoints
 
         # # TODO is this required?
         # if tilt_angles is not None:
@@ -651,6 +674,7 @@ class FlorisInterface(LoggingManager):
             power_functions=self.floris.farm.turbine_power_functions,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
+            power_setpoints=self.floris.farm.power_setpoints,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
@@ -662,8 +686,10 @@ class FlorisInterface(LoggingManager):
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
             velocities=self.floris.flow_field.u,
+            air_density=self.floris.flow_field.air_density,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
+            power_setpoints=self.floris.farm.power_setpoints,
             thrust_coefficient_functions=self.floris.farm.turbine_thrust_coefficient_functions,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
@@ -678,8 +704,10 @@ class FlorisInterface(LoggingManager):
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.floris.flow_field.u,
+            air_density=self.floris.flow_field.air_density,
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
+            power_setpoints=self.floris.farm.power_setpoints,
             axial_induction_functions=self.floris.farm.turbine_axial_induction_functions,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
