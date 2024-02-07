@@ -79,8 +79,30 @@ class FlowField(BaseClass):
 
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
+        # Check that the array is 1-dimensional
+        if self.wind_directions.ndim != 1:
+            raise ValueError(
+                "wind_directions must have 1-dimension"
+            )
+
         """Using the validator method to keep the `n_findex` attribute up to date."""
         self.n_findex = value.size
+
+    @wind_speeds.validator
+    def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
+
+        # Check that the array is 1-dimensional
+        if self.wind_speeds.ndim != 1:
+            raise ValueError(
+                "wind_directions must have 1-dimension"
+            )
+
+        """Confirm wind speeds and wind directions have the same lenght"""
+        if len(self.wind_directions) != len(self.wind_speeds):
+            raise ValueError(
+                f"wind_directions (length = {len(self.wind_directions)}) and "
+                f"wind_speeds (length = {len(self.wind_speeds)}) must have the same length"
+            )
 
     @heterogenous_inflow_config.validator
     def heterogenous_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
