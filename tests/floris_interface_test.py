@@ -16,6 +16,7 @@ def test_read_yaml():
     assert isinstance(fi, FlorisInterface)
 
 
+
 def test_calculate_wake():
     """
     In FLORIS v3.2, running calculate_wake twice incorrectly set the yaw angles when the first time

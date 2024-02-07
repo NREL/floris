@@ -12,8 +12,8 @@
 
 # See https://floris.readthedocs.io for documentation
 
-
 import numpy as np
+import pytest
 
 from floris.simulation import FlowField, TurbineGrid
 from tests.conftest import N_FINDEX, N_TURBINES
@@ -58,6 +58,62 @@ def test_asdict(flow_field_fixture: FlowField, turbine_grid_fixture: TurbineGrid
     dict2 = new_ff.as_dict()
 
     assert dict1 == dict2
+
+def test_len_ws_equals_len_wd(flow_field_fixture: FlowField, turbine_grid_fixture: TurbineGrid):
+
+    flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
+    dict1 = flow_field_fixture.as_dict()
+
+    # Test that having the 3 equal in lenght raises no error
+    dict1['wind_directions'] = np.array([180, 180])
+    dict1['wind_speeds'] = np.array([5., 6.])
+    dict1['turbulence_intensities'] = np.array([175., 175.])
+
+    FlowField.from_dict(dict1)
+
+    # Set the wind speeds as a different length of wind directions and turbulence_intensities
+    # And confirm error raised
+    dict1['wind_directions'] = np.array([180, 180])
+    dict1['wind_speeds'] = np.array([5., 6., 7.])
+    dict1['turbulence_intensities'] = np.array([175., 175.])
+
+    with pytest.raises(ValueError):
+        FlowField.from_dict(dict1)
+
+    # Set the wind directions as a different length of wind speeds and turbulence_intensities
+    dict1['wind_directions'] = np.array([180, 180, 180.])
+    # And confirm error raised
+    dict1['wind_speeds'] = np.array([5., 6.])
+    dict1['turbulence_intensities'] = np.array([175., 175.])
+
+    with pytest.raises(ValueError):
+        FlowField.from_dict(dict1)
+
+def test_dim_ws_wd_ti(flow_field_fixture: FlowField, turbine_grid_fixture: TurbineGrid):
+
+    flow_field_fixture.initialize_velocity_field(turbine_grid_fixture)
+    dict1 = flow_field_fixture.as_dict()
+
+    # Test that having an extra dimension in wind_directions raises an error
+    with pytest.raises(ValueError):
+        dict1['wind_directions'] = np.array([[180, 180]])
+        dict1['wind_speeds'] = np.array([5., 6.])
+        dict1['turbulence_intensities'] = np.array([175., 175.])
+        FlowField.from_dict(dict1)
+
+    # Test that having an extra dimension in wind_speeds raises an error
+    with pytest.raises(ValueError):
+        dict1['wind_directions'] = np.array([180, 180])
+        dict1['wind_speeds'] = np.array([[5., 6.]])
+        dict1['turbulence_intensities'] = np.array([175., 175.])
+        FlowField.from_dict(dict1)
+
+    # Test that having an extra dimension in turbulence_intensities raises an error
+    with pytest.raises(ValueError):
+        dict1['wind_directions'] = np.array([180, 180])
+        dict1['wind_speeds'] = np.array([5., 6.])
+        dict1['turbulence_intensities'] = np.array([[175., 175.]])
+        FlowField.from_dict(dict1)
 
 
 def test_turbulence_intensities_to_n_findex(flow_field_fixture, turbine_grid_fixture):
