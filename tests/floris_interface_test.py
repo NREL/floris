@@ -24,11 +24,11 @@ def test_reinitialize():
 
     # Test that passing in wind speeds and wind directions of different lenght raises an error
     with pytest.raises(ValueError):
-        fi.reinitialize(wind_directions=[0,180],wind_speeds=[8,8,8, 8, 8])
+        fi.reinitialize(wind_directions=[0,180],wind_speeds=[8, 8, 8, 8, 8])
 
     # Test that passing in two many dimensions of wind direction raises an error
     with pytest.raises(ValueError):
-        fi.reinitialize(wind_directions=np.ones((5,2)),wind_speeds=[8,8,8, 8, 8])
+        fi.reinitialize(wind_directions=np.ones((5,2)),wind_speeds=[8, 8, 8, 8, 8])
 
 
 def test_calculate_wake():
