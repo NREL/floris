@@ -22,9 +22,6 @@ def test_reinitialize():
     with pytest.raises(ValueError):
         fi.reinitialize(layout_x=[0,1000,2000,3000], layout_y=[0, 0, 0])
 
-    # Initialize to 4 turbines
-    fi.reinitialize(layout_x=[0,1000,2000,3000], layout_y=[0, 0, 0, 0])
-
     # Test that passing in wind speeds and wind directions of different lenght raises an error
     with pytest.raises(ValueError):
         fi.reinitialize(wind_directions=[0,180],wind_speeds=[8,8,8, 8, 8])
