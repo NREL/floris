@@ -32,6 +32,7 @@ from floris.simulation import (
     Turbine,
 )
 from floris.simulation.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
+from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
@@ -350,8 +351,8 @@ class Farm(BaseClass):
         )
 
     def set_power_setpoints(self, n_findex: int):
-        self.power_setpoints = 1E12 * np.ones((n_findex, self.n_turbines))
-        self.power_setpoints_sorted = 1E12 * np.ones((n_findex, self.n_turbines))
+        self.power_setpoints = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
+        self.power_setpoints_sorted = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
         tilt_angles = compute_tilt_angles_for_floating_turbines_map(
