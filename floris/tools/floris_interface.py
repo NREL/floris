@@ -155,13 +155,12 @@ class FlorisInterface(LoggingManager):
             power_setpoints = np.array(power_setpoints)
 
         # Convert any None values to the default power setpoint
-        power_setpoints[power_setpoints == np.full(power_setpoints.shape, None)] = (
-            POWER_SETPOINT_DEFAULT
-        )
+        power_setpoints[
+            power_setpoints == np.full(power_setpoints.shape, None)
+        ] = POWER_SETPOINT_DEFAULT
         power_setpoints = floris_array_converter(power_setpoints)
 
         self.floris.farm.power_setpoints = power_setpoints
-
 
         # # TODO is this required?
         # if tilt_angles is not None:

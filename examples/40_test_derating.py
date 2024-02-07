@@ -20,10 +20,11 @@ from floris.tools import FlorisInterface
 
 
 """
-Example to test out derating of turbines
+Example to test out derating of turbines and mixed derating and yawing. Will be refined before
+release. TODO: Demonstrate shutting off turbines also, once developed.
 """
 
-# Grab model of FLORIS using de-rate style NREL 5MW turbines
+# Grab model of FLORIS and update to deratable turbines
 fi = FlorisInterface("inputs/gch.yaml")
 
 with open(str(
