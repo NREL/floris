@@ -94,7 +94,7 @@ class FlowField(BaseClass):
         # Check that the array is 1-dimensional
         if self.wind_speeds.ndim != 1:
             raise ValueError(
-                "wind_directions must have 1-dimension"
+                "wind_speeds must have 1-dimension"
             )
 
         """Confirm wind speeds and wind directions have the same lenght"""
