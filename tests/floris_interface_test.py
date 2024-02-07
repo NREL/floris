@@ -15,6 +15,25 @@ def test_read_yaml():
     assert isinstance(fi, FlorisInterface)
 
 
+def test_reinitialize():
+    fi = FlorisInterface(configuration=YAML_INPUT)
+
+    # Test that passing in layouts of different lengths raises an error
+    with pytest.raises(ValueError):
+        fi.reinitialize(layout_x=[0,1000,2000,3000], layout_y=[0, 0, 0])
+
+    # Initialize to 4 turbines
+    fi.reinitialize(layout_x=[0,1000,2000,3000], layout_y=[0, 0, 0, 0])
+
+    # Test that passing in wind speeds and wind directions of different lenght raises an error
+    with pytest.raises(ValueError):
+        fi.reinitialize(wind_directions=[0,180],wind_speeds=[8,8,8, 8, 8])
+
+    # Test that passing in different dimension of wind speed and direction raises an error
+    with pytest.raises(ValueError):
+        fi.reinitialize(wind_directions=np.ones((5,2)),wind_speeds=[8,8,8, 8, 8])
+
+
 def test_calculate_wake():
     """
     In FLORIS v3.2, running calculate_wake twice incorrectly set the yaw angles when the first time
