@@ -89,14 +89,4 @@ fi.calculate_wake(yaw_angles=yaw_angles, power_setpoints=power_setpoints)
 turbine_powers = fi.get_turbine_powers()
 print(turbine_powers)
 
-
-"""
-TODO: BAD ERROR RAISED:
-fi.reinitialize(
-    wind_directions=270 * np.ones_like(yaw_angles),
-    wind_speeds=10.0 * np.ones_like(yaw_angles),
-    turbine_type=[turbine_type]*2
-)
-"""
-
 plt.show()
