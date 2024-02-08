@@ -3,6 +3,7 @@ import pytest
 
 from floris.simulation.turbine.operation_models import (
     CosineLossTurbine,
+    MITLossTurbine,
     MixedOperationTurbine,
     POWER_SETPOINT_DEFAULT,
     rotor_velocity_air_density_correction,
