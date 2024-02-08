@@ -62,6 +62,7 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     farm.construct_turbine_ref_tilts()
     farm.set_yaw_angles(N_FINDEX)
     farm.set_tilt_to_ref_tilt(N_FINDEX)
+    farm.set_power_setpoints(N_FINDEX)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
@@ -69,6 +70,7 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     new_farm.construct_turbine_ref_tilts()
     new_farm.set_yaw_angles(N_FINDEX)
     new_farm.set_tilt_to_ref_tilt(N_FINDEX)
+    new_farm.set_power_setpoints(N_FINDEX)
     dict2 = new_farm.as_dict()
 
     assert dict1 == dict2

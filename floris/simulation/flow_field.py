@@ -39,7 +39,7 @@ class FlowField(BaseClass):
     wind_veer: float = field(converter=float)
     wind_shear: float = field(converter=float)
     air_density: float = field(converter=float)
-    turbulence_intensity: float = field(converter=float)
+    turbulence_intensities: NDArrayFloat = field(converter=floris_array_converter)
     reference_wind_height: float = field(converter=float)
     time_series: bool = field(default=False)
     heterogenous_inflow_config: dict = field(default=None)
@@ -66,10 +66,49 @@ class FlowField(BaseClass):
         init=False, factory=lambda: np.array([])
     )
 
+    @turbulence_intensities.validator
+    def turbulence_intensities_validator(
+        self, instance: attrs.Attribute, value: NDArrayFloat
+    ) -> None:
+
+        # Check that the array is 1-dimensional
+        if value.ndim != 1:
+            raise ValueError(
+                "wind_directions must have 1-dimension"
+            )
+
+        # Check the turbulence intensity is either length 1 or n_findex
+        if len(value) != 1 and len(value) != self.n_findex:
+            raise ValueError("turbulence_intensities should either be length 1 or n_findex")
+
+
+
     @wind_directions.validator
     def wind_directions_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
+        # Check that the array is 1-dimensional
+        if self.wind_directions.ndim != 1:
+            raise ValueError(
+                "wind_directions must have 1-dimension"
+            )
+
         """Using the validator method to keep the `n_findex` attribute up to date."""
         self.n_findex = value.size
+
+    @wind_speeds.validator
+    def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
+
+        # Check that the array is 1-dimensional
+        if self.wind_speeds.ndim != 1:
+            raise ValueError(
+                "wind_speeds must have 1-dimension"
+            )
+
+        """Confirm wind speeds and wind directions have the same lenght"""
+        if len(self.wind_directions) != len(self.wind_speeds):
+            raise ValueError(
+                f"wind_directions (length = {len(self.wind_directions)}) and "
+                f"wind_speeds (length = {len(self.wind_speeds)}) must have the same length"
+            )
 
     @heterogenous_inflow_config.validator
     def heterogenous_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
@@ -108,6 +147,10 @@ class FlowField(BaseClass):
         if self.heterogenous_inflow_config is not None:
             self.generate_heterogeneous_wind_map()
 
+        # If turbulence_intensity is length 1, then convert it to a uniform array of
+        # length n_findex
+        if len(self.turbulence_intensities) == 1:
+            self.turbulence_intensities = self.turbulence_intensities[0] * np.ones(self.n_findex)
 
     def initialize_velocity_field(self, grid: Grid) -> None:
 
@@ -197,14 +240,13 @@ class FlowField(BaseClass):
         self.v_sorted = self.v_initial_sorted.copy()
         self.w_sorted = self.w_initial_sorted.copy()
 
-        self.turbulence_intensity_field = self.turbulence_intensity * np.ones(
-            (
-                self.n_findex,
-                grid.n_turbines,
-                1,
-                1,
-            )
+        self.turbulence_intensity_field = self.turbulence_intensities[:, None, None, None]
+        self.turbulence_intensity_field = np.repeat(
+            self.turbulence_intensity_field,
+            grid.n_turbines,
+            axis=1
         )
+
         self.turbulence_intensity_field_sorted = self.turbulence_intensity_field.copy()
 
     def finalize(self, unsorted_indices):

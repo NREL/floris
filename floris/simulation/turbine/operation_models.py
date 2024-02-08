@@ -40,6 +40,8 @@ from floris.type_dec import (
 from floris.utilities import cosd
 
 
+POWER_SETPOINT_DEFAULT = 1e12
+
 def rotor_velocity_air_density_correction(
     velocities: NDArrayFloat,
     air_density: float,
@@ -317,6 +319,184 @@ class CosineLossTurbine(BaseOperationModel):
         return 0.5 / misalignment_loss * (1 - np.sqrt(1 - thrust_coefficient * misalignment_loss))
 
 @define
+class SimpleDeratingTurbine(BaseOperationModel):
+    """
+    power_thrust_table is a dictionary (normally defined on the turbine input yaml)
+    that contains the parameters necessary to evaluate power(), thrust(), and axial_induction().
+    Any specific parameters for derating can be placed here. (they can be added to the turbine
+    yaml). For this operation model to receive those arguements, they'll need to be
+    added to the kwargs dictionaries in the respective functions on turbine.py. They won't affect
+    the other operation models.
+    """
+    def power(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        power_setpoints: NDArrayFloat | None,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        base_powers = SimpleTurbine.power(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            air_density=air_density,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+        if power_setpoints is None:
+            return base_powers
+        else:
+            return np.minimum(base_powers, power_setpoints)
+
+        # TODO: would we like special handling of zero power setpoints
+        # (mixed with non-zero values) to speed up computation in that case?
+
+    def thrust_coefficient(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        power_setpoints: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        base_thrust_coefficients = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+        if power_setpoints is None:
+            return base_thrust_coefficients
+        else:
+            # Assume thrust coefficient scales directly with power
+            base_powers = SimpleTurbine.power(
+                power_thrust_table=power_thrust_table,
+                velocities=velocities,
+                air_density=air_density
+            )
+            power_fractions = power_setpoints / base_powers
+            thrust_coefficients = power_fractions * base_thrust_coefficients
+            return np.minimum(base_thrust_coefficients, thrust_coefficients)
+
+    def axial_induction(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        power_setpoints: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        thrust_coefficient = SimpleDeratingTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            air_density=air_density,
+            power_setpoints=power_setpoints,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        return (1 - np.sqrt(1 - thrust_coefficient))/2
+
+@define
+class MixedOperationTurbine(BaseOperationModel):
+
+    def power(
+        yaw_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        **kwargs
+    ):
+        yaw_angles_mask = yaw_angles > 0
+        power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+        neither_mask = np.logical_not(yaw_angles_mask) & np.logical_not(power_setpoints_mask)
+
+        if (power_setpoints_mask & yaw_angles_mask).any():
+            raise ValueError((
+                "Power setpoints and yaw angles are incompatible."
+                "If yaw_angles entry is nonzero, power_setpoints must be greater than"
+                " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
+            ))
+
+        powers = np.zeros_like(power_setpoints)
+        powers[yaw_angles_mask] += CosineLossTurbine.power(
+            yaw_angles=yaw_angles,
+            **kwargs
+        )[yaw_angles_mask]
+        powers[power_setpoints_mask] += SimpleDeratingTurbine.power(
+            power_setpoints=power_setpoints,
+            **kwargs
+        )[power_setpoints_mask]
+        powers[neither_mask] += SimpleTurbine.power(
+            **kwargs
+        )[neither_mask]
+
+        return powers
+
+    def thrust_coefficient(
+        yaw_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        **kwargs
+    ):
+        yaw_angles_mask = yaw_angles > 0
+        power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+        neither_mask = np.logical_not(yaw_angles_mask) & np.logical_not(power_setpoints_mask)
+
+        if (power_setpoints_mask & yaw_angles_mask).any():
+            raise ValueError((
+                "Power setpoints and yaw angles are incompatible."
+                "If yaw_angles entry is nonzero, power_setpoints must be greater than"
+                " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
+            ))
+
+        thrust_coefficients = np.zeros_like(power_setpoints)
+        thrust_coefficients[yaw_angles_mask] += CosineLossTurbine.thrust_coefficient(
+            yaw_angles=yaw_angles,
+            **kwargs
+        )[yaw_angles_mask]
+        thrust_coefficients[power_setpoints_mask] += SimpleDeratingTurbine.thrust_coefficient(
+            power_setpoints=power_setpoints,
+            **kwargs
+        )[power_setpoints_mask]
+        thrust_coefficients[neither_mask] += SimpleTurbine.thrust_coefficient(
+            **kwargs
+        )[neither_mask]
+
+        return thrust_coefficients
+
+    def axial_induction(
+        yaw_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        **kwargs
+    ):
+        yaw_angles_mask = yaw_angles > 0
+        power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
+        neither_mask = np.logical_not(yaw_angles_mask) & np.logical_not(power_setpoints_mask)
+
+        if (power_setpoints_mask & yaw_angles_mask).any():
+            raise ValueError((
+                "Power setpoints and yaw angles are incompatible."
+                "If yaw_angles entry is nonzero, power_setpoints must be greater than"
+                " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
+            ))
+
+        axial_inductions = np.zeros_like(power_setpoints)
+        axial_inductions[yaw_angles_mask] += CosineLossTurbine.axial_induction(
+            yaw_angles=yaw_angles,
+            **kwargs
+        )[yaw_angles_mask]
+        axial_inductions[power_setpoints_mask] += SimpleDeratingTurbine.axial_induction(
+            power_setpoints=power_setpoints,
+            **kwargs
+        )[power_setpoints_mask]
+        axial_inductions[neither_mask] += SimpleTurbine.axial_induction(
+            **kwargs
+        )[neither_mask]
+
+        return axial_inductions
+
+@define
 class HelixTurbine(BaseOperationModel):
     """
     power_thrust_table is a dictionary (normally defined on the turbine input yaml)
@@ -324,7 +504,7 @@ class HelixTurbine(BaseOperationModel):
 
     Feel free to put any Helix tuning parameters into here (they can be added to the turbine yaml).
     Also, feel free to add any commanded inputs to power(), thrust_coefficient(), or
-    axial_induction(). For this operation model to receive those arguements, they'll need to be
+    axial_induction(). For this operation model to receive those arguments, they'll need to be
     added to the kwargs dictionaries in the respective functions on turbine.py. They won't affect
     the other operation models.
     """

@@ -22,6 +22,7 @@ from attrs import define, field
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
+    floris_numeric_dict_converter,
     FromDictMixin,
     iter_validator,
 )
@@ -116,7 +117,7 @@ def test_iter_validator():
         AttrsDemoClass(w=0, x=1, liststr=("a", "b"))
 
 
-def test_attrs_array_converter():
+def test_array_converter():
     array_input = [[1, 2, 3], [4.5, 6.3, 2.2]]
     test_array = np.array(array_input)
 
@@ -124,10 +125,53 @@ def test_attrs_array_converter():
     cls = AttrsDemoClass(w=0, x=1, array=array_input)
     np.testing.assert_allclose(test_array, cls.array)
 
-    # Test converstion on reset
+    # Test conversion on reset
     cls.array = array_input
     np.testing.assert_allclose(test_array, cls.array)
 
+    # Test that a non-iterable item like a scalar number fails
+    with pytest.raises(TypeError):
+        cls.array = 1
+
+
+def test_numeric_dict_converter():
+    """
+    This function converts data in a dictionary to a numeric type.
+    If it can't convert the data, it will raise a TypeError.
+    It should support scalar, list, and numpy array types
+    for values in the dictionary.
+    """
+    test_dict = {
+        "scalar_string": "1",
+        "scalar_int": 1,
+        "scalar_float": 1.0,
+        "list_string": ["1", "2", "3"],
+        "list_int": [1, 2, 3],
+        "list_float": [1.0, 2.0, 3.0],
+        "array_string": np.array(["1", "2", "3"]),
+        "array_int": np.array([1, 2, 3]),
+        "array_float": np.array([1.0, 2.0, 3.0]),
+    }
+    numeric_dict = floris_numeric_dict_converter(test_dict)
+    assert numeric_dict["scalar_string"] == 1
+    assert numeric_dict["scalar_int"] == 1
+    assert numeric_dict["scalar_float"] == 1.0
+    np.testing.assert_allclose(numeric_dict["list_string"], [1, 2, 3])
+    np.testing.assert_allclose(numeric_dict["list_int"], [1, 2, 3])
+    np.testing.assert_allclose(numeric_dict["list_float"], [1.0, 2.0, 3.0])
+    np.testing.assert_allclose(numeric_dict["array_string"], [1, 2, 3])
+    np.testing.assert_allclose(numeric_dict["array_int"], [1, 2, 3])
+    np.testing.assert_allclose(numeric_dict["array_float"], [1.0, 2.0, 3.0])
+
+    test_dict = {"scalar_fail": "a"}
+    with pytest.raises(TypeError):
+        floris_numeric_dict_converter(test_dict)
+    test_dict = {"list_fail": ["a", "2", "3"]}
+    with pytest.raises(TypeError):
+        floris_numeric_dict_converter(test_dict)
+    test_dict = {"array_fail": np.array(["a", "2", "3"])}
+    with pytest.raises(TypeError):
+        floris_numeric_dict_converter(test_dict)
 
 def test_convert_to_path():
     str_input = "../tests"

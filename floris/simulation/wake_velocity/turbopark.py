@@ -80,7 +80,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         x_i: np.ndarray,
         y_i: np.ndarray,
         z_i: np.ndarray,
-        ambient_turbulence_intensity: np.ndarray,
+        ambient_turbulence_intensities: np.ndarray,
         Cts: np.ndarray,
         rotor_diameter_i: np.ndarray,
         rotor_diameters: np.ndarray,
@@ -112,7 +112,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         Cts[:, i:, :, :] = 0.00001
 
         # Characteristic wake widths from all turbines relative to turbine i
-        dw = characteristic_wake_width(x_dist, ambient_turbulence_intensity, Cts, self.A)
+        dw = characteristic_wake_width(x_dist, ambient_turbulence_intensities, Cts, self.A)
         epsilon = 0.25 * np.sqrt(
             np.min( 0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts), 3, keepdims=True )
         )
