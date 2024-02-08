@@ -42,6 +42,18 @@ def rotor_velocity_yaw_correction(
 
     return rotor_effective_velocities
 
+def mit_rotor_velocity_yaw_correction(
+    pP: float,
+    yaw_angles: NDArrayFloat,
+    rotor_effective_velocities: NDArrayFloat,
+) -> NDArrayFloat:
+    # Compute the rotor effective velocity adjusting for yaw settings
+    pW = pP / 3.0  # Convert from pP to w
+    # TODO: cosine loss hard coded
+    rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angles) ** pW
+
+    return rotor_effective_velocities
+
 def rotor_velocity_tilt_correction(
     tilt_angles: NDArrayFloat,
     ref_tilt: NDArrayFloat,
