@@ -1228,6 +1228,9 @@ def empirical_gauss_solver(
                     1,
                     model_manager.deflection_model.yaw_added_mixing_gain
                 )
+                # add equivalent addition for Helix that takes in:
+                # - Helix pitch amplitude
+                # - Helix frequency
 
         # Extract total wake induced mixing for turbine i
         mixing_i = np.linalg.norm(
