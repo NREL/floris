@@ -81,16 +81,16 @@ fig, axarr = plt.subplots(2, 1, sharex=True)
 
 # Plot the power
 ax = axarr[0]
-ax.plot(["T0", "T1", "T2"], turbine_powers[0, :], "ks-", label="All On")
-ax.plot(["T0", "T1", "T2"], turbine_powers[1, :], "ro-", label="T0/T1 Disabled")
+ax.plot(["T0", "T1", "T2"], turbine_powers[0, :], "ks-", label="All on")
+ax.plot(["T0", "T1", "T2"], turbine_powers[1, :], "ro-", label="T0 & T1 disabled")
 ax.set_ylabel("Power (kW)")
 ax.grid(True)
 ax.legend()
 
 ax = axarr[1]
-ax.plot(["T0", "T1", "T2"], effective_wind_speeds[0, :], "ks-", label="All On")
-ax.plot(["T0", "T1", "T2"], effective_wind_speeds[1, :], "ro-", label="T0/T1 Disabled")
-ax.set_ylabel("Effective Wind Speeds (m/s)")
+ax.plot(["T0", "T1", "T2"], effective_wind_speeds[0, :], "ks-", label="All on")
+ax.plot(["T0", "T1", "T2"], effective_wind_speeds[1, :], "ro-", label="T0 & T1 disabled")
+ax.set_ylabel("Effective wind speeds (m/s)")
 ax.grid(True)
 ax.legend()
 
