@@ -71,6 +71,21 @@ def test_disable_turbines():
     turbines_powers_false_disable = fi.get_turbine_powers()
     np.testing.assert_allclose(turbines_powers_normal,turbines_powers_false_disable,atol=0.1)
 
+    # Confirm the shutting off the middle turbine is like removing from the layout
+    # In terms of impact on third turbine
+    disable_turbines = np.zeros((2, 3), dtype=bool)
+    disable_turbines[:,1] = [True, True]
+    fi.calculate_wake(disable_turbines = disable_turbines)
+    power_with_middle_disabled = fi.get_turbine_powers()
+
+    fi.reinitialize(layout_x = [0,2000],layout_y = [0, 0])
+    fi.calculate_wake()
+    power_with_middle_removed = fi.get_turbine_powers()
+
+    np.testing.assert_almost_equal(power_with_middle_disabled[0,2], power_with_middle_removed[0,1])
+    np.testing.assert_almost_equal(power_with_middle_disabled[1,2], power_with_middle_removed[1,1])
+
+
 
 def test_calculate_wake():
     """
