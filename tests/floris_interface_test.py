@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+import yaml
 
 from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.tools.floris_interface import FlorisInterface
@@ -15,6 +16,60 @@ def test_read_yaml():
     fi = FlorisInterface(configuration=YAML_INPUT)
     assert isinstance(fi, FlorisInterface)
 
+def test_disable_turbines():
+
+    fi = FlorisInterface(configuration=YAML_INPUT)
+
+    # Set to mixed turbine model
+    with open(
+        str(
+            fi.floris.as_dict()["farm"]["turbine_library_path"]
+            / (fi.floris.as_dict()["farm"]["turbine_type"][0] + ".yaml")
+        )
+    ) as t:
+        turbine_type = yaml.safe_load(t)
+    turbine_type["power_thrust_model"] = "mixed"
+    fi.reinitialize(turbine_type=[turbine_type])
+
+    # Init to n-findex = 2, n_turbines = 3
+    fi.reinitialize(
+        wind_speeds=np.array([8.,8.,]),
+        wind_directions=np.array([270.,270.]),
+        layout_x = [0,1000,2000],
+        layout_y=[0,0,0]
+    )
+
+    # Confirm that passing in a disable value with wrong n_findex raises error
+    with pytest.raises(ValueError):
+        fi.calculate_wake(disable_turbines=np.zeros((10, 3), dtype=bool))
+
+    # Confirm that passing in a disable value with wrong n_turbines raises error
+    with pytest.raises(ValueError):
+        fi.calculate_wake(disable_turbines=np.zeros((2, 10), dtype=bool))
+
+    # Confirm that if all turbines are disabled, power is near 0 for all turbines
+    fi.calculate_wake(disable_turbines=np.ones((2, 3), dtype=bool))
+    turbines_powers = fi.get_turbine_powers()
+    np.testing.assert_allclose(turbines_powers,0,atol=0.1)
+
+    # Confirm the same for calculate_no_wake
+    fi.calculate_no_wake(disable_turbines=np.ones((2, 3), dtype=bool))
+    turbines_powers = fi.get_turbine_powers()
+    np.testing.assert_allclose(turbines_powers,0,atol=0.1)
+
+    # Confirm that if all disabled values set to false, equivalent to running normally
+    fi.calculate_wake()
+    turbines_powers_normal = fi.get_turbine_powers()
+    fi.calculate_wake(disable_turbines=np.zeros((2, 3), dtype=bool))
+    turbines_powers_false_disable = fi.get_turbine_powers()
+    np.testing.assert_allclose(turbines_powers_normal,turbines_powers_false_disable,atol=0.1)
+
+    # Confirm the same for calculate_no_wake
+    fi.calculate_no_wake()
+    turbines_powers_normal = fi.get_turbine_powers()
+    fi.calculate_no_wake(disable_turbines=np.zeros((2, 3), dtype=bool))
+    turbines_powers_false_disable = fi.get_turbine_powers()
+    np.testing.assert_allclose(turbines_powers_normal,turbines_powers_false_disable,atol=0.1)
 
 
 def test_calculate_wake():
