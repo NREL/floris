@@ -31,7 +31,11 @@ from floris.simulation.turbine.turbine import (
 )
 from floris.tools.cut_plane import CutPlane
 from floris.tools.wind_data import WindDataBase
-from floris.type_dec import floris_array_converter, NDArrayFloat
+from floris.type_dec import (
+    floris_array_converter,
+    NDArrayBool,
+    NDArrayFloat,
+)
 
 
 class FlorisInterface(LoggingManager):
@@ -122,6 +126,7 @@ class FlorisInterface(LoggingManager):
         yaw_angles: NDArrayFloat | list[float] | None = None,
         # tilt_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        disable_turbines: NDArrayBool | list[bool] | None = None,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -133,6 +138,9 @@ class FlorisInterface(LoggingManager):
             power_setpoints (NDArrayFloat | list[float] | None, optional): Turbine power setpoints.
                 May be specified with some float values and some None values; power maximization
                 will be assumed for any None value. Defaults to None.
+            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions
+                n_findex x n_turbines.  True values indicate the turbine is disabled at that findex
+                and the power setpoint at that position is set to 0.  Defaults to None
         """
 
         if yaw_angles is None:
@@ -159,6 +167,33 @@ class FlorisInterface(LoggingManager):
             power_setpoints == np.full(power_setpoints.shape, None)
         ] = POWER_SETPOINT_DEFAULT
         power_setpoints = floris_array_converter(power_setpoints)
+
+        # Check for turbines to disable
+        if disable_turbines is not None:
+
+            # Force to numpy array
+            # disable_turbines = np.array(disable_turbines)
+
+            # Must have first dimension = n_findex
+            if disable_turbines.shape[0] != self.floris.flow_field.n_findex:
+                raise ValueError(
+                    f"disable_turbines has a size of {disable_turbines.shape[0]} "
+                    f"in the 0th dimension, must be equal to "
+                    f"n_findex={self.floris.flow_field.n_findex}"
+                )
+
+            # Must have first dimension = n_turbines
+            if disable_turbines.shape[1] != self.floris.farm.n_turbines:
+                raise ValueError(
+                    f"disable_turbines has a size of {disable_turbines.shape[1]} "
+                    f"in the 1th dimension, must be equal to "
+                    f"n_turbines={self.floris.farm.n_turbines}"
+                )
+
+            # Set power_setpoints and yaw_angles to 0 in all locations where
+            # disable_turbines is True
+            yaw_angles[disable_turbines] = 0.0
+            power_setpoints[disable_turbines] = 0.001 # Not zero to avoid numerical problems
 
         self.floris.farm.power_setpoints = power_setpoints
 
