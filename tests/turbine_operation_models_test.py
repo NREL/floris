@@ -507,7 +507,7 @@ def test_MixedOperationTurbine():
 def test_TUMLossTurbine():
 
     # NOTE: These tests should be updated to reflect actual expected behavior
-    # of the MITLossTurbine model. Currently, match the CosineLossTurbine model.
+    # of the TUMLossTurbine model. Currently, match the CosineLossTurbine model.
 
     n_turbines = 1
     wind_speed = 10.0
