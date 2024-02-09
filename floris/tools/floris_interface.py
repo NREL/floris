@@ -172,7 +172,7 @@ class FlorisInterface(LoggingManager):
         if disable_turbines is not None:
 
             # Force to numpy array
-            # disable_turbines = np.array(disable_turbines)
+            disable_turbines = np.array(disable_turbines)
 
             # Must have first dimension = n_findex
             if disable_turbines.shape[0] != self.floris.flow_field.n_findex:
