@@ -27,10 +27,10 @@ from scipy.interpolate import interp1d
 from floris.simulation import BaseClass
 from floris.simulation.turbine import (
     CosineLossTurbine,
-    MITLossTurbine,
     MixedOperationTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
+    TUMLossTurbine,
 )
 from floris.type_dec import (
     convert_to_path,
@@ -48,7 +48,7 @@ TURBINE_MODEL_MAP = {
     "power_thrust_model": {
         "simple": SimpleTurbine,
         "cosine-loss": CosineLossTurbine,
-        "mit-loss": MITLossTurbine,
+        "tum-loss": TUMLossTurbine,
         "simple-derating": SimpleDeratingTurbine,
         "mixed": MixedOperationTurbine,
     },

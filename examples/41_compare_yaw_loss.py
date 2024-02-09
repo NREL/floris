@@ -20,8 +20,7 @@ from floris.tools import FlorisInterface
 
 
 """
-Example to test out derating of turbines and mixed derating and yawing. Will be refined before
-release. TODO: Demonstrate shutting off turbines also, once developed.
+Test alternative models of loss to yawing
 """
 
 # Parameters
@@ -36,7 +35,7 @@ print(yaw_angles.shape)
 
 
 # Now loop over the operational models to compare
-op_models = ["cosine-loss", "mit-loss"]
+op_models = ["cosine-loss", "tum-loss"]
 results = {}
 
 for op_model in op_models:

@@ -42,7 +42,7 @@ def rotor_velocity_yaw_correction(
 
     return rotor_effective_velocities
 
-def mit_rotor_velocity_yaw_correction(
+def tum_rotor_velocity_yaw_correction(
     pP: float,
     yaw_angles: NDArrayFloat,
     rotor_effective_velocities: NDArrayFloat,

@@ -30,9 +30,9 @@ from floris.simulation import BaseClass
 from floris.simulation.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
-    mit_rotor_velocity_yaw_correction,
     rotor_velocity_tilt_correction,
     rotor_velocity_yaw_correction,
+    tum_rotor_velocity_yaw_correction,
 )
 from floris.type_dec import (
     NDArrayFloat,
@@ -322,7 +322,7 @@ class CosineLossTurbine(BaseOperationModel):
 
 
 @define
-class MITLossTurbine(BaseOperationModel):
+class TUMLossTurbine(BaseOperationModel):
     """
     Static class defining an actuator disk turbine model that may be misaligned with the flow.
     Nonzero tilt and yaw angles are handled via cosine relationships, with the power lost to yawing
@@ -369,7 +369,7 @@ class MITLossTurbine(BaseOperationModel):
             ref_air_density=power_thrust_table["ref_air_density"]
         )
 
-        rotor_effective_velocities = mit_rotor_velocity_yaw_correction(
+        rotor_effective_velocities = tum_rotor_velocity_yaw_correction(
             pP=power_thrust_table["pP"],
             yaw_angles=yaw_angles,
             rotor_effective_velocities=rotor_effective_velocities,

@@ -3,12 +3,12 @@ import pytest
 
 from floris.simulation.turbine.operation_models import (
     CosineLossTurbine,
-    MITLossTurbine,
     MixedOperationTurbine,
     POWER_SETPOINT_DEFAULT,
     rotor_velocity_air_density_correction,
     SimpleDeratingTurbine,
     SimpleTurbine,
+    TUMLossTurbine,
 )
 from floris.utilities import cosd
 from tests.conftest import SampleInputs, WIND_SPEEDS
@@ -50,9 +50,9 @@ def test_submodel_attributes():
     assert hasattr(MixedOperationTurbine, "thrust_coefficient")
     assert hasattr(MixedOperationTurbine, "axial_induction")
 
-    assert hasattr(MITLossTurbine, "power")
-    assert hasattr(MITLossTurbine, "thrust_coefficient")
-    assert hasattr(MITLossTurbine, "axial_induction")
+    assert hasattr(TUMLossTurbine, "power")
+    assert hasattr(TUMLossTurbine, "thrust_coefficient")
+    assert hasattr(TUMLossTurbine, "axial_induction")
 
 def test_SimpleTurbine():
 
@@ -504,7 +504,7 @@ def test_MixedOperationTurbine():
             tilt_interp=None
         )
 
-def test_MITLossTurbine():
+def test_TUMLossTurbine():
 
     # NOTE: These tests should be updated to reflect actual expected behavior
     # of the MITLossTurbine model. Currently, match the CosineLossTurbine model.
@@ -520,7 +520,7 @@ def test_MITLossTurbine():
 
 
     # Check that power works as expected
-    test_power = MITLossTurbine.power(
+    test_power = TUMLossTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=turbine_data["power_thrust_table"]["ref_air_density"], # Matches ref_air_density
@@ -533,7 +533,7 @@ def test_MITLossTurbine():
     assert np.allclose(baseline_power, test_power)
 
     # Check that yaw and tilt angle have an effect
-    test_power = MITLossTurbine.power(
+    test_power = TUMLossTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=turbine_data["power_thrust_table"]["ref_air_density"], # Matches ref_air_density
@@ -544,7 +544,7 @@ def test_MITLossTurbine():
     assert test_power < baseline_power
 
     # Check that a lower air density decreases power appropriately
-    test_power = MITLossTurbine.power(
+    test_power = TUMLossTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1,
@@ -556,7 +556,7 @@ def test_MITLossTurbine():
 
 
     # Check that thrust coefficient works as expected
-    test_Ct = MITLossTurbine.thrust_coefficient(
+    test_Ct = TUMLossTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1, # Unused
@@ -568,7 +568,7 @@ def test_MITLossTurbine():
     assert np.allclose(baseline_Ct, test_Ct)
 
     # Check that yaw and tilt angle have the expected effect
-    test_Ct = MITLossTurbine.thrust_coefficient(
+    test_Ct = TUMLossTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1, # Unused
@@ -581,7 +581,7 @@ def test_MITLossTurbine():
 
 
     # Check that thrust coefficient works as expected
-    test_ai = MITLossTurbine.axial_induction(
+    test_ai = TUMLossTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1, # Unused
@@ -599,7 +599,7 @@ def test_MITLossTurbine():
     assert np.allclose(baseline_ai, test_ai)
 
     # Check that yaw and tilt angle have the expected effect
-    test_ai = MITLossTurbine.axial_induction(
+    test_ai = TUMLossTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1, # Unused
