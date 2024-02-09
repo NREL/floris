@@ -49,7 +49,7 @@ layout = np.array([[0.0, 0.0], [500.0, 0.0], [1000.0, 0.0]])
 wind_directions = np.array([270.0, 270.0])
 wind_speeds = np.array([8.0, 8.0])
 
-# Shut down the first 2 turbines for the second wind data
+# Shut down the first 2 turbines for the second findex
 # 2 findex x 3 turbines
 disable_turbines = np.array([[False, False, False], [True, True, False]])
 
