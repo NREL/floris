@@ -50,6 +50,10 @@ def test_submodel_attributes():
     assert hasattr(MixedOperationTurbine, "thrust_coefficient")
     assert hasattr(MixedOperationTurbine, "axial_induction")
 
+    assert hasattr(MITLossTurbine, "power")
+    assert hasattr(MITLossTurbine, "thrust_coefficient")
+    assert hasattr(MITLossTurbine, "axial_induction")
+
 def test_SimpleTurbine():
 
     n_turbines = 1
