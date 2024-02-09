@@ -25,7 +25,7 @@ release. TODO: Demonstrate shutting off turbines also, once developed.
 """
 
 # Parameters
-N  = 100 # How many steps to cover yaw range in
+N  = 101 # How many steps to cover yaw range in
 yaw_max = 30 # Maximum yaw to test
 
 # Set up the yaw angle sweep
@@ -66,21 +66,22 @@ for op_model in op_models:
     # Calculate the power
     fi.calculate_wake(yaw_angles=yaw_angles)
     turbine_power = fi.get_turbine_powers().squeeze()
-    print(turbine_power.shape)
 
     # Save the results
     results[op_model] = turbine_power
 
-
 # Plot the results
 fig, ax = plt.subplots()
 
-for key in results:
-    ax.plot(yaw_angles.squeeze(), results[key], label=key)
+colors = ["C0", "k", "r"]
+linestyles = ["solid", "dashed", "dotted"]
+for key, c, ls in zip(results, colors, linestyles):
+    central_power = results[key][yaw_angles.squeeze() == 0]
+    ax.plot(yaw_angles.squeeze(), results[key]/central_power, label=key, color=c, linestyle=ls)
 
 ax.grid(True)
 ax.legend()
-ax.set_xlabel("Yaw Angle (Deg)")
-ax.set_ylabel("Turbine Power (Deg)")
+ax.set_xlabel("Yaw angle [deg]")
+ax.set_ylabel("Normalized turbine power [deg]")
 
 plt.show()
