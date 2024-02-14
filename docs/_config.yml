@@ -74,3 +74,4 @@ sphinx:
       # class-doc-from
       # no-value
     autodoc_typehints: both
+    mermaid_version: "10.8"
