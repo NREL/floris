@@ -33,17 +33,19 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
 # Reinitialize as a 3-turbine farm with range of WDs and 1 WS
+wd_array = np.arange(0.0, 360.0, 3.0)
+ws_array = 8.0 * np.ones_like(wd_array)
 D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=np.arange(0.0, 360.0, 3.0),
-    wind_speeds=[8.0],
+    wind_directions=wd_array,
+    wind_speeds=ws_array,
 )
 print(fi.floris.farm.rotor_diameters)
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
-yaw_opt = YawOptimizationSR(fi)#, exploit_layout_symmetry=False)
+yaw_opt = YawOptimizationSR(fi)
 df_opt = yaw_opt.optimize()
 
 print("Optimization results:")

@@ -32,13 +32,27 @@ the SerialRefine method. Finally, we plot the results.
 fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
 # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
 
-# Reinitialize as a 3-turbine farm with range of WDs and 1 WS
+# Define arrays of ws/wd
+wind_speeds_to_expand = np.arange(2.0, 18.0, 1.0)
+wind_directions_to_expand = np.arange(0.0, 360.0, 3.0)
+
+# Create grids to make combinations of ws/wd
+wind_speeds_grid, wind_directions_grid = np.meshgrid(
+    wind_speeds_to_expand,
+    wind_directions_to_expand
+)
+
+# Flatten the grids back to 1D arrays
+wd_array = wind_directions_grid.flatten()
+ws_array = wind_speeds_grid.flatten()
+
+# Reinitialize as a 3-turbine farm with range of WDs and WSs
 D = 126.0 # Rotor diameter for the NREL 5 MW
 fi.reinitialize(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=np.arange(0.0, 360.0, 3.0),
-    wind_speeds=np.arange(2.0, 18.0, 1.0),
+    wind_directions=wd_array,
+    wind_speeds=ws_array,
 )
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
@@ -52,7 +66,7 @@ fi.reinitialize(
 # but has no effect on the predicted power uplift from wake steering.
 # Hence, it should mostly be used when actually synthesizing a practicable
 # wind farm controller.
-yaw_opt = YawOptimizationSR(fi, verify_convergence=True)
+yaw_opt = YawOptimizationSR(fi)
 df_opt = yaw_opt.optimize()
 
 print("Optimization results:")
@@ -71,7 +85,7 @@ fig, axarr = plt.subplots(
     figsize=(10, 8)
 )
 jj = 0
-for ii, ws in enumerate(fi.floris.flow_field.wind_speeds):
+for ii, ws in enumerate(np.unique(fi.floris.flow_field.wind_speeds)):
     xi = np.remainder(ii, 4)
     if ((ii > 0) & (xi == 0)):
         jj += 1
@@ -101,7 +115,7 @@ fig, axarr = plt.subplots(
     figsize=(10, 8)
 )
 jj = 0
-for ii, ws in enumerate(fi.floris.flow_field.wind_speeds):
+for ii, ws in enumerate(np.unique(fi.floris.flow_field.wind_speeds)):
     xi = np.remainder(ii, 4)
     if ((ii > 0) & (xi == 0)):
         jj += 1
