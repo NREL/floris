@@ -52,6 +52,9 @@ jobs:
           if [[ $i == *08* ]]; then
             continue
           fi
+          if [[ $i == *12* ]]; then
+            continue
+          fi
           if [[ $i == *20* ]]; then
             continue
           fi
