@@ -37,7 +37,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         Ny_passes=[5, 4],  # Optimization options
         turbine_weights=None,
         exclude_downstream_turbines=True,
-        exploit_layout_symmetry=True,
+        exploit_layout_symmetry=False,
         verify_convergence=False,
     ):
         """
@@ -107,29 +107,31 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         yaw_angles_opt_subset = self._yaw_angles_opt_subset
         farm_power_opt_subset = self._farm_power_opt_subset
         wd_array_subset = self.fi_subset.floris.flow_field.wind_directions
+        ws_array_subset = self.fi_subset.floris.flow_field.wind_speeds
         turbine_weights_subset = self._turbine_weights_subset
 
         # Reformat yaw_angles_subset, if necessary
-        eval_multiple_passes = (len(np.shape(yaw_angles_subset)) == 4)
+        eval_multiple_passes = (len(np.shape(yaw_angles_subset)) == 3)
         if eval_multiple_passes:
             # Four-dimensional; format everything into three-dimensional
             Ny = yaw_angles_subset.shape[0]  # Number of passes
             yaw_angles_subset = np.vstack(
-                [yaw_angles_subset[iii, :, :, :] for iii in range(Ny)]
+                [yaw_angles_subset[iii, :, :] for iii in range(Ny)]
             )
-            yaw_angles_opt_subset = np.tile(yaw_angles_opt_subset, (Ny, 1, 1))
-            farm_power_opt_subset = np.tile(farm_power_opt_subset, (Ny, 1))
+            yaw_angles_opt_subset = np.tile(yaw_angles_opt_subset, (Ny, 1))
+            farm_power_opt_subset = np.tile(farm_power_opt_subset, (Ny))
             wd_array_subset = np.tile(wd_array_subset, Ny)
-            turbine_weights_subset = np.tile(turbine_weights_subset, (Ny, 1, 1))
+            ws_array_subset = np.tile(ws_array_subset, Ny)
+            turbine_weights_subset = np.tile(turbine_weights_subset, (Ny, 1))
 
         # Initialize empty matrix for floris farm power outputs
-        farm_powers = np.zeros((yaw_angles_subset.shape[0], yaw_angles_subset.shape[1]))
+        farm_powers = np.zeros((yaw_angles_subset.shape[0]))
 
         # Find indices of yaw angles that we previously already evaluated, and
         # prevent redoing the same calculations
         if use_memory:
-            idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=2).all(axis=1)
-            farm_powers[idx, :] = farm_power_opt_subset[idx, :]
+            idx = (np.abs(yaw_angles_opt_subset - yaw_angles_subset) < 0.01).all(axis=1)
+            farm_powers[idx] = farm_power_opt_subset[idx]
             if self.print_progress:
                 self.logger.info(
                     "Skipping {:d}/{:d} calculations: already in memory.".format(
@@ -149,10 +151,11 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
                 het_sm = np.tile(het_sm_orig, (Ny, 1))[~idx, :]
             else:
                 het_sm = None
-            farm_powers[~idx, :] = self._calculate_farm_power(
+            farm_powers[~idx] = self._calculate_farm_power(
                 wd_array=wd_array_subset[~idx],
-                turbine_weights=turbine_weights_subset[~idx, :, :],
-                yaw_angles=yaw_angles_subset[~idx, :, :],
+                ws_array=ws_array_subset[~idx],
+                turbine_weights=turbine_weights_subset[~idx, :],
+                yaw_angles=yaw_angles_subset[~idx, :],
                 heterogeneous_speed_multipliers=het_sm
             )
             self.time_spent_in_floris += (timerpc() - start_time)
@@ -163,8 +166,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
                 farm_powers,
                 (
                     Ny,
-                    self.fi_subset.floris.flow_field.n_wind_directions,
-                    self.fi_subset.floris.flow_field.n_wind_speeds
+                    self.fi_subset.floris.flow_field.n_findex
                 )
             )
 
@@ -180,10 +182,10 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
 
         # Initialize yaw angles to evaluate, 'Ny' times the wind rose
         Ny = self.Ny_passes[pass_depth]
-        evaluation_grid = np.tile(self._yaw_angles_opt_subset, (Ny, 1, 1, 1))
+        evaluation_grid = np.tile(self._yaw_angles_opt_subset, (Ny, 1, 1))
 
         # Get a list of the turbines in order of x and sort front to back
-        for iw in range(self._nwinddirections_subset):
+        for iw in range(self._n_wind_directions_subset):
             turbid = self.turbines_ordered_array_subset[iw, turbine_depth]  # Turbine to manipulate
 
             # # Check if this turbine needs to be optimized. If not, continue
@@ -194,19 +196,19 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
             # turbines_ordered = [ti for ti in turbines_ordered if ti in self.turbs_to_opt]
 
             # Grab yaw bounds from self
-            yaw_lb = self._yaw_lbs[iw, :, turbid]
-            yaw_ub = self._yaw_ubs[iw, :, turbid]
+            yaw_lb = self._yaw_lbs[iw, turbid]
+            yaw_ub = self._yaw_ubs[iw, turbid]
 
             # Saturate to allowable yaw limits
             yaw_lb = np.clip(
                 yaw_lb,
-                self.minimum_yaw_angle[iw, :, turbid],
-                self.maximum_yaw_angle[iw, :, turbid]
+                self.minimum_yaw_angle[iw, turbid],
+                self.maximum_yaw_angle[iw, turbid]
             )
             yaw_ub = np.clip(
                 yaw_ub,
-                self.minimum_yaw_angle[iw, :, turbid],
-                self.maximum_yaw_angle[iw, :, turbid]
+                self.minimum_yaw_angle[iw, turbid],
+                self.maximum_yaw_angle[iw, turbid]
             )
 
             if pass_depth == 0:
@@ -218,7 +220,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
                 ids = [*list(range(0, c)), *list(range(c + 1, Ny + 1))]
                 yaw_angles_subset = np.linspace(yaw_lb, yaw_ub, Ny + 1)[ids]
 
-            evaluation_grid[:, iw, :, turbid] = yaw_angles_subset
+            evaluation_grid[:, iw, turbid] = yaw_angles_subset
 
         self._yaw_evaluation_grid = evaluation_grid
         return evaluation_grid
@@ -276,7 +278,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
                 yaw_angles_opt_new = np.squeeze(
                     np.take_along_axis(
                         evaluation_grid,
-                        np.expand_dims(args_opt, axis=3),
+                        np.expand_dims(args_opt, axis=2),
                         axis=0
                     ),
                     axis=0
@@ -299,8 +301,8 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
 
                 # Update bounds for next iteration to close proximity of optimal solution
                 dx = (
-                    evaluation_grid[1, :, :, :] -
-                    evaluation_grid[0, :, :, :]
+                    evaluation_grid[1, :, :] -
+                    evaluation_grid[0, :, :]
                 )[ids]
                 self._yaw_lbs[ids] = np.clip(
                     yaw_angles_opt[ids] - 0.50 * dx,
