@@ -44,7 +44,7 @@ fi = FlorisInterface('inputs/gch.yaml')
 # and 1 wind speed with uniform probability
 wind_directions = [270., 90.]
 n_wds = len(wind_directions)
-wind_speeds = [8.0]
+wind_speeds = [8.0] * np.ones_like(wind_directions)
 # Shape frequency distribution to match number of wind directions and wind speeds
 freq = np.ones((len(wind_directions), len(wind_speeds)))
 freq = freq / freq.sum()
@@ -165,7 +165,7 @@ ax.set_title("Geometric yaw enabled")
 print(
     'Turbine geometric yaw angles for wind direction {0:.2f}'.format(wind_directions[1])\
     +' and wind speed {0:.2f} m/s:'.format(wind_speeds[0]),
-    f'{layout_opt.yaw_angles[1,0,:]}'
+    f'{layout_opt.yaw_angles[1, :]}'
 )
 
 plt.show()
