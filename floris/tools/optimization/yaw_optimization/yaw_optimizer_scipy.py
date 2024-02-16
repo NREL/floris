@@ -86,10 +86,7 @@ class YawOptimizationScipy(YawOptimization):
         # Loop through every wind condition individually
         wd_array = self.fi_subset.floris.flow_field.wind_directions
         ws_array = self.fi_subset.floris.flow_field.wind_speeds
-        for i, wc in enumerate(zip(wd_array, ws_array)):
-
-            wd = wc[0]
-            ws = wc[1]
+        for i, (wd, ws) in enumerate(zip(wd_array, ws_array)):
 
             self.fi_subset.reinitialize(wind_directions=[wd], wind_speeds=[ws])
 
