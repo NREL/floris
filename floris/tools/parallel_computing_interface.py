@@ -43,7 +43,6 @@ def _optimize_yaw_angles_serial(
     Ny_passes,
     turbine_weights,
     exclude_downstream_turbines,
-    exploit_layout_symmetry,
     verify_convergence,
     print_progress,
 ):
@@ -57,7 +56,6 @@ def _optimize_yaw_angles_serial(
         Ny_passes=Ny_passes,
         turbine_weights=turbine_weights,
         exclude_downstream_turbines=exclude_downstream_turbines,
-        exploit_layout_symmetry=exploit_layout_symmetry,
         verify_convergence=verify_convergence,
     )
 
@@ -476,7 +474,6 @@ class ParallelComputingInterface(LoggingManager):
         Ny_passes=[5,4],
         turbine_weights=None,
         exclude_downstream_turbines=True,
-        exploit_layout_symmetry=False,
         verify_convergence=False,
         print_worker_progress=False,  # Recommended disabled to avoid clutter. Useful for debugging
     ):
@@ -494,7 +491,6 @@ class ParallelComputingInterface(LoggingManager):
                 Ny_passes,
                 turbine_weights,
                 exclude_downstream_turbines,
-                exploit_layout_symmetry,
                 verify_convergence,
                 print_worker_progress,
             )
@@ -518,7 +514,6 @@ class ParallelComputingInterface(LoggingManager):
                     [j[7] for j in multiargs],
                     [j[8] for j in multiargs],
                     [j[9] for j in multiargs],
-                    [j[10] for j in multiargs],
                 )
         t2 = timerpc()
 

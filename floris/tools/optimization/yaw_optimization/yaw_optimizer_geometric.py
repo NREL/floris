@@ -33,7 +33,6 @@ class YawOptimizationGeometric(YawOptimization):
         fi,
         minimum_yaw_angle=0.0,
         maximum_yaw_angle=25.0,
-        exploit_layout_symmetry=False,
     ):
         """
         Instantiate YawOptimizationGeometric object with a FlorisInterface
@@ -44,7 +43,6 @@ class YawOptimizationGeometric(YawOptimization):
             fi=fi,
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
-            exploit_layout_symmetry=exploit_layout_symmetry,
             calc_baseline_power=False
         )
 

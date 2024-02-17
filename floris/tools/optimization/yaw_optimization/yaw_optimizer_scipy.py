@@ -38,7 +38,6 @@ class YawOptimizationScipy(YawOptimization):
         opt_options=None,
         turbine_weights=None,
         exclude_downstream_turbines=True,
-        exploit_layout_symmetry=False,
         verify_convergence=False,
     ):
         """
@@ -65,7 +64,6 @@ class YawOptimizationScipy(YawOptimization):
             normalize_control_variables=True,
             calc_baseline_power=True,
             exclude_downstream_turbines=exclude_downstream_turbines,
-            exploit_layout_symmetry=exploit_layout_symmetry,
             verify_convergence=verify_convergence,
         )
 

@@ -58,7 +58,6 @@ class LayoutOptimization(LoggingManager):
                 fi,
                 minimum_yaw_angle=-30.0,
                 maximum_yaw_angle=30.0,
-                exploit_layout_symmetry=False
             )
 
         self.initial_AEP = fi.get_farm_AEP(self.freq)

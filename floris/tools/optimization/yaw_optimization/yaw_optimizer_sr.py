@@ -37,7 +37,6 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         Ny_passes=[5, 4],  # Optimization options
         turbine_weights=None,
         exclude_downstream_turbines=True,
-        exploit_layout_symmetry=False,
         verify_convergence=False,
     ):
         """
@@ -55,7 +54,6 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
             turbine_weights=turbine_weights,
             calc_baseline_power=True,
             exclude_downstream_turbines=exclude_downstream_turbines,
-            exploit_layout_symmetry=exploit_layout_symmetry,
             verify_convergence=verify_convergence,
         )
 

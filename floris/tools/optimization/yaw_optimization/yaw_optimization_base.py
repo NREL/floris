@@ -21,7 +21,7 @@ import pandas as pd
 
 from floris.logging_manager import LoggingManager
 
-from .yaw_optimization_tools import derive_downstream_turbines, find_layout_symmetry
+from .yaw_optimization_tools import derive_downstream_turbines
 
 
 class YawOptimization(LoggingManager):
@@ -42,7 +42,6 @@ class YawOptimization(LoggingManager):
         normalize_control_variables=False,
         calc_baseline_power=True,
         exclude_downstream_turbines=True,
-        exploit_layout_symmetry=False,
         verify_convergence=False,
     ):
         """
@@ -179,16 +178,6 @@ class YawOptimization(LoggingManager):
         self.calc_baseline_power = calc_baseline_power
         self.exclude_downstream_turbines = exclude_downstream_turbines
 
-        # Check if exploit_layout_symmetry is being used with heterogeneous inflow
-        if exploit_layout_symmetry and fi.floris.flow_field.heterogenous_inflow_config is not None:
-            err_msg = (
-                "Layout symmetry cannot be exploited with heterogeneous inflows. "
-                "Setting exploit_layout_symmetry to False."
-            )
-            self.logger.warning(err_msg, stack_info=True)
-            self.exploit_layout_symmetry = False
-        else:
-            self.exploit_layout_symmetry = exploit_layout_symmetry
 
         # Prepare for optimization and calculate baseline powers (if applic.)
         self._initialize()
@@ -203,9 +192,6 @@ class YawOptimization(LoggingManager):
     # Private methods
 
     def _initialize(self):
-        # Derive layout symmetry, if applicable
-        self._derive_layout_symmetry()
-
         # Reduce optimization problem as much as possible
         self._reduce_control_problem()
 
@@ -250,9 +236,7 @@ class YawOptimization(LoggingManager):
         user-specified set of bounds (where bounds[i][0] == bounds[i][1]),
         or alternatively turbines that are far downstream in the wind farm
         and of which the wake does not impinge other turbines, if
-        exclude_downstream_turbines == True. This function also reduces
-        the optimization problem by exploiting layout symmetry, if
-        exploit_layout_symmetry == True.
+        exclude_downstream_turbines == True.
         """
         # Initialize which turbines to optimize for
         self.turbs_to_opt = (self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001)
@@ -276,29 +260,6 @@ class YawOptimization(LoggingManager):
                 downstream_turbines = np.array(downstream_turbines, dtype=int)
                 self.turbs_to_opt[iw, downstream_turbines] = False
                 turbs_to_opt_subset = copy.deepcopy(self.turbs_to_opt)  # Update
-
-        # Reduce optimization problem through layout symmetry
-        if (self.exploit_layout_symmetry) & (self._sym_df is not None):
-            # Reinitialize floris with subset of wind directions
-            wd_array = self.fi.floris.flow_field.wind_directions
-            wind_direction_subset = wd_array[self._sym_mapping_reduce]
-            ws_array = self.fi.floris.flow_field.wind_speeds
-            wind_speed_subset = ws_array[self._sym_mapping_reduce]
-            self.fi_subset.reinitialize(
-                wind_directions=wind_direction_subset,
-                wind_speeds=wind_speed_subset,
-            )
-
-            # Reduce control variables
-            red_map = self._sym_mapping_reduce
-            n_wind_directions_subset = len(wind_direction_subset)
-            minimum_yaw_angle_subset = minimum_yaw_angle_subset[red_map, :]
-            maximum_yaw_angle_subset = maximum_yaw_angle_subset[red_map, :]
-            x0_subset = x0_subset[red_map, :]
-            turbs_to_opt_subset = turbs_to_opt_subset[red_map, :]
-            turbine_weights_subset = turbine_weights_subset[red_map, :]
-            yaw_angles_template_subset = yaw_angles_template_subset[red_map, :]
-            yaw_angles_baseline_subset = yaw_angles_baseline_subset[red_map, :]
 
         # Set up a template yaw angles array with default solutions. The default
         # solutions are either 0.0 or the allowable yaw angle closest to 0.0 deg.
@@ -417,113 +378,10 @@ class YawOptimization(LoggingManager):
         if self.calc_baseline_power:
             P = self._calculate_farm_power(self._yaw_angles_baseline_subset)
             self._farm_power_baseline_subset = P
-            self.farm_power_baseline = self._unreduce_variable(P)
+            self.farm_power_baseline = P
         else:
             self._farm_power_baseline_subset = None
             self.farm_power_baseline = None
-
-    def _derive_layout_symmetry(self):
-        """Derive symmetry lines in the wind farm layout and use that
-        to reduce the optimization problem by 50 %.
-        """
-        self._sym_df = None  # Default option
-        if self.exploit_layout_symmetry:
-            # Check symmetry of bounds & turbine_weights
-            if np.unique(self.minimum_yaw_angle, axis=0).shape[0] > 1:
-                print("minimum_yaw_angle is not equal over wind directions.")
-                print("Exploiting of symmetry has been disabled.")
-                return
-
-            if np.unique(self.maximum_yaw_angle, axis=0).shape[0] > 1:
-                print("maximum_yaw_angle is not equal over wind directions.")
-                print("Exploiting of symmetry has been disabled.")
-                return
-
-            if np.unique(self.maximum_yaw_angle, axis=0).shape[0] > 1:
-                print("maximum_yaw_angle is not equal over wind directions.")
-                print("Exploiting of symmetry has been disabled.")
-                return
-
-            if np.unique(self.turbine_weights, axis=0).shape[0] > 1:
-                print("turbine_weights is not equal over wind directions.")
-                print("Exploiting of symmetry has been disabled.")
-                return
-
-            # Check if turbine_weights are consistently 1.0 everywhere
-            if np.any(np.abs(self.turbine_weights - 1.0) > 0.001):
-                print("turbine_weights are not uniformly 1.0.")
-                print("Exploiting of symmetry has been disabled.")
-                return
-
-            x = self.fi.layout_x
-            y = self.fi.layout_y
-            df = find_layout_symmetry(x=x, y=y)
-
-            # If no axes of symmetry, exit function
-            if df.shape[0] <= 0:
-                print("Wind farm layout in floris is not symmetrical.")
-                print("Exploitation of symmetry has been disabled.")
-                return
-
-            wd_array = self.fi.floris.flow_field.wind_directions
-            sym_step = df.iloc[0]["wd_range"][1]
-            if ((0.0 not in wd_array) or(sym_step not in wd_array)):
-                print("Floris wind direction array does not " +
-                      "intersect {:.1f} and {:.1f}.".format(0.0, sym_step))
-                print("Exploitation of symmetry has been disabled.")
-                return
-
-            ids_minimal = (wd_array >= 0.0) & (wd_array < sym_step)
-            wd_array_min = wd_array[ids_minimal]
-            wd_array_remn = np.remainder(wd_array, sym_step)
-
-            if not np.all([(x in wd_array_min) for x in wd_array_remn]):
-                print("Wind direction array appears irregular.")
-                print("Exploitation of symmetry has been disabled.")
-
-            self._sym_mapping_extrap = np.array(
-                [np.where(np.abs(x - wd_array_min) < 0.0001)[0][0]
-                for x in wd_array_remn], dtype=int)
-
-            self._sym_mapping_reduce = copy.deepcopy(ids_minimal)
-            self._sym_df = df
-
-            return
-
-    def _unreduce_variable(self, variable):
-        # Check if needed to un-reduce at all, if not, return directly
-        if variable is None:
-            return variable
-
-        if not self.exploit_layout_symmetry:
-            return variable
-
-        if self._sym_df is None:
-            return variable
-
-        # Apply operation on right dimension
-        ndims = len(np.shape(variable))
-        if ndims == 1:
-            full_array = variable[self._sym_mapping_extrap]
-        elif ndims == 2:
-            full_array = variable[self._sym_mapping_extrap, :]
-        elif ndims == 3:
-            # First upsample to full wind rose
-            full_array = variable[self._sym_mapping_extrap, :, :]
-
-            # Now process turbine mapping
-            wd_array = self.fi.floris.flow_field.wind_directions
-            for ii, dfrow in self._sym_df.iloc[1::].iterrows():
-                ids = (
-                    (wd_array >= dfrow["wd_range"][0]) &
-                    (wd_array < dfrow["wd_range"][1])
-                )
-                tmap = np.argsort(dfrow["turbine_mapping"])
-                full_array[ids, :, :] = full_array[ids, :, :][:, :, tmap]
-        else:
-            raise UserWarning("Unknown data shape.")
-
-        return full_array
 
     def _finalize(self, farm_power_opt_subset=None, yaw_angles_opt_subset=None):
         # Process final solutions
@@ -542,8 +400,8 @@ class YawOptimization(LoggingManager):
             )
 
         # Finalization step for optimization: undo reduction step
-        self.farm_power_opt = self._unreduce_variable(farm_power_opt_subset)
-        self.yaw_angles_opt = self._unreduce_variable(yaw_angles_opt_subset)
+        self.farm_power_opt = farm_power_opt_subset
+        self.yaw_angles_opt = yaw_angles_opt_subset
 
         # Produce output table
         ti = np.min(self.fi.floris.flow_field.turbulence_intensities)
