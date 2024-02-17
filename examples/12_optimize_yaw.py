@@ -79,9 +79,6 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
     yaw_angles = np.array(df_windrose[yaw_cols], dtype=float)
     fi.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
 
-    # Map angles from dataframe onto floris wind direction/speed grid
-    X, Y = np.meshgrid(wd_array, ws_array, indexing='ij')
-
     # Calculate FLORIS for every WD and WS combination and get the farm power
     fi.calculate_wake(yaw_angles)
     farm_power_array = fi.get_farm_power()
