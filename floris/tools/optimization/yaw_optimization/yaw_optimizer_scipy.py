@@ -84,9 +84,14 @@ class YawOptimizationScipy(YawOptimization):
         # Loop through every wind condition individually
         wd_array = self.fi_subset.floris.flow_field.wind_directions
         ws_array = self.fi_subset.floris.flow_field.wind_speeds
-        for i, (wd, ws) in enumerate(zip(wd_array, ws_array)):
+        ti_array = self.fi_subset.floris.flow_field.turbulence_intensities
+        for i, (wd, ws, ti) in enumerate(zip(wd_array, ws_array, ti_array)):
 
-            self.fi_subset.reinitialize(wind_directions=[wd], wind_speeds=[ws])
+            self.fi_subset.reinitialize(
+                wind_directions=[wd],
+                wind_speeds=[ws],
+                turbulence_intensities=[ti]
+            )
 
 
             # Find turbines to optimize
@@ -125,6 +130,7 @@ class YawOptimizationScipy(YawOptimization):
                         yaw_angles=x_full,
                         wd_array=[wd],
                         ws_array=[ws],
+                        ti_array=[ti],
                         turbine_weights=turbine_weights,
                         heterogeneous_speed_multipliers=het_sm
                     )[0] / J0
