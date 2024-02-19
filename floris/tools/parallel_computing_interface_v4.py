@@ -66,15 +66,12 @@ def _optimize_yaw_angles_serial(
     return df_opt
 
 
-class ParallelComputingInterface(LoggingManager):
+class ParallelComputingInterface(FlorisInterface):
     def __init__(
         self,
-        fi,
-        max_workers,
-        n_wind_direction_splits,
-        n_wind_speed_splits=1,
+        n_splits=2, # Is this required?
+        max_workers=None, # How do we want to handle how many workers are used?
         interface="multiprocessing",  # Options are 'multiprocessing', 'mpi4py' or 'concurrent'
-        use_mpi4py=None,
         propagate_flowfield_from_workers=False,
         print_timings=False
     ):
