@@ -298,6 +298,13 @@ class FlorisInterface(LoggingManager):
         if layout_y is not None:
             farm_dict["layout_y"] = layout_y
         if turbine_type is not None:
+            if reference_wind_height is None:
+                self.logger.warning(
+                    "turbine_type has been changed without specifying a new "
+                    +"reference_wind_height. reference_wind_height remains {0:.2f} m.".format(
+                        flow_field_dict["reference_wind_height"]
+                    )
+                )
             farm_dict["turbine_type"] = turbine_type
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
