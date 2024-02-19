@@ -153,9 +153,8 @@ def plot_turbine_labels(
     plotting_dict = {**default_plotting_dict, **plotting_dict}
 
     # If showing bbox is true, if bbox_dict is None, use a default
-    if (show_bbox is True) and (not bbox_dict):
-        # Use default
-        bbox_dict = {"facecolor": "gray", "alpha": 0.5, "pad": 0.1, "boxstyle": "round"}
+    default_bbox_dict = {"facecolor": "gray", "alpha": 0.5, "pad": 0.1, "boxstyle": "round"}
+    bbox_dict = {**default_bbox_dict, **bbox_dict}
 
     for ti in turbine_indices:
         if not show_bbox:
