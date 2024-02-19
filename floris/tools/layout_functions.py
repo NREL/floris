@@ -25,13 +25,13 @@ from scipy.spatial.distance import pdist, squareform
 from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 
-def plot_turbine_points(fi, turbine_names=None, turbine_indices=None, plotting_dict={}, label_turbines=True, ax=None):
+def plot_turbine_points(fi, ax=None, turbine_indices=None, plotting_dict={}):
     """
     Plot the farm layout.
 
-    Args:s
-        turbine_names (list[str]): Provided turbine names
-            Defaults to 0-index list
+    Args:
+        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
+        ax: axes to plot on (if None, creates figure and axes)
         turbine_indices (list[int]): turbines to plot,
             default to all turbines
 
@@ -42,27 +42,16 @@ def plot_turbine_points(fi, turbine_names=None, turbine_indices=None, plotting_d
             "markersize" : (10)
             "label" : (None) (for legend, if desired)
 
-        label_turbines (bool): Label turbines in plot
-        ax: axes to plot on (if None, creates figure and axes)
+
 
     Returns:
         ax: the current axes for the layout plot
 
-    turbine_names should be a complete list of all turbine names; only
-    those in turbine_indices will be plotted though.
     """
 
     # Generate axis, if needed
     if ax is None:
         _, ax = plt.subplots()
-
-    # If turbine names not none, confirm has correct number of turbines
-    if turbine_names is not None:
-        if len(turbine_names) != len(fi.layout_x):
-            raise ValueError("Length of turbine_names not equal to number turbines in fi object")
-    else:
-        # Assign simple default numbering
-        turbine_names = [f"{i:03d}" for i in range(len(fi.layout_x))]
 
     # If turbine_indices is not none, make sure all elements correspond to real indices
     if turbine_indices is not None:
@@ -86,35 +75,109 @@ def plot_turbine_points(fi, turbine_names=None, turbine_indices=None, plotting_d
     ax.plot(
         fi.layout_x[turbine_indices],
         fi.layout_y[turbine_indices],
-        marker=plotting_dict["marker"],
-        markersize=plotting_dict["markersize"],
         linestyle="None",
-        color=plotting_dict["color"],
-        label=plotting_dict["label"],
+        **plotting_dict,
     )
 
-    # Add labels to plot, if desired
-    if label_turbines:
-        # r = fi.floris.farm.rotor_diameters[0] / 2.0
-        for ti in turbine_indices:
-            # ax.text(fi.layout_x[ti]+r, fi.layout_y[ti]+r, turbine_names[ti])
+    # Make sure axis set to equal
+    ax.axis("equal")
 
-            ax.annotate(
+    return ax
+
+
+def plot_turbine_labels(
+    fi,
+    ax=None,
+    turbine_names=None,
+    turbine_indices=None,
+    label_offset=None,
+    show_bbox=False,
+    bbox_dict={},
+    plotting_dict={},
+):
+    """
+    Labels the turbines on a farm
+
+    Args:
+        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
+        ax: axes to plot on (if None, creates figure and axes)
+        turbine_names (list[str]): Provided turbine names
+            Defaults to 0-index list
+        turbine_indices (list[int]): turbines to plot,
+            default to all turbines
+        label_offset (float): Amount in m to dispace label from point.  Defaults to r/8
+        show_bbox (bool): Whether to put a box around the labels. Defaults to False
+        bbox_dict (dict): Dictionary defining box around labels.
+        plotting_dict: dictionary of plotting parameters, with the
+            following (optional) fields and their (default) values:
+            "color" : ("black")
+
+
+
+    Returns:
+        ax: the current axes for the layout plot
+    """
+
+    # Generate axis, if needed
+    if ax is None:
+        _, ax = plt.subplots()
+
+    # If turbine names not none, confirm has correct number of turbines
+    if turbine_names is not None:
+        if len(turbine_names) != len(fi.layout_x):
+            raise ValueError("Length of turbine_names not equal to number turbines in fi object")
+    else:
+        # Assign simple default numbering
+        turbine_names = [f"{i:03d}" for i in range(len(fi.layout_x))]
+
+    # If label_offset is None, use default value of r/8
+    if label_offset is None:
+        rotor_diameters = fi.floris.farm.rotor_diameters.flatten()
+        r = rotor_diameters[0] / 2.0
+        label_offset = r / 8.0
+
+    # If turbine_indices is not none, make sure all elements correspond to real indices
+    if turbine_indices is not None:
+        try:
+            fi.layout_x[turbine_indices]
+        except IndexError:
+            raise IndexError("turbine_indices does not correspond to turbine indices in fi")
+    else:
+        turbine_indices = list(range(len(fi.layout_x)))
+
+    # Generate plotting dictionary
+    default_plotting_dict = {
+        "color": "black",
+        "label": None,
+    }
+    plotting_dict = {**default_plotting_dict, **plotting_dict}
+
+    # If showing bbox is true, if bbox_dict is None, use a default
+    if (show_bbox is True) and (not bbox_dict):
+        # Use default
+        bbox_dict = {"facecolor": "gray", "alpha": 0.5, "pad": 0.1, "boxstyle": "round"}
+
+    for ti in turbine_indices:
+        if not show_bbox:
+            ax.text(
+                fi.layout_x[ti] + label_offset,
+                fi.layout_y[ti] + label_offset,
                 turbine_names[ti],
-                (fi.layout_x[ti], fi.layout_y[ti]),
-                xytext=(1,1),
-                textcoords="offset points",
-                # **kwargs
+                **plotting_dict,
+            )
+        else:
+            ax.text(
+                fi.layout_x[ti] + label_offset,
+                fi.layout_y[ti] + label_offset,
+                turbine_names[ti],
+                bbox=bbox_dict,
+                **plotting_dict,
             )
 
     # Plot labels and aesthetics
     ax.axis("equal")
-    ax.grid(True)
-    ax.set_xlabel("x coordinate (m)")
-    ax.set_ylabel("y coordinate (m)")
 
     return ax
-
 
 
 def plot_turbines_rotors(
@@ -150,7 +213,7 @@ def plot_turbines_rotors(
     # If yaw angles is not 1D, assume we want first findex
     yaw_angles = np.array(yaw_angles)
     if yaw_angles.ndim == 2:
-        yaw_angles = yaw_angles[0,:]
+        yaw_angles = yaw_angles[0, :]
 
     rotor_diameters = fi.floris.farm.rotor_diameters.flatten()
     for x, y, yaw, d in zip(fi.layout_x, fi.layout_y, yaw_angles, rotor_diameters):
@@ -160,8 +223,6 @@ def plot_turbines_rotors(
         y_0 = y - np.cos(np.deg2rad(yaw)) * R
         y_1 = y + np.cos(np.deg2rad(yaw)) * R
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
-
-
 
 
 def get_wake_direction(x_i, y_i, x_j, y_j):
@@ -246,7 +307,7 @@ def label_line(
             color=line.get_color(),
             ha="center",
             va="center",
-            bbox=dict(ec="1", fc="1", alpha=0.8),
+            bbox={"ec":"1", "fc":"1", "alpha":0.8},
         )
 
     # extract line data
@@ -283,6 +344,7 @@ def label_line(
 
 def plot_waking_directions(
     fi,
+    ax=None,
     turbine_indices=None,
     wake_plotting_dict={},
     D=None,
@@ -290,13 +352,14 @@ def plot_waking_directions(
     limit_dist_m=None,
     limit_num=None,
     wake_label_size=7,
-    ax=None,
+
 ):
     """
     Plot waking directions and distances between turbines.
 
     Args:
         fi: Instantiated FlorisInterface object
+        ax: axes to plot on (if None, creates figure and axes)
         turbine_indices (list[int]): turbines to plot,
             default to all turbines
         layout_plotting_dict: dictionary of plotting parameters for
@@ -319,7 +382,6 @@ def plot_waking_directions(
             plotted. However, directions already plotted from other
             turbines are not considered in the count.
         wake_label_size: font size for labels of direction/distance.
-        ax: axes to plot on (if None, creates figure and axes)
 
     Returns:
         ax: the current axes for the thrust curve plot
@@ -361,12 +423,8 @@ def plot_waking_directions(
 
     for i in range(N_turbs):
         for j in range(N_turbs):
-            dists_m[i, j] = np.linalg.norm(
-                [layout_x[i] - layout_x[j], layout_y[i] - layout_y[j]]
-            )
-            angles_d[i, j] = get_wake_direction(
-                layout_x[i], layout_y[i], layout_x[j], layout_y[j]
-            )
+            dists_m[i, j] = np.linalg.norm([layout_x[i] - layout_x[j], layout_y[i] - layout_y[j]])
+            angles_d[i, j] = get_wake_direction(layout_x[i], layout_y[i], layout_x[j], layout_y[j])
 
     # Mask based on the limit distance (assumed to be in measurement D)
     if limit_dist_D is not None and limit_dist_m is None:
@@ -419,8 +477,6 @@ def plot_waking_directions(
     return ax
 
 
-
-
 def plot_farm_terrain(fi, fig, ax):
     hub_heights = fi.floris.farm.hub_heights.flatten()
     cntr = ax.tricontourf(fi.layout_x, fi.layout_y, hub_heights, levels=14, cmap="RdBu_r")
@@ -435,7 +491,6 @@ def plot_farm_terrain(fi, fig, ax):
             15,
         ),
     )
-
 
 
 def shade_region(
