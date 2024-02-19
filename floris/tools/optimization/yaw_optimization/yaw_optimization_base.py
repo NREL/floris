@@ -220,10 +220,7 @@ class YawOptimization(LoggingManager):
             # If one-dimensional array, copy over to all atmos. conditions
             variable = np.tile(
                 variable,
-                (
-                    self.fi.floris.flow_field.n_findex,
-                    1
-                )
+                (self.fi.floris.flow_field.n_findex, 1)
             )
 
 
@@ -336,7 +333,7 @@ class YawOptimization(LoggingManager):
             turbine_weights (iterable, optional): Array or list of weights to apply to the turbine
                 powers. Defaults to None.
             heterogeneous_speed_multipliers (iterable, optional): Array or list of speed up factors
-                for hterogenous inflow. Defaults to None.
+                for heterogenous inflow. Defaults to None.
 
 
         Returns:
