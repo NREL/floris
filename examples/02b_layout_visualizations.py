@@ -22,13 +22,11 @@ from floris.tools import FlorisInterface
 
 
 """
-This example makes changes to the given input file through the script.
-First, we plot simulation from the input file as given. Then, we make a series
-of changes and generate plots from those simulations.
+This example shows a number of different ways to visualize a farm layout using FLORIS
 """
 
 # Create the plotting objects using matplotlib
-fig, axarr = plt.subplots(2, 3, figsize=(15, 10),sharex=False)
+fig, axarr = plt.subplots(2, 3, figsize=(16, 10), sharex=False)
 axarr = axarr.flatten()
 
 MIN_WS = 1.0
@@ -38,131 +36,63 @@ MAX_WS = 8.0
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Change to 2 x 3 layout with a wind direction from northwest
-fi.reinitialize(layout_x = [0, 0, 1000, 1000, 1000],
-                layout_y = [0, 500, 0, 500, 1000],
-                wind_directions=[300])
+fi.reinitialize(
+    layout_x=[0, 0, 1000, 1000, 1000], layout_y=[0, 500, 0, 500, 1000], wind_directions=[300]
+)
 
-
+# Plot 1: Visualize the flow
+ax = axarr[0]
 # Plot a horizatonal slice of the initial configuration
 horizontal_plane = fi.calculate_horizontal_plane(height=90.0)
 visualize_cut_plane(
     horizontal_plane,
-    ax=axarr[0],
-    title="Layout with turbine indices",
+    ax=ax,
     min_speed=MIN_WS,
-    max_speed=MAX_WS
+    max_speed=MAX_WS,
 )
-# Plot the turbine points
-lf.plot_turbine_points(fi, ax=axarr[0])
+# Plot the turbine points, setting the color to white
+lf.plot_turbine_points(fi, ax=ax, plotting_dict={"color": "w"})
+ax.set_title('Flow visualization and turbine points')
 
-# Replot showing given turbine names
-turbine_names = [f'T{i}' for i in [10,11,12,13,22]]
-lf.plot_turbine_points(fi, ax=axarr[1], turbine_names=turbine_names)
-axarr[1].set_title("Show turbine names")
+# Plot 2: Show a particular flow case
+ax = axarr[1]
+turbine_names = [f"T{i}" for i in [10, 11, 12, 13, 22]]
+lf.plot_turbine_points(fi, ax=ax)
+lf.plot_turbine_labels(fi, ax=ax, turbine_names=turbine_names, show_bbox=True, bbox_dict={'facecolor':'r'})
+ax.set_title("Show turbine names with a red bounding box")
 
 
-# Plot the flow and rotors, yawing one of the turbines
+# Plot 2: Show turbine rotors on flow
+ax = axarr[2]
 horizontal_plane = fi.calculate_horizontal_plane(height=90.0, yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
 visualize_cut_plane(
     horizontal_plane,
-    ax=axarr[2],
-    title="Layout with rotors indicated",
+    ax=ax,
     min_speed=MIN_WS,
     max_speed=MAX_WS
 )
-lf.plot_turbines_rotors(fi,ax=axarr[2],yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
+lf.plot_turbines_rotors(fi,ax=ax,yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
+ax.set_title("Flow visualization with yawed turbine")
 
-# Plot the layout with directions
-lf.plot_turbine_points(fi, ax=axarr[3], turbine_names=turbine_names)
-lf.plot_waking_directions(fi, ax=axarr[3])
+# Plot 3: Show the layout, including wake directions
+ax = axarr[3]
+lf.plot_turbine_points(fi, ax=ax)
+lf.plot_turbine_labels(fi, ax=ax, turbine_names=turbine_names)
+lf.plot_waking_directions(fi, ax=ax)
+ax.set_title("Show turbine names and wake direction")
 
-# Plot a subset of the layout, and limit directions less than 7D
-lf.plot_turbine_points(fi, ax=axarr[4], turbine_names=turbine_names, turbine_indices=[0,1,2,3])
-lf.plot_waking_directions(fi, ax=axarr[4], turbine_indices=[0,1,2,3], limit_dist_D=7)
+# Plot 4: Plot a subset of the layout, and limit directions less than 7D
+ax = axarr[4]
+lf.plot_turbine_points(fi, ax=ax, turbine_indices=[0,1,2,3])
+lf.plot_turbine_labels(fi, ax=ax, turbine_names=turbine_names, turbine_indices=[0,1,2,3])
+lf.plot_waking_directions(fi, ax=ax, turbine_indices=[0,1,2,3], limit_dist_D=7)
+ax.set_title("Plot a subset and limit wake line distance")
 
 # Plot with a shaded region
-lf.plot_turbine_points(fi, ax=axarr[5], turbine_names=turbine_names)
-lf.shade_region(np.array([[0,0],[300,0],[300,400],[0,300]]),ax=axarr[5])
+ax = axarr[5]
+lf.plot_turbine_points(fi, ax=ax)
+lf.shade_region(np.array([[0,0],[300,0],[300,1000],[0,700]]),ax=ax)
+ax.set_title("Plot with a shaded region")
 
-# Show elevation map
-
-# # Change the wind speed
-# horizontal_plane = fi.calculate_horizontal_plane(ws=[7.0], height=90.0)
-# wakeviz.visualize_cut_plane(
-#     horizontal_plane,
-#     ax=axarr[1],
-#     title="Wind speed at 7 m/s",
-#     min_speed=MIN_WS,
-#     max_speed=MAX_WS
-# )
-
-
-# # Change the wind shear, reset the wind speed, and plot a vertical slice
-# fi.reinitialize( wind_shear=0.2, wind_speeds=[8.0] )
-# y_plane = fi.calculate_y_plane(crossstream_dist=0.0)
-# wakeviz.visualize_cut_plane(
-#     y_plane,
-#     ax=axarr[2],
-#     title="Wind shear at 0.2",
-#     min_speed=MIN_WS,
-#     max_speed=MAX_WS
-# )
-
-# # # Change the farm layout
-# N = 3  # Number of turbines per row and per column
-# X, Y = np.meshgrid(
-#     5.0 * fi.floris.farm.rotor_diameters[0,0] * np.arange(0, N, 1),
-#     5.0 * fi.floris.farm.rotor_diameters[0,0] * np.arange(0, N, 1),
-# )
-# fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten(), wind_directions=[270.0])
-# horizontal_plane = fi.calculate_horizontal_plane(height=90.0)
-# wakeviz.visualize_cut_plane(
-#     horizontal_plane,
-#     ax=axarr[3],
-#     title="3x3 Farm",
-#     min_speed=MIN_WS,
-#     max_speed=MAX_WS
-# )
-# wakeviz.add_turbine_id_labels(fi, axarr[3], color="w", backgroundcolor="k")
-# wakeviz.plot_turbines_with_fi(fi, axarr[3])
-
-# # Change the yaw angles and configure the plot differently
-# yaw_angles = np.zeros((1, N * N))
-
-# ## First row
-# yaw_angles[:,0] = 30.0
-# yaw_angles[:,3] = -30.0
-# yaw_angles[:,6] = 30.0
-
-# ## Second row
-# yaw_angles[:,1] = -30.0
-# yaw_angles[:,4] = 30.0
-# yaw_angles[:,7] = -30.0
-
-# horizontal_plane = fi.calculate_horizontal_plane(yaw_angles=yaw_angles, height=90.0)
-# wakeviz.visualize_cut_plane(
-#     horizontal_plane,
-#     ax=axarr[4],
-#     title="Yawesome art",
-#     cmap="PuOr",
-#     min_speed=MIN_WS,
-#     max_speed=MAX_WS
-# )
-# wakeviz.plot_turbines_with_fi(fi, axarr[4], yaw_angles=yaw_angles, color="c")
-
-
-# # Plot the cross-plane of the 3x3 configuration
-# cross_plane = fi.calculate_cross_plane(yaw_angles=yaw_angles, downstream_dist=610.0)
-# wakeviz.visualize_cut_plane(
-#     cross_plane,
-#     ax=axarr[5],
-#     title="Cross section at 610 m",
-#     min_speed=MIN_WS,
-#     max_speed=MAX_WS
-# )
-# axarr[5].invert_xaxis()
-
-
-# wakeviz.show_plots()
 
 plt.show()
