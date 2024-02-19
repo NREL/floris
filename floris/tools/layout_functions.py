@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import pdist, squareform
+
 from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 

@@ -16,9 +16,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools.visualization import visualize_cut_plane
 import floris.tools.layout_functions as lf
 from floris.tools import FlorisInterface
+from floris.tools.visualization import visualize_cut_plane
 
 
 """

@@ -40,9 +40,8 @@ from .floris_interface import FlorisInterface
 from .floris_interface_legacy_reader import FlorisInterfaceLegacyV2
 from .parallel_computing_interface import ParallelComputingInterface
 from .uncertainty_interface import UncertaintyInterface
-from .visualization import (
+from .visualization import (  # plot_turbines_with_fi,
     plot_rotor_values,
-    # plot_turbines_with_fi,
     visualize_cut_plane,
     visualize_quiver,
 )
