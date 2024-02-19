@@ -986,7 +986,7 @@ def turbopark_solver(
 
         # Model calculations
         # NOTE: exponential
-        if not np.all(farm.yaw_angles_sorted):
+        if np.any(farm.yaw_angles_sorted):
             model_manager.deflection_model.logger.warning(
                 "WARNING: Deflection with the TurbOPark model has not been fully validated. "
                 "This is an initial implementation, and we advise you use at your own risk "
@@ -1195,9 +1195,6 @@ def empirical_gauss_solver(
         z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        flow_field.u_sorted[:, i:i+1]
-        flow_field.v_sorted[:, i:i+1]
-
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
             air_density=flow_field.air_density,
@@ -1399,9 +1396,6 @@ def full_flow_empirical_gauss_solver(
         y_i = y_i[:, :, None, None]
         z_i = np.mean(turbine_grid.z_sorted[:, i:i+1], axis=(2,3))
         z_i = z_i[:, :, None, None]
-
-        turbine_grid_flow_field.u_sorted[:, i:i+1]
-        turbine_grid_flow_field.v_sorted[:, i:i+1]
 
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
