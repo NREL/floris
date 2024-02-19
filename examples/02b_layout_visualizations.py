@@ -58,13 +58,18 @@ ax.set_title('Flow visualization and turbine points')
 ax = axarr[1]
 turbine_names = [f"T{i}" for i in [10, 11, 12, 13, 22]]
 lf.plot_turbine_points(fi, ax=ax)
-lf.plot_turbine_labels(fi, ax=ax, turbine_names=turbine_names, show_bbox=True, bbox_dict={'facecolor':'r'})
+lf.plot_turbine_labels(fi,
+                       ax=ax,
+                       turbine_names=turbine_names,
+                       show_bbox=True,
+                       bbox_dict={'facecolor':'r'})
 ax.set_title("Show turbine names with a red bounding box")
 
 
 # Plot 2: Show turbine rotors on flow
 ax = axarr[2]
-horizontal_plane = fi.calculate_horizontal_plane(height=90.0, yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
+horizontal_plane = fi.calculate_horizontal_plane(height=90.0,
+                                                 yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
 visualize_cut_plane(
     horizontal_plane,
     ax=ax,
