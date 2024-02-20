@@ -969,20 +969,8 @@ def turbopark_solver(
 
 
         if model_manager.enable_secondary_steering:
-            added_yaw = wake_added_yaw(
-                u_i,
-                v_i,
-                flow_field.u_initial_sorted,
-                grid.y_sorted[:, i:i+1] - y_i,
-                grid.z_sorted[:, i:i+1],
-                rotor_diameter_i,
-                hub_height_i,
-                ct_i,
-                TSR_i,
-                axial_induction_i,
-                flow_field.wind_shear,
-            )
-            effective_yaw_i += added_yaw
+            raise NotImplementedError(
+                "Secondary steering not available for this model.")
 
         # Model calculations
         # NOTE: exponential
@@ -1031,33 +1019,12 @@ def turbopark_solver(
                 deflection_field[:, ii:ii+1, :, :] = deflection_field_ii[:, i:i+1, :, :]
 
         if model_manager.enable_transverse_velocities:
-            v_wake, w_wake = calculate_transverse_velocity(
-                u_i,
-                flow_field.u_initial_sorted,
-                flow_field.dudz_initial_sorted,
-                grid.x_sorted - x_i,
-                grid.y_sorted - y_i,
-                grid.z_sorted,
-                rotor_diameter_i,
-                hub_height_i,
-                yaw_angle_i,
-                ct_i,
-                TSR_i,
-                axial_induction_i,
-                flow_field.wind_shear,
-            )
+            raise NotImplementedError(
+                "Transverse velocities not used in this model.")
 
         if model_manager.enable_yaw_added_recovery:
-            I_mixing = yaw_added_turbulence_mixing(
-                u_i,
-                turbulence_intensity_i,
-                v_i,
-                flow_field.w_sorted[:, :, i:i+1],
-                v_wake[:, :, i:i+1],
-                w_wake[:, :, i:i+1],
-            )
-            gch_gain = 2
-            turbine_turbulence_intensity[:, :, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
+            raise NotImplementedError(
+                "Yaw added recovery not used in this model.")
 
         # NOTE: exponential
         velocity_deficit = model_manager.velocity_model.function(
