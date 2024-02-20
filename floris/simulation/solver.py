@@ -930,7 +930,8 @@ def turbopark_solver(
             turbine_type_map=farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
 
         ct_i = thrust_coefficient(
@@ -946,7 +947,8 @@ def turbopark_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
@@ -964,7 +966,8 @@ def turbopark_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
@@ -1024,7 +1027,8 @@ def turbopark_solver(
                     turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
                     ix_filter=[ii],
                     average_method=grid.average_method,
-                    cubature_weights=grid.cubature_weights
+                    cubature_weights=grid.cubature_weights,
+                    multidim_condition=flow_field.multidim_conditions,
                 )
                 ct_ii = ct_ii[:, 0:1, None, None]
                 rotor_diameter_ii = farm.rotor_diameters_sorted[:, ii:ii+1, None, None]
