@@ -513,7 +513,8 @@ def cc_solver(
             turbine_type_map=farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         turb_Cts = turb_Cts[:, :, None, None]
         turb_aIs = axial_induction(
@@ -529,7 +530,8 @@ def cc_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         turb_aIs = turb_aIs[:, :, None, None]
 
@@ -549,7 +551,8 @@ def cc_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
 
         axial_induction_i = axial_induction_i[:, :, None, None]
