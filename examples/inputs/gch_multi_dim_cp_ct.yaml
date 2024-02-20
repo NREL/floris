@@ -47,7 +47,7 @@ wake:
     combination_model: sosfs
     deflection_model: gauss
     turbulence_model: crespo_hernandez
-    velocity_model: multidim_cp_ct
+    velocity_model: gauss
 
   enable_secondary_steering: true
   enable_yaw_added_recovery: true
@@ -77,7 +77,7 @@ wake:
       b_f: -0.68
       c_f: 2.41
       alpha_mod: 1.0
-    multidim_cp_ct:
+    gauss:
       alpha: 0.58
       beta: 0.077
       ka: 0.38
