@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools.layout_functions import visualize_layout
 
 
 """
