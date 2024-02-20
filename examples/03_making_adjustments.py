@@ -124,4 +124,4 @@ wakeviz.visualize_cut_plane(
 axarr[5].invert_xaxis()
 
 
-wakeviz.show_plots()
+plt.show()

@@ -12,6 +12,7 @@
 
 # See https://floris.readthedocs.io for documentation
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 import floris.tools.visualization as wakeviz
@@ -79,4 +80,4 @@ print("Farm AEP (one turbine removed from power calculation): {:.3f} GWh".format
 aep_no_wake = fi.get_farm_AEP_wind_rose_class(wind_rose=wind_rose, no_wake=True)
 print("Farm AEP (no_wake=True): {:.3f} GWh".format(aep_no_wake / 1.0e9))
 
-wakeviz.show_plots()
+plt.show()

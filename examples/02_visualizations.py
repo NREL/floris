@@ -155,4 +155,4 @@ fig, axes, _ , _ = wakeviz.plot_rotor_values(
 )
 fig.suptitle("Rotor Plane Visualization, 10x10 Resolution")
 
-wakeviz.show_plots()
+plt.show()

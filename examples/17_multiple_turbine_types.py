@@ -42,4 +42,4 @@ wakeviz.visualize_cut_plane(horizontal_plane, ax=ax_list[0], title="Horizontal")
 wakeviz.visualize_cut_plane(y_plane, ax=ax_list[1], title="Streamwise profile")
 wakeviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile")
 
-wakeviz.show_plots()
+plt.show()
