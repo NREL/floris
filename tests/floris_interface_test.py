@@ -348,3 +348,49 @@ def test_reinitailize_ti():
     # Test that applying a float however raises an error
     with pytest.raises(TypeError):
         fi.reinitialize(turbulence_intensities=0.12)
+
+
+def test_get_heterogenous_inflow_config():
+
+    fi = FlorisInterface(configuration=YAML_INPUT)
+
+    heterogenous_inflow_config_by_wd = {
+        'speed_multipliers': np.array([[1.0, 1.1, 1.2],
+                                       [1.1, 1.1, 1.1],
+                                       [1.3, 1.4, 1.5],]),
+        'het_wd': np.array([0, 90, 270])
+    }
+
+    # Check for correctness
+    wind_directions = np.array([240, 80,15])
+    expected_output = np.array([[1.3, 1.4, 1.5],
+                                [1.1, 1.1, 1.1],
+                                [1.0, 1.1, 1.2]])
+    result = fi.get_heterogenous_inflow_config(heterogenous_inflow_config_by_wd, wind_directions)
+    assert np.allclose(result, expected_output)
+
+    # Confirm wrapping behavior
+    wind_directions = np.array([350, 10])
+    expected_output = np.array([[1.0, 1.1, 1.2],
+                                [1.0, 1.1, 1.2]])
+    result = fi.get_heterogenous_inflow_config(heterogenous_inflow_config_by_wd, wind_directions)
+    assert np.allclose(result, expected_output)
+
+    # Confirm can expand the result to match wind directions
+    wind_directions = np.arange(0.0,360.0,10.0)
+    num_wd = len(wind_directions)
+    result = fi.get_heterogenous_inflow_config(heterogenous_inflow_config_by_wd, wind_directions)
+    assert result.shape[0] == num_wd
+
+
+
+    # Confirm that if het_wd isn't as long as the number of rows in heterogenous_inflow_config_by_wd
+    # An error is raised
+    heterogenous_inflow_config_by_wd = {
+        'speed_multipliers': np.array([[1.0, 1.1, 1.2],
+                                       [1.1, 1.1, 1.1],
+                                       [1.3, 1.4, 1.5],]),
+        'het_wd': np.array([0, 90, 270, 290.])
+    }
+    with pytest.raises(ValueError):
+        fi.get_heterogenous_inflow_config(heterogenous_inflow_config_by_wd, wind_directions)
