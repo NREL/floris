@@ -66,6 +66,12 @@ wake:
       ad: 0.0
       bd: 0.0
       kd: 0.05
+    empirical_gauss:
+      horizontal_deflection_gain_D: 3.0
+      vertical_deflection_gain_D: -1
+      deflection_rate: 30
+      mixing_gain_deflection: 0.0
+      yaw_added_mixing_gain: 0.0
 
   wake_velocity_parameters:
     cc:
@@ -84,6 +90,18 @@ wake:
       kb: 0.004
     jensen:
       we: 0.05
+    turbopark:
+      A: 0.04
+      sigma_max_rel: 4.0
+    empirical_gauss:
+      wake_expansion_rates:
+      - 0.023
+      - 0.008
+      breakpoints_D:
+      - 10
+      sigma_0_D: 0.28
+      smoothing_length_D: 2.0
+      mixing_gain_velocity: 2.0
 
   wake_turbulence_parameters:
     crespo_hernandez:
@@ -91,3 +109,5 @@ wake:
       constant: 0.9
       ai: 0.83
       downstream: -0.25
+    wake_induced_mixing:
+      atmospheric_ti_gain: 0.0
