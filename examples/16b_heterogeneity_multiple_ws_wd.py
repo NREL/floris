@@ -77,6 +77,30 @@ print('With wind directions now set to 270 and 275 deg')
 print(f'T0: {turbine_powers[:, 0].flatten()} kW')
 print(f'T1: {turbine_powers[:, 1].flatten()} kW')
 
+# This time define heterogenaity by wind direction
+speed_multipliers = [[2.0, 1.0, 2.0, 1.0], [1.0, 2.0, 1.0, 2.0]]
+het_wd = [269, 276] #Identify the directions each row corresponds to
+heterogenous_inflow_config_by_wd = {
+    'speed_multipliers': speed_multipliers,
+    'het_wd': het_wd,
+    'x': x_locs,
+    'y': y_locs,
+}
+# Now can expand number of rows, and fi will use nearest wd to build
+# appropriately sized map
+expanded_wd = np.round(np.linspace(260,280,10),1)
+fi.reinitialize(
+    wind_directions=expanded_wd,
+    wind_speeds=8 * np.ones(len(expanded_wd)),
+    heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd
+)
+fi.calculate_wake()
+turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
+print("Taking advantage of heterogenous_inflow_config_by_wd")
+print(f'With wind directions now set to {expanded_wd} deg')
+print(f'T0: {turbine_powers[:, 0].flatten()} kW')
+print(f'T1: {turbine_powers[:, 1].flatten()} kW')
+
 # # Uncomment if want to see example of error output
 # # Note if we change wind directions to 3 without a matching change to het map we get an error
 # print()
