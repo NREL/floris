@@ -904,9 +904,6 @@ def turbopark_solver(
         z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
-        u_i = flow_field.u_sorted[:, :, i:i+1]
-        v_i = flow_field.v_sorted[:, :, i:i+1]
-
         Cts = thrust_coefficient(
             velocities=flow_field.u_sorted,
             air_density=flow_field.air_density,
@@ -958,11 +955,8 @@ def turbopark_solver(
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
         axial_induction_i = axial_induction_i[:, 0:1, None, None]
-        turbulence_intensity_i = turbine_turbulence_intensity[:, i:i+1]
         yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
-        hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
         rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
-        TSR_i = farm.TSRs_sorted[:, i:i+1, None, None]
 
         effective_yaw_i = np.zeros_like(yaw_angle_i)
         effective_yaw_i += yaw_angle_i
