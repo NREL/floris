@@ -17,37 +17,50 @@
 # layouts for quick visualizations
 
 import math
+from typing import (
+    Any,
+    Dict,
+    List,
+    Tuple,
+)
 
+import matplotlib.lines
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import pdist, squareform
 
+from floris.tools import FlorisInterface
 from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 
-def plot_turbine_points(fi, ax=None, turbine_indices=None, plotting_dict={}):
+def plot_turbine_points(
+    fi: FlorisInterface,
+    ax: plt.Axes = None,
+    turbine_indices: List[int] = None,
+    plotting_dict: Dict[str, Any] = {},
+) -> plt.Axes:
     """
-    Plot the farm layout.
+    Plots turbine layout from a FlorisInterface object.
 
     Args:
-        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
-        ax: axes to plot on (if None, creates figure and axes)
-        turbine_indices (list[int]): turbines to plot,
-            default to all turbines
-
-        plotting_dict: dictionary of plotting parameters, with the
-            following (optional) fields and their (default) values:
-            "color" : ("black")
-            "marker" : (".")
-            "markersize" : (10)
-            "label" : (None) (for legend, if desired)
-
-
+        fi (FlorisInterface): The FlorisInterface object containing layout data.
+        ax (plt.Axes, optional): An existing axes object to plot on. If None,
+            a new figure and axes will be created. Defaults to None.
+        turbine_indices (List[int], optional): A list of turbine indices to plot.
+            If None, all turbines will be plotted. Defaults to None.
+        plotting_dict (Dict[str, Any], optional):  A dictionary to customize plot
+            appearance.  Valid keys include:
+                * 'color' (str): Turbine marker color. Defaults to 'black'.
+                * 'marker' (str):  Turbine marker style. Defaults to '.'.
+                * 'markersize' (int): Turbine marker size. Defaults to 10.
+                * 'label' (str): Label for the legend. Defaults to None.
 
     Returns:
-        ax: the current axes for the layout plot
+        plt.Axes: The axes object used for the plot.
 
+    Raises:
+        IndexError: If any value in `turbine_indices` is an invalid turbine index.
     """
 
     # Generate axis, if needed
@@ -87,36 +100,47 @@ def plot_turbine_points(fi, ax=None, turbine_indices=None, plotting_dict={}):
 
 
 def plot_turbine_labels(
-    fi,
-    ax=None,
-    turbine_names=None,
-    turbine_indices=None,
-    label_offset=None,
-    show_bbox=False,
-    bbox_dict={},
-    plotting_dict={},
-):
+    fi: FlorisInterface,
+    ax: plt.Axes = None,
+    turbine_names: List[str] = None,
+    turbine_indices: List[int] = None,
+    label_offset: float = None,
+    show_bbox: bool = False,
+    bbox_dict: Dict[str, Any] = {},
+    plotting_dict: Dict[str, Any] = {},
+) -> plt.Axes:
     """
-    Labels the turbines on a farm
+    Adds turbine labels to a turbine layout plot.
 
     Args:
-        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
-        ax: axes to plot on (if None, creates figure and axes)
-        turbine_names (list[str]): Provided turbine names
-            Defaults to 0-index list
-        turbine_indices (list[int]): turbines to plot,
-            default to all turbines
-        label_offset (float): Amount in m to dispace label from point.  Defaults to r/8
-        show_bbox (bool): Whether to put a box around the labels. Defaults to False
-        bbox_dict (dict): Dictionary defining box around labels.
-        plotting_dict: dictionary of plotting parameters, with the
-            following (optional) fields and their (default) values:
-            "color" : ("black")
-
-
+        fi (FlorisInterface): The FlorisInterface object containing layout data.
+        ax (plt.Axes, optional): An existing axes object to plot on. If None,
+            a new figure and axes will be created. Defaults to None.
+        turbine_names (List[str], optional): Custom turbine labels. If None,
+            defaults to turbine indices (e.g., '000', '001'). Defaults to None.
+        turbine_indices (List[int], optional): Indices of turbines to label.
+            If None, all turbines will be labeled. Defaults to None.
+        label_offset (float, optional): Distance to offset labels from turbine
+            points (in meters). If None, defaults to rotor_diameter/8.
+            Defaults to None.
+        show_bbox (bool, optional): If True, adds a bounding box around each label.
+            Defaults to False.
+        bbox_dict (Dict[str, Any], optional): Dictionary to customize the appearance
+            of bounding boxes (if show_bbox is True). Valid keys include:
+                * 'facecolor' (str):  Box background color. Defaults to 'gray'.
+                * 'alpha' (float): Opacity of box. Defaults to 0.5.
+                * 'pad' (float): Padding around text. Defaults to 0.1.
+                * 'boxstyle' (str): Box style (e.g., 'round'). Defaults to 'round'.
+        plotting_dict (Dict[str, Any], optional): Dictionary to control text
+            appearance. Valid keys include:
+                * 'color' (str): Text color. Defaults to 'black'.
 
     Returns:
-        ax: the current axes for the layout plot
+        plt.Axes: The axes object used for the plot.
+
+    Raises:
+        IndexError: If any value in `turbine_indices` is an invalid turbine index.
+        ValueError: If the length of `turbine_names` does not match the number of turbines.
     """
 
     # Generate axis, if needed
@@ -181,21 +205,28 @@ def plot_turbine_labels(
 
 
 def plot_turbines_rotors(
-    fi,
+    fi: FlorisInterface,
     ax: plt.Axes = None,
-    color: str = None,
-    wd: np.ndarray = None,
+    color: str = "k",
+    wd: float = None,
     yaw_angles: np.ndarray = None,
-):
+) -> plt.Axes:
     """
-    Plot the wind turbine rotors including yaw angle
+    Plots wind turbine rotors on an existing axes, visually representing their yaw angles.
 
     Args:
-        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
-        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults to None.
-        color (str, optional): Color to plot turbines. Defaults to None.
-        wd (list, optional): The wind direction to plot the turbines relative to. Defaults to None.
-        yaw_angles (NDArray, optional): The yaw angles for the turbines. Defaults to None.
+        fi (FlorisInterface): The FlorisInterface object containing layout and turbine data.
+        ax (plt.Axes, optional): An existing axes object to plot on. If None,
+            a new figure and axes will be created. Defaults to None.
+        color (str, optional): Color of the turbine rotor lines. Defaults to 'k' (black).
+        wd (float, optional): Wind direction (in degrees) relative to global reference.
+            If None, the first wind direction in `fi.floris.flow_field.wind_directions` is used.
+            Defaults to None.
+        yaw_angles (np.ndarray, optional): Array of turbine yaw angles (in degrees). If None,
+            the values from `fi.floris.farm.yaw_angles` are used. Defaults to None.
+
+    Returns:
+        plt.Axes: The axes object used for the plot.
     """
     if not ax:
         _, ax = plt.subplots()
@@ -224,19 +255,22 @@ def plot_turbines_rotors(
         y_1 = y + np.cos(np.deg2rad(yaw)) * R
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
+    return ax
 
-def get_wake_direction(x_i, y_i, x_j, y_j):
+
+def get_wake_direction(x_i: float, y_i: float, x_j: float, y_j: float) -> float:
     """
-    Calculates the compass direction where turbine i wakes turbine j
+    Calculates the wind direction at which the wake of turbine i would impact turbine j.
 
     Args:
-        x_i: x-coordinate of the starting point
-        y_i: y-coordinate of the starting point
-        x_j: x-coordinate of the ending point
-        y_j: y-coordinate of the ending point
+        x_i (float): X-coordinate of turbine i (the upstream turbine).
+        y_i (float): Y-coordinate of turbine i.
+        x_j (float): X-coordinate of turbine j (the downstream turbine).
+        y_j (float): Y-coordinate of turbine j.
 
     Returns:
-        wake_direction (float): Angle in degrees, when turbine i wakes turbine j
+        float: Wind direction in degrees (0-360) where 0 degrees represents wind
+               blowing from the north, and the angle increases clockwise.
     """
 
     dx = x_j - x_i
@@ -252,46 +286,44 @@ def get_wake_direction(x_i, y_i, x_j, y_j):
 
 
 def label_line(
-    line,
-    label_text,
-    ax,
-    near_i=None,
-    near_x=None,
-    near_y=None,
-    rotation_offset=0.0,
-    offset=(0, 0),
-    size=7,
-):
+    line: matplotlib.lines.Line2D,
+    label_text: str,
+    ax: plt.Axes,
+    near_i: int = None,
+    near_x: float = None,
+    near_y: float = None,
+    rotation_offset: float = 0.0,
+    offset: Tuple[float, float] = (0, 0),
+    size: int = 7,
+) -> None:
     """
-    [summary]
+    Adds a text label to a matplotlib line, with options to specify label placement.
 
     Args:
-        line (matplotlib.lines.Line2D): line to label.
-        label_text (str): label to add to line.
-        ax (:py:class:`matplotlib.pyplot.axes` optional): figure axes.
-        near_i (int, optional): Catch line near index i.
-            Defaults to None.
-        near_x (float, optional): Catch line near coordinate x.
-            Defaults to None.
-        near_y (float, optional): Catch line near coordinate y.
-            Defaults to None.
-        rotation_offset (float, optional): label rotation in degrees.
-            Defaults to 0.
-        offset (tuple, optional): label offset from turbine location.
+        line (matplotlib.lines.Line2D): The line object to label.
+        label_text (str): The text of the label.
+        ax (plt.Axes): The axes object where the line is plotted.
+        near_i (int, optional): Index near which to place the label. Defaults to None.
+        near_x (float, optional): X-coordinate near which to place the label. Defaults to None.
+        near_y (float, optional): Y-coordinate near which to place the label. Defaults to None.
+        rotation_offset (float, optional): Additional rotation for the label (in degrees).
+            Defaults to 0.0.
+        offset (Tuple[float, float], optional):  X and Y offset from the label position.
             Defaults to (0, 0).
-        size (float): font size. Defaults to 7.
+        size (int, optional): Font size of the label. Defaults to 7.
 
     Raises:
-        ValueError: ("Need one of near_i, near_x, near_y") raised if
-            insufficient information is passed in.
+        ValueError: If none of `near_i`, `near_x`, or `near_y`
+            are provided to determine label placement.
     """
 
-    def put_label(i):
+    def put_label(i: int) -> None:
         """
-        Add a label to index.
+        Adds a label to a line segment within a plot (used internally by the 'label_line' function).
 
         Args:
-            i (int): index to label.
+            i (int): The index of the line segment where the label should be placed.
+                    The label will be positioned between points i and i+1.
         """
         i = min(i, len(x) - 2)
         dx = sx[i + 1] - sx[i]
@@ -307,7 +339,7 @@ def label_line(
             color=line.get_color(),
             ha="center",
             va="center",
-            bbox={"ec":"1", "fc":"1", "alpha":0.8},
+            bbox={"ec": "1", "fc": "1", "alpha": 0.8},
         )
 
     # extract line data
@@ -343,49 +375,47 @@ def label_line(
 
 
 def plot_waking_directions(
-    fi,
-    ax=None,
-    turbine_indices=None,
-    wake_plotting_dict={},
-    D=None,
-    limit_dist_D=None,
-    limit_dist_m=None,
-    limit_num=None,
-    wake_label_size=7,
-
-):
+    fi: FlorisInterface,
+    ax: plt.Axes = None,
+    turbine_indices: List[int] = None,
+    wake_plotting_dict: Dict[str, Any] = {},
+    D: float = None,
+    limit_dist_D: float = None,
+    limit_dist_m: float = None,
+    limit_num: int = None,
+    wake_label_size: int = 7,
+) -> plt.Axes:
     """
-    Plot waking directions and distances between turbines.
+    Plots lines representing potential waking directions between wind turbines in a layout.
 
     Args:
-        fi: Instantiated FlorisInterface object
-        ax: axes to plot on (if None, creates figure and axes)
-        turbine_indices (list[int]): turbines to plot,
-            default to all turbines
-        layout_plotting_dict: dictionary of plotting parameters for
-            turbine locations. Defaults to the defaults of
-            plot_layout_only.
-        wake_plotting_dict: dictionary of plotting parameters for the
-            waking directions, with the following (optional) fields and
-            their (default) values:
-            "color" : ("black"),
-            "linestyle" : ("solid"),
-            "linewidth" : (0.5)
-        D: rotor diameter. Defaults to the rotor diamter of the first
-            turbine in the Floris object.
-        limit_dist_D: limit on the distance between turbines to plot,
-            specified in rotor diamters.
-        limit_dist_m: limit on the distance between turbines to plot,
-            specified in meters. If specified, overrides limit_dist_D.
-        limit_num: limit on number of outgoing neighbors to include.
-            If specified, only the limit_num closest turbines are
-            plotted. However, directions already plotted from other
-            turbines are not considered in the count.
-        wake_label_size: font size for labels of direction/distance.
+        fi (FlorisInterface): Instantiated FlorisInterface object containing layout data.
+        ax (plt.Axes, optional): An existing axes object to plot on. If None, a new
+            figure and axes will be created. Defaults to None.
+        turbine_indices (List[int], optional):  Indices of turbines to include in the plot.
+            If None, all turbines are plotted. Defaults to None.
+        wake_plotting_dict (Dict[str, Any], optional): Dictionary to customize the appearance
+            of waking direction lines. Valid keys include:
+                * 'color' (str): Line color. Defaults to 'black'.
+                * 'linestyle' (str): Line style (e.g., 'solid', 'dashed'). Defaults to 'solid'.
+                * 'linewidth' (float): Line width. Defaults to 0.5.
+        D (float, optional):  Rotor diameter. Used for distance calculations if `limit_dist_D`
+            is provided. If None, defaults to the first turbine's rotor diameter.
+        limit_dist_D (float, optional): Maximum distance between turbines (in rotor diameters)
+            to plot waking lines. Defaults to None (no limit).
+        limit_dist_m (float, optional): Maximum distance (in meters) between turbines to plot
+            waking lines. Overrides `limit_dist_D` if provided. Defaults to None (no limit).
+        limit_num (int, optional):  Limits the number of waking lines plotted from each turbine
+            to the `limit_num` closest neighbors. Defaults to None (no limit).
+        wake_label_size (int, optional): Font size for labels showing wake distance and direction.
+            Defaults to 7.
 
     Returns:
-        ax: the current axes for the thrust curve plot
+        plt.Axes: The axes object used for the plot.
     """
+
+    if not ax:
+        _, ax = plt.subplots()
 
     # If turbine_indices is not none, make sure all elements correspond to real indices
     if turbine_indices is not None:
@@ -477,7 +507,15 @@ def plot_waking_directions(
     return ax
 
 
-def plot_farm_terrain(fi, fig, ax):
+def plot_farm_terrain(fi: FlorisInterface, fig: plt.Figure, ax: plt.Axes) -> None:
+    """
+    Creates a filled contour plot visualizing terrain-corrected wind turbine hub heights.
+
+    Args:
+        fi (FlorisInterface): Instantiated FlorisInterface object containing layout data.
+        fig (plt.Figure):  The figure object where the plot will be created.
+        ax (plt.Axes): The axes object where the plot will be drawn.
+    """
     hub_heights = fi.floris.farm.hub_heights.flatten()
     cntr = ax.tricontourf(fi.layout_x, fi.layout_y, hub_heights, levels=14, cmap="RdBu_r")
 
@@ -494,34 +532,36 @@ def plot_farm_terrain(fi, fig, ax):
 
 
 def shade_region(
-    points, show_points=False, plotting_dict_region={}, plotting_dict_points={}, ax=None
-):
+    points: np.ndarray,
+    show_points: bool = False,
+    plotting_dict_region: Dict[str, Any] = {},
+    plotting_dict_points: Dict[str, Any] = {},
+    ax: plt.Axes = None,
+) -> plt.Axes:
     """
-    Shade a region defined by a series of vertices (points).
+    Shades a region defined by a set of vertices and optionally plots the vertices.
 
     Args:
-        points: 2D array of vertices for the shaded region, shape N x 2,
-            where each row contains a coordinate (x, y)
-        show_points: Boolean to dictate whether to plot the points as well
-            as the shaded region
-        plotting_dict_region: dictionary of plotting parameters for the shaded
-            region, with the following (optional) fields and their (default)
-            values:
-            "color" : ("black")
-            "edgecolor": (None)
-            "alpha" : (0.3)
-            "label" : (None) (for legend, if desired)
-        plotting_dict_region: dictionary of plotting parameters for the
-            vertices (points), with the following (optional) fields and their
-            (default) values:
-            "color" : "black",
-            "marker" : (None)
-            "s" : (10)
-            "label" : (None) (for legend, if desired)
-        ax: axes to plot on (if None, creates figure and axes)
+        points (np.ndarray): A 2D array where each row represents (x, y) coordinates of a vertex.
+        show_points (bool, optional): If True, plots markers at the specified vertices.
+            Defaults to False.
+        plotting_dict_region (Dict[str, Any], optional): Customization options for shaded region.
+            Valid keys include:
+                * 'color' (str): Fill color. Defaults to 'black'.
+                * 'edgecolor' (str): Edge color. Defaults to None (no edge).
+                * 'alpha' (float): Opacity (transparency) of the fill. Defaults to 0.3.
+                * 'label' (str): Optional label for legend.
+        plotting_dict_points (Dict[str, Any], optional): Customization options for vertex markers.
+            Valid keys include:
+                * 'color' (str): Marker color. Defaults to 'black'.
+                * 'marker' (str): Marker style (e.g., '.', 'o', 'x'). Defaults to None (no marker).
+                * 's' (float): Marker size. Defaults to 10.
+                * 'label' (str): Optional label for legend.
+        ax (plt.Axes, optional): An existing axes object for plotting. If None, creates a new figure
+            and axes. Defaults to None.
 
     Returns:
-        ax: the current axes for the layout plot
+        plt.Axes: The axes object used for the plot.
     """
 
     # Generate axis, if needed
@@ -548,10 +588,5 @@ def shade_region(
 
     # Plot labels and aesthetics
     ax.axis("equal")
-    ax.grid(True)
-    ax.set_xlabel("x coordinate (m)")
-    ax.set_ylabel("y coordinate (m)")
-    # if plotting_dict_region["label"] is not None or plotting_dict_points["label"] is not None:
-    #     ax.legend()
 
     return ax
