@@ -965,7 +965,7 @@ def turbopark_solver(
 
         # Model calculations
         # NOTE: exponential
-        if not np.all(farm.yaw_angles_sorted):
+        if np.any(farm.yaw_angles_sorted):
             model_manager.deflection_model.logger.warning(
                 "WARNING: Deflection with the TurbOPark model has not been fully validated."
                 "This is an initial implementation, and we advise you use at your own risk"
