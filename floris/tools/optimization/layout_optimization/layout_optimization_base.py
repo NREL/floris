@@ -45,10 +45,7 @@ class LayoutOptimization(LoggingManager):
 
         # If freq is not provided, give equal weight to all wind conditions
         if freq is None:
-            self.freq = np.ones((
-                self.fi.floris.flow_field.n_wind_directions,
-                self.fi.floris.flow_field.n_wind_speeds
-            ))
+            self.freq = np.ones((self.fi.floris.flow_field.n_findex,))
             self.freq = self.freq / self.freq.sum()
         else:
             self.freq = freq
@@ -59,7 +56,6 @@ class LayoutOptimization(LoggingManager):
                 fi,
                 minimum_yaw_angle=-30.0,
                 maximum_yaw_angle=30.0,
-                exploit_layout_symmetry=False
             )
 
         self.initial_AEP = fi.get_farm_AEP(self.freq)
@@ -79,7 +75,7 @@ class LayoutOptimization(LoggingManager):
         if self.enable_geometric_yaw:
             self.yaw_opt.fi_subset.reinitialize(layout_x=self.x, layout_y=self.y)
             df_opt = self.yaw_opt.optimize()
-            self.yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
+            self.yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, :]
         else:
             self.yaw_angles = None
 
@@ -140,4 +136,4 @@ class LayoutOptimization(LoggingManager):
 
     @property
     def rotor_diameter(self):
-        return self.fi.floris.farm.rotor_diameters_sorted[0][0][0]
+        return self.fi.floris.farm.rotor_diameters_sorted[0][0]

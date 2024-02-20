@@ -106,7 +106,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self.parse_opt_vars(varDict)
 
         # Update turbine map with turbince locations
-        self.fi.reinitialize(layout_x = self.x, layout_y = self.y)
+        self.fi.reinitialize(layout_x=self.x, layout_y=self.y)
 
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
