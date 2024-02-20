@@ -53,7 +53,7 @@ def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=F
     # Get farm layout
     x = fi.layout_x
     y = fi.layout_y
-    D = np.ones_like(x) * fi.floris.farm.rotor_diameters_sorted[0][0][0]
+    D = np.ones_like(x) * fi.floris.farm.rotor_diameters_sorted[0][0]
     n_turbs = len(x)
 
     # Rotate farm and determine freestream/waked turbines
@@ -142,66 +142,3 @@ def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=F
         )
 
     return turbs_downstream
-
-
-def find_layout_symmetry(x, y, step_sizes = [15.0], eps=0.00001):
-    # Place center of farm at (0, 0)
-    x = x - np.mean(x)
-    y = y - np.mean(y)
-    nturbs = len(x)
-
-    # Evaluate at continuously refined step size
-    for ss in step_sizes:
-        wd_array = np.arange(ss, 180.001, ss)
-        for wd in wd_array:
-            is_faulty = False
-            x_rot = (
-                np.cos(wd * np.pi / 180.0) * x
-                - np.sin(wd * np.pi / 180.0) * y
-            )
-            y_rot = (
-                np.sin(wd * np.pi / 180.0) * x
-                + np.cos(wd * np.pi / 180.0) * y
-            )
-
-            # compare differences: force turbine 0 to (0, 0)
-            for ti in range(nturbs):
-                if np.all(np.abs(x_rot[ti] - x) > eps):
-                    is_faulty = True
-                    break
-
-            if is_faulty:
-                continue
-
-            for ti in range(nturbs):
-                if np.all(np.abs(y_rot[ti] - y) > eps):
-                    is_faulty = True
-                    break
-
-            if is_faulty:
-                continue
-
-            # Found a valid solution. Now find mappings
-            wd_eval_array = [(0.0, wd)]
-            mapping_array = [list(range(nturbs))]
-            for wd_eval in np.arange(wd, 360.0, wd):
-                ang = wd_eval * -1.0  # Opposite rotation
-                x_rot = (
-                    np.cos(ang * np.pi / 180.0) * x
-                    - np.sin(ang * np.pi / 180.0) * y
-                )
-                y_rot = (
-                    np.sin(ang * np.pi / 180.0) * x
-                    + np.cos(ang * np.pi / 180.0) * y
-                )
-                wd_eval_array.append((wd_eval, wd_eval + wd))
-                id_mapping = ([
-                    np.where((np.abs(xr - x) < eps) &(np.abs(yr - y) < eps))[0][0]
-                    for xr, yr in zip(x_rot, y_rot)
-                ])
-                mapping_array.append(id_mapping)
-
-            df = pd.DataFrame({"wd_range": wd_eval_array, "turbine_mapping": mapping_array})
-            return df
-
-    return pd.DataFrame()  # Return empty dataframe if completes without finding solution

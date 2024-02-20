@@ -41,16 +41,9 @@ fi = FlorisInterface('inputs/gch.yaml')
 # Setup 72 wind directions with a random wind speed and frequency distribution
 wind_directions = np.arange(0, 360.0, 5.0)
 np.random.seed(1)
-wind_speeds = 8.0 + np.random.randn(1) * 0.5
+wind_speeds = 8.0 + np.random.randn(1) * 0.5 * np.ones_like(wind_directions)
 # Shape frequency distribution to match number of wind directions and wind speeds
-freq = (
-    np.abs(
-        np.sort(
-            np.random.randn(len(wind_directions))
-        )
-    )
-    .reshape( ( len(wind_directions), len(wind_speeds) ) )
-)
+freq = (np.abs(np.sort(np.random.randn(len(wind_directions)))))
 freq = freq / freq.sum()
 
 fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
