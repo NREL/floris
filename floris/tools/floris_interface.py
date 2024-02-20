@@ -306,6 +306,7 @@ class FlorisInterface(LoggingManager):
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
         heterogenous_inflow_config=None,
+        heterogenous_inflow_config_by_wd=None,
         wind_data: type[WindDataBase] | None = None,
     ):
         # Export the floris object recursively as a dictionary
@@ -350,6 +351,19 @@ class FlorisInterface(LoggingManager):
             flow_field_dict["turbulence_intensities"] = turbulence_intensities
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
+
+        if heterogenous_inflow_config_by_wd is not None:
+
+            # Build the n-findex version of the het map
+            speed_multipliers = self.get_heterogenous_inflow_config(
+                                                    heterogenous_inflow_config_by_wd,
+                                                    flow_field_dict["wind_directions"])
+            heterogenous_inflow_config = {
+                    'speed_multipliers': speed_multipliers,
+                    'x': heterogenous_inflow_config_by_wd['x'],
+                    'y': heterogenous_inflow_config_by_wd['y'],
+            }
+
         if heterogenous_inflow_config is not None:
             flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
 
@@ -398,6 +412,43 @@ class FlorisInterface(LoggingManager):
 
         # Create a new instance of floris and attach to self
         self.floris = Floris.from_dict(floris_dict)
+
+    def get_heterogenous_inflow_config(self, heterogenous_inflow_config_by_wd, wind_directions):
+        """
+        Processes heterogenous inflow configuration data to generate a speed multiplier array
+        aligned with the wind directions. Accounts for the cyclical nature of wind directions.
+
+        Args:
+            heterogenous_inflow_config_by_wd (dict): A dictionary containing the following keys:
+                * 'speed_multipliers': A 2D NumPy array (size mxn) of speed multipliers.
+                * 'het_wd': A 1D NumPy array (size m) of wind directions (degrees).
+            wind_directions (np.array): Wind directions to map onto
+
+        Returns:
+            numpy.ndarray: A 2D NumPy array (size n_findex x n) of speed multipliers
+                        Each row corresponds to a wind direction, with speed multipliers selected
+                        based on the closest matching wind direction in 'het_wd'.
+        """
+
+        # Extract data from the configuration dictionary
+        speed_multipliers = np.array(heterogenous_inflow_config_by_wd['speed_multipliers'])
+        het_wd = np.array(heterogenous_inflow_config_by_wd['het_wd'])
+
+        # Confirm 0th dimension of speed_multipliers == len(het_wd)
+        if len(het_wd) != speed_multipliers.shape[0]:
+            raise ValueError(
+                "The legnth of het_wd must equal the number of rows speed_multipliers"
+                "Within the heterogenous_inflow_config_by_wd dictionary"
+            )
+
+        # Calculate closest wind direction indices (accounting for angles)
+        angle_diffs = np.abs(wind_directions[:, None] - het_wd)
+        min_angle_diffs = np.minimum(angle_diffs, 360 - angle_diffs)
+        closest_wd_indices = np.argmin(min_angle_diffs, axis=1)
+
+        # Construct the output array using the calculated indices
+        return speed_multipliers[closest_wd_indices]
+
 
     def get_plane_of_points(
         self,
