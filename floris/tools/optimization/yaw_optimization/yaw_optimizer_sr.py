@@ -186,7 +186,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         evaluation_grid = np.tile(self._yaw_angles_opt_subset, (Ny, 1, 1))
 
         # Get a list of the turbines in order of x and sort front to back
-        for iw in range(self._n_wind_directions_subset):
+        for iw in range(self._n_findex_subset):
             turbid = self.turbines_ordered_array_subset[iw, turbine_depth]  # Turbine to manipulate
 
             # # Check if this turbine needs to be optimized. If not, continue

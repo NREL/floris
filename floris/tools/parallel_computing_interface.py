@@ -84,7 +84,7 @@ class ParallelComputingInterface(LoggingManager):
             object or can be an UncertaintyInterface object.
         max_workers (int): Number of parallel workers, typically equal to the number of cores
             you have on your system or HPC.
-        n_wind_condition_splits (int): Number of sectors to split the wind condition array over.
+        n_wind_condition_splits (int): Number of sectors to split the wind findex array over.
             This is typically equal to max_workers, or a multiple of it.
         interface (str): Parallel computing interface to leverage. Recommended is 'concurrent'
             or 'multiprocessing' for local (single-system) use, and 'mpi4py' for high performance
@@ -435,6 +435,10 @@ class ParallelComputingInterface(LoggingManager):
         # the the farm_power variable as an empty array.
         wind_speeds = np.array(self.fi.floris.flow_field.wind_speeds, copy=True)
         wind_directions = np.array(self.fi.floris.flow_field.wind_directions, copy=True)
+        turbulence_intensities = np.array(
+            self.fi.floris.flow_field.turbulence_intensities,
+            copy=True,
+        )
         farm_power = np.zeros((self.fi.floris.flow_field.n_wind_directions, len(wind_speeds)))
 
         # Determine which wind speeds we must evaluate in floris
@@ -446,12 +450,14 @@ class ParallelComputingInterface(LoggingManager):
         if np.any(conditions_to_evaluate):
             wind_speeds_subset = wind_speeds[conditions_to_evaluate]
             wind_direction_subset = wind_directions[conditions_to_evaluate]
+            turbulence_intensities_subset = turbulence_intensities[conditions_to_evaluate]
             yaw_angles_subset = None
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
             self.fi.reinitialize(
                 wind_directions=wind_direction_subset,
-                wind_speeds=wind_speeds_subset
+                wind_speeds=wind_speeds_subset,
+                turbulence_intensities=turbulence_intensities_subset,
             )
             farm_power[:, conditions_to_evaluate] = (
                 self.get_farm_power(yaw_angles=yaw_angles_subset, turbine_weights=turbine_weights)
@@ -461,7 +467,11 @@ class ParallelComputingInterface(LoggingManager):
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
-        self.fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
+        self.fi.reinitialize(
+            wind_directions=wind_directions,
+            wind_speeds=wind_speeds,
+            turbulence_intensities=turbulence_intensities_subset,
+        )
 
         return aep
 

@@ -243,7 +243,7 @@ class YawOptimization(LoggingManager):
 
         # Initialize subset variables as full set
         self.fi_subset = self.fi.copy()
-        n_wind_directions_subset = copy.deepcopy(self.fi.floris.flow_field.n_findex)
+        n_findex_subset = copy.deepcopy(self.fi.floris.flow_field.n_findex)
         minimum_yaw_angle_subset = copy.deepcopy(self.minimum_yaw_angle)
         maximum_yaw_angle_subset = copy.deepcopy(self.maximum_yaw_angle)
         x0_subset = copy.deepcopy(self.x0)
@@ -282,7 +282,7 @@ class YawOptimization(LoggingManager):
             yaw_angles_template_subset[idx] = yaw_mb[idx]
 
         # Save all subset variables to self
-        self._n_wind_directions_subset = n_wind_directions_subset
+        self._n_findex_subset = n_findex_subset
         self._minimum_yaw_angle_subset = minimum_yaw_angle_subset
         self._maximum_yaw_angle_subset = maximum_yaw_angle_subset
         self._x0_subset = x0_subset
