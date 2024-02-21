@@ -12,7 +12,7 @@ from floris.simulation import Floris, State
 from floris.simulation.rotor_velocity import average_velocity
 from floris.simulation.turbine.operation_models import (
     POWER_SETPOINT_DEFAULT,
-    POWER_SETPOINT_DISABLED
+    POWER_SETPOINT_DISABLED,
 )
 from floris.simulation.turbine.turbine import (
     axial_induction,
