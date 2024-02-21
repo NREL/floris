@@ -91,12 +91,10 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         # Parse the variable dictionary
         self.parse_opt_vars(varDict)
 
-        # Update turbine map with turbince locations
-        self.fi.set(layout_x=self.x, layout_y=self.y)
-
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
-        self.fi.set(yaw_angles=yaw_angles)
+        # Update turbine map with turbine locations and yaw angles
+        self.fi.set(layout_x=self.x, layout_y=self.y, yaw_angles=yaw_angles)
 
         # Compute the objective function
         funcs = {}
