@@ -19,17 +19,16 @@ Main concept is introduce FLORIS and illustrate essential structure of most-used
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Convert to a simple two turbine layout
-fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+fi.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 
 # Single wind speed and wind direction
 print("\n========================= Single Wind Direction and Wind Speed =========================")
 
 # Get the turbine powers assuming 1 wind direction and speed
-fi.reinitialize(wind_directions=[270.0], wind_speeds=[8.0])
+# Set the yaw angles to 0 with 1 wind direction and speed, 2 turbines
+fi.set(wind_directions=[270.0], wind_speeds=[8.0], yaw_angles=np.zeros([1, 2]))
 
-# Set the yaw angles to 0
-yaw_angles = np.zeros([1, 2])  # 1 wind direction and speed, 2 turbines
-fi.calculate_wake(yaw_angles=yaw_angles)
+fi.run()
 
 # Get the turbine powers
 turbine_powers = fi.get_turbine_powers() / 1000.0
@@ -44,9 +43,9 @@ print("\n========================= Single Wind Direction and Multiple Wind Speed
 wind_speeds = np.array([8.0, 9.0, 10.0])
 wind_directions = np.array([270.0, 270.0, 270.0])
 
-fi.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
-yaw_angles = np.zeros([3, 2])  # 3 wind directions/ speeds, 2 turbines
-fi.calculate_wake(yaw_angles=yaw_angles)
+# 3 wind directions/ speeds, 2 turbines
+fi.set(wind_speeds=wind_speeds, wind_directions=wind_directions, yaw_angles=np.zeros([3, 2]))
+fi.run()
 turbine_powers = fi.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 3 findex X 2 Turbines")
 print(turbine_powers)
@@ -60,9 +59,8 @@ print("\n========================= Multiple Wind Directions and Multiple Wind Sp
 wind_speeds = np.tile([8.0, 9.0, 10.0], 3)
 wind_directions = np.repeat([260.0, 270.0, 280.0], 3)
 
-fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
-yaw_angles = np.zeros([9, 2])  # 9 wind directions/ speeds, 2 turbines
-fi.calculate_wake(yaw_angles=yaw_angles)
+fi.set(wind_directions=wind_directions, wind_speeds=wind_speeds, yaw_angles=np.zeros([9, 2]))
+fi.run()
 turbine_powers = fi.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 9 WD/WS X 2 Turbines")
 print(turbine_powers)
