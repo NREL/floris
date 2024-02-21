@@ -55,7 +55,7 @@ if __name__ == '__main__':
     homogeneous_wind_speed = 8.0
 
     fi = FlorisInterface("inputs/gch.yaml")
-    fi.reinitialize(layout_x=[0.0], layout_y=[0.0])
+    fi.set(layout_x=[0.0], layout_y=[0.0])
 
     # ------------------------------ Single-turbine layout ------------------------------
     # We first show how to sample and plot velocity deficit profiles on a single-turbine layout.
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     # Let (x_t1, y_t1) be the location of the second turbine
     x_t1 =  2 * D
     y_t1 = -2 * D
-    fi.reinitialize(wind_directions=[wind_direction], layout_x=[0.0, x_t1], layout_y=[0.0, y_t1])
+    fi.set(wind_directions=[wind_direction], layout_x=[0.0, x_t1], layout_y=[0.0, y_t1])
 
     # Extract profiles at a set of downstream distances from the starting point (x_start, y_start)
     cross_profiles = fi.sample_velocity_deficit_profiles(

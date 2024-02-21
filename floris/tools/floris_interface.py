@@ -1193,7 +1193,7 @@ class FlorisInterface(LoggingManager):
         if reference_height is None:
             reference_height = self.floris.flow_field.reference_wind_height
 
-        self.reinitialize(
+        self.set(
             wind_directions=[wind_direction],
             wind_speeds=[homogeneous_wind_speed],
             wind_shear=0.0,
@@ -1211,7 +1211,7 @@ class FlorisInterface(LoggingManager):
             reference_height,
         )
 
-        self.reinitialize(
+        self.set(
             wind_directions=wind_directions_copy,
             wind_speeds=wind_speeds_copy,
             wind_shear=wind_shear_copy,
