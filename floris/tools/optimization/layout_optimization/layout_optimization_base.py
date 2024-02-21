@@ -60,7 +60,7 @@ class LayoutOptimization(LoggingManager):
         # NOTE: requires that child class saves x and y locations
         # as self.x and self.y and updates them during optimization.
         if self.enable_geometric_yaw:
-            self.yaw_opt.fi_subset.reinitialize(layout_x=self.x, layout_y=self.y)
+            self.yaw_opt.fi_subset.set(layout_x=self.x, layout_y=self.y)
             df_opt = self.yaw_opt.optimize()
             self.yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, :]
         else:

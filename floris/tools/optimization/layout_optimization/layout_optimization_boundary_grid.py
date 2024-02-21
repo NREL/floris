@@ -612,7 +612,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
             self.boundary_spacing,
         )
 
-        self.fi.reinitialize(layout=(layout_x, layout_y))
+        self.fi.set(layout=(layout_x, layout_y))
 
     def plot_layout(self):
         plt.figure(figsize=(9, 6))
