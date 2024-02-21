@@ -10,7 +10,10 @@ import pandas as pd
 from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
 from floris.simulation.rotor_velocity import average_velocity
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.simulation.turbine.operation_models import (
+    POWER_SETPOINT_DEFAULT,
+    POWER_SETPOINT_DISABLED
+)
 from floris.simulation.turbine.turbine import (
     axial_induction,
     power,
@@ -151,7 +154,10 @@ class FlorisInterface(LoggingManager):
         )
         if not (save_yaw_angles == 0).all():
             self.floris.farm.yaw_angles = save_yaw_angles
-        if not (save_power_setpoints == POWER_SETPOINT_DEFAULT).all():
+        if not (
+            (save_power_setpoints == POWER_SETPOINT_DEFAULT)
+            | (save_power_setpoints == POWER_SETPOINT_DISABLED)
+        ).all():
             self.floris.farm.power_setpoints = save_power_setpoints
 
         # Set the operation
@@ -160,6 +166,9 @@ class FlorisInterface(LoggingManager):
             power_setpoints=power_setpoints,
             disable_turbines=disable_turbines,
         )
+
+    def reset_operation(self):
+        self._reinitialize()
 
     def run(self) -> None:
         """
@@ -183,11 +192,8 @@ class FlorisInterface(LoggingManager):
         # Perform the wake calculations
         self.floris.steady_state_atmospheric_condition()
 
-    def calculate_no_wake(
+    def run_no_wake(
         self,
-        yaw_angles: NDArrayFloat | list[float] | None = None,
-        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
-        disable_turbines: NDArrayBool | list[bool] | None = None,
     ) -> None:
         """
         This function is similar to `calculate_wake()` except
@@ -195,65 +201,7 @@ class FlorisInterface(LoggingManager):
         farm is modeled as if there is no wake in the flow.
         Yaw angles are used to reduce the power and thrust of
         the turbine that is yawed.
-
-        Args:
-            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
-                Defaults to None.
         """
-
-        if yaw_angles is None:
-            yaw_angles = np.zeros(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines,
-                )
-            )
-        self.floris.farm.yaw_angles = yaw_angles
-
-        if power_setpoints is None:
-            power_setpoints = POWER_SETPOINT_DEFAULT * np.ones(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines,
-                )
-            )
-        else:
-            power_setpoints = np.array(power_setpoints)
-
-        # Convert any None values to the default power setpoint
-        power_setpoints[
-            power_setpoints == np.full(power_setpoints.shape, None)
-        ] = POWER_SETPOINT_DEFAULT
-        power_setpoints = floris_array_converter(power_setpoints)
-
-        # Check for turbines to disable
-        if disable_turbines is not None:
-
-            # Force to numpy array
-            # disable_turbines = np.array(disable_turbines)
-
-            # Must have first dimension = n_findex
-            if disable_turbines.shape[0] != self.floris.flow_field.n_findex:
-                raise ValueError(
-                    f"disable_turbines has a size of {disable_turbines.shape[0]} "
-                    f"in the 0th dimension, must be equal to "
-                    f"n_findex={self.floris.flow_field.n_findex}"
-                )
-
-            # Must have first dimension = n_turbines
-            if disable_turbines.shape[1] != self.floris.farm.n_turbines:
-                raise ValueError(
-                    f"disable_turbines has a size of {disable_turbines.shape[1]} "
-                    f"in the 1th dimension, must be equal to "
-                    f"n_turbines={self.floris.farm.n_turbines}"
-                )
-
-            # Set power_setpoints and yaw_angles to 0 in all locations where
-            # disable_turbines is True
-            yaw_angles[disable_turbines] = 0.0
-            power_setpoints[disable_turbines] = 0.001 # Not zero to avoid numerical problems
-
-        self.floris.farm.power_setpoints = power_setpoints
 
         # Initialize solution space
         self.floris.initialize_domain()
@@ -417,7 +365,7 @@ class FlorisInterface(LoggingManager):
             # Set power setpoints to small value (non zero to avoid numerical issues) and
             # yaw_angles to 0 in all locations where disable_turbines is True
             self.floris.farm.yaw_angles[disable_turbines] = 0.0
-            self.floris.farm.power_setpoints[disable_turbines] = 0.001
+            self.floris.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
 
     def get_plane_of_points(
         self,
@@ -774,7 +722,7 @@ class FlorisInterface(LoggingManager):
         if self.floris.state is not State.USED:
             raise RuntimeError(
                 "Can't run function `FlorisInterface.get_turbine_powers` without "
-                "first running `FlorisInterface.calculate_wake`."
+                "first running `FlorisInterface.run`."
             )
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.

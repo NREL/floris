@@ -51,9 +51,9 @@ baseline = np.array(
 )
 
 
-def test_calculate_no_wake(sample_inputs_fixture):
+def test_run_no_wake(sample_inputs_fixture):
     """
-    The calculate_no_wake function calculates the power production of a wind farm
+    The run_no_wake function calculates the power production of a wind farm
     assuming no wake losses. It does this by initializing and finalizing the
     floris simulation while skipping the wake calculation. The power for all wind
     turbines should be the same for a uniform wind condition. The chosen wake model
@@ -65,7 +65,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fi = FlorisInterface(sample_inputs_fixture.floris)
-    fi.calculate_no_wake()
+    fi.run_no_wake()
 
     n_turbines = fi.floris.farm.n_turbines
     n_findex = fi.floris.flow_field.n_findex
