@@ -57,7 +57,7 @@ if __name__ == "__main__":
     valid_properties = [
         "generator_efficiency",
         "hub_height",
-        "pP",
+        "cosine_loss_exponent_yaw",
         "pT",
         "rotor_diameter",
         "TSR",

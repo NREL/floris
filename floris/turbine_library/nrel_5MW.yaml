@@ -41,7 +41,7 @@ power_thrust_table:
   # Cosine exponent for power loss due to tilt.
   pT: 1.88
   # Cosine exponent for power loss due to yaw misalignment.
-  pP: 1.88
+  cosine_loss_exponent_yaw: 1.88
   ### Power thrust table data
   wind_speed:
     - 0.0

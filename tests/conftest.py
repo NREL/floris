@@ -206,7 +206,7 @@ class SampleInputs:
             "generator_efficiency": 0.944,
             "power_thrust_model": "cosine-loss",
             "power_thrust_table": {
-                "pP": 1.88,
+                "cosine_loss_exponent_yaw": 1.88,
                 "pT": 1.88,
                 "ref_air_density": 1.225,
                 "ref_tilt": 5.0,

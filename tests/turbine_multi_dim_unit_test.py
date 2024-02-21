@@ -72,7 +72,10 @@ def test_turbine_init():
     condition = (2, 1)
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
-    assert turbine.power_thrust_table[condition]["pP"] == turbine_data["power_thrust_table"]["pP"]
+    assert (
+        turbine.power_thrust_table[condition]["cosine_loss_exponent_yaw"]
+        == turbine_data["power_thrust_table"]["cosine_loss_exponent_yaw"]
+    )
     assert turbine.power_thrust_table[condition]["pT"] == turbine_data["power_thrust_table"]["pT"]
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
 

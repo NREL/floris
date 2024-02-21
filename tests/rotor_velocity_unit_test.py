@@ -21,7 +21,7 @@ def test_rotor_velocity_yaw_correction():
 
     # Test a single turbine for zero yaw
     yaw_corrected_velocities = rotor_velocity_yaw_correction(
-        pP=3.0,
+        cosine_loss_exponent_yaw=3.0,
         yaw_angles=0.0,
         rotor_effective_velocities=wind_speed,
     )
@@ -29,7 +29,7 @@ def test_rotor_velocity_yaw_correction():
 
     # Test a single turbine for non-zero yaw
     yaw_corrected_velocities = rotor_velocity_yaw_correction(
-        pP=3.0,
+        cosine_loss_exponent_yaw=3.0,
         yaw_angles=60.0,
         rotor_effective_velocities=wind_speed,
     )
@@ -37,7 +37,7 @@ def test_rotor_velocity_yaw_correction():
 
     # Test multiple turbines for zero yaw
     yaw_corrected_velocities = rotor_velocity_yaw_correction(
-        pP=3.0,
+        cosine_loss_exponent_yaw=3.0,
         yaw_angles=np.zeros((1, N_TURBINES)),
         rotor_effective_velocities=wind_speed_N_TURBINES,
     )
@@ -45,7 +45,7 @@ def test_rotor_velocity_yaw_correction():
 
     # Test multiple turbines for non-zero yaw
     yaw_corrected_velocities = rotor_velocity_yaw_correction(
-        pP=3.0,
+        cosine_loss_exponent_yaw=3.0,
         yaw_angles=np.ones((1, N_TURBINES)) * 60.0,
         rotor_effective_velocities=wind_speed_N_TURBINES,
     )

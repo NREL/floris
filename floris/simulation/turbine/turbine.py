@@ -130,7 +130,7 @@ def power(
     """
     # TODO: Change the order of input arguments to be consistent with the other
     # utility functions - velocities first...
-    # Update to power calculation which replaces the fixed pP exponent with
+    # Update to power calculation which replaces the fixed cosine_loss_exponent_yaw exponent with
     # an exponent pW, that changes the effective wind speed input to the power
     # calculation, rather than scaling the power.  This better handles power
     # loss to yaw in above rated conditions
@@ -416,8 +416,8 @@ class Turbine(BaseClass):
             or, contain a key "power_thrust_data_file" pointing to the power/thrust data.
             Optionally, power_thrust_table may include parameters for use in the turbine submodel,
             for example:
-                pP (float): The cosine exponent relating the yaw misalignment angle to turbine
-                    power.
+                cosine_loss_exponent_yaw (float): The cosine exponent relating the yaw misalignment
+                    angle to turbine power.
                 pT (float): The cosine exponent relating the rotor tilt angle to turbine
                     power.
                 ref_air_density (float): The density at which the provided Cp and Ct curves are
