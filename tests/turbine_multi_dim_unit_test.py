@@ -80,7 +80,6 @@ def test_turbine_init():
         turbine.power_thrust_table[condition]["cosine_loss_exponent_tilt"]
         == turbine_data["power_thrust_table"]["cosine_loss_exponent_tilt"]
     )
-    assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
 
     assert isinstance(turbine.power_thrust_table, dict)
     assert callable(turbine.thrust_coefficient_function)

@@ -1,5 +1,4 @@
 turbine_type: 'iea_15MW_floating'
-generator_efficiency: 1.0
 hub_height: 150.0
 rotor_diameter: 242.24
 TSR: 8.0

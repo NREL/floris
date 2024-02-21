@@ -2,8 +2,8 @@
 # https://github.com/IEAWindTask37/IEA-15-240-RWT/blob/master/Documentation/
 # IEA-15-240-RWT_tabular.xlsx
 # Note: Small power variations above rated removed.
+# Generator efficiency of 100% used.
 turbine_type: 'iea_15MW'
-generator_efficiency: 1.0
 hub_height: 150.0
 rotor_diameter: 242.24
 TSR: 8.0

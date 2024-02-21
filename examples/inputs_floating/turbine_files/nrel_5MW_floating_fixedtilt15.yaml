@@ -1,5 +1,4 @@
 turbine_type: 'nrel_5MW_floating'
-generator_efficiency: 0.944
 hub_height: 90.0
 rotor_diameter: 125.88
 TSR: 8.0

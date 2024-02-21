@@ -54,7 +54,6 @@ def test_turbine_init():
         == turbine_data["power_thrust_table"]["cosine_loss_exponent_tilt"]
     )
     assert turbine.TSR == turbine_data["TSR"]
-    assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
     assert (
         turbine.power_thrust_table["ref_air_density"]
         == turbine_data["power_thrust_table"]["ref_air_density"]

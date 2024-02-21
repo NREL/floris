@@ -2,7 +2,6 @@
 # https://github.com/NREL/turbine-models/blob/master/Offshore/IEA_10MW_198_RWT.csv
 # Note: Generator efficiency of 94% used. Small power variations above rated removed.
 turbine_type: 'iea_10MW'
-generator_efficiency: 0.94
 hub_height: 119.0
 rotor_diameter: 198.0
 TSR: 8.0
