@@ -58,7 +58,7 @@ if __name__ == "__main__":
         "generator_efficiency",
         "hub_height",
         "cosine_loss_exponent_yaw",
-        "pT",
+        "cosine_loss_exponent_tilt",
         "rotor_diameter",
         "TSR",
         "ref_air_density",

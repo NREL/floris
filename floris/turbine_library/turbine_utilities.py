@@ -27,7 +27,7 @@ def build_cosine_loss_turbine_dict(
     generator_efficiency=0.944,
     hub_height=90.0,
     cosine_loss_exponent_yaw=1.88,
-    pT=1.88,
+    cosine_loss_exponent_tilt=1.88,
     rotor_diameter=125.88,
     TSR=8.0,
     ref_air_density=1.225,
@@ -67,7 +67,8 @@ def build_cosine_loss_turbine_dict(
         hub_height (float): Hub height [m]. Defaults to 90.0.
         cosine_loss_exponent_yaw (float): Cosine exponent for power loss to yaw [-].
             Defaults to 1.88.
-        pT (float): Cosine exponent for thrust loss to yaw [-]. Defaults to 1.88.
+        cosine_loss_exponent_tilt (float): Cosine exponent for thrust loss to yaw [-].
+            Defaults to 1.88.
         rotor_diameter (float). Rotor diameter [m]. Defaults to 126.0.
         TSR (float). Turbine optimal tip-speed ratio [-]. Defaults to 8.0.
         ref_air_density (float). Air density used to specify power and thrust
@@ -152,7 +153,7 @@ def build_cosine_loss_turbine_dict(
         "ref_air_density": ref_air_density,
         "ref_tilt": ref_tilt,
         "cosine_loss_exponent_yaw": cosine_loss_exponent_yaw,
-        "pT": pT,
+        "cosine_loss_exponent_tilt": cosine_loss_exponent_tilt,
         "wind_speed": u.tolist(),
         "power": p.tolist(),
         "thrust_coefficient": Ct.tolist()

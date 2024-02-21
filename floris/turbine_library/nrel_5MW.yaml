@@ -39,7 +39,7 @@ power_thrust_table:
   # the effects of a floating platform on a turbine's power and wake.
   ref_tilt: 5.0
   # Cosine exponent for power loss due to tilt.
-  pT: 1.88
+  cosine_loss_exponent_tilt: 1.88
   # Cosine exponent for power loss due to yaw misalignment.
   cosine_loss_exponent_yaw: 1.88
   ### Power thrust table data

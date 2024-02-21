@@ -418,8 +418,8 @@ class Turbine(BaseClass):
             for example:
                 cosine_loss_exponent_yaw (float): The cosine exponent relating the yaw misalignment
                     angle to turbine power.
-                pT (float): The cosine exponent relating the rotor tilt angle to turbine
-                    power.
+                cosine_loss_exponent_tilt (float): The cosine exponent relating the rotor tilt angle
+                    to turbine power.
                 ref_air_density (float): The density at which the provided Cp and Ct curves are
                     defined.
                 ref_tilt (float): The implicit tilt of the turbine for which the Cp and Ct

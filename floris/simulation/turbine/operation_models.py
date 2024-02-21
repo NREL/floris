@@ -232,7 +232,7 @@ class CosineLossTurbine(BaseOperationModel):
         rotor_effective_velocities = rotor_velocity_tilt_correction(
             tilt_angles=tilt_angles,
             ref_tilt=power_thrust_table["ref_tilt"],
-            pT=power_thrust_table["pT"],
+            cosine_loss_exponent_tilt=power_thrust_table["cosine_loss_exponent_tilt"],
             tilt_interp=tilt_interp,
             correct_cp_ct_for_tilt=correct_cp_ct_for_tilt,
             rotor_effective_velocities=rotor_effective_velocities,
