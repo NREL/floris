@@ -510,6 +510,8 @@ class FlorisInterface(LoggingManager):
         wd=None,
         ws=None,
         yaw_angles=None,
+        power_septoints=None,
+        disable_turbines=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -540,8 +542,6 @@ class FlorisInterface(LoggingManager):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
-        current_yaw_angles = self.floris.farm.yaw_angles
-
         # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
@@ -550,11 +550,14 @@ class FlorisInterface(LoggingManager):
             "flow_field_grid_points": [x_resolution, y_resolution],
             "flow_field_bounds": [x_bounds, y_bounds],
         }
-        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
-
-        # TODO this has to be done here as it seems to be lost with reinitialize
-        if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_septoints,
+            disable_turbines=disable_turbines,
+        )
 
         # Calculate wake
         self.floris.solve_for_viz()
@@ -579,7 +582,7 @@ class FlorisInterface(LoggingManager):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.run()
 
         return horizontal_plane
 
@@ -593,6 +596,8 @@ class FlorisInterface(LoggingManager):
         wd=None,
         ws=None,
         yaw_angles=None,
+        power_setpoints=None,
+        disable_turbines=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -623,7 +628,6 @@ class FlorisInterface(LoggingManager):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
-        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -633,11 +637,14 @@ class FlorisInterface(LoggingManager):
             "flow_field_grid_points": [y_resolution, z_resolution],
             "flow_field_bounds": [y_bounds, z_bounds],
         }
-        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
-
-        # TODO this has to be done here as it seems to be lost with reinitialize
-        if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
 
         # Calculate wake
         self.floris.solve_for_viz()
@@ -657,7 +664,7 @@ class FlorisInterface(LoggingManager):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.run()
 
         return cross_plane
 
@@ -671,6 +678,8 @@ class FlorisInterface(LoggingManager):
         wd=None,
         ws=None,
         yaw_angles=None,
+        power_setpoints=None,
+        disable_turbines=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -701,7 +710,6 @@ class FlorisInterface(LoggingManager):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
-        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -711,11 +719,14 @@ class FlorisInterface(LoggingManager):
             "flow_field_grid_points": [x_resolution, z_resolution],
             "flow_field_bounds": [x_bounds, z_bounds],
         }
-        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
-
-        # TODO this has to be done here as it seems to be lost with reinitialize
-        if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
 
         # Calculate wake
         self.floris.solve_for_viz()
@@ -735,7 +746,7 @@ class FlorisInterface(LoggingManager):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.run()
 
         return y_plane
 
