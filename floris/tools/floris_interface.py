@@ -916,7 +916,6 @@ class FlorisInterface(LoggingManager):
         freq,
         cut_in_wind_speed=0.001,
         cut_out_wind_speed=None,
-        yaw_angles=None,
         turbine_weights=None,
         no_wake=False,
     ) -> float:
@@ -939,10 +938,6 @@ class FlorisInterface(LoggingManager):
                 wind farm is known to produce 0.0 W of power. If None is
                 specified, will assume that the wind farm does not cut out
                 at high wind speeds. Defaults to None.
-            yaw_angles (NDArrayFloat | list[float] | None, optional):
-                The relative turbine yaw angles in degrees. If None is
-                specified, will assume that the turbine yaw angles are all
-                zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
                 particular turbines and/or completely ignore the power
@@ -996,10 +991,7 @@ class FlorisInterface(LoggingManager):
         if np.any(conditions_to_evaluate):
             wind_speeds_subset = wind_speeds[conditions_to_evaluate]
             wind_directions_subset = wind_directions[conditions_to_evaluate]
-            yaw_angles_subset = None
-            if yaw_angles is not None:
-                yaw_angles_subset = yaw_angles[conditions_to_evaluate]
-            self.reinitialize(
+            self.set(
                 wind_speeds=wind_speeds_subset,
                 wind_directions=wind_directions_subset,
             )
@@ -1015,7 +1007,7 @@ class FlorisInterface(LoggingManager):
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
-        self.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
+        self.set(wind_speeds=wind_speeds, wind_directions=wind_directions)
 
         return aep
 
@@ -1024,7 +1016,6 @@ class FlorisInterface(LoggingManager):
         wind_data,
         cut_in_wind_speed=0.001,
         cut_out_wind_speed=None,
-        yaw_angles=None,
         turbine_weights=None,
         no_wake=False,
     ) -> float:
@@ -1045,10 +1036,6 @@ class FlorisInterface(LoggingManager):
                 wind farm is known to produce 0.0 W of power. If None is
                 specified, will assume that the wind farm does not cut out
                 at high wind speeds. Defaults to None.
-            yaw_angles (NDArrayFloat | list[float] | None, optional):
-                The relative turbine yaw angles in degrees. If None is
-                specified, will assume that the turbine yaw angles are all
-                zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
                 particular turbines and/or completely ignore the power
@@ -1084,7 +1071,6 @@ class FlorisInterface(LoggingManager):
             freq,
             cut_in_wind_speed=cut_in_wind_speed,
             cut_out_wind_speed=cut_out_wind_speed,
-            yaw_angles=yaw_angles,
             turbine_weights=turbine_weights,
             no_wake=no_wake,
         )
