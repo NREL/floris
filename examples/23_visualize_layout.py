@@ -14,7 +14,7 @@ using the visualize_layout function
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Assign a 6-turbine layout
-fi.reinitialize(layout_x=[0, 100, 500, 1000, 1200,500], layout_y=[0, 800, 150, 500, 0,500])
+fi.set(layout_x=[0, 100, 500, 1000, 1200,500], layout_y=[0, 800, 150, 500, 0,500])
 
 # Give turbines specific names
 turbine_names = ['T01', 'T02','T03','S01','X01', 'X02']

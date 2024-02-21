@@ -24,14 +24,14 @@ y_locs = [ -300.0, 300.0, -300.0, 300.0]
 fi = FlorisInterface("inputs/gch_heterogeneous_inflow.yaml")
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
-fi.reinitialize(
+fi.set(
     wind_shear=0.0,
     wind_speeds=[8.0],
     wind_directions=[270.],
     layout_x=[0, 0],
     layout_y=[-299., 299.],
 )
-fi.calculate_wake()
+fi.run()
 turbine_powers = fi.get_turbine_powers().flatten() / 1000.
 
 # Show the initial results
@@ -52,12 +52,12 @@ heterogenous_inflow_config = {
     'x': x_locs,
     'y': y_locs,
 }
-fi.reinitialize(
+fi.set(
     wind_directions=[270.0, 275.0],
     wind_speeds=[8.0, 8.0],
     heterogenous_inflow_config=heterogenous_inflow_config
 )
-fi.calculate_wake()
+fi.run()
 turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
 print('With wind directions now set to 270 and 275 deg')
 print(f'T0: {turbine_powers[:, 0].flatten()} kW')

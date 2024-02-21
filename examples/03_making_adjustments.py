@@ -45,7 +45,7 @@ wakeviz.visualize_cut_plane(
 
 
 # Change the wind shear, reset the wind speed, and plot a vertical slice
-fi.reinitialize( wind_shear=0.2, wind_speeds=[8.0] )
+fi.set(wind_shear=0.2, wind_speeds=[8.0])
 y_plane = fi.calculate_y_plane(crossstream_dist=0.0)
 wakeviz.visualize_cut_plane(
     y_plane,
@@ -61,7 +61,7 @@ X, Y = np.meshgrid(
     5.0 * fi.floris.farm.rotor_diameters[0,0] * np.arange(0, N, 1),
     5.0 * fi.floris.farm.rotor_diameters[0,0] * np.arange(0, N, 1),
 )
-fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten(), wind_directions=[270.0])
+fi.set(layout_x=X.flatten(), layout_y=Y.flatten(), wind_directions=[270.0])
 horizontal_plane = fi.calculate_horizontal_plane(height=90.0)
 wakeviz.visualize_cut_plane(
     horizontal_plane,

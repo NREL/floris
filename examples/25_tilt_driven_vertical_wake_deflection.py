@@ -49,7 +49,7 @@ powers = np.zeros((2, num_in_row))
 for i, (fi, tilt) in enumerate(zip([fi_5, fi_15], [5, 15])):
 
     # Farm layout and wind conditions
-    fi.reinitialize(
+    fi.set(
         layout_x=[x * 5.0 * D for x in range(num_in_row)],
         layout_y=[0.0]*num_in_row,
         wind_speeds=[8.0],
@@ -57,7 +57,7 @@ for i, (fi, tilt) in enumerate(zip([fi_5, fi_15], [5, 15])):
     )
 
     # Flow solve and power computation
-    fi.calculate_wake()
+    fi.run()
     powers[i,:] = fi.get_turbine_powers().flatten()
 
     # Compute flow slices

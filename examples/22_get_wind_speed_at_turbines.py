@@ -10,10 +10,10 @@ from floris.tools import FlorisInterface
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Create a 4-turbine layouts
-fi.reinitialize(layout_x=[0, 0., 500., 500.], layout_y=[0., 300., 0., 300.])
+fi.set(layout_x=[0, 0., 500., 500.], layout_y=[0., 300., 0., 300.])
 
 # Calculate wake
-fi.calculate_wake()
+fi.run()
 
 # Collect the wind speed at all the turbine points
 u_points = fi.floris.flow_field.u

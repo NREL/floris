@@ -27,7 +27,7 @@ fi = FlorisInterface("inputs/gch.yaml")  # GCH model matched to the default "leg
 D = 126.0
 layout_x = np.array([0, D*6, D*12, D*18, D*24])
 layout_y = [0, 0, 0, 0, 0]
-fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
+fi.set(layout_x=layout_x, layout_y=layout_y)
 
 # In this case we want to check a grid of wind speed and direction combinations
 wind_speeds_to_expand = np.arange(6, 9, 1.0)
@@ -46,7 +46,7 @@ ws_array = wind_speeds_grid.flatten()
 wd_array = wind_directions_grid.flatten()
 
 # Now reinitialize FLORIS
-fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
+fi.set(wind_speeds=ws_array, wind_directions=wd_array)
 
 # Define a matrix of yaw angles to be all 0
 # Note that yaw angles is now specified as a matrix whose dimensions are
@@ -56,9 +56,10 @@ num_ws = len(ws_array)
 n_findex = num_wd  # Could be either num_wd or num_ws
 num_turbine = len(layout_x)
 yaw_angles = np.zeros((n_findex, num_turbine))
+fi.set(yaw_angles=yaw_angles)
 
 # Calculate
-fi.calculate_wake(yaw_angles=yaw_angles)
+fi.run()
 
 # Collect the turbine powers
 turbine_powers = fi.get_turbine_powers() / 1e3  # In kW
