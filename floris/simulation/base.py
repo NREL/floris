@@ -1,9 +1,4 @@
 
-
-"""
-Defines the BaseClass parent class for all models to be based upon.
-"""
-
 from abc import abstractmethod
 from enum import Enum
 from typing import (
@@ -22,6 +17,11 @@ from attrs import (
 
 from floris.logging_manager import LoggingManager
 from floris.type_dec import FromDictMixin
+
+
+"""
+Defines the BaseClass parent class for all models to be based upon.
+"""
 
 
 class State(Enum):

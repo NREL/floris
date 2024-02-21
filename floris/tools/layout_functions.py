@@ -1,14 +1,14 @@
 
-
-# Defines a bunch of tools for plotting and manipulating
-# layouts for quick visualizations
-
 import math
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import pdist, squareform
+
+
+# Defines a bunch of tools for plotting and manipulating
+# layouts for quick visualizations
 
 
 def visualize_layout(

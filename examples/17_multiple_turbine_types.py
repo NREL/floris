@@ -1,5 +1,4 @@
 
-
 import matplotlib.pyplot as plt
 
 import floris.tools.visualization as wakeviz

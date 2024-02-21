@@ -1,5 +1,4 @@
 
-
 import numpy as np
 
 from floris.utilities import rotate_coordinates_rel_west

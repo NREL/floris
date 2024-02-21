@@ -1,5 +1,4 @@
 
-
 import pytest
 from attr import define, field
 from attrs.exceptions import FrozenAttributeError

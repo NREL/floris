@@ -1,5 +1,4 @@
 
-
 """
 The :py:obj:`floris.tools` package contains the modules used to drive
 FLORIS simulations and perform studies in various areas of research and

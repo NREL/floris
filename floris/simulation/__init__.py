@@ -1,5 +1,4 @@
 
-
 """
 The :py:obj:`floris` package contains :py:obj:`floris.utilities` module
 and the modules that make up the FLORIS software. The floris simulation

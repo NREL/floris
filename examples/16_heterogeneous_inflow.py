@@ -1,5 +1,4 @@
 
-
 import matplotlib.pyplot as plt
 
 from floris.tools import FlorisInterface

@@ -1,4 +1,11 @@
 
+import sys
+from pathlib import Path
+
+from floris.turbine_library import build_cosine_loss_turbine_dict, check_smooth_power_curve
+from floris.utilities import load_yaml
+
+
 """
 This script is intended to be called with an argument and converts a turbine
 yaml file specified for FLORIS v3 to one specified for FLORIS v4.
@@ -9,12 +16,6 @@ python convert_turbine_yaml_v3_to_v4.py <path/to/turbine>.yaml
 The resulting turbine is placed in the same directory as the original yaml,
 and is appended _v4.
 """
-
-import sys
-from pathlib import Path
-
-from floris.turbine_library import build_cosine_loss_turbine_dict, check_smooth_power_curve
-from floris.utilities import load_yaml
 
 
 if __name__ == "__main__":

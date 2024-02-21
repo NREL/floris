@@ -1,5 +1,3 @@
-# Example adapted from https://github.com/NREL/floris/pull/693 contributed by Elie Kadoche
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,6 +7,7 @@ from floris.tools import FlorisInterface
 
 
 """
+Adapted from https://github.com/NREL/floris/pull/693 contributed by Elie Kadoche
 This example demonstrates the ability of FLORIS to shut down some turbines
 during a simulation.
 """

@@ -1,5 +1,4 @@
 
-
 from floris.simulation.wake_velocity.cumulative_gauss_curl import CumulativeGaussCurlVelocityDeficit
 from floris.simulation.wake_velocity.empirical_gauss import EmpiricalGaussVelocityDeficit
 from floris.simulation.wake_velocity.gauss import GaussVelocityDeficit

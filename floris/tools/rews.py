@@ -1,5 +1,4 @@
 
-
 import numpy as np
 
 from ..utilities import wrap_180, wrap_360
