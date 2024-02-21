@@ -107,7 +107,7 @@ class FlorisInterface(LoggingManager):
     def copy(self):
         """Create an independent copy of the current FlorisInterface object"""
         return FlorisInterface(self.floris.as_dict())
-    
+
     def set(
         self,
         wind_speeds: list[float] | NDArrayFloat | None = None,
@@ -153,7 +153,7 @@ class FlorisInterface(LoggingManager):
             self.floris.farm.yaw_angles = save_yaw_angles
         if not (save_power_setpoints == POWER_SETPOINT_DEFAULT).all():
             self.floris.farm.power_setpoints = save_power_setpoints
-        
+
         # Set the operation
         self._set_operation(
             yaw_angles=yaw_angles,
@@ -391,7 +391,7 @@ class FlorisInterface(LoggingManager):
             power_setpoints = floris_array_converter(power_setpoints)
 
             self.floris.farm.power_setpoints = power_setpoints
-        
+
         # Check for turbines to disable
         if disable_turbines is not None:
 
@@ -414,10 +414,10 @@ class FlorisInterface(LoggingManager):
                     f"n_turbines={self.floris.farm.n_turbines}"
                 )
 
-            # Set power_setpoints and yaw_angles to 0 in all locations where
-            # disable_turbines is True
+            # Set power setpoints to small value (non zero to avoid numerical issues) and
+            # yaw_angles to 0 in all locations where disable_turbines is True
             self.floris.farm.yaw_angles[disable_turbines] = 0.0
-            self.floris.farm.power_setpoints[disable_turbines] = 0.001 # Not zero to avoid numerical problems
+            self.floris.farm.power_setpoints[disable_turbines] = 0.001
 
     def get_plane_of_points(
         self,
