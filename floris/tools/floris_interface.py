@@ -996,9 +996,9 @@ class FlorisInterface(LoggingManager):
                 wind_directions=wind_directions_subset,
             )
             if no_wake:
-                self.calculate_no_wake(yaw_angles=yaw_angles_subset)
+                self.calculate_no_wake()
             else:
-                self.calculate_wake(yaw_angles=yaw_angles_subset)
+                self.run()
             farm_power[conditions_to_evaluate] = self.get_farm_power(
                 turbine_weights=turbine_weights
             )

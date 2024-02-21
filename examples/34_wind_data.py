@@ -48,16 +48,16 @@ wind_rose.plot_wind_rose(ax=ax)
 
 # Now set up a FLORIS model and initialize it using the time series and wind rose
 fi = FlorisInterface("inputs/gch.yaml")
-fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+fi.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 
 fi_time_series = fi.copy()
 fi_wind_rose = fi.copy()
 
-fi_time_series.reinitialize(wind_data=time_series)
-fi_wind_rose.reinitialize(wind_data=wind_rose)
+fi_time_series.set(wind_data=time_series)
+fi_wind_rose.set(wind_data=wind_rose)
 
-fi_time_series.calculate_wake()
-fi_wind_rose.calculate_wake()
+fi_time_series.run()
+fi_wind_rose.run()
 
 time_series_power = fi_time_series.get_farm_power()
 wind_rose_power = fi_wind_rose.get_farm_power()

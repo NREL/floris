@@ -69,6 +69,6 @@ print(f'T1: {turbine_powers[:, 1].flatten()} kW')
 # print()
 # print('~~ Now forcing an error by not matching wd and het_map')
 
-# fi.reinitialize(wind_directions=[270, 275, 280], wind_speeds=3*[8.0])
-# fi.calculate_wake()
+# fi.set(wind_directions=[270, 275, 280], wind_speeds=3*[8.0])
+# fi.run()
 # turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
