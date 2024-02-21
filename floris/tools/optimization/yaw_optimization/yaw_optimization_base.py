@@ -349,12 +349,13 @@ class YawOptimization(LoggingManager):
 
         # Calculate solutions
         turbine_power = np.zeros_like(self._minimum_yaw_angle_subset[:, :])
-        fi_subset.reinitialize(
+        fi_subset.set(
             wind_directions=wd_array,
             wind_speeds=ws_array,
-            turbulence_intensities=ti_array
+            turbulence_intensities=ti_array,
+            yaw_angles=yaw_angles,
         )
-        fi_subset.calculate_wake(yaw_angles=yaw_angles)
+        fi_subset.run()
         turbine_power = fi_subset.get_turbine_powers()
 
         # Multiply with turbine weighing terms

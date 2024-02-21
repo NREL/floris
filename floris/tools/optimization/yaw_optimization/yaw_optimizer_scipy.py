@@ -73,7 +73,7 @@ class YawOptimizationScipy(YawOptimization):
         ti_array = self.fi_subset.floris.flow_field.turbulence_intensities
         for i, (wd, ws, ti) in enumerate(zip(wd_array, ws_array, ti_array)):
 
-            self.fi_subset.reinitialize(
+            self.fi_subset.set(
                 wind_directions=[wd],
                 wind_speeds=[ws],
                 turbulence_intensities=[ti]

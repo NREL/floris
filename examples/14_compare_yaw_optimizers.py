@@ -38,7 +38,7 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 D = 126.0 # Rotor diameter for the NREL 5 MW
 wd_array = np.arange(0.0, 360.0, 3.0)
 ws_array = 8.0 * np.ones_like(wd_array)
-fi.reinitialize(
+fi.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
     wind_directions=wd_array,
@@ -92,7 +92,8 @@ for t in range(3):
 
 # Before plotting results, need to compute values for GEOOPT since it doesn't compute
 # power within the optimization
-fi.calculate_wake(yaw_angles=yaw_angles_opt_geo)
+fi.set(yaw_angles=yaw_angles_opt_geo)
+fi.run()
 geo_farm_power = fi.get_farm_power().squeeze()
 
 
