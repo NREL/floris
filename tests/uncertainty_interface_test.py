@@ -97,3 +97,36 @@ def test_get_weights():
     np.testing.assert_allclose(
         weights, np.array([0.05448868, 0.24420134, 0.40261995, 0.24420134, 0.05448868])
     )
+
+
+def test_uncertainty_interface():
+    # Recompute uncertain result using certain result with 1 deg
+
+    fi_nom = FlorisInterface(configuration=YAML_INPUT)
+    fi_unc = UncertaintyInterface(configuration=YAML_INPUT, wd_sample_points=[-3, 0, 3], wd_std=3)
+
+    fi_nom.set(
+        layout_x=[0, 300],
+        layout_y=[0, 0],
+        wind_speeds=[8.0, 8.0, 8.0],
+        wind_directions=[267.0, 270.0, 273],
+        turbulence_intensities=[0.06, 0.06, 0.06],
+    )
+
+    fi_unc.set(
+        layout_x=[0, 300],
+        layout_y=[0, 0],
+        wind_speeds=[8.0],
+        wind_directions=[270.0],
+        turbulence_intensities=[0.06],
+    )
+
+    fi_nom.run()
+    fi_unc.run()
+
+    nom_powers = fi_nom.get_turbine_powers()[:, 1].flatten()
+    unc_powers = fi_unc.get_turbine_powers()[:, 1].flatten()
+
+    weights = fi_unc.weights
+
+    np.testing.assert_allclose(np.sum(nom_powers * weights), unc_powers)
