@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisInterface, WindRose
 from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
@@ -24,15 +24,22 @@ which makes sense in order to maximize the energy production by minimizing wake 
 file_dir = os.path.dirname(os.path.abspath(__file__))
 fi = FlorisInterface('inputs/gch.yaml')
 
-# Setup 72 wind directions with a random wind speed and frequency distribution
+# Setup 72 wind directions with a 1 wind speed and frequency distribution
 wind_directions = np.arange(0, 360.0, 5.0)
-np.random.seed(1)
-wind_speeds = 8.0 + np.random.randn(1) * 0.5 * np.ones_like(wind_directions)
-# Shape frequency distribution to match number of wind directions and wind speeds
-freq = (np.abs(np.sort(np.random.randn(len(wind_directions)))))
-freq = freq / freq.sum()
+wind_speeds = np.array([8.0])
 
-fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
+# Shape frequency distribution to match number of wind directions and wind speeds
+freq_table = np.zeros((len(wind_directions), len(wind_speeds)))
+np.random.seed(1)
+freq_table[:,0] = (np.abs(np.sort(np.random.randn(len(wind_directions)))))
+freq_table = freq_table / freq_table.sum()
+
+# Establish a TimeSeries object
+wind_rose = WindRose(wind_directions=wind_directions,
+                     wind_speeds=wind_speeds,
+                     freq_table=freq_table)
+
+fi.reinitialize(wind_data=wind_rose)
 
 # The boundaries for the turbines, specified as vertices
 boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
@@ -44,7 +51,7 @@ layout_y = [0, 4 * D, 0, 4 * D]
 fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
 
 # Setup the optimization problem
-layout_opt = LayoutOptimizationScipy(fi, boundaries, freq=freq)
+layout_opt = LayoutOptimizationScipy(fi, boundaries, wind_data=wind_rose)
 
 # Run the optimization
 sol = layout_opt.optimize()
@@ -52,10 +59,10 @@ sol = layout_opt.optimize()
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
 fi.calculate_wake()
-base_aep = fi.get_farm_AEP(freq=freq) / 1e6
+base_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
 fi.reinitialize(layout_x=sol[0], layout_y=sol[1])
 fi.calculate_wake()
-opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
+opt_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose)  / 1e6
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results
