@@ -150,6 +150,48 @@ secondary_steering_baseline = np.array(
     ]
 )
 
+full_flow_baseline = np.array(
+    [
+        [
+            [
+                [7.88772361, 8.00000000, 8.10178821],
+                [7.88772361, 8.00000000, 8.10178821],
+                [7.88772361, 8.00000000, 8.10178821],
+                [7.88772361, 8.00000000, 8.10178821],
+                [7.88772361, 8.00000000, 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.85396979, 7.96487892, 8.06803439],
+                [4.19559099, 4.28925565, 4.40965558],
+                [7.85396979, 7.96487892, 8.06803439],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88769642, 7.99997223, 8.10176102],
+                [7.58415314, 7.69072103, 7.79821773],
+                [4.16725762, 4.26342392, 4.38132221],
+                [7.58415314, 7.69072103, 7.79821773],
+                [7.88769642, 7.99997223, 8.10176102],
+            ],
+            [
+                [7.88513176, 7.99737618, 8.09919636],
+                [7.21888868, 7.32333558, 7.43301511],
+                [4.30201226, 4.40270245, 4.51689213],
+                [7.21888868, 7.32333558, 7.43301511],
+                [7.88513176, 7.99737618, 8.09919636],
+            ],
+            [
+                [7.86539121, 7.97748824, 8.0794561 ],
+                [7.0723371 , 7.1790733 , 7.28645574],
+                [5.8436738 , 5.95178931, 6.05791862],
+                [7.0723371 , 7.1790733 , 7.28645574],
+                [7.86539121, 7.97748824, 8.0794561 ],
+            ]
+        ]
+    ]
+)
+
 
 # Note: compare the yawed vs non-yawed results. The upstream turbine
 # power should be lower in the yawed case. The following turbine
@@ -637,3 +679,32 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     assert np.allclose(farm_powers[8,0:5], farm_powers[8,15:20])
     assert np.allclose(farm_powers[8,20], farm_powers[8,0])
     assert np.allclose(farm_powers[8,21], farm_powers[8,21:25])
+
+
+def test_full_flow_solver(sample_inputs_fixture):
+    """
+    Full flow solver test with the flow field planar grid.
+    This requires one wind condition, and the grid is deliberately coarse to allow for
+    visually comparing results, as needed.
+    The u-component of velocity is compared, and the array has the shape
+    (n_findex, n_turbines, n grid points in x, n grid points in y, 3 grid points in z).
+    """
+
+    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["solver"] = {
+        "type": "flow_field_planar_grid",
+        "normal_vector": "z",
+        "planar_coordinate": sample_inputs_fixture.floris["farm"]["turbine_type"][0]["hub_height"],
+        "flow_field_grid_points": [5, 5],
+        "flow_field_bounds": [None, None],
+    }
+    sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0]
+    sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
+
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris.solve_for_viz()
+
+    velocities = floris.flow_field.u_sorted
+
+    assert_results_arrays(velocities, full_flow_baseline)
