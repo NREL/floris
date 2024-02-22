@@ -3,15 +3,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString, Polygon
 
+from floris.tools import (
+    TimeSeries,
+    WindRose,
+)
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
+from floris.tools.wind_data import WindDataBase
 
 from ....logging_manager import LoggingManager
 
 
 class LayoutOptimization(LoggingManager):
-    def __init__(self, fi, boundaries, min_dist=None, freq=None, enable_geometric_yaw=False):
+    def __init__(self, fi, boundaries, min_dist=None, wind_data=None, enable_geometric_yaw=False):
         self.fi = fi.copy()
         self.boundaries = boundaries
         self.enable_geometric_yaw = enable_geometric_yaw
@@ -30,12 +35,19 @@ class LayoutOptimization(LoggingManager):
         else:
             self.min_dist = min_dist
 
-        # If freq is not provided, give equal weight to all wind conditions
-        if freq is None:
-            self.freq = np.ones((self.fi.floris.flow_field.n_findex,))
-            self.freq = self.freq / self.freq.sum()
+        # If wind_data is None, make a simple time series object off the fi
+        if wind_data is None:
+            wind_data = TimeSeries(wind_directions=fi.wind_directions,
+                                wind_speeds=fi.wind_speeds,
+                                turbulence_intensities=fi.turbulence_intensities)
         else:
-            self.freq = freq
+            if ((not isinstance(wind_data, WindDataBase)) and
+                 (not isinstance(wind_data, TimeSeries)) and
+                 (not isinstance(wind_data, WindRose))):
+                raise ValueError(
+                    "wind_data entry is not a TimeSeries or WindRose"
+                )
+        self.wind_data = wind_data
 
         # Establish geometric yaw class
         if self.enable_geometric_yaw:
@@ -45,7 +57,7 @@ class LayoutOptimization(LoggingManager):
                 maximum_yaw_angle=30.0,
             )
 
-        self.initial_AEP = fi.get_farm_AEP(self.freq)
+        self.initial_AEP = fi.get_farm_AEP_with_wind_data(self.wind_data)
 
     def __str__(self):
         return "layout"
