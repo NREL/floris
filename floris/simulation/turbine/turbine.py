@@ -520,21 +520,16 @@ class Turbine(BaseClass):
             data = df2.loc[key]
 
             # Build the interpolants
-            power_thrust_table_.update({
-                key: {
-                    "wind_speed": data['ws'].values,
-                    "power": (
-                        # NOTE: generator_efficiency hardcoded to 0.944 here (NREL 5MW default).
-                        # This code will be
-                        # removed in a separate PR when power is specified as an absolute value for
-                        # mutlidimensional turbines
-                        0.5 * self.rotor_area * data['Cp'].values * 0.944
-                        * data['ws'].values ** 3 * power_thrust_table_ref["ref_air_density"] / 1000
-                    ), # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
-                    "thrust_coefficient": data['Ct'].values,
-                    **power_thrust_table_ref
-                },
-            })
+            power_thrust_table_.update(
+                {
+                    key: {
+                        "wind_speed": data['ws'].values,
+                        "power": data['power'].values,
+                        "thrust_coefficient": data['thrust_coefficient'].values,
+                        **power_thrust_table_ref
+                    },
+                }
+            )
             # Add reference information at the lower level
 
         # Set on-object version
