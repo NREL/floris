@@ -31,10 +31,15 @@ def test_turbine_init():
     assert turbine.turbine_type == turbine_data["turbine_type"]
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
-    assert turbine.power_thrust_table["pP"] == turbine_data["power_thrust_table"]["pP"]
-    assert turbine.power_thrust_table["pT"] == turbine_data["power_thrust_table"]["pT"]
+    assert (
+        turbine.power_thrust_table["cosine_loss_exponent_yaw"]
+        == turbine_data["power_thrust_table"]["cosine_loss_exponent_yaw"]
+    )
+    assert (
+        turbine.power_thrust_table["cosine_loss_exponent_tilt"]
+        == turbine_data["power_thrust_table"]["cosine_loss_exponent_tilt"]
+    )
     assert turbine.TSR == turbine_data["TSR"]
-    assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
     assert (
         turbine.power_thrust_table["ref_air_density"]
         == turbine_data["power_thrust_table"]["ref_air_density"]

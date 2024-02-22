@@ -168,8 +168,8 @@ class CosineLossTurbine(BaseOperationModel):
     """
     Static class defining an actuator disk turbine model that may be misaligned with the flow.
     Nonzero tilt and yaw angles are handled via cosine relationships, with the power lost to yawing
-    defined by the pP exponent. This turbine submodel is the default, and matches the turbine
-    model in FLORIS v3.
+    defined by the cosine of the yaw misalignment raised to the power of cosine_loss_exponent_yaw.
+    This turbine submodel is the default, and matches the turbine model in FLORIS v3.
 
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively. This class is
@@ -212,7 +212,7 @@ class CosineLossTurbine(BaseOperationModel):
         )
 
         rotor_effective_velocities = rotor_velocity_yaw_correction(
-            pP=power_thrust_table["pP"],
+            cosine_loss_exponent_yaw=power_thrust_table["cosine_loss_exponent_yaw"],
             yaw_angles=yaw_angles,
             rotor_effective_velocities=rotor_effective_velocities,
         )
@@ -220,7 +220,7 @@ class CosineLossTurbine(BaseOperationModel):
         rotor_effective_velocities = rotor_velocity_tilt_correction(
             tilt_angles=tilt_angles,
             ref_tilt=power_thrust_table["ref_tilt"],
-            pT=power_thrust_table["pT"],
+            cosine_loss_exponent_tilt=power_thrust_table["cosine_loss_exponent_tilt"],
             tilt_interp=tilt_interp,
             correct_cp_ct_for_tilt=correct_cp_ct_for_tilt,
             rotor_effective_velocities=rotor_effective_velocities,
