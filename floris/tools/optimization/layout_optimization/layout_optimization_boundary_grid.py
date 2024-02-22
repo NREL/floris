@@ -8,6 +8,12 @@ from shapely.geometry import (
     Polygon,
 )
 
+from floris.tools import (
+    TimeSeries,
+    WindRose,
+)
+from floris.tools.wind_data import WindDataBase
+
 from .layout_optimization_base import LayoutOptimization
 
 

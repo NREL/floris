@@ -4,6 +4,12 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from shapely.geometry import Point
 
+from floris.tools import (
+    TimeSeries,
+    WindRose,
+)
+from floris.tools.wind_data import WindDataBase
+
 from .layout_optimization_base import LayoutOptimization
 
 
