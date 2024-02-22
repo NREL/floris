@@ -679,7 +679,7 @@ def cc_solver(
 def full_flow_cc_solver(
     farm: Farm,
     flow_field: FlowField,
-    flow_field_grid: FlowFieldGrid,
+    flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     model_manager: WakeModelManager,
 ) -> None:
     # Get the flow quantities and turbine performance
@@ -749,7 +749,7 @@ def full_flow_cc_solver(
         turb_avg_vels = average_velocity(turbine_grid_flow_field.u_sorted)
         turb_Cts = thrust_coefficient(
             velocities=turb_avg_vels,
-            air_density=flow_field_grid.air_density,
+            air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
