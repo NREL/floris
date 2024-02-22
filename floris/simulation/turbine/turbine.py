@@ -130,12 +130,12 @@ def power(
     """
     # TODO: Change the order of input arguments to be consistent with the other
     # utility functions - velocities first...
-    # Update to power calculation which replaces the fixed cosine_loss_exponent_yaw exponent with
-    # an exponent pW, that changes the effective wind speed input to the power
-    # calculation, rather than scaling the power.  This better handles power
-    # loss to yaw in above rated conditions
+    # Update to power calculation which replaces the fixed cosine_loss_exponent_yaw exponent 
+    # (which applies to the cosine of the yaw misalignment) with an exponent pW, that changes the
+    # effective wind speed input to the power calculation, rather than scaling the power.  This
+    # better handles power loss to yaw in above rated conditions
     #
-    # based on the paper "Optimising yaw control at wind farm level" by
+    # Based on the paper "Optimising yaw control at wind farm level" by
     # Ervin Bossanyi
 
     # Down-select inputs if ix_filter is given

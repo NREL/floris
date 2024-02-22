@@ -180,8 +180,8 @@ class CosineLossTurbine(BaseOperationModel):
     """
     Static class defining an actuator disk turbine model that may be misaligned with the flow.
     Nonzero tilt and yaw angles are handled via cosine relationships, with the power lost to yawing
-    defined by the cosine_loss_exponent_yaw. This turbine submodel is the default, and matches the
-    turbine model in FLORIS v3.
+    defined by the cosine of the yaw misalignment raised to the power of cosine_loss_exponent_yaw.
+    This turbine submodel is the default, and matches the turbine model in FLORIS v3.
 
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively. This class is
