@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -51,17 +38,17 @@ x, y = np.meshgrid(np.linspace(0, 4*630., 5), np.linspace(0, 3*630., 4))
 x = x.flatten()
 y = y.flatten()
 for fi in [fi_fixed, fi_floating]:
-    fi.reinitialize(layout_x=x, layout_y=y)
+    fi.set(layout_x=x, layout_y=y)
 
 # Compute a single wind speed and direction, power and wakes
 for fi in [fi_fixed, fi_floating]:
-    fi.reinitialize(
+    fi.set(
         layout_x=x,
         layout_y=y,
         wind_speeds=[10],
         wind_directions=[270]
     )
-    fi.calculate_wake()
+    fi.run()
 
 powers_fixed = fi_fixed.get_turbine_powers()
 powers_floating = fi_floating.get_turbine_powers()
@@ -131,7 +118,7 @@ freq = freq_interp(wd_grid, ws_grid).flatten()
 freq = freq / np.sum(freq)
 
 for fi in [fi_fixed, fi_floating]:
-    fi.reinitialize(
+    fi.set(
         wind_directions=wd_grid.flatten(),
         wind_speeds= ws_grid.flatten(),
     )

@@ -1,17 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 
@@ -51,7 +37,7 @@ For each case, we are plotting three slices of the resulting flow field:
 fi_2d = FlorisInterface("inputs/gch_heterogeneous_inflow.yaml")
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
-fi_2d.reinitialize(wind_shear=0.0)
+fi_2d.set(wind_shear=0.0)
 
 # Using the FlorisInterface functions for generating plots, run FLORIS
 # and extract 2D planes of data.
@@ -119,10 +105,10 @@ heterogenous_inflow_config = {
 # Note that we initialize FLORIS with a homogenous flow input file, but
 # then configure the heterogeneous inflow via the reinitialize method.
 fi_3d = FlorisInterface("inputs/gch.yaml")
-fi_3d.reinitialize(heterogenous_inflow_config=heterogenous_inflow_config)
+fi_3d.set(heterogenous_inflow_config=heterogenous_inflow_config)
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
-fi_3d.reinitialize(wind_shear=0.0)
+fi_3d.set(wind_shear=0.0)
 
 # Using the FlorisInterface functions for generating plots, run FLORIS
 # and extract 2D planes of data.

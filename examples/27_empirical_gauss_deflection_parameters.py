@@ -1,17 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://nrel.github.io/floris for documentation
-
 
 import copy
 
@@ -121,18 +107,19 @@ def generate_wake_visualization(fi, title=None):
 # Load input yaml and define farm layout
 fi = FlorisInterface("inputs/emgauss.yaml")
 D = fi.floris.farm.rotor_diameters[0]
-fi.reinitialize(
+fi.set(
     layout_x=[x*5.0*D for x in range(num_in_row)],
     layout_y=[0.0]*num_in_row,
     wind_speeds=[8.0],
-    wind_directions=[270.0]
+    wind_directions=[270.0],
+    yaw_angles=yaw_angles,
 )
 
 # Save dictionary to modify later
 fi_dict = fi.floris.as_dict()
 
 # Run wake calculation
-fi.calculate_wake(yaw_angles=yaw_angles)
+fi.run()
 
 # Look at the powers of each turbine
 turbine_powers = fi.get_turbine_powers().flatten()/1e6
@@ -158,12 +145,13 @@ fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
     ['horizontal_deflection_gain_D'] = 5.0
 
 fi = FlorisInterface(fi_dict_mod)
-fi.reinitialize(
+fi.set(
     wind_speeds=[8.0],
-    wind_directions=[270.0]
+    wind_directions=[270.0],
+    yaw_angles=yaw_angles,
 )
 
-fi.calculate_wake(yaw_angles=yaw_angles)
+fi.run()
 turbine_powers = fi.get_turbine_powers().flatten()/1e6
 
 x = np.array(range(num_in_row))+width*nw
@@ -181,12 +169,13 @@ fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
    ['mixing_gain_deflection'] = 100.0
 
 fi = FlorisInterface(fi_dict_mod)
-fi.reinitialize(
+fi.set(
     wind_speeds=[8.0],
-    wind_directions=[270.0]
+    wind_directions=[270.0],
+    yaw_angles=yaw_angles,
 )
 
-fi.calculate_wake(yaw_angles=yaw_angles)
+fi.run()
 turbine_powers = fi.get_turbine_powers().flatten()/1e6
 
 x = np.array(range(num_in_row))+width*nw
@@ -207,12 +196,13 @@ fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
 fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
    ['yaw_added_mixing_gain'] = 1.0
 fi = FlorisInterface(fi_dict_mod)
-fi.reinitialize(
+fi.set(
     wind_speeds=[8.0],
-    wind_directions=[270.0]
+    wind_directions=[270.0],
+    yaw_angles=yaw_angles,
 )
 
-fi.calculate_wake(yaw_angles=yaw_angles)
+fi.run()
 turbine_powers = fi.get_turbine_powers().flatten()/1e6
 
 x = np.array(range(num_in_row))+width*nw

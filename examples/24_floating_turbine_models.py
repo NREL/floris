@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,13 +40,13 @@ fi_floating_defined_floating = FlorisInterface("inputs_floating/gch_floating_def
 # Calculate across wind speeds
 ws_array = np.arange(3., 25., 1.)
 wd_array = 270.0 * np.ones_like(ws_array)
-fi_fixed.reinitialize(wind_speeds=ws_array,  wind_directions=wd_array)
-fi_floating.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
-fi_floating_defined_floating.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
+fi_fixed.set(wind_speeds=ws_array,  wind_directions=wd_array)
+fi_floating.set(wind_speeds=ws_array, wind_directions=wd_array)
+fi_floating_defined_floating.set(wind_speeds=ws_array, wind_directions=wd_array)
 
-fi_fixed.calculate_wake()
-fi_floating.calculate_wake()
-fi_floating_defined_floating.calculate_wake()
+fi_fixed.run()
+fi_floating.run()
+fi_floating_defined_floating.run()
 
 # Grab power
 power_fixed = fi_fixed.get_turbine_powers().flatten()/1000.

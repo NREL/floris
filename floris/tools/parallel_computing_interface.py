@@ -30,7 +30,8 @@ def _load_local_floris_object(
 
 def _get_turbine_powers_serial(fi_information, yaw_angles=None):
     fi = _load_local_floris_object(*fi_information)
-    fi.calculate_wake(yaw_angles=yaw_angles)
+    fi.set(yaw_angles=yaw_angles)
+    fi.run()
     return (fi.get_turbine_powers(), fi.floris.flow_field)
 
 
@@ -150,7 +151,7 @@ class ParallelComputingInterface(LoggingManager):
         self_copy.fi = self.fi.copy()
         return self_copy
 
-    def reinitialize(
+    def set(
         self,
         wind_speeds=None,
         wind_directions=None,
@@ -165,7 +166,7 @@ class ParallelComputingInterface(LoggingManager):
         turbine_type=None,
         solver_settings=None,
     ):
-        """Pass to the FlorisInterface reinitialize function. To allow users
+        """Pass to the FlorisInterface set function. To allow users
         to directly replace a FlorisInterface object with this
         UncertaintyInterface object, this function is required."""
 
@@ -178,7 +179,7 @@ class ParallelComputingInterface(LoggingManager):
 
         # Just passes arguments to the floris object
         fi = self.fi.copy()
-        fi.reinitialize(
+        fi.set(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
             wind_shear=wind_shear,
@@ -279,7 +280,7 @@ class ParallelComputingInterface(LoggingManager):
 
         return turbine_powers
 
-    def calculate_wake(self):
+    def calculate_wake(self): # TODO: Remove or update this function?
         # raise UserWarning("'calculate_wake' not supported. Please use
         # 'get_turbine_powers' or 'get_farm_power' directly.")
         return None  # Do nothing
@@ -454,7 +455,7 @@ class ParallelComputingInterface(LoggingManager):
             yaw_angles_subset = None
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
-            self.fi.reinitialize(
+            self.fi.set(
                 wind_directions=wind_direction_subset,
                 wind_speeds=wind_speeds_subset,
                 turbulence_intensities=turbulence_intensities_subset,
@@ -467,7 +468,7 @@ class ParallelComputingInterface(LoggingManager):
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
-        self.fi.reinitialize(
+        self.fi.set(
             wind_directions=wind_directions,
             wind_speeds=wind_speeds,
             turbulence_intensities=turbulence_intensities_subset,

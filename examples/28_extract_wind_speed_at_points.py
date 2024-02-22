@@ -1,17 +1,3 @@
-# Copyright 2023 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -44,7 +30,7 @@ fi = FlorisInterface("inputs/"+floris_model+".yaml")
 
 # Set up a two-turbine farm
 D = 126
-fi.reinitialize(layout_x=[0, 3 * D], layout_y=[0, 3 * D])
+fi.set(layout_x=[0, 3 * D], layout_y=[0, 3 * D])
 
 fig, ax = plt.subplots(1,2)
 fig.set_size_inches(10,4)
@@ -53,7 +39,7 @@ ax[0].scatter(fi.layout_x, fi.layout_y, color="black", label="Turbine")
 # Set the wind direction to run 360 degrees
 wd_array = np.arange(0, 360, 1)
 ws_array = 8.0 * np.ones_like(wd_array)
-fi.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
+fi.set(wind_directions=wd_array, wind_speeds=ws_array)
 
 # Simulate a met mast in between the turbines
 if met_mast_option == 0:

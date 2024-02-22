@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
 
@@ -74,7 +61,7 @@ class FlowField(BaseClass):
         # Check that the array is 1-dimensional
         if value.ndim != 1:
             raise ValueError(
-                "wind_directions must have 1-dimension"
+                "turbulence_intensities must have 1-dimension"
             )
 
         # Check the turbulence intensity is either length 1 or n_findex
@@ -103,7 +90,7 @@ class FlowField(BaseClass):
                 "wind_speeds must have 1-dimension"
             )
 
-        """Confirm wind speeds and wind directions have the same lenght"""
+        """Confirm wind speeds and wind directions have the same length"""
         if len(self.wind_directions) != len(self.wind_speeds):
             raise ValueError(
                 f"wind_directions (length = {len(self.wind_directions)}) and "

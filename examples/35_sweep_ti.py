@@ -1,16 +1,3 @@
-# Copyright 2024 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -43,8 +30,8 @@ time_series = TimeSeries(wd_array, ws_array, turbulence_intensities=ti_array)
 
 # Now set up a FLORIS model and initialize it using the time
 fi = FlorisInterface("inputs/gch.yaml")
-fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0], wind_data=time_series)
-fi.calculate_wake()
+fi.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0], wind_data=time_series)
+fi.run()
 turbine_power = fi.get_turbine_powers()
 
 fig, axarr = plt.subplots(2, 1, sharex=True, figsize=(6, 6))

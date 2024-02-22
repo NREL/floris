@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import os
 
@@ -46,7 +32,7 @@ wind_speeds = 8.0 + np.random.randn(1) * 0.5 * np.ones_like(wind_directions)
 freq = (np.abs(np.sort(np.random.randn(len(wind_directions)))))
 freq = freq / freq.sum()
 
-fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi.set(wind_directions=wind_directions, wind_speeds=wind_speeds)
 
 # The boundaries for the turbines, specified as vertices
 boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
@@ -55,7 +41,7 @@ boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 
 D = 126.0 # rotor diameter for the NREL 5MW
 layout_x = [0, 0, 6 * D, 6 * D]
 layout_y = [0, 4 * D, 0, 4 * D]
-fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
+fi.set(layout_x=layout_x, layout_y=layout_y)
 
 # Setup the optimization problem
 layout_opt = LayoutOptimizationScipy(fi, boundaries, freq=freq)
@@ -65,10 +51,10 @@ sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
-fi.calculate_wake()
+fi.run()
 base_aep = fi.get_farm_AEP(freq=freq) / 1e6
-fi.reinitialize(layout_x=sol[0], layout_y=sol[1])
-fi.calculate_wake()
+fi.set(layout_x=sol[0], layout_y=sol[1])
+fi.run()
 opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 

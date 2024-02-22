@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -38,16 +24,16 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 D = 126.
 layout_x = np.array([0, D*6, 0, D*6])
 layout_y = [0, 0, D*3, D*3]
-fi.reinitialize(layout_x = layout_x, layout_y = layout_y)
+fi.set(layout_x=layout_x, layout_y=layout_y)
 
 # Define a simple wind rose with just 1 wind speed
 wd_array = np.arange(0,360,4.)
 ws_array = 8.0 * np.ones_like(wd_array)
-fi.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
+fi.set(wind_directions=wd_array, wind_speeds=ws_array)
 
 
 # Calculate
-fi.calculate_wake()
+fi.run()
 
 # Collect the farm power
 farm_power_base = fi.get_farm_power() / 1E3 # In kW
@@ -55,14 +41,14 @@ farm_power_base = fi.get_farm_power() / 1E3 # In kW
 # Add a neighbor to the east
 layout_x = np.array([0, D*6, 0, D*6, D*12, D*15, D*12, D*15])
 layout_y = np.array([0, 0, D*3, D*3, 0, 0, D*3, D*3])
-fi.reinitialize(layout_x = layout_x, layout_y = layout_y)
+fi.set(layout_x=layout_x, layout_y=layout_y)
 
 # Define the weights to exclude the neighboring farm from calcuations of power
 turbine_weights = np.zeros(len(layout_x), dtype=int)
 turbine_weights[0:4] = 1.0
 
 # Calculate
-fi.calculate_wake()
+fi.run()
 
 # Collect the farm power with the neightbor
 farm_power_neighbor = fi.get_farm_power(turbine_weights=turbine_weights) / 1E3 # In kW

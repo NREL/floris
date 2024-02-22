@@ -1,17 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 from pathlib import Path
 
@@ -34,10 +20,10 @@ wind_speed_to_test_yaw = 11
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Make one turbine sim
-fi.reinitialize(layout_x=[0], layout_y=[0])
+fi.set(layout_x=[0], layout_y=[0])
 
 # Apply wind speeds
-fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
+fi.set(wind_speeds=ws_array, wind_directions=wd_array)
 
 # Get a list of available turbine models provided through FLORIS, and remove
 # multi-dimensional Cp/Ct turbine definitions as they require different handling
@@ -54,7 +40,7 @@ fig_pow_ct, axarr_pow_ct = plt.subplots(2,1,sharex=True,figsize=(10,10))
 for t in turbines:
 
     # Set t as the turbine
-    fi.reinitialize(turbine_type=[t])
+    fi.set(turbine_type=[t])
 
     # Since we are changing the turbine type, make a matching change to the reference wind height
     fi.assign_hub_height_to_ref_height()
@@ -82,12 +68,12 @@ for t in turbines:
     # Try a few density
     for density in [1.15,1.225,1.3]:
 
-        fi.reinitialize(air_density=density)
+        fi.set(air_density=density)
 
         # POWER CURVE
         ax = axarr[0]
-        fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
-        fi.calculate_wake()
+        fi.set(wind_speeds=ws_array, wind_directions=wd_array)
+        fi.run()
         turbine_powers = fi.get_turbine_powers().flatten() / 1e3
         if density == 1.225:
             ax.plot(ws_array,turbine_powers,label='Air Density = %.3f' % density, lw=2, color='k')
@@ -101,10 +87,11 @@ for t in turbines:
         # Power loss to yaw, try a range of yaw angles
         ax = axarr[1]
 
-        fi.reinitialize(wind_speeds=[wind_speed_to_test_yaw], wind_directions=[270.0])
+        fi.set(wind_speeds=[wind_speed_to_test_yaw], wind_directions=[270.0])
         yaw_result = []
         for yaw in yaw_angles:
-            fi.calculate_wake(yaw_angles=np.array([[yaw]]))
+            fi.set(yaw_angles=np.array([[yaw]]))
+            fi.run()
             turbine_powers = fi.get_turbine_powers().flatten() / 1e3
             yaw_result.append(turbine_powers[0])
         if density == 1.225:

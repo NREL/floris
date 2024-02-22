@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -65,7 +51,7 @@ def load_floris():
     turbine_weights[0:10] = 1.0
 
     # Now reinitialize FLORIS layout
-    fi.reinitialize(layout_x = X, layout_y = Y)
+    fi.set(layout_x = X, layout_y = Y)
 
     # And visualize the floris layout
     fig, ax = plt.subplots()
@@ -194,13 +180,13 @@ if __name__ == "__main__":
 
     # Create a FLORIS object for AEP calculations
     fi_AEP = fi.copy()
-    fi_AEP.reinitialize(wind_speeds=ws_windrose, wind_directions=wd_windrose)
+    fi_AEP.set(wind_speeds=ws_windrose, wind_directions=wd_windrose)
 
     # And create a separate FLORIS object for optimization
     fi_opt = fi.copy()
     wd_array = np.arange(0.0, 360.0, 3.0)
     ws_array = 8.0 * np.ones_like(wd_array)
-    fi_opt.reinitialize(
+    fi_opt.set(
         wind_directions=wd_array,
         wind_speeds=ws_array,
     )
@@ -236,7 +222,7 @@ if __name__ == "__main__":
 
     # Optimize yaw angles while ignoring neighboring farm
     fi_opt_subset = fi_opt.copy()
-    fi_opt_subset.reinitialize(
+    fi_opt_subset.set(
         layout_x = fi.layout_x[turbs_to_opt],
         layout_y = fi.layout_y[turbs_to_opt]
     )
@@ -253,15 +239,15 @@ if __name__ == "__main__":
     print(" ")
     print("===========================================================")
     print("Calculating annual energy production with wake steering (AEP)...")
+    fi_AEP.set(yaw_angles=yaw_angles_opt_nonb_AEP)
     aep_opt_subset_nonb = 1.0e-9 * fi_AEP.get_farm_AEP(
         freq=freq_windrose,
         turbine_weights=turbine_weights,
-        yaw_angles=yaw_angles_opt_nonb_AEP,
     )
+    fi_AEP.set(yaw_angles=yaw_angles_opt_AEP)
     aep_opt_subset = 1.0e-9 * fi_AEP.get_farm_AEP(
         freq=freq_windrose,
         turbine_weights=turbine_weights,
-        yaw_angles=yaw_angles_opt_AEP,
     )
     uplift_subset_nonb = 100.0 * (aep_opt_subset_nonb - aep_bl_subset) / aep_bl_subset
     uplift_subset = 100.0 * (aep_opt_subset - aep_bl_subset) / aep_bl_subset
@@ -285,15 +271,18 @@ if __name__ == "__main__":
     yaw_angles_opt_nonb[:, turbs_to_opt] = yaw_opt_interpolant_nonb(wd, ws)
 
     fi_opt = fi_opt.copy()
-    fi_opt.calculate_wake(yaw_angles=np.zeros_like(yaw_angles_opt))
+    fi_opt.set(yaw_angles=np.zeros_like(yaw_angles_opt))
+    fi_opt.run()
     farm_power_bl_subset = fi_opt.get_farm_power(turbine_weights).flatten()
 
     fi_opt = fi_opt.copy()
-    fi_opt.calculate_wake(yaw_angles=yaw_angles_opt)
+    fi_opt.set(yaw_angles=yaw_angles_opt)
+    fi_opt.run()
     farm_power_opt_subset = fi_opt.get_farm_power(turbine_weights).flatten()
 
     fi_opt = fi_opt.copy()
-    fi_opt.calculate_wake(yaw_angles=yaw_angles_opt_nonb)
+    fi_opt.set(yaw_angles=yaw_angles_opt_nonb)
+    fi_opt.run()
     farm_power_opt_subset_nonb = fi_opt.get_farm_power(turbine_weights).flatten()
 
     fig, ax = plt.subplots()
