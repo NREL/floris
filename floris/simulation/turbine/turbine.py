@@ -117,12 +117,12 @@ def power(
     """
     # TODO: Change the order of input arguments to be consistent with the other
     # utility functions - velocities first...
-    # Update to power calculation which replaces the fixed pP exponent with
-    # an exponent pW, that changes the effective wind speed input to the power
-    # calculation, rather than scaling the power.  This better handles power
-    # loss to yaw in above rated conditions
+    # Update to power calculation which replaces the fixed cosine_loss_exponent_yaw exponent
+    # (which applies to the cosine of the yaw misalignment) with an exponent pW, that changes the
+    # effective wind speed input to the power calculation, rather than scaling the power.  This
+    # better handles power loss to yaw in above rated conditions
     #
-    # based on the paper "Optimising yaw control at wind farm level" by
+    # Based on the paper "Optimising yaw control at wind farm level" by
     # Ervin Bossanyi
 
     # Down-select inputs if ix_filter is given
@@ -390,8 +390,6 @@ class Turbine(BaseClass):
         rotor_diameter (float): The rotor diameter in meters.
         hub_height (float): The hub height in meters.
         TSR (float): The Tip Speed Ratio of the turbine.
-        generator_efficiency (float): The efficiency of the generator used to scale
-            power production.
         power_thrust_table (dict[str, float]): Contains power coefficient and thrust coefficient
             values at a series of wind speeds to define the turbine performance.
             The dictionary must have the following three keys with equal length values:
@@ -403,10 +401,10 @@ class Turbine(BaseClass):
             or, contain a key "power_thrust_data_file" pointing to the power/thrust data.
             Optionally, power_thrust_table may include parameters for use in the turbine submodel,
             for example:
-                pP (float): The cosine exponent relating the yaw misalignment angle to turbine
-                    power.
-                pT (float): The cosine exponent relating the rotor tilt angle to turbine
-                    power.
+                cosine_loss_exponent_yaw (float): The cosine exponent relating the yaw misalignment
+                    angle to turbine power.
+                cosine_loss_exponent_tilt (float): The cosine exponent relating the rotor tilt angle
+                    to turbine power.
                 ref_air_density (float): The density at which the provided Cp and Ct curves are
                     defined.
                 ref_tilt (float): The implicit tilt of the turbine for which the Cp and Ct
@@ -428,7 +426,6 @@ class Turbine(BaseClass):
     rotor_diameter: float = field()
     hub_height: float = field()
     TSR: float = field()
-    generator_efficiency: float = field()
     power_thrust_table: dict = field(default={}) # conversion to numpy in __post_init__
     power_thrust_model: str = field(default="cosine-loss")
 
@@ -527,7 +524,11 @@ class Turbine(BaseClass):
                 key: {
                     "wind_speed": data['ws'].values,
                     "power": (
-                        0.5 * self.rotor_area * data['Cp'].values * self.generator_efficiency
+                        # NOTE: generator_efficiency hardcoded to 0.944 here (NREL 5MW default).
+                        # This code will be
+                        # removed in a separate PR when power is specified as an absolute value for
+                        # mutlidimensional turbines
+                        0.5 * self.rotor_area * data['Cp'].values * 0.944
                         * data['ws'].values ** 3 * power_thrust_table_ref["ref_air_density"] / 1000
                     ), # TODO: convert this to 'power' or 'P' in data tables, as per PR #765
                     "thrust_coefficient": data['Ct'].values,
