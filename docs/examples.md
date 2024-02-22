@@ -232,7 +232,3 @@ listed here!
 ### 18_check_turbine.py
 Plot power and thrust curves for each turbine type included in the
 turbine library. Additionally, plot the losses due to yaw.
-
-### 19_streamlit_demo.py
-Creates a Streamlit dashboard to quickly modify the layout and
-atmospheric conditions of a wind farm.

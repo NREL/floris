@@ -39,11 +39,6 @@ jobs:
         # Run each Python script example
         for i in *.py; do
 
-          # Skip these examples since they have additional dependencies
-          if [[ $i == *19* ]]; then
-            continue
-          fi
-
           # Skip these examples until the wind rose, optimization package, and
           # uncertainty interface are update to v4
           if [[ $i == *20* ]]; then
