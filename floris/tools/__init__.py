@@ -23,7 +23,6 @@ Examples:
 """
 
 from .floris_interface import FlorisInterface
-from .floris_interface_legacy_reader import FlorisInterfaceLegacyV2
 from .parallel_computing_interface import ParallelComputingInterface
 from .uncertainty_interface import UncertaintyInterface
 from .visualization import (
