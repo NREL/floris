@@ -1,16 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -45,10 +32,7 @@ class LayoutOptimization(LoggingManager):
 
         # If freq is not provided, give equal weight to all wind conditions
         if freq is None:
-            self.freq = np.ones((
-                self.fi.floris.flow_field.n_wind_directions,
-                self.fi.floris.flow_field.n_wind_speeds
-            ))
+            self.freq = np.ones((self.fi.floris.flow_field.n_findex,))
             self.freq = self.freq / self.freq.sum()
         else:
             self.freq = freq
@@ -59,7 +43,6 @@ class LayoutOptimization(LoggingManager):
                 fi,
                 minimum_yaw_angle=-30.0,
                 maximum_yaw_angle=30.0,
-                exploit_layout_symmetry=False
             )
 
         self.initial_AEP = fi.get_farm_AEP(self.freq)
@@ -79,7 +62,7 @@ class LayoutOptimization(LoggingManager):
         if self.enable_geometric_yaw:
             self.yaw_opt.fi_subset.reinitialize(layout_x=self.x, layout_y=self.y)
             df_opt = self.yaw_opt.optimize()
-            self.yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
+            self.yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, :]
         else:
             self.yaw_angles = None
 
@@ -140,4 +123,4 @@ class LayoutOptimization(LoggingManager):
 
     @property
     def rotor_diameter(self):
-        return self.fi.floris.farm.rotor_diameters_sorted[0][0][0]
+        return self.fi.floris.farm.rotor_diameters_sorted[0][0]

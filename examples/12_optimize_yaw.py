@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 from time import perf_counter as timerpc
 
@@ -46,8 +32,8 @@ def load_floris():
     # Specify wind farm layout and update in the floris object
     N = 5  # number of turbines per row and per column
     X, Y = np.meshgrid(
-        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
-        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
+        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
+        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
     )
     fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten())
 
@@ -74,23 +60,18 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
         df_windrose[yaw_cols] = 0.0  # Add zeros
 
     # Derive the wind directions and speeds we need to evaluate in FLORIS
-    wd_array = np.array(df_windrose["wd"].unique(), dtype=float)
-    ws_array = np.array(df_windrose["ws"].unique(), dtype=float)
+    wd_array = np.array(df_windrose["wd"], dtype=float)
+    ws_array = np.array(df_windrose["ws"], dtype=float)
     yaw_angles = np.array(df_windrose[yaw_cols], dtype=float)
     fi.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
 
-    # Map angles from dataframe onto floris wind direction/speed grid
-    X, Y = np.meshgrid(wd_array, ws_array, indexing='ij')
-    interpolant = NearestNDInterpolator(df_windrose[["wd", "ws"]], yaw_angles)
-    yaw_angles_floris = interpolant(X, Y)
-
     # Calculate FLORIS for every WD and WS combination and get the farm power
-    fi.calculate_wake(yaw_angles_floris)
+    fi.calculate_wake(yaw_angles)
     farm_power_array = fi.get_farm_power()
 
     # Now map FLORIS solutions to dataframe
     interpolant = NearestNDInterpolator(
-        np.vstack([X.flatten(), Y.flatten()]).T,
+        np.vstack([wd_array, ws_array]).T,
         farm_power_array.flatten()
     )
     df_windrose[column_name] = interpolant(df_windrose[["wd", "ws"]])  # Save to dataframe
@@ -108,7 +89,8 @@ if __name__ == "__main__":
 
     # Load FLORIS
     fi = load_floris()
-    fi.reinitialize(wind_speeds=8.0)
+    ws_array = 8.0 * np.ones_like(fi.floris.flow_field.wind_directions)
+    fi.reinitialize(wind_speeds=ws_array)
     nturbs = len(fi.layout_x)
 
     # First, get baseline AEP, without wake steering
@@ -125,9 +107,11 @@ if __name__ == "__main__":
     # Now optimize the yaw angles using the Serial Refine method
     print("Now starting yaw optimization for the entire wind rose...")
     start_time = timerpc()
+    wd_array = np.arange(0.0, 360.0, 5.0)
+    ws_array = 8.0 * np.ones_like(wd_array)
     fi.reinitialize(
-        wind_directions=np.arange(0.0, 360.0, 5.0),
-        wind_speeds=[8.0]
+        wind_directions=wd_array,
+        wind_speeds=ws_array,
     )
     yaw_opt = YawOptimizationSR(
         fi=fi,
@@ -135,7 +119,6 @@ if __name__ == "__main__":
         maximum_yaw_angle=20.0,  # Allowable yaw angles upper bound
         Ny_passes=[5, 4],
         exclude_downstream_turbines=True,
-        exploit_layout_symmetry=True,
     )
 
     df_opt = yaw_opt.optimize()

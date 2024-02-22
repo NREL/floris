@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,8 +20,8 @@ def load_floris():
     # Specify wind farm layout and update in the floris object
     N = 4  # number of turbines per row and per column
     X, Y = np.meshgrid(
-        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
-        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
+        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
+        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
     )
     fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten())
 
@@ -58,11 +44,24 @@ if __name__ == "__main__":
 
     # Load a FLORIS object for AEP calculations
     fi_aep = load_floris()
-    wind_directions = np.arange(0.0, 360.0, 1.0)
-    wind_speeds = np.arange(1.0, 25.0, 1.0)
+
+    # Define arrays of wd/ws
+    wind_directions_to_expand = np.arange(0.0, 360.0, 1.0)
+    wind_speeds_to_expand = np.arange(1.0, 25.0, 1.0)
+
+    # Create grids to make combinations of ws/wd
+    wind_directions_grid, wind_speeds_grid = np.meshgrid(
+        wind_directions_to_expand,
+        wind_speeds_to_expand,
+    )
+
+    # Flatten the grids back to 1D arrays
+    wd_array = wind_directions_grid.flatten()
+    ws_array = wind_speeds_grid.flatten()
+
     fi_aep.reinitialize(
-        wind_directions=wind_directions,
-        wind_speeds=wind_speeds,
+        wind_directions=wd_array,
+        wind_speeds=ws_array,
         turbulence_intensities=[0.08],  # Assume 8% turbulence intensity
     )
 
@@ -71,15 +70,13 @@ if __name__ == "__main__":
     fi_aep_parallel = ParallelComputingInterface(
         fi=fi_aep,
         max_workers=max_workers,
-        n_wind_direction_splits=max_workers,
-        n_wind_speed_splits=1,
+        n_wind_condition_splits=max_workers,
         interface=parallel_interface,
         print_timings=True,
     )
 
     # Calculate frequency of occurrence for each bin and normalize sum to 1.0
-    wd_grid, ws_grid = np.meshgrid(wind_directions, wind_speeds, indexing="ij")
-    freq_grid = windrose_interpolant(wd_grid, ws_grid)
+    freq_grid = windrose_interpolant(wd_array, ws_array)
     freq_grid = freq_grid / np.sum(freq_grid)  # Normalize to 1.0
 
     # Calculate farm power baseline
@@ -100,11 +97,24 @@ if __name__ == "__main__":
 
     # Load a FLORIS object for yaw optimization
     fi_opt = load_floris()
-    wind_directions = np.arange(0.0, 360.0, 3.0)
-    wind_speeds = np.arange(6.0, 14.0, 2.0)
+
+    # Define arrays of wd/ws
+    wind_directions_to_expand = np.arange(0.0, 360.0, 3.0)
+    wind_speeds_to_expand = np.arange(6.0, 14.0, 2.0)
+
+    # Create grids to make combinations of ws/wd
+    wind_directions_grid, wind_speeds_grid = np.meshgrid(
+        wind_directions_to_expand,
+        wind_speeds_to_expand,
+    )
+
+    # Flatten the grids back to 1D arrays
+    wd_array_opt = wind_directions_grid.flatten()
+    ws_array_opt = wind_speeds_grid.flatten()
+
     fi_opt.reinitialize(
-        wind_directions=wind_directions,
-        wind_speeds=wind_speeds,
+        wind_directions=wd_array_opt,
+        wind_speeds=ws_array_opt,
         turbulence_intensities=[0.08],  # Assume 8% turbulence intensity
     )
 
@@ -112,8 +122,7 @@ if __name__ == "__main__":
     fi_opt_parallel = ParallelComputingInterface(
         fi=fi_opt,
         max_workers=max_workers,
-        n_wind_direction_splits=max_workers,
-        n_wind_speed_splits=1,
+        n_wind_condition_splits=max_workers,
         interface=parallel_interface,
         print_timings=True,
     )
@@ -123,8 +132,7 @@ if __name__ == "__main__":
         minimum_yaw_angle=-25.0,
         maximum_yaw_angle=25.0,
         Ny_passes=[5, 4],
-        exclude_downstream_turbines=True,
-        exploit_layout_symmetry=False,
+        exclude_downstream_turbines=False,
     )
 
 
@@ -152,7 +160,7 @@ if __name__ == "__main__":
     )
 
     # Get optimized AEP, with wake steering
-    yaw_grid = yaw_angles_interpolant(wd_grid, ws_grid)
+    yaw_grid = yaw_angles_interpolant(wd_array, ws_array)
     farm_power_opt = fi_aep_parallel.get_farm_power(yaw_angles=yaw_grid)
     aep_opt = np.sum(24 * 365 * np.multiply(farm_power_opt, freq_grid))
     aep_uplift = 100.0 * (aep_opt / aep_bl - 1)
@@ -173,8 +181,8 @@ if __name__ == "__main__":
     farm_energy_bl = np.multiply(freq_grid, farm_power_bl)
     farm_energy_opt = np.multiply(freq_grid, farm_power_opt)
     df = pd.DataFrame({
-        "wd": wd_grid.flatten(),
-        "ws": ws_grid.flatten(),
+        "wd": wd_array.flatten(),
+        "ws": ws_array.flatten(),
         "freq_val": freq_grid.flatten(),
         "farm_power_baseline": farm_power_bl.flatten(),
         "farm_power_opt": farm_power_opt.flatten(),

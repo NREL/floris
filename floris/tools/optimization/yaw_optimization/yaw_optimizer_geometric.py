@@ -1,17 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import numpy as np
 
@@ -33,7 +19,6 @@ class YawOptimizationGeometric(YawOptimization):
         fi,
         minimum_yaw_angle=0.0,
         maximum_yaw_angle=25.0,
-        exploit_layout_symmetry=True,
     ):
         """
         Instantiate YawOptimizationGeometric object with a FlorisInterface
@@ -44,7 +29,6 @@ class YawOptimizationGeometric(YawOptimization):
             fi=fi,
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
-            exploit_layout_symmetry=exploit_layout_symmetry,
             calc_baseline_power=False
         )
 
@@ -61,15 +45,15 @@ class YawOptimizationGeometric(YawOptimization):
         wd_array = self.fi_subset.floris.flow_field.wind_directions
 
         for nwdi, wd in enumerate(wd_array):
-            self._yaw_angles_opt_subset[nwdi, :, :] = geometric_yaw(
+            self._yaw_angles_opt_subset[nwdi, :] = geometric_yaw(
                 self.fi_subset.layout_x,
                 self.fi_subset.layout_y,
                 wd,
                 self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"],
-                top_left_yaw_upper=self.maximum_yaw_angle[0,0,0],
-                bottom_left_yaw_upper=self.maximum_yaw_angle[0,0,0],
-                top_left_yaw_lower=self.minimum_yaw_angle[0,0,0],
-                bottom_left_yaw_lower=self.minimum_yaw_angle[0,0,0]
+                top_left_yaw_upper=self.maximum_yaw_angle[0, 0],
+                bottom_left_yaw_upper=self.maximum_yaw_angle[0, 0],
+                top_left_yaw_lower=self.minimum_yaw_angle[0, 0],
+                bottom_left_yaw_lower=self.minimum_yaw_angle[0, 0],
             )
 
         # Finalize optimization, i.e., retrieve full solutions
@@ -94,7 +78,7 @@ def geometric_yaw(
     top_left_yaw_lower=-30.0,
     top_right_yaw_lower=0.0,
     bottom_left_yaw_lower=-30.0,
-    bottom_right_yaw_lower=0.0
+    bottom_right_yaw_lower=0.0,
 ):
     """
     turbine_x: unrotated x turbine coords
@@ -125,7 +109,7 @@ def geometric_yaw(
         np.array([wind_direction]),
         turbine_coordinates_array
     )
-    processed_x, processed_y = _process_layout(rotated_x[0][0],rotated_y[0][0],rotor_diameter)
+    processed_x, processed_y = _process_layout(rotated_x[0], rotated_y[0], rotor_diameter)
     yaw_array = np.zeros(nturbs)
     for i in range(nturbs):
         # TODO: fix shape of top left yaw etc?
@@ -143,7 +127,7 @@ def geometric_yaw(
             top_left_yaw_lower,
             top_right_yaw_lower,
             bottom_left_yaw_lower,
-            bottom_right_yaw_lower
+            bottom_right_yaw_lower,
         )
 
     return yaw_array

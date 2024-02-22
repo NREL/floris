@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import os
 
@@ -41,16 +27,9 @@ fi = FlorisInterface('inputs/gch.yaml')
 # Setup 72 wind directions with a random wind speed and frequency distribution
 wind_directions = np.arange(0, 360.0, 5.0)
 np.random.seed(1)
-wind_speeds = 8.0 + np.random.randn(1) * 0.5
+wind_speeds = 8.0 + np.random.randn(1) * 0.5 * np.ones_like(wind_directions)
 # Shape frequency distribution to match number of wind directions and wind speeds
-freq = (
-    np.abs(
-        np.sort(
-            np.random.randn(len(wind_directions))
-        )
-    )
-    .reshape( ( len(wind_directions), len(wind_speeds) ) )
-)
+freq = (np.abs(np.sort(np.random.randn(len(wind_directions)))))
 freq = freq / freq.sum()
 
 fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)

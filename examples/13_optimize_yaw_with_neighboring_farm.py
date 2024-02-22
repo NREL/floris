@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -88,15 +74,17 @@ def load_windrose():
     # Now put the wind rose information in FLORIS format
     ws_windrose = df["ws"].unique()
     wd_windrose = df["wd"].unique()
-    wd_grid, ws_grid = np.meshgrid(wd_windrose, ws_windrose, indexing="ij")
 
     # Use an interpolant to shape the 'freq_val' vector appropriately. You can
     # also use np.reshape(), but NearestNDInterpolator is more fool-proof.
     freq_interpolant = NearestNDInterpolator(
         df[["ws", "wd"]], df["freq_val"]
     )
-    freq = freq_interpolant(wd_grid, ws_grid)
+    freq = freq_interpolant(df["wd"], df["ws"])
     freq_windrose = freq / freq.sum()  # Normalize to sum to 1.0
+
+    ws_windrose = df["ws"]
+    wd_windrose = df["wd"]
 
     return ws_windrose, wd_windrose, freq_windrose
 
@@ -113,19 +101,17 @@ def optimize_yaw_angles(fi_opt):
     # Specify minimum and maximum allowable yaw angle limits
     minimum_yaw_angle = np.zeros(
         (
-            fi_opt.floris.flow_field.n_wind_directions,
-            fi_opt.floris.flow_field.n_wind_speeds,
-            fi_opt.floris.farm.n_turbines
+            fi_opt.floris.flow_field.n_findex,
+            fi_opt.floris.farm.n_turbines,
         )
     )
     maximum_yaw_angle = np.zeros(
         (
-            fi_opt.floris.flow_field.n_wind_directions,
-            fi_opt.floris.flow_field.n_wind_speeds,
-            fi_opt.floris.farm.n_turbines
+            fi_opt.floris.flow_field.n_findex,
+            fi_opt.floris.farm.n_turbines,
         )
     )
-    maximum_yaw_angle[:, :, turbs_to_opt] = 30.0
+    maximum_yaw_angle[:, turbs_to_opt] = 30.0
 
     yaw_opt = YawOptimizationSR(
         fi=fi_opt,
@@ -153,7 +139,7 @@ def optimize_yaw_angles(fi_opt):
         x = yaw_opt.fi.floris.flow_field.wind_directions
         nturbs = fi_opt.floris.farm.n_turbines
         y = np.stack(
-            [np.interp(wd, x, yaw_angles_opt[:, 0, ti]) for ti in range(nturbs)],
+            [np.interp(wd, x, yaw_angles_opt[:, ti]) for ti in range(nturbs)],
             axis=np.ndim(wd)
         )
 
@@ -198,9 +184,11 @@ if __name__ == "__main__":
 
     # And create a separate FLORIS object for optimization
     fi_opt = fi.copy()
+    wd_array = np.arange(0.0, 360.0, 3.0)
+    ws_array = 8.0 * np.ones_like(wd_array)
     fi_opt.reinitialize(
-        wind_directions=np.arange(0.0, 360.0, 3.0),
-        wind_speeds=[8.0]
+        wind_directions=wd_array,
+        wind_speeds=ws_array,
     )
 
     # First, get baseline AEP, without wake steering
@@ -241,14 +229,11 @@ if __name__ == "__main__":
     yaw_opt_interpolant_nonb = optimize_yaw_angles(fi_opt=fi_opt_subset)
 
     # Use interpolant to get optimal yaw angles for fi_AEP object
-    X, Y = np.meshgrid(
-        fi_AEP.floris.flow_field.wind_directions,
-        fi_AEP.floris.flow_field.wind_speeds,
-        indexing="ij"
-    )
-    yaw_angles_opt_AEP = yaw_opt_interpolant(X, Y)
+    wd = fi_AEP.floris.flow_field.wind_directions
+    ws = fi_AEP.floris.flow_field.wind_speeds
+    yaw_angles_opt_AEP = yaw_opt_interpolant(wd, ws)
     yaw_angles_opt_nonb_AEP = np.zeros_like(yaw_angles_opt_AEP)  # nonb = no neighbor
-    yaw_angles_opt_nonb_AEP[:, :, turbs_to_opt] = yaw_opt_interpolant_nonb(X, Y)
+    yaw_angles_opt_nonb_AEP[:, turbs_to_opt] = yaw_opt_interpolant_nonb(wd, ws)
 
     # Now get AEP with optimized yaw angles
     print(" ")
@@ -278,15 +263,12 @@ if __name__ == "__main__":
     print(" ")
 
     # Plot power and AEP uplift across wind direction at wind_speed of 8 m/s
-    X, Y = np.meshgrid(
-        fi_opt.floris.flow_field.wind_directions,
-        fi_opt.floris.flow_field.wind_speeds,
-        indexing="ij",
-    )
-    yaw_angles_opt = yaw_opt_interpolant(X, Y)
+    wd = fi_opt.floris.flow_field.wind_directions
+    ws = fi_opt.floris.flow_field.wind_speeds
+    yaw_angles_opt = yaw_opt_interpolant(wd, ws)
 
     yaw_angles_opt_nonb = np.zeros_like(yaw_angles_opt)  # nonb = no neighbor
-    yaw_angles_opt_nonb[:, :, turbs_to_opt] = yaw_opt_interpolant_nonb(X, Y)
+    yaw_angles_opt_nonb[:, turbs_to_opt] = yaw_opt_interpolant_nonb(wd, ws)
 
     fi_opt = fi_opt.copy()
     fi_opt.calculate_wake(yaw_angles=np.zeros_like(yaw_angles_opt))
