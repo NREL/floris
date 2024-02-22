@@ -646,13 +646,25 @@ def calculate_horizontal_plane_with_turbines(
         # Grab the turbine layout
         layout_x = copy.deepcopy(fi.layout_x)
         layout_y = copy.deepcopy(fi.layout_y)
-        D = np.unique(fi.floris.farm.rotor_diameters_sorted)[0]
+        turbine_types = copy.deepcopy(fi.floris.farm.turbine_type)
+        D = fi.floris.farm.rotor_diameters_sorted[0, 0]
 
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
-        yaw_angles = np.append(yaw_angles, [[0.0]], axis=1)
-        power_setpoints = np.append(power_setpoints, [[POWER_SETPOINT_DEFAULT]], axis=1)
+
+        # Declare turbine types with an extra turbine in case of special one-type usage
+        if len(layout_x) > 1 and len(turbine_types) == 1:
+            # Convert to list length len(layout_x) + 1
+            turbine_types_test = [turbine_types[0] for i in range(len(layout_x))] + ['nrel_5MW']
+        else:
+            turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
+        yaw_angles = np.append(yaw_angles, np.zeros([fi.floris.flow_field.n_findex, 1]), axis=1)
+        power_setpoints = np.append(
+            power_setpoints,
+            POWER_SETPOINT_DEFAULT * np.ones([fi.floris.flow_field.n_findex, 1]),
+            axis=1
+        )
 
         # Get a grid of points test test
         if x_bounds is None:
@@ -689,7 +701,8 @@ def calculate_horizontal_plane_with_turbines(
                     layout_y=layout_y_test,
                     yaw_angles=yaw_angles,
                     power_setpoints=power_setpoints,
-                    disable_turbines=disable_turbines
+                    disable_turbines=disable_turbines,
+                    turbine_type=turbine_types_test
                 )
                 fi.run()
 
