@@ -333,6 +333,9 @@ def full_flow_sequential_solver(
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
+            average_method=turbine_grid.average_method,
+            cubature_weights=turbine_grid.cubature_weights,
+            multidim_condition=turbine_grid_flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the thrust_coefficient function,
         # get the first index here (0:1)
@@ -349,6 +352,9 @@ def full_flow_sequential_solver(
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
+            average_method=turbine_grid.average_method,
+            cubature_weights=turbine_grid.cubature_weights,
+            multidim_condition=turbine_grid_flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
@@ -502,7 +508,8 @@ def cc_solver(
             turbine_type_map=farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         turb_Cts = turb_Cts[:, :, None, None]
         turb_aIs = axial_induction(
@@ -518,7 +525,8 @@ def cc_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         turb_aIs = turb_aIs[:, :, None, None]
 
@@ -538,7 +546,8 @@ def cc_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
 
         axial_induction_i = axial_induction_i[:, :, None, None]
@@ -670,7 +679,7 @@ def cc_solver(
 def full_flow_cc_solver(
     farm: Farm,
     flow_field: FlowField,
-    flow_field_grid: FlowFieldGrid,
+    flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     model_manager: WakeModelManager,
 ) -> None:
     # Get the flow quantities and turbine performance
@@ -740,7 +749,7 @@ def full_flow_cc_solver(
         turb_avg_vels = average_velocity(turbine_grid_flow_field.u_sorted)
         turb_Cts = thrust_coefficient(
             velocities=turb_avg_vels,
-            air_density=flow_field_grid.air_density,
+            air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
@@ -750,7 +759,8 @@ def full_flow_cc_solver(
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             average_method=turbine_grid.average_method,
-            cubature_weights=turbine_grid.cubature_weights
+            cubature_weights=turbine_grid.cubature_weights,
+            multidim_condition=turbine_grid_flow_field.multidim_conditions,
         )
         turb_Cts = turb_Cts[:, :, None, None]
 
@@ -767,7 +777,8 @@ def full_flow_cc_solver(
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=turbine_grid.average_method,
-            cubature_weights=turbine_grid.cubature_weights
+            cubature_weights=turbine_grid.cubature_weights,
+            multidim_condition=turbine_grid_flow_field.multidim_conditions,
         )
         axial_induction_i = axial_induction_i[:, :, None, None]
 
@@ -905,7 +916,8 @@ def turbopark_solver(
             turbine_type_map=farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
 
         ct_i = thrust_coefficient(
@@ -921,7 +933,8 @@ def turbopark_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
@@ -939,7 +952,8 @@ def turbopark_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
@@ -984,7 +998,8 @@ def turbopark_solver(
                     turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
                     ix_filter=[ii],
                     average_method=grid.average_method,
-                    cubature_weights=grid.cubature_weights
+                    cubature_weights=grid.cubature_weights,
+                    multidim_condition=flow_field.multidim_conditions,
                 )
                 ct_ii = ct_ii[:, 0:1, None, None]
                 rotor_diameter_ii = farm.rotor_diameters_sorted[:, ii:ii+1, None, None]
@@ -1158,7 +1173,8 @@ def empirical_gauss_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
@@ -1176,7 +1192,8 @@ def empirical_gauss_solver(
             turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
@@ -1359,6 +1376,9 @@ def full_flow_empirical_gauss_solver(
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
+            average_method=turbine_grid.average_method,
+            cubature_weights=turbine_grid.cubature_weights,
+            multidim_condition=turbine_grid_flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
@@ -1375,6 +1395,9 @@ def full_flow_empirical_gauss_solver(
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
             turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
+            average_method=turbine_grid.average_method,
+            cubature_weights=turbine_grid.cubature_weights,
+            multidim_condition=turbine_grid_flow_field.multidim_conditions,
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
