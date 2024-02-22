@@ -17,7 +17,7 @@ class UncertaintyInterface(FlorisInterface):
         configuration: dict | str | Path,
         wd_resolution=1.0,  # Degree
         ws_resolution=1.0,  # m/s
-        ti_resolution=0.025,
+        ti_resolution=0.01,
         yaw_resolution=1.0,  # Degree
         power_setpoint_resolution=100,  # kW
         wd_std=3.0,
