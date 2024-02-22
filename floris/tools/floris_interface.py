@@ -119,9 +119,7 @@ class FlorisInterface(LoggingManager):
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
         turbulence_intensities: list[float] | NDArrayFloat | None = None,
-        # turbulence_kinetic_energy=None,
         air_density: float | None = None,
-        # wake: WakeModelManager = None,
         layout_x: list[float] | NDArrayFloat | None = None,
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
@@ -1010,7 +1008,7 @@ class FlorisInterface(LoggingManager):
                 wind_directions=wind_directions_subset,
             )
             if no_wake:
-                self.calculate_no_wake()
+                self.run_no_wake()
             else:
                 self.run()
             farm_power[conditions_to_evaluate] = self.get_farm_power(
