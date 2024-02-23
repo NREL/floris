@@ -164,9 +164,9 @@ class FlorisInterface(LoggingManager):
                 n_findex x n_turbines. True values indicate the turbine is disabled at that findex
                 and the power setpoint at that position is set to 0. Defaults to None.
         """
-        # Reinitialize the floris object after saving the setpoints
-        save_yaw_angles = self.floris.farm.yaw_angles
-        save_power_setpoints = self.floris.farm.power_setpoints
+        # Initialize a new Floris object after saving the setpoints
+        _yaw_angles = self.floris.farm.yaw_angles
+        _power_setpoints = self.floris.farm.power_setpoints
         self._reinitialize(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
@@ -183,13 +183,16 @@ class FlorisInterface(LoggingManager):
             heterogenous_inflow_config=heterogenous_inflow_config,
             wind_data=wind_data,
         )
-        if not (save_yaw_angles == 0).all():
-            self.floris.farm.yaw_angles = save_yaw_angles
+
+        # If the yaw angles or power setpoints are not the default, set them back to the
+        # previous setting
+        if not (_yaw_angles == 0).all():
+            self.floris.farm.yaw_angles = _yaw_angles
         if not (
-            (save_power_setpoints == POWER_SETPOINT_DEFAULT)
-            | (save_power_setpoints == POWER_SETPOINT_DISABLED)
+            (_power_setpoints == POWER_SETPOINT_DEFAULT)
+            | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
-            self.floris.farm.power_setpoints = save_power_setpoints
+            self.floris.farm.power_setpoints = _power_setpoints
 
         # Set the operation
         self._set_operation(
@@ -200,41 +203,9 @@ class FlorisInterface(LoggingManager):
 
     def reset_operation(self):
         """
-        Reinstantiate the floris interface and set all operation setpoints to their default values.
-
-        Args: (None)
+        Instantiate a new Floris object to set all operation setpoints to their default values.
         """
         self._reinitialize()
-
-    def run(self) -> None:
-        """
-        Run the FLORIS solve to compute the velocity field and wake effects.
-
-        Args: (None)
-        """
-
-        # Initialize solution space
-        self.floris.initialize_domain()
-
-        # Perform the wake calculations
-        self.floris.steady_state_atmospheric_condition()
-
-    def run_no_wake(
-        self,
-    ) -> None:
-        """
-        This function is similar to `run()` except that it does not apply a wake model. That is,
-        the wind farm is modeled as if there is no wake in the flow. Yaw angles are used to reduce
-        the power and thrust of the turbine that is yawed.
-
-        Args: (None)
-        """
-
-        # Initialize solution space
-        self.floris.initialize_domain()
-
-        # Finalize values to user-supplied order
-        self.floris.finalize()
 
     def _reinitialize(
         self,
@@ -254,7 +225,8 @@ class FlorisInterface(LoggingManager):
         wind_data: type[WindDataBase] | None = None,
     ):
         """
-        Reinstantiate the floris object with updated conditions set by arguments.
+        Instantiate a new Floris object with updated conditions set by arguments. Any parameters
+        in Floris that aren't changed by arguments to this function retain their values.
 
         Args:
             wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
@@ -422,6 +394,30 @@ class FlorisInterface(LoggingManager):
             # yaw_angles to 0 in all locations where disable_turbines is True
             self.floris.farm.yaw_angles[disable_turbines] = 0.0
             self.floris.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
+
+    def run(self) -> None:
+        """
+        Run the FLORIS solve to compute the velocity field and wake effects.
+        """
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Perform the wake calculations
+        self.floris.steady_state_atmospheric_condition()
+
+    def run_no_wake(self) -> None:
+        """
+        This function is similar to `run()` except that it does not apply a wake model. That is,
+        the wind farm is modeled as if there is no wake in the flow. Operation settings may
+        reduce the power and thrust of the turbine to where they're applied.
+        """
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Finalize values to user-supplied order
+        self.floris.finalize()
 
     def get_plane_of_points(
         self,

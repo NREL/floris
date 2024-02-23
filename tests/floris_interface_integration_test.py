@@ -238,12 +238,12 @@ def test_disable_turbines():
         layout_y=[0,0,0]
     )
 
-    # Confirm that passing in a disable value with wrong n_findex raises error
+    # Confirm that using a disable value with wrong n_findex raises error
     with pytest.raises(ValueError):
         fi.set(disable_turbines=np.zeros((10, 3), dtype=bool))
         fi.run()
 
-    # Confirm that passing in a disable value with wrong n_turbines raises error
+    # Confirm that using a disable value with wrong n_turbines raises error
     with pytest.raises(ValueError):
         fi.set(disable_turbines=np.zeros((2, 10), dtype=bool))
         fi.run()
@@ -252,12 +252,12 @@ def test_disable_turbines():
     fi.set(disable_turbines=np.ones((2, 3), dtype=bool))
     fi.run()
     turbines_powers = fi.get_turbine_powers()
-    np.testing.assert_allclose(turbines_powers,0,atol=0.1)
+    np.testing.assert_allclose(turbines_powers, 0, atol=0.1)
 
     # Confirm the same for run_no_wake
     fi.run_no_wake()
     turbines_powers = fi.get_turbine_powers()
-    np.testing.assert_allclose(turbines_powers,0,atol=0.1)
+    np.testing.assert_allclose(turbines_powers, 0, atol=0.1)
 
     # Confirm that if all disabled values set to false, equivalent to running normally
     fi.reset_operation()
@@ -284,7 +284,8 @@ def test_disable_turbines():
     fi.run()
     power_with_middle_disabled = fi.get_turbine_powers()
 
-    fi.set(layout_x = [0,2000],layout_y = [0, 0], disable_turbines=np.zeros((2, 2), dtype=bool))
+    disable_turbines = np.zeros((2, 3), dtype=bool)
+    fi.set(layout_x=[0,2000], layout_y=[0, 0], disable_turbines=disable_turbines)
     fi.run()
     power_with_middle_removed = fi.get_turbine_powers()
 
@@ -293,8 +294,8 @@ def test_disable_turbines():
 
     # Check that yaw angles are correctly set when turbines are disabled
     fi.set(
-        layout_x=[0,1000,2000],
-        layout_y=[0,0,0],
+        layout_x=[0, 1000, 2000],
+        layout_y=[0, 0, 0],
         disable_turbines=disable_turbines,
         yaw_angles=np.ones((2, 3))
     )
