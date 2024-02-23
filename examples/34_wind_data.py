@@ -43,15 +43,20 @@ wind_rose = time_series.to_wind_rose()
 
 # Plot the wind rose
 fig, ax = plt.subplots(subplot_kw={"polar": True})
-wind_rose.plot_wind_rose(ax=ax)
+wind_rose.plot_wind_rose(ax=ax,legend_kwargs={"title": "WS"})
+fig.suptitle("WindRose Plot")
 
 # Now build a wind rose with turbulence intensity
 wind_ti_rose = time_series.to_wind_ti_rose()
 
-# Plot the wind rose
-fig, ax = plt.subplots(subplot_kw={"polar": True})
-wind_ti_rose.plot_wind_rose(ax=ax)
-wind_ti_rose.plot_wind_rose(ax=ax, wind_rose_var="ti")
+# Plot the wind rose with TI
+fig, axs = plt.subplots(2, 1, figsize=(6,8), subplot_kw={"polar": True})
+wind_ti_rose.plot_wind_rose(ax=axs[0], wind_rose_var="ws",legend_kwargs={"title": "WS"})
+axs[0].set_title("Wind Direction and Wind Speed Frequencies")
+wind_ti_rose.plot_wind_rose(ax=axs[1], wind_rose_var="ti",legend_kwargs={"title": "TI"})
+axs[1].set_title("Wind Direction and Turbulence Intensity Frequencies")
+fig.suptitle("WindTIRose Plots")
+plt.tight_layout()
 
 # Now set up a FLORIS model and initialize it using the time series and wind rose
 fi = FlorisInterface("inputs/gch.yaml")
