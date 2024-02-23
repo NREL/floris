@@ -119,9 +119,7 @@ class FlorisInterface(LoggingManager):
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
         turbulence_intensities: list[float] | NDArrayFloat | None = None,
-        # turbulence_kinetic_energy=None,
         air_density: float | None = None,
-        # wake: WakeModelManager = None,
         layout_x: list[float] | NDArrayFloat | None = None,
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
@@ -246,9 +244,7 @@ class FlorisInterface(LoggingManager):
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
         turbulence_intensities: list[float] | NDArrayFloat | None = None,
-        # turbulence_kinetic_energy=None,
         air_density: float | None = None,
-        # wake: WakeModelManager = None,
         layout_x: list[float] | NDArrayFloat | None = None,
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
@@ -358,12 +354,6 @@ class FlorisInterface(LoggingManager):
             farm_dict["turbine_type"] = turbine_type
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
-
-        ## Wake
-        # if wake is not None:
-        #     self.floris.wake = wake
-        # if turbulence_kinetic_energy is not None:
-        #     pass  # TODO: not needed until GCH
 
         if solver_settings is not None:
             floris_dict["solver"] = solver_settings
