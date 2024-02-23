@@ -1,5 +1,4 @@
 turbine_type: 'nrel_5MW_floating'
-generator_efficiency: 0.944
 hub_height: 90.0
 rotor_diameter: 125.88
 TSR: 8.0
@@ -7,8 +6,8 @@ correct_cp_ct_for_tilt: True # Apply tilt correction to cp/ct
 power_thrust_table:
   ref_air_density: 1.225
   ref_tilt: 5.0
-  pP: 1.88
-  pT: 1.88
+  cosine_loss_exponent_yaw: 1.88
+  cosine_loss_exponent_tilt: 1.88
   power:
     - 0.0
     - 0.0

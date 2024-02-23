@@ -18,12 +18,12 @@ from floris.utilities import cosd
 
 
 def rotor_velocity_yaw_correction(
-    pP: float,
+    cosine_loss_exponent_yaw: float,
     yaw_angles: NDArrayFloat,
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Compute the rotor effective velocity adjusting for yaw settings
-    pW = pP / 3.0  # Convert from pP to w
+    pW = cosine_loss_exponent_yaw / 3.0  # Convert from cosine_loss_exponent_yaw to w
     # TODO: cosine loss hard coded
     rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angles) ** pW
 
@@ -32,7 +32,7 @@ def rotor_velocity_yaw_correction(
 def rotor_velocity_tilt_correction(
     tilt_angles: NDArrayFloat,
     ref_tilt: NDArrayFloat,
-    pT: float,
+    cosine_loss_exponent_tilt: float,
     tilt_interp: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
     rotor_effective_velocities: NDArrayFloat,
@@ -50,7 +50,10 @@ def rotor_velocity_tilt_correction(
     # Compute the rotor effective velocity adjusting for tilt
     # TODO: cosine loss hard coded
     relative_tilt = tilt_angles - ref_tilt
-    rotor_effective_velocities = rotor_effective_velocities * cosd(relative_tilt) ** (pT / 3.0)
+    rotor_effective_velocities = (
+        rotor_effective_velocities
+        * cosd(relative_tilt) ** (cosine_loss_exponent_tilt / 3.0)
+    )
     return rotor_effective_velocities
 
 def simple_mean(array, axis=0):
@@ -177,8 +180,8 @@ def rotor_effective_velocity(
     yaw_angle: NDArrayFloat,
     tilt_angle: NDArrayFloat,
     ref_tilt: NDArrayFloat,
-    pP: float,
-    pT: float,
+    cosine_loss_exponent_yaw: float,
+    cosine_loss_exponent_tilt: float,
     tilt_interp: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
     turbine_type_map: NDArrayObject,
@@ -198,8 +201,8 @@ def rotor_effective_velocity(
         yaw_angle = yaw_angle[:, ix_filter]
         tilt_angle = tilt_angle[:, ix_filter]
         ref_tilt = ref_tilt[:, ix_filter]
-        pP = pP[:, ix_filter]
-        pT = pT[:, ix_filter]
+        cosine_loss_exponent_yaw = cosine_loss_exponent_yaw[:, ix_filter]
+        cosine_loss_exponent_tilt = cosine_loss_exponent_tilt[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
 
     # Compute the rotor effective velocity adjusting for air density
@@ -212,7 +215,7 @@ def rotor_effective_velocity(
 
     # Compute the rotor effective velocity adjusting for yaw settings
     rotor_effective_velocities = rotor_velocity_yaw_correction(
-        pP,
+        cosine_loss_exponent_yaw,
         yaw_angle,
         rotor_effective_velocities
     )
@@ -222,7 +225,7 @@ def rotor_effective_velocity(
         turbine_type_map,
         tilt_angle,
         ref_tilt,
-        pT,
+        cosine_loss_exponent_tilt,
         tilt_interp,
         correct_cp_ct_for_tilt,
         rotor_effective_velocities,
