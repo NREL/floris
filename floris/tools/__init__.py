@@ -19,7 +19,7 @@ Examples:
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',
     'floris_interface',
     'layout_functions', 'optimization', 'plotting', 'power_rose',
-    'rews', 'visualization', 'wind_rose']
+    'visualization']
 """
 
 from .floris_interface import FlorisInterface
@@ -45,7 +45,5 @@ from .wind_data import (
 #     optimization,
 #     plotting,
 #     power_rose,
-#     rews,
 #     visualization,
-#     wind_rose,
 # )
