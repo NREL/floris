@@ -14,11 +14,19 @@ DEBUG = False
 VELOCITY_MODEL = "gauss"
 DEFLECTION_MODEL = "gauss"
 
+# These inputs and baseline power are common for all optimization methods
+WIND_DIRECTIONS = [0.0, 90.0, 180.0, 270.0]
+WIND_SPEEDS = [8.0] * 4
+TURBULENCE_INTENSITIES = [0.1] * 4
+FARM_POWER_BASELINE = [5.261863e+06, 3.206038e+06, 5.261863e+06, 3.206038e+06]
+
+# These are the input data structures for each optimization method along with the output
+# optimized yaw angles
 baseline_serial_refine = pd.DataFrame(
         {
-        "wind_direction": [0.0, 90.0, 180.0, 270.0],
-        "wind_speed": [8.0] * 4,
-        "turbulence_intensity": [0.1] * 4,
+        "wind_direction": WIND_DIRECTIONS,
+        "wind_speed": WIND_SPEEDS,
+        "turbulence_intensity": TURBULENCE_INTENSITIES,
         "yaw_angles_opt": [
             [0.0, 0.0, 0.0],
             [0.0, 25.0, 15.625],
@@ -26,15 +34,15 @@ baseline_serial_refine = pd.DataFrame(
             [15.625, 25.0, 0.0],
         ],
         "farm_power_opt": [5.261863e+06, 3.262218e+06, 5.261863e+06, 3.262218e+06],
-        "farm_power_baseline": [5.261863e+06, 3.206038e+06, 5.261863e+06, 3.206038e+06],
+        "farm_power_baseline": FARM_POWER_BASELINE,
     }
 )
 
 baseline_geometric_yaw = pd.DataFrame(
         {
-        "wind_direction": [0.0, 90.0, 180.0, 270.0],
-        "wind_speed": [8.0] * 4,
-        "turbulence_intensity": [0.1] * 4,
+        "wind_direction": WIND_DIRECTIONS,
+        "wind_speed": WIND_SPEEDS,
+        "turbulence_intensity": TURBULENCE_INTENSITIES,
         "yaw_angles_opt": [
             [0.0, 0.0, 0.0],
             [0.0, 19.9952335557674, 19.9952335557674],
@@ -42,15 +50,15 @@ baseline_geometric_yaw = pd.DataFrame(
             [19.9952335557674, 19.9952335557674, 0.0],
         ],
         "farm_power_opt": [5.261863e+06, 3.252509e+06, 5.261863e+06, 3.252509e+06],
-        "farm_power_baseline": [5.261863e+06, 3.206038e+06, 5.261863e+06, 3.206038e+06],
+        "farm_power_baseline": FARM_POWER_BASELINE,
     }
 )
 
 baseline_scipy = pd.DataFrame(
         {
-        "wind_direction": [0.0, 90.0, 180.0, 270.0],
-        "wind_speed": [8.0] * 4,
-        "turbulence_intensity": [0.1] * 4,
+        "wind_direction": WIND_DIRECTIONS,
+        "wind_speed": WIND_SPEEDS,
+        "turbulence_intensity": TURBULENCE_INTENSITIES,
         "yaw_angles_opt": [
             [0.0, 0.0, 0.0],
             [0.0, 24.999999999999982, 12.165643400939755],
@@ -58,7 +66,7 @@ baseline_scipy = pd.DataFrame(
             [12.165643399558299, 25.0, 0.0],
         ],
         "farm_power_opt": [5.261863e+06, 3.264975e+06, 5.261863e+06, 3.264975e+06],
-        "farm_power_baseline": [5.261863e+06, 3.206038e+06, 5.261863e+06, 3.206038e+06],
+        "farm_power_baseline": FARM_POWER_BASELINE,
     }
 )
 
@@ -97,7 +105,7 @@ def test_geometric_yaw(sample_inputs_fixture):
     """
     The Geometric Yaw optimization method optimizes yaw angles using geometric data and derived
     optimal yaw relationships. This test compares the optimization results from the Geometric Yaw
-    optimizaiton for a simple farm with a simple wind rose to stored baseline results.
+    optimization for a simple farm with a simple wind rose to stored baseline results.
     """
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
@@ -135,7 +143,7 @@ def test_geometric_yaw(sample_inputs_fixture):
 def test_scipy_yaw_opt(sample_inputs_fixture):
     """
     The SciPy optimization method optimizes yaw angles using SciPy's minimize method. This test
-    compares the optimization results from the SciPy yaw optimizaiton for a simple farm with a
+    compares the optimization results from the SciPy yaw optimization for a simple farm with a
     simple wind rose to stored baseline results.
     """
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
