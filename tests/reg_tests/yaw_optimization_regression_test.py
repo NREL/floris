@@ -84,7 +84,7 @@ def test_serial_refine(sample_inputs_fixture):
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
-    fi.reinitialize(
+    fi.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
@@ -114,20 +114,21 @@ def test_geometric_yaw(sample_inputs_fixture):
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
-    fi.reinitialize(
+    fi.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
     )
-    fi.calculate_wake()
+    fi.run()
     baseline_farm_power = fi.get_farm_power().squeeze()
 
     yaw_opt = YawOptimizationGeometric(fi)
     df_opt = yaw_opt.optimize()
 
     yaw_angles_opt_geo = np.vstack(yaw_opt.yaw_angles_opt)
-    fi.calculate_wake(yaw_angles=yaw_angles_opt_geo)
+    fi.set(yaw_angles=yaw_angles_opt_geo)
+    fi.run()
     geo_farm_power = fi.get_farm_power().squeeze()
 
     df_opt['farm_power_baseline'] = baseline_farm_power
@@ -161,7 +162,7 @@ def test_scipy_yaw_opt(sample_inputs_fixture):
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
-    fi.reinitialize(
+    fi.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,

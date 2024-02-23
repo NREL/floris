@@ -27,7 +27,7 @@ def test_parallel_turbine_powers(sample_inputs_fixture):
 
     fi_serial = FlorisInterface(sample_inputs_fixture.floris)
     fi_parallel_input = copy.deepcopy(fi_serial)
-    fi_serial.calculate_wake()
+    fi_serial.run()
 
     serial_turbine_powers = fi_serial.get_turbine_powers()
 
