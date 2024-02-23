@@ -129,10 +129,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # import dependencies
 "floris/simulation/__init__.py" = ["I001"]
 
-# FIXME
-"floris/tools/interface_utilities.py" = ["F821"]
-"floris/tools/wind_rose.py" = ["F821"]
-
 [tool.ruff.isort]
 combine-as-imports = true
 known-first-party = ["floris"]

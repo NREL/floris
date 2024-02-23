@@ -19,11 +19,10 @@ Examples:
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',
     'floris_interface',
     'layout_functions', 'optimization', 'plotting', 'power_rose',
-    'rews', 'visualization', 'wind_rose']
+    'visualization']
 """
 
 from .floris_interface import FlorisInterface
-from .floris_interface_legacy_reader import FlorisInterfaceLegacyV2
 from .parallel_computing_interface import ParallelComputingInterface
 from .uncertainty_interface import UncertaintyInterface
 from .visualization import (
@@ -46,7 +45,5 @@ from .wind_data import (
 #     optimization,
 #     plotting,
 #     power_rose,
-#     rews,
 #     visualization,
-#     wind_rose,
 # )
