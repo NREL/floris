@@ -3,10 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString, Polygon
 
-from floris.tools import (
-    TimeSeries,
-    WindRose,
-)
+from floris.tools import TimeSeries
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
