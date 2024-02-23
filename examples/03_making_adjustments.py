@@ -16,7 +16,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.layout_functions as lt
+import floris.tools.layout_functions as lf
 import floris.tools.visualization as wakeviz
 from floris.tools import FlorisInterface
 
@@ -85,8 +85,8 @@ wakeviz.visualize_cut_plane(
     min_speed=MIN_WS,
     max_speed=MAX_WS
 )
-lt.plot_turbine_labels(fi, axarr[3],plotting_dict={'color':"w"})#, backgroundcolor="k")
-lt.plot_turbines_rotors(fi, axarr[3])
+lf.plot_turbine_labels(fi, axarr[3],plotting_dict={'color':"w"})#, backgroundcolor="k")
+lf.plot_turbines_rotors(fi, axarr[3])
 
 # Change the yaw angles and configure the plot differently
 yaw_angles = np.zeros((1, N * N))
@@ -110,7 +110,7 @@ wakeviz.visualize_cut_plane(
     min_speed=MIN_WS,
     max_speed=MAX_WS
 )
-lt.plot_turbines_rotors(fi, axarr[4], yaw_angles=yaw_angles, color="c")
+lf.plot_turbines_rotors(fi, axarr[4], yaw_angles=yaw_angles, color="c")
 
 
 # Plot the cross-plane of the 3x3 configuration
