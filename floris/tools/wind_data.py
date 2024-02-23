@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from abc import abstractmethod
@@ -383,7 +382,7 @@ class WindRose(WindDataBase):
         if ax is None:
             _, ax = plt.subplots()
 
-        ax.plot(self.ws_flat, self.ti_table_flat*100, marker=marker, ls=ls, color=color)
+        ax.plot(self.ws_flat, self.ti_table_flat * 100, marker=marker, ls=ls, color=color)
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Turbulence Intensity (%)")
         ax.grid(True)
@@ -432,7 +431,7 @@ class WindTIRose(WindDataBase):
 
         if not isinstance(wind_speeds, np.ndarray):
             raise TypeError("wind_speeds must be a NumPy array")
-        
+
         if not isinstance(turbulence_intensities, np.ndarray):
             raise TypeError("turbulence_intensities must be a NumPy array")
 
@@ -449,10 +448,14 @@ class WindTIRose(WindDataBase):
             if not freq_table.shape[1] == len(wind_speeds):
                 raise ValueError("freq_table second dimension must equal len(wind_speeds)")
             if not freq_table.shape[2] == len(turbulence_intensities):
-                raise ValueError("freq_table third dimension must equal len(turbulence_intensities)")
+                raise ValueError(
+                    "freq_table third dimension must equal len(turbulence_intensities)"
+                )
             self.freq_table = freq_table
         else:
-            self.freq_table = np.ones((len(wind_directions), len(wind_speeds), len(turbulence_intensities)))
+            self.freq_table = np.ones(
+                (len(wind_directions), len(wind_speeds), len(turbulence_intensities))
+            )
 
         # Normalize freq table
         self.freq_table = self.freq_table / np.sum(self.freq_table)
@@ -465,7 +468,9 @@ class WindTIRose(WindDataBase):
             if not value_table.shape[1] == len(wind_speeds):
                 raise ValueError("value_table second dimension must equal len(wind_speeds)")
             if not value_table.shape[2] == len(turbulence_intensities):
-                raise ValueError("value_table third dimension must equal len(turbulence_intensities)")
+                raise ValueError(
+                    "value_table third dimension must equal len(turbulence_intensities)"
+                )
         self.value_table = value_table
 
         # Save whether zero occurrence cases should be computed
@@ -573,13 +578,11 @@ class WindTIRose(WindDataBase):
         if ti_step is None:
             if len(self.turbulence_intensities) >= 2:
                 ti_step = self.turbulence_intensities[1] - self.turbulence_intensities[0]
-            else:  # wind rose will have only a single turbulence intensity, and we assume a ti_step of 1
+            else:  # wind rose will have only a single TI, and we assume a ti_step of 1
                 ti_step = 1.0
 
         # Pass the flat versions of each quantity to build a TimeSeries model
-        time_series = TimeSeries(
-            self.wd_flat, self.ws_flat, self.ti_flat, self.value_table_flat
-        )
+        time_series = TimeSeries(self.wd_flat, self.ws_flat, self.ti_flat, self.value_table_flat)
 
         # Now build a new wind rose using the new steps
         return time_series.to_wind_ti_rose(
@@ -628,7 +631,9 @@ class WindTIRose(WindDataBase):
         """
 
         if wind_rose_var not in {"ws", "ti"}:
-            raise ValueError("wind_rose_var must be either \"ws\" or \"ti\" for wind speed or turbulence intensity, respectively.")
+            raise ValueError(
+                'wind_rose_var must be either "ws" or "ti" for wind speed or turbulence intensity.'
+            )
 
         # Get a resampled wind_rose
         if wind_rose_var == "ws":
@@ -636,13 +641,13 @@ class WindTIRose(WindDataBase):
                 wind_rose_var_step = 5.0
             wind_rose_resample = self.resample_wind_rose(wd_step, ws_step=wind_rose_var_step)
             var_bins = wind_rose_resample.wind_speeds
-            freq_table = wind_rose_resample.freq_table.sum(2) # sum along TI dimension
-        else: # wind_rose_var == "ti"
+            freq_table = wind_rose_resample.freq_table.sum(2)  # sum along TI dimension
+        else:  # wind_rose_var == "ti"
             if wind_rose_var_step is None:
                 wind_rose_var_step = 0.04
             wind_rose_resample = self.resample_wind_rose(wd_step, ti_step=wind_rose_var_step)
             var_bins = wind_rose_resample.turbulence_intensities
-            freq_table = wind_rose_resample.freq_table.sum(1) # sum along wind speed dimension
+            freq_table = wind_rose_resample.freq_table.sum(1)  # sum along wind speed dimension
 
         wd_bins = wind_rose_resample.wind_directions
 
@@ -678,7 +683,6 @@ class WindTIRose(WindDataBase):
 
         return ax
 
-
     def plot_ti_over_ws(
         self,
         ax=None,
@@ -708,9 +712,9 @@ class WindTIRose(WindDataBase):
 
         # get mean TI for each wind speed by averaging along wind direction and
         # TI dimensions
-        mean_ti_values = (self.ti_grid*self.freq_table).sum((0,2))/self.freq_table.sum((0,2))
+        mean_ti_values = (self.ti_grid * self.freq_table).sum((0, 2)) / self.freq_table.sum((0, 2))
 
-        ax.plot(self.wind_speeds, mean_ti_values*100, marker=marker, ls=ls, color=color)
+        ax.plot(self.wind_speeds, mean_ti_values * 100, marker=marker, ls=ls, color=color)
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Mean Turbulence Intensity (%)")
         ax.grid(True)
@@ -972,7 +976,7 @@ class TimeSeries(WindDataBase):
 
         # Return a WindRose
         return WindRose(wd_centers, ws_centers, freq_table, ti_table, value_table)
-    
+
     def to_wind_ti_rose(
         self,
         wd_step=2.0,
@@ -981,7 +985,7 @@ class TimeSeries(WindDataBase):
         wd_edges=None,
         ws_edges=None,
         ti_edges=None,
-        bin_weights=None
+        bin_weights=None,
     ):
         """
         Converts the TimeSeries data to a WindRose.
@@ -1010,11 +1014,11 @@ class TimeSeries(WindDataBase):
             - If `ti_edges` is not defined, it determines `ti_edges` from the step and data.
         """
 
-        # If turbulence_intensities is None, a WindTIRose object cannot be created. 
+        # If turbulence_intensities is None, a WindTIRose object cannot be created.
         if self.turbulence_intensities is None:
             raise ValueError(
-                    "turbulence_intensities must be defined to export to a WindTIRose object."
-                )
+                "turbulence_intensities must be defined to export to a WindTIRose object."
+            )
 
         # If wd_edges is defined, then use it to produce the bin centers
         if wd_edges is not None:

@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -52,7 +51,7 @@ wind_ti_rose = time_series.to_wind_ti_rose()
 # Plot the wind rose
 fig, ax = plt.subplots(subplot_kw={"polar": True})
 wind_ti_rose.plot_wind_rose(ax=ax)
-wind_ti_rose.plot_wind_rose(ax=ax,wind_rose_var="ti")
+wind_ti_rose.plot_wind_rose(ax=ax, wind_rose_var="ti")
 
 # Now set up a FLORIS model and initialize it using the time series and wind rose
 fi = FlorisInterface("inputs/gch.yaml")
