@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -15,6 +14,33 @@ from floris.type_dec import (
 
 
 class UncertaintyInterface(FlorisInterface):
+    """
+    An interface for handling uncertainty in wind farm simulations.
+
+    This class inherits from FlorisInterface and provides functionality to incorporate uncertainty
+    parameters into the wind farm simulation.
+
+    Args:
+        configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.
+            The configuration should have the following inputs specified.
+                - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
+                - **farm**: See `floris.simulation.farm.Farm` for more details.
+                - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
+                - **wake**: See `floris.simulation.wake.WakeManager` for more details.
+                - **logging**: See `floris.simulation.floris.Floris` for more details.
+        wd_resolution (float, optional): The resolution of wind direction, in degrees.
+            Defaults to 1.0.
+        ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
+        ti_resolution (float, optional): The resolution of turbulence intensity. Defaults to 0.01.
+        yaw_resolution (float, optional): The resolution of yaw angle, in degrees. Defaults to 1.0.
+        power_setpoint_resolution (int, optional): The resolution of power setpoints, in kW.
+            Defaults to 100.
+        wd_std (float, optional): The standard deviation of wind direction. Defaults to 3.0.
+        wd_sample_points (list[float], optional): The sample points for wind direction.
+            If not provided, defaults to [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std].
+        verbose (bool, optional): Verbosity flag for printing messages. Defaults to False.
+
+    """
     def __init__(
         self,
         configuration: dict | str | Path,
@@ -35,7 +61,7 @@ class UncertaintyInterface(FlorisInterface):
         self.yaw_resolution = yaw_resolution
         self.power_setpoint_resolution = power_setpoint_resolution
         self.wd_std = wd_std
-        self.verbose= verbose
+        self.verbose = verbose
 
         # If wd_sample_points, default to 1 and 2 std
         if wd_sample_points is None:
@@ -47,11 +73,11 @@ class UncertaintyInterface(FlorisInterface):
         # Get the weights
         self.weights = self._get_weights(self.wd_std, self.wd_sample_points)
 
-
         # Call base init function
         super().__init__(configuration)  # Call the parent's __init__
 
-    def set(self,
+    def set(
+        self,
         wind_speeds: list[float] | NDArrayFloat | None = None,
         wind_directions: list[float] | NDArrayFloat | None = None,
         wind_shear: float | None = None,
@@ -68,27 +94,28 @@ class UncertaintyInterface(FlorisInterface):
         wind_data: type[WindDataBase] | None = None,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
-        disable_turbines: NDArrayBool | list[bool] | None = None,):
-
+        disable_turbines: NDArrayBool | list[bool] | None = None,
+    ):
         # Call the base function
-        super().set(wind_speeds=wind_speeds,
-                    wind_directions=wind_directions,
-                    wind_shear=wind_shear,
-                    wind_veer=wind_veer,
-                    reference_wind_height=reference_wind_height,
-                    turbulence_intensities=turbulence_intensities,
-                    air_density=air_density,
-                    layout_x=layout_x,
-                    layout_y=layout_y,
-                    turbine_type=turbine_type,
-                    turbine_library_path=turbine_library_path,
-                    solver_settings=solver_settings,
-                    heterogenous_inflow_config=heterogenous_inflow_config,
-                    wind_data=wind_data,
-                    yaw_angles=yaw_angles,
-                    power_setpoints=power_setpoints,
-                    disable_turbines=disable_turbines,
-                    )
+        super().set(
+            wind_speeds=wind_speeds,
+            wind_directions=wind_directions,
+            wind_shear=wind_shear,
+            wind_veer=wind_veer,
+            reference_wind_height=reference_wind_height,
+            turbulence_intensities=turbulence_intensities,
+            air_density=air_density,
+            layout_x=layout_x,
+            layout_y=layout_y,
+            turbine_type=turbine_type,
+            turbine_library_path=turbine_library_path,
+            solver_settings=solver_settings,
+            heterogenous_inflow_config=heterogenous_inflow_config,
+            wind_data=wind_data,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
 
         self._set_uncertain()
 
@@ -99,20 +126,7 @@ class UncertaintyInterface(FlorisInterface):
         Sets the underlying wind direction (wd), wind speed (ws), turbulence intensity (ti),
           yaw angle, and power setpoint for unique conditions, accounting for uncertainties.
 
-        Args:
-            wd_resolution (float, optional): Resolution for wind direction in degrees.
-                Defaults to 1.0.
-            ws_resolution (float, optional): Resolution for wind speed in m/s. Defaults to 1.0.
-            ti_resolution (float, optional): Resolution for turbulence intensity. Defaults to 0.025.
-            yaw_resolution (float, optional): Resolution for yaw angle in degrees. Defaults to 1.0.
-            power_setpoint_resolution (int, optional): Resolution for power setpoint in kW. Defaults
-                to 100.
-            wd_std (float, optional): Standard deviation for wind direction. Defaults to 3.0.
-            wd_sample_points (list, optional): Sample points for wind direction,
-                defaulting to [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std]. Defaults to None.
-            verbose (bool, optional): Whether to display information about sizes. Defaults to False.
         """
-
 
         # Grab the unexpanded values of all arrays
         # These original dimensions are what is returned
@@ -549,7 +563,6 @@ class UncertaintyInterface(FlorisInterface):
             input_array, axis=0, return_index=True, return_inverse=True
         )
 
-
         return unique_inputs, map_to_expanded_inputs
 
     def _get_weights(self, wd_std, wd_sample_points):
@@ -603,7 +616,10 @@ class UncertaintyInterface(FlorisInterface):
     ):
         raise NotImplementedError("calculate_y_plane not implemented for UncertaintyInterface")
 
-    def check_wind_condition_for_viz(self, **_,):
+    def check_wind_condition_for_viz(
+        self,
+        **_,
+    ):
         raise NotImplementedError(
             "check_wind_condition_for_viz not implemented for UncertaintyInterface"
         )
@@ -616,7 +632,10 @@ class UncertaintyInterface(FlorisInterface):
     def get_turbine_ais(self):
         raise NotImplementedError("get_turbine_ais not implemented for UncertaintyInterface")
 
-    def sample_flow_at_points(self, **_,):
+    def sample_flow_at_points(
+        self,
+        **_,
+    ):
         raise NotImplementedError("sample_flow_at_points not implemented for UncertaintyInterface")
 
     def sample_velocity_deficit_profiles(

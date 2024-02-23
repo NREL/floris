@@ -18,10 +18,10 @@ historical SCADA data and robust optimization.
 fi = FlorisInterface("inputs/gch.yaml")  # GCH model
 fi_unc_3 = UncertaintyInterface(
     "inputs/gch.yaml", verbose=True, wd_std=3
-)  # Add uncertainty with default settings
+)
 fi_unc_5 = UncertaintyInterface(
     "inputs/gch.yaml", verbose=True, wd_std=5
-)  # Add uncertainty with default settings
+)
 
 # Define a two turbine farm
 D = 126.0
