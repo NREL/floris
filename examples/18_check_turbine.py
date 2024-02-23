@@ -19,10 +19,10 @@ wind_speed_to_test_yaw = 11
 # Grab the gch model
 fi = FlorisInterface("inputs/gch.yaml")
 
-# Make one turbine sim
+# Make one turbine simulation
 fi.set(layout_x=[0], layout_y=[0])
 
-# Apply wind speeds
+# Apply wind directions and wind speeds
 fi.set(wind_speeds=ws_array, wind_directions=wd_array)
 
 # Get a list of available turbine models provided through FLORIS, and remove
