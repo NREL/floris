@@ -23,9 +23,9 @@ def test_set_run():
     retains or resets information as intended.
     """
 
-    # In FLORIS v3.2, running calculate_wake twice incorrectly set the yaw angles when the first time
-    # has non-zero yaw settings but the second run had all-zero yaw settings. The test below asserts
-    # that the yaw angles are correctly set in subsequent calls to run.
+    # In FLORIS v3.2, running calculate_wake twice incorrectly set the yaw angles when the
+    # first time has non-zero yaw settings but the second run had all-zero yaw settings.
+    # The test below asserts that the yaw angles are correctly set in subsequent calls to run.
     fi = FlorisInterface(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
     fi.set(yaw_angles=yaw_angles)
