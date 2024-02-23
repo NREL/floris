@@ -1,16 +1,10 @@
-# Copyright 2021 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
+import sys
+from pathlib import Path
 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
+from floris.turbine_library import build_cosine_loss_turbine_dict, check_smooth_power_curve
+from floris.utilities import load_yaml
 
-# See https://floris.readthedocs.io for documentation
 
 """
 This script is intended to be called with an argument and converts a turbine
@@ -22,12 +16,6 @@ python convert_turbine_yaml_v3_to_v4.py <path/to/turbine>.yaml
 The resulting turbine is placed in the same directory as the original yaml,
 and is appended _v4.
 """
-
-import sys
-from pathlib import Path
-
-from floris.turbine_library import build_cosine_loss_turbine_dict, check_smooth_power_curve
-from floris.utilities import load_yaml
 
 
 if __name__ == "__main__":
@@ -57,8 +45,8 @@ if __name__ == "__main__":
     valid_properties = [
         "generator_efficiency",
         "hub_height",
-        "pP",
-        "pT",
+        "cosine_loss_exponent_yaw",
+        "cosine_loss_exponent_tilt",
         "rotor_diameter",
         "TSR",
         "ref_air_density",
@@ -67,8 +55,11 @@ if __name__ == "__main__":
 
     turbine_properties = {k:v for k,v in v3_turbine_dict.items() if k in valid_properties}
     turbine_properties["ref_air_density"] = v3_turbine_dict["ref_density_cp_ct"]
+    turbine_properties["cosine_loss_exponent_yaw"] = v3_turbine_dict["pP"]
     if "ref_tilt_cp_ct" in v3_turbine_dict:
         turbine_properties["ref_tilt"] = v3_turbine_dict["ref_tilt_cp_ct"]
+    if "pT" in v3_turbine_dict:
+        turbine_properties["cosine_loss_exponent_tilt"] = v3_turbine_dict["pT"]
 
     # Convert to v4 and print new yaml
     v4_turbine_dict = build_cosine_loss_turbine_dict(

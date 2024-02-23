@@ -1,16 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import numpy as np
 
@@ -122,6 +109,49 @@ yaw_added_recovery_baseline = np.array(
         ],
     ]
 )
+
+full_flow_baseline = np.array(
+    [
+        [
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772293, 7.99999928, 8.10178747],
+                [7.81808498, 7.92586259, 8.02673494],
+                [4.62773192, 4.52940667, 4.58832122],
+                [7.81808498, 7.92586259, 8.02673494],
+                [7.88772293, 7.99999928, 8.10178747],
+            ],
+            [
+                [7.88732914, 7.99958427, 8.10136238],
+                [7.6048457 , 7.7024654 , 7.79800687],
+                [5.17186918, 5.14573321, 5.19139623],
+                [7.6048457 , 7.7024654 , 7.79800687],
+                [7.88732914, 7.99958427, 8.10136238],
+            ],
+            [
+                [7.87212701, 7.9839635 , 8.08549222],
+                [7.407898  , 7.50191936, 7.59393585],
+                [5.63364686, 5.64936831, 5.70257783],
+                [7.407898  , 7.50191936, 7.59393585],
+                [7.87212701, 7.9839635 , 8.08549222],
+            ],
+            [
+                [7.83291702, 7.94434682, 8.04564378],
+                [7.37290675, 7.47263397, 7.56667866],
+                [6.4654506 , 6.52687795, 6.59629865],
+                [7.37290675, 7.47263397, 7.56667866],
+                [7.83291702, 7.94434682, 8.04564378],
+            ],
+        ]
+    ]
+)
+
 
 # Note: compare the yawed vs non-yawed results. The upstream turbine
 # power should be lower in the yawed case. The following turbine
@@ -605,3 +635,33 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     assert np.allclose(farm_powers[8,0:5], farm_powers[8,15:20])
     assert np.allclose(farm_powers[8,20], farm_powers[8,0])
     assert np.allclose(farm_powers[8,21], farm_powers[8,21:25])
+
+
+def test_full_flow_solver(sample_inputs_fixture):
+    """
+    Full flow solver test with the flow field planar grid.
+    This requires one wind condition, and the grid is deliberately coarse to allow for
+    visually comparing results, as needed.
+    The u-component of velocity is compared, and the array has the shape
+    (n_findex, n_turbines, n grid points in x, n grid points in y, 3 grid points in z).
+    """
+
+    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["turbulence_model"] = TURBULENCE_MODEL
+    sample_inputs_fixture.floris["solver"] = {
+        "type": "flow_field_planar_grid",
+        "normal_vector": "z",
+        "planar_coordinate": sample_inputs_fixture.floris["farm"]["turbine_type"][0]["hub_height"],
+        "flow_field_grid_points": [5, 5],
+        "flow_field_bounds": [None, None],
+    }
+    sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0]
+    sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
+
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris.solve_for_viz()
+
+    velocities = floris.flow_field.u_sorted
+
+    assert_results_arrays(velocities, full_flow_baseline)

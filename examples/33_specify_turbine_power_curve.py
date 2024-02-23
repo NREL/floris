@@ -1,17 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -45,8 +31,8 @@ turbine_dict = build_cosine_loss_turbine_dict(
     file_name=None,
     generator_efficiency=1,
     hub_height=90,
-    pP=1.88,
-    pT=1.88,
+    cosine_loss_exponent_yaw=1.88,
+    cosine_loss_exponent_tilt=1.88,
     rotor_diameter=126,
     TSR=8,
     ref_air_density=1.225,

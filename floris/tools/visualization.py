@@ -1,16 +1,4 @@
-# Copyright 2021 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 from __future__ import annotations
 
 import copy
@@ -535,12 +523,21 @@ def calculate_horizontal_plane_with_turbines(
         # Grab the turbine layout
         layout_x = copy.deepcopy(fi.layout_x)
         layout_y = copy.deepcopy(fi.layout_y)
-        D = np.unique(fi.floris.farm.rotor_diameters_sorted)[0]
+        turbine_types = copy.deepcopy(fi.floris.farm.turbine_type)
+        D = fi.floris.farm.rotor_diameters_sorted[0, 0]
 
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
-        yaw_angles = np.append(yaw_angles, [[0.0]], axis=1)
+
+        # Declare turbine types with an extra turbine in
+        # case of special one type useage
+        if len(layout_x) > 1 and len(turbine_types) == 1:
+            # Convert to list length len(layout_x) + 1
+            turbine_types_test = [turbine_types[0] for i in range(len(layout_x))] + ['nrel_5MW']
+        else:
+            turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
+        yaw_angles = np.append(yaw_angles, np.zeros([fi.floris.flow_field.n_findex, 1]), axis=1)
 
         # Get a grid of points test test
         if x_bounds is None:
@@ -572,7 +569,11 @@ def calculate_horizontal_plane_with_turbines(
                 # Place the test turbine at this location and calculate wake
                 layout_x_test[-1] = x
                 layout_y_test[-1] = y
-                fi.reinitialize(layout_x = layout_x_test, layout_y = layout_y_test)
+                fi.reinitialize(
+                    layout_x=layout_x_test,
+                    layout_y=layout_y_test,
+                    turbine_type=turbine_types_test
+                )
                 fi.calculate_wake(yaw_angles=yaw_angles)
 
                 # Get the velocity of that test turbines central point

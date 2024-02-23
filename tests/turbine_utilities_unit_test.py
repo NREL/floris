@@ -1,21 +1,9 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import os
 from pathlib import Path
 
 import numpy as np
+import pytest
 import yaml
 
 from floris.turbine_library import build_cosine_loss_turbine_dict, check_smooth_power_curve
@@ -38,13 +26,29 @@ def test_build_turbine_dict():
         "test_turbine",
         generator_efficiency=turbine_data_v3["generator_efficiency"],
         hub_height=turbine_data_v3["hub_height"],
-        pP=turbine_data_v3["pP"],
-        pT=turbine_data_v3["pT"],
+        cosine_loss_exponent_yaw=turbine_data_v3["pP"],
+        cosine_loss_exponent_tilt=turbine_data_v3["pT"],
         rotor_diameter=turbine_data_v3["rotor_diameter"],
         TSR=turbine_data_v3["TSR"],
         ref_air_density=turbine_data_v3["ref_density_cp_ct"],
         ref_tilt=turbine_data_v3["ref_tilt_cp_ct"]
     )
+
+    # Test correct error raised if power_coefficient version passed and generator efficiency
+    # not specified
+    with pytest.raises(KeyError):
+        build_cosine_loss_turbine_dict(
+            turbine_data_dict,
+            "test_turbine",
+            #generator_efficiency=turbine_data_v3["generator_efficiency"],
+            hub_height=turbine_data_v3["hub_height"],
+            cosine_loss_exponent_yaw=turbine_data_v3["pP"],
+            cosine_loss_exponent_tilt=turbine_data_v3["pT"],
+            rotor_diameter=turbine_data_v3["rotor_diameter"],
+            TSR=turbine_data_v3["TSR"],
+            ref_air_density=turbine_data_v3["ref_density_cp_ct"],
+            ref_tilt=turbine_data_v3["ref_tilt_cp_ct"]
+        )
 
     # Directly compute power, thrust values
     Cp = np.array(turbine_data_v3["power_thrust_table"]["power"])
@@ -85,10 +89,9 @@ def test_build_turbine_dict():
     test_dict_2 = build_cosine_loss_turbine_dict(
         turbine_data_dict,
         "test_turbine",
-        generator_efficiency=turbine_data_v4["generator_efficiency"],
         hub_height=turbine_data_v4["hub_height"],
-        pP=turbine_data_v4["power_thrust_table"]["pP"],
-        pT=turbine_data_v4["power_thrust_table"]["pT"],
+        cosine_loss_exponent_yaw=turbine_data_v4["power_thrust_table"]["cosine_loss_exponent_yaw"],
+        cosine_loss_exponent_tilt=turbine_data_v4["power_thrust_table"]["cosine_loss_exponent_tilt"],
         rotor_diameter=turbine_data_v4["rotor_diameter"],
         TSR=turbine_data_v4["TSR"],
         ref_air_density=turbine_data_v4["power_thrust_table"]["ref_air_density"],

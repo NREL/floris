@@ -1,17 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import os
 from pathlib import Path
@@ -45,10 +31,15 @@ def test_turbine_init():
     assert turbine.turbine_type == turbine_data["turbine_type"]
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
     assert turbine.hub_height == turbine_data["hub_height"]
-    assert turbine.power_thrust_table["pP"] == turbine_data["power_thrust_table"]["pP"]
-    assert turbine.power_thrust_table["pT"] == turbine_data["power_thrust_table"]["pT"]
+    assert (
+        turbine.power_thrust_table["cosine_loss_exponent_yaw"]
+        == turbine_data["power_thrust_table"]["cosine_loss_exponent_yaw"]
+    )
+    assert (
+        turbine.power_thrust_table["cosine_loss_exponent_tilt"]
+        == turbine_data["power_thrust_table"]["cosine_loss_exponent_tilt"]
+    )
     assert turbine.TSR == turbine_data["TSR"]
-    assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
     assert (
         turbine.power_thrust_table["ref_air_density"]
         == turbine_data["power_thrust_table"]["ref_air_density"]

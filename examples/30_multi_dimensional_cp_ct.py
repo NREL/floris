@@ -1,17 +1,3 @@
-# Copyright 2023 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import numpy as np
 
@@ -33,8 +19,7 @@ contains two additional conditions to define Cp/Ct values for: Tp for wave perio
 height. For every combination of Tp and Hs defined, a Cp/Ct/Wind speed table of values is also
 defined. It is required for this .csv file to have the last 3 columns be ws, Cp, and Ct. In order
 for this table to be used, the flag 'multi_dimensional_cp_ct' must be present and set to true in
-the turbine definition. Also of note is the 'velocity_model' must be set to 'multidim_cp_ct' in
-the main input file. With both of these values provided, the solver will downselect to use the
+the turbine definition. With this flag enabled, the solver will downselect to use the
 interpolant defined at the closest conditions. The user must supply these conditions in the
 main input file under the 'flow_field' section, e.g.:
 
