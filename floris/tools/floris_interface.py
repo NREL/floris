@@ -1010,7 +1010,7 @@ class FlorisInterface(LoggingManager):
                 wind_directions=wind_directions_subset,
             )
             if no_wake:
-                self.calculate_no_wake()
+                self.run_no_wake()
             else:
                 self.run()
             farm_power[conditions_to_evaluate] = self.get_farm_power(
