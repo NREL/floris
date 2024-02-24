@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-from floris.simulation import (
+from floris.core import (
     Farm,
     Floris,
     FlowField,

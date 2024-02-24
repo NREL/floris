@@ -1,7 +1,7 @@
 import numpy as np
 
-from floris.simulation import Turbine
-from floris.simulation.rotor_velocity import (
+from floris.core import Turbine
+from floris.core.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
     compute_tilt_angles_for_floating_turbines_map,

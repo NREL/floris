@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from floris.simulation import (
+from floris.core import (
     average_velocity,
     axial_induction,
     Floris,

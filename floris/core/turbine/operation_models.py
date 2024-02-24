@@ -13,8 +13,8 @@ import numpy as np
 from attrs import define, field
 from scipy.interpolate import interp1d
 
-from floris.simulation import BaseClass
-from floris.simulation.rotor_velocity import (
+from floris.core import BaseClass
+from floris.core.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
     rotor_velocity_tilt_correction,

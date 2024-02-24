@@ -2,7 +2,7 @@
 import numpy as np
 from attrs import define
 
-from floris.simulation import BaseModel
+from floris.core import BaseModel
 
 
 @define

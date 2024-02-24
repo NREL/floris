@@ -3,7 +3,7 @@ import copy
 
 import numpy as np
 
-from floris.tools import FlorisInterface, ParallelComputingInterface
+from floris import FlorisInterface, ParallelComputingInterface
 from tests.conftest import (
     assert_results_arrays,
 )

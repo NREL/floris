@@ -9,7 +9,7 @@ from attrs import define, field
 from scipy import integrate
 from scipy.interpolate import RegularGridInterpolator
 
-from floris.simulation import (
+from floris.core import (
     BaseModel,
     Farm,
     FlowField,

@@ -5,7 +5,7 @@ import numexpr as ne
 import numpy as np
 from attrs import define, field
 
-from floris.simulation import (
+from floris.core import (
     BaseModel,
     Farm,
     FlowField,
@@ -64,13 +64,13 @@ class JimenezVelocityDeflection(BaseModel):
             y_locations (np.array): spanwise locations in wake
             z_locations (np.array): vertical locations in wake
                 (not used in Jiménez)
-            turbine (:py:class:`floris.simulation.turbine.Turbine`):
+            turbine (:py:class:`floris.core.turbine.Turbine`):
                 Turbine object
             coord
-                (:py:meth:`floris.simulation.turbine_map.TurbineMap.coords`):
+                (:py:meth:`floris.core.turbine_map.TurbineMap.coords`):
                 Spatial coordinates of wind turbine.
             flow_field
-                (:py:class:`floris.simulation.flow_field.FlowField`):
+                (:py:class:`floris.core.flow_field.FlowField`):
                 Flow field object.
 
         Returns:

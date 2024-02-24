@@ -12,7 +12,7 @@ from attrs import (
 )
 from numpy import pi
 
-from floris.simulation import (
+from floris.core import (
     BaseModel,
     Farm,
     FlowField,

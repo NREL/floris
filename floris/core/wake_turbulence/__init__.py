@@ -1,4 +1,4 @@
 
-from floris.simulation.wake_turbulence.crespo_hernandez import CrespoHernandez
-from floris.simulation.wake_turbulence.none import NoneWakeTurbulence
-from floris.simulation.wake_turbulence.wake_induced_mixing import WakeInducedMixing
+from floris.core.wake_turbulence.crespo_hernandez import CrespoHernandez
+from floris.core.wake_turbulence.none import NoneWakeTurbulence
+from floris.core.wake_turbulence.wake_induced_mixing import WakeInducedMixing

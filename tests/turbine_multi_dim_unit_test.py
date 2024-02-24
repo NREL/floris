@@ -5,11 +5,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from floris.simulation import (
+from floris.core import (
     Turbine,
 )
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
-from floris.simulation.turbine.turbine import (
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.core.turbine.turbine import (
     axial_induction,
     power,
     thrust_coefficient,

@@ -8,19 +8,19 @@ import numpy as np
 import pandas as pd
 
 from floris.logging_manager import LoggingManager
-from floris.simulation import Floris, State
-from floris.simulation.rotor_velocity import average_velocity
-from floris.simulation.turbine.operation_models import (
+from floris.core import Floris, State
+from floris.core.rotor_velocity import average_velocity
+from floris.core.turbine.operation_models import (
     POWER_SETPOINT_DEFAULT,
     POWER_SETPOINT_DISABLED,
 )
-from floris.simulation.turbine.turbine import (
+from floris.core.turbine.turbine import (
     axial_induction,
     power,
     thrust_coefficient,
 )
-from floris.tools.cut_plane import CutPlane
-from floris.tools.wind_data import WindDataBase
+from floris.cut_plane import CutPlane
+from floris.wind_data import WindDataBase
 from floris.type_dec import (
     floris_array_converter,
     NDArrayBool,

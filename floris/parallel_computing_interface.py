@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 
 from floris.logging_manager import LoggingManager
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
-from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInterface
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris.uncertainty_interface import FlorisInterface, UncertaintyInterface
 
 
 def _load_local_floris_object(

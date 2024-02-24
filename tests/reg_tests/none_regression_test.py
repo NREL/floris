@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from floris.simulation import (
+from floris.core import (
     average_velocity,
     axial_induction,
     Floris,

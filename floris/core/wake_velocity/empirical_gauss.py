@@ -5,14 +5,14 @@ import numexpr as ne
 import numpy as np
 from attrs import define, field
 
-from floris.simulation import (
+from floris.core import (
     BaseModel,
     Farm,
     FlowField,
     Grid,
     Turbine,
 )
-from floris.simulation.wake_velocity.gauss import gaussian_function
+from floris.core.wake_velocity.gauss import gaussian_function
 from floris.utilities import (
     cosd,
     sind,

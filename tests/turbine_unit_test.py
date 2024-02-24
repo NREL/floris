@@ -7,14 +7,14 @@ import numpy as np
 import pytest
 import yaml
 
-from floris.simulation import (
+from floris.core import (
     average_velocity,
     axial_induction,
     power,
     thrust_coefficient,
     Turbine,
 )
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 

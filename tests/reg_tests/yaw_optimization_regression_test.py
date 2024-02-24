@@ -2,12 +2,12 @@
 import numpy as np
 import pandas as pd
 
-from floris.tools import FlorisInterface
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
+from floris import FlorisInterface
+from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_scipy import YawOptimizationScipy
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris.optimization.yaw_optimization.yaw_optimizer_scipy import YawOptimizationScipy
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 DEBUG = False

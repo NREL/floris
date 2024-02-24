@@ -1,5 +1,5 @@
 
-from floris.simulation import WakeModelManager
+from floris.core import WakeModelManager
 from tests.conftest import SampleInputs
 
 

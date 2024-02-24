@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 import yaml
 
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
-from floris.tools.floris_interface import FlorisInterface
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.floris_interface import FlorisInterface
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"

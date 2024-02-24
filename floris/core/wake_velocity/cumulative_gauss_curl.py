@@ -5,7 +5,7 @@ import numpy as np
 from attrs import define, field
 from scipy.special import gamma
 
-from floris.simulation import (
+from floris.core import (
     BaseModel,
     Farm,
     FlowField,

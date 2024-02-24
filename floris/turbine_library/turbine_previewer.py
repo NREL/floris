@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from attrs import define, field
 
-from floris.simulation.turbine.turbine import (
+from floris.core.turbine.turbine import (
     power,
     thrust_coefficient,
     Turbine,

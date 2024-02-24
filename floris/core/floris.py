@@ -9,7 +9,7 @@ import yaml
 from attrs import define, field
 
 from floris import logging_manager
-from floris.simulation import (
+from floris.core import (
     BaseClass,
     cc_solver,
     empirical_gauss_solver,

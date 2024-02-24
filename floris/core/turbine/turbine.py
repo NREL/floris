@@ -11,8 +11,8 @@ import pandas as pd
 from attrs import define, field
 from scipy.interpolate import interp1d
 
-from floris.simulation import BaseClass
-from floris.simulation.turbine import (
+from floris.core import BaseClass
+from floris.core.turbine import (
     CosineLossTurbine,
     MixedOperationTurbine,
     SimpleDeratingTurbine,

@@ -9,7 +9,7 @@ from attrs import (
     fields,
 )
 
-from floris.simulation import (
+from floris.core import (
     BaseModel,
     Farm,
     FlowField,

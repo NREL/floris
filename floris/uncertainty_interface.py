@@ -5,7 +5,7 @@ import numpy as np
 from scipy.stats import norm
 
 from floris.logging_manager import LoggingManager
-from floris.tools import FlorisInterface
+from floris import FlorisInterface
 from floris.utilities import wrap_360
 
 

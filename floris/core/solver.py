@@ -5,7 +5,7 @@ import copy
 
 import numpy as np
 
-from floris.simulation import (
+from floris.core import (
     axial_induction,
     Farm,
     FlowField,
@@ -15,10 +15,10 @@ from floris.simulation import (
     thrust_coefficient,
     TurbineGrid,
 )
-from floris.simulation.rotor_velocity import average_velocity
-from floris.simulation.wake import WakeModelManager
-from floris.simulation.wake_deflection.empirical_gauss import yaw_added_wake_mixing
-from floris.simulation.wake_deflection.gauss import (
+from floris.core.rotor_velocity import average_velocity
+from floris.core.wake import WakeModelManager
+from floris.core.wake_deflection.empirical_gauss import yaw_added_wake_mixing
+from floris.core.wake_deflection.gauss import (
     calculate_transverse_velocity,
     wake_added_yaw,
     yaw_added_turbulence_mixing,

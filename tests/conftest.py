@@ -6,7 +6,7 @@ import copy
 import numpy as np
 import pytest
 
-from floris.simulation import (
+from floris.core import (
     Floris,
     FlowField,
     FlowFieldGrid,

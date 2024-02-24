@@ -4,7 +4,7 @@ from typing import Any, Dict
 import numpy as np
 from attrs import define, field
 
-from floris.simulation import (
+from floris.core import (
     BaseModel,
     FlowField,
     Grid,

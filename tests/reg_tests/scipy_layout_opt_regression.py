@@ -2,8 +2,8 @@
 import numpy as np
 import pandas as pd
 
-from floris.tools import FlorisInterface
-from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
+from floris import FlorisInterface
+from floris.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
 from tests.conftest import (

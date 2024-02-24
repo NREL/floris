@@ -15,13 +15,13 @@ import numpy as np
 from attrs import define, field
 from scipy.interpolate import interp1d
 
-from floris.simulation import (
+from floris.core import (
     BaseClass,
     State,
     Turbine,
 )
-from floris.simulation.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.core.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,

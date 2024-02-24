@@ -9,7 +9,7 @@ from scipy.interpolate import LinearNDInterpolator
 from scipy.spatial import ConvexHull
 from shapely.geometry import Polygon
 
-from floris.simulation import (
+from floris.core import (
     BaseClass,
     Grid,
 )

@@ -15,10 +15,10 @@ from attrs import define, field
 from matplotlib import rcParams
 from scipy.spatial import ConvexHull
 
-from floris.simulation import Floris
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
-from floris.tools.cut_plane import CutPlane
-from floris.tools.floris_interface import FlorisInterface
+from floris.core import Floris
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.cut_plane import CutPlane
+from floris.floris_interface import FlorisInterface
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,

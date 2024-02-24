@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from floris.simulation import FlowField, TurbineGrid
+from floris.core import FlowField, TurbineGrid
 from tests.conftest import N_FINDEX, N_TURBINES
 
 
