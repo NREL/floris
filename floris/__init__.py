@@ -29,7 +29,7 @@ Examples:
     'visualization']
 """
 
-from .floris_interface import FlorisInterface
+from .floris import Floris
 from .parallel_computing_interface import ParallelComputingInterface
 from .uncertainty_interface import UncertaintyInterface
 from .visualization import (

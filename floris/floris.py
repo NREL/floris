@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from floris.logging_manager import LoggingManager
-from floris.core import Floris, State
+from floris.core import Core, State
 from floris.core.rotor_velocity import average_velocity
 from floris.core.turbine.operation_models import (
     POWER_SETPOINT_DEFAULT,
@@ -28,7 +28,7 @@ from floris.type_dec import (
 )
 
 
-class FlorisInterface(LoggingManager):
+class Floris(LoggingManager):
     """
     FlorisInterface provides a high-level user interface to many of the
     underlying methods within the FLORIS framework. It is meant to act as a
@@ -50,18 +50,18 @@ class FlorisInterface(LoggingManager):
 
         if isinstance(self.configuration, (str, Path)):
             try:
-                self.floris = Floris.from_file(self.configuration)
+                self.floris = Core.from_file(self.configuration)
             except FileNotFoundError:
                 # If the file cannot be found, then attempt the configuration path relative to the
                 # file location from which FlorisInterface was attempted to be run. If successful,
                 # update self.configuration to an absolute, working file path and name.
                 base_fn = Path(inspect.stack()[-1].filename).resolve().parent
                 config = (base_fn / self.configuration).resolve()
-                self.floris = Floris.from_file(config)
+                self.floris = Core.from_file(config)
                 self.configuration = config
 
         elif isinstance(self.configuration, dict):
-            self.floris = Floris.from_dict(self.configuration)
+            self.floris = Core.from_dict(self.configuration)
 
         else:
             raise TypeError("The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
@@ -109,7 +109,7 @@ class FlorisInterface(LoggingManager):
 
     def copy(self):
         """Create an independent copy of the current FlorisInterface object"""
-        return FlorisInterface(self.floris.as_dict())
+        return Core(self.floris.as_dict())
 
     def set(
         self,
@@ -334,7 +334,7 @@ class FlorisInterface(LoggingManager):
         floris_dict["farm"] = farm_dict
 
         # Create a new instance of floris and attach to self
-        self.floris = Floris.from_dict(floris_dict)
+        self.floris = Core.from_dict(floris_dict)
 
     def _set_operation(
         self,
@@ -587,7 +587,7 @@ class FlorisInterface(LoggingManager):
         )
 
         # Reset the fi object back to the turbine grid configuration
-        self.floris = Floris.from_dict(floris_dict)
+        self.floris = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.run()
@@ -669,7 +669,7 @@ class FlorisInterface(LoggingManager):
         cross_plane = CutPlane(df, y_resolution, z_resolution, "x")
 
         # Reset the fi object back to the turbine grid configuration
-        self.floris = Floris.from_dict(floris_dict)
+        self.floris = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.run()
@@ -763,7 +763,7 @@ class FlorisInterface(LoggingManager):
         y_plane = CutPlane(df, x_resolution, z_resolution, "y")
 
         # Reset the fi object back to the turbine grid configuration
-        self.floris = Floris.from_dict(floris_dict)
+        self.floris = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.run()

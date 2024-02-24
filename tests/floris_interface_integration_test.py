@@ -5,7 +5,7 @@ import pytest
 import yaml
 
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
-from floris.floris_interface import FlorisInterface
+from floris import Floris
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
@@ -13,8 +13,8 @@ YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 
 def test_read_yaml():
-    fi = FlorisInterface(configuration=YAML_INPUT)
-    assert isinstance(fi, FlorisInterface)
+    fi = Floris(configuration=YAML_INPUT)
+    assert isinstance(fi, Floris)
 
 def test_set_run():
     """
@@ -26,7 +26,7 @@ def test_set_run():
     # In FLORIS v3.2, running calculate_wake twice incorrectly set the yaw angles when the
     # first time has non-zero yaw settings but the second run had all-zero yaw settings.
     # The test below asserts that the yaw angles are correctly set in subsequent calls to run.
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
     fi.set(yaw_angles=yaw_angles)
     fi.run()
@@ -93,7 +93,7 @@ def test_set_run():
 
 def test_reset_operation():
     # Calling the reset function should reset the power setpoints to the default values
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
     power_setpoints = 1e6 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
     fi.set(power_setpoints=power_setpoints, yaw_angles=yaw_angles)
@@ -119,7 +119,7 @@ def test_run_no_wake():
     # In FLORIS v3.2, running calculate_no_wake twice incorrectly set the yaw angles when the first
     # time has non-zero yaw settings but the second run had all-zero yaw settings. The test below
     # asserts that the yaw angles are correctly set in subsequent calls to run_no_wake.
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
     fi.set(yaw_angles=yaw_angles)
     fi.run_no_wake()
@@ -142,7 +142,7 @@ def test_get_turbine_powers():
     # Get turbine powers should return n_findex x n_turbine powers
     # Apply the same wind speed and direction multiple times and confirm all equal
 
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
 
     wind_speeds = np.array([8.0, 8.0, 8.0])
     wind_directions = np.array([270.0, 270.0, 270.0])
@@ -168,7 +168,7 @@ def test_get_turbine_powers():
     assert turbine_powers[0, 0] == turbine_powers[1, 0]
 
 def test_get_farm_power():
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
 
     wind_speeds = np.array([8.0, 8.0, 8.0])
     wind_directions = np.array([270.0, 270.0, 270.0])
@@ -217,7 +217,7 @@ def test_get_farm_power():
 
 def test_disable_turbines():
 
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
 
     # Set to mixed turbine model
     with open(
@@ -304,7 +304,7 @@ def test_disable_turbines():
     assert (fi.floris.farm.yaw_angles == np.array([[1.0, 0.0, 1.0], [1.0, 0.0, 1.0]])).all()
 
 def test_get_farm_aep():
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
 
     wind_speeds = np.array([8.0, 8.0, 8.0])
     wind_directions = np.array([270.0, 270.0, 270.0])
@@ -337,7 +337,7 @@ def test_get_farm_aep():
     np.testing.assert_allclose(farm_aep, aep)
 
 def test_get_farm_aep_with_conditions():
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
 
     wind_speeds = np.array([5.0, 8.0, 8.0, 8.0, 20.0])
     wind_directions = np.array([270.0, 270.0, 270.0, 270.0, 270.0])
@@ -379,7 +379,7 @@ def test_get_farm_aep_with_conditions():
     assert n_findex == fi.floris.flow_field.n_findex
 
 def test_set_ti():
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi = Floris(configuration=YAML_INPUT)
 
     # Set wind directions, wind speeds and turbulence intensities with n_findex = 3
     fi.set(

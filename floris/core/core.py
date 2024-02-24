@@ -38,7 +38,7 @@ from floris.utilities import (
 
 
 @define
-class Floris(BaseClass):
+class Core(BaseClass):
     """
     Top-level class that describes a Floris model and initializes the
     simulation. Use the :py:class:`~.simulation.farm.Farm` attribute to
@@ -336,7 +336,7 @@ class Floris(BaseClass):
     ## I/O
 
     @classmethod
-    def from_file(cls, input_file_path: str | Path) -> Floris:
+    def from_file(cls, input_file_path: str | Path) -> Core:
         """Creates a `Floris` instance from an input file. Must be filetype YAML.
 
         Args:
@@ -348,7 +348,7 @@ class Floris(BaseClass):
         """
         input_dict = load_yaml(Path(input_file_path).resolve())
         check_input_file_for_v3_keys(input_dict)
-        return Floris.from_dict(input_dict)
+        return Core.from_dict(input_dict)
 
     def to_file(self, output_file_path: str) -> None:
         """Converts the `Floris` object to an input-ready YAML file at `output_file_path`.

@@ -15,10 +15,10 @@ from attrs import define, field
 from matplotlib import rcParams
 from scipy.spatial import ConvexHull
 
-from floris.core import Floris
+from floris.core import Core
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.cut_plane import CutPlane
-from floris.floris_interface import FlorisInterface
+from floris import Floris
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,
@@ -70,7 +70,7 @@ def plot_turbines(
 
 
 def plot_turbines_with_fi(
-    fi: FlorisInterface,
+    fi: Floris,
     ax: plt.Axes = None,
     color: str = None,
     wd: np.ndarray = None,
@@ -112,7 +112,7 @@ def plot_turbines_with_fi(
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
-def add_turbine_id_labels(fi: FlorisInterface, ax: plt.Axes, **kwargs):
+def add_turbine_id_labels(fi: Floris, ax: plt.Axes, **kwargs):
     """
     Adds index labels to a plot based on the given FlorisInterface.
     See the pyplot.annotate docs for more info:

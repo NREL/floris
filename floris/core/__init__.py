@@ -55,7 +55,7 @@ from .solver import (
     sequential_solver,
     turbopark_solver,
 )
-from .floris import Floris
+from .core import Core
 
 # initialize the logger
 floris.logging_manager._setup_logger()
