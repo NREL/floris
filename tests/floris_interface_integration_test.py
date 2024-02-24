@@ -284,7 +284,7 @@ def test_disable_turbines():
     fi.run()
     power_with_middle_disabled = fi.get_turbine_powers()
 
-    disable_turbines = np.zeros((2, 3), dtype=bool)
+    disable_turbines = np.zeros((2, 2), dtype=bool)
     fi.set(layout_x=[0,2000], layout_y=[0, 0], disable_turbines=disable_turbines)
     fi.run()
     power_with_middle_removed = fi.get_turbine_powers()
