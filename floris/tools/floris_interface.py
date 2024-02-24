@@ -1256,3 +1256,17 @@ class FlorisInterface(LoggingManager):
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
+
+    ### v3 functions that are removed - raise an error if used
+
+    def calculate_wake(self):
+        raise NotImplementedError(
+            "The calculate_wake method has been removed. Please use the run method. "
+            "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+        )
+    
+    def reinitialize(self):
+        raise NotImplementedError(
+            "The reinitialize method has been removed. Please use the set method. "
+            "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+        )
