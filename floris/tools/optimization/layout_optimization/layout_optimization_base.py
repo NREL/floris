@@ -34,14 +34,16 @@ class LayoutOptimization(LoggingManager):
 
         # If wind_data is None, make a simple time series object off the fi
         if wind_data is None:
-            wind_data = TimeSeries(wind_directions=fi.floris.flow_field.wind_directions,
-                                wind_speeds=fi.floris.flow_field.wind_speeds,
-                                turbulence_intensities=fi.floris.flow_field.turbulence_intensities)
+            wind_data = TimeSeries(
+                wind_directions=fi.floris.flow_field.wind_directions,
+                wind_speeds=fi.floris.flow_field.wind_speeds,
+                turbulence_intensities=fi.floris.flow_field.turbulence_intensities,
+            )
         else:
             if (not isinstance(wind_data, WindDataBase)):
                 raise ValueError(
                     "wind_data entry is not an object of WindDataBase"
-                     " (eg TimeSeries, WindRose, WindTIRose)"
+                    " (eg TimeSeries, WindRose, WindTIRose)"
                 )
         self.wind_data = wind_data
 
