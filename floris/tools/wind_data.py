@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from abc import abstractmethod
@@ -57,9 +56,9 @@ class WindDataBase:
 
 class WindRose(WindDataBase):
     """
-    In FLORIS v4, the WindRose class is used to drive FLORIS and optimization
-    operations in which the inflow is characterized by the frequency of
-    binned wind speed, wind direction and turbulence intensity values
+    The WindRose class is used to drive FLORIS and optimization operations in
+    which the inflow is characterized by the frequency of binned wind speed and
+    wind direction values.
 
     Args:
         wind_directions: NumPy array of wind directions (NDArrayFloat).
@@ -383,23 +382,355 @@ class WindRose(WindDataBase):
         if ax is None:
             _, ax = plt.subplots()
 
-        ax.plot(self.ws_flat, self.ti_table_flat*100, marker=marker, ls=ls, color=color)
+        ax.plot(self.ws_flat, self.ti_table_flat * 100, marker=marker, ls=ls, color=color)
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Turbulence Intensity (%)")
         ax.grid(True)
 
 
-class TimeSeries(WindDataBase):
+class WindTIRose(WindDataBase):
     """
-    In FLORIS v4, the TimeSeries class is used to drive FLORIS and optimization
-    operations in which the inflow is by a sequence of wind direction, wind speed
-    and turbulence intensity values
+    WindTIRose is similar to the WindRose class, but contains turbulence
+    intensity as an additional wind rose dimension instead of being defined
+    as a function of wind direction and wind speed. The class is used to drive
+    FLORIS and optimization operations in which the inflow is characterized by
+    the frequency of binned wind speed, wind direction, and turbulence intensity
+    values.
 
     Args:
         wind_directions: NumPy array of wind directions (NDArrayFloat).
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
-        turbulence_intensities:  NumPy array of wind speeds (NDArrayFloat, optional).
-            Defaults to None
+        turbulence_intensities: NumPy array of turbulence intensities (NDArrayFloat).
+        freq_table: Frequency table for binned wind direction, wind speed, and
+            turbulence intensity values (NDArrayFloat, optional). Must have
+            dimension (n_wind_directions, n_wind_speeds, n_turbulence_intensities).
+            Defaults to None in which case uniform frequency of all bins is
+            assumed.
+        value_table: Value table for binned wind direction, wind
+            speed, and turbulence intensity values (NDArrayFloat, optional).
+            Must have dimension (n_wind_directions, n_wind_speeds,
+            n_turbulence_intensities). Defaults to None in which case uniform
+            values are assumed. Value can be used to weight power in each bin
+            to compute the total value of the energy produced.
+        compute_zero_freq_occurrence: Flag indicating whether to compute zero
+            frequency occurrences (bool, optional).  Defaults to False.
+
+    """
+
+    def __init__(
+        self,
+        wind_directions: NDArrayFloat,
+        wind_speeds: NDArrayFloat,
+        turbulence_intensities: NDArrayFloat,
+        freq_table: NDArrayFloat | None = None,
+        value_table: NDArrayFloat | None = None,
+        compute_zero_freq_occurrence: bool = False,
+    ):
+        if not isinstance(wind_directions, np.ndarray):
+            raise TypeError("wind_directions must be a NumPy array")
+
+        if not isinstance(wind_speeds, np.ndarray):
+            raise TypeError("wind_speeds must be a NumPy array")
+
+        if not isinstance(turbulence_intensities, np.ndarray):
+            raise TypeError("turbulence_intensities must be a NumPy array")
+
+        # Save the wind speeds and directions
+        self.wind_directions = wind_directions
+        self.wind_speeds = wind_speeds
+        self.turbulence_intensities = turbulence_intensities
+
+        # If freq_table is not None, confirm it has correct dimension,
+        # otherwise initialize to uniform probability
+        if freq_table is not None:
+            if not freq_table.shape[0] == len(wind_directions):
+                raise ValueError("freq_table first dimension must equal len(wind_directions)")
+            if not freq_table.shape[1] == len(wind_speeds):
+                raise ValueError("freq_table second dimension must equal len(wind_speeds)")
+            if not freq_table.shape[2] == len(turbulence_intensities):
+                raise ValueError(
+                    "freq_table third dimension must equal len(turbulence_intensities)"
+                )
+            self.freq_table = freq_table
+        else:
+            self.freq_table = np.ones(
+                (len(wind_directions), len(wind_speeds), len(turbulence_intensities))
+            )
+
+        # Normalize freq table
+        self.freq_table = self.freq_table / np.sum(self.freq_table)
+
+        # If value_table is not None, confirm it has correct dimension,
+        # otherwise initialize to all ones
+        if value_table is not None:
+            if not value_table.shape[0] == len(wind_directions):
+                raise ValueError("value_table first dimension must equal len(wind_directions)")
+            if not value_table.shape[1] == len(wind_speeds):
+                raise ValueError("value_table second dimension must equal len(wind_speeds)")
+            if not value_table.shape[2] == len(turbulence_intensities):
+                raise ValueError(
+                    "value_table third dimension must equal len(turbulence_intensities)"
+                )
+        self.value_table = value_table
+
+        # Save whether zero occurrence cases should be computed
+        self.compute_zero_freq_occurrence = compute_zero_freq_occurrence
+
+        # Build the gridded and flatten versions
+        self._build_gridded_and_flattened_version()
+
+    def _build_gridded_and_flattened_version(self):
+        """
+        Given the wind direction, wind speed, and turbulence intensity array,
+        build the gridded versions covering all combinations, and then flatten
+        versions which put all combinations into 1D array
+        """
+        # Gridded wind speed and direction
+        self.wd_grid, self.ws_grid, self.ti_grid = np.meshgrid(
+            self.wind_directions, self.wind_speeds, self.turbulence_intensities, indexing="ij"
+        )
+
+        # Flat wind direction, wind speed, and turbulence intensity
+        self.wd_flat = self.wd_grid.flatten()
+        self.ws_flat = self.ws_grid.flatten()
+        self.ti_flat = self.ti_grid.flatten()
+
+        # Flat frequency table
+        self.freq_table_flat = self.freq_table.flatten()
+
+        # value table
+        if self.value_table is not None:
+            self.value_table_flat = self.value_table.flatten()
+        else:
+            self.value_table_flat = None
+
+        # Set mask to non-zero frequency cases depending on compute_zero_freq_occurrence
+        if self.compute_zero_freq_occurrence:
+            # If computing zero freq occurrences, then this is all True
+            self.non_zero_freq_mask = [True for i in range(len(self.freq_table_flat))]
+        else:
+            self.non_zero_freq_mask = self.freq_table_flat > 0.0
+
+        # N_findex should only be the calculated cases
+        self.n_findex = np.sum(self.non_zero_freq_mask)
+
+    def unpack(self):
+        """
+        Unpack the flattened versions of the matrices and return the values
+        accounting for the non_zero_freq_mask
+        """
+
+        # The unpacked versions start as the flat version of each
+        wind_directions_unpack = self.wd_flat.copy()
+        wind_speeds_unpack = self.ws_flat.copy()
+        turbulence_intensities_unpack = self.ti_flat.copy()
+        freq_table_unpack = self.freq_table_flat.copy()
+
+        # Now mask thes values according to self.non_zero_freq_mask
+        wind_directions_unpack = wind_directions_unpack[self.non_zero_freq_mask]
+        wind_speeds_unpack = wind_speeds_unpack[self.non_zero_freq_mask]
+        turbulence_intensities_unpack = turbulence_intensities_unpack[self.non_zero_freq_mask]
+        freq_table_unpack = freq_table_unpack[self.non_zero_freq_mask]
+
+        # Now get unpacked value table
+        if self.value_table_flat is not None:
+            value_table_unpack = self.value_table_flat[self.non_zero_freq_mask].copy()
+        else:
+            value_table_unpack = None
+
+        return (
+            wind_directions_unpack,
+            wind_speeds_unpack,
+            freq_table_unpack,
+            turbulence_intensities_unpack,
+            value_table_unpack,
+        )
+
+    def resample_wind_rose(self, wd_step=None, ws_step=None, ti_step=None):
+        """
+        Resamples the wind rose by by wd_step, ws_step, and/or ti_step
+
+        Args:
+            wd_step: Step size for wind direction resampling (float, optional).
+            ws_step: Step size for wind speed resampling (float, optional).
+            ti_step: Step size for turbulence intensity resampling (float, optional).
+
+        Returns:
+            WindRose: Resampled wind rose based on the provided or default step sizes.
+
+        Notes:
+            - Returns a resampled version of the wind rose using new `ws_step`,
+                `wd_step`, and `ti_step`.
+            - Uses the bin weights feature in TimeSeries to resample the wind rose.
+            - If `ws_step`, `wd_step`, or `ti_step` are not specified, it uses
+                the current values.
+        """
+        if ws_step is None:
+            if len(self.wind_speeds) >= 2:
+                ws_step = self.wind_speeds[1] - self.wind_speeds[0]
+            else:  # wind rose will have only a single wind speed, and we assume a ws_step of 1
+                ws_step = 1.0
+        if wd_step is None:
+            if len(self.wind_directions) >= 2:
+                wd_step = self.wind_directions[1] - self.wind_directions[0]
+            else:  # wind rose will have only a single wind direction, and we assume a wd_step of 1
+                wd_step = 1.0
+        if ti_step is None:
+            if len(self.turbulence_intensities) >= 2:
+                ti_step = self.turbulence_intensities[1] - self.turbulence_intensities[0]
+            else:  # wind rose will have only a single TI, and we assume a ti_step of 1
+                ti_step = 1.0
+
+        # Pass the flat versions of each quantity to build a TimeSeries model
+        time_series = TimeSeries(self.wd_flat, self.ws_flat, self.ti_flat, self.value_table_flat)
+
+        # Now build a new wind rose using the new steps
+        return time_series.to_wind_ti_rose(
+            wd_step=wd_step, ws_step=ws_step, ti_step=ti_step, bin_weights=self.freq_table_flat
+        )
+
+    def plot_wind_rose(
+        self,
+        ax=None,
+        wind_rose_var="ws",
+        color_map="viridis_r",
+        wd_step=15.0,
+        wind_rose_var_step=None,
+        legend_kwargs={},
+    ):
+        """
+        This method creates a wind rose plot showing the frequency of occurrence
+        of either the specified wind direction and wind speed bins or wind
+        direction and turbulence intensity bins. If no axis is provided, a new
+        one is created.
+
+        **Note**: Based on code provided by Patrick Murphy from the University
+        of Colorado Boulder.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the wind rose is plotted. Defaults to None.
+            wind_rose_var (str, optional): The variable to display in the wind
+                rose plot in addition to wind direction. If
+                wind_rose_var = "ws", wind speed frequencies will be plotted.
+                If wind_rose_var = "ti", turbulence intensity frequencies will
+                be plotted. Defaults to "ws".
+            color_map (str, optional): Colormap to use. Defaults to 'viridis_r'.
+            wd_step (float, optional): Step size for wind direction. Defaults
+                to 15 degrees.
+            wind_rose_var_step (float, optional): Step size for other wind rose
+                variable. Defaults to None. If unspecified, a value of 5 m/s
+                will beused if wind_rose_var = "ws", and a value of 4% will be
+                used if wind_rose_var = "ti".
+            legend_kwargs (dict, optional): Keyword arguments to be passed to
+                ax.legend().
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted wind rose.
+        """
+
+        if wind_rose_var not in {"ws", "ti"}:
+            raise ValueError(
+                'wind_rose_var must be either "ws" or "ti" for wind speed or turbulence intensity.'
+            )
+
+        # Get a resampled wind_rose
+        if wind_rose_var == "ws":
+            if wind_rose_var_step is None:
+                wind_rose_var_step = 5.0
+            wind_rose_resample = self.resample_wind_rose(wd_step, ws_step=wind_rose_var_step)
+            var_bins = wind_rose_resample.wind_speeds
+            freq_table = wind_rose_resample.freq_table.sum(2)  # sum along TI dimension
+        else:  # wind_rose_var == "ti"
+            if wind_rose_var_step is None:
+                wind_rose_var_step = 0.04
+            wind_rose_resample = self.resample_wind_rose(wd_step, ti_step=wind_rose_var_step)
+            var_bins = wind_rose_resample.turbulence_intensities
+            freq_table = wind_rose_resample.freq_table.sum(1)  # sum along wind speed dimension
+
+        wd_bins = wind_rose_resample.wind_directions
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots(subplot_kw={"polar": True})
+
+        # Get a color array
+        color_array = cm.get_cmap(color_map, len(var_bins))
+
+        for wd_idx, wd in enumerate(wd_bins):
+            rects = []
+            freq_table_sub = freq_table[wd_idx, :].flatten()
+            for var_idx, ws in reversed(list(enumerate(var_bins))):
+                plot_val = freq_table_sub[:var_idx].sum()
+                rects.append(
+                    ax.bar(
+                        np.radians(wd),
+                        plot_val,
+                        width=0.9 * np.radians(wd_step),
+                        color=color_array(var_idx),
+                        edgecolor="k",
+                    )
+                )
+
+        # Configure the plot
+        ax.legend(reversed(rects), var_bins, **legend_kwargs)
+        ax.set_theta_direction(-1)
+        ax.set_theta_offset(np.pi / 2.0)
+        ax.set_theta_zero_location("N")
+        ax.set_xticks(np.arange(0, 2 * np.pi, np.pi / 4))
+        ax.set_xticklabels(["N", "NE", "E", "SE", "S", "SW", "W", "NW"])
+
+        return ax
+
+    def plot_ti_over_ws(
+        self,
+        ax=None,
+        marker=".",
+        ls="-",
+        color="k",
+    ):
+        """
+        Plot the mean turbulence intensity against wind speed.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the wind rose is plotted. Defaults to None.
+            plot_kwargs (dict, optional): Keyword arguments to be passed to
+                ax.plot().
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted wind rose.
+        """
+
+        # TODO: Plot std. devs. of TI in addition to mean values
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots()
+
+        # get mean TI for each wind speed by averaging along wind direction and
+        # TI dimensions
+        mean_ti_values = (self.ti_grid * self.freq_table).sum((0, 2)) / self.freq_table.sum((0, 2))
+
+        ax.plot(self.wind_speeds, mean_ti_values * 100, marker=marker, ls=ls, color=color)
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Mean Turbulence Intensity (%)")
+        ax.grid(True)
+
+
+class TimeSeries(WindDataBase):
+    """
+    The TimeSeries class is used to drive FLORIS and optimization operations in
+    which the inflow is by a sequence of wind direction, wind speed and
+    turbulence intensity values
+
+    Args:
+        wind_directions: NumPy array of wind directions (NDArrayFloat).
+        wind_speeds: NumPy array of wind speeds (NDArrayFloat).
+        turbulence_intensities:  NumPy array of turbulence intensities
+            (NDArrayFloat, optional). Defaults to None
         values:  NumPy array of electricity values (NDArrayFloat, optional).
             Defaults to None
 
@@ -645,3 +976,169 @@ class TimeSeries(WindDataBase):
 
         # Return a WindRose
         return WindRose(wd_centers, ws_centers, freq_table, ti_table, value_table)
+
+    def to_wind_ti_rose(
+        self,
+        wd_step=2.0,
+        ws_step=1.0,
+        ti_step=0.02,
+        wd_edges=None,
+        ws_edges=None,
+        ti_edges=None,
+        bin_weights=None,
+    ):
+        """
+        Converts the TimeSeries data to a WindRose.
+
+        Args:
+            wd_step (float, optional): Step size for wind direction (default is 2.0).
+            ws_step (float, optional): Step size for wind speed (default is 1.0).
+            ti_step (float, optional): Step size for turbulence intensity (default is 0.02).
+            wd_edges (NDArrayFloat, optional): Custom wind direction edges. Defaults to None.
+            ws_edges (NDArrayFloat, optional): Custom wind speed edges. Defaults to None.
+            ti_edges (NDArrayFloat, optional): Custom turbulence intensity
+                edges. Defaults to None.
+            bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
+                are primarily used by the resample resample_wind_rose function.
+                Defaults to None.
+
+        Returns:
+            WindRose: A WindTIRose object based on the TimeSeries data.
+
+        Notes:
+            - If `wd_edges` is defined, it uses it to produce the wind direction bin edges.
+            - If `wd_edges` is not defined, it determines `wd_edges` from the step and data.
+            - If `ws_edges` is defined, it uses it for wind speed edges.
+            - If `ws_edges` is not defined, it determines `ws_edges` from the step and data.
+            - If `ti_edges` is defined, it uses it for turbulence intensity edges.
+            - If `ti_edges` is not defined, it determines `ti_edges` from the step and data.
+        """
+
+        # If turbulence_intensities is None, a WindTIRose object cannot be created.
+        if self.turbulence_intensities is None:
+            raise ValueError(
+                "turbulence_intensities must be defined to export to a WindTIRose object."
+            )
+
+        # If wd_edges is defined, then use it to produce the bin centers
+        if wd_edges is not None:
+            wd_step = wd_edges[1] - wd_edges[0]
+
+            # use wd_step to produce a wrapped version of wind_directions
+            wind_directions_wrapped = self._wrap_wind_directions_near_360(
+                self.wind_directions, wd_step
+            )
+
+        # Else, determine wd_edges from the step and data
+        else:
+            wd_edges = np.arange(0.0 - wd_step / 2.0, 360.0, wd_step)
+
+            # use wd_step to produce a wrapped version of wind_directions
+            wind_directions_wrapped = self._wrap_wind_directions_near_360(
+                self.wind_directions, wd_step
+            )
+
+            # Only keep the range with values in it
+            wd_edges = wd_edges[wd_edges + wd_step > wind_directions_wrapped.min()]
+            wd_edges = wd_edges[wd_edges - wd_step <= wind_directions_wrapped.max()]
+
+        # Define the centers from the edges
+        wd_centers = wd_edges[:-1] + wd_step / 2.0
+
+        # Repeat for wind speeds
+        if ws_edges is not None:
+            ws_step = ws_edges[1] - ws_edges[0]
+
+        else:
+            ws_edges = np.arange(0.0 - ws_step / 2.0, 50.0, ws_step)
+
+            # Only keep the range with values in it
+            ws_edges = ws_edges[ws_edges + ws_step > self.wind_speeds.min()]
+            ws_edges = ws_edges[ws_edges - ws_step <= self.wind_speeds.max()]
+
+        # Define the centers from the edges
+        ws_centers = ws_edges[:-1] + ws_step / 2.0
+
+        # Repeat for turbulence intensities
+        if ti_edges is not None:
+            ti_step = ti_edges[1] - ti_edges[0]
+
+        else:
+            ti_edges = np.arange(0.0 - ti_step / 2.0, 1.0, ti_step)
+
+            # Only keep the range with values in it
+            ti_edges = ti_edges[ti_edges + ti_step > self.turbulence_intensities.min()]
+            ti_edges = ti_edges[ti_edges - ti_step <= self.turbulence_intensities.max()]
+
+        # Define the centers from the edges
+        ti_centers = ti_edges[:-1] + ti_step / 2.0
+
+        # Now use pandas to get the tables need for wind rose
+        df = pd.DataFrame(
+            {
+                "wd": wind_directions_wrapped,
+                "ws": self.wind_speeds,
+                "ti": self.turbulence_intensities,
+                "freq_val": np.ones(len(wind_directions_wrapped)),
+            }
+        )
+
+        # If bin_weights are passed in, apply these to the frequency
+        # this is mostly used when resampling the wind rose
+        if bin_weights is not None:
+            df = df.assign(freq_val=df["freq_val"] * bin_weights)
+
+        # If values is not none, add to dataframe
+        if self.values is not None:
+            df = df.assign(values=self.values)
+
+        # Bin wind speed, wind direction, and turbulence intensity and then group things up
+        df = (
+            df.assign(
+                wd_bin=pd.cut(
+                    df.wd, bins=wd_edges, labels=wd_centers, right=False, include_lowest=True
+                )
+            )
+            .assign(
+                ws_bin=pd.cut(
+                    df.ws, bins=ws_edges, labels=ws_centers, right=False, include_lowest=True
+                )
+            )
+            .assign(
+                ti_bin=pd.cut(
+                    df.ti, bins=ti_edges, labels=ti_centers, right=False, include_lowest=True
+                )
+            )
+            .drop(["wd", "ws", "ti"], axis=1)
+        )
+
+        # Convert wd_bin, ws_bin, and ti_bin to categoricals to ensure all
+        # combinations are considered and then group
+        wd_cat = CategoricalDtype(categories=wd_centers, ordered=True)
+        ws_cat = CategoricalDtype(categories=ws_centers, ordered=True)
+        ti_cat = CategoricalDtype(categories=ti_centers, ordered=True)
+
+        df = (
+            df.assign(wd_bin=df["wd_bin"].astype(wd_cat))
+            .assign(ws_bin=df["ws_bin"].astype(ws_cat))
+            .assign(ti_bin=df["ti_bin"].astype(ti_cat))
+            .groupby(["wd_bin", "ws_bin", "ti_bin"], observed=False)
+            .agg(["sum", "mean"])
+        )
+        # Flatten and combine levels using an underscore
+        df.columns = ["_".join(col) for col in df.columns]
+
+        # Collect the frequency table and reshape
+        freq_table = df["freq_val_sum"].values.copy()
+        freq_table = freq_table / freq_table.sum()
+        freq_table = freq_table.reshape((len(wd_centers), len(ws_centers), len(ti_centers)))
+
+        # If values is not none, compute the table
+        if self.values is not None:
+            value_table = df["values_mean"].values.copy()
+            value_table = value_table.reshape((len(wd_centers), len(ws_centers), len(ti_centers)))
+        else:
+            value_table = None
+
+        # Return a WindTIRose
+        return WindTIRose(wd_centers, ws_centers, ti_centers, freq_table, value_table)
