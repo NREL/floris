@@ -617,6 +617,8 @@ def calculate_horizontal_plane_with_turbines(
             wd (float, optional): Wind direction setting. Defaults to None.
             ws (float, optional): Wind speed setting. Defaults to None.
             yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.
+            power_setpoints (np.ndarray, optional): Power setpoints settings. Defaults to None.
+            disable_turbines (np.ndarray, optional): Disable turbines settings. Defaults to None.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w
