@@ -34,6 +34,7 @@ from .visualization import (
 from .wind_data import (
     TimeSeries,
     WindRose,
+    WindTIRose,
 )
 
 
@@ -45,5 +46,4 @@ from .wind_data import (
 #     plotting,
 #     power_rose,
 #     visualization,
-#     wind_rose,
 # )

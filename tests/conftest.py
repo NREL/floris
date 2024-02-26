@@ -383,12 +383,20 @@ class SampleInputs:
         }
         self.turbine_floating["correct_cp_ct_for_tilt"] = True
 
-        self.turbine_multi_dim = copy.deepcopy(self.turbine)
-        del self.turbine_multi_dim['power_thrust_table']['power']
-        del self.turbine_multi_dim['power_thrust_table']['thrust_coefficient']
-        del self.turbine_multi_dim['power_thrust_table']['wind_speed']
-        self.turbine_multi_dim["multi_dimensional_cp_ct"] = True
-        self.turbine_multi_dim['power_thrust_table']["power_thrust_data_file"] = ""
+        self.turbine_multi_dim = {
+            "turbine_type": 'iea_15MW_multi_dim_cp_ct',
+            "hub_height": 150.0,
+            "rotor_diameter": 242.24,
+            "TSR": 8.0,
+            "multi_dimensional_cp_ct": True,
+            "power_thrust_table": {
+                "ref_air_density": 1.225,
+                "ref_tilt": 6.0,
+                "cosine_loss_exponent_yaw": 1.88,
+                "cosine_loss_exponent_tilt": 1.88,
+                "power_thrust_data_file": 'iea_15MW_multi_dim_Tp_Hs.csv',
+            }
+        }
 
         self.farm = {
             "layout_x": X_COORDS,

@@ -16,13 +16,11 @@ DEFLECTION_MODEL = "gauss"
 
 def test_parallel_turbine_powers(sample_inputs_fixture):
     """
-    The calculate_no_wake function calculates the power production of a wind farm
-    assuming no wake losses. It does this by initializing and finalizing the
-    floris simulation while skipping the wake calculation. The power for all wind
-    turbines should be the same for a uniform wind condition. The chosen wake model
-    is not important since it will not actually be used. However, it is left enabled
-    instead of using "None" so that additional tests can be constructed here such
-    as one with yaw activated.
+    The parallel computing interface behaves like the floris interface, but distributes
+    calculations among available cores to speep up the necessary computations. This test compares
+    the individual turbine powers computed with the parallel interface to those computed with
+    the serial floris interface. The expected result is that the turbine powers should be
+    exactly the same.
     """
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL

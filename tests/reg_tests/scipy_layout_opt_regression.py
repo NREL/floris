@@ -25,13 +25,9 @@ baseline = np.array(
 
 def test_scipy_layout_opt(sample_inputs_fixture):
     """
-    The calculate_no_wake function calculates the power production of a wind farm
-    assuming no wake losses. It does this by initializing and finalizing the
-    floris simulation while skipping the wake calculation. The power for all wind
-    turbines should be the same for a uniform wind condition. The chosen wake model
-    is not important since it will not actually be used. However, it is left enabled
-    instead of using "None" so that additional tests can be constructed here such
-    as one with yaw activated.
+    The SciPy optimization method optimizes turbine layout using SciPy's minimize method. This test
+    compares the optimization results from the SciPy layout optimizaiton for a simple farm with a
+    simple wind rose to stored baseline results.
     """
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL

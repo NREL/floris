@@ -53,7 +53,6 @@ MODEL_MAP = {
         "jensen": JensenVelocityDeficit,
         "turbopark": TurbOParkVelocityDeficit,
         "empirical_gauss": EmpiricalGaussVelocityDeficit,
-        "multidim_cp_ct": GaussVelocityDeficit
     },
 }
 

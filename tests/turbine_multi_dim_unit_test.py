@@ -17,10 +17,6 @@ from floris.simulation.turbine.turbine import (
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
-TEST_DATA = Path(__file__).resolve().parent.parent / "floris" / "turbine_library"
-CSV_INPUT = TEST_DATA / "iea_15MW_multi_dim_Tp_Hs.csv"
-
-
 # size 16 x 1 x 1 x 1
 # 16 wind speed and wind direction combinations from conftest
 WIND_CONDITION_BROADCAST = np.reshape(np.array(WIND_SPEEDS), (-1, 1, 1, 1))
@@ -53,7 +49,6 @@ INDEX_FILTER = [0, 2]
 
 def test_turbine_init():
     turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
     turbine = Turbine.from_dict(turbine_data)
     condition = (2, 1)
     assert turbine.rotor_diameter == turbine_data["rotor_diameter"]
@@ -77,7 +72,6 @@ def test_ct():
     N_TURBINES = 4
 
     turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
     turbine = Turbine.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
@@ -100,7 +94,7 @@ def test_ct():
         multidim_condition=condition
     )
 
-    np.testing.assert_allclose(thrust, np.array([[0.77853469]]))
+    np.testing.assert_allclose(thrust, np.array([[0.77815736]]))
 
     # Multiple turbines with index filter
     # 4 turbines with 3 x 3 grid arrays
@@ -121,25 +115,25 @@ def test_ct():
     assert len(thrusts[0]) == len(INDEX_FILTER)
 
     thrusts_truth = np.array([
-        [0.77853469, 0.77853469],
-        [0.77853469, 0.77853469],
-        [0.77853469, 0.77853469],
-        [0.6957943,  0.6957943 ],
+        [0.77815736, 0.77815736],
+        [0.77815736, 0.77815736],
+        [0.77815736, 0.77815736],
+        [0.66626835,  0.66626835 ],
 
-        [0.77853469, 0.77853469],
-        [0.77853469, 0.77853469],
-        [0.77853469, 0.77853469],
-        [0.6957943,  0.6957943 ],
+        [0.77815736, 0.77815736],
+        [0.77815736, 0.77815736],
+        [0.77815736, 0.77815736],
+        [0.66626835,  0.66626835 ],
 
-        [0.77853469, 0.77853469],
-        [0.77853469, 0.77853469],
-        [0.77853469, 0.77853469],
-        [0.6957943,  0.6957943 ],
+        [0.77815736, 0.77815736],
+        [0.77815736, 0.77815736],
+        [0.77815736, 0.77815736],
+        [0.66626835,  0.66626835 ],
 
-        [0.77853469, 0.77853469],
-        [0.77853469, 0.77853469],
-        [0.77853469, 0.77853469],
-        [0.6957943,  0.6957943 ],
+        [0.77815736, 0.77815736],
+        [0.77815736, 0.77815736],
+        [0.77815736, 0.77815736],
+        [0.66626835,  0.66626835 ],
     ])
     np.testing.assert_allclose(thrusts, thrusts_truth)
 
@@ -148,7 +142,6 @@ def test_power():
     AIR_DENSITY = 1.225
 
     turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
     turbine = Turbine.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
@@ -169,7 +162,7 @@ def test_power():
         multidim_condition=condition
     )
 
-    power_truth = 3029825.10569982
+    power_truth = 12424759.67683091
 
     np.testing.assert_allclose(p, power_truth)
 
@@ -206,13 +199,12 @@ def test_axial_induction():
     N_TURBINES = 4
 
     turbine_data = SampleInputs().turbine_multi_dim
-    turbine_data["power_thrust_table"]["power_thrust_data_file"] = CSV_INPUT
     turbine = Turbine.from_dict(turbine_data)
     turbine_type_map = np.array(N_TURBINES * [turbine.turbine_type])
     turbine_type_map = turbine_type_map[None, :]
     condition = (2, 1)
 
-    baseline_ai = 0.2646995
+    baseline_ai = np.array([[0.26447651]])
 
     # Single turbine
     wind_speed = 10.0
@@ -250,7 +242,7 @@ def test_axial_induction():
     assert len(ai[0]) == len(INDEX_FILTER)
 
     # Test the 10 m/s wind speed to use the same baseline as above
-    np.testing.assert_allclose(ai[2], baseline_ai)
+    np.testing.assert_allclose(ai[2][0], baseline_ai)
 
 
 def test_asdict(sample_inputs_fixture: SampleInputs):
