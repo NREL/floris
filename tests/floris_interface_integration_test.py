@@ -284,12 +284,9 @@ def test_disable_turbines():
     fi.run()
     power_with_middle_disabled = fi.get_turbine_powers()
 
-    # Set up case with middle turbine removed
-    disable_turbines_remove_middle = np.zeros((2, 2), dtype=bool)
+    # Two turbine case to compare against above
     fi_remove_middle = fi.copy()
-    fi_remove_middle.set(layout_x=[0,2000],
-                          layout_y=[0, 0],
-                            disable_turbines=disable_turbines_remove_middle)
+    fi_remove_middle.set(layout_x=[0,2000], layout_y=[0, 0])
     fi_remove_middle.run()
     power_with_middle_removed = fi_remove_middle.get_turbine_powers()
 
