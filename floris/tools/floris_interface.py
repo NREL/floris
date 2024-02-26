@@ -510,7 +510,7 @@ class FlorisInterface(LoggingManager):
         wd=None,
         ws=None,
         yaw_angles=None,
-        power_septoints=None,
+        power_setpoints=None,
         disable_turbines=None,
     ):
         """
@@ -528,6 +528,14 @@ class FlorisInterface(LoggingManager):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
+            wd (float, optional): Wind direction. Defaults to None.
+            ws (float, optional): Wind speed. Defaults to None.
+            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
@@ -555,7 +563,7 @@ class FlorisInterface(LoggingManager):
             wind_speeds=ws,
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
-            power_setpoints=power_septoints,
+            power_setpoints=power_setpoints,
             disable_turbines=disable_turbines,
         )
 
@@ -696,6 +704,18 @@ class FlorisInterface(LoggingManager):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
+            z_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            wd (float, optional): Wind direction. Defaults to None.
+            ws (float, optional): Wind speed. Defaults to None.
+            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
+
+
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
