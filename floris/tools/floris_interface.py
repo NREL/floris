@@ -164,9 +164,9 @@ class FlorisInterface(LoggingManager):
                 n_findex x n_turbines. True values indicate the turbine is disabled at that findex
                 and the power setpoint at that position is set to 0. Defaults to None.
         """
-        # Reinitialize the floris object after saving the setpoints
-        save_yaw_angles = self.floris.farm.yaw_angles
-        save_power_setpoints = self.floris.farm.power_setpoints
+        # Initialize a new Floris object after saving the setpoints
+        _yaw_angles = self.floris.farm.yaw_angles
+        _power_setpoints = self.floris.farm.power_setpoints
         self._reinitialize(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
@@ -183,13 +183,16 @@ class FlorisInterface(LoggingManager):
             heterogenous_inflow_config=heterogenous_inflow_config,
             wind_data=wind_data,
         )
-        if not (save_yaw_angles == 0).all():
-            self.floris.farm.yaw_angles = save_yaw_angles
+
+        # If the yaw angles or power setpoints are not the default, set them back to the
+        # previous setting
+        if not (_yaw_angles == 0).all():
+            self.floris.farm.yaw_angles = _yaw_angles
         if not (
-            (save_power_setpoints == POWER_SETPOINT_DEFAULT)
-            | (save_power_setpoints == POWER_SETPOINT_DISABLED)
+            (_power_setpoints == POWER_SETPOINT_DEFAULT)
+            | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
-            self.floris.farm.power_setpoints = save_power_setpoints
+            self.floris.farm.power_setpoints = _power_setpoints
 
         # Set the operation
         self._set_operation(
@@ -200,41 +203,9 @@ class FlorisInterface(LoggingManager):
 
     def reset_operation(self):
         """
-        Reinstantiate the floris interface and set all operation setpoints to their default values.
-
-        Args: (None)
+        Instantiate a new Floris object to set all operation setpoints to their default values.
         """
         self._reinitialize()
-
-    def run(self) -> None:
-        """
-        Run the FLORIS solve to compute the velocity field and wake effects.
-
-        Args: (None)
-        """
-
-        # Initialize solution space
-        self.floris.initialize_domain()
-
-        # Perform the wake calculations
-        self.floris.steady_state_atmospheric_condition()
-
-    def run_no_wake(
-        self,
-    ) -> None:
-        """
-        This function is similar to `run()` except that it does not apply a wake model. That is,
-        the wind farm is modeled as if there is no wake in the flow. Yaw angles are used to reduce
-        the power and thrust of the turbine that is yawed.
-
-        Args: (None)
-        """
-
-        # Initialize solution space
-        self.floris.initialize_domain()
-
-        # Finalize values to user-supplied order
-        self.floris.finalize()
 
     def _reinitialize(
         self,
@@ -244,9 +215,7 @@ class FlorisInterface(LoggingManager):
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
         turbulence_intensities: list[float] | NDArrayFloat | None = None,
-        # turbulence_kinetic_energy=None,
         air_density: float | None = None,
-        # wake: WakeModelManager = None,
         layout_x: list[float] | NDArrayFloat | None = None,
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
@@ -256,7 +225,8 @@ class FlorisInterface(LoggingManager):
         wind_data: type[WindDataBase] | None = None,
     ):
         """
-        Reinstantiate the floris object with updated conditions set by arguments.
+        Instantiate a new Floris object with updated conditions set by arguments. Any parameters
+        in Floris that aren't changed by arguments to this function retain their values.
 
         Args:
             wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
@@ -357,12 +327,6 @@ class FlorisInterface(LoggingManager):
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
 
-        ## Wake
-        # if wake is not None:
-        #     self.floris.wake = wake
-        # if turbulence_kinetic_energy is not None:
-        #     pass  # TODO: not needed until GCH
-
         if solver_settings is not None:
             floris_dict["solver"] = solver_settings
 
@@ -430,6 +394,30 @@ class FlorisInterface(LoggingManager):
             # yaw_angles to 0 in all locations where disable_turbines is True
             self.floris.farm.yaw_angles[disable_turbines] = 0.0
             self.floris.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
+
+    def run(self) -> None:
+        """
+        Run the FLORIS solve to compute the velocity field and wake effects.
+        """
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Perform the wake calculations
+        self.floris.steady_state_atmospheric_condition()
+
+    def run_no_wake(self) -> None:
+        """
+        This function is similar to `run()` except that it does not apply a wake model. That is,
+        the wind farm is modeled as if there is no wake in the flow. Operation settings may
+        reduce the power and thrust of the turbine to where they're applied.
+        """
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Finalize values to user-supplied order
+        self.floris.finalize()
 
     def get_plane_of_points(
         self,
@@ -522,7 +510,7 @@ class FlorisInterface(LoggingManager):
         wd=None,
         ws=None,
         yaw_angles=None,
-        power_septoints=None,
+        power_setpoints=None,
         disable_turbines=None,
     ):
         """
@@ -540,6 +528,14 @@ class FlorisInterface(LoggingManager):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
+            wd (float, optional): Wind direction. Defaults to None.
+            ws (float, optional): Wind speed. Defaults to None.
+            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
@@ -567,7 +563,7 @@ class FlorisInterface(LoggingManager):
             wind_speeds=ws,
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
-            power_setpoints=power_septoints,
+            power_setpoints=power_setpoints,
             disable_turbines=disable_turbines,
         )
 
@@ -708,6 +704,18 @@ class FlorisInterface(LoggingManager):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
+            z_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            wd (float, optional): Wind direction. Defaults to None.
+            ws (float, optional): Wind speed. Defaults to None.
+            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
+
+
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
@@ -1268,3 +1276,17 @@ class FlorisInterface(LoggingManager):
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
+
+    ### v3 functions that are removed - raise an error if used
+
+    def calculate_wake(self):
+        raise NotImplementedError(
+            "The calculate_wake method has been removed. Please use the run method. "
+            "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+        )
+
+    def reinitialize(self):
+        raise NotImplementedError(
+            "The reinitialize method has been removed. Please use the set method. "
+            "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+        )

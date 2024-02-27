@@ -45,8 +45,8 @@ if __name__ == "__main__":
     valid_properties = [
         "generator_efficiency",
         "hub_height",
-        "pP",
-        "pT",
+        "cosine_loss_exponent_yaw",
+        "cosine_loss_exponent_tilt",
         "rotor_diameter",
         "TSR",
         "ref_air_density",
@@ -55,8 +55,11 @@ if __name__ == "__main__":
 
     turbine_properties = {k:v for k,v in v3_turbine_dict.items() if k in valid_properties}
     turbine_properties["ref_air_density"] = v3_turbine_dict["ref_density_cp_ct"]
+    turbine_properties["cosine_loss_exponent_yaw"] = v3_turbine_dict["pP"]
     if "ref_tilt_cp_ct" in v3_turbine_dict:
         turbine_properties["ref_tilt"] = v3_turbine_dict["ref_tilt_cp_ct"]
+    if "pT" in v3_turbine_dict:
+        turbine_properties["cosine_loss_exponent_tilt"] = v3_turbine_dict["pT"]
 
     # Convert to v4 and print new yaml
     v4_turbine_dict = build_cosine_loss_turbine_dict(

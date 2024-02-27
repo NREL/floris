@@ -280,10 +280,11 @@ class ParallelComputingInterface(LoggingManager):
 
         return turbine_powers
 
-    def calculate_wake(self): # TODO: Remove or update this function?
-        # raise UserWarning("'calculate_wake' not supported. Please use
-        # 'get_turbine_powers' or 'get_farm_power' directly.")
-        return None  # Do nothing
+    def run(self): # TODO: Remove or update this function?
+        raise UserWarning(
+            "'run' not supported on ParallelComputingInterface. Please use "
+            "'get_turbine_powers' or 'get_farm_power' directly."
+        )
 
     def get_turbine_powers(self, yaw_angles=None):
         # Retrieve multiargs: preprocessing

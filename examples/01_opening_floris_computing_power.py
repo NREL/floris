@@ -25,7 +25,7 @@ fi.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 print("\n========================= Single Wind Direction and Wind Speed =========================")
 
 # Get the turbine powers assuming 1 wind direction and speed
-# Set the yaw angles to 0 with 1 wind direction and speed, 2 turbines
+# Set the yaw angles to 0 with 1 wind direction and speed
 fi.set(wind_directions=[270.0], wind_speeds=[8.0], yaw_angles=np.zeros([1, 2]))
 
 fi.run()
@@ -43,7 +43,7 @@ print("\n========================= Single Wind Direction and Multiple Wind Speed
 wind_speeds = np.array([8.0, 9.0, 10.0])
 wind_directions = np.array([270.0, 270.0, 270.0])
 
-# 3 wind directions/ speeds, 2 turbines
+# 3 wind directions/ speeds
 fi.set(wind_speeds=wind_speeds, wind_directions=wind_directions, yaw_angles=np.zeros([3, 2]))
 fi.run()
 turbine_powers = fi.get_turbine_powers() / 1000.0
