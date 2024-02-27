@@ -121,12 +121,12 @@ class UncertaintyInterface(LoggingManager):
         """
         Set the wind farm conditions in the UncertaintyInterface.
 
-        See FlorisInterace.set() for details of the contents of args.
+        See FlorisInterace.set() for details of the contents of kwargs.
 
         Args:
             **kwargs: The wind farm conditions to set.
         """
-        # Call the base function
+        # Call the nominal set function
         self.floris_interface.set(
             **kwargs
         )
