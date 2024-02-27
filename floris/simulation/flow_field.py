@@ -61,7 +61,7 @@ class FlowField(BaseClass):
         # Check that the array is 1-dimensional
         if value.ndim != 1:
             raise ValueError(
-                "wind_directions must have 1-dimension"
+                "turbulence_intensities must have 1-dimension"
             )
 
         # Check the turbulence intensity is either length 1 or n_findex
@@ -90,7 +90,7 @@ class FlowField(BaseClass):
                 "wind_speeds must have 1-dimension"
             )
 
-        """Confirm wind speeds and wind directions have the same lenght"""
+        """Confirm wind speeds and wind directions have the same length"""
         if len(self.wind_directions) != len(self.wind_speeds):
             raise ValueError(
                 f"wind_directions (length = {len(self.wind_directions)}) and "

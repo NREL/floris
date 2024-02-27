@@ -14,7 +14,7 @@ of wind direction and wind speed combinations.
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Convert to a simple two turbine layout
-fi.reinitialize(layout_x=[0, 500.], layout_y=[0., 0.])
+fi.set(layout_x=[0, 500.], layout_y=[0., 0.])
 
 # Create a fake time history where wind speed steps in the middle while wind direction
 # Walks randomly
@@ -28,10 +28,10 @@ for idx in range(1, len(time)):
 
 
 # Now intiialize FLORIS object to this history using time_series flag
-fi.reinitialize(wind_directions=wd, wind_speeds=ws)
+fi.set(wind_directions=wd, wind_speeds=ws)
 
 # Collect the powers
-fi.calculate_wake()
+fi.run()
 turbine_powers = fi.get_turbine_powers() / 1000.
 
 # Show the dimensions

@@ -35,7 +35,7 @@ ws_array = wind_speeds_grid.flatten()
 
 # Reinitialize as a 3-turbine farm with range of WDs and WSs
 D = 126.0 # Rotor diameter for the NREL 5 MW
-fi.reinitialize(
+fi.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
     wind_directions=wd_array,
