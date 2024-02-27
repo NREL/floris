@@ -53,7 +53,31 @@ class UncertaintyInterface(FlorisInterface):
         wd_sample_points=None,
         verbose=False,
     ):
+        """
+        Instantiate the UncertaintyInterface.
 
+        Args:
+            configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.
+                The configuration should have the following inputs specified.
+                    - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
+                    - **farm**: See `floris.simulation.farm.Farm` for more details.
+                    - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
+                    - **wake**: See `floris.simulation.wake.WakeManager` for more details.
+                    - **logging**: See `floris.simulation.floris.Floris` for more details.
+            wd_resolution (float, optional): The resolution of wind direction for generating
+                gaussian blends, in degrees.  Defaults to 1.0.
+            ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
+            ti_resolution (float, optional): The resolution of turbulence intensity.
+                efaults to 0.01.
+            yaw_resolution (float, optional): The resolution of yaw angle, in degrees.
+                Defaults to 1.0.
+            power_setpoint_resolution (int, optional): The resolution of power setpoints, in kW.
+                Defaults to 100.
+            wd_std (float, optional): The standard deviation of wind direction. Defaults to 3.0.
+            wd_sample_points (list[float], optional): The sample points for wind direction.
+                If not provided, defaults to [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std].
+            verbose (bool, optional): Verbosity flag for printing messages. Defaults to False.
+        """
         # Save these inputs
         self.wd_resolution = wd_resolution
         self.ws_resolution = ws_resolution
@@ -96,6 +120,39 @@ class UncertaintyInterface(FlorisInterface):
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
         disable_turbines: NDArrayBool | list[bool] | None = None,
     ):
+        """
+        Set the wind farm conditions in the UncertaintyInterface.
+
+        Args:
+            wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
+                Defaults to None.
+            wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each
+                findex. Defaults to None.
+            wind_shear (float | None, optional): Wind shear exponent. Defaults to None.
+            wind_veer (float | None, optional): Wind veer. Defaults to None.
+            reference_wind_height (float | None, optional): Reference wind height. Defaults to None.
+            turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence
+                intensities at each findex. Defaults to None.
+            air_density (float | None, optional): Air density. Defaults to None.
+            layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.
+                Defaults to None.
+            layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.
+                Defaults to None.
+            turbine_type (list | None, optional): Turbine type. Defaults to None.
+            turbine_library_path (str | Path | None, optional): Path to the turbine library.
+                Defaults to None.
+            solver_settings (dict | None, optional): Solver settings. Defaults to None.
+            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
+                to None.
+            wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+            power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):
+                Turbine power setpoints.
+            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions
+                n_findex x n_turbines. True values indicate the turbine is disabled at that findex
+                and the power setpoint at that position is set to 0. Defaults to None.
+        """
         # Call the base function
         super().set(
             wind_speeds=wind_speeds,
