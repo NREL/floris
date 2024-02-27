@@ -116,76 +116,19 @@ class UncertaintyInterface(LoggingManager):
 
     def set(
         self,
-        wind_speeds: list[float] | NDArrayFloat | None = None,
-        wind_directions: list[float] | NDArrayFloat | None = None,
-        wind_shear: float | None = None,
-        wind_veer: float | None = None,
-        reference_wind_height: float | None = None,
-        turbulence_intensities: list[float] | NDArrayFloat | None = None,
-        air_density: float | None = None,
-        layout_x: list[float] | NDArrayFloat | None = None,
-        layout_y: list[float] | NDArrayFloat | None = None,
-        turbine_type: list | None = None,
-        turbine_library_path: str | Path | None = None,
-        solver_settings: dict | None = None,
-        heterogenous_inflow_config=None,
-        wind_data: type[WindDataBase] | None = None,
-        yaw_angles: NDArrayFloat | list[float] | None = None,
-        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
-        disable_turbines: NDArrayBool | list[bool] | None = None,
+        **kwargs,
     ):
         """
         Set the wind farm conditions in the UncertaintyInterface.
 
+        See FlorisInterace.set() for details of the contents of args.
+
         Args:
-            wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
-                Defaults to None.
-            wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each
-                findex. Defaults to None.
-            wind_shear (float | None, optional): Wind shear exponent. Defaults to None.
-            wind_veer (float | None, optional): Wind veer. Defaults to None.
-            reference_wind_height (float | None, optional): Reference wind height. Defaults to None.
-            turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence
-                intensities at each findex. Defaults to None.
-            air_density (float | None, optional): Air density. Defaults to None.
-            layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.
-                Defaults to None.
-            layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.
-                Defaults to None.
-            turbine_type (list | None, optional): Turbine type. Defaults to None.
-            turbine_library_path (str | Path | None, optional): Path to the turbine library.
-                Defaults to None.
-            solver_settings (dict | None, optional): Solver settings. Defaults to None.
-            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
-                to None.
-            wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
-            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
-                Defaults to None.
-            power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):
-                Turbine power setpoints.
-            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions
-                n_findex x n_turbines. True values indicate the turbine is disabled at that findex
-                and the power setpoint at that position is set to 0. Defaults to None.
+            **kwargs: The wind farm conditions to set.
         """
         # Call the base function
         self.floris_interface.set(
-            wind_speeds=wind_speeds,
-            wind_directions=wind_directions,
-            wind_shear=wind_shear,
-            wind_veer=wind_veer,
-            reference_wind_height=reference_wind_height,
-            turbulence_intensities=turbulence_intensities,
-            air_density=air_density,
-            layout_x=layout_x,
-            layout_y=layout_y,
-            turbine_type=turbine_type,
-            turbine_library_path=turbine_library_path,
-            solver_settings=solver_settings,
-            heterogenous_inflow_config=heterogenous_inflow_config,
-            wind_data=wind_data,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            disable_turbines=disable_turbines,
+            **kwargs
         )
 
         self._set_uncertain()
