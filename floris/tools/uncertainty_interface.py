@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 
+from floris.logging_manager import LoggingManager
 from floris.tools import FlorisInterface
 from floris.tools.wind_data import WindDataBase
 from floris.type_dec import (
@@ -13,12 +14,12 @@ from floris.type_dec import (
 )
 
 
-class UncertaintyInterface(FlorisInterface):
+class UncertaintyInterface(LoggingManager):
     """
     An interface for handling uncertainty in wind farm simulations.
 
-    This class inherits from FlorisInterface and provides functionality to incorporate uncertainty
-    parameters into the wind farm simulation.
+    This class contains a FlorisInterface object and adds functionality to handle
+    uncertainty in wind direction.
 
     Args:
         configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.
@@ -97,8 +98,21 @@ class UncertaintyInterface(FlorisInterface):
         # Get the weights
         self.weights = self._get_weights(self.wd_std, self.wd_sample_points)
 
-        # Call base init function
-        super().__init__(configuration)  # Call the parent's __init__
+        # Instantiate the FlorisInterface
+        self.floris_interface = FlorisInterface(configuration)
+
+    def copy(self):
+        """Create an independent copy of the current FlorisInterface object"""
+        return UncertaintyInterface(self.floris_interface.floris.as_dict(),
+                                    wd_resolution=self.wd_resolution,
+                                    ws_resolution=self.ws_resolution,
+                                    ti_resolution=self.ti_resolution,
+                                    yaw_resolution=self.yaw_resolution,
+                                    power_setpoint_resolution=self.power_setpoint_resolution,
+                                    wd_std=self.wd_std,
+                                    wd_sample_points=self.wd_sample_points,
+                                    verbose=self.verbose)
+
 
     def set(
         self,
@@ -154,7 +168,7 @@ class UncertaintyInterface(FlorisInterface):
                 and the power setpoint at that position is set to 0. Defaults to None.
         """
         # Call the base function
-        super().set(
+        self.floris_interface.set(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
             wind_shear=wind_shear,
@@ -187,11 +201,13 @@ class UncertaintyInterface(FlorisInterface):
 
         # Grab the unexpanded values of all arrays
         # These original dimensions are what is returned
-        self.wind_directions_unexpanded = self.floris.flow_field.wind_directions
-        self.wind_speeds_unexpanded = self.floris.flow_field.wind_speeds
-        self.turbulence_intensities_unexpanded = self.floris.flow_field.turbulence_intensities
-        self.yaw_angles_unexpanded = self.floris.farm.yaw_angles
-        self.power_setpoints_unexpanded = self.floris.farm.power_setpoints
+        self.wind_directions_unexpanded = self.floris_interface.floris.flow_field.wind_directions
+        self.wind_speeds_unexpanded = self.floris_interface.floris.flow_field.wind_speeds
+        self.turbulence_intensities_unexpanded = (
+            self.floris_interface.floris.flow_field.turbulence_intensities
+        )
+        self.yaw_angles_unexpanded = self.floris_interface.floris.farm.yaw_angles
+        self.power_setpoints_unexpanded = self.floris_interface.floris.farm.power_setpoints
         self.n_unexpanded = len(self.wind_directions_unexpanded)
 
         # Combine into the complete unexpanded_inputs
@@ -234,13 +250,27 @@ class UncertaintyInterface(FlorisInterface):
             print(f"Unique num rows: {self.n_unique}")
 
         # Now set the underlying wd/ws/ti/yaw/setpoint to check only the unique conditions
-        super().set(
+        self.floris_interface.set(
             wind_directions=self.unique_inputs[:, 0],
             wind_speeds=self.unique_inputs[:, 1],
             turbulence_intensities=self.unique_inputs[:, 2],
-            yaw_angles=self.unique_inputs[:, 3 : 3 + self.floris.farm.n_turbines],
-            power_setpoints=self.unique_inputs[:, 3 + self.floris.farm.n_turbines :],
+            yaw_angles=self.unique_inputs[:, 3 : 3 + self.floris_interface.floris.farm.n_turbines],
+            power_setpoints=self.unique_inputs[:, 3 + self.floris_interface.floris.farm.n_turbines:]
         )
+
+    def run(self):
+        """
+        Run the simulation in the underlying FlorisInterface object.
+        """
+
+        self.floris_interface.run()
+
+    def run_no_wake(self):
+        """
+        Run the simulation in the underlying FlorisInterface object without wakes.
+        """
+
+        self.floris_interface.run_no_wake()
 
     def get_turbine_powers(self):
         """Calculates the power at each turbine in the wind farm.
@@ -254,7 +284,7 @@ class UncertaintyInterface(FlorisInterface):
         """
 
         # First call the underlying function
-        unique_turbine_powers = super().get_turbine_powers()
+        unique_turbine_powers = self.floris_interface.get_turbine_powers()
 
         # Expand back to the expanded value
         expanded_turbine_powers = unique_turbine_powers[self.map_to_expanded_inputs]
@@ -265,7 +295,7 @@ class UncertaintyInterface(FlorisInterface):
         # Reshape expanded_turbine_powers into blocks
         blocks = np.reshape(
             expanded_turbine_powers,
-            (self.n_unexpanded, self.n_sample_points, self.floris.farm.n_turbines),
+            (self.n_unexpanded, self.n_sample_points, self.floris_interface.floris.farm.n_turbines),
             order="F",
         )
 
@@ -308,7 +338,7 @@ class UncertaintyInterface(FlorisInterface):
             turbine_weights = np.ones(
                 (
                     self.n_unexpanded,
-                    self.floris.farm.n_turbines,
+                    self.floris_interface.floris.farm.n_turbines,
                 )
             )
         elif len(np.shape(turbine_weights)) == 1:
@@ -644,61 +674,22 @@ class UncertaintyInterface(FlorisInterface):
 
         return weights
 
-    def copy(self):
-        raise NotImplementedError("Copy not implemented for UncertaintyInterface")
+    @property
+    def layout_x(self):
+        """
+        Wind turbine coordinate information.
 
-    def get_plane_of_points(
-        self,
-        **_,
-    ):
-        raise NotImplementedError("get_plane_of_points not implemented for UncertaintyInterface")
+        Returns:
+            np.array: Wind turbine x-coordinate.
+        """
+        return self.floris_interface.floris.farm.layout_x
 
-    def calculate_horizontal_plane(
-        self,
-        **_,
-    ):
-        raise NotImplementedError(
-            "calculate_horizontal_plane not implemented for UncertaintyInterface"
-        )
+    @property
+    def layout_y(self):
+        """
+        Wind turbine coordinate information.
 
-    def calculate_cross_plane(
-        self,
-        **_,
-    ):
-        raise NotImplementedError("calculate_cross_plane not implemented for UncertaintyInterface")
-
-    def calculate_y_plane(
-        self,
-        **_,
-    ):
-        raise NotImplementedError("calculate_y_plane not implemented for UncertaintyInterface")
-
-    def check_wind_condition_for_viz(
-        self,
-        **_,
-    ):
-        raise NotImplementedError(
-            "check_wind_condition_for_viz not implemented for UncertaintyInterface"
-        )
-
-    def get_turbine_thrust_coefficients(self):
-        raise NotImplementedError(
-            "get_turbine_thrust_coefficients not implemented for UncertaintyInterface"
-        )
-
-    def get_turbine_ais(self):
-        raise NotImplementedError("get_turbine_ais not implemented for UncertaintyInterface")
-
-    def sample_flow_at_points(
-        self,
-        **_,
-    ):
-        raise NotImplementedError("sample_flow_at_points not implemented for UncertaintyInterface")
-
-    def sample_velocity_deficit_profiles(
-        self,
-        **_,
-    ):
-        raise NotImplementedError(
-            "sample_velocity_deficit_profiles not implemented for UncertaintyInterface"
-        )
+        Returns:
+            np.array: Wind turbine y-coordinate.
+        """
+        return self.floris_interface.floris.farm.layout_y
