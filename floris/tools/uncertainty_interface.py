@@ -215,6 +215,18 @@ class UncertaintyInterface(LoggingManager):
 
         self.floris_interface.run_no_wake()
 
+    def reset_operation(self):
+        """
+        Reset the operation of the underlying FlorisInterface object.
+        """
+        self.floris_interface.set(
+            wind_directions=self.wind_directions_unexpanded,
+            wind_speeds=self.wind_speeds_unexpanded,
+            turbulence_intensities=self.turbulence_intensities_unexpanded,
+        )
+        self.floris_interface.reset_operation()
+        self._set_uncertain()
+
     def get_turbine_powers(self):
         """Calculates the power at each turbine in the wind farm.
 

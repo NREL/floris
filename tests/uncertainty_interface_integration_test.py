@@ -151,6 +151,7 @@ def test_uncertainty_interface_setpoints():
         wind_directions=[270.0],
         turbulence_intensities=[0.06],
     )
+    weights = fi_unc.weights
 
     # Check setpoints dimensions are respected and reset_operation works
     # Note that fi_nom.set() does NOT raise ValueError---an AttributeError is raised only at 
@@ -161,5 +162,23 @@ def test_uncertainty_interface_setpoints():
     with pytest.raises(ValueError):
         fi_unc.set(yaw_angles=[[0,0], [0,0]])
 
-    fi_unc.set(yaw_angles=np.array([[20,0], [0,0], [0,0]]))
+    fi_nom.set(yaw_angles=[[20, 0], [20, 0], [20, 0]])
+    fi_nom.run()
+    nom_powers = fi_nom.get_turbine_powers()[:, 1].flatten()
+    
+    fi_unc.set(yaw_angles=[[20, 0]])
     fi_unc.run()
+    unc_powers = fi_unc.get_turbine_powers()[:, 1].flatten()
+
+    np.testing.assert_allclose(np.sum(nom_powers * weights), unc_powers)
+
+    # Drop yaw setpoints and rerun
+    fi_nom.reset_operation()
+    fi_nom.run()
+    nom_powers = fi_nom.get_turbine_powers()[:, 1].flatten()
+
+    fi_unc.reset_operation()
+    fi_unc.run()
+    unc_powers = fi_unc.get_turbine_powers()[:, 1].flatten()
+
+    np.testing.assert_allclose(np.sum(nom_powers * weights), unc_powers)
