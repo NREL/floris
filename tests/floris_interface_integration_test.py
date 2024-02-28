@@ -22,13 +22,13 @@ def test_assign_yaw_angles():
     fi.set(layout_x=[0, 0], layout_y=[0, 1000])
 
     # Test setting yaw angles via a list
-    fi.set(yaw_angles=[20.0, 30.0])
+    fi.set(yaw_angles=[[20.0, 30.0]])
 
     # Test passing in integers as yaw angles
-    fi.set(yaw_angles=[20, 30])
+    fi.set(yaw_angles=[[20, 30]])
 
     # Test setting yaw angles via a numpy array
-    fi.set(yaw_angles=np.array([20.0, 30.0]))
+    fi.set(yaw_angles=np.array([[20.0, 30.0]]))
 
 def test_set_run():
     """
