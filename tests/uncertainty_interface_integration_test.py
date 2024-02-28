@@ -130,3 +130,36 @@ def test_uncertainty_interface():
     weights = fi_unc.weights
 
     np.testing.assert_allclose(np.sum(nom_powers * weights), unc_powers)
+
+def test_uncertainty_interface_setpoints():
+    
+    fi_nom = FlorisInterface(configuration=YAML_INPUT)
+    fi_unc = UncertaintyInterface(configuration=YAML_INPUT, wd_sample_points=[-3, 0, 3], wd_std=3)
+
+    fi_nom.set(
+        layout_x=[0, 300],
+        layout_y=[0, 0],
+        wind_speeds=[8.0, 8.0, 8.0],
+        wind_directions=[267.0, 270.0, 273],
+        turbulence_intensities=[0.06, 0.06, 0.06],
+    )
+
+    fi_unc.set(
+        layout_x=[0, 300],
+        layout_y=[0, 0],
+        wind_speeds=[8.0],
+        wind_directions=[270.0],
+        turbulence_intensities=[0.06],
+    )
+
+    # Check setpoints dimensions are respected and reset_operation works
+    # Note that fi_nom.set() does NOT raise ValueError---an AttributeError is raised only at 
+    # fi_nom.run()---whereas fi_unc.set raises ValueError immediately.
+    fi_nom.set(yaw_angles=[[0, 0]])
+    with pytest.raises(AttributeError):
+        fi_nom.run()
+    with pytest.raises(ValueError):
+        fi_unc.set(yaw_angles=[[0,0], [0,0]])
+
+    fi_unc.set(yaw_angles=np.array([[20,0], [0,0], [0,0]]))
+    fi_unc.run()
