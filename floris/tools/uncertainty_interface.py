@@ -98,20 +98,27 @@ class UncertaintyInterface(LoggingManager):
         # Get the weights
         self.weights = self._get_weights(self.wd_std, self.wd_sample_points)
 
-        # Instantiate the FlorisInterface
-        self.floris_interface = FlorisInterface(configuration)
+        # Instantiate the un-expanded FlorisInterface
+        self.fi_unexpanded = FlorisInterface(configuration)
 
-    def copy(self):
-        """Create an independent copy of the current FlorisInterface object"""
-        return UncertaintyInterface(self.floris_interface.floris.as_dict(),
-                                    wd_resolution=self.wd_resolution,
-                                    ws_resolution=self.ws_resolution,
-                                    ti_resolution=self.ti_resolution,
-                                    yaw_resolution=self.yaw_resolution,
-                                    power_setpoint_resolution=self.power_setpoint_resolution,
-                                    wd_std=self.wd_std,
-                                    wd_sample_points=self.wd_sample_points,
-                                    verbose=self.verbose)
+        # Call set at this point with no arguments so ready to run
+        self.set()
+
+        # Instantiate the expanded FlorisInterface
+        # self.floris_interface = FlorisInterface(configuration)
+
+    # TODO: Hold off on this until we have a better understanding of how to handle this
+    # def copy(self):
+    #     """Create an independent copy of the current FlorisInterface object"""
+    #     return UncertaintyInterface(self.floris_interface.floris.as_dict(),
+    #                                 wd_resolution=self.wd_resolution,
+    #                                 ws_resolution=self.ws_resolution,
+    #                                 ti_resolution=self.ti_resolution,
+    #                                 yaw_resolution=self.yaw_resolution,
+    #                                 power_setpoint_resolution=self.power_setpoint_resolution,
+    #                                 wd_std=self.wd_std,
+    #                                 wd_sample_points=self.wd_sample_points,
+    #                                 verbose=self.verbose)
 
 
     def set(
@@ -127,7 +134,7 @@ class UncertaintyInterface(LoggingManager):
             **kwargs: The wind farm conditions to set.
         """
         # Call the nominal set function
-        self.floris_interface.set(
+        self.fi_unexpanded.set(
             **kwargs
         )
 
@@ -144,13 +151,13 @@ class UncertaintyInterface(LoggingManager):
 
         # Grab the unexpanded values of all arrays
         # These original dimensions are what is returned
-        self.wind_directions_unexpanded = self.floris_interface.floris.flow_field.wind_directions
-        self.wind_speeds_unexpanded = self.floris_interface.floris.flow_field.wind_speeds
+        self.wind_directions_unexpanded = self.fi_unexpanded.floris.flow_field.wind_directions
+        self.wind_speeds_unexpanded = self.fi_unexpanded.floris.flow_field.wind_speeds
         self.turbulence_intensities_unexpanded = (
-            self.floris_interface.floris.flow_field.turbulence_intensities
+            self.fi_unexpanded.floris.flow_field.turbulence_intensities
         )
-        self.yaw_angles_unexpanded = self.floris_interface.floris.farm.yaw_angles
-        self.power_setpoints_unexpanded = self.floris_interface.floris.farm.power_setpoints
+        self.yaw_angles_unexpanded = self.fi_unexpanded.floris.farm.yaw_angles
+        self.power_setpoints_unexpanded = self.fi_unexpanded.floris.farm.power_setpoints
         self.n_unexpanded = len(self.wind_directions_unexpanded)
 
         # Combine into the complete unexpanded_inputs
@@ -192,13 +199,16 @@ class UncertaintyInterface(LoggingManager):
             print(f"Expanded num rows: {self.n_expanded}")
             print(f"Unique num rows: {self.n_unique}")
 
+        # Initiate the expanded FlorisInterface
+        self.fi_expanded = self.fi_unexpanded.copy()
+
         # Now set the underlying wd/ws/ti/yaw/setpoint to check only the unique conditions
-        self.floris_interface.set(
+        self.fi_expanded.set(
             wind_directions=self.unique_inputs[:, 0],
             wind_speeds=self.unique_inputs[:, 1],
             turbulence_intensities=self.unique_inputs[:, 2],
-            yaw_angles=self.unique_inputs[:, 3 : 3 + self.floris_interface.floris.farm.n_turbines],
-            power_setpoints=self.unique_inputs[:, 3 + self.floris_interface.floris.farm.n_turbines:]
+            yaw_angles=self.unique_inputs[:, 3 : 3 + self.fi_unexpanded.floris.farm.n_turbines],
+            power_setpoints=self.unique_inputs[:, 3 + self.fi_unexpanded.floris.farm.n_turbines:]
         )
 
     def run(self):
@@ -206,25 +216,27 @@ class UncertaintyInterface(LoggingManager):
         Run the simulation in the underlying FlorisInterface object.
         """
 
-        self.floris_interface.run()
+        self.fi_expanded.run()
 
     def run_no_wake(self):
         """
         Run the simulation in the underlying FlorisInterface object without wakes.
         """
 
-        self.floris_interface.run_no_wake()
+        self.fi_expanded.run_no_wake()
 
     def reset_operation(self):
         """
         Reset the operation of the underlying FlorisInterface object.
         """
-        self.floris_interface.set(
+        self.fi_unexpanded.set(
             wind_directions=self.wind_directions_unexpanded,
             wind_speeds=self.wind_speeds_unexpanded,
             turbulence_intensities=self.turbulence_intensities_unexpanded,
         )
-        self.floris_interface.reset_operation()
+        self.fi_unexpanded.reset_operation()
+
+        # Calling set_uncertain again to reset the expanded FlorisInterface
         self._set_uncertain()
 
     def get_turbine_powers(self):
@@ -239,7 +251,7 @@ class UncertaintyInterface(LoggingManager):
         """
 
         # First call the underlying function
-        unique_turbine_powers = self.floris_interface.get_turbine_powers()
+        unique_turbine_powers = self.fi_expanded.get_turbine_powers()
 
         # Expand back to the expanded value
         expanded_turbine_powers = unique_turbine_powers[self.map_to_expanded_inputs]
@@ -250,7 +262,7 @@ class UncertaintyInterface(LoggingManager):
         # Reshape expanded_turbine_powers into blocks
         blocks = np.reshape(
             expanded_turbine_powers,
-            (self.n_unexpanded, self.n_sample_points, self.floris_interface.floris.farm.n_turbines),
+            (self.n_unexpanded, self.n_sample_points, self.fi_unexpanded.floris.farm.n_turbines),
             order="F",
         )
 
@@ -293,7 +305,7 @@ class UncertaintyInterface(LoggingManager):
             turbine_weights = np.ones(
                 (
                     self.n_unexpanded,
-                    self.floris_interface.floris.farm.n_turbines,
+                    self.fi_unexpanded.floris.farm.n_turbines,
                 )
             )
         elif len(np.shape(turbine_weights)) == 1:
