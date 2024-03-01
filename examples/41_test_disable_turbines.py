@@ -24,7 +24,7 @@ with open(
 ) as t:
     turbine_type = yaml.safe_load(t)
 turbine_type["power_thrust_model"] = "mixed"
-fi.reinitialize(turbine_type=[turbine_type])
+fi.set(turbine_type=[turbine_type])
 
 # Consider a wind farm of 3 aligned wind turbines
 layout = np.array([[0.0, 0.0], [500.0, 0.0], [1000.0, 0.0]])
@@ -42,15 +42,16 @@ disable_turbines = np.array([[False, False, False], [True, True, False]])
 # ------------------------------------------
 
 # Reinitialize flow field
-fi.reinitialize(
+fi.set(
     layout_x=layout[:, 0],
     layout_y=layout[:, 1],
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
+    disable_turbines=disable_turbines,
 )
 
 # # Compute wakes
-fi.calculate_wake(disable_turbines=disable_turbines)
+fi.run()
 
 # Results
 # ------------------------------------------

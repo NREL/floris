@@ -39,7 +39,7 @@ wind_rose = WindRose(wind_directions=wind_directions,
                      wind_speeds=wind_speeds,
                      freq_table=freq_table)
 
-fi.reinitialize(wind_data=wind_rose)
+fi.set(wind_data=wind_rose)
 
 # The boundaries for the turbines, specified as vertices
 boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
@@ -48,7 +48,7 @@ boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 
 D = 126.0 # rotor diameter for the NREL 5MW
 layout_x = [0, 0, 6 * D, 6 * D]
 layout_y = [0, 4 * D, 0, 4 * D]
-fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
+fi.set(layout_x=layout_x, layout_y=layout_y)
 
 # Setup the optimization problem
 layout_opt = LayoutOptimizationScipy(fi, boundaries, wind_data=wind_rose)
@@ -58,11 +58,12 @@ sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
-fi.calculate_wake()
+fi.run()
 base_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
-fi.reinitialize(layout_x=sol[0], layout_y=sol[1])
-fi.calculate_wake()
+fi.set(layout_x=sol[0], layout_y=sol[1])
+fi.run()
 opt_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose)  / 1e6
+
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results

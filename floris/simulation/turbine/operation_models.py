@@ -28,6 +28,7 @@ from floris.utilities import cosd
 
 
 POWER_SETPOINT_DEFAULT = 1e12
+POWER_SETPOINT_DISABLED = 0.001
 
 def rotor_velocity_air_density_correction(
     velocities: NDArrayFloat,

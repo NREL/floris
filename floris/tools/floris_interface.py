@@ -10,7 +10,10 @@ import pandas as pd
 from floris.logging_manager import LoggingManager
 from floris.simulation import Floris, State
 from floris.simulation.rotor_velocity import average_velocity
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.simulation.turbine.operation_models import (
+    POWER_SETPOINT_DEFAULT,
+    POWER_SETPOINT_DISABLED,
+)
 from floris.simulation.turbine.turbine import (
     axial_induction,
     power,
@@ -108,175 +111,7 @@ class FlorisInterface(LoggingManager):
         """Create an independent copy of the current FlorisInterface object"""
         return FlorisInterface(self.floris.as_dict())
 
-    def calculate_wake(
-        self,
-        yaw_angles: NDArrayFloat | list[float] | None = None,
-        # tilt_angles: NDArrayFloat | list[float] | None = None,
-        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
-        disable_turbines: NDArrayBool | list[bool] | None = None,
-    ) -> None:
-        """
-        Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
-        :py:meth:`~.FlowField.calculate_wake` methods.
-
-        Args:
-            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
-                Defaults to None.
-            power_setpoints (NDArrayFloat | list[float] | None, optional): Turbine power setpoints.
-                May be specified with some float values and some None values; power maximization
-                will be assumed for any None value. Defaults to None.
-            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions
-                n_findex x n_turbines.  True values indicate the turbine is disabled at that findex
-                and the power setpoint at that position is set to 0.  Defaults to None
-        """
-
-        if yaw_angles is None:
-            yaw_angles = np.zeros(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines,
-                )
-            )
-        self.floris.farm.yaw_angles = yaw_angles
-
-        if power_setpoints is None:
-            power_setpoints = POWER_SETPOINT_DEFAULT * np.ones(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines,
-                )
-            )
-        else:
-            power_setpoints = np.array(power_setpoints)
-
-        # Convert any None values to the default power setpoint
-        power_setpoints[
-            power_setpoints == np.full(power_setpoints.shape, None)
-        ] = POWER_SETPOINT_DEFAULT
-        power_setpoints = floris_array_converter(power_setpoints)
-
-        # Check for turbines to disable
-        if disable_turbines is not None:
-
-            # Force to numpy array
-            disable_turbines = np.array(disable_turbines)
-
-            # Must have first dimension = n_findex
-            if disable_turbines.shape[0] != self.floris.flow_field.n_findex:
-                raise ValueError(
-                    f"disable_turbines has a size of {disable_turbines.shape[0]} "
-                    f"in the 0th dimension, must be equal to "
-                    f"n_findex={self.floris.flow_field.n_findex}"
-                )
-
-            # Must have first dimension = n_turbines
-            if disable_turbines.shape[1] != self.floris.farm.n_turbines:
-                raise ValueError(
-                    f"disable_turbines has a size of {disable_turbines.shape[1]} "
-                    f"in the 1th dimension, must be equal to "
-                    f"n_turbines={self.floris.farm.n_turbines}"
-                )
-
-            # Set power_setpoints and yaw_angles to 0 in all locations where
-            # disable_turbines is True
-            yaw_angles[disable_turbines] = 0.0
-            power_setpoints[disable_turbines] = 0.001 # Not zero to avoid numerical problems
-
-        self.floris.farm.power_setpoints = power_setpoints
-
-        # # TODO is this required?
-        # if tilt_angles is not None:
-        #     self.floris.farm.tilt_angles = tilt_angles
-        # else:
-        #     self.floris.farm.set_tilt_to_ref_tilt(
-        #         self.floris.flow_field.n_findex,
-        #     )
-
-        # Initialize solution space
-        self.floris.initialize_domain()
-
-        # Perform the wake calculations
-        self.floris.steady_state_atmospheric_condition()
-
-    def calculate_no_wake(
-        self,
-        yaw_angles: NDArrayFloat | list[float] | None = None,
-        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
-        disable_turbines: NDArrayBool | list[bool] | None = None,
-    ) -> None:
-        """
-        This function is similar to `calculate_wake()` except
-        that it does not apply a wake model. That is, the wind
-        farm is modeled as if there is no wake in the flow.
-        Yaw angles are used to reduce the power and thrust of
-        the turbine that is yawed.
-
-        Args:
-            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
-                Defaults to None.
-        """
-
-        if yaw_angles is None:
-            yaw_angles = np.zeros(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines,
-                )
-            )
-        self.floris.farm.yaw_angles = yaw_angles
-
-        if power_setpoints is None:
-            power_setpoints = POWER_SETPOINT_DEFAULT * np.ones(
-                (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines,
-                )
-            )
-        else:
-            power_setpoints = np.array(power_setpoints)
-
-        # Convert any None values to the default power setpoint
-        power_setpoints[
-            power_setpoints == np.full(power_setpoints.shape, None)
-        ] = POWER_SETPOINT_DEFAULT
-        power_setpoints = floris_array_converter(power_setpoints)
-
-        # Check for turbines to disable
-        if disable_turbines is not None:
-
-            # Force to numpy array
-            # disable_turbines = np.array(disable_turbines)
-
-            # Must have first dimension = n_findex
-            if disable_turbines.shape[0] != self.floris.flow_field.n_findex:
-                raise ValueError(
-                    f"disable_turbines has a size of {disable_turbines.shape[0]} "
-                    f"in the 0th dimension, must be equal to "
-                    f"n_findex={self.floris.flow_field.n_findex}"
-                )
-
-            # Must have first dimension = n_turbines
-            if disable_turbines.shape[1] != self.floris.farm.n_turbines:
-                raise ValueError(
-                    f"disable_turbines has a size of {disable_turbines.shape[1]} "
-                    f"in the 1th dimension, must be equal to "
-                    f"n_turbines={self.floris.farm.n_turbines}"
-                )
-
-            # Set power_setpoints and yaw_angles to 0 in all locations where
-            # disable_turbines is True
-            yaw_angles[disable_turbines] = 0.0
-            power_setpoints[disable_turbines] = 0.001 # Not zero to avoid numerical problems
-
-        self.floris.farm.power_setpoints = power_setpoints
-
-        # Initialize solution space
-        self.floris.initialize_domain()
-
-        # Finalize values to user-supplied order
-        self.floris.finalize()
-
-    def reinitialize(
+    def set(
         self,
         wind_speeds: list[float] | NDArrayFloat | None = None,
         wind_directions: list[float] | NDArrayFloat | None = None,
@@ -284,9 +119,103 @@ class FlorisInterface(LoggingManager):
         wind_veer: float | None = None,
         reference_wind_height: float | None = None,
         turbulence_intensities: list[float] | NDArrayFloat | None = None,
-        # turbulence_kinetic_energy=None,
         air_density: float | None = None,
-        # wake: WakeModelManager = None,
+        layout_x: list[float] | NDArrayFloat | None = None,
+        layout_y: list[float] | NDArrayFloat | None = None,
+        turbine_type: list | None = None,
+        turbine_library_path: str | Path | None = None,
+        solver_settings: dict | None = None,
+        heterogenous_inflow_config=None,
+        wind_data: type[WindDataBase] | None = None,
+        yaw_angles: NDArrayFloat | list[float] | None = None,
+        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        disable_turbines: NDArrayBool | list[bool] | None = None,
+    ):
+        """
+        Set the wind conditions and operation setpoints for the wind farm.
+
+        Args:
+            wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
+                Defaults to None.
+            wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each
+                findex. Defaults to None.
+            wind_shear (float | None, optional): Wind shear exponent. Defaults to None.
+            wind_veer (float | None, optional): Wind veer. Defaults to None.
+            reference_wind_height (float | None, optional): Reference wind height. Defaults to None.
+            turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence
+                intensities at each findex. Defaults to None.
+            air_density (float | None, optional): Air density. Defaults to None.
+            layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.
+                Defaults to None.
+            layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.
+                Defaults to None.
+            turbine_type (list | None, optional): Turbine type. Defaults to None.
+            turbine_library_path (str | Path | None, optional): Path to the turbine library.
+                Defaults to None.
+            solver_settings (dict | None, optional): Solver settings. Defaults to None.
+            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
+                to None.
+            wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+            power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):
+                Turbine power setpoints.
+            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions
+                n_findex x n_turbines. True values indicate the turbine is disabled at that findex
+                and the power setpoint at that position is set to 0. Defaults to None.
+        """
+        # Initialize a new Floris object after saving the setpoints
+        _yaw_angles = self.floris.farm.yaw_angles
+        _power_setpoints = self.floris.farm.power_setpoints
+        self._reinitialize(
+            wind_speeds=wind_speeds,
+            wind_directions=wind_directions,
+            wind_shear=wind_shear,
+            wind_veer=wind_veer,
+            reference_wind_height=reference_wind_height,
+            turbulence_intensities=turbulence_intensities,
+            air_density=air_density,
+            layout_x=layout_x,
+            layout_y=layout_y,
+            turbine_type=turbine_type,
+            turbine_library_path=turbine_library_path,
+            solver_settings=solver_settings,
+            heterogenous_inflow_config=heterogenous_inflow_config,
+            wind_data=wind_data,
+        )
+
+        # If the yaw angles or power setpoints are not the default, set them back to the
+        # previous setting
+        if not (_yaw_angles == 0).all():
+            self.floris.farm.yaw_angles = _yaw_angles
+        if not (
+            (_power_setpoints == POWER_SETPOINT_DEFAULT)
+            | (_power_setpoints == POWER_SETPOINT_DISABLED)
+        ).all():
+            self.floris.farm.power_setpoints = _power_setpoints
+
+        # Set the operation
+        self._set_operation(
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
+
+    def reset_operation(self):
+        """
+        Instantiate a new Floris object to set all operation setpoints to their default values.
+        """
+        self._reinitialize()
+
+    def _reinitialize(
+        self,
+        wind_speeds: list[float] | NDArrayFloat | None = None,
+        wind_directions: list[float] | NDArrayFloat | None = None,
+        wind_shear: float | None = None,
+        wind_veer: float | None = None,
+        reference_wind_height: float | None = None,
+        turbulence_intensities: list[float] | NDArrayFloat | None = None,
+        air_density: float | None = None,
         layout_x: list[float] | NDArrayFloat | None = None,
         layout_y: list[float] | NDArrayFloat | None = None,
         turbine_type: list | None = None,
@@ -295,6 +224,33 @@ class FlorisInterface(LoggingManager):
         heterogenous_inflow_config=None,
         wind_data: type[WindDataBase] | None = None,
     ):
+        """
+        Instantiate a new Floris object with updated conditions set by arguments. Any parameters
+        in Floris that aren't changed by arguments to this function retain their values.
+
+        Args:
+            wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
+                Defaults to None.
+            wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each
+                findex. Defaults to None.
+            wind_shear (float | None, optional): Wind shear exponent. Defaults to None.
+            wind_veer (float | None, optional): Wind veer. Defaults to None.
+            reference_wind_height (float | None, optional): Reference wind height. Defaults to None.
+            turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence
+                intensities at each findex. Defaults to None.
+            air_density (float | None, optional): Air density. Defaults to None.
+            layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.
+                Defaults to None.
+            layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.
+                Defaults to None.
+            turbine_type (list | None, optional): Turbine type. Defaults to None.
+            turbine_library_path (str | Path | None, optional): Path to the turbine library.
+                Defaults to None.
+            solver_settings (dict | None, optional): Solver settings. Defaults to None.
+            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
+                to None.
+            wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
+        """
         # Export the floris object recursively as a dictionary
         floris_dict = self.floris.as_dict()
         flow_field_dict = floris_dict["flow_field"]
@@ -371,12 +327,6 @@ class FlorisInterface(LoggingManager):
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
 
-        ## Wake
-        # if wake is not None:
-        #     self.floris.wake = wake
-        # if turbulence_kinetic_energy is not None:
-        #     pass  # TODO: not needed until GCH
-
         if solver_settings is not None:
             floris_dict["solver"] = solver_settings
 
@@ -385,6 +335,89 @@ class FlorisInterface(LoggingManager):
 
         # Create a new instance of floris and attach to self
         self.floris = Floris.from_dict(floris_dict)
+
+    def _set_operation(
+        self,
+        yaw_angles: NDArrayFloat | list[float] | None = None,
+        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        disable_turbines: NDArrayBool | list[bool] | None = None,
+    ):
+        """
+        Apply operating setpoints to the floris object.
+
+        Args:
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool | list[bool] | None, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
+        """
+        # Add operating conditions to the floris object
+        if yaw_angles is not None:
+            self.floris.farm.yaw_angles = yaw_angles
+
+        if power_setpoints is not None:
+            power_setpoints = np.array(power_setpoints)
+
+            # Convert any None values to the default power setpoint
+            power_setpoints[
+                power_setpoints == np.full(power_setpoints.shape, None)
+            ] = POWER_SETPOINT_DEFAULT
+            power_setpoints = floris_array_converter(power_setpoints)
+
+            self.floris.farm.power_setpoints = power_setpoints
+
+        # Check for turbines to disable
+        if disable_turbines is not None:
+
+            # Force to numpy array
+            disable_turbines = np.array(disable_turbines)
+
+            # Must have first dimension = n_findex
+            if disable_turbines.shape[0] != self.floris.flow_field.n_findex:
+                raise ValueError(
+                    f"disable_turbines has a size of {disable_turbines.shape[0]} "
+                    f"in the 0th dimension, must be equal to "
+                    f"n_findex={self.floris.flow_field.n_findex}"
+                )
+
+            # Must have first dimension = n_turbines
+            if disable_turbines.shape[1] != self.floris.farm.n_turbines:
+                raise ValueError(
+                    f"disable_turbines has a size of {disable_turbines.shape[1]} "
+                    f"in the 1th dimension, must be equal to "
+                    f"n_turbines={self.floris.farm.n_turbines}"
+                )
+
+            # Set power setpoints to small value (non zero to avoid numerical issues) and
+            # yaw_angles to 0 in all locations where disable_turbines is True
+            self.floris.farm.yaw_angles[disable_turbines] = 0.0
+            self.floris.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
+
+    def run(self) -> None:
+        """
+        Run the FLORIS solve to compute the velocity field and wake effects.
+        """
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Perform the wake calculations
+        self.floris.steady_state_atmospheric_condition()
+
+    def run_no_wake(self) -> None:
+        """
+        This function is similar to `run()` except that it does not apply a wake model. That is,
+        the wind farm is modeled as if there is no wake in the flow. Operation settings may
+        reduce the power and thrust of the turbine to where they're applied.
+        """
+
+        # Initialize solution space
+        self.floris.initialize_domain()
+
+        # Finalize values to user-supplied order
+        self.floris.finalize()
 
     def get_plane_of_points(
         self,
@@ -477,6 +510,8 @@ class FlorisInterface(LoggingManager):
         wd=None,
         ws=None,
         yaw_angles=None,
+        power_setpoints=None,
+        disable_turbines=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -493,6 +528,14 @@ class FlorisInterface(LoggingManager):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
+            wd (float, optional): Wind direction. Defaults to None.
+            ws (float, optional): Wind speed. Defaults to None.
+            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
@@ -507,8 +550,6 @@ class FlorisInterface(LoggingManager):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
-        current_yaw_angles = self.floris.farm.yaw_angles
-
         # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
@@ -517,11 +558,14 @@ class FlorisInterface(LoggingManager):
             "flow_field_grid_points": [x_resolution, y_resolution],
             "flow_field_bounds": [x_bounds, y_bounds],
         }
-        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
-
-        # TODO this has to be done here as it seems to be lost with reinitialize
-        if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
 
         # Calculate wake
         self.floris.solve_for_viz()
@@ -546,7 +590,7 @@ class FlorisInterface(LoggingManager):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.run()
 
         return horizontal_plane
 
@@ -560,6 +604,8 @@ class FlorisInterface(LoggingManager):
         wd=None,
         ws=None,
         yaw_angles=None,
+        power_setpoints=None,
+        disable_turbines=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -590,7 +636,6 @@ class FlorisInterface(LoggingManager):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
-        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -600,11 +645,14 @@ class FlorisInterface(LoggingManager):
             "flow_field_grid_points": [y_resolution, z_resolution],
             "flow_field_bounds": [y_bounds, z_bounds],
         }
-        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
-
-        # TODO this has to be done here as it seems to be lost with reinitialize
-        if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
 
         # Calculate wake
         self.floris.solve_for_viz()
@@ -624,7 +672,7 @@ class FlorisInterface(LoggingManager):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.run()
 
         return cross_plane
 
@@ -638,6 +686,8 @@ class FlorisInterface(LoggingManager):
         wd=None,
         ws=None,
         yaw_angles=None,
+        power_setpoints=None,
+        disable_turbines=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -654,6 +704,18 @@ class FlorisInterface(LoggingManager):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
+            z_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            wd (float, optional): Wind direction. Defaults to None.
+            ws (float, optional): Wind speed. Defaults to None.
+            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
+
+
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
@@ -668,7 +730,6 @@ class FlorisInterface(LoggingManager):
 
         # Store the current state for reinitialization
         floris_dict = self.floris.as_dict()
-        current_yaw_angles = self.floris.farm.yaw_angles
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -678,11 +739,14 @@ class FlorisInterface(LoggingManager):
             "flow_field_grid_points": [x_resolution, z_resolution],
             "flow_field_bounds": [x_bounds, z_bounds],
         }
-        self.reinitialize(wind_directions=wd, wind_speeds=ws, solver_settings=solver_settings)
-
-        # TODO this has to be done here as it seems to be lost with reinitialize
-        if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
 
         # Calculate wake
         self.floris.solve_for_viz()
@@ -702,7 +766,7 @@ class FlorisInterface(LoggingManager):
         self.floris = Floris.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.calculate_wake(yaw_angles=current_yaw_angles)
+        self.run()
 
         return y_plane
 
@@ -730,7 +794,7 @@ class FlorisInterface(LoggingManager):
         if self.floris.state is not State.USED:
             raise RuntimeError(
                 "Can't run function `FlorisInterface.get_turbine_powers` without "
-                "first running `FlorisInterface.calculate_wake`."
+                "first running `FlorisInterface.run`."
             )
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.
@@ -872,7 +936,6 @@ class FlorisInterface(LoggingManager):
         freq,
         cut_in_wind_speed=0.001,
         cut_out_wind_speed=None,
-        yaw_angles=None,
         turbine_weights=None,
         no_wake=False,
     ) -> float:
@@ -895,10 +958,6 @@ class FlorisInterface(LoggingManager):
                 wind farm is known to produce 0.0 W of power. If None is
                 specified, will assume that the wind farm does not cut out
                 at high wind speeds. Defaults to None.
-            yaw_angles (NDArrayFloat | list[float] | None, optional):
-                The relative turbine yaw angles in degrees. If None is
-                specified, will assume that the turbine yaw angles are all
-                zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
                 particular turbines and/or completely ignore the power
@@ -952,17 +1011,14 @@ class FlorisInterface(LoggingManager):
         if np.any(conditions_to_evaluate):
             wind_speeds_subset = wind_speeds[conditions_to_evaluate]
             wind_directions_subset = wind_directions[conditions_to_evaluate]
-            yaw_angles_subset = None
-            if yaw_angles is not None:
-                yaw_angles_subset = yaw_angles[conditions_to_evaluate]
-            self.reinitialize(
+            self.set(
                 wind_speeds=wind_speeds_subset,
                 wind_directions=wind_directions_subset,
             )
             if no_wake:
-                self.calculate_no_wake(yaw_angles=yaw_angles_subset)
+                self.run_no_wake()
             else:
-                self.calculate_wake(yaw_angles=yaw_angles_subset)
+                self.run()
             farm_power[conditions_to_evaluate] = self.get_farm_power(
                 turbine_weights=turbine_weights
             )
@@ -971,7 +1027,7 @@ class FlorisInterface(LoggingManager):
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
-        self.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
+        self.set(wind_speeds=wind_speeds, wind_directions=wind_directions)
 
         return aep
 
@@ -980,7 +1036,6 @@ class FlorisInterface(LoggingManager):
         wind_data,
         cut_in_wind_speed=0.001,
         cut_out_wind_speed=None,
-        yaw_angles=None,
         turbine_weights=None,
         no_wake=False,
     ) -> float:
@@ -1001,10 +1056,6 @@ class FlorisInterface(LoggingManager):
                 wind farm is known to produce 0.0 W of power. If None is
                 specified, will assume that the wind farm does not cut out
                 at high wind speeds. Defaults to None.
-            yaw_angles (NDArrayFloat | list[float] | None, optional):
-                The relative turbine yaw angles in degrees. If None is
-                specified, will assume that the turbine yaw angles are all
-                zero degrees for all conditions. Defaults to None.
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
                 particular turbines and/or completely ignore the power
@@ -1040,7 +1091,6 @@ class FlorisInterface(LoggingManager):
             freq,
             cut_in_wind_speed=cut_in_wind_speed,
             cut_out_wind_speed=cut_out_wind_speed,
-            yaw_angles=yaw_angles,
             turbine_weights=turbine_weights,
             no_wake=no_wake,
         )
@@ -1163,7 +1213,7 @@ class FlorisInterface(LoggingManager):
         if reference_height is None:
             reference_height = self.floris.flow_field.reference_wind_height
 
-        self.reinitialize(
+        self.set(
             wind_directions=[wind_direction],
             wind_speeds=[homogeneous_wind_speed],
             wind_shear=0.0,
@@ -1181,7 +1231,7 @@ class FlorisInterface(LoggingManager):
             reference_height,
         )
 
-        self.reinitialize(
+        self.set(
             wind_directions=wind_directions_copy,
             wind_speeds=wind_speeds_copy,
             wind_shear=wind_shear_copy,
@@ -1226,3 +1276,17 @@ class FlorisInterface(LoggingManager):
             return xcoords, ycoords, zcoords
         else:
             return xcoords, ycoords
+
+    ### v3 functions that are removed - raise an error if used
+
+    def calculate_wake(self):
+        raise NotImplementedError(
+            "The calculate_wake method has been removed. Please use the run method. "
+            "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+        )
+
+    def reinitialize(self):
+        raise NotImplementedError(
+            "The reinitialize method has been removed. Please use the set method. "
+            "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+        )
