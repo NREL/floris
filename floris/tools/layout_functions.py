@@ -260,9 +260,10 @@ def get_wake_direction(x_i: float, y_i: float, x_j: float, y_j: float) -> float:
     dy = y_j - y_i
 
     angle_rad = np.arctan2(dy, dx)
-    angle_deg = 270 - np.rad2deg(angle_rad)
+
 
     # Adjust for "from" direction (add 180 degrees) and wrap within 0-360
+    angle_deg = 270 - np.rad2deg(angle_rad)
     wind_direction = angle_deg % 360
 
     return wind_direction
@@ -395,6 +396,10 @@ def plot_waking_directions(
 
     Returns:
         plt.Axes: The axes object used for the plot.
+
+    Raises:
+        IndexError: If any value in `turbine_indices` is an invalid turbine index.
+
     """
 
     if not ax:
