@@ -1,16 +1,3 @@
-# Copyright 2024 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,22 +22,24 @@ with open(str(
 turbine_type["power_thrust_model"] = "simple-derating"
 
 # Convert to a simple two turbine layout with derating turbines
-fi.reinitialize(layout_x=[0, 1000.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])
+fi.set(layout_x=[0, 1000.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])
 
 # Set the wind directions and speeds to be constant over n_findex = N time steps
 N = 50
-fi.reinitialize(wind_directions=270 * np.ones(N), wind_speeds=10.0 * np.ones(N))
-fi.calculate_wake()
+fi.set(wind_directions=270 * np.ones(N), wind_speeds=10.0 * np.ones(N))
+fi.run()
 turbine_powers_orig = fi.get_turbine_powers()
 
 # Add derating
 power_setpoints = np.tile(np.linspace(1, 6e6, N), 2).reshape(2, N).T
-fi.calculate_wake(power_setpoints=power_setpoints)
+fi.set(power_setpoints=power_setpoints)
+fi.run()
 turbine_powers_derated = fi.get_turbine_powers()
 
 # Compute available power at downstream turbine
 power_setpoints_2 = np.array([np.linspace(1, 6e6, N), np.full(N, None)]).T
-fi.calculate_wake(power_setpoints=power_setpoints_2)
+fi.set(power_setpoints=power_setpoints_2)
+fi.run()
 turbine_powers_avail_ds = fi.get_turbine_powers()[:,1]
 
 # Plot the results
@@ -104,12 +93,14 @@ power_setpoints = np.array([
     [2e6, None,],
     [None, 1e6]
 ])
-fi.reinitialize(
+fi.set(
     wind_directions=270 * np.ones(len(yaw_angles)),
     wind_speeds=10.0 * np.ones(len(yaw_angles)),
-    turbine_type=[turbine_type]*2
+    turbine_type=[turbine_type]*2,
+    yaw_angles=yaw_angles,
+    power_setpoints=power_setpoints,
 )
-fi.calculate_wake(yaw_angles=yaw_angles, power_setpoints=power_setpoints)
+fi.run()
 turbine_powers = fi.get_turbine_powers()
 print(turbine_powers)
 

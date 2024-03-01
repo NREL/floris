@@ -16,53 +16,127 @@ def test_read_yaml():
     fi = FlorisInterface(configuration=YAML_INPUT)
     assert isinstance(fi, FlorisInterface)
 
-def test_calculate_wake():
+def test_set_run():
     """
-    In FLORIS v3.2, running calculate_wake twice incorrectly set the yaw angles when the first time
-    has non-zero yaw settings but the second run had all-zero yaw settings. The test below asserts
-    that the yaw angles are correctly set in subsequent calls to calculate_wake.
+    These tests are designed to test the set / run sequence to ensure that inputs are
+    set when they should be, not set when they shouldn't be, and that the run sequence
+    retains or resets information as intended.
     """
+
+    # In FLORIS v3.2, running calculate_wake twice incorrectly set the yaw angles when the
+    # first time has non-zero yaw settings but the second run had all-zero yaw settings.
+    # The test below asserts that the yaw angles are correctly set in subsequent calls to run.
     fi = FlorisInterface(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
-    fi.calculate_wake(yaw_angles=yaw_angles)
+    fi.set(yaw_angles=yaw_angles)
+    fi.run()
     assert fi.floris.farm.yaw_angles == yaw_angles
 
     yaw_angles = np.zeros((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
-    fi.calculate_wake(yaw_angles=yaw_angles)
+    fi.set(yaw_angles=yaw_angles)
+    fi.run()
     assert fi.floris.farm.yaw_angles == yaw_angles
 
-    power_setpoints = 1e6*np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
-    fi.calculate_wake(power_setpoints=power_setpoints)
-    assert fi.floris.farm.power_setpoints == power_setpoints
+    # Verify making changes to the layout, wind speed, and wind direction both before and after
+    # running the calculation
+    fi.reset_operation()
+    fi.set(layout_x=[0, 0], layout_y=[0, 1000], wind_speeds=[8, 8], wind_directions=[270, 270])
+    assert np.array_equal(fi.floris.farm.layout_x, np.array([0, 0]))
+    assert np.array_equal(fi.floris.farm.layout_y, np.array([0, 1000]))
+    assert np.array_equal(fi.floris.flow_field.wind_speeds, np.array([8, 8]))
+    assert np.array_equal(fi.floris.flow_field.wind_directions, np.array([270, 270]))
 
-    fi.calculate_wake(power_setpoints=None)
-    assert fi.floris.farm.power_setpoints == (
-        POWER_SETPOINT_DEFAULT * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
-    )
+    # Double check that nothing has changed after running the calculation
+    fi.run()
+    assert np.array_equal(fi.floris.farm.layout_x, np.array([0, 0]))
+    assert np.array_equal(fi.floris.farm.layout_y, np.array([0, 1000]))
+    assert np.array_equal(fi.floris.flow_field.wind_speeds, np.array([8, 8]))
+    assert np.array_equal(fi.floris.flow_field.wind_directions, np.array([270, 270]))
 
-    fi.reinitialize(layout_x=[0, 0], layout_y=[0, 1000])
+    # Verify that changing wind shear doesn't change the other settings above
+    fi.set(wind_shear=0.1)
+    assert fi.floris.flow_field.wind_shear == 0.1
+    assert np.array_equal(fi.floris.farm.layout_x, np.array([0, 0]))
+    assert np.array_equal(fi.floris.farm.layout_y, np.array([0, 1000]))
+    assert np.array_equal(fi.floris.flow_field.wind_speeds, np.array([8, 8]))
+    assert np.array_equal(fi.floris.flow_field.wind_directions, np.array([270, 270]))
+
+    # Verify that operation set-points are retained after changing other settings
+    yaw_angles = 20 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    fi.set(yaw_angles=yaw_angles)
+    assert np.array_equal(fi.floris.farm.yaw_angles, yaw_angles)
+    fi.set()
+    assert np.array_equal(fi.floris.farm.yaw_angles, yaw_angles)
+    fi.set(wind_speeds=[10, 10])
+    assert np.array_equal(fi.floris.farm.yaw_angles, yaw_angles)
+    power_setpoints = 1e6 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    fi.set(power_setpoints=power_setpoints)
+    assert np.array_equal(fi.floris.farm.yaw_angles, yaw_angles)
+    assert np.array_equal(fi.floris.farm.power_setpoints, power_setpoints)
+
+    # Test that setting power setpoints through the .set() function actually sets the
+    # power setpoints in the floris object
+    fi.reset_operation()
+    power_setpoints = 1e6 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    fi.set(power_setpoints=power_setpoints)
+    fi.run()
+    assert np.array_equal(fi.floris.farm.power_setpoints, power_setpoints)
+
+    # Similar to above, any "None" set-points should be set to the default value
     power_setpoints = np.array([[1e6, None]])
-    fi.calculate_wake(power_setpoints=power_setpoints)
-    assert np.allclose(
+    fi.set(layout_x=[0, 0], layout_y=[0, 1000], power_setpoints=power_setpoints)
+    fi.run()
+    assert np.array_equal(
         fi.floris.farm.power_setpoints,
         np.array([[power_setpoints[0, 0], POWER_SETPOINT_DEFAULT]])
     )
 
-def test_calculate_no_wake():
-    """
-    In FLORIS v3.2, running calculate_no_wake twice incorrectly set the yaw angles when the first
-    time has non-zero yaw settings but the second run had all-zero yaw settings. The test below
-    asserts that the yaw angles are correctly set in subsequent calls to calculate_no_wake.
-    """
+def test_reset_operation():
+    # Calling the reset function should reset the power setpoints to the default values
     fi = FlorisInterface(configuration=YAML_INPUT)
     yaw_angles = 20 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
-    fi.calculate_no_wake(yaw_angles=yaw_angles)
+    power_setpoints = 1e6 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    fi.set(power_setpoints=power_setpoints, yaw_angles=yaw_angles)
+    fi.run()
+    fi.reset_operation()
+    assert fi.floris.farm.yaw_angles == np.zeros(
+        (fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines)
+    )
+    assert fi.floris.farm.power_setpoints == (
+        POWER_SETPOINT_DEFAULT * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    )
+
+    # Double check that running the calculate also doesn't change the operating set points
+    fi.run()
+    assert fi.floris.farm.yaw_angles == np.zeros(
+        (fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines)
+    )
+    assert fi.floris.farm.power_setpoints == (
+        POWER_SETPOINT_DEFAULT * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    )
+
+def test_run_no_wake():
+    # In FLORIS v3.2, running calculate_no_wake twice incorrectly set the yaw angles when the first
+    # time has non-zero yaw settings but the second run had all-zero yaw settings. The test below
+    # asserts that the yaw angles are correctly set in subsequent calls to run_no_wake.
+    fi = FlorisInterface(configuration=YAML_INPUT)
+    yaw_angles = 20 * np.ones((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
+    fi.set(yaw_angles=yaw_angles)
+    fi.run_no_wake()
     assert fi.floris.farm.yaw_angles == yaw_angles
 
     yaw_angles = np.zeros((fi.floris.flow_field.n_findex, fi.floris.farm.n_turbines))
-    fi.calculate_no_wake(yaw_angles=yaw_angles)
+    fi.set(yaw_angles=yaw_angles)
+    fi.run_no_wake()
     assert fi.floris.farm.yaw_angles == yaw_angles
 
+    # With no wake and three turbines in a line, the power for all turbines with zero yaw
+    # should be the same
+    fi.reset_operation()
+    fi.set(layout_x=[0, 200, 4000], layout_y=[0, 0, 0])
+    fi.run_no_wake()
+    power_no_wake = fi.get_turbine_powers()
+    assert len(np.unique(power_no_wake)) == 1
 
 def test_get_turbine_powers():
     # Get turbine powers should return n_findex x n_turbine powers
@@ -78,21 +152,20 @@ def test_get_turbine_powers():
     layout_y = np.array([0, 1000])
     n_turbines = len(layout_x)
 
-    fi.reinitialize(
+    fi.set(
         wind_speeds=wind_speeds,
         wind_directions=wind_directions,
         layout_x=layout_x,
         layout_y=layout_y,
     )
 
-    fi.calculate_wake()
+    fi.run()
 
     turbine_powers = fi.get_turbine_powers()
 
     assert turbine_powers.shape[0] == n_findex
     assert turbine_powers.shape[1] == n_turbines
     assert turbine_powers[0, 0] == turbine_powers[1, 0]
-
 
 def test_get_farm_power():
     fi = FlorisInterface(configuration=YAML_INPUT)
@@ -105,14 +178,14 @@ def test_get_farm_power():
     layout_y = np.array([0, 1000])
     # n_turbines = len(layout_x)
 
-    fi.reinitialize(
+    fi.set(
         wind_speeds=wind_speeds,
         wind_directions=wind_directions,
         layout_x=layout_x,
         layout_y=layout_y,
     )
 
-    fi.calculate_wake()
+    fi.run()
 
     turbine_powers = fi.get_turbine_powers()
     farm_powers = fi.get_farm_power()
@@ -155,45 +228,51 @@ def test_disable_turbines():
     ) as t:
         turbine_type = yaml.safe_load(t)
     turbine_type["power_thrust_model"] = "mixed"
-    fi.reinitialize(turbine_type=[turbine_type])
+    fi.set(turbine_type=[turbine_type])
 
     # Init to n-findex = 2, n_turbines = 3
-    fi.reinitialize(
+    fi.set(
         wind_speeds=np.array([8.,8.,]),
         wind_directions=np.array([270.,270.]),
         layout_x = [0,1000,2000],
         layout_y=[0,0,0]
     )
 
-    # Confirm that passing in a disable value with wrong n_findex raises error
+    # Confirm that using a disable value with wrong n_findex raises error
     with pytest.raises(ValueError):
-        fi.calculate_wake(disable_turbines=np.zeros((10, 3), dtype=bool))
+        fi.set(disable_turbines=np.zeros((10, 3), dtype=bool))
+        fi.run()
 
-    # Confirm that passing in a disable value with wrong n_turbines raises error
+    # Confirm that using a disable value with wrong n_turbines raises error
     with pytest.raises(ValueError):
-        fi.calculate_wake(disable_turbines=np.zeros((2, 10), dtype=bool))
+        fi.set(disable_turbines=np.zeros((2, 10), dtype=bool))
+        fi.run()
 
     # Confirm that if all turbines are disabled, power is near 0 for all turbines
-    fi.calculate_wake(disable_turbines=np.ones((2, 3), dtype=bool))
+    fi.set(disable_turbines=np.ones((2, 3), dtype=bool))
+    fi.run()
     turbines_powers = fi.get_turbine_powers()
-    np.testing.assert_allclose(turbines_powers,0,atol=0.1)
+    np.testing.assert_allclose(turbines_powers, 0, atol=0.1)
 
-    # Confirm the same for calculate_no_wake
-    fi.calculate_no_wake(disable_turbines=np.ones((2, 3), dtype=bool))
+    # Confirm the same for run_no_wake
+    fi.run_no_wake()
     turbines_powers = fi.get_turbine_powers()
-    np.testing.assert_allclose(turbines_powers,0,atol=0.1)
+    np.testing.assert_allclose(turbines_powers, 0, atol=0.1)
 
     # Confirm that if all disabled values set to false, equivalent to running normally
-    fi.calculate_wake()
+    fi.reset_operation()
+    fi.run()
     turbines_powers_normal = fi.get_turbine_powers()
-    fi.calculate_wake(disable_turbines=np.zeros((2, 3), dtype=bool))
+    fi.set(disable_turbines=np.zeros((2, 3), dtype=bool))
+    fi.run()
     turbines_powers_false_disable = fi.get_turbine_powers()
     np.testing.assert_allclose(turbines_powers_normal,turbines_powers_false_disable,atol=0.1)
 
-    # Confirm the same for calculate_no_wake
-    fi.calculate_no_wake()
+    # Confirm the same for run_no_wake
+    fi.run_no_wake()
     turbines_powers_normal = fi.get_turbine_powers()
-    fi.calculate_no_wake(disable_turbines=np.zeros((2, 3), dtype=bool))
+    fi.set(disable_turbines=np.zeros((2, 3), dtype=bool))
+    fi.run_no_wake()
     turbines_powers_false_disable = fi.get_turbine_powers()
     np.testing.assert_allclose(turbines_powers_normal,turbines_powers_false_disable,atol=0.1)
 
@@ -201,19 +280,27 @@ def test_disable_turbines():
     # In terms of impact on third turbine
     disable_turbines = np.zeros((2, 3), dtype=bool)
     disable_turbines[:,1] = [True, True]
-    fi.calculate_wake(disable_turbines=disable_turbines)
+    fi.set(disable_turbines=disable_turbines)
+    fi.run()
     power_with_middle_disabled = fi.get_turbine_powers()
 
-    fi.reinitialize(layout_x = [0,2000],layout_y = [0, 0])
-    fi.calculate_wake()
-    power_with_middle_removed = fi.get_turbine_powers()
+    # Two turbine case to compare against above
+    fi_remove_middle = fi.copy()
+    fi_remove_middle.set(layout_x=[0,2000], layout_y=[0, 0])
+    fi_remove_middle.run()
+    power_with_middle_removed = fi_remove_middle.get_turbine_powers()
 
     np.testing.assert_almost_equal(power_with_middle_disabled[0,2], power_with_middle_removed[0,1])
     np.testing.assert_almost_equal(power_with_middle_disabled[1,2], power_with_middle_removed[1,1])
 
     # Check that yaw angles are correctly set when turbines are disabled
-    fi.reinitialize(layout_x = [0,1000,2000],layout_y = [0,0,0])
-    fi.calculate_wake(disable_turbines=disable_turbines, yaw_angles=np.ones((2, 3)))
+    fi.set(
+        layout_x=[0, 1000, 2000],
+        layout_y=[0, 0, 0],
+        disable_turbines=disable_turbines,
+        yaw_angles=np.ones((2, 3))
+    )
+    fi.run()
     assert (fi.floris.farm.yaw_angles == np.array([[1.0, 0.0, 1.0], [1.0, 0.0, 1.0]])).all()
 
 def test_get_farm_aep():
@@ -227,14 +314,14 @@ def test_get_farm_aep():
     layout_y = np.array([0, 1000])
     # n_turbines = len(layout_x)
 
-    fi.reinitialize(
+    fi.set(
         wind_speeds=wind_speeds,
         wind_directions=wind_directions,
         layout_x=layout_x,
         layout_y=layout_y,
     )
 
-    fi.calculate_wake()
+    fi.run()
 
     farm_powers = fi.get_farm_power()
 
@@ -249,7 +336,6 @@ def test_get_farm_aep():
     # In this case farm_aep should match farm powers
     np.testing.assert_allclose(farm_aep, aep)
 
-
 def test_get_farm_aep_with_conditions():
     fi = FlorisInterface(configuration=YAML_INPUT)
 
@@ -261,14 +347,14 @@ def test_get_farm_aep_with_conditions():
     layout_y = np.array([0, 1000])
     # n_turbines = len(layout_x)
 
-    fi.reinitialize(
+    fi.set(
         wind_speeds=wind_speeds,
         wind_directions=wind_directions,
         layout_x=layout_x,
         layout_y=layout_y,
     )
 
-    fi.calculate_wake()
+    fi.run()
 
     farm_powers = fi.get_farm_power()
 
@@ -292,23 +378,20 @@ def test_get_farm_aep_with_conditions():
     #Confirm n_findex reset after the operation
     assert n_findex == fi.floris.flow_field.n_findex
 
-
-def test_reinitailize_ti():
+def test_set_ti():
     fi = FlorisInterface(configuration=YAML_INPUT)
 
-    # Set wind directions and wind speeds and turbulence intensitities
-    # with n_findex = 3
-    fi.reinitialize(
+    # Set wind directions, wind speeds and turbulence intensities with n_findex = 3
+    fi.set(
         wind_speeds=[8.0, 8.0, 8.0],
         wind_directions=[240.0, 250.0, 260.0],
         turbulence_intensities=[0.1, 0.1, 0.1],
     )
 
     # Now confirm can change wind speeds and directions shape without changing
-    # turbulence intensity since this is allowed when the turbulence
-    # intensities are uniform
+    # turbulence intensity since this is allowed when the turbulence intensities are uniform
     # raises n_findex to 4
-    fi.reinitialize(
+    fi.set(
         wind_speeds=[8.0, 8.0, 8.0, 8.0],
         wind_directions=[
             240.0,
@@ -322,16 +405,16 @@ def test_reinitailize_ti():
     np.testing.assert_allclose(fi.floris.flow_field.turbulence_intensities, [0.1, 0.1, 0.1, 0.1])
 
     # Now should be able to change turbulence intensity to changing, so long as length 4
-    fi.reinitialize(turbulence_intensities=[0.08, 0.09, 0.1, 0.11])
+    fi.set(turbulence_intensities=[0.08, 0.09, 0.1, 0.11])
 
     # However the wrong length should raise an error
     with pytest.raises(ValueError):
-        fi.reinitialize(turbulence_intensities=[0.08, 0.09, 0.1])
+        fi.set(turbulence_intensities=[0.08, 0.09, 0.1])
 
     # Also, now that TI is not a single unique value, it can not be left default when changing
     # shape of wind speeds and directions
     with pytest.raises(ValueError):
-        fi.reinitialize(
+        fi.set(
             wind_speeds=[8.0, 8.0, 8.0, 8.0, 8.0],
             wind_directions=[
                 240.0,
@@ -343,11 +426,11 @@ def test_reinitailize_ti():
         )
 
     # Test that applying a 1D array of length 1 is allowed for ti
-    fi.reinitialize(turbulence_intensities=[0.12])
+    fi.set(turbulence_intensities=[0.12])
 
     # Test that applying a float however raises an error
     with pytest.raises(TypeError):
-        fi.reinitialize(turbulence_intensities=0.12)
+        fi.set(turbulence_intensities=0.12)
 
 
 def test_get_heterogenous_inflow_config():

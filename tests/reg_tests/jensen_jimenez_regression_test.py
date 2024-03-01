@@ -1,16 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import numpy as np
 
@@ -90,6 +77,48 @@ yawed_baseline = np.array(
             [8.5159500, 0.7864631, 2156780.3499849, 0.2689497],
             [8.0047998, 0.7871218, 1774753.2988553, 0.2693064],
         ],
+    ]
+)
+
+full_flow_baseline = np.array(
+    [
+        [
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [5.55736296, 5.63646825, 5.708184  ],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [5.11849406, 5.19135235, 5.25740466],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.18032699, 7.28253407, 7.37519358],
+                [4.98829055, 5.05929547, 5.12366755],
+                [7.18032699, 7.28253407, 7.37519358],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [6.97109947, 6.37648724, 7.16028784],
+                [6.28699612, 6.37648724, 6.45761864],
+                [6.97109947, 6.37648724, 7.16028784],
+                [7.88772361, 8.        , 8.10178821],
+            ]
+        ]
     ]
 )
 
@@ -413,3 +442,32 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     assert np.allclose(farm_powers[8,0:5], farm_powers[8,10:15])
     assert np.allclose(farm_powers[8,0:5], farm_powers[8,15:20])
     assert np.allclose(farm_powers[8,20], farm_powers[8,20:25])
+
+
+def test_full_flow_solver(sample_inputs_fixture):
+    """
+    Full flow solver test with the flow field planar grid.
+    This requires one wind condition, and the grid is deliberately coarse to allow for
+    visually comparing results, as needed.
+    The u-component of velocity is compared, and the array has the shape
+    (n_findex, n_turbines, n grid points in x, n grid points in y, 3 grid points in z).
+    """
+
+    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.floris["solver"] = {
+        "type": "flow_field_planar_grid",
+        "normal_vector": "z",
+        "planar_coordinate": sample_inputs_fixture.floris["farm"]["turbine_type"][0]["hub_height"],
+        "flow_field_grid_points": [5, 5],
+        "flow_field_bounds": [None, None],
+    }
+    sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0]
+    sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
+
+    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris.solve_for_viz()
+
+    velocities = floris.flow_field.u_sorted
+
+    assert_results_arrays(velocities, full_flow_baseline)

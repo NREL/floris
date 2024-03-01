@@ -1,17 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -63,7 +49,7 @@ powers = np.zeros((2, num_in_row))
 for i, (fi, tilt) in enumerate(zip([fi_5, fi_15], [5, 15])):
 
     # Farm layout and wind conditions
-    fi.reinitialize(
+    fi.set(
         layout_x=[x * 5.0 * D for x in range(num_in_row)],
         layout_y=[0.0]*num_in_row,
         wind_speeds=[8.0],
@@ -71,7 +57,7 @@ for i, (fi, tilt) in enumerate(zip([fi_5, fi_15], [5, 15])):
     )
 
     # Flow solve and power computation
-    fi.calculate_wake()
+    fi.run()
     powers[i,:] = fi.get_turbine_powers().flatten()
 
     # Compute flow slices

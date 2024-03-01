@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import os
 
@@ -77,7 +63,7 @@ heterogenous_inflow_config = {
     'y': y_locs,
 }
 
-fi.reinitialize(
+fi.set(
     layout_x=layout_x,
     layout_y=layout_y,
     wind_directions=wind_directions,
@@ -101,10 +87,10 @@ sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
-fi.calculate_wake()
+fi.run()
 base_aep = fi.get_farm_AEP(freq=freq) / 1e6
-fi.reinitialize(layout_x=sol[0], layout_y=sol[1])
-fi.calculate_wake()
+fi.set(layout_x=sol[0], layout_y=sol[1])
+fi.run()
 opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
@@ -125,7 +111,7 @@ ax.set_title("Geometric yaw disabled")
 
 # Rerun the layout optimization with geometric yaw enabled
 print("\nReoptimizing with geometric yaw enabled.")
-fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
+fi.set(layout_x=layout_x, layout_y=layout_y)
 layout_opt = LayoutOptimizationScipy(
     fi,
     boundaries,
@@ -141,11 +127,10 @@ sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
-fi.calculate_wake()
+fi.set(yaw_angles=np.zeros_like(layout_opt.yaw_angles))
 base_aep = fi.get_farm_AEP(freq=freq) / 1e6
-fi.reinitialize(layout_x=sol[0], layout_y=sol[1])
-fi.calculate_wake()
-opt_aep = fi.get_farm_AEP(freq=freq, yaw_angles=layout_opt.yaw_angles) / 1e6
+fi.set(layout_x=sol[0], layout_y=sol[1], yaw_angles=layout_opt.yaw_angles)
+opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results

@@ -61,9 +61,6 @@ a wind farm.
 - Arrange the wind rose data into arrays
 - Create the frequency information from the wind condition data
 
-### 08_calc_aep_from_rose_use_class.py
-Do the above but use the included WindRose class.
-
 ### 09_compare_farm_power_with_neighbor.py
 Consider the affects of one wind farm on another wind farm's AEP.
 
@@ -235,7 +232,3 @@ listed here!
 ### 18_check_turbine.py
 Plot power and thrust curves for each turbine type included in the
 turbine library. Additionally, plot the losses due to yaw.
-
-### 19_streamlit_demo.py
-Creates a Streamlit dashboard to quickly modify the layout and
-atmospheric conditions of a wind farm.

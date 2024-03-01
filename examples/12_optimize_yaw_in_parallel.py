@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -37,7 +23,7 @@ def load_floris():
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
     )
-    fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten())
+    fi.set(layout_x=X.flatten(), layout_y=Y.flatten())
 
     return fi
 
@@ -73,7 +59,7 @@ if __name__ == "__main__":
     wd_array = wind_directions_grid.flatten()
     ws_array = wind_speeds_grid.flatten()
 
-    fi_aep.reinitialize(
+    fi_aep.set(
         wind_directions=wd_array,
         wind_speeds=ws_array,
         turbulence_intensities=[0.08],  # Assume 8% turbulence intensity
@@ -126,7 +112,7 @@ if __name__ == "__main__":
     wd_array_opt = wind_directions_grid.flatten()
     ws_array_opt = wind_speeds_grid.flatten()
 
-    fi_opt.reinitialize(
+    fi_opt.set(
         wind_directions=wd_array_opt,
         wind_speeds=ws_array_opt,
         turbulence_intensities=[0.08],  # Assume 8% turbulence intensity

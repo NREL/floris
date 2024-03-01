@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
 
@@ -203,11 +190,10 @@ class SampleInputs:
             "turbine_type": "nrel_5mw",
             "rotor_diameter": 125.88,
             "hub_height": 90.0,
-            "generator_efficiency": 0.944,
             "power_thrust_model": "cosine-loss",
             "power_thrust_table": {
-                "pP": 1.88,
-                "pT": 1.88,
+                "cosine_loss_exponent_yaw": 1.88,
+                "cosine_loss_exponent_tilt": 1.88,
                 "ref_air_density": 1.225,
                 "ref_tilt": 5.0,
                 "power": [
@@ -397,12 +383,20 @@ class SampleInputs:
         }
         self.turbine_floating["correct_cp_ct_for_tilt"] = True
 
-        self.turbine_multi_dim = copy.deepcopy(self.turbine)
-        del self.turbine_multi_dim['power_thrust_table']['power']
-        del self.turbine_multi_dim['power_thrust_table']['thrust_coefficient']
-        del self.turbine_multi_dim['power_thrust_table']['wind_speed']
-        self.turbine_multi_dim["multi_dimensional_cp_ct"] = True
-        self.turbine_multi_dim['power_thrust_table']["power_thrust_data_file"] = ""
+        self.turbine_multi_dim = {
+            "turbine_type": 'iea_15MW_multi_dim_cp_ct',
+            "hub_height": 150.0,
+            "rotor_diameter": 242.24,
+            "TSR": 8.0,
+            "multi_dimensional_cp_ct": True,
+            "power_thrust_table": {
+                "ref_air_density": 1.225,
+                "ref_tilt": 6.0,
+                "cosine_loss_exponent_yaw": 1.88,
+                "cosine_loss_exponent_tilt": 1.88,
+                "power_thrust_data_file": 'iea_15MW_multi_dim_Tp_Hs.csv',
+            }
+        }
 
         self.farm = {
             "layout_x": X_COORDS,

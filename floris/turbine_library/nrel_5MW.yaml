@@ -2,16 +2,13 @@
 # Data based on:
 # https://github.com/NREL/turbine-models/blob/master/Offshore/NREL_5MW_126_RWT_corrected.csv
 # Note: Small power variations above rated removed. Rotor diameter includes coning angle.
+# Note: generator efficiency of 94.4% is assumed for the NREL 5MW turbine.
 
 ###
 # An ID for this type of turbine definition.
 # This is not currently used, but it will be enabled in the future. This should typically
 # match the root name of the file.
 turbine_type: 'nrel_5MW'
-
-###
-# Setting for generator losses to power.
-generator_efficiency: 0.944
 
 ###
 # Hub height.
@@ -39,9 +36,9 @@ power_thrust_table:
   # the effects of a floating platform on a turbine's power and wake.
   ref_tilt: 5.0
   # Cosine exponent for power loss due to tilt.
-  pT: 1.88
+  cosine_loss_exponent_tilt: 1.88
   # Cosine exponent for power loss due to yaw misalignment.
-  pP: 1.88
+  cosine_loss_exponent_yaw: 1.88
   ### Power thrust table data
   wind_speed:
     - 0.0

@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import copy
 from time import perf_counter as timerpc
@@ -363,12 +349,13 @@ class YawOptimization(LoggingManager):
 
         # Calculate solutions
         turbine_power = np.zeros_like(self._minimum_yaw_angle_subset[:, :])
-        fi_subset.reinitialize(
+        fi_subset.set(
             wind_directions=wd_array,
             wind_speeds=ws_array,
-            turbulence_intensities=ti_array
+            turbulence_intensities=ti_array,
+            yaw_angles=yaw_angles,
         )
-        fi_subset.calculate_wake(yaw_angles=yaw_angles)
+        fi_subset.run()
         turbine_power = fi_subset.get_turbine_powers()
 
         # Multiply with turbine weighing terms
