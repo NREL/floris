@@ -38,17 +38,17 @@ x, y = np.meshgrid(np.linspace(0, 4*630., 5), np.linspace(0, 3*630., 4))
 x = x.flatten()
 y = y.flatten()
 for fi in [fi_fixed, fi_floating]:
-    fi.reinitialize(layout_x=x, layout_y=y)
+    fi.set(layout_x=x, layout_y=y)
 
 # Compute a single wind speed and direction, power and wakes
 for fi in [fi_fixed, fi_floating]:
-    fi.reinitialize(
+    fi.set(
         layout_x=x,
         layout_y=y,
         wind_speeds=[10],
         wind_directions=[270]
     )
-    fi.calculate_wake()
+    fi.run()
 
 powers_fixed = fi_fixed.get_turbine_powers()
 powers_floating = fi_floating.get_turbine_powers()
@@ -118,7 +118,7 @@ freq = freq_interp(wd_grid, ws_grid).flatten()
 freq = freq / np.sum(freq)
 
 for fi in [fi_fixed, fi_floating]:
-    fi.reinitialize(
+    fi.set(
         wind_directions=wd_grid.flatten(),
         wind_speeds= ws_grid.flatten(),
     )

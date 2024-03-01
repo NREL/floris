@@ -101,7 +101,7 @@ wakeviz.visualize_cut_plane(
 
 # Run the wake calculation to get the turbine-turbine interfactions
 # on the turbine grids
-fi.calculate_wake()
+fi.run()
 
 # Plot the values at each rotor
 fig, axes, _ , _ = wakeviz.plot_rotor_values(
@@ -125,11 +125,11 @@ solver_settings = {
     "type": "turbine_grid",
     "turbine_grid_points": 10
 }
-fi.reinitialize(solver_settings=solver_settings)
+fi.set(solver_settings=solver_settings)
 
 # Run the wake calculation to get the turbine-turbine interfactions
 # on the turbine grids
-fi.calculate_wake()
+fi.run()
 
 # Plot the values at each rotor
 fig, axes, _ , _ = wakeviz.plot_rotor_values(

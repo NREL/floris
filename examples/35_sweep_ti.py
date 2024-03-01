@@ -30,8 +30,8 @@ time_series = TimeSeries(wd_array, ws_array, turbulence_intensities=ti_array)
 
 # Now set up a FLORIS model and initialize it using the time
 fi = FlorisInterface("inputs/gch.yaml")
-fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0], wind_data=time_series)
-fi.calculate_wake()
+fi.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0], wind_data=time_series)
+fi.run()
 turbine_power = fi.get_turbine_powers()
 
 fig, axarr = plt.subplots(2, 1, sharex=True, figsize=(6, 6))

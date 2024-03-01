@@ -28,18 +28,18 @@ fi_dict_mod['flow_field']['multidim_conditions']['Hs'] = 1.0
 fi_hs_1 = FlorisInterface(fi_dict_mod)
 
 # Set both cases to 3 turbine layout
-fi.reinitialize(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
-fi_hs_1.reinitialize(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
+fi.set(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
+fi_hs_1.set(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
 
 # Use a sweep of wind speeds
 wind_speeds = np.arange(5, 20, 1.0)
 wind_directions = 270.0 * np.ones_like(wind_speeds)
-fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
-fi_hs_1.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi.set(wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi_hs_1.set(wind_directions=wind_directions, wind_speeds=wind_speeds)
 
 # Calculate wakes with baseline yaw
-fi.calculate_wake()
-fi_hs_1.calculate_wake()
+fi.run()
+fi_hs_1.run()
 
 # Collect the turbine powers in kW
 turbine_powers = fi.get_turbine_powers()/1000.

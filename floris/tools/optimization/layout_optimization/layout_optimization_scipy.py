@@ -99,8 +99,8 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self._change_coordinates(locs_unnorm)
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
-        return (-1 * self.fi.get_farm_AEP(self.freq, yaw_angles=yaw_angles) /
-                self.initial_AEP)
+        self.fi.set(yaw_angles=yaw_angles)
+        return -1 * self.fi.get_farm_AEP(self.freq) /self.initial_AEP
 
     def _change_coordinates(self, locs):
         # Parse the layout coordinates
@@ -112,7 +112,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self.y = layout_y
 
         # Update the turbine map in floris
-        self.fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
+        self.fi.set(layout_x=layout_x, layout_y=layout_y)
 
     def _generate_constraints(self):
         tmp1 = {

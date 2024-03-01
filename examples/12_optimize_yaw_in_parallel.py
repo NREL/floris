@@ -23,7 +23,7 @@ def load_floris():
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
         5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
     )
-    fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten())
+    fi.set(layout_x=X.flatten(), layout_y=Y.flatten())
 
     return fi
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     wd_array = wind_directions_grid.flatten()
     ws_array = wind_speeds_grid.flatten()
 
-    fi_aep.reinitialize(
+    fi_aep.set(
         wind_directions=wd_array,
         wind_speeds=ws_array,
         turbulence_intensities=[0.08],  # Assume 8% turbulence intensity
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     wd_array_opt = wind_directions_grid.flatten()
     ws_array_opt = wind_speeds_grid.flatten()
 
-    fi_opt.reinitialize(
+    fi_opt.set(
         wind_directions=wd_array_opt,
         wind_speeds=ws_array_opt,
         turbulence_intensities=[0.08],  # Assume 8% turbulence intensity

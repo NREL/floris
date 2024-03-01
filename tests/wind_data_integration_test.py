@@ -1,10 +1,10 @@
-
 import numpy as np
 import pytest
 
 from floris.tools import (
     TimeSeries,
     WindRose,
+    WindTIRose,
 )
 from floris.tools.wind_data import WindDataBase
 
@@ -247,3 +247,179 @@ def test_time_series_to_wind_rose_with_ti():
     # The 6 m/s bin should be empty
     freq_table = wind_rose.freq_table
     np.testing.assert_almost_equal(freq_table[0, 1], 0)
+
+
+def test_wind_ti_rose_init():
+    """
+    The wind directions, wind speeds, and turbulence intensities can have any
+    length, but the frequency array must have shape (n wind directions,
+    n wind speeds, n turbulence intensities)
+    """
+    wind_directions = np.array([270, 280, 290, 300])
+    wind_speeds = np.array([6, 7, 8])
+    turbulence_intensities = np.array([0.05, 0.1])
+
+    # This should be ok
+    _ = WindTIRose(wind_directions, wind_speeds, turbulence_intensities)
+
+    # This should be ok since the frequency array shape matches the wind directions
+    # and wind speeds
+    _ = WindTIRose(wind_directions, wind_speeds, turbulence_intensities, np.ones((4, 3, 2)))
+
+    # This should raise an error since the frequency array shape does not
+    # match the wind directions and wind speeds
+    with pytest.raises(ValueError):
+        WindTIRose(wind_directions, wind_speeds, turbulence_intensities, np.ones((3, 3, 3)))
+
+
+def test_wind_ti_rose_grid():
+    wind_directions = np.array([270, 280, 290, 300])
+    wind_speeds = np.array([6, 7, 8])
+    turbulence_intensities = np.array([0.05, 0.1])
+
+    wind_rose = WindTIRose(wind_directions, wind_speeds, turbulence_intensities)
+
+    # Wind direction grid has the same dimensions as the frequency table
+    assert wind_rose.wd_grid.shape == wind_rose.freq_table.shape
+
+    # Flattening process occurs wd first
+    # This is each wind direction for each wind speed:
+    np.testing.assert_allclose(wind_rose.wd_flat, 6 * [270] + 6 * [280] + 6 * [290] + 6 * [300])
+
+
+def test_wind_ti_rose_unpack():
+    wind_directions = np.array([270, 280, 290, 300])
+    wind_speeds = np.array([6, 7, 8])
+    turbulence_intensities = np.array([0.05, 0.1])
+    freq_table = np.array(
+        [
+            [[1.0, 0.0], [1.0, 0.0], [0.0, 0.0]],
+            [[1.0, 0.0], [1.0, 0.0], [0.0, 0.0]],
+            [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]],
+            [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]],
+        ]
+    )
+
+    # First test using default assumption only non-zero frequency cases computed
+    wind_rose = WindTIRose(wind_directions, wind_speeds, turbulence_intensities, freq_table)
+
+    (
+        wind_directions_unpack,
+        wind_speeds_unpack,
+        freq_table_unpack,
+        turbulence_intensities_unpack,
+        value_table_unpack,
+    ) = wind_rose.unpack()
+
+    # Given the above frequency table with zeros for a few elements,
+    # we expect only combinations of wind directions of 270 and 280 deg,
+    # wind speeds of 6 and 7 m/s, and a TI of 5%
+    np.testing.assert_allclose(wind_directions_unpack, [270, 270, 280, 280])
+    np.testing.assert_allclose(wind_speeds_unpack, [6, 7, 6, 7])
+    np.testing.assert_allclose(turbulence_intensities_unpack, [0.05, 0.05, 0.05, 0.05])
+    np.testing.assert_allclose(freq_table_unpack, [0.25, 0.25, 0.25, 0.25])
+
+    # In this case n_findex is the length of the wind combinations that are
+    # non-zero frequency
+    assert wind_rose.n_findex == 4
+
+    # Now test computing 0-freq cases too
+    wind_rose = WindTIRose(
+        wind_directions,
+        wind_speeds,
+        turbulence_intensities,
+        freq_table,
+        compute_zero_freq_occurrence=True,
+    )
+
+    (
+        wind_directions_unpack,
+        wind_speeds_unpack,
+        freq_table_unpack,
+        turbulence_intensities_unpack,
+        value_table_unpack,
+    ) = wind_rose.unpack()
+
+    # Expect now to compute all combinations
+    np.testing.assert_allclose(
+        wind_directions_unpack, 6 * [270] + 6 * [280] + 6 * [290] + 6 * [300]
+    )
+
+    # In this case n_findex is the total number of wind combinations
+    assert wind_rose.n_findex == 24
+
+
+def test_wind_ti_rose_unpack_for_reinitialize():
+    wind_directions = np.array([270, 280, 290, 300])
+    wind_speeds = np.array([6, 7, 8])
+    turbulence_intensities = np.array([0.05, 0.1])
+    freq_table = np.array(
+        [
+            [[1.0, 0.0], [1.0, 0.0], [0.0, 0.0]],
+            [[1.0, 0.0], [1.0, 0.0], [0.0, 0.0]],
+            [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]],
+            [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]],
+        ]
+    )
+
+    # First test using default assumption only non-zero frequency cases computed
+    wind_rose = WindTIRose(wind_directions, wind_speeds, turbulence_intensities, freq_table)
+
+    (
+        wind_directions_unpack,
+        wind_speeds_unpack,
+        turbulence_intensities_unpack,
+    ) = wind_rose.unpack_for_reinitialize()
+
+    # Given the above frequency table with zeros for a few elements,
+    # we expect only combinations of wind directions of 270 and 280 deg,
+    # wind speeds of 6 and 7 m/s, and a TI of 5%
+    np.testing.assert_allclose(wind_directions_unpack, [270, 270, 280, 280])
+    np.testing.assert_allclose(wind_speeds_unpack, [6, 7, 6, 7])
+    np.testing.assert_allclose(turbulence_intensities_unpack, [0.05, 0.05, 0.05, 0.05])
+
+
+def test_wind_ti_rose_resample():
+    wind_directions = np.array([0, 2, 4, 6, 8, 10])
+    wind_speeds = np.array([7, 8])
+    turbulence_intensities = np.array([0.02, 0.04, 0.06, 0.08, 0.1])
+    freq_table = np.ones((6, 2, 5))
+
+    wind_rose = WindTIRose(wind_directions, wind_speeds, turbulence_intensities, freq_table)
+
+    # Test that resampling with a new step size returns the same
+    wind_rose_resample = wind_rose.resample_wind_rose()
+
+    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_resample.wind_directions)
+    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_resample.wind_speeds)
+    np.testing.assert_allclose(
+        wind_rose.turbulence_intensities, wind_rose_resample.turbulence_intensities
+    )
+    np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_resample.freq_table_flat)
+
+    # Now test resampling the turbulence intensities to 4% bins
+    wind_rose_resample = wind_rose.resample_wind_rose(ti_step=0.04)
+    np.testing.assert_allclose(wind_rose_resample.turbulence_intensities, [0.04, 0.08, 0.12])
+    np.testing.assert_allclose(
+        wind_rose_resample.freq_table_flat, (1 / 60) * np.array(12 * [2, 2, 1])
+    )
+
+
+def test_time_series_to_wind_ti_rose():
+    wind_directions = np.array([259.8, 260.2, 260.3, 260.1])
+    wind_speeds = np.array([5.0, 5.0, 5.1, 7.2])
+    turbulence_intensities = np.array([0.05, 0.1, 0.15, 0.2])
+    time_series = TimeSeries(
+        wind_directions,
+        wind_speeds,
+        turbulence_intensities=turbulence_intensities,
+    )
+    wind_rose = time_series.to_wind_ti_rose(wd_step=2.0, ws_step=1.0, ti_step=0.1)
+
+    # The binning should result in turbulence intensity bins of 0.1 and 0.2
+    tis_windrose = wind_rose.turbulence_intensities
+    np.testing.assert_almost_equal(tis_windrose, [0.1, 0.2])
+
+    # The 6 m/s bin should be empty
+    freq_table = wind_rose.freq_table
+    np.testing.assert_almost_equal(freq_table[0, 1, :], [0, 0])

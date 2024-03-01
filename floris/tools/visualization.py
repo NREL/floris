@@ -16,6 +16,7 @@ from matplotlib import rcParams
 from scipy.spatial import ConvexHull
 
 from floris.simulation import Floris
+from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.tools.cut_plane import CutPlane
 from floris.tools.floris_interface import FlorisInterface
 from floris.type_dec import (
@@ -470,6 +471,8 @@ def calculate_horizontal_plane_with_turbines(
     wd=None,
     ws=None,
     yaw_angles=None,
+    power_setpoints=None,
+    disable_turbines=None,
 ) -> CutPlane:
         """
         This function creates a :py:class:`~.tools.cut_plane.CutPlane` by
@@ -494,6 +497,8 @@ def calculate_horizontal_plane_with_turbines(
             wd (float, optional): Wind direction setting. Defaults to None.
             ws (float, optional): Wind speed setting. Defaults to None.
             yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.
+            power_setpoints (np.ndarray, optional): Power setpoints settings. Defaults to None.
+            disable_turbines (np.ndarray, optional): Disable turbines settings. Defaults to None.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w
@@ -510,15 +515,15 @@ def calculate_horizontal_plane_with_turbines(
         fi.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # Set the ws and wd
-        fi.reinitialize(wind_directions=wd, wind_speeds=ws)
-
-        # Re-set yaw angles
-        if yaw_angles is not None:
-            fi.floris.farm.yaw_angles = yaw_angles
-
-        # Now place the yaw_angles back into yaw_angles
-        # to be sure not None
+        fi.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines
+        )
         yaw_angles = fi.floris.farm.yaw_angles
+        power_setpoints = fi.floris.farm.power_setpoints
 
         # Grab the turbine layout
         layout_x = copy.deepcopy(fi.layout_x)
@@ -530,14 +535,18 @@ def calculate_horizontal_plane_with_turbines(
         layout_x_test = np.append(layout_x,[0])
         layout_y_test = np.append(layout_y,[0])
 
-        # Declare turbine types with an extra turbine in
-        # case of special one type useage
+        # Declare turbine types with an extra turbine in case of special one-type usage
         if len(layout_x) > 1 and len(turbine_types) == 1:
             # Convert to list length len(layout_x) + 1
             turbine_types_test = [turbine_types[0] for i in range(len(layout_x))] + ['nrel_5MW']
         else:
             turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
         yaw_angles = np.append(yaw_angles, np.zeros([fi.floris.flow_field.n_findex, 1]), axis=1)
+        power_setpoints = np.append(
+            power_setpoints,
+            POWER_SETPOINT_DEFAULT * np.ones([fi.floris.flow_field.n_findex, 1]),
+            axis=1
+        )
 
         # Get a grid of points test test
         if x_bounds is None:
@@ -569,12 +578,15 @@ def calculate_horizontal_plane_with_turbines(
                 # Place the test turbine at this location and calculate wake
                 layout_x_test[-1] = x
                 layout_y_test[-1] = y
-                fi.reinitialize(
+                fi.set(
                     layout_x=layout_x_test,
                     layout_y=layout_y_test,
+                    yaw_angles=yaw_angles,
+                    power_setpoints=power_setpoints,
+                    disable_turbines=disable_turbines,
                     turbine_type=turbine_types_test
                 )
-                fi.calculate_wake(yaw_angles=yaw_angles)
+                fi.run()
 
                 # Get the velocity of that test turbines central point
                 center_point = int(np.floor(fi.floris.flow_field.u[0,-1].shape[0] / 2.0))
