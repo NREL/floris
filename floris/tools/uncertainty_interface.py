@@ -107,19 +107,6 @@ class UncertaintyInterface(LoggingManager):
         # Instantiate the expanded FlorisInterface
         # self.floris_interface = FlorisInterface(configuration)
 
-    # TODO: Hold off on this until we have a better understanding of how to handle this
-    # def copy(self):
-    #     """Create an independent copy of the current FlorisInterface object"""
-    #     return UncertaintyInterface(self.floris_interface.floris.as_dict(),
-    #                                 wd_resolution=self.wd_resolution,
-    #                                 ws_resolution=self.ws_resolution,
-    #                                 ti_resolution=self.ti_resolution,
-    #                                 yaw_resolution=self.yaw_resolution,
-    #                                 power_setpoint_resolution=self.power_setpoint_resolution,
-    #                                 wd_std=self.wd_std,
-    #                                 wd_sample_points=self.wd_sample_points,
-    #                                 verbose=self.verbose)
-
 
     def set(
         self,
