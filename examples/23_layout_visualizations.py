@@ -22,7 +22,7 @@ MAX_WS = 8.0
 fi = FlorisInterface("inputs/gch.yaml")
 
 # Change to 2 x 3 layout with a wind direction from northwest
-fi.reinitialize(
+fi.set(
     layout_x=[0, 0, 1000, 1000, 1000], layout_y=[0, 500, 0, 500, 1000], wind_directions=[300]
 )
 
