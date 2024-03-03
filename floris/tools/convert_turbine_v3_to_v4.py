@@ -11,7 +11,7 @@ This script is intended to be called with an argument and converts a turbine
 yaml file specified for FLORIS v3 to one specified for FLORIS v4.
 
 Usage:
-python convert_turbine_yaml_v3_to_v4.py <path/to/turbine>.yaml
+python convert_turbine_v3_to_v4.py <path/to/turbine>.yaml
 
 The resulting turbine is placed in the same directory as the original yaml,
 and is appended _v4.
@@ -20,7 +20,7 @@ and is appended _v4.
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        raise Exception("Usage: python convert_turbine_yaml_v3_to_v4.py <path/to/turbine>.yaml")
+        raise Exception("Usage: python convert_turbine_v3_to_v4.py <path/to/turbine>.yaml")
 
     input_yaml = sys.argv[1]
 
