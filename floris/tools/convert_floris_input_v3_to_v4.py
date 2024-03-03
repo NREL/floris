@@ -1,6 +1,7 @@
 
 import sys
 from pathlib import Path
+
 import yaml
 
 from floris.utilities import load_yaml
@@ -47,7 +48,7 @@ if __name__ == "__main__":
             [v3_floris_input_dict["flow_field"]["turbulence_intensity"]]
         )
         del v4_floris_input_dict["flow_field"]["turbulence_intensity"]
-    
+
     # Change multidim_cp_ct velocity model to gauss
     if v3_floris_input_dict["wake"]["model_strings"]["velocity_model"] == "multidim_cp_ct":
         print(
