@@ -390,7 +390,7 @@ def check_input_file_for_v3_keys(input_dict) -> None:
     if input_dict["wake"]["model_strings"]["velocity_model"] == "multidim_cp_ct":
         raise AttributeError(
             "Dedicated 'multidim_cp_ct' velocity model has been removed in FLORIS v4 in favor of "
-            + "supporting all available wake models. To recover previous operation, set velocity_model "
-            + "to gauss. "
+            + "supporting all available wake models. To recover previous operation, set "
+            + "velocity_model to gauss. "
             + v3_deprecation_msg
         )
