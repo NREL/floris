@@ -495,19 +495,18 @@ def plot_waking_directions(
     return ax
 
 
-def plot_farm_terrain(fi: FlorisInterface, fig: plt.Figure, ax: plt.Axes) -> None:
+def plot_farm_terrain(fi: FlorisInterface, ax: plt.Axes) -> None:
     """
     Creates a filled contour plot visualizing terrain-corrected wind turbine hub heights.
 
     Args:
         fi (FlorisInterface): Instantiated FlorisInterface object containing layout data.
-        fig (plt.Figure):  The figure object where the plot will be created.
         ax (plt.Axes): The axes object where the plot will be drawn.
     """
     hub_heights = fi.floris.farm.hub_heights.flatten()
     cntr = ax.tricontourf(fi.layout_x, fi.layout_y, hub_heights, levels=14, cmap="RdBu_r")
 
-    fig.colorbar(
+    ax.get_figure().colorbar(
         cntr,
         ax=ax,
         label="Terrain-corrected hub height (m)",

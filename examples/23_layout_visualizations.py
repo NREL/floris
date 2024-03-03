@@ -12,7 +12,7 @@ This example shows a number of different ways to visualize a farm layout using F
 """
 
 # Create the plotting objects using matplotlib
-fig, axarr = plt.subplots(2, 3, figsize=(16, 10), sharex=False)
+fig, axarr = plt.subplots(3, 3, figsize=(16, 10), sharex=False)
 axarr = axarr.flatten()
 
 MIN_WS = 1.0
@@ -21,7 +21,7 @@ MAX_WS = 8.0
 # Initialize FLORIS with the given input file via FlorisInterface
 fi = FlorisInterface("inputs/gch.yaml")
 
-# Change to 2 x 3 layout with a wind direction from northwest
+# Change to 5-turbine layout with a wind direction from northwest
 fi.set(
     layout_x=[0, 0, 1000, 1000, 1000], layout_y=[0, 500, 0, 500, 1000], wind_directions=[300]
 )
@@ -85,5 +85,9 @@ lf.plot_turbine_points(fi, ax=ax)
 lf.shade_region(np.array([[0,0],[300,0],[300,1000],[0,700]]),ax=ax)
 ax.set_title("Plot with a shaded region")
 
+# Change hub heights and plot as a proxy for terrain
+ax = axarr[6]
+fi.floris.farm.hub_heights = np.array([110, 90, 100, 100, 95])
+lf.plot_farm_terrain(fi, ax=ax)
 
 plt.show()
