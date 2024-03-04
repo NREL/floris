@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools.visualization import plot_rotor_values, visualize_cut_plane
+from floris.tools.flow_visualization import plot_rotor_values, visualize_cut_plane
 
 
 """

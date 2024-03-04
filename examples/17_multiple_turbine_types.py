@@ -1,7 +1,7 @@
 
 import matplotlib.pyplot as plt
 
-import floris.tools.visualization as wakeviz
+import floris.tools.flow_visualization as wakeviz
 from floris.tools import FlorisInterface
 
 

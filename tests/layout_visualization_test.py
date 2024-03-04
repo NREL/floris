@@ -3,9 +3,8 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
 
-import floris.tools.layout_functions as lf
+import floris.tools.layout_visulalization as lf
 from floris.tools.floris_interface import FlorisInterface
 
 

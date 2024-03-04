@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.visualization as wakeviz
+import floris.tools.flow_visualization as wakeviz
 from floris.tools import FlorisInterface
 
 

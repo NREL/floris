@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
 
-import floris.tools.visualization as wakeviz
+import floris.tools.flow_visualization as wakeviz
 from floris.tools import FlorisInterface
 
 

@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import ticker
 
-import floris.tools.visualization as wakeviz
+import floris.tools.flow_visualization as wakeviz
 from floris.tools import cut_plane, FlorisInterface
-from floris.tools.visualization import VelocityProfilesFigure
+from floris.tools.flow_visualization import VelocityProfilesFigure
 from floris.utilities import reverse_rotate_coordinates_rel_west
 
 

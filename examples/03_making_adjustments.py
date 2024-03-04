@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.layout_functions as lf
-import floris.tools.visualization as wakeviz
+import floris.tools.flow_visualization as wakeviz
+import floris.tools.layout_visualization as lf
 from floris.tools import FlorisInterface
 
 
