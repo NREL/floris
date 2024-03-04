@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import ticker
 
-import floris.tools.flow_visualization as wakeviz
+import floris.tools.flow_visualization as flowviz
 from floris.tools import cut_plane, FlorisInterface
 from floris.tools.flow_visualization import VelocityProfilesFigure
 from floris.utilities import reverse_rotate_coordinates_rel_west
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     horizontal_plane = fi.calculate_horizontal_plane(height=hub_height)
     fig, ax = plt.subplots(figsize=(6.4, 3))
-    wakeviz.visualize_cut_plane(horizontal_plane, ax)
+    flowviz.visualize_cut_plane(horizontal_plane, ax)
     colors = ['b', 'g', 'c']
     for i, profile in enumerate(profiles):
         # Plot profile coordinates on the horizontal plane
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     )
 
     horizontal_plane = fi.calculate_horizontal_plane(height=hub_height, x_bounds=[-2 * D, 9 * D])
-    ax = wakeviz.visualize_cut_plane(horizontal_plane)
+    ax = flowviz.visualize_cut_plane(horizontal_plane)
     colors = ['b', 'g', 'c']
     for i, profile in enumerate(cross_profiles):
         ax.plot(
