@@ -26,6 +26,15 @@ from floris.type_dec import (
 from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 
+def show():
+    """
+    Display all open figures.  This is a wrapper for `plt.show()`.
+    This function is useful if the user doesn't wish to import `matplotlib.pyplot`
+    """
+    plt.show(
+    )
+
+
 def line_contour_cut_plane(
     cut_plane,
     ax=None,

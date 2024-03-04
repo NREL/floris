@@ -141,4 +141,9 @@ fig, axes, _ , _ = wakeviz.plot_rotor_values(
 )
 fig.suptitle("Rotor Plane Visualization, 10x10 Resolution")
 
+# Show plots
 plt.show()
+
+# Note if the user doesn't import matplotlib.pyplot as plt, the user can
+# use the following to show the plots:
+# wakeviz.show()
