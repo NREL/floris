@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.layout_visualization as lf
+import floris.tools.layout_visualization as layoutviz
 from floris.tools import FlorisInterface
 from floris.tools.flow_visualization import visualize_cut_plane
 
@@ -37,14 +37,14 @@ visualize_cut_plane(
     max_speed=MAX_WS,
 )
 # Plot the turbine points, setting the color to white
-lf.plot_turbine_points(fi, ax=ax, plotting_dict={"color": "w"})
+layoutviz.plot_turbine_points(fi, ax=ax, plotting_dict={"color": "w"})
 ax.set_title('Flow visualization and turbine points')
 
 # Plot 2: Show a particular flow case
 ax = axarr[1]
 turbine_names = [f"T{i}" for i in [10, 11, 12, 13, 22]]
-lf.plot_turbine_points(fi, ax=ax)
-lf.plot_turbine_labels(fi,
+layoutviz.plot_turbine_points(fi, ax=ax)
+layoutviz.plot_turbine_labels(fi,
                        ax=ax,
                        turbine_names=turbine_names,
                        show_bbox=True,
@@ -62,32 +62,32 @@ visualize_cut_plane(
     min_speed=MIN_WS,
     max_speed=MAX_WS
 )
-lf.plot_turbines_rotors(fi,ax=ax,yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
+layoutviz.plot_turbines_rotors(fi,ax=ax,yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
 ax.set_title("Flow visualization with yawed turbine")
 
 # Plot 3: Show the layout, including wake directions
 ax = axarr[3]
-lf.plot_turbine_points(fi, ax=ax)
-lf.plot_turbine_labels(fi, ax=ax, turbine_names=turbine_names)
-lf.plot_waking_directions(fi, ax=ax)
+layoutviz.plot_turbine_points(fi, ax=ax)
+layoutviz.plot_turbine_labels(fi, ax=ax, turbine_names=turbine_names)
+layoutviz.plot_waking_directions(fi, ax=ax)
 ax.set_title("Show turbine names and wake direction")
 
 # Plot 4: Plot a subset of the layout, and limit directions less than 7D
 ax = axarr[4]
-lf.plot_turbine_points(fi, ax=ax, turbine_indices=[0,1,2,3])
-lf.plot_turbine_labels(fi, ax=ax, turbine_names=turbine_names, turbine_indices=[0,1,2,3])
-lf.plot_waking_directions(fi, ax=ax, turbine_indices=[0,1,2,3], limit_dist_D=7)
+layoutviz.plot_turbine_points(fi, ax=ax, turbine_indices=[0,1,2,3])
+layoutviz.plot_turbine_labels(fi, ax=ax, turbine_names=turbine_names, turbine_indices=[0,1,2,3])
+layoutviz.plot_waking_directions(fi, ax=ax, turbine_indices=[0,1,2,3], limit_dist_D=7)
 ax.set_title("Plot a subset and limit wake line distance")
 
 # Plot with a shaded region
 ax = axarr[5]
-lf.plot_turbine_points(fi, ax=ax)
-lf.shade_region(np.array([[0,0],[300,0],[300,1000],[0,700]]),ax=ax)
+layoutviz.plot_turbine_points(fi, ax=ax)
+layoutviz.shade_region(np.array([[0,0],[300,0],[300,1000],[0,700]]),ax=ax)
 ax.set_title("Plot with a shaded region")
 
 # Change hub heights and plot as a proxy for terrain
 ax = axarr[6]
 fi.floris.farm.hub_heights = np.array([110, 90, 100, 100, 95])
-lf.plot_farm_terrain(fi, ax=ax)
+layoutviz.plot_farm_terrain(fi, ax=ax)
 
 plt.show()
