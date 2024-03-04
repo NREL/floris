@@ -4,7 +4,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.layout_visulalization as lf
+import floris.tools.layout_visualization as lf
 from floris.tools.floris_interface import FlorisInterface
 
 
