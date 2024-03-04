@@ -37,6 +37,13 @@ if __name__ == "__main__":
 
     # Split into components expected by build_turbine_dict
     power_thrust_table = v3_turbine_dict["power_thrust_table"]
+    if "power_thrust_data_file" in power_thrust_table:
+        raise ValueError(
+            "Cannot convert multidimensional turbine model. Please manually update your "
+            + "turbine yaml. Note that the power_thrust_data_file csv needs to be updated to "
+            + "reflect the absolute power curve, rather than the power coefficient curve,"
+            + "and that `thrust` has been replaced by `thrust_coefficient`."
+        )
     power_thrust_table["power_coefficient"] = power_thrust_table["power"]
     power_thrust_table["thrust_coefficient"] = power_thrust_table["thrust"]
     power_thrust_table.pop("power")

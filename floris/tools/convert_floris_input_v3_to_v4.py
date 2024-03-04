@@ -55,9 +55,9 @@ if __name__ == "__main__":
             "multidim_cp_ct velocity model specified. Changing to gauss, "
             + "but note that other velocity models are also compatible with multidimensional "
             + "turbines in FLORIS v4. "
-            + "The multidimensional power_thrust_data_file csv has NOT been updated. You will "
-            + "need to update this to reflect the absolute power curve, rather than the "
-            + "power coefficient curve."
+            + "You will also need to convert your multidimensional turbine yaml files and their "
+            + "corresponding power/thrust csv files to be compatible with FLORIS v4 and to reflect "
+            + " the absolute power curve, rather than the power coefficient curve."
         )
         v4_floris_input_dict["wake"]["model_strings"]["velocity_model"] = "gauss"
 
