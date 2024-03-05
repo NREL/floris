@@ -187,7 +187,7 @@ def plot_turbine_labels(
     return ax
 
 
-def plot_turbines_rotors(
+def plot_turbine_rotors(
     fi: FlorisInterface,
     ax: plt.Axes = None,
     color: str = "k",

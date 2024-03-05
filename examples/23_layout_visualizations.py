@@ -62,7 +62,7 @@ visualize_cut_plane(
     min_speed=MIN_WS,
     max_speed=MAX_WS
 )
-layoutviz.plot_turbines_rotors(fi,ax=ax,yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
+layoutviz.plot_turbine_rotors(fi,ax=ax,yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
 ax.set_title("Flow visualization with yawed turbine")
 
 # Plot 3: Show the layout, including wake directions

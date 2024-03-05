@@ -25,9 +25,15 @@ def test_get_wake_direction():
 def test_plotting_functions():
 
     fi = FlorisInterface(configuration=YAML_INPUT)
+
     ax = layoutviz.plot_turbine_points(fi=fi)
     assert isinstance(ax, plt.Axes)
+
     ax = layoutviz.plot_turbine_labels(fi=fi)
     assert isinstance(ax, plt.Axes)
+
+    ax = layoutviz.plot_turbine_rotors(fi=fi)
+    assert isinstance(ax, plt.Axes)
+
     ax = layoutviz.plot_waking_directions(fi=fi)
     assert isinstance(ax, plt.Axes)
