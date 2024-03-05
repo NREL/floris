@@ -6,7 +6,7 @@ with open(Path(__file__).parent / "version.py") as _version_file:
     __version__ = _version_file.read().strip()
 
 
-from .floris import FlorisModel
+from .floris_model import FlorisModel
 from .parallel_computing_interface import ParallelComputingInterface
 # from .uncertainty_interface import UncertaintyInterface
 from .visualization import (
