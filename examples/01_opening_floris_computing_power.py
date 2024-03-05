@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from floris import Floris
+from floris import FlorisModel
 
 
 """
@@ -15,22 +15,22 @@ Main concept is introduce FLORIS and illustrate essential structure of most-used
 
 # Initialize FLORIS with the given input file.
 # The Floris class is the entry point for most usage.
-flowris = Floris("inputs/gch.yaml")
+fmodel = FlorisModel("inputs/gch.yaml")
 
 # Convert to a simple two turbine layout
-flowris.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 
 # Single wind speed and wind direction
 print("\n========================= Single Wind Direction and Wind Speed =========================")
 
 # Get the turbine powers assuming 1 wind direction and speed
 # Set the yaw angles to 0 with 1 wind direction and speed
-flowris.set(wind_directions=[270.0], wind_speeds=[8.0], yaw_angles=np.zeros([1, 2]))
+fmodel.set(wind_directions=[270.0], wind_speeds=[8.0], yaw_angles=np.zeros([1, 2]))
 
-flowris.run()
+fmodel.run()
 
 # Get the turbine powers
-turbine_powers = flowris.get_turbine_powers() / 1000.0
+turbine_powers = fmodel.get_turbine_powers() / 1000.0
 
 print("The turbine power matrix should be of dimensions 1 findex X 2 Turbines")
 print(turbine_powers)
@@ -43,9 +43,9 @@ wind_speeds = np.array([8.0, 9.0, 10.0])
 wind_directions = np.array([270.0, 270.0, 270.0])
 
 # 3 wind directions/ speeds
-flowris.set(wind_speeds=wind_speeds, wind_directions=wind_directions, yaw_angles=np.zeros([3, 2]))
-flowris.run()
-turbine_powers = flowris.get_turbine_powers() / 1000.0
+fmodel.set(wind_speeds=wind_speeds, wind_directions=wind_directions, yaw_angles=np.zeros([3, 2]))
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 3 findex X 2 Turbines")
 print(turbine_powers)
 print("Shape: ", turbine_powers.shape)
@@ -58,9 +58,9 @@ print("\n========================= Multiple Wind Directions and Multiple Wind Sp
 wind_speeds = np.tile([8.0, 9.0, 10.0], 3)
 wind_directions = np.repeat([260.0, 270.0, 280.0], 3)
 
-flowris.set(wind_directions=wind_directions, wind_speeds=wind_speeds, yaw_angles=np.zeros([9, 2]))
-flowris.run()
-turbine_powers = flowris.get_turbine_powers() / 1000.0
+fmodel.set(wind_directions=wind_directions, wind_speeds=wind_speeds, yaw_angles=np.zeros([9, 2]))
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 9 WD/WS X 2 Turbines")
 print(turbine_powers)
 print("Shape: ", turbine_powers.shape)
