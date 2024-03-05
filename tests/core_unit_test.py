@@ -5,7 +5,7 @@ import yaml
 
 from floris.core import (
     Farm,
-    Floris,
+    Core,
     FlowField,
     TurbineGrid,
     WakeModelManager,
@@ -18,29 +18,29 @@ DICT_INPUT = yaml.load(open(YAML_INPUT, "r"), Loader=yaml.SafeLoader)
 
 
 def test_read_yaml():
-    fi = Floris.from_file(YAML_INPUT)
-    assert isinstance(fi, Floris)
+    fmodel = Core.from_file(YAML_INPUT)
+    assert isinstance(fmodel, Core)
 
 
 def test_read_dict():
-    fi = Floris.from_dict(DICT_INPUT)
-    assert isinstance(fi, Floris)
+    fmodel = Core.from_dict(DICT_INPUT)
+    assert isinstance(fmodel, Core)
 
 
 def test_init():
-    fi = Floris.from_dict(DICT_INPUT)
-    assert isinstance(fi.farm, Farm)
-    assert isinstance(fi.wake, WakeModelManager)
-    assert isinstance(fi.flow_field, FlowField)
+    fmodel = Core.from_dict(DICT_INPUT)
+    assert isinstance(fmodel.farm, Farm)
+    assert isinstance(fmodel.wake, WakeModelManager)
+    assert isinstance(fmodel.flow_field, FlowField)
 
 
 def test_asdict(turbine_grid_fixture: TurbineGrid):
 
-    floris = Floris.from_dict(DICT_INPUT)
+    floris = Core.from_dict(DICT_INPUT)
     floris.flow_field.initialize_velocity_field(turbine_grid_fixture)
     dict1 = floris.as_dict()
 
-    new_floris = Floris.from_dict(dict1)
+    new_floris = Core.from_dict(dict1)
     new_floris.flow_field.initialize_velocity_field(turbine_grid_fixture)
     dict2 = new_floris.as_dict()
 

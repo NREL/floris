@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from floris import FlorisInterface
+from floris import FlorisModel
 from floris.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
@@ -42,18 +42,18 @@ def test_scipy_layout_opt(sample_inputs_fixture):
 
     boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
 
-    fi = FlorisInterface(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.floris)
     wd_array = np.arange(0, 360.0, 5.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
-    fi.reinitialize(
+    fmodel.reinitialize(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
     )
 
-    layout_opt = LayoutOptimizationScipy(fi, boundaries, optOptions=opt_options)
+    layout_opt = LayoutOptimizationScipy(fmodel, boundaries, optOptions=opt_options)
     sol = layout_opt.optimize()
     locations_opt = np.array([sol[0], sol[1]])
 

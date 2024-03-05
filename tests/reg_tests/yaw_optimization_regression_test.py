@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from floris import FlorisInterface
+from floris import FlorisModel
 from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
@@ -80,18 +80,18 @@ def test_serial_refine(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    fi = FlorisInterface(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.floris)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
-    fi.set(
+    fmodel.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
     )
 
-    yaw_opt = YawOptimizationSR(fi)
+    yaw_opt = YawOptimizationSR(fmodel)
     df_opt = yaw_opt.optimize()
 
     if DEBUG:
@@ -110,26 +110,26 @@ def test_geometric_yaw(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    fi = FlorisInterface(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.floris)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
-    fi.set(
+    fmodel.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
     )
-    fi.run()
-    baseline_farm_power = fi.get_farm_power().squeeze()
+    fmodel.run()
+    baseline_farm_power = fmodel.get_farm_power().squeeze()
 
-    yaw_opt = YawOptimizationGeometric(fi)
+    yaw_opt = YawOptimizationGeometric(fmodel)
     df_opt = yaw_opt.optimize()
 
     yaw_angles_opt_geo = np.vstack(yaw_opt.yaw_angles_opt)
-    fi.set(yaw_angles=yaw_angles_opt_geo)
-    fi.run()
-    geo_farm_power = fi.get_farm_power().squeeze()
+    fmodel.set(yaw_angles=yaw_angles_opt_geo)
+    fmodel.run()
+    geo_farm_power = fmodel.get_farm_power().squeeze()
 
     df_opt['farm_power_baseline'] = baseline_farm_power
     df_opt['farm_power_opt'] = geo_farm_power
@@ -158,18 +158,18 @@ def test_scipy_yaw_opt(sample_inputs_fixture):
         "eps": 0.5,
     }
 
-    fi = FlorisInterface(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.floris)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
-    fi.set(
+    fmodel.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
     )
 
-    yaw_opt = YawOptimizationScipy(fi, opt_options=opt_options)
+    yaw_opt = YawOptimizationScipy(fmodel, opt_options=opt_options)
     df_opt = yaw_opt.optimize()
 
     if DEBUG:

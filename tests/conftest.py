@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from floris.core import (
-    Floris,
+    Core,
     FlowField,
     FlowFieldGrid,
     PointsGrid,
@@ -173,7 +173,7 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
 @pytest.fixture
 def floris_fixture():
     sample_inputs = SampleInputs()
-    return Floris(sample_inputs.floris)
+    return Core(sample_inputs.floris)
 
 @pytest.fixture
 def sample_inputs_fixture():

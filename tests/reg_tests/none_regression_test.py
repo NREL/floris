@@ -5,7 +5,7 @@ import pytest
 from floris.core import (
     average_velocity,
     axial_induction,
-    Floris,
+    Core,
     power,
     rotor_effective_velocity,
     thrust_coefficient,
@@ -135,7 +135,7 @@ def test_regression_tandem(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.floris)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
@@ -262,7 +262,7 @@ def test_regression_rotation(sample_inputs_fixture):
     sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
     sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0, 8.0]
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.floris)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
@@ -291,7 +291,7 @@ def test_regression_yaw(sample_inputs_fixture):
     sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.floris)
 
     yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,0] = 5.0
@@ -335,7 +335,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     sample_inputs_fixture.floris["farm"]["layout_x"] = X
     sample_inputs_fixture.floris["farm"]["layout_y"] = Y
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.floris)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
@@ -390,7 +390,7 @@ def test_full_flow_solver(sample_inputs_fixture):
     sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0]
     sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.floris)
     floris.solve_for_viz()
 
     velocities = floris.flow_field.u_sorted
