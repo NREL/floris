@@ -31,11 +31,11 @@ class YawOptimization(LoggingManager):
         verify_convergence=False,
     ):
         """
-        Instantiate YawOptimization object with a FlorisInterface object
+        Instantiate YawOptimization object with a FlorisModel object
         and assign parameter values.
 
         Args:
-            fi (:py:class:`~.tools.floris_interface.FlorisInterface`):
+            fi (:py:class:`~.floris.FlorisModel`):
                 Interface used to interact with the Floris object.
             minimum_yaw_angle (float or ndarray): Minimum constraint on yaw
                 angle (deg). If a single value specified, assumes this value

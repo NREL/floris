@@ -12,7 +12,7 @@ from scipy.spatial.distance import pdist, squareform
 
 
 def visualize_layout(
-    fi,
+    fmodel,
     ax=None,
     show_wake_lines=False,
     limit_dist_m=None,
@@ -47,12 +47,12 @@ def visualize_layout(
 
     # Build a dataframe of locations and names
     df_turbine = pd.DataFrame({
-        'x':fi.layout_x,
-        'y':fi.layout_y
+        'x':fmodel.layout_x,
+        'y':fmodel.layout_y
     })
 
     # Get some info
-    D = fi.floris.farm.rotor_diameters[0]
+    D = fmodel.core.farm.rotor_diameters[0]
     N_turbine = df_turbine.shape[0]
     turbines = df_turbine.index
 

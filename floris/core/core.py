@@ -265,7 +265,7 @@ class Core(BaseClass):
     ) -> list[pd.DataFrame]:
         """
         Extract velocity deficit profiles. See
-        :py:meth:`~floris.tools.floris_interface.FlorisInterface.sample_velocity_deficit_profiles`
+        :py:meth:`~floris.FlorisModel.sample_velocity_deficit_profiles`
         for more details.
         """
 

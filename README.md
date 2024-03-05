@@ -86,7 +86,7 @@ FLORIS is a Python package run on the command line typically by providing
 an input file with an initial configuration. It can be installed with
 ```pip install floris``` (see [installation](https://github.nrel.io/floris/installation)).
 The typical entry point is
-[FlorisInterface](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface)
+[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris.FlorisModel.html#floris.FlorisModel)
 which accepts the path to the input file as an argument. From there,
 changes can be made to the initial configuration through the
 [FlorisInterface.reinitialize](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.reinitialize)

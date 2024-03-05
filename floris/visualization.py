@@ -18,7 +18,7 @@ from scipy.spatial import ConvexHull
 from floris.core import Core
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.cut_plane import CutPlane
-from floris import Floris
+from floris import FlorisModel
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,
@@ -38,7 +38,7 @@ def plot_turbines(
     color: str | None = None,
 ):
     """
-    This function is deprecated and will be removed in v3.5, use `plot_turbines_with_fi` instead.
+    This function is deprecated and will be removed in v3.5, use `plot_turbines_with_fmodel` instead.
 
     Plot wind plant layout from turbine locations.
 
@@ -52,7 +52,7 @@ def plot_turbines(
     """
     warnings.warn(
         "The `plot_turbines` function is deprecated and will be removed in v3.5, "
-        "use `plot_turbines_with_fi` instead.",
+        "use `plot_turbines_with_fmodel` instead.",
         DeprecationWarning,
         stacklevel=2  # This prints the calling function and this function in the warning
     )
@@ -69,21 +69,21 @@ def plot_turbines(
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
-def plot_turbines_with_fi(
-    fi: Floris,
+def plot_turbines_with_fmodel(
+    fmodel: FlorisModel,
     ax: plt.Axes = None,
     color: str = None,
     wd: np.ndarray = None,
     yaw_angles: np.ndarray = None,
 ):
     """
-    Plot the wind plant layout from turbine locations gotten from a FlorisInterface object.
+    Plot the wind plant layout from turbine locations gotten from a FlorisModel object.
     Note that this function automatically uses the first wind direction and first wind speed.
-    Generally, it is most explicit to create a new FlorisInterface with only the single
+    Generally, it is most explicit to create a new FlorisModel with only the single
     wind condition that should be plotted.
 
     Args:
-        fi (:py:class:`floris.tools.floris_interface.FlorisInterface`): FlorisInterface object.
+        fmodel (:py:class:`~.floris.FlorisModel`): FlorisModel object.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults to None.
         color (str, optional): Color to plot turbines. Defaults to None.
         wd (list, optional): The wind direction to plot the turbines relative to. Defaults to None.
@@ -92,9 +92,9 @@ def plot_turbines_with_fi(
     if not ax:
         fig, ax = plt.subplots()
     if yaw_angles is None:
-        yaw_angles = fi.floris.farm.yaw_angles
+        yaw_angles = fmodel.core.farm.yaw_angles
     if wd is None:
-        wd = fi.floris.flow_field.wind_directions[0]
+        wd = fmodel.core.flow_field.wind_directions[0]
 
     # Rotate yaw angles to inertial frame for plotting turbines relative to wind direction
     yaw_angles = yaw_angles - wind_delta(np.array(wd))
@@ -102,8 +102,8 @@ def plot_turbines_with_fi(
     if color is None:
         color = "k"
 
-    rotor_diameters = fi.floris.farm.rotor_diameters.flatten()
-    for x, y, yaw, d in zip(fi.layout_x, fi.layout_y, yaw_angles[0], rotor_diameters):
+    rotor_diameters = fmodel.core.farm.rotor_diameters.flatten()
+    for x, y, yaw, d in zip(fmodel.layout_x, fmodel.layout_y, yaw_angles[0], rotor_diameters):
         R = d / 2.0
         x_0 = x + np.sin(np.deg2rad(yaw)) * R
         x_1 = x - np.sin(np.deg2rad(yaw)) * R
@@ -112,31 +112,31 @@ def plot_turbines_with_fi(
         ax.plot([x_0, x_1], [y_0, y_1], color=color)
 
 
-def add_turbine_id_labels(fi: Floris, ax: plt.Axes, **kwargs):
+def add_turbine_id_labels(fmodel: FlorisModel, ax: plt.Axes, **kwargs):
     """
-    Adds index labels to a plot based on the given FlorisInterface.
+    Adds index labels to a plot based on the given FlorisModel.
     See the pyplot.annotate docs for more info:
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html.
     kwargs are passed to Text
     (https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text).
 
     Args:
-        fi (FlorisInterface): Simulation object to get the layout and index information.
+        fmodel (FlorisModel): Simulation object to get the layout and index information.
         ax (plt.Axes): Axes object to add the labels.
     """
 
     # Rotate layout to inertial frame for plotting turbines relative to wind direction
     coordinates_array = np.array([
         [x, y, 0.0]
-        for x, y in list(zip(fi.layout_x, fi.layout_y))
+        for x, y in list(zip(fmodel.layout_x, fmodel.layout_y))
     ])
-    wind_direction = fi.floris.flow_field.wind_directions[0]
+    wind_direction = fmodel.core.flow_field.wind_directions[0]
     layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
         np.array([wind_direction]),
         coordinates_array
     )
 
-    for i in range(fi.floris.farm.n_turbines):
+    for i in range(fmodel.core.farm.n_turbines):
         ax.annotate(
             i,
             (layout_x[0,i], layout_y[0,i]),
@@ -306,7 +306,7 @@ def visualize_cut_plane(
 
 def visualize_heterogeneous_cut_plane(
     cut_plane,
-    fi,
+    fmodel,
     ax=None,
     vel_component='u',
     min_speed=None,
@@ -326,7 +326,7 @@ def visualize_heterogeneous_cut_plane(
     Args:
         cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
             plane through wind plant.
-        fi (:py:class:`~.tools.floris_interface.FlorisInterface`): FlorisInterface object.
+        fmodel (:py:class:`~.floris.FlorisModel`): FlorisModel object.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
             to None.
         vel_component (str, optional): The velocity component that the cut plane is
@@ -408,8 +408,8 @@ def visualize_heterogeneous_cut_plane(
         points = np.array(
             list(
                 zip(
-                    fi.floris.flow_field.heterogenous_inflow_config['x'],
-                    fi.floris.flow_field.heterogenous_inflow_config['y'],
+                    fmodel.core.flow_field.heterogenous_inflow_config['x'],
+                    fmodel.core.flow_field.heterogenous_inflow_config['y'],
                 )
             )
         )
@@ -583,7 +583,7 @@ def plot_rotor_values(
         plt.show()
 
 def calculate_horizontal_plane_with_turbines(
-    fi_in,
+    fmodel_in,
     x_resolution=200,
     y_resolution=200,
     x_bounds=None,
@@ -604,12 +604,11 @@ def calculate_horizontal_plane_with_turbines(
         and the flow field is reset to its initial state for every new
         location. Then, the local velocities are put into a DataFrame and
         then into a CutPlane. This method is much slower than
-        `FlorisInterface.calculate_horizontal_plane`, but it is helpful
+        `FlorisModel.calculate_horizontal_plane`, but it is helpful
         for models where the visualization capability is not yet available.
 
         Args:
-            fi_in (:py:class:`floris.tools.floris_interface.FlorisInterface`):
-                Preinitialized FlorisInterface object.
+            fmodel_in (:py:class:`~.floris.FlorisModel`): Preinitialized FlorisModel object.
             x_resolution (float, optional): Output array resolution. Defaults to 200 points.
             y_resolution (float, optional): Output array resolution. Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
@@ -624,32 +623,32 @@ def calculate_horizontal_plane_with_turbines(
             :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w
         """
 
-        # Make a local copy of fi to avoid editing passed in fi
-        fi = copy.deepcopy(fi_in)
+        # Make a local copy of fmodel to avoid editing passed in fmodel
+        fmodel = copy.deepcopy(fmodel_in)
 
-        # If wd/ws not provided, use what is set in fi
+        # If wd/ws not provided, use what is set in fmodel
         if wd is None:
-            wd = fi.floris.flow_field.wind_directions
+            wd = fmodel.core.flow_field.wind_directions
         if ws is None:
-            ws = fi.floris.flow_field.wind_speeds
-        fi.check_wind_condition_for_viz(wd=wd, ws=ws)
+            ws = fmodel.core.flow_field.wind_speeds
+        fmodel.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # Set the ws and wd
-        fi.set(
+        fmodel.set(
             wind_directions=wd,
             wind_speeds=ws,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
             disable_turbines=disable_turbines
         )
-        yaw_angles = fi.floris.farm.yaw_angles
-        power_setpoints = fi.floris.farm.power_setpoints
+        yaw_angles = fmodel.core.farm.yaw_angles
+        power_setpoints = fmodel.core.farm.power_setpoints
 
         # Grab the turbine layout
-        layout_x = copy.deepcopy(fi.layout_x)
-        layout_y = copy.deepcopy(fi.layout_y)
-        turbine_types = copy.deepcopy(fi.floris.farm.turbine_type)
-        D = fi.floris.farm.rotor_diameters_sorted[0, 0]
+        layout_x = copy.deepcopy(fmodel.layout_x)
+        layout_y = copy.deepcopy(fmodel.layout_y)
+        turbine_types = copy.deepcopy(fmodel.core.farm.turbine_type)
+        D = fmodel.core.farm.rotor_diameters_sorted[0, 0]
 
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
@@ -661,10 +660,10 @@ def calculate_horizontal_plane_with_turbines(
             turbine_types_test = [turbine_types[0] for i in range(len(layout_x))] + ['nrel_5MW']
         else:
             turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
-        yaw_angles = np.append(yaw_angles, np.zeros([fi.floris.flow_field.n_findex, 1]), axis=1)
+        yaw_angles = np.append(yaw_angles, np.zeros([fmodel.core.flow_field.n_findex, 1]), axis=1)
         power_setpoints = np.append(
             power_setpoints,
-            POWER_SETPOINT_DEFAULT * np.ones([fi.floris.flow_field.n_findex, 1]),
+            POWER_SETPOINT_DEFAULT * np.ones([fmodel.core.flow_field.n_findex, 1]),
             axis=1
         )
 
@@ -698,7 +697,7 @@ def calculate_horizontal_plane_with_turbines(
                 # Place the test turbine at this location and calculate wake
                 layout_x_test[-1] = x
                 layout_y_test[-1] = y
-                fi.set(
+                fmodel.set(
                     layout_x=layout_x_test,
                     layout_y=layout_y_test,
                     yaw_angles=yaw_angles,
@@ -706,11 +705,11 @@ def calculate_horizontal_plane_with_turbines(
                     disable_turbines=disable_turbines,
                     turbine_type=turbine_types_test
                 )
-                fi.run()
+                fmodel.run()
 
                 # Get the velocity of that test turbines central point
-                center_point = int(np.floor(fi.floris.flow_field.u[0,-1].shape[0] / 2.0))
-                u_results[idx] = fi.floris.flow_field.u[0,-1,center_point,center_point]
+                center_point = int(np.floor(fmodel.core.flow_field.u[0,-1].shape[0] / 2.0))
+                u_results[idx] = fmodel.core.flow_field.u[0,-1,center_point,center_point]
 
                 # Increment index
                 idx = idx + 1

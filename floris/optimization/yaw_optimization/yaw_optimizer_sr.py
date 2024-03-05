@@ -26,7 +26,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         verify_convergence=False,
     ):
         """
-        Instantiate YawOptimizationSR object with a FlorisInterface object
+        Instantiate YawOptimizationSR object with a FlorisModel object
         and assign parameter values.
         """
 

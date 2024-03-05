@@ -28,7 +28,7 @@ class WindDataBase:
 
     def unpack_for_reinitialize(self):
         """
-        Return only the variables need for FlorisInterface.reinitialize
+        Return only the variables need for FlorisModel.reinitialize
         """
         (
             wind_directions_unpack,

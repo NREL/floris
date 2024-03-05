@@ -27,7 +27,7 @@ class YawOptimizationScipy(YawOptimization):
         verify_convergence=False,
     ):
         """
-        Instantiate YawOptimizationScipy object with a FlorisInterface object
+        Instantiate YawOptimizationScipy object with a FlorisModel object
         and assign parameter values.
         """
         if opt_options is None:

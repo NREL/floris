@@ -21,7 +21,7 @@ class YawOptimizationGeometric(YawOptimization):
         maximum_yaw_angle=25.0,
     ):
         """
-        Instantiate YawOptimizationGeometric object with a FlorisInterface
+        Instantiate YawOptimizationGeometric object with a FlorisModel
         object assign parameter values.
         """
 

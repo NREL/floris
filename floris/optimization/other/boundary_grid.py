@@ -243,10 +243,10 @@ class BoundaryGrid:
     def __init__(self, fi):
         """
         Initializes a BoundaryGrid object by assigning a
-        FlorisInterface object.
+        FlorisModel object.
 
         Args:
-            fi (:py:class:`~.tools.floris_interface.FlorisInterface`):
+            fi (:py:class:`~.floris.FlorisModel`):
                 Interface used to interact with the Floris object.
         """
         self.fi = fi

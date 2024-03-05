@@ -28,7 +28,7 @@ from floris.type_dec import (
 )
 
 
-class Floris(LoggingManager):
+class FlorisModel(LoggingManager):
     """
     FlorisInterface provides a high-level user interface to many of the
     underlying methods within the FLORIS framework. It is meant to act as a
@@ -50,31 +50,31 @@ class Floris(LoggingManager):
 
         if isinstance(self.configuration, (str, Path)):
             try:
-                self.floris = Core.from_file(self.configuration)
+                self.core = Core.from_file(self.configuration)
             except FileNotFoundError:
                 # If the file cannot be found, then attempt the configuration path relative to the
                 # file location from which FlorisInterface was attempted to be run. If successful,
                 # update self.configuration to an absolute, working file path and name.
                 base_fn = Path(inspect.stack()[-1].filename).resolve().parent
                 config = (base_fn / self.configuration).resolve()
-                self.floris = Core.from_file(config)
+                self.core = Core.from_file(config)
                 self.configuration = config
 
         elif isinstance(self.configuration, dict):
-            self.floris = Core.from_dict(self.configuration)
+            self.core = Core.from_dict(self.configuration)
 
         else:
             raise TypeError("The Floris `configuration` must be of type 'dict', 'str', or 'Path'.")
 
         # If ref height is -1, assign the hub height
-        if np.abs(self.floris.flow_field.reference_wind_height + 1.0) < 1.0e-6:
+        if np.abs(self.core.flow_field.reference_wind_height + 1.0) < 1.0e-6:
             self.assign_hub_height_to_ref_height()
 
         # Make a check on reference height and provide a helpful warning
-        unique_heights = np.unique(np.round(self.floris.farm.hub_heights, decimals=6))
+        unique_heights = np.unique(np.round(self.core.farm.hub_heights, decimals=6))
         if ((
             len(unique_heights) == 1) and
-            (np.abs(self.floris.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6
+            (np.abs(self.core.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6
         )):
             err_msg = (
                 "The only unique hub-height is not the equal to the specified reference "
@@ -84,10 +84,10 @@ class Floris(LoggingManager):
             self.logger.warning(err_msg, stack_info=True)
 
         # Check the turbine_grid_points is reasonable
-        if self.floris.solver["type"] == "turbine_grid":
-            if self.floris.solver["turbine_grid_points"] > 3:
+        if self.core.solver["type"] == "turbine_grid":
+            if self.core.solver["turbine_grid_points"] > 3:
                 self.logger.error(
-                    f"turbine_grid_points value is {self.floris.solver['turbine_grid_points']} "
+                    f"turbine_grid_points value is {self.core.solver['turbine_grid_points']} "
                     "which is larger than the recommended value of less than or equal to 3. "
                     "High amounts of turbine grid points reduce the computational performance "
                     "but have a small change on accuracy."
@@ -97,7 +97,7 @@ class Floris(LoggingManager):
     def assign_hub_height_to_ref_height(self):
 
         # Confirm can do this operation
-        unique_heights = np.unique(self.floris.farm.hub_heights)
+        unique_heights = np.unique(self.core.farm.hub_heights)
         if len(unique_heights) > 1:
             raise ValueError(
                 "To assign hub heights to reference height, can not have more than one "
@@ -105,11 +105,11 @@ class Floris(LoggingManager):
                 f"Current length is {unique_heights}."
             )
 
-        self.floris.flow_field.reference_wind_height = unique_heights[0]
+        self.core.flow_field.reference_wind_height = unique_heights[0]
 
     def copy(self):
         """Create an independent copy of the current FlorisInterface object"""
-        return Core(self.floris.as_dict())
+        return FlorisModel(self.core.as_dict())
 
     def set(
         self,
@@ -165,8 +165,8 @@ class Floris(LoggingManager):
                 and the power setpoint at that position is set to 0. Defaults to None.
         """
         # Initialize a new Floris object after saving the setpoints
-        _yaw_angles = self.floris.farm.yaw_angles
-        _power_setpoints = self.floris.farm.power_setpoints
+        _yaw_angles = self.core.farm.yaw_angles
+        _power_setpoints = self.core.farm.power_setpoints
         self._reinitialize(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
@@ -187,12 +187,12 @@ class Floris(LoggingManager):
         # If the yaw angles or power setpoints are not the default, set them back to the
         # previous setting
         if not (_yaw_angles == 0).all():
-            self.floris.farm.yaw_angles = _yaw_angles
+            self.core.farm.yaw_angles = _yaw_angles
         if not (
             (_power_setpoints == POWER_SETPOINT_DEFAULT)
             | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
-            self.floris.farm.power_setpoints = _power_setpoints
+            self.core.farm.power_setpoints = _power_setpoints
 
         # Set the operation
         self._set_operation(
@@ -252,7 +252,7 @@ class Floris(LoggingManager):
             wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
         """
         # Export the floris object recursively as a dictionary
-        floris_dict = self.floris.as_dict()
+        floris_dict = self.core.as_dict()
         flow_field_dict = floris_dict["flow_field"]
         farm_dict = floris_dict["farm"]
 
@@ -334,7 +334,7 @@ class Floris(LoggingManager):
         floris_dict["farm"] = farm_dict
 
         # Create a new instance of floris and attach to self
-        self.floris = Core.from_dict(floris_dict)
+        self.core = Core.from_dict(floris_dict)
 
     def _set_operation(
         self,
@@ -355,7 +355,7 @@ class Floris(LoggingManager):
         """
         # Add operating conditions to the floris object
         if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
+            self.core.farm.yaw_angles = yaw_angles
 
         if power_setpoints is not None:
             power_setpoints = np.array(power_setpoints)
@@ -366,7 +366,7 @@ class Floris(LoggingManager):
             ] = POWER_SETPOINT_DEFAULT
             power_setpoints = floris_array_converter(power_setpoints)
 
-            self.floris.farm.power_setpoints = power_setpoints
+            self.core.farm.power_setpoints = power_setpoints
 
         # Check for turbines to disable
         if disable_turbines is not None:
@@ -375,25 +375,25 @@ class Floris(LoggingManager):
             disable_turbines = np.array(disable_turbines)
 
             # Must have first dimension = n_findex
-            if disable_turbines.shape[0] != self.floris.flow_field.n_findex:
+            if disable_turbines.shape[0] != self.core.flow_field.n_findex:
                 raise ValueError(
                     f"disable_turbines has a size of {disable_turbines.shape[0]} "
                     f"in the 0th dimension, must be equal to "
-                    f"n_findex={self.floris.flow_field.n_findex}"
+                    f"n_findex={self.core.flow_field.n_findex}"
                 )
 
             # Must have first dimension = n_turbines
-            if disable_turbines.shape[1] != self.floris.farm.n_turbines:
+            if disable_turbines.shape[1] != self.core.farm.n_turbines:
                 raise ValueError(
                     f"disable_turbines has a size of {disable_turbines.shape[1]} "
                     f"in the 1th dimension, must be equal to "
-                    f"n_turbines={self.floris.farm.n_turbines}"
+                    f"n_turbines={self.core.farm.n_turbines}"
                 )
 
             # Set power setpoints to small value (non zero to avoid numerical issues) and
             # yaw_angles to 0 in all locations where disable_turbines is True
-            self.floris.farm.yaw_angles[disable_turbines] = 0.0
-            self.floris.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
+            self.core.farm.yaw_angles[disable_turbines] = 0.0
+            self.core.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
 
     def run(self) -> None:
         """
@@ -401,10 +401,10 @@ class Floris(LoggingManager):
         """
 
         # Initialize solution space
-        self.floris.initialize_domain()
+        self.core.initialize_domain()
 
         # Perform the wake calculations
-        self.floris.steady_state_atmospheric_condition()
+        self.core.steady_state_atmospheric_condition()
 
     def run_no_wake(self) -> None:
         """
@@ -414,10 +414,10 @@ class Floris(LoggingManager):
         """
 
         # Initialize solution space
-        self.floris.initialize_domain()
+        self.core.initialize_domain()
 
         # Finalize values to user-supplied order
-        self.floris.finalize()
+        self.core.finalize()
 
     def get_plane_of_points(
         self,
@@ -440,16 +440,16 @@ class Floris(LoggingManager):
         """
         # Get results vectors
         if normal_vector == "z":
-            x_flat = self.floris.grid.x_sorted_inertial_frame[0].flatten()
-            y_flat = self.floris.grid.y_sorted_inertial_frame[0].flatten()
-            z_flat = self.floris.grid.z_sorted_inertial_frame[0].flatten()
+            x_flat = self.core.grid.x_sorted_inertial_frame[0].flatten()
+            y_flat = self.core.grid.y_sorted_inertial_frame[0].flatten()
+            z_flat = self.core.grid.z_sorted_inertial_frame[0].flatten()
         else:
-            x_flat = self.floris.grid.x_sorted[0].flatten()
-            y_flat = self.floris.grid.y_sorted[0].flatten()
-            z_flat = self.floris.grid.z_sorted[0].flatten()
-        u_flat = self.floris.flow_field.u_sorted[0].flatten()
-        v_flat = self.floris.flow_field.v_sorted[0].flatten()
-        w_flat = self.floris.flow_field.w_sorted[0].flatten()
+            x_flat = self.core.grid.x_sorted[0].flatten()
+            y_flat = self.core.grid.y_sorted[0].flatten()
+            z_flat = self.core.grid.z_sorted[0].flatten()
+        u_flat = self.core.flow_field.u_sorted[0].flatten()
+        v_flat = self.core.flow_field.v_sorted[0].flatten()
+        w_flat = self.core.flow_field.w_sorted[0].flatten()
 
         # Create a df of these
         if normal_vector == "z":
@@ -543,13 +543,13 @@ class Floris(LoggingManager):
         """
         # TODO update docstring
         if wd is None:
-            wd = self.floris.flow_field.wind_directions
+            wd = self.core.flow_field.wind_directions
         if ws is None:
-            ws = self.floris.flow_field.wind_speeds
+            ws = self.core.flow_field.wind_speeds
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # Store the current state for reinitialization
-        floris_dict = self.floris.as_dict()
+        floris_dict = self.core.as_dict()
         # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
@@ -568,7 +568,7 @@ class Floris(LoggingManager):
         )
 
         # Calculate wake
-        self.floris.solve_for_viz()
+        self.core.solve_for_viz()
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
@@ -581,13 +581,13 @@ class Floris(LoggingManager):
         # Compute the cutplane
         horizontal_plane = CutPlane(
             df,
-            self.floris.grid.grid_resolution[0],
-            self.floris.grid.grid_resolution[1],
+            self.core.grid.grid_resolution[0],
+            self.core.grid.grid_resolution[1],
             "z",
         )
 
         # Reset the fi object back to the turbine grid configuration
-        self.floris = Core.from_dict(floris_dict)
+        self.core = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.run()
@@ -629,13 +629,13 @@ class Floris(LoggingManager):
         """
         # TODO update docstring
         if wd is None:
-            wd = self.floris.flow_field.wind_directions
+            wd = self.core.flow_field.wind_directions
         if ws is None:
-            ws = self.floris.flow_field.wind_speeds
+            ws = self.core.flow_field.wind_speeds
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # Store the current state for reinitialization
-        floris_dict = self.floris.as_dict()
+        floris_dict = self.core.as_dict()
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -655,7 +655,7 @@ class Floris(LoggingManager):
         )
 
         # Calculate wake
-        self.floris.solve_for_viz()
+        self.core.solve_for_viz()
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
@@ -669,7 +669,7 @@ class Floris(LoggingManager):
         cross_plane = CutPlane(df, y_resolution, z_resolution, "x")
 
         # Reset the fi object back to the turbine grid configuration
-        self.floris = Core.from_dict(floris_dict)
+        self.core = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.run()
@@ -723,13 +723,13 @@ class Floris(LoggingManager):
         """
         # TODO update docstring
         if wd is None:
-            wd = self.floris.flow_field.wind_directions
+            wd = self.core.flow_field.wind_directions
         if ws is None:
-            ws = self.floris.flow_field.wind_speeds
+            ws = self.core.flow_field.wind_speeds
         self.check_wind_condition_for_viz(wd=wd, ws=ws)
 
         # Store the current state for reinitialization
-        floris_dict = self.floris.as_dict()
+        floris_dict = self.core.as_dict()
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -749,7 +749,7 @@ class Floris(LoggingManager):
         )
 
         # Calculate wake
-        self.floris.solve_for_viz()
+        self.core.solve_for_viz()
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
@@ -763,7 +763,7 @@ class Floris(LoggingManager):
         y_plane = CutPlane(df, x_resolution, z_resolution, "y")
 
         # Reset the fi object back to the turbine grid configuration
-        self.floris = Core.from_dict(floris_dict)
+        self.core = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
         self.run()
@@ -791,77 +791,77 @@ class Floris(LoggingManager):
         """
 
         # Confirm calculate wake has been run
-        if self.floris.state is not State.USED:
+        if self.core.state is not State.USED:
             raise RuntimeError(
                 "Can't run function `FlorisInterface.get_turbine_powers` without "
                 "first running `FlorisInterface.run`."
             )
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.
-        if (self.floris.flow_field.u < 0.0).any():
+        if (self.core.flow_field.u < 0.0).any():
             self.logger.warning("Some velocities at the rotor are negative.")
 
         turbine_powers = power(
-            velocities=self.floris.flow_field.u,
-            air_density=self.floris.flow_field.air_density,
-            power_functions=self.floris.farm.turbine_power_functions,
-            yaw_angles=self.floris.farm.yaw_angles,
-            tilt_angles=self.floris.farm.tilt_angles,
-            power_setpoints=self.floris.farm.power_setpoints,
-            tilt_interps=self.floris.farm.turbine_tilt_interps,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
-            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
-            multidim_condition=self.floris.flow_field.multidim_conditions,
+            velocities=self.core.flow_field.u,
+            air_density=self.core.flow_field.air_density,
+            power_functions=self.core.farm.turbine_power_functions,
+            yaw_angles=self.core.farm.yaw_angles,
+            tilt_angles=self.core.farm.tilt_angles,
+            power_setpoints=self.core.farm.power_setpoints,
+            tilt_interps=self.core.farm.turbine_tilt_interps,
+            turbine_type_map=self.core.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
+            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
+            multidim_condition=self.core.flow_field.multidim_conditions,
         )
         return turbine_powers
 
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
-            velocities=self.floris.flow_field.u,
-            air_density=self.floris.flow_field.air_density,
-            yaw_angles=self.floris.farm.yaw_angles,
-            tilt_angles=self.floris.farm.tilt_angles,
-            power_setpoints=self.floris.farm.power_setpoints,
-            thrust_coefficient_functions=self.floris.farm.turbine_thrust_coefficient_functions,
-            tilt_interps=self.floris.farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
-            average_method=self.floris.grid.average_method,
-            cubature_weights=self.floris.grid.cubature_weights,
-            multidim_condition=self.floris.flow_field.multidim_conditions,
+            velocities=self.core.flow_field.u,
+            air_density=self.core.flow_field.air_density,
+            yaw_angles=self.core.farm.yaw_angles,
+            tilt_angles=self.core.farm.tilt_angles,
+            power_setpoints=self.core.farm.power_setpoints,
+            thrust_coefficient_functions=self.core.farm.turbine_thrust_coefficient_functions,
+            tilt_interps=self.core.farm.turbine_tilt_interps,
+            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
+            turbine_type_map=self.core.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
+            average_method=self.core.grid.average_method,
+            cubature_weights=self.core.grid.cubature_weights,
+            multidim_condition=self.core.flow_field.multidim_conditions,
         )
         return turbine_thrust_coefficients
 
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
-            velocities=self.floris.flow_field.u,
-            air_density=self.floris.flow_field.air_density,
-            yaw_angles=self.floris.farm.yaw_angles,
-            tilt_angles=self.floris.farm.tilt_angles,
-            power_setpoints=self.floris.farm.power_setpoints,
-            axial_induction_functions=self.floris.farm.turbine_axial_induction_functions,
-            tilt_interps=self.floris.farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
-            turbine_type_map=self.floris.farm.turbine_type_map,
-            turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
-            average_method=self.floris.grid.average_method,
-            cubature_weights=self.floris.grid.cubature_weights,
-            multidim_condition=self.floris.flow_field.multidim_conditions,
+            velocities=self.core.flow_field.u,
+            air_density=self.core.flow_field.air_density,
+            yaw_angles=self.core.farm.yaw_angles,
+            tilt_angles=self.core.farm.tilt_angles,
+            power_setpoints=self.core.farm.power_setpoints,
+            axial_induction_functions=self.core.farm.turbine_axial_induction_functions,
+            tilt_interps=self.core.farm.turbine_tilt_interps,
+            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
+            turbine_type_map=self.core.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
+            average_method=self.core.grid.average_method,
+            cubature_weights=self.core.grid.cubature_weights,
+            multidim_condition=self.core.flow_field.multidim_conditions,
         )
         return turbine_ais
 
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:
         return average_velocity(
-            velocities=self.floris.flow_field.u,
-            method=self.floris.grid.average_method,
-            cubature_weights=self.floris.grid.cubature_weights,
+            velocities=self.core.flow_field.u,
+            method=self.core.grid.average_method,
+            cubature_weights=self.core.grid.cubature_weights,
         )
 
     def get_turbine_TIs(self) -> NDArrayFloat:
-        return self.floris.flow_field.turbulence_intensity_field
+        return self.core.flow_field.turbulence_intensity_field
 
     def get_farm_power(
         self,
@@ -900,11 +900,11 @@ class Floris(LoggingManager):
         # the model yet
         # TODO: Turbines need a switch for using turbulence correction
         # TODO: Uncomment out the following two lines once the above are resolved
-        # for turbine in self.floris.farm.turbines:
+        # for turbine in self.core.farm.turbines:
         #     turbine.use_turbulence_correction = use_turbulence_correction
 
         # Confirm calculate wake has been run
-        if self.floris.state is not State.USED:
+        if self.core.state is not State.USED:
             raise RuntimeError(
                 "Can't run function `FlorisInterface.get_turbine_powers` without "
                 "first running `FlorisInterface.calculate_wake`."
@@ -914,15 +914,15 @@ class Floris(LoggingManager):
             # Default to equal weighing of all turbines when turbine_weights is None
             turbine_weights = np.ones(
                 (
-                    self.floris.flow_field.n_findex,
-                    self.floris.farm.n_turbines,
+                    self.core.flow_field.n_findex,
+                    self.core.farm.n_turbines,
                 )
             )
         elif len(np.shape(turbine_weights)) == 1:
             # Deal with situation when 1D array is provided
             turbine_weights = np.tile(
                 turbine_weights,
-                (self.floris.flow_field.n_findex, 1),
+                (self.core.flow_field.n_findex, 1),
             )
 
         # Calculate all turbine powers and apply weights
@@ -984,7 +984,7 @@ class Floris(LoggingManager):
         """
 
         # Verify dimensions of the variable "freq"
-        if np.shape(freq)[0] != self.floris.flow_field.n_findex:
+        if np.shape(freq)[0] != self.core.flow_field.n_findex:
             raise UserWarning(
                 "'freq' should be a one-dimensional array with dimensions (n_findex). "
                 f"Given shape is {np.shape(freq)}"
@@ -998,9 +998,9 @@ class Floris(LoggingManager):
 
         # Copy the full wind speed array from the floris object and initialize
         # the the farm_power variable as an empty array.
-        wind_speeds = np.array(self.floris.flow_field.wind_speeds, copy=True)
-        wind_directions = np.array(self.floris.flow_field.wind_directions, copy=True)
-        farm_power = np.zeros(self.floris.flow_field.n_findex)
+        wind_speeds = np.array(self.core.flow_field.wind_speeds, copy=True)
+        wind_directions = np.array(self.core.flow_field.wind_directions, copy=True)
+        farm_power = np.zeros(self.core.flow_field.n_findex)
 
         # Determine which wind speeds we must evaluate
         conditions_to_evaluate = wind_speeds >= cut_in_wind_speed
@@ -1081,7 +1081,7 @@ class Floris(LoggingManager):
         """
 
         # Verify the wind_data object matches FLORIS' initialization
-        if wind_data.n_findex != self.floris.flow_field.n_findex:
+        if wind_data.n_findex != self.core.flow_field.n_findex:
             raise ValueError("WindData object and floris do not have same findex")
 
         # Get freq directly from wind_data
@@ -1113,7 +1113,7 @@ class Floris(LoggingManager):
         if not len(x) == len(y) == len(z):
             raise ValueError("x, y, and z must be the same size")
 
-        return self.floris.solve_for_points(x, y, z)
+        return self.core.solve_for_points(x, y, z)
 
     def sample_velocity_deficit_profiles(
         self,
@@ -1164,7 +1164,7 @@ class Floris(LoggingManager):
             raise ValueError("`direction` must be either `cross-stream` or `vertical`.")
 
         if ref_rotor_diameter is None:
-            unique_rotor_diameters = np.unique(self.floris.farm.rotor_diameters)
+            unique_rotor_diameters = np.unique(self.core.farm.rotor_diameters)
             if len(unique_rotor_diameters) == 1:
                 ref_rotor_diameter = unique_rotor_diameters[0]
             else:
@@ -1181,9 +1181,9 @@ class Floris(LoggingManager):
         if profile_range is None:
             profile_range = ref_rotor_diameter * np.array([-2, 2])
 
-        wind_directions_copy = np.array(self.floris.flow_field.wind_directions, copy=True)
-        wind_speeds_copy = np.array(self.floris.flow_field.wind_speeds, copy=True)
-        wind_shear_copy = self.floris.flow_field.wind_shear
+        wind_directions_copy = np.array(self.core.flow_field.wind_directions, copy=True)
+        wind_speeds_copy = np.array(self.core.flow_field.wind_speeds, copy=True)
+        wind_shear_copy = self.core.flow_field.wind_shear
 
         if wind_direction is None:
             if len(wind_directions_copy) == 1:
@@ -1211,7 +1211,7 @@ class Floris(LoggingManager):
                 )
 
         if reference_height is None:
-            reference_height = self.floris.flow_field.reference_wind_height
+            reference_height = self.core.flow_field.reference_wind_height
 
         self.set(
             wind_directions=[wind_direction],
@@ -1219,7 +1219,7 @@ class Floris(LoggingManager):
             wind_shear=0.0,
         )
 
-        velocity_deficit_profiles = self.floris.solve_for_velocity_deficit_profiles(
+        velocity_deficit_profiles = self.core.solve_for_velocity_deficit_profiles(
             direction,
             downstream_dists,
             profile_range,
@@ -1247,7 +1247,7 @@ class Floris(LoggingManager):
         Returns:
             np.array: Wind turbine x-coordinate.
         """
-        return self.floris.farm.layout_x
+        return self.core.farm.layout_x
 
     @property
     def layout_y(self):
@@ -1257,7 +1257,7 @@ class Floris(LoggingManager):
         Returns:
             np.array: Wind turbine y-coordinate.
         """
-        return self.floris.farm.layout_y
+        return self.core.farm.layout_y
 
     def get_turbine_layout(self, z=False):
         """
@@ -1271,7 +1271,7 @@ class Floris(LoggingManager):
             np.array: lists of x, y, and (optionally) z coordinates of
                 each turbine
         """
-        xcoords, ycoords, zcoords = self.floris.farm.coordinates.T
+        xcoords, ycoords, zcoords = self.core.farm.coordinates.T
         if z:
             return xcoords, ycoords, zcoords
         else:
