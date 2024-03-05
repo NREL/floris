@@ -17,6 +17,7 @@ from floris.simulation.turbine import (
     MixedOperationTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
+    TUMLossTurbine,
 )
 from floris.type_dec import (
     convert_to_path,
@@ -34,6 +35,7 @@ TURBINE_MODEL_MAP = {
     "power_thrust_model": {
         "simple": SimpleTurbine,
         "cosine-loss": CosineLossTurbine,
+        "tum-loss": TUMLossTurbine,
         "simple-derating": SimpleDeratingTurbine,
         "mixed": MixedOperationTurbine,
     },
