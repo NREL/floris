@@ -355,7 +355,7 @@ class FlorisInterface(LoggingManager):
         """
         # Add operating conditions to the floris object
         if yaw_angles is not None:
-            self.floris.farm.yaw_angles = yaw_angles
+            self.floris.farm.yaw_angles = np.array(yaw_angles)
 
         if power_setpoints is not None:
             power_setpoints = np.array(power_setpoints)
