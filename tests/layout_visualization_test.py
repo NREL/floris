@@ -37,3 +37,11 @@ def test_plotting_functions():
 
     ax = layoutviz.plot_waking_directions(fi=fi)
     assert isinstance(ax, plt.Axes)
+
+    # Add additional turbines to test plot farm terrain
+    fi.set(
+        layout_x=[0, 1000, 0, 1000, 3000],
+        layout_y=[0, 0, 2000, 2000, 3000],
+    )
+    ax = layoutviz.plot_farm_terrain(fi=fi)
+    assert isinstance(ax, plt.Axes)
