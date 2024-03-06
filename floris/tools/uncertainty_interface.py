@@ -206,7 +206,7 @@ class UncertaintyInterface(LoggingManager):
     def _reassign_yaw_angles(self, yaw_angles=None):
         # Overwrite the yaw angles in the FlorisInterface object
         if yaw_angles is not None:
-            self.fi.floris.farm.yaw_angles = yaw_angles
+            self.fi.floris.farm.set_yaw_angles(yaw_angles)
 
     # Public methods
 

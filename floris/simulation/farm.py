@@ -329,8 +329,12 @@ class Farm(BaseClass):
             axis=1
         )
 
-    def set_yaw_angles(self, n_findex: int):
-        self.yaw_angles = np.zeros((n_findex, self.n_turbines))
+    def set_yaw_angles(self, yaw_angles: NDArrayFloat | list[float]):
+        self.yaw_angles = np.array(yaw_angles)
+
+    def set_yaw_angles_to_ref_yaw(self, n_findex: int):
+        yaw_angles = np.zeros((n_findex, self.n_turbines))
+        self.set_yaw_angles(yaw_angles)
         self.yaw_angles_sorted = np.zeros((n_findex, self.n_turbines))
 
     def set_tilt_to_ref_tilt(self, n_findex: int):
@@ -343,8 +347,12 @@ class Farm(BaseClass):
             * self.ref_tilts
         )
 
-    def set_power_setpoints(self, n_findex: int):
-        self.power_setpoints = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
+    def set_power_setpoints(self, power_setpoints: NDArrayFloat):
+        self.power_setpoints = np.array(power_setpoints)
+
+    def set_power_setpoints_to_ref_power(self, n_findex: int):
+        power_setpoints = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
+        self.set_power_setpoints(power_setpoints)
         self.power_setpoints_sorted = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
