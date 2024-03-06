@@ -60,7 +60,7 @@ class WindDataBase:
 
         return freq_table_unpack
 
-    def check_heterogenous_inflow_config_by_wd(heterogenous_inflow_config_by_wd):
+    def check_heterogenous_inflow_config_by_wd(self, heterogenous_inflow_config_by_wd):
         """
         Check that the heterogenous_inflow_config_by_wd dictionary is properly formatted
 
@@ -87,7 +87,7 @@ class WindDataBase:
             if "y" not in heterogenous_inflow_config_by_wd:
                 raise ValueError("heterogenous_inflow_config_by_wd must contain a key 'y'")
 
-    def check_heterogenous_inflow_config(heterogenous_inflow_config):
+    def check_heterogenous_inflow_config(self, heterogenous_inflow_config):
         """
         Check that the heterogenous_inflow_config dictionary is properly formatted
 
