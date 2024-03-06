@@ -508,23 +508,69 @@ class HelixTurbine(BaseOperationModel):
     added to the kwargs dictionaries in the respective functions on turbine.py. They won't affect
     the other operation models.
     """
+    
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
+        air_density: float,
+        helix_amplitudes: NDArrayFloat | None,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        return 0 # Placeholder until code is built out
+        base_powers = SimpleTurbine.power(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            air_density=air_density,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+        
+        if helix_amplitudes is None:
+            return base_powers
+        else:
+            return base_powers * (1 - (4.828e-3+4.017e-11*base_powers)*helix_amplitudes**1.809) ## Should probably add max function here
+
+        # TODO: would we like special handling of zero power setpoints
+        # (mixed with non-zero values) to speed up computation in that case?
 
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
+        air_density: float,
+        helix_amplitudes: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        return 0 # Placeholder until code is built out
+        base_thrust_coefficients = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+        if helix_amplitudes is None:
+            return base_thrust_coefficients
+        else:
+            return base_thrust_coefficients * (1 - (1.390e-3+5.084e-4*base_thrust_coefficients)*helix_amplitudes**1.809)
 
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
+        air_density: float,
+        helix_amplitudes: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        return 0 # Placeholder until code is built out
+        thrust_coefficient = HelixTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            air_density=air_density,
+            helix_amplitudes=helix_amplitudes,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        return (1 - np.sqrt(1 - thrust_coefficient))/2
+

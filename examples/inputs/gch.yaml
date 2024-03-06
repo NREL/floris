@@ -180,6 +180,10 @@ wake:
 
   ###
   # Can be "true" or "false".
+  enable_helix_added_recovery: false
+
+  ###
+  # Can be "true" or "false".
   enable_transverse_velocities: true
 
   ###

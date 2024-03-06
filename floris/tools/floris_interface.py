@@ -122,6 +122,8 @@ class FlorisInterface(LoggingManager):
         yaw_angles: NDArrayFloat | list[float] | None = None,
         # tilt_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        helix_amplitudes: NDArrayFloat | list[float] | list[float, None] | None = None,
+        helix_frequencies: NDArrayFloat | list[float] | list[float, None] | None = None,
     ) -> None:
         """
         Wrapper to the :py:meth:`~.Farm.set_yaw_angles` and
@@ -161,6 +163,24 @@ class FlorisInterface(LoggingManager):
         power_setpoints = floris_array_converter(power_setpoints)
 
         self.floris.farm.power_setpoints = power_setpoints
+
+        if helix_amplitudes is None:
+            helix_amplitudes = np.zeros(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
+        self.floris.farm.helix_amplitudes = helix_amplitudes
+
+        if helix_frequencies is None:
+            helix_frequencies = np.zeros(
+                (
+                    self.floris.flow_field.n_findex,
+                    self.floris.farm.n_turbines,
+                )
+            )
+        self.floris.farm.helix_frequencies = helix_frequencies
 
         # # TODO is this required?
         # if tilt_angles is not None:
@@ -459,7 +479,7 @@ class FlorisInterface(LoggingManager):
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="z",
             planar_coordinate=height,
@@ -476,7 +496,7 @@ class FlorisInterface(LoggingManager):
         # Reset the fi object back to the turbine grid configuration
         self.floris = Floris.from_dict(floris_dict)
 
-        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        # Run the simulation again for further postprocessing (i.e. now we can get farm power)
         self.calculate_wake(yaw_angles=current_yaw_angles)
 
         return horizontal_plane
@@ -675,6 +695,7 @@ class FlorisInterface(LoggingManager):
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
             power_setpoints=self.floris.farm.power_setpoints,
+            helix_amplitudes=self.floris.farm.helix_amplitudes,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             turbine_type_map=self.floris.farm.turbine_type_map,
             turbine_power_thrust_tables=self.floris.farm.turbine_power_thrust_tables,
@@ -690,6 +711,7 @@ class FlorisInterface(LoggingManager):
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
             power_setpoints=self.floris.farm.power_setpoints,
+            helix_amplitudes=self.floris.farm.helix_amplitudes,
             thrust_coefficient_functions=self.floris.farm.turbine_thrust_coefficient_functions,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,
@@ -708,6 +730,7 @@ class FlorisInterface(LoggingManager):
             yaw_angles=self.floris.farm.yaw_angles,
             tilt_angles=self.floris.farm.tilt_angles,
             power_setpoints=self.floris.farm.power_setpoints,
+            helix_amplitudes=self.floris.farm.helix_amplitudes,
             axial_induction_functions=self.floris.farm.turbine_axial_induction_functions,
             tilt_interps=self.floris.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.floris.farm.correct_cp_ct_for_tilt,

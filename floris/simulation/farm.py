@@ -96,6 +96,12 @@ class Farm(BaseClass):
     power_setpoints: NDArrayFloat = field(init=False)
     power_setpoints_sorted: NDArrayFloat = field(init=False)
 
+    helix_amplitudes: NDArrayFloat = field(init=False)
+    helix_amplitudes_sorted: NDArrayFloat = field(init=False)
+
+    helix_frequencies: NDArrayFloat = field(init=False)
+    helix_frequencies_sorted: NDArrayFloat = field(init=False)
+
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
 
@@ -242,6 +248,16 @@ class Farm(BaseClass):
             sorted_indices[:, :, 0, 0],
             axis=1,
         )
+        self.helix_amplitudes_sorted = np.take_along_axis(
+            self.helix_amplitudes,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
+        self.helix_frequencies_sorted = np.take_along_axis(
+            self.helix_frequencies,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
         self.state = State.INITIALIZED
 
     def construct_hub_heights(self):
@@ -353,6 +369,14 @@ class Farm(BaseClass):
     def set_power_setpoints(self, n_findex: int):
         self.power_setpoints = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
         self.power_setpoints_sorted = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
+
+    def set_helix_amplitudes(self, n_findex: int):
+        self.helix_amplitudes = np.zeros((n_findex, self.n_turbines))
+        self.helix_amplitudes_sorted = np.zeros((n_findex, self.n_turbines))
+
+    def set_helix_frequencies(self, n_findex: int):
+        self.helix_frequencies = np.zeros((n_findex, self.n_turbines))
+        self.helix_frequencies_sorted = np.zeros((n_findex, self.n_turbines))
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
         tilt_angles = compute_tilt_angles_for_floating_turbines_map(
