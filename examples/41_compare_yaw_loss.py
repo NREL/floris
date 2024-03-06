@@ -46,11 +46,12 @@ for op_model in op_models:
     fi = FlorisInterface("inputs/gch.yaml")
 
     # Initialize to a simple 1 turbine case with n_findex = N
-    fi.reinitialize(layout_x=[0],
-                    layout_y=[0],
-                    wind_directions=270 * np.ones(N),
-                    wind_speeds=8 * np.ones(N),
-                    )
+    fi.set(
+        layout_x=[0],
+        layout_y=[0],
+        wind_directions=270 * np.ones(N),
+        wind_speeds=8 * np.ones(N),
+    )
 
     with open(str(
         fi.floris.as_dict()["farm"]["turbine_library_path"] /
@@ -60,10 +61,10 @@ for op_model in op_models:
     turbine_type["power_thrust_model"] = op_model
 
     # Change the turbine type
-    fi.reinitialize(turbine_type=[turbine_type])
+    fi.set(turbine_type=[turbine_type], yaw_angles=yaw_angles)
 
     # Calculate the power
-    fi.calculate_wake(yaw_angles=yaw_angles)
+    fi.run()
     turbine_power = fi.get_turbine_powers().squeeze()
 
     # Save the results
