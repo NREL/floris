@@ -187,12 +187,12 @@ class FlorisInterface(LoggingManager):
         # If the yaw angles or power setpoints are not the default, set them back to the
         # previous setting
         if not (_yaw_angles == 0).all():
-            self.floris.farm.yaw_angles = _yaw_angles
+            self.floris.farm.set_yaw_angles(_yaw_angles)
         if not (
             (_power_setpoints == POWER_SETPOINT_DEFAULT)
             | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
-            self.floris.farm.power_setpoints = _power_setpoints
+            self.floris.farm.set_power_setpoints(_power_setpoints)
 
         # Set the operation
         self._set_operation(
@@ -355,7 +355,7 @@ class FlorisInterface(LoggingManager):
         """
         # Add operating conditions to the floris object
         if yaw_angles is not None:
-            self.floris.farm.yaw_angles = np.array(yaw_angles)
+            self.floris.farm.set_yaw_angles(yaw_angles)
 
         if power_setpoints is not None:
             power_setpoints = np.array(power_setpoints)
@@ -366,7 +366,7 @@ class FlorisInterface(LoggingManager):
             ] = POWER_SETPOINT_DEFAULT
             power_setpoints = floris_array_converter(power_setpoints)
 
-            self.floris.farm.power_setpoints = power_setpoints
+            self.floris.farm.set_power_setpoints(power_setpoints)
 
         # Check for turbines to disable
         if disable_turbines is not None:
