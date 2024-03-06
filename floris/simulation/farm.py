@@ -184,6 +184,10 @@ class Farm(BaseClass):
         if len(_turbine_types) == 1:
             _turbine_types *= self.n_turbines
 
+        # Check that turbine definitions contain any v3 keys
+        for t in _turbine_types:
+            check_turbine_definition_for_v3_keys(turbine_definition_cache[t])
+
         # Map each turbine definition to its index in this list
         self.turbine_definitions = [
             copy.deepcopy(turbine_definition_cache[t]) for t in _turbine_types
@@ -404,3 +408,38 @@ class Farm(BaseClass):
     @property
     def n_turbines(self):
         return len(self.layout_x)
+
+def check_turbine_definition_for_v3_keys(turbine_definition: dict):
+    """Check that the turbine definition does not contain any v3 keys."""
+    v3_deprecation_msg = (
+        "Consider using the convert_turbine_v3_to_v4.py utility in floris/tools "
+        + "to convert from a FLORIS v3 turbine definition to FLORIS v4. "
+        + "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+    )
+    if "generator_efficiency" in turbine_definition:
+        raise ValueError(
+            "generator_efficiency is no longer supported as power is specified in absolute terms "
+            + "in FLORIS v4. "
+            + v3_deprecation_msg
+        )
+
+    v3_renamed_keys = ["pP", "pT", "ref_density_cp_ct", "ref_tilt_cp_ct"]
+    if any(k in turbine_definition for k in v3_renamed_keys):
+        v3_list_keys = ", ".join(map(str,v3_renamed_keys[:-1]))+", and "+v3_renamed_keys[-1]
+        v4_versions = (
+            "cosine_loss_exponent_yaw, cosine_loss_exponent_tilt, ref_air_density, and ref_tilt"
+        )
+        raise ValueError(
+            v3_list_keys
+            + " have been renamed to "
+            + v4_versions
+            + ", respectively, and placed under the power_thrust_table field in FLORIS v4. "
+            + v3_deprecation_msg
+        )
+
+    if "thrust" in turbine_definition["power_thrust_table"]:
+        raise ValueError(
+            "thrust has been renamed thrust_coefficient in FLORIS v4 (and power is now specified "
+            "in absolute terms with units kW, rather than as a coefficient). "
+            + v3_deprecation_msg
+        )
