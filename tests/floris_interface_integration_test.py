@@ -341,6 +341,7 @@ def test_get_farm_aep_with_conditions():
 
     wind_speeds = np.array([5.0, 8.0, 8.0, 8.0, 20.0])
     wind_directions = np.array([270.0, 270.0, 270.0, 270.0, 270.0])
+    turbulence_intensities = np.array([0.06, 0.06, 0.06, 0.06, 0.06])
     n_findex = len(wind_directions)
 
     layout_x = np.array([0, 0])
@@ -350,6 +351,7 @@ def test_get_farm_aep_with_conditions():
     fi.set(
         wind_speeds=wind_speeds,
         wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
         layout_x=layout_x,
         layout_y=layout_y,
     )
@@ -388,45 +390,26 @@ def test_set_ti():
         turbulence_intensities=[0.1, 0.1, 0.1],
     )
 
-    # Now confirm can change wind speeds and directions shape without changing
-    # turbulence intensity since this is allowed when the turbulence intensities are uniform
-    # raises n_findex to 4
-    fi.set(
-        wind_speeds=[8.0, 8.0, 8.0, 8.0],
-        wind_directions=[
-            240.0,
-            250.0,
-            260.0,
-            270.0,
-        ],
-    )
+    # Confirm can change turbulence intensities if not changing the lenght of the array
+    fi.set(turbulence_intensities=[0.12, 0.12, 0.12])
 
-    # Confirm turbulence_intensities now length 4 with single unique value
-    np.testing.assert_allclose(fi.floris.flow_field.turbulence_intensities, [0.1, 0.1, 0.1, 0.1])
-
-    # Now should be able to change turbulence intensity to changing, so long as length 4
-    fi.set(turbulence_intensities=[0.08, 0.09, 0.1, 0.11])
-
-    # However the wrong length should raise an error
-    with pytest.raises(ValueError):
-        fi.set(turbulence_intensities=[0.08, 0.09, 0.1])
-
-    # Also, now that TI is not a single unique value, it can not be left default when changing
-    # shape of wind speeds and directions
+    # Confirm that changes wind speeds and directions without change turbulence intensities
+    # raises an error
     with pytest.raises(ValueError):
         fi.set(
-            wind_speeds=[8.0, 8.0, 8.0, 8.0, 8.0],
+            wind_speeds=[8.0, 8.0, 8.0, 8.0],
             wind_directions=[
                 240.0,
                 250.0,
                 260.0,
                 270.0,
-                280.0,
             ],
         )
 
-    # Test that applying a 1D array of length 1 is allowed for ti
-    fi.set(turbulence_intensities=[0.12])
+
+    # Changing the length of TI alone is not allowed
+    with pytest.raises(ValueError):
+        fi.set(turbulence_intensities=[0.12])
 
     # Test that applying a float however raises an error
     with pytest.raises(TypeError):
