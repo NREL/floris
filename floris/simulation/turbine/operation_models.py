@@ -469,7 +469,6 @@ class TUMLossTurbine(BaseOperationModel):
         cp_i = LUT['cp_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
-        interp_lut = RegularGridInterpolator((tsr_i,pitch_i), cp_i)
         idx = np.squeeze(np.where(cp_i == np.max(cp_i)))
 
         tsr_opt   = tsr_i[idx[0]]
