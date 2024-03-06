@@ -296,27 +296,6 @@ class FlorisInterface(LoggingManager):
         if heterogenous_inflow_config is not None:
             flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
 
-        # Handle a special case where:
-        #   wind_speeds | wind_directions are not None
-        #   turbulence_intensities is None
-        #   len(turbulence intensity) != len(wind_directions)
-        #   turbulence_intensities is uniform
-        # In this case, automatically resize turbulence intensity
-        # This is the case where user is assuming same TI across all findex
-        if (
-            (wind_speeds is not None or wind_directions is not None)
-            and turbulence_intensities is None
-            and (
-                len(flow_field_dict["turbulence_intensities"])
-                != len(flow_field_dict["wind_directions"])
-            )
-            and len(np.unique(flow_field_dict["turbulence_intensities"])) == 1
-        ):
-            flow_field_dict["turbulence_intensities"] = (
-                flow_field_dict["turbulence_intensities"][0]
-                * np.ones_like(flow_field_dict["wind_directions"])
-            )
-
         ## Farm
         if layout_x is not None:
             farm_dict["layout_x"] = layout_x
@@ -1000,6 +979,9 @@ class FlorisInterface(LoggingManager):
         # the the farm_power variable as an empty array.
         wind_speeds = np.array(self.floris.flow_field.wind_speeds, copy=True)
         wind_directions = np.array(self.floris.flow_field.wind_directions, copy=True)
+        turbulence_intensities = np.array(
+            self.floris.flow_field.turbulence_intensities, copy=True
+        )
         farm_power = np.zeros(self.floris.flow_field.n_findex)
 
         # Determine which wind speeds we must evaluate
@@ -1011,9 +993,11 @@ class FlorisInterface(LoggingManager):
         if np.any(conditions_to_evaluate):
             wind_speeds_subset = wind_speeds[conditions_to_evaluate]
             wind_directions_subset = wind_directions[conditions_to_evaluate]
+            turbulence_intensities_subset = turbulence_intensities[conditions_to_evaluate]
             self.set(
                 wind_speeds=wind_speeds_subset,
                 wind_directions=wind_directions_subset,
+                turbulence_intensities=turbulence_intensities_subset,
             )
             if no_wake:
                 self.run_no_wake()
@@ -1027,7 +1011,9 @@ class FlorisInterface(LoggingManager):
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
-        self.set(wind_speeds=wind_speeds, wind_directions=wind_directions)
+        self.set(wind_speeds=wind_speeds,
+                 wind_directions=wind_directions,
+                 turbulence_intensities=turbulence_intensities)
 
         return aep
 
