@@ -368,6 +368,18 @@ class SampleInputs:
             "TSR": 8.0
         }
 
+        self.tum_loss_turbine_power_thrust_table = {
+            "ref_air_density": 1.225,
+            "rotor_solidity": 0.05132,
+            "generator_efficiency": 0.944,
+            "rated_power": 5.0e6,
+            "rotor_diameter": 126,
+            "beta": -0.45891,
+            "cd": 0.0040638,
+            "cl_alfa": 4.275049,
+            "ref_tilt": 5.0,
+        }
+
         self.turbine_floating = copy.deepcopy(self.turbine)
         self.turbine_floating["floating_tilt_table"] = {
             "tilt": [

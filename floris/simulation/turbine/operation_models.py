@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import copy
 from abc import abstractmethod
+import os
+from pathlib import Path
 from typing import (
     Any,
     Dict,
@@ -465,7 +467,9 @@ class TUMLossTurbine(BaseOperationModel):
             y = aero_pow - electric_pow
             return y
                 
-        LUT         = np.load('../floris/turbine_library/LUT_IEA3MW.npz')
+        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
+        lut_file = pkgroot / "turbine_library" / "LUT_IEA3MW.npz"
+        LUT         = np.load(lut_file)
         cp_i = LUT['cp_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
@@ -581,13 +585,13 @@ class TUMLossTurbine(BaseOperationModel):
         correct_cp_ct_for_tilt: bool = False,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        # Construct power interpolant
-        power_interpolator = interp1d(
-            power_thrust_table["wind_speed"],
-            power_thrust_table["power"],
-            fill_value=0.0,
-            bounds_error=False,
-        )
+        # # Construct power interpolant
+        # power_interpolator = interp1d(
+        #     power_thrust_table["wind_speed"],
+        #     power_thrust_table["power"],
+        #     fill_value=0.0,
+        #     bounds_error=False,
+        # )
   
         # sign convention. in the tum model, negative tilt creates tower clearance
         tilt_angles = -tilt_angles
@@ -714,7 +718,9 @@ class TUMLossTurbine(BaseOperationModel):
                
     ############################################################################
     
-        LUT         = np.load('../floris/turbine_library/LUT_IEA3MW.npz')
+        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
+        lut_file = pkgroot / "turbine_library" / "LUT_IEA3MW.npz"
+        LUT         = np.load(lut_file)
         cp_i = LUT['cp_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
@@ -842,7 +848,9 @@ class TUMLossTurbine(BaseOperationModel):
         
         razio = thrust_coefficient1/thrust_coefficient0
 
-        LUT         = np.load('../floris/turbine_library/LUT_IEA3MW.npz')
+        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
+        lut_file = pkgroot / "turbine_library" / "LUT_IEA3MW.npz"
+        LUT         = np.load(lut_file)
         ct_i = LUT['ct_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
@@ -969,7 +977,9 @@ class TUMLossTurbine(BaseOperationModel):
         
         razio = thrust_coefficient1/thrust_coefficient0
 
-        LUT         = np.load('../floris/turbine_library/LUT_IEA3MW.npz')
+        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
+        lut_file = pkgroot / "turbine_library" / "LUT_IEA3MW.npz"
+        LUT         = np.load(lut_file)
         ct_i = LUT['ct_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
