@@ -33,8 +33,8 @@ class WindDataBase:
         (
             wind_directions_unpack,
             wind_speeds_unpack,
-            _,
             ti_table_unpack,
+            _,
             _,
         ) = self.unpack()
 
@@ -46,8 +46,8 @@ class WindDataBase:
         (
             _,
             _,
-            freq_table_unpack,
             _,
+            freq_table_unpack,
             _,
         ) = self.unpack()
 
@@ -207,8 +207,8 @@ class WindRose(WindDataBase):
         return (
             wind_directions_unpack,
             wind_speeds_unpack,
-            freq_table_unpack,
             ti_table_unpack,
+            freq_table_unpack,
             value_table_unpack,
         )
 
@@ -539,8 +539,8 @@ class WindTIRose(WindDataBase):
         return (
             wind_directions_unpack,
             wind_speeds_unpack,
-            freq_table_unpack,
             turbulence_intensities_unpack,
+            freq_table_unpack,
             value_table_unpack,
         )
 
@@ -830,8 +830,8 @@ class TimeSeries(WindDataBase):
         return (
             self.wind_directions,
             self.wind_speeds,
-            uniform_frequency,
             self.turbulence_intensities,
+            uniform_frequency,
             self.values,
         )
 

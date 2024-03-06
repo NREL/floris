@@ -121,8 +121,8 @@ def test_wind_rose_unpack():
     (
         wind_directions_unpack,
         wind_speeds_unpack,
-        freq_table_unpack,
         ti_table_unpack,
+        freq_table_unpack,
         value_table_unpack,
     ) = wind_rose.unpack()
 
@@ -130,6 +130,7 @@ def test_wind_rose_unpack():
     # we expect only the (270 deg, 6 m/s) and (280 deg, 7 m/s) rows
     np.testing.assert_allclose(wind_directions_unpack, [270, 280])
     np.testing.assert_allclose(wind_speeds_unpack, [6, 7])
+    np.testing.assert_allclose(ti_table_unpack, [0.06, 0.06])
     np.testing.assert_allclose(freq_table_unpack, [0.5, 0.5])
 
     # In this case n_findex is the length of the wind combinations that are
@@ -144,8 +145,8 @@ def test_wind_rose_unpack():
     (
         wind_directions_unpack,
         wind_speeds_unpack,
-        freq_table_unpack,
         ti_table_unpack,
+        freq_table_unpack,
         value_table_unpack,
     ) = wind_rose.unpack()
 
@@ -174,6 +175,7 @@ def test_unpack_for_reinitialize():
     # (270 deg, 6 m/s) and (280 deg, 7 m/s) rows
     np.testing.assert_allclose(wind_directions_unpack, [270, 280])
     np.testing.assert_allclose(wind_speeds_unpack, [6, 7])
+    np.testing.assert_allclose(ti_table_unpack, [0.06, 0.06])
 
 
 def test_wind_rose_resample():
@@ -347,8 +349,8 @@ def test_wind_ti_rose_unpack():
     (
         wind_directions_unpack,
         wind_speeds_unpack,
-        freq_table_unpack,
         turbulence_intensities_unpack,
+        freq_table_unpack,
         value_table_unpack,
     ) = wind_rose.unpack()
 
@@ -376,8 +378,8 @@ def test_wind_ti_rose_unpack():
     (
         wind_directions_unpack,
         wind_speeds_unpack,
-        freq_table_unpack,
         turbulence_intensities_unpack,
+        freq_table_unpack,
         value_table_unpack,
     ) = wind_rose.unpack()
 
