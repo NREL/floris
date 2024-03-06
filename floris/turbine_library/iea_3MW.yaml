@@ -10,10 +10,6 @@
 turbine_type: 'iea_3MW'
 
 ###
-# Setting for generator losses to power.
-generator_efficiency: 0.944
-
-###
 # Hub height.
 hub_height: 110.0
 
