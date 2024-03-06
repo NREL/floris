@@ -26,18 +26,36 @@ def test_bad_inheritance():
 def test_time_series_instantiation():
     wind_directions = np.array([270, 280, 290])
     wind_speeds = np.array([5, 5, 5])
-    TimeSeries(wind_directions, wind_speeds)
 
-
-def test_time_series_wrong_dimensions():
-    """
-    Verifies that the TimeSeries class errors when the input wind directions and wind speeds
-    have different lengths.
-    """
-    wind_directions = np.array([270, 280, 290])
-    wind_speeds = np.array([5, 5])
-    with pytest.raises(ValueError):
+    # Test that TI require
+    with pytest.raises(TypeError):
         TimeSeries(wind_directions, wind_speeds)
+
+    # Test that passing a float TI returns a list of length matched to wind directions
+    time_series = TimeSeries(wind_directions, wind_speeds, turbulence_intensities=0.06)
+    np.testing.assert_allclose(time_series.turbulence_intensities, [0.06, 0.06, 0.06])
+
+    # Test that passing floats to wind directions and wind speeds returns a list of
+    # length turbulence intensities
+    time_series = TimeSeries(270., 8.0, turbulence_intensities=np.array([0.06, 0.07, 0.08]))
+    np.testing.assert_allclose(time_series.wind_directions, [270, 270, 270])
+    np.testing.assert_allclose(time_series.wind_speeds, [8, 8, 8])
+
+    # Test that passing in all floats raises a type error
+    with pytest.raises(TypeError):
+        TimeSeries(270., 8.0, 0.06)
+
+    # Test casting of both wind speeds and TI
+    time_series = TimeSeries(wind_directions, 8.0, 0.06)
+    np.testing.assert_allclose(time_series.wind_speeds, [8, 8, 8])
+    np.testing.assert_allclose(time_series.turbulence_intensities, [0.06, 0.06, 0.06])
+
+    # Test the passing in a 1D array of turbulence intensities which is longer than the
+    # wind directions and wind speeds raises an error
+    with pytest.raises(ValueError):
+        TimeSeries(wind_directions,
+                   wind_speeds,
+                   turbulence_intensities=np.array([0.06, 0.07, 0.08, 0.09]))
 
 
 def test_wind_rose_init():
@@ -48,24 +66,41 @@ def test_wind_rose_init():
     wind_directions = np.array([270, 280, 290])
     wind_speeds = np.array([6, 7])
 
-    # This should be ok
-    _ = WindRose(wind_directions, wind_speeds)
+    # Pass ti_table in as a single float and confirm it is broadcast to the correct shape
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06)
+    np.testing.assert_allclose(wind_rose.ti_table,
+                               np.array([[0.06, 0.06], [0.06, 0.06], [0.06, 0.06]]))
+
+    # Pass ti_table in as a 2D array and confirm it is used as is
+    ti_table = np.array([[0.06, 0.06], [0.06, 0.06], [0.06, 0.06]])
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=ti_table)
+    np.testing.assert_allclose(wind_rose.ti_table, ti_table)
+
+    # Confirm passing in a ti_table that is 1D raises an error
+    with pytest.raises(ValueError):
+        WindRose(wind_directions,
+                 wind_speeds,
+                 ti_table=np.array([0.06, 0.06, 0.06, 0.06, 0.06, 0.06]))
+
+    # Confirm passing in a ti_table that is wrong dimensions raises an error
+    with pytest.raises(ValueError):
+        WindRose(wind_directions, wind_speeds, ti_table=np.ones((3, 3)))
 
     # This should be ok since the frequency array shape matches the wind directions
     # and wind speeds
-    _ = WindRose(wind_directions, wind_speeds, np.ones((3, 2)))
+    _ = WindRose(wind_directions, wind_speeds, ti_table= .06 ,freq_table=np.ones((3, 2)))
 
     # This should raise an error since the frequency array shape does not
     # match the wind directions and wind speeds
     with pytest.raises(ValueError):
-        WindRose(wind_directions, wind_speeds, np.ones((3, 3)))
+        WindRose(wind_directions, wind_speeds, 0.06,  np.ones((3, 3)))
 
 
 def test_wind_rose_grid():
     wind_directions = np.array([270, 280, 290])
     wind_speeds = np.array([6, 7])
 
-    wind_rose = WindRose(wind_directions, wind_speeds)
+    wind_rose = WindRose(wind_directions, wind_speeds, 0.06)
 
     # Wind direction grid has the same dimensions as the frequency table
     assert wind_rose.wd_grid.shape == wind_rose.freq_table.shape
@@ -81,7 +116,7 @@ def test_wind_rose_unpack():
     freq_table = np.array([[1.0, 0.0], [0, 1.0], [0, 0]])
 
     # First test using default assumption only non-zero frequency cases computed
-    wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
+    wind_rose = WindRose(wind_directions, wind_speeds, 0.06, freq_table)
 
     (
         wind_directions_unpack,
@@ -127,7 +162,7 @@ def test_unpack_for_reinitialize():
     freq_table = np.array([[1.0, 0.0], [0, 1.0], [0, 0]])
 
     # First test using default assumption only non-zero frequency cases computed
-    wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
+    wind_rose = WindRose(wind_directions, wind_speeds, 0.06,  freq_table)
 
     (
         wind_directions_unpack,
@@ -164,7 +199,7 @@ def test_wind_rose_resample():
 def test_wrap_wind_directions_near_360():
     wd_step = 5.0
     wd_values = np.array([0, 180, 357, 357.5, 358])
-    time_series = TimeSeries(np.array([0]), np.array([0]))
+    time_series = TimeSeries(np.array([0]), np.array([0]), 0.06)
 
     wd_wrapped = time_series._wrap_wind_directions_near_360(wd_values, wd_step)
 
@@ -176,7 +211,7 @@ def test_time_series_to_wind_rose():
     # Test just 1 wind speed
     wind_directions = np.array([259.8, 260.2, 264.3])
     wind_speeds = np.array([5.0, 5.0, 5.1])
-    time_series = TimeSeries(wind_directions, wind_speeds)
+    time_series = TimeSeries(wind_directions, wind_speeds, 0.06)
     wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
 
     # The wind directions should be 260, 262 and 264 because they're binned
@@ -196,7 +231,7 @@ def test_time_series_to_wind_rose():
     # Test just 2 wind speeds
     wind_directions = np.array([259.8, 260.2, 264.3])
     wind_speeds = np.array([5.0, 5.0, 6.1])
-    time_series = TimeSeries(wind_directions, wind_speeds)
+    time_series = TimeSeries(wind_directions, wind_speeds, 0.06)
     wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
 
     # The wind directions should be 260, 262 and 264
@@ -214,11 +249,17 @@ def test_time_series_to_wind_rose():
     assert freq_table[0, 0] == 2 / 3
     assert freq_table[2, 1] == 1 / 3
 
+    # The turbulence intensity table should be 0.06 for all bins
+    ti_table = wind_rose.ti_table
+
+    # Assert that table entires which are not nan are equal to 0.06
+    assert np.allclose(ti_table[~np.isnan(ti_table)], 0.06)
+
 
 def test_time_series_to_wind_rose_wrapping():
     wind_directions = np.arange(0.0, 360.0, 0.25)
     wind_speeds = 8.0 * np.ones_like(wind_directions)
-    time_series = TimeSeries(wind_directions, wind_speeds)
+    time_series = TimeSeries(wind_directions, wind_speeds, 0.06)
     wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
 
     # Expert for the first bin in this case to be 0, and the final to be 358
