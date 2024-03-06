@@ -317,7 +317,7 @@ class TUMLossTurbine(BaseOperationModel):
     Nonzero tilt and yaw angles are handled via the model presented in https://doi.org/10.5194/wes-2023-133 . 
     
     The method requires C_P, C_T look-up tables as functions of tip speed ratio and blade pitch angle, available here:
-    "../../LUT_IEA3MW.npz" for the IEA 3.4 MW (Bortolotti et al., 2019)
+    "../floris/turbine_library/LUT_IEA3MW.npz" for the IEA 3.4 MW (Bortolotti et al., 2019)
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively. 
     There are also two new functions, i.e. compute_local_vertical_shear() and control_trajectory(). 
@@ -348,7 +348,7 @@ class TUMLossTurbine(BaseOperationModel):
             power_demanded = np.ones_like(tilt_angles)*power_thrust_table["rated_power"]/power_thrust_table["generator_efficiency"]
         else:
             power_demanded = power_setpoints/power_thrust_table["generator_efficiency"]    
-        
+                
         def find_cp(sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,MU,ct):
             a = 1-((1+np.sqrt(1-ct-1/16*sinMu**2*ct**2))/(2*(1+1/16*ct*sinMu**2)))
             SG = np.sin(np.deg2rad(gamma))
@@ -589,6 +589,9 @@ class TUMLossTurbine(BaseOperationModel):
             fill_value=0.0,
             bounds_error=False,
         )
+  
+        # sign convention. in the tum model, negative tilt creates tower clearance
+        tilt_angles = -tilt_angles
         
         # Compute the power-effective wind speed across the rotor
         rotor_average_velocities = average_velocity(
@@ -716,7 +719,7 @@ class TUMLossTurbine(BaseOperationModel):
         cp_i = LUT['cp_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
-        interp_lut = RegularGridInterpolator((tsr_i,pitch_i), cp_i)
+        interp_lut = RegularGridInterpolator((tsr_i,pitch_i), cp_i,bounds_error=False, fill_value=None)
                 
         power_coefficient = np.zeros_like(average_velocity(velocities))        
         for i in np.arange(num_rows):
@@ -741,6 +744,9 @@ class TUMLossTurbine(BaseOperationModel):
         correct_cp_ct_for_tilt: bool = False,
         **_ # <- Allows other models to accept other keyword arguments
     ):
+
+        # sign convention. in the tum model, negative tilt creates tower clearance        
+        tilt_angles = -tilt_angles
        
         # Compute the effective wind speed across the rotor
         rotor_average_velocities = average_velocity(
@@ -841,7 +847,7 @@ class TUMLossTurbine(BaseOperationModel):
         ct_i = LUT['ct_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
-        interp_lut = RegularGridInterpolator((tsr_i,pitch_i), ct_i)#*0.9722085500886761)
+        interp_lut = RegularGridInterpolator((tsr_i,pitch_i), ct_i,bounds_error=False, fill_value=None)#*0.9722085500886761)
         
         
         thrust_coefficient = np.zeros_like(average_velocity(velocities))
@@ -866,6 +872,9 @@ class TUMLossTurbine(BaseOperationModel):
         **_ # <- Allows other models to accept other keyword arguments
     ):
 
+        # sign convention. in the tum model, negative tilt creates tower clearance
+        tilt_angles = -tilt_angles
+        
         # Compute the effective wind speed across the rotor
         rotor_average_velocities = average_velocity(
             velocities=velocities,
@@ -965,7 +974,7 @@ class TUMLossTurbine(BaseOperationModel):
         ct_i = LUT['ct_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
-        interp_lut = RegularGridInterpolator((tsr_i,pitch_i), ct_i)#*0.9722085500886761)
+        interp_lut = RegularGridInterpolator((tsr_i,pitch_i), ct_i,bounds_error=False, fill_value=None)#*0.9722085500886761)
         
         axial_induction = np.zeros_like(average_velocity(velocities))
         
