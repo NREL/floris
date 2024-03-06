@@ -58,19 +58,21 @@ class WindRose(WindDataBase):
     """
     The WindRose class is used to drive FLORIS and optimization operations in
     which the inflow is characterized by the frequency of binned wind speed and
-    wind direction values.
+    wind direction values.  Turbulence intensities are defined as a function of
+    wind direction and wind speed.
 
     Args:
         wind_directions: NumPy array of wind directions (NDArrayFloat).
         wind_speeds: NumPy array of wind speeds (NDArrayFloat).
+        ti_table: Turbulence intensity table for binned wind direction, wind
+            speed values (float, NDArrayFloat).  Can be an array with dimensions
+            (n_wind_directions, n_wind_speeds) or a single float value.  If a
+            single float value is provided, the turbulence intensity is assumed
+            to be constant across all wind directions and wind speeds.
         freq_table: Frequency table for binned wind direction, wind speed
             values (NDArrayFloat, optional).   Must have dimension
             (n_wind_directions, n_wind_speeds).  Defaults to None in which case
             uniform frequency of all bins is assumed.
-        ti_table: Turbulence intensity table for binned wind direction, wind
-            speed values (NDArrayFloat, optional).   Must have dimension
-            (n_wind_directions, n_wind_speeds). Defaults to None (no change to
-            turbulence intensity)
         value_table: Value table for binned wind direction, wind
             speed values (NDArrayFloat, optional).  Must have dimension
             (n_wind_directions, n_wind_speeds).  Defaults to None in which case
@@ -85,8 +87,8 @@ class WindRose(WindDataBase):
         self,
         wind_directions: NDArrayFloat,
         wind_speeds: NDArrayFloat,
+        ti_table: float | NDArrayFloat,
         freq_table: NDArrayFloat | None = None,
-        ti_table: NDArrayFloat | None = None,
         value_table: NDArrayFloat | None = None,
         compute_zero_freq_occurrence: bool = False,
     ):
@@ -99,6 +101,18 @@ class WindRose(WindDataBase):
         # Save the wind speeds and directions
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
+
+        # Check if ti_table is a single float value
+        if isinstance(ti_table, float):
+            self.ti_table = np.full((len(wind_directions), len(wind_speeds)), ti_table)
+
+        # Otherwise confirm the dimensions and then save it
+        else:
+            if not ti_table.shape[0] == len(wind_directions):
+                raise ValueError("ti_table first dimension must equal len(wind_directions)")
+            if not ti_table.shape[1] == len(wind_speeds):
+                raise ValueError("ti_table second dimension must equal len(wind_speeds)")
+            self.ti_table = ti_table
 
         # If freq_table is not None, confirm it has correct dimension,
         # otherwise initialize to uniform probability
@@ -113,15 +127,6 @@ class WindRose(WindDataBase):
 
         # Normalize freq table
         self.freq_table = self.freq_table / np.sum(self.freq_table)
-
-        # If TI table is not None, confirm dimension
-        # otherwise leave it None
-        if ti_table is not None:
-            if not ti_table.shape[0] == len(wind_directions):
-                raise ValueError("ti_table first dimension must equal len(wind_directions)")
-            if not ti_table.shape[1] == len(wind_speeds):
-                raise ValueError("ti_table second dimension must equal len(wind_speeds)")
-        self.ti_table = ti_table
 
         # If value_table is not None, confirm it has correct dimension,
         # otherwise initialize to all ones
@@ -156,11 +161,8 @@ class WindRose(WindDataBase):
         # Flat frequency table
         self.freq_table_flat = self.freq_table.flatten()
 
-        # TI table
-        if self.ti_table is not None:
-            self.ti_table_flat = self.ti_table.flatten()
-        else:
-            self.ti_table_flat = None
+        # Flat TI table
+        self.ti_table_flat = self.ti_table.flatten()
 
         # value table
         if self.value_table is not None:
@@ -188,17 +190,13 @@ class WindRose(WindDataBase):
         wind_directions_unpack = self.wd_flat.copy()
         wind_speeds_unpack = self.ws_flat.copy()
         freq_table_unpack = self.freq_table_flat.copy()
+        ti_table_unpack = self.ti_table_flat.copy()
 
         # Now mask thes values according to self.non_zero_freq_mask
         wind_directions_unpack = wind_directions_unpack[self.non_zero_freq_mask]
         wind_speeds_unpack = wind_speeds_unpack[self.non_zero_freq_mask]
         freq_table_unpack = freq_table_unpack[self.non_zero_freq_mask]
-
-        # Repeat for turbulence intensity if not none
-        if self.ti_table_flat is not None:
-            ti_table_unpack = self.ti_table_flat[self.non_zero_freq_mask].copy()
-        else:
-            ti_table_unpack = None
+        ti_table_unpack = ti_table_unpack[self.non_zero_freq_mask]
 
         # Now get unpacked value table
         if self.value_table_flat is not None:
@@ -724,37 +722,90 @@ class TimeSeries(WindDataBase):
     """
     The TimeSeries class is used to drive FLORIS and optimization operations in
     which the inflow is by a sequence of wind direction, wind speed and
-    turbulence intensity values
+    turbulence intensity values.  Each input of wind direction, wind speed, and
+    turbulence intensity can be assigned as an array of values or a single value.
+    At least one of wind_directions, wind_speeds, or turbulence_intensities must
+    be an array.  If arrays are provided, they must be the same length as the
+    other arrays or the single values.  If signle values are provided, then an
+    array of the same length as the other arrays will be created with the single
+    value.
 
     Args:
-        wind_directions: NumPy array of wind directions (NDArrayFloat).
-        wind_speeds: NumPy array of wind speeds (NDArrayFloat).
-        turbulence_intensities:  NumPy array of turbulence intensities
-            (NDArrayFloat, optional). Defaults to None
-        values:  NumPy array of electricity values (NDArrayFloat, optional).
-            Defaults to None
+        wind_direction (float, NDArrayFloat): Wind direction. Can be a single
+            value or an array of values.
+        wind_speed (float, NDArrayFloat): Wind speed. Can be a single value or
+            an array of values.
+        turbulence_intensity (float, NDArrayFloat): Turbulence intensity. Can be
+            a single value or an array of values.
+        values (NDArrayFloat, optional): Values associated with each wind
+            direction, wind speed, and turbulence intensity. Defaults to None.
 
     """
 
     def __init__(
         self,
-        wind_directions: NDArrayFloat,
-        wind_speeds: NDArrayFloat,
-        turbulence_intensities: NDArrayFloat | None = None,
+        wind_directions: float | NDArrayFloat,
+        wind_speeds: float | NDArrayFloat,
+        turbulence_intensities: float | NDArrayFloat,
         values: NDArrayFloat | None = None,
     ):
-        # Wind speeds and wind directions must be the same length
-        if len(wind_directions) != len(wind_speeds):
-            raise ValueError("wind_directions and wind_speeds must be the same length")
+        # At least one of wind_directions, wind_speeds, or turbulence_intensities must be an array
+        if (
+            not isinstance(wind_directions, np.ndarray)
+            and not isinstance(wind_speeds, np.ndarray)
+            and not isinstance(turbulence_intensities, np.ndarray)
+        ):
+            raise TypeError(
+                "At least one of wind_directions, wind_speeds, or "
+                " turbulence_intensities must be a NumPy array"
+            )
 
-        # If turbulence_intensities is not None, must be same length as wind_directions
-        if turbulence_intensities is not None:
-            if len(wind_directions) != len(turbulence_intensities):
+        # For each of wind_directions, wind_speeds, and turbulence_intensities provided as
+        # an array, confirm they are the same length
+        if isinstance(wind_directions, np.ndarray) and isinstance(wind_speeds, np.ndarray):
+            if len(wind_directions) != len(wind_speeds):
                 raise ValueError(
-                    "wind_directions and turbulence_intensities must be the same length"
+                    "wind_directions and wind_speeds must be the same length if provided as arrays"
                 )
 
-        # If values is not None, must be same length as wind_directions
+        if isinstance(wind_directions, np.ndarray) and isinstance(
+            turbulence_intensities, np.ndarray
+        ):
+            if len(wind_directions) != len(turbulence_intensities):
+                raise ValueError(
+                    "wind_directions and turbulence_intensities must be "
+                    "the same length if provided as arrays"
+                )
+
+        if isinstance(wind_speeds, np.ndarray) and isinstance(turbulence_intensities, np.ndarray):
+            if len(wind_speeds) != len(turbulence_intensities):
+                raise ValueError(
+                    "wind_speeds and turbulence_intensities must be the "
+                    "same length if provided as arrays"
+                )
+
+        # For each of wind_directions, wind_speeds, and turbulence_intensities
+        # provided as a single value, set them
+        # to be the same length as those passed in as arrays
+        if isinstance(wind_directions, float):
+            if isinstance(wind_speeds, np.ndarray):
+                wind_directions = np.full(len(wind_speeds), wind_directions)
+            elif isinstance(turbulence_intensities, np.ndarray):
+                wind_directions = np.full(len(turbulence_intensities), wind_directions)
+
+        if isinstance(wind_speeds, float):
+            if isinstance(wind_directions, np.ndarray):
+                wind_speeds = np.full(len(wind_directions), wind_speeds)
+            elif isinstance(turbulence_intensities, np.ndarray):
+                wind_speeds = np.full(len(turbulence_intensities), wind_speeds)
+
+        if isinstance(turbulence_intensities, float):
+            if isinstance(wind_directions, np.ndarray):
+                turbulence_intensities = np.full(len(wind_directions), turbulence_intensities)
+            elif isinstance(wind_speeds, np.ndarray):
+                turbulence_intensities = np.full(len(wind_speeds), turbulence_intensities)
+
+        # If values is not None, must be same length as wind_directions/wind_speeds/
         if values is not None:
             if len(wind_directions) != len(values):
                 raise ValueError("wind_directions and values must be the same length")
@@ -918,9 +969,8 @@ class TimeSeries(WindDataBase):
         if bin_weights is not None:
             df = df.assign(freq_val=df["freq_val"] * bin_weights)
 
-        # If turbulence_intensities is not none, add to dataframe
-        if self.turbulence_intensities is not None:
-            df = df.assign(turbulence_intensities=self.turbulence_intensities)
+        # Add turbulence intensities to dataframe
+        df = df.assign(turbulence_intensities=self.turbulence_intensities)
 
         # If values is not none, add to dataframe
         if self.values is not None:
@@ -960,12 +1010,9 @@ class TimeSeries(WindDataBase):
         freq_table = freq_table / freq_table.sum()
         freq_table = freq_table.reshape((len(wd_centers), len(ws_centers)))
 
-        # If turbulence intensity is not none, compute the table
-        if self.turbulence_intensities is not None:
-            ti_table = df["turbulence_intensities_mean"].values.copy()
-            ti_table = ti_table.reshape((len(wd_centers), len(ws_centers)))
-        else:
-            ti_table = None
+        # Compute the TI table
+        ti_table = df["turbulence_intensities_mean"].values.copy()
+        ti_table = ti_table.reshape((len(wd_centers), len(ws_centers)))
 
         # If values is not none, compute the table
         if self.values is not None:
@@ -975,7 +1022,7 @@ class TimeSeries(WindDataBase):
             value_table = None
 
         # Return a WindRose
-        return WindRose(wd_centers, ws_centers, freq_table, ti_table, value_table)
+        return WindRose(wd_centers, ws_centers, ti_table, freq_table, value_table)
 
     def to_wind_ti_rose(
         self,
@@ -988,7 +1035,7 @@ class TimeSeries(WindDataBase):
         bin_weights=None,
     ):
         """
-        Converts the TimeSeries data to a WindRose.
+        Converts the TimeSeries data to a WindTIRose.
 
         Args:
             wd_step (float, optional): Step size for wind direction (default is 2.0).
@@ -1013,12 +1060,6 @@ class TimeSeries(WindDataBase):
             - If `ti_edges` is defined, it uses it for turbulence intensity edges.
             - If `ti_edges` is not defined, it determines `ti_edges` from the step and data.
         """
-
-        # If turbulence_intensities is None, a WindTIRose object cannot be created.
-        if self.turbulence_intensities is None:
-            raise ValueError(
-                "turbulence_intensities must be defined to export to a WindTIRose object."
-            )
 
         # If wd_edges is defined, then use it to produce the bin centers
         if wd_edges is not None:
