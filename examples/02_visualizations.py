@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.visualization as wakeviz
+import floris.tools.flow_visualization as flowviz
 from floris.tools import FlorisInterface
 
 
@@ -60,19 +60,19 @@ cross_plane = fi.calculate_cross_plane(
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
-wakeviz.visualize_cut_plane(
+flowviz.visualize_cut_plane(
     horizontal_plane,
     ax=ax_list[0],
     label_contours=True,
     title="Horizontal"
 )
-wakeviz.visualize_cut_plane(
+flowviz.visualize_cut_plane(
     y_plane,
     ax=ax_list[1],
     label_contours=True,
     title="Streamwise profile"
 )
-wakeviz.visualize_cut_plane(
+flowviz.visualize_cut_plane(
     cross_plane,
     ax=ax_list[2],
     label_contours=True,
@@ -81,7 +81,7 @@ wakeviz.visualize_cut_plane(
 
 # Some wake models may not yet have a visualization method included, for these cases can use
 # a slower version which scans a turbine model to produce the horizontal flow
-horizontal_plane_scan_turbine = wakeviz.calculate_horizontal_plane_with_turbines(
+horizontal_plane_scan_turbine = flowviz.calculate_horizontal_plane_with_turbines(
     fi,
     x_resolution=20,
     y_resolution=10,
@@ -89,7 +89,7 @@ horizontal_plane_scan_turbine = wakeviz.calculate_horizontal_plane_with_turbines
 )
 
 fig, ax = plt.subplots()
-wakeviz.visualize_cut_plane(
+flowviz.visualize_cut_plane(
     horizontal_plane_scan_turbine,
     ax=ax,
     label_contours=True,
@@ -104,7 +104,7 @@ wakeviz.visualize_cut_plane(
 fi.run()
 
 # Plot the values at each rotor
-fig, axes, _ , _ = wakeviz.plot_rotor_values(
+fig, axes, _ , _ = flowviz.plot_rotor_values(
     fi.floris.flow_field.u,
     findex=0,
     n_rows=1,
@@ -132,7 +132,7 @@ fi.set(solver_settings=solver_settings)
 fi.run()
 
 # Plot the values at each rotor
-fig, axes, _ , _ = wakeviz.plot_rotor_values(
+fig, axes, _ , _ = flowviz.plot_rotor_values(
     fi.floris.flow_field.u,
     findex=0,
     n_rows=1,
@@ -141,4 +141,9 @@ fig, axes, _ , _ = wakeviz.plot_rotor_values(
 )
 fig.suptitle("Rotor Plane Visualization, 10x10 Resolution")
 
-wakeviz.show_plots()
+# Show plots
+plt.show()
+
+# Note if the user doesn't import matplotlib.pyplot as plt, the user can
+# use the following to show the plots:
+# flowviz.show()

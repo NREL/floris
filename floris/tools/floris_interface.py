@@ -1279,13 +1279,13 @@ class FlorisInterface(LoggingManager):
 
     ### v3 functions that are removed - raise an error if used
 
-    def calculate_wake(self):
+    def calculate_wake(self, **_):
         raise NotImplementedError(
             "The calculate_wake method has been removed. Please use the run method. "
             "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
         )
 
-    def reinitialize(self):
+    def reinitialize(self, **_):
         raise NotImplementedError(
             "The reinitialize method has been removed. Please use the set method. "
             "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
