@@ -124,6 +124,8 @@ def test_wind_rose_unpack():
         ti_table_unpack,
         freq_table_unpack,
         value_table_unpack,
+        heterogenous_inflow_config,
+
     ) = wind_rose.unpack()
 
     # Given the above frequency table with zeros for a few elements,
@@ -148,6 +150,7 @@ def test_wind_rose_unpack():
         ti_table_unpack,
         freq_table_unpack,
         value_table_unpack,
+        heterogenous_inflow_config,
     ) = wind_rose.unpack()
 
     # Expect now to compute all combinations
@@ -169,6 +172,7 @@ def test_unpack_for_reinitialize():
         wind_directions_unpack,
         wind_speeds_unpack,
         ti_table_unpack,
+        heterogenous_inflow_config,
     ) = wind_rose.unpack_for_reinitialize()
 
     # Given the above frequency table, would only expect the
@@ -352,6 +356,7 @@ def test_wind_ti_rose_unpack():
         turbulence_intensities_unpack,
         freq_table_unpack,
         value_table_unpack,
+        heterogenous_inflow_config,
     ) = wind_rose.unpack()
 
     # Given the above frequency table with zeros for a few elements,
@@ -381,6 +386,7 @@ def test_wind_ti_rose_unpack():
         turbulence_intensities_unpack,
         freq_table_unpack,
         value_table_unpack,
+        heterogenous_inflow_config,
     ) = wind_rose.unpack()
 
     # Expect now to compute all combinations
@@ -412,6 +418,7 @@ def test_wind_ti_rose_unpack_for_reinitialize():
         wind_directions_unpack,
         wind_speeds_unpack,
         turbulence_intensities_unpack,
+        heterogenous_inflow_config,
     ) = wind_rose.unpack_for_reinitialize()
 
     # Given the above frequency table with zeros for a few elements,

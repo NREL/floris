@@ -267,15 +267,18 @@ class FlorisInterface(LoggingManager):
                 (wind_directions is not None)
                 or (wind_speeds is not None)
                 or (turbulence_intensities is not None)
+                or (heterogenous_inflow_config is not None)
             ):
                 raise ValueError(
                     "If wind_data is passed to reinitialize, then do not pass wind_directions, "
-                    "wind_speeds or turbulence_intensities as this is redundant"
+                    "wind_speeds, turbulence_intensities or "
+                    "heterogenous_inflow_config as this is redundant"
                 )
             (
                 wind_directions,
                 wind_speeds,
                 turbulence_intensities,
+                heterogenous_inflow_config,
             ) = wind_data.unpack_for_reinitialize()
 
         ## FlowField
