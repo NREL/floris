@@ -32,6 +32,13 @@ power_thrust_table:
   ### Power thrust table parameters
   # The air density at which the Cp and Ct curves are defined.
   ref_air_density: 1.225
+  rotor_solidity: 0.05132
+  generator_efficiency: 0.944
+  rated_power: 5.0e6
+  rotor_diameter: 126
+  beta: -0.45891
+  cd:  0.0040638
+  cl_alfa: 4.275049
   # The tilt angle at which the Cp and Ct curves are defined. This is used to capture
   # the effects of a floating platform on a turbine's power and wake.
   ref_tilt: 5.0
