@@ -64,9 +64,9 @@ class FlowField(BaseClass):
                 "turbulence_intensities must have 1-dimension"
             )
 
-        # Check the turbulence intensity is either length 1 or n_findex
-        if len(value) != 1 and len(value) != self.n_findex:
-            raise ValueError("turbulence_intensities should either be length 1 or n_findex")
+        # Check the turbulence intensity is lenght n_findex
+        if len(value) != self.n_findex:
+            raise ValueError("turbulence_intensities must be length n_findex")
 
 
 
@@ -134,10 +134,6 @@ class FlowField(BaseClass):
         if self.heterogenous_inflow_config is not None:
             self.generate_heterogeneous_wind_map()
 
-        # If turbulence_intensity is length 1, then convert it to a uniform array of
-        # length n_findex
-        if len(self.turbulence_intensities) == 1:
-            self.turbulence_intensities = self.turbulence_intensities[0] * np.ones(self.n_findex)
 
     def initialize_velocity_field(self, grid: Grid) -> None:
 
