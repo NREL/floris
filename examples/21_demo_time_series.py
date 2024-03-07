@@ -22,13 +22,14 @@ time = np.arange(0, 120, 10.) # Each time step represents a 10-minute average
 ws = np.ones_like(time) * 8.
 ws[int(len(ws) / 2):] = 9.
 wd = np.ones_like(time) * 270.
+turbulence_intensities = np.ones_like(time) * 0.06
 
 for idx in range(1, len(time)):
     wd[idx] = wd[idx - 1] + np.random.randn() * 2.
 
 
 # Now intiialize FLORIS object to this history using time_series flag
-fi.set(wind_directions=wd, wind_speeds=ws)
+fi.set(wind_directions=wd, wind_speeds=ws, turbulence_intensities=turbulence_intensities)
 
 # Collect the powers
 fi.run()
