@@ -42,9 +42,13 @@ print("\n========================= Single Wind Direction and Multiple Wind Speed
 
 wind_speeds = np.array([8.0, 9.0, 10.0])
 wind_directions = np.array([270.0, 270.0, 270.0])
+turbulence_intensities = np.array([0.06, 0.06, 0.06])
 
 # 3 wind directions/ speeds
-fi.set(wind_speeds=wind_speeds, wind_directions=wind_directions, yaw_angles=np.zeros([3, 2]))
+fi.set(wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+          turbulence_intensities=turbulence_intensities,
+          yaw_angles=np.zeros([3, 2]))
 fi.run()
 turbine_powers = fi.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 3 findex X 2 Turbines")
@@ -58,8 +62,12 @@ print("\n========================= Multiple Wind Directions and Multiple Wind Sp
 
 wind_speeds = np.tile([8.0, 9.0, 10.0], 3)
 wind_directions = np.repeat([260.0, 270.0, 280.0], 3)
+turbulence_intensities = np.tile([0.06, 0.06, 0.06], 3)
 
-fi.set(wind_directions=wind_directions, wind_speeds=wind_speeds, yaw_angles=np.zeros([9, 2]))
+fi.set(wind_directions=wind_directions,
+       wind_speeds=wind_speeds,
+         turbulence_intensities=turbulence_intensities,
+       yaw_angles=np.zeros([9, 2]))
 fi.run()
 turbine_powers = fi.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 9 WD/WS X 2 Turbines")
