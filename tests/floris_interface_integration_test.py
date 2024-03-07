@@ -16,6 +16,31 @@ def test_read_yaml():
     fi = FlorisInterface(configuration=YAML_INPUT)
     assert isinstance(fi, FlorisInterface)
 
+def test_assign_setpoints():
+
+    fi = FlorisInterface(configuration=YAML_INPUT)
+    fi.set(layout_x=[0, 0], layout_y=[0, 1000])
+
+    # Test setting yaw angles via a list, integers, numpy array
+    fi.set(yaw_angles=[[20.0, 30.0]])
+    fi.set(yaw_angles=[[20, 30]])
+    fi.set(yaw_angles=np.array([[20.0, 30.0]]))
+
+    # Test setting power setpoints in various ways
+    fi.set(power_setpoints=[[1e6, 2e6]])
+    fi.set(power_setpoints=np.array([[1e6, 2e6]]))
+
+    # Disable turbines
+    fi.set(disable_turbines=[[True, False]])
+    fi.set(disable_turbines=np.array([[True, False]]))
+
+    # Combination
+    fi.set(yaw_angles=[[0, 30]], power_setpoints=np.array([[1e6, None]]))
+
+    # power_setpoints and disable_turbines (disable_turbines overrides power_setpoints)
+    fi.set(power_setpoints=[[1e6, 2e6]], disable_turbines=[[True, False]])
+    assert np.allclose(fi.floris.farm.power_setpoints, np.array([[0.001, 2e6]]))
+
 def test_set_run():
     """
     These tests are designed to test the set / run sequence to ensure that inputs are
