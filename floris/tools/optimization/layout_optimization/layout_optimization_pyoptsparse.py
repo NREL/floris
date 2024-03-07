@@ -12,8 +12,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self,
         fi,
         boundaries,
+        wind_data,
         min_dist=None,
-        freq=None,
         solver=None,
         optOptions=None,
         timeLimit=None,
@@ -21,7 +21,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         hotStart=None,
         enable_geometric_yaw=False,
     ):
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq,
+        super().__init__(fi, boundaries, wind_data=wind_data, min_dist=min_dist,
                          enable_geometric_yaw=enable_geometric_yaw)
 
         self.x0 = self._norm(self.fi.layout_x, self.xmin, self.xmax)
@@ -99,7 +99,10 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         # Compute the objective function
         funcs = {}
         funcs["obj"] = (
-            -1 * self.fi.get_farm_AEP(self.freq) / self.initial_AEP
+
+            -1 * self.fi.get_farm_AEP_with_wind_data(self.wind_data)
+              / self.initial_AEP
+
         )
 
         # Compute constraints, if any are defined for the optimization

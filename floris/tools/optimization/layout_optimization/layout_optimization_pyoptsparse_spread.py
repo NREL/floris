@@ -12,15 +12,15 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self,
         fi,
         boundaries,
+        wind_data,
         min_dist=None,
-        freq=None,
         solver=None,
         optOptions=None,
         timeLimit=None,
         storeHistory='hist.hist',
         hotStart=None
     ):
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq)
+        super().__init__(fi, boundaries,  wind_data=wind_data, min_dist=min_dist)
         self._reinitialize(solver=solver, optOptions=optOptions)
 
         self.storeHistory = storeHistory
@@ -95,7 +95,6 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         funcs = {}
         funcs["obj"] = (
             -1 * self.mean_distance(self.x, self.y)
-           #  -1 * np.sum(self.fi.get_farm_power() * self.freq * 8760) / self.initial_AEP
         )
 
         # Compute constraints, if any are defined for the optimization

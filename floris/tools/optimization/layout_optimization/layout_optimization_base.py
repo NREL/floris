@@ -3,15 +3,33 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString, Polygon
 
+from floris.tools import TimeSeries
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
+from floris.tools.wind_data import WindDataBase
 
 from ....logging_manager import LoggingManager
 
 
 class LayoutOptimization(LoggingManager):
-    def __init__(self, fi, boundaries, min_dist=None, freq=None, enable_geometric_yaw=False):
+    """
+    Base class for layout optimization. This class should not be used directly
+    but should be subclassed by a specific optimization method.
+
+    Args:
+        fi (FlorisInterface): A FlorisInterface object.
+        boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+            that represent the boundary's vertices (m).
+        wind_data (TimeSeries | WindRose): A TimeSeries or WindRose object
+            values.
+        min_dist (float, optional): The minimum distance to be maintained
+            between turbines during the optimization (m). If not specified,
+            initializes to 2 rotor diameters. Defaults to None.
+        enable_geometric_yaw (bool, optional): If True, enables geometric yaw
+            optimization. Defaults to False.
+    """
+    def __init__(self, fi, boundaries, wind_data, min_dist=None, enable_geometric_yaw=False):
         self.fi = fi.copy()
         self.boundaries = boundaries
         self.enable_geometric_yaw = enable_geometric_yaw
@@ -30,12 +48,13 @@ class LayoutOptimization(LoggingManager):
         else:
             self.min_dist = min_dist
 
-        # If freq is not provided, give equal weight to all wind conditions
-        if freq is None:
-            self.freq = np.ones((self.fi.floris.flow_field.n_findex,))
-            self.freq = self.freq / self.freq.sum()
-        else:
-            self.freq = freq
+        # Check that wind_data is a WindDataBase object
+        if (not isinstance(wind_data, WindDataBase)):
+            raise ValueError(
+                "wind_data entry is not an object of WindDataBase"
+                " (eg TimeSeries, WindRose, WindTIRose)"
+            )
+        self.wind_data = wind_data
 
         # Establish geometric yaw class
         if self.enable_geometric_yaw:
@@ -45,7 +64,7 @@ class LayoutOptimization(LoggingManager):
                 maximum_yaw_angle=30.0,
             )
 
-        self.initial_AEP = fi.get_farm_AEP(self.freq)
+        self.initial_AEP = fi.get_farm_AEP_with_wind_data(self.wind_data)
 
     def __str__(self):
         return "layout"

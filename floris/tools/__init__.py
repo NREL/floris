@@ -40,7 +40,6 @@ from .wind_data import (
 # from floris.tools import (
 #     cut_plane,
 #     floris_interface,
-#     interface_utilities,
 #     layout_visualization,
 #     optimization,
 #     plotting,
