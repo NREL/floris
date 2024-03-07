@@ -13,6 +13,7 @@ curve and power loss to yaw are reasonable and  reasonably smooth
 """
 ws_array = np.arange(0.1,30,0.2)
 wd_array = 270.0 * np.ones_like(ws_array)
+turbulence_intensities = 0.06 * np.ones_like(ws_array)
 yaw_angles = np.linspace(-30,30,60)
 wind_speed_to_test_yaw = 11
 
@@ -23,7 +24,9 @@ fi = FlorisInterface("inputs/gch.yaml")
 fi.set(layout_x=[0], layout_y=[0])
 
 # Apply wind directions and wind speeds
-fi.set(wind_speeds=ws_array, wind_directions=wd_array)
+fi.set(wind_speeds=ws_array,
+       wind_directions=wd_array,
+         turbulence_intensities=turbulence_intensities)
 
 # Get a list of available turbine models provided through FLORIS, and remove
 # multi-dimensional Cp/Ct turbine definitions as they require different handling
@@ -72,7 +75,9 @@ for t in turbines:
 
         # POWER CURVE
         ax = axarr[0]
-        fi.set(wind_speeds=ws_array, wind_directions=wd_array)
+        fi.set(wind_speeds=ws_array,
+               wind_directions=wd_array,
+               turbulence_intensities=turbulence_intensities)
         fi.run()
         turbine_powers = fi.get_turbine_powers().flatten() / 1e3
         if density == 1.225:
@@ -87,7 +92,9 @@ for t in turbines:
         # Power loss to yaw, try a range of yaw angles
         ax = axarr[1]
 
-        fi.set(wind_speeds=[wind_speed_to_test_yaw], wind_directions=[270.0])
+        fi.set(wind_speeds=[wind_speed_to_test_yaw],
+               wind_directions=[270.0],
+                 turbulence_intensities=[0.06])
         yaw_result = []
         for yaw in yaw_angles:
             fi.set(yaw_angles=np.array([[yaw]]))
