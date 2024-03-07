@@ -46,7 +46,7 @@ def test_base_class():
     )
     wind_rose = time_series.to_wind_rose()
 
-    # Passing wind_data objects in the 4th position should not fail
+    # Passing wind_data objects in the 3rd position should not fail
     LayoutOptimization(fi, boundaries, time_series, 5)
     LayoutOptimization(fi, boundaries, wind_rose, 5)
 
