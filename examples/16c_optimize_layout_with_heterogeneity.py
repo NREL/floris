@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisInterface, WindRose
 from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
@@ -28,12 +28,17 @@ fi = FlorisInterface('inputs/gch.yaml')
 
 # Setup 2 wind directions (due east and due west)
 # and 1 wind speed with uniform probability
-wind_directions = [270., 90.]
+wind_directions = np.array([270., 90.])
 n_wds = len(wind_directions)
-wind_speeds = [8.0] * np.ones_like(wind_directions)
+wind_speeds = np.array([8.0])
 # Shape frequency distribution to match number of wind directions and wind speeds
-freq = np.ones((len(wind_directions), len(wind_speeds)))
-freq = freq / freq.sum()
+freq_table = np.ones((len(wind_directions), len(wind_speeds)))
+freq_table = freq_table / freq_table.sum()
+
+# Establish a TimeSeries object
+wind_rose = WindRose(wind_directions=wind_directions,
+                     wind_speeds=wind_speeds,
+                     freq_table=freq_table)
 
 # The boundaries for the turbines, specified as vertices
 D = 126.0 # rotor diameter for the NREL 5MW
@@ -66,8 +71,7 @@ heterogenous_inflow_config = {
 fi.set(
     layout_x=layout_x,
     layout_y=layout_y,
-    wind_directions=wind_directions,
-    wind_speeds=wind_speeds,
+    wind_data=wind_rose,
     heterogenous_inflow_config=heterogenous_inflow_config
 )
 
@@ -76,7 +80,7 @@ maxiter = 100
 layout_opt = LayoutOptimizationScipy(
     fi,
     boundaries,
-    freq=freq,
+    wind_data=wind_rose,
     min_dist=2*D,
     optOptions={"maxiter":maxiter}
 )
@@ -87,11 +91,13 @@ sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
+
 fi.run()
-base_aep = fi.get_farm_AEP(freq=freq) / 1e6
+base_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
 fi.set(layout_x=sol[0], layout_y=sol[1])
 fi.run()
-opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
+opt_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results
@@ -115,7 +121,7 @@ fi.set(layout_x=layout_x, layout_y=layout_y)
 layout_opt = LayoutOptimizationScipy(
     fi,
     boundaries,
-    freq=freq,
+    wind_data=wind_rose,
     min_dist=2*D,
     enable_geometric_yaw=True,
     optOptions={"maxiter":maxiter}
@@ -127,10 +133,15 @@ sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
+
 fi.set(yaw_angles=np.zeros_like(layout_opt.yaw_angles))
-base_aep = fi.get_farm_AEP(freq=freq) / 1e6
+base_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
 fi.set(layout_x=sol[0], layout_y=sol[1], yaw_angles=layout_opt.yaw_angles)
-opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
+fi.run()
+opt_aep = fi.get_farm_AEP_with_wind_data(
+    wind_data=wind_rose
+) / 1e6
+
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results
