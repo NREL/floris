@@ -443,9 +443,6 @@ class TUMLossTurbine(BaseOperationModel):
             omega   = x*u/R
             omega_rpm = omega*30/np.pi
 
-            pitch_in = pitch_in
-            pitch_deg = pitch_in
-
             torque_nm = np.interp(omega,omega_lut_torque,torque_lut_omega)
 
             mu    = np.arccos(np.cos(np.deg2rad(gamma))*np.cos(np.deg2rad(tilt)))
@@ -494,7 +491,7 @@ class TUMLossTurbine(BaseOperationModel):
                                 np.squeeze((pitch_i))), cp_i,
                                                bounds_error=False, fill_value=None)
 
-            Cp_now = interp((x,pitch_deg))
+            Cp_now = interp((x,pitch_in))
             cp_g1 =  Cp_now*eta_p
             aero_pow = 0.5*air_density*(np.pi*R**2)*(u)**3*cp_g1
             electric_pow = torque_nm*(omega_rpm*np.pi/30)
@@ -582,7 +579,7 @@ class TUMLossTurbine(BaseOperationModel):
         pitch_opt = pitch_i[idx[1]]
         max_cp    = cp_i[idx[0],idx[1]]
 
-        omega_cut_in = 1     # RPM
+        omega_cut_in = 0     # RPM
         omega_max    = 11.75 # RPM
         rated_power_aero  = 3.37e6/0.936  # MW
         #%% Compute torque-rpm relation and check for region 2-and-a-half
@@ -675,7 +672,7 @@ class TUMLossTurbine(BaseOperationModel):
                         pitch_out_soluzione = pitch_opt
                     pitch_out0 = pitch_out_soluzione
                 #%% COMPUTE CP AND CT GIVEN THE PITCH AND TSR FOUND ABOVE
-                pitch_out[i,j]         = pitch_out0
+                pitch_out[i,j]         = np.squeeze(pitch_out0)
                 tsr_out[i,j]           = tsr_outO
 
         return pitch_out, tsr_out
@@ -837,7 +834,7 @@ class TUMLossTurbine(BaseOperationModel):
                 )
                 ct, info, ier, msg = fsolve(get_ct, x0,args=data,full_output=True)
                 if ier == 1:
-                    p[i,j] = find_cp(
+                    p[i,j] = np.squeeze(find_cp(
                         sigma,
                         cd,
                         cl_alfa,
@@ -851,7 +848,7 @@ class TUMLossTurbine(BaseOperationModel):
                         R,
                         Mu[j],
                         ct
-                    )
+                    ))
                 else:
                     p[i,j] = -1e3
 
@@ -876,7 +873,7 @@ class TUMLossTurbine(BaseOperationModel):
                         (theta_array[i,j]),R,Mu[j])
                 ct, info, ier, msg = fsolve(get_ct, x0,args=data,full_output=True)
                 if ier == 1:
-                    p0[i,j] = find_cp(
+                    p0[i,j] = np.squeeze(find_cp(
                         sigma,
                         cd,
                         cl_alfa,
@@ -890,7 +887,7 @@ class TUMLossTurbine(BaseOperationModel):
                         R,
                         Mu[j],
                         ct
-                    )
+                    ))
                 else:
                     p0[i,j] = -1e3
 
@@ -915,7 +912,7 @@ class TUMLossTurbine(BaseOperationModel):
         for i in np.arange(num_rows):
             for j in np.arange(num_cols):
                 cp_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
-                power_coefficient[i,j] = cp_interp*ratio[i,j]
+                power_coefficient[i,j] = np.squeeze(cp_interp*ratio[i,j])
 
         # print('Tip speed ratio' + str(tsr_array))
         # print('Pitch out: ' + str(pitch_out))
@@ -1029,7 +1026,7 @@ class TUMLossTurbine(BaseOperationModel):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
                         (theta_array[i,j]),R,Mu[j])
                 ct = fsolve(get_ct, x0,args=data)
-                thrust_coefficient1[i,j] = np.clip(ct, 0.0001, 0.9999)
+                thrust_coefficient1[i,j] = np.squeeze(np.clip(ct, 0.0001, 0.9999))
 
 
         yaw_angles = np.zeros_like(yaw_angles)
@@ -1049,7 +1046,7 @@ class TUMLossTurbine(BaseOperationModel):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
                         (theta_array[i,j]),R,Mu[j])
                 ct = fsolve(get_ct, x0,args=data)
-                thrust_coefficient0[i,j] = ct #np.clip(ct, 0.0001, 0.9999)
+                thrust_coefficient0[i,j] = np.squeeze(ct) #np.clip(ct, 0.0001, 0.9999)
 
         ############################################################################
 
@@ -1074,7 +1071,7 @@ class TUMLossTurbine(BaseOperationModel):
         for i in np.arange(num_rows):
             for j in np.arange(num_cols):
                 ct_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
-                thrust_coefficient[i,j] = ct_interp*ratio[i,j]
+                thrust_coefficient[i,j] = np.squeeze(ct_interp*ratio[i,j])
 
         return thrust_coefficient
 
@@ -1182,7 +1179,7 @@ class TUMLossTurbine(BaseOperationModel):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
                         (theta_array[i,j]),R,Mu[j])
                 ct = fsolve(get_ct, x0,args=data)
-                thrust_coefficient1[i,j] = np.clip(ct, 0.0001, 0.9999)
+                thrust_coefficient1[i,j] = np.squeeze(np.clip(ct, 0.0001, 0.9999))
 
 
         yaw_angles = np.zeros_like(yaw_angles)
@@ -1202,7 +1199,7 @@ class TUMLossTurbine(BaseOperationModel):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
                         (theta_array[i,j]),R,Mu[j])
                 ct = fsolve(get_ct, x0,args=data)
-                thrust_coefficient0[i,j] = ct #np.clip(ct, 0.0001, 0.9999)
+                thrust_coefficient0[i,j] = np.squeeze(ct) #np.clip(ct, 0.0001, 0.9999)
 
         ############################################################################
 
@@ -1228,7 +1225,7 @@ class TUMLossTurbine(BaseOperationModel):
                 ct_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
                 ct = ct_interp*ratio[i,j]
                 a  = (1- ( (1+np.sqrt(1-ct-1/16*ct**2*sMu[j]**2))/(2*(1+1/16*ct*sMu[j]**2))) )
-                axial_induction[i,j] = np.clip(a, 0.0001, 0.9999)
+                axial_induction[i,j] = np.squeeze(np.clip(a, 0.0001, 0.9999))
 
         return axial_induction
 
