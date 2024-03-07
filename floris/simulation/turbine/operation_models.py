@@ -788,7 +788,7 @@ class TUMLossTurbine(BaseOperationModel):
         air_density = power_thrust_table["ref_air_density"]
 
         pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
-            rotor_average_velocities,
+            rotor_effective_velocities,
             yaw_angles,
             tilt_angles,
             air_density,
@@ -917,8 +917,8 @@ class TUMLossTurbine(BaseOperationModel):
                 cp_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
                 power_coefficient[i,j] = cp_interp*ratio[i,j]
 
-        #print('Tip speed ratio' + str(tsr_array))
-        #print('Pitch out: ' + str(pitch_out))
+        # print('Tip speed ratio' + str(tsr_array))
+        # print('Pitch out: ' + str(pitch_out))
         power = (
             0.5*air_density*(rotor_effective_velocities)**3*np.pi*R**2
             *(power_coefficient)*power_thrust_table["generator_efficiency"]
