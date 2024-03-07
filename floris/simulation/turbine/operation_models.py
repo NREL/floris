@@ -491,7 +491,7 @@ class TUMLossTurbine(BaseOperationModel):
                                 np.squeeze((pitch_i))), cp_i,
                                                bounds_error=False, fill_value=None)
 
-            Cp_now = interp((x,pitch_in))
+            Cp_now = interp((x,pitch_in),method='cubic')
             cp_g1 =  Cp_now*eta_p
             aero_pow = 0.5*air_density*(np.pi*R**2)*(u)**3*cp_g1
             electric_pow = torque_nm*(omega_rpm*np.pi/30)
@@ -559,7 +559,7 @@ class TUMLossTurbine(BaseOperationModel):
                 fill_value=None
             )
 
-            Cp_now = interp((tsr,x))
+            Cp_now = interp((tsr,x),method='cubic')
             cp_g1 =  Cp_now*eta_p
             aero_pow = 0.5*air_density*(np.pi*R**2)*(u)**3*cp_g1
             electric_pow = torque_nm*(omega_rpm*np.pi/30)
@@ -585,7 +585,7 @@ class TUMLossTurbine(BaseOperationModel):
         #%% Compute torque-rpm relation and check for region 2-and-a-half
         Region2andAhalf = False
 
-        omega_array = np.linspace(omega_cut_in,omega_max,21)*np.pi/30 # rad/s
+        omega_array = np.linspace(omega_cut_in,omega_max,161)*np.pi/30 # rad/s
         Q = (0.5*air_density*omega_array**2*R**5 * np.pi * max_cp ) / tsr_opt**3
 
         Paero_array = Q*omega_array
@@ -666,8 +666,8 @@ class TUMLossTurbine(BaseOperationModel):
                             omega_rated[i,j],omega_array,Q,cp_i,pitch_i,tsr_i)
                     # solve aero-electrical power balance with TSR from rated omega
                     [pitch_out_soluzione,infodict,ier,mesg] = fsolve(
-                        get_pitch,8,args=data,factor=0.1,full_output=True
-                    )
+                        get_pitch,u_v,args=data,factor=0.1,full_output=True,
+                    xtol=1e-10,maxfev=2000)
                     if pitch_out_soluzione < pitch_opt:
                         pitch_out_soluzione = pitch_opt
                     pitch_out0 = pitch_out_soluzione
@@ -988,8 +988,15 @@ class TUMLossTurbine(BaseOperationModel):
         shear = TUMLossTurbine.compute_local_vertical_shear(velocities,average_velocity(velocities))
 
         air_density = power_thrust_table["ref_air_density"] # CHANGE
+
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=power_thrust_table["ref_air_density"]
+        )
+
         pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
-            rotor_average_velocities,
+            rotor_effective_velocities,
             yaw_angles,
             tilt_angles,
             air_density,
@@ -1141,8 +1148,15 @@ class TUMLossTurbine(BaseOperationModel):
         shear = TUMLossTurbine.compute_local_vertical_shear(velocities,average_velocity(velocities))
 
         air_density = power_thrust_table["ref_air_density"] # CHANGE
+        
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=power_thrust_table["ref_air_density"]
+        )
+        
         pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
-            rotor_average_velocities,
+            rotor_effective_velocities,
             yaw_angles,
             tilt_angles,
             air_density,
