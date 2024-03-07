@@ -28,19 +28,16 @@ def test_base_class():
     # Set up a sample boundary
     boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
 
-    # Declare an instance of the base class with only fi and boundaries
-    LayoutOptimization(fi=fi, boundaries=boundaries)
-
-    # Now initiate layout optimization with a frequency matrix passed in the 4th position
+    # Now initiate layout optimization with a frequency matrix passed in the 3rd position
     # (this should fail)
     freq = np.ones((5, 5))
     freq = freq / freq.sum()
     with pytest.raises(ValueError):
-        LayoutOptimization(fi, boundaries, 5, freq)
+        LayoutOptimization(fi, boundaries, freq, 5)
 
     # Passing as a keyword freq to wind_data should also fail
     with pytest.raises(ValueError):
-        LayoutOptimization(fi=fi, boundaries=boundaries, min_dist=5, wind_data=freq)
+        LayoutOptimization(fi=fi, boundaries=boundaries, wind_data=freq, min_dist=5,)
 
     time_series = TimeSeries(
         wind_directions=fi.floris.flow_field.wind_directions,
@@ -50,9 +47,9 @@ def test_base_class():
     wind_rose = time_series.to_wind_rose()
 
     # Passing wind_data objects in the 4th position should not fail
-    LayoutOptimization(fi, boundaries, 5, time_series)
-    LayoutOptimization(fi, boundaries, 5, wind_rose)
+    LayoutOptimization(fi, boundaries, time_series, 5)
+    LayoutOptimization(fi, boundaries, wind_rose, 5)
 
     # Passing wind_data objects by keyword should not fail
-    LayoutOptimization(fi=fi, boundaries=boundaries, min_dist=5, wind_data=time_series)
-    LayoutOptimization(fi=fi, boundaries=boundaries, min_dist=5, wind_data=wind_rose)
+    LayoutOptimization(fi=fi, boundaries=boundaries, wind_data=time_series, min_dist=5)
+    LayoutOptimization(fi=fi, boundaries=boundaries, wind_data=wind_rose, min_dist=5)
