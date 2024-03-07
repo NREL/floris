@@ -83,9 +83,9 @@ class Floris(BaseClass):
         self.farm.construct_turbine_ref_tilts()
         self.farm.construct_turbine_tilt_interps()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
-        self.farm.set_yaw_angles(self.flow_field.n_findex)
+        self.farm.set_yaw_angles_to_ref_yaw(self.flow_field.n_findex)
         self.farm.set_tilt_to_ref_tilt(self.flow_field.n_findex)
-        self.farm.set_power_setpoints(self.flow_field.n_findex)
+        self.farm.set_power_setpoints_to_ref_power(self.flow_field.n_findex)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
@@ -347,6 +347,7 @@ class Floris(BaseClass):
             Floris: The class object instance.
         """
         input_dict = load_yaml(Path(input_file_path).resolve())
+        check_input_file_for_v3_keys(input_dict)
         return Floris.from_dict(input_dict)
 
     def to_file(self, output_file_path: str) -> None:
@@ -362,3 +363,36 @@ class Floris(BaseClass):
                 sort_keys=False,
                 default_flow_style=False
             )
+
+def check_input_file_for_v3_keys(input_dict) -> None:
+    """
+    Checks if any FLORIS v3 keys are present in the input file and raises special errors if
+    the extra keys belong to a v3 definition of the input_dct.
+    and raises special errors if the extra arguments belong to a v3 definition of the class.
+
+    Args:
+        input_dict (dict): The input dictionary to be checked for v3 keys.
+    """
+    v3_deprecation_msg = (
+        "Consider using the convert_floris_input_v3_to_v4.py utility in floris/tools "
+        + "to convert from a FLORIS v3 input file to FLORIS v4. "
+        "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+    )
+    if "turbulence_intensity" in input_dict["flow_field"]:
+        raise AttributeError(
+            "turbulence_intensity has been updated to turbulence_intensities in FLORIS v4. "
+            + v3_deprecation_msg
+        )
+    elif not hasattr(input_dict["flow_field"]["turbulence_intensities"], "__len__"):
+        raise AttributeError(
+            "turbulence_intensities must be a list of floats in FLORIS v4. "
+            + v3_deprecation_msg
+        )
+
+    if input_dict["wake"]["model_strings"]["velocity_model"] == "multidim_cp_ct":
+        raise AttributeError(
+            "Dedicated 'multidim_cp_ct' velocity model has been removed in FLORIS v4 in favor of "
+            + "supporting all available wake models. To recover previous operation, set "
+            + "velocity_model to gauss. "
+            + v3_deprecation_msg
+        )

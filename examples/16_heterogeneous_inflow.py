@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 
 from floris.tools import FlorisInterface
-from floris.tools.visualization import visualize_cut_plane
+from floris.tools.flow_visualization import visualize_cut_plane
 
 
 """

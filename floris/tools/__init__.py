@@ -18,19 +18,18 @@ Examples:
     ['__builtins__', '__cached__', '__doc__', '__file__', '__loader__',
     '__name__', '__package__', '__path__', '__spec__', 'cut_plane',
     'floris_interface',
-    'layout_functions', 'optimization', 'plotting', 'power_rose',
+    'layout_visualization', 'optimization', 'plotting', 'power_rose',
     'visualization']
 """
 
 from .floris_interface import FlorisInterface
-from .parallel_computing_interface import ParallelComputingInterface
-from .uncertainty_interface import UncertaintyInterface
-from .visualization import (
+from .flow_visualization import (
     plot_rotor_values,
-    plot_turbines_with_fi,
     visualize_cut_plane,
     visualize_quiver,
 )
+from .parallel_computing_interface import ParallelComputingInterface
+from .uncertainty_interface import UncertaintyInterface
 from .wind_data import (
     TimeSeries,
     WindRose,
@@ -41,7 +40,7 @@ from .wind_data import (
 # from floris.tools import (
 #     cut_plane,
 #     floris_interface,
-#     layout_functions,
+#     layout_visualization,
 #     optimization,
 #     plotting,
 #     power_rose,
