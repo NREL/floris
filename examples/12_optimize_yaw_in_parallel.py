@@ -58,11 +58,12 @@ if __name__ == "__main__":
     # Flatten the grids back to 1D arrays
     wd_array = wind_directions_grid.flatten()
     ws_array = wind_speeds_grid.flatten()
+    turbulence_intensities = 0.08 * np.ones_like(wd_array)
 
     fi_aep.set(
         wind_directions=wd_array,
         wind_speeds=ws_array,
-        turbulence_intensities=[0.08],  # Assume 8% turbulence intensity
+        turbulence_intensities=turbulence_intensities,
     )
 
     # Pour this into a parallel computing interface
@@ -111,11 +112,12 @@ if __name__ == "__main__":
     # Flatten the grids back to 1D arrays
     wd_array_opt = wind_directions_grid.flatten()
     ws_array_opt = wind_speeds_grid.flatten()
+    turbulence_intensities = 0.08 * np.ones_like(wd_array_opt)
 
     fi_opt.set(
         wind_directions=wd_array_opt,
         wind_speeds=ws_array_opt,
-        turbulence_intensities=[0.08],  # Assume 8% turbulence intensity
+        turbulence_intensities=turbulence_intensities,
     )
 
     # Pour this into a parallel computing interface
