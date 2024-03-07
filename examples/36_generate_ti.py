@@ -19,9 +19,10 @@ and TimeSeries classes
 # Generate a random time series of wind speeds, wind directions and turbulence intensities
 wind_directions = np.array([250, 260, 270])
 wind_speeds = np.array([5, 6, 7, 8, 9, 10])
+ti_table = 0.06
 
 # Declare a WindRose object
-wind_rose = WindRose(wind_directions=wind_directions, wind_speeds=wind_speeds)
+wind_rose = WindRose(wind_directions=wind_directions, wind_speeds=wind_speeds, ti_table=ti_table)
 
 
 # Define a custom function where TI = 1 / wind_speed
@@ -51,7 +52,10 @@ ax.set_title(f"Turbulence Intensity defined by Iref = {Iref:0.2}")
 N = 100
 wind_directions = 270 * np.ones(N)
 wind_speeds = np.linspace(5, 15, N)
-time_series = TimeSeries(wind_directions=wind_directions, wind_speeds=wind_speeds)
+turbulence_intensities =  0.06 * np.ones(N)
+time_series = TimeSeries(wind_directions=wind_directions,
+                         wind_speeds=wind_speeds,
+                         turbulence_intensities=turbulence_intensities)
 time_series.assign_ti_using_IEC_method(Iref=Iref)
 
 fig, axarr = plt.subplots(2, 1, sharex=True, figsize=(7, 8))
