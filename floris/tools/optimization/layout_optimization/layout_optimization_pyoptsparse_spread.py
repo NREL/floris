@@ -12,15 +12,15 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self,
         fi,
         boundaries,
+        wind_data,
         min_dist=None,
-        wind_data=None,
         solver=None,
         optOptions=None,
         timeLimit=None,
         storeHistory='hist.hist',
         hotStart=None
     ):
-        super().__init__(fi, boundaries, min_dist=min_dist, wind_data=wind_data)
+        super().__init__(fi, boundaries,  wind_data=wind_data, min_dist=min_dist)
         self._reinitialize(solver=solver, optOptions=optOptions)
 
         self.storeHistory = storeHistory

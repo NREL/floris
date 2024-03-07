@@ -12,8 +12,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self,
         fi,
         boundaries,
+        wind_data,
         min_dist=None,
-        wind_data=None,
         solver=None,
         optOptions=None,
         timeLimit=None,
@@ -21,7 +21,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         hotStart=None,
         enable_geometric_yaw=False,
     ):
-        super().__init__(fi, boundaries, min_dist=min_dist, wind_data=wind_data,
+        super().__init__(fi, boundaries, wind_data=wind_data, min_dist=min_dist,
                          enable_geometric_yaw=enable_geometric_yaw)
 
         self.x0 = self._norm(self.fi.layout_x, self.xmin, self.xmax)

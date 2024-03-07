@@ -13,7 +13,7 @@ from ....logging_manager import LoggingManager
 
 
 class LayoutOptimization(LoggingManager):
-    def __init__(self, fi, boundaries, min_dist=None, wind_data=None, enable_geometric_yaw=False):
+    def __init__(self, fi, boundaries, wind_data, min_dist=None, enable_geometric_yaw=False):
         self.fi = fi.copy()
         self.boundaries = boundaries
         self.enable_geometric_yaw = enable_geometric_yaw
@@ -32,19 +32,12 @@ class LayoutOptimization(LoggingManager):
         else:
             self.min_dist = min_dist
 
-        # If wind_data is None, make a simple time series object off the fi
-        if wind_data is None:
-            wind_data = TimeSeries(
-                wind_directions=fi.floris.flow_field.wind_directions,
-                wind_speeds=fi.floris.flow_field.wind_speeds,
-                turbulence_intensities=fi.floris.flow_field.turbulence_intensities,
+        # Check that wind_data is a WindDataBase object
+        if (not isinstance(wind_data, WindDataBase)):
+            raise ValueError(
+                "wind_data entry is not an object of WindDataBase"
+                " (eg TimeSeries, WindRose, WindTIRose)"
             )
-        else:
-            if (not isinstance(wind_data, WindDataBase)):
-                raise ValueError(
-                    "wind_data entry is not an object of WindDataBase"
-                    " (eg TimeSeries, WindRose, WindTIRose)"
-                )
         self.wind_data = wind_data
 
         # Establish geometric yaw class

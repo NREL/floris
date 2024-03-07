@@ -13,7 +13,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self,
         fi,
         boundaries,
-        wind_data=None,
+        wind_data,
         bnds=None,
         min_dist=None,
         solver='SLSQP',
@@ -29,7 +29,6 @@ class LayoutOptimizationScipy(LayoutOptimization):
                 that represent the boundary's vertices (m).
             wind_data (TimeSeries | WindRose): A TimeSeries or WindRose object
                 values. If None, equal weight is given to each pair of wind conditions
-                Defaults to None.
             bnds (iterable, optional): Bounds for the optimization
                 variables (pairs of min/max values for each variable (m)). If
                 none are specified, they are set to 0 and 1. Defaults to None.
