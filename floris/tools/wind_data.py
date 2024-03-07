@@ -96,8 +96,8 @@ class WindDataBase:
             heterogenous_inflow_config (dict): A dictionary containing the following keys:
                 * 'speed_multipliers': A 2D NumPy array (size n_findex x num_points)
                       of speed multipliers.
-                * 'x': A 1D NumPy array (size n_findex) of x-coordinates (meters).
-                * 'y': A 1D NumPy array (size n_findex) of y-coordinates (meters).
+                * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
+                * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
         """
         if heterogenous_inflow_config is not None:
             if not isinstance(heterogenous_inflow_config, dict):
@@ -194,7 +194,8 @@ class WindRose(WindDataBase):
             each bin to compute the total value of the energy produced
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
-        heterogenous_inflow_config_by_wd (dict): A dictionary containing the following keys:
+        heterogenous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+            keys. Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)
                     of speed multipliers.
             * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
@@ -564,7 +565,8 @@ class WindTIRose(WindDataBase):
             to compute the total value of the energy produced.
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
-        heterogenous_inflow_config_by_wd (dict): A dictionary containing the following keys:
+        heterogenous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+            keys. Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)
                     of speed multipliers.
             * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
@@ -921,17 +923,19 @@ class TimeSeries(WindDataBase):
             a single value or an array of values.
         values (NDArrayFloat, optional): Values associated with each wind
             direction, wind speed, and turbulence intensity. Defaults to None.
-        heterogenous_inflow_config_by_wd (dict): A dictionary containing the following keys:
+        heterogenous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+            keys. Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)
                     of speed multipliers.
             * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
             * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
             * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
-        heterogenous_inflow_config (dict): A dictionary containing the following keys:
+        heterogenous_inflow_config (dict, optional): A dictionary containing the following keys.
+            Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size n_findex x num_points)
                     of speed multipliers.
-            * 'x': A 1D NumPy array (size n_findex) of x-coordinates (meters).
-            * 'y': A 1D NumPy array (size n_findex) of y-coordinates (meters).
+            * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
+            * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
     """
 
     def __init__(
