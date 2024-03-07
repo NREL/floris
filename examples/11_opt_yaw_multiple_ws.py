@@ -32,6 +32,7 @@ wind_speeds_grid, wind_directions_grid = np.meshgrid(
 # Flatten the grids back to 1D arrays
 wd_array = wind_directions_grid.flatten()
 ws_array = wind_speeds_grid.flatten()
+turbulence_intensities = 0.06 * np.ones_like(wd_array)
 
 # Reinitialize as a 3-turbine farm with range of WDs and WSs
 D = 126.0 # Rotor diameter for the NREL 5 MW
@@ -40,6 +41,7 @@ fi.set(
     layout_y=[0.0, 0.0, 0.0],
     wind_directions=wd_array,
     wind_speeds=ws_array,
+    turbulence_intensities=turbulence_intensities,
 )
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
