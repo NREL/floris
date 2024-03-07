@@ -28,11 +28,14 @@ fi = FlorisInterface('inputs/gch.yaml')
 wind_directions = np.arange(0, 360.0, 5.0)
 np.random.seed(1)
 wind_speeds = 8.0 + np.random.randn(1) * 0.5 * np.ones_like(wind_directions)
+turbulence_intensities = 0.06 * np.ones_like(wind_directions)
 # Shape frequency distribution to match number of wind directions and wind speeds
 freq = (np.abs(np.sort(np.random.randn(len(wind_directions)))))
 freq = freq / freq.sum()
 
-fi.set(wind_directions=wind_directions, wind_speeds=wind_speeds)
+fi.set(wind_directions=wind_directions,
+       wind_speeds=wind_speeds,
+       turbulence_intensities=turbulence_intensities)
 
 # The boundaries for the turbines, specified as vertices
 boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
