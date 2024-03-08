@@ -35,9 +35,12 @@ freq_table[:,0] = (np.abs(np.sort(np.random.randn(len(wind_directions)))))
 freq_table = freq_table / freq_table.sum()
 
 # Establish a TimeSeries object
-wind_rose = WindRose(wind_directions=wind_directions,
-                     wind_speeds=wind_speeds,
-                     freq_table=freq_table)
+wind_rose = WindRose(
+    wind_directions=wind_directions,
+    wind_speeds=wind_speeds,
+    freq_table=freq_table,
+    ti_table=0.06
+)
 
 fi.set(wind_data=wind_rose)
 

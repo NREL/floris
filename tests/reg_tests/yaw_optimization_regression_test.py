@@ -83,12 +83,15 @@ def test_serial_refine(sample_inputs_fixture):
     fi = FlorisInterface(sample_inputs_fixture.floris)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
+    ti_array = 0.1 * np.ones_like(wd_array)
+
     D = 126.0 # Rotor diameter for the NREL 5 MW
     fi.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
+        turbulence_intensities=ti_array,
     )
 
     yaw_opt = YawOptimizationSR(fi)
@@ -113,12 +116,14 @@ def test_geometric_yaw(sample_inputs_fixture):
     fi = FlorisInterface(sample_inputs_fixture.floris)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
+    ti_array = 0.1 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
     fi.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
+        turbulence_intensities=ti_array,
     )
     fi.run()
     baseline_farm_power = fi.get_farm_power().squeeze()
@@ -161,12 +166,14 @@ def test_scipy_yaw_opt(sample_inputs_fixture):
     fi = FlorisInterface(sample_inputs_fixture.floris)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
+    ti_array = 0.1 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
     fi.set(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
+        turbulence_intensities=ti_array,
     )
 
     yaw_opt = YawOptimizationScipy(fi, opt_options=opt_options)

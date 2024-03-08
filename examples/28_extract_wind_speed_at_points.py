@@ -39,7 +39,8 @@ ax[0].scatter(fi.layout_x, fi.layout_y, color="black", label="Turbine")
 # Set the wind direction to run 360 degrees
 wd_array = np.arange(0, 360, 1)
 ws_array = 8.0 * np.ones_like(wd_array)
-fi.set(wind_directions=wd_array, wind_speeds=ws_array)
+ti_array = 0.06 * np.ones_like(wd_array)
+fi.set(wind_directions=wd_array, wind_speeds=ws_array, turbulence_intensities=ti_array)
 
 # Simulate a met mast in between the turbines
 if met_mast_option == 0:

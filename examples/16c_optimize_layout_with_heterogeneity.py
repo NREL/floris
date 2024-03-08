@@ -30,15 +30,12 @@ fi = FlorisInterface('inputs/gch.yaml')
 # and 1 wind speed with uniform probability
 wind_directions = np.array([270., 90.])
 n_wds = len(wind_directions)
-wind_speeds = np.array([8.0])
+wind_speeds = [8.0] * np.ones_like(wind_directions)
+turbulence_intensities = 0.06 * np.ones_like(wind_directions)
 # Shape frequency distribution to match number of wind directions and wind speeds
 freq_table = np.ones((len(wind_directions), len(wind_speeds)))
 freq_table = freq_table / freq_table.sum()
 
-# Establish a TimeSeries object
-wind_rose = WindRose(wind_directions=wind_directions,
-                     wind_speeds=wind_speeds,
-                     freq_table=freq_table)
 
 # The boundaries for the turbines, specified as vertices
 D = 126.0 # rotor diameter for the NREL 5MW
@@ -62,17 +59,27 @@ x_locs = [0, size_D * D, 0, size_D * D]
 y_locs = [-D, -D, D, D]
 
 # Create the configuration dictionary to be used for the heterogeneous inflow.
-heterogenous_inflow_config = {
+heterogenous_inflow_config_by_wd = {
     'speed_multipliers': speed_multipliers,
+    'wind_directions': wind_directions,
     'x': x_locs,
     'y': y_locs,
 }
+
+# Establish a WindRose object
+wind_rose = WindRose(
+    wind_directions=wind_directions,
+    wind_speeds=wind_speeds,
+    freq_table=freq_table,
+    ti_table=0.06,
+    heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd
+)
+
 
 fi.set(
     layout_x=layout_x,
     layout_y=layout_y,
     wind_data=wind_rose,
-    heterogenous_inflow_config=heterogenous_inflow_config
 )
 
 # Setup and solve the layout optimization problem without heterogeneity

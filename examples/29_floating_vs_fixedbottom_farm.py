@@ -46,7 +46,8 @@ for fi in [fi_fixed, fi_floating]:
         layout_x=x,
         layout_y=y,
         wind_speeds=[10],
-        wind_directions=[270]
+        wind_directions=[270],
+        turbulence_intensities=[0.06],
     )
     fi.run()
 
@@ -121,6 +122,7 @@ for fi in [fi_fixed, fi_floating]:
     fi.set(
         wind_directions=wd_grid.flatten(),
         wind_speeds= ws_grid.flatten(),
+        turbulence_intensities=0.06 * np.ones_like(wd_grid.flatten())
     )
 
 # Compute the AEP
