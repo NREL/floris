@@ -13,7 +13,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self,
         fi,
         boundaries,
-        freq=None,
+        wind_data,
         bnds=None,
         min_dist=None,
         solver='SLSQP',
@@ -27,10 +27,8 @@ class LayoutOptimizationScipy(LayoutOptimization):
             fi (_type_): _description_
             boundaries (iterable(float, float)): Pairs of x- and y-coordinates
                 that represent the boundary's vertices (m).
-            freq (np.array): An array of the frequencies of occurance
-                correponding to each pair of wind direction and wind speed
+            wind_data (TimeSeries | WindRose): A TimeSeries or WindRose object
                 values. If None, equal weight is given to each pair of wind conditions
-                Defaults to None.
             bnds (iterable, optional): Bounds for the optimization
                 variables (pairs of min/max values for each variable (m)). If
                 none are specified, they are set to 0 and 1. Defaults to None.
@@ -41,7 +39,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
             optOptions (dict, optional): Dicitonary for setting the
                 optimization options. Defaults to None.
         """
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq,
+        super().__init__(fi, boundaries, min_dist=min_dist, wind_data=wind_data,
                     enable_geometric_yaw=enable_geometric_yaw)
 
         self.boundaries_norm = [
@@ -100,7 +98,10 @@ class LayoutOptimizationScipy(LayoutOptimization):
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
         self.fi.set(yaw_angles=yaw_angles)
-        return -1 * self.fi.get_farm_AEP(self.freq) /self.initial_AEP
+
+        return (-1 * self.fi.get_farm_AEP_with_wind_data(self.wind_data) /
+                self.initial_AEP)
+
 
     def _change_coordinates(self, locs):
         # Parse the layout coordinates

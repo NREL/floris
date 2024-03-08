@@ -38,11 +38,13 @@ fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "lega
 D = 126.0 # Rotor diameter for the NREL 5 MW
 wd_array = np.arange(0.0, 360.0, 3.0)
 ws_array = 8.0 * np.ones_like(wd_array)
+turbulence_intensities = 0.06 * np.ones_like(wd_array)
 fi.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
     wind_directions=wd_array,
     wind_speeds=ws_array,
+    turbulence_intensities=turbulence_intensities,
 )
 
 print("Performing optimizations with SciPy...")

@@ -35,7 +35,7 @@ def test_farm_init_homogenous_turbines():
     # turbine_type=[turbine_data["turbine_type"]]
 
     farm.construct_hub_heights()
-    farm.set_yaw_angles(N_FINDEX)
+    farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
 
     # Check initial values
     np.testing.assert_array_equal(farm.coordinates, coordinates)
@@ -47,17 +47,17 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     farm = Farm.from_dict(sample_inputs_fixture.farm)
     farm.construct_hub_heights()
     farm.construct_turbine_ref_tilts()
-    farm.set_yaw_angles(N_FINDEX)
+    farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
     farm.set_tilt_to_ref_tilt(N_FINDEX)
-    farm.set_power_setpoints(N_FINDEX)
+    farm.set_power_setpoints_to_ref_power(N_FINDEX)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
     new_farm.construct_hub_heights()
     new_farm.construct_turbine_ref_tilts()
-    new_farm.set_yaw_angles(N_FINDEX)
+    new_farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
     new_farm.set_tilt_to_ref_tilt(N_FINDEX)
-    new_farm.set_power_setpoints(N_FINDEX)
+    new_farm.set_power_setpoints_to_ref_power(N_FINDEX)
     dict2 = new_farm.as_dict()
 
     assert dict1 == dict2

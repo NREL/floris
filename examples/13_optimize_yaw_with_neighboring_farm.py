@@ -177,18 +177,25 @@ if __name__ == "__main__":
     # Load a dataframe containing the wind rose information
     ws_windrose, wd_windrose, freq_windrose = load_windrose()
     ws_windrose = ws_windrose + 0.001  # Deal with 0.0 m/s discrepancy
+    turbulence_intensities_windrose = 0.06 * np.ones_like(wd_windrose)
 
     # Create a FLORIS object for AEP calculations
     fi_AEP = fi.copy()
-    fi_AEP.set(wind_speeds=ws_windrose, wind_directions=wd_windrose)
+    fi_AEP.set(
+        wind_speeds=ws_windrose,
+        wind_directions=wd_windrose,
+        turbulence_intensities=turbulence_intensities_windrose
+    )
 
     # And create a separate FLORIS object for optimization
     fi_opt = fi.copy()
     wd_array = np.arange(0.0, 360.0, 3.0)
     ws_array = 8.0 * np.ones_like(wd_array)
+    turbulence_intensities = 0.06 * np.ones_like(wd_array)
     fi_opt.set(
         wind_directions=wd_array,
         wind_speeds=ws_array,
+        turbulence_intensities=turbulence_intensities,
     )
 
     # First, get baseline AEP, without wake steering

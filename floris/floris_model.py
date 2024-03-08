@@ -187,12 +187,12 @@ class FlorisModel(LoggingManager):
         # If the yaw angles or power setpoints are not the default, set them back to the
         # previous setting
         if not (_yaw_angles == 0).all():
-            self.core.farm.yaw_angles = _yaw_angles
+            self.core.farm.set_yaw_angles(_yaw_angles)
         if not (
             (_power_setpoints == POWER_SETPOINT_DEFAULT)
             | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
-            self.core.farm.power_setpoints = _power_setpoints
+            self.core.farm.set_power_setpoints(_power_setpoints)
 
         # Set the operation
         self._set_operation(
@@ -267,15 +267,18 @@ class FlorisModel(LoggingManager):
                 (wind_directions is not None)
                 or (wind_speeds is not None)
                 or (turbulence_intensities is not None)
+                or (heterogenous_inflow_config is not None)
             ):
                 raise ValueError(
                     "If wind_data is passed to reinitialize, then do not pass wind_directions, "
-                    "wind_speeds or turbulence_intensities as this is redundant"
+                    "wind_speeds, turbulence_intensities or "
+                    "heterogenous_inflow_config as this is redundant"
                 )
             (
                 wind_directions,
                 wind_speeds,
                 turbulence_intensities,
+                heterogenous_inflow_config,
             ) = wind_data.unpack_for_reinitialize()
 
         ## FlowField
@@ -295,27 +298,6 @@ class FlorisModel(LoggingManager):
             flow_field_dict["air_density"] = air_density
         if heterogenous_inflow_config is not None:
             flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
-
-        # Handle a special case where:
-        #   wind_speeds | wind_directions are not None
-        #   turbulence_intensities is None
-        #   len(turbulence intensity) != len(wind_directions)
-        #   turbulence_intensities is uniform
-        # In this case, automatically resize turbulence intensity
-        # This is the case where user is assuming same TI across all findex
-        if (
-            (wind_speeds is not None or wind_directions is not None)
-            and turbulence_intensities is None
-            and (
-                len(flow_field_dict["turbulence_intensities"])
-                != len(flow_field_dict["wind_directions"])
-            )
-            and len(np.unique(flow_field_dict["turbulence_intensities"])) == 1
-        ):
-            flow_field_dict["turbulence_intensities"] = (
-                flow_field_dict["turbulence_intensities"][0]
-                * np.ones_like(flow_field_dict["wind_directions"])
-            )
 
         ## Farm
         if layout_x is not None:
@@ -355,7 +337,7 @@ class FlorisModel(LoggingManager):
         """
         # Add operating conditions to the floris object
         if yaw_angles is not None:
-            self.core.farm.yaw_angles = yaw_angles
+            self.core.farm.set_yaw_angles(yaw_angles)
 
         if power_setpoints is not None:
             power_setpoints = np.array(power_setpoints)
@@ -366,7 +348,7 @@ class FlorisModel(LoggingManager):
             ] = POWER_SETPOINT_DEFAULT
             power_setpoints = floris_array_converter(power_setpoints)
 
-            self.core.farm.power_setpoints = power_setpoints
+            self.core.farm.set_power_setpoints(power_setpoints)
 
         # Check for turbines to disable
         if disable_turbines is not None:
@@ -1000,6 +982,7 @@ class FlorisModel(LoggingManager):
         # the the farm_power variable as an empty array.
         wind_speeds = np.array(self.core.flow_field.wind_speeds, copy=True)
         wind_directions = np.array(self.core.flow_field.wind_directions, copy=True)
+        turbulence_intensities = np.array(self.core.flow_field.turbulence_intensities, copy=True)
         farm_power = np.zeros(self.core.flow_field.n_findex)
 
         # Determine which wind speeds we must evaluate
@@ -1011,9 +994,11 @@ class FlorisModel(LoggingManager):
         if np.any(conditions_to_evaluate):
             wind_speeds_subset = wind_speeds[conditions_to_evaluate]
             wind_directions_subset = wind_directions[conditions_to_evaluate]
+            turbulence_intensities_subset = turbulence_intensities[conditions_to_evaluate]
             self.set(
                 wind_speeds=wind_speeds_subset,
                 wind_directions=wind_directions_subset,
+                turbulence_intensities=turbulence_intensities_subset,
             )
             if no_wake:
                 self.run_no_wake()
@@ -1027,7 +1012,11 @@ class FlorisModel(LoggingManager):
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
-        self.set(wind_speeds=wind_speeds, wind_directions=wind_directions)
+        self.set(
+            wind_speeds=wind_speeds,
+            wind_directions=wind_directions,
+            turbulence_intensities=turbulence_intensities
+        )
 
         return aep
 
@@ -1279,13 +1268,13 @@ class FlorisModel(LoggingManager):
 
     ### v3 functions that are removed - raise an error if used
 
-    def calculate_wake(self):
+    def calculate_wake(self, **_):
         raise NotImplementedError(
             "The calculate_wake method has been removed. Please use the run method. "
             "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
         )
 
-    def reinitialize(self):
+    def reinitialize(self, **_):
         raise NotImplementedError(
             "The reinitialize method has been removed. Please use the set method. "
             "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."

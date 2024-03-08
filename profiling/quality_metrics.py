@@ -16,6 +16,7 @@ wd_grid, ws_grid = np.meshgrid(
 )
 WIND_DIRECTIONS = wd_grid.flatten()
 WIND_SPEEDS = ws_grid.flatten()
+TURBULENCE_INTENSITIES = np.ones_like(WIND_DIRECTIONS) * 0.1
 N_FINDEX = len(WIND_DIRECTIONS)
 
 N_TURBINES = 3
@@ -116,6 +117,7 @@ if __name__=="__main__":
     sample_inputs.floris["farm"]["layout_y"] = Y_COORDS
     sample_inputs.floris["flow_field"]["wind_directions"] = WIND_DIRECTIONS
     sample_inputs.floris["flow_field"]["wind_speeds"] = WIND_SPEEDS
+    sample_inputs.floris["flow_field"]["turbulence_intensities"] = TURBULENCE_INTENSITIES
 
     print()
     print("### Memory profiling")

@@ -42,12 +42,14 @@ turbine_dict = build_cosine_loss_turbine_dict(
 fi = FlorisInterface("inputs/gch.yaml")
 wind_speeds = np.linspace(1, 15, 100)
 wind_directions = 270 * np.ones_like(wind_speeds)
+turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
 # Replace the turbine(s) in the FLORIS model with the created one
 fi.set(
     layout_x=[0],
     layout_y=[0],
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
+    turbulence_intensities=turbulence_intensities,
     turbine_type=[turbine_dict]
 )
 fi.run()

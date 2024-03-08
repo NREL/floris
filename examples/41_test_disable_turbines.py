@@ -33,6 +33,7 @@ layout = np.array([[0.0, 0.0], [500.0, 0.0], [1000.0, 0.0]])
 # (n_findex = 2)
 wind_directions = np.array([270.0, 270.0])
 wind_speeds = np.array([8.0, 8.0])
+turbulence_intensities = np.array([0.06, 0.06])
 
 # Shut down the first 2 turbines for the second findex
 # 2 findex x 3 turbines
@@ -47,6 +48,7 @@ fi.set(
     layout_y=layout[:, 1],
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
+    turbulence_intensities=turbulence_intensities,
     disable_turbines=disable_turbines,
 )
 

@@ -26,124 +26,13 @@ from floris.type_dec import (
 from floris.utilities import rotate_coordinates_rel_west, wind_delta
 
 
-def show_plots():
-    plt.show()
-
-def plot_turbines(
-    ax,
-    layout_x,
-    layout_y,
-    yaw_angles,
-    rotor_diameters,
-    color: str | None = None,
-):
+def show():
     """
-    This function is deprecated and will be removed in v3.5, use `plot_turbines_with_fmodel` instead.
-
-    Plot wind plant layout from turbine locations.
-
-    Args:
-        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
-        layout_x (np.array): Wind turbine locations (east-west).
-        layout_y (np.array): Wind turbine locations (north-south).
-        yaw_angles (np.array): Yaw angles of each wind turbine.
-        rotor_diameters (np.array): Wind turbine rotor diameter.
-        color (str): pyplot color option to plot the turbines.
+    Display all open figures.  This is a wrapper for `plt.show()`.
+    This function is useful if the user doesn't wish to import `matplotlib.pyplot`
     """
-    warnings.warn(
-        "The `plot_turbines` function is deprecated and will be removed in v3.5, "
-        "use `plot_turbines_with_fmodel` instead.",
-        DeprecationWarning,
-        stacklevel=2  # This prints the calling function and this function in the warning
+    plt.show(
     )
-
-    if color is None:
-        color = "k"
-
-    for x, y, yaw, d in zip(layout_x, layout_y, yaw_angles, rotor_diameters):
-        R = d / 2.0
-        x_0 = x + np.sin(np.deg2rad(yaw)) * R
-        x_1 = x - np.sin(np.deg2rad(yaw)) * R
-        y_0 = y - np.cos(np.deg2rad(yaw)) * R
-        y_1 = y + np.cos(np.deg2rad(yaw)) * R
-        ax.plot([x_0, x_1], [y_0, y_1], color=color)
-
-
-def plot_turbines_with_fmodel(
-    fmodel: FlorisModel,
-    ax: plt.Axes = None,
-    color: str = None,
-    wd: np.ndarray = None,
-    yaw_angles: np.ndarray = None,
-):
-    """
-    Plot the wind plant layout from turbine locations gotten from a FlorisModel object.
-    Note that this function automatically uses the first wind direction and first wind speed.
-    Generally, it is most explicit to create a new FlorisModel with only the single
-    wind condition that should be plotted.
-
-    Args:
-        fmodel (:py:class:`~.floris.FlorisModel`): FlorisModel object.
-        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults to None.
-        color (str, optional): Color to plot turbines. Defaults to None.
-        wd (list, optional): The wind direction to plot the turbines relative to. Defaults to None.
-        yaw_angles (NDArray, optional): The yaw angles for the turbines. Defaults to None.
-    """
-    if not ax:
-        fig, ax = plt.subplots()
-    if yaw_angles is None:
-        yaw_angles = fmodel.core.farm.yaw_angles
-    if wd is None:
-        wd = fmodel.core.flow_field.wind_directions[0]
-
-    # Rotate yaw angles to inertial frame for plotting turbines relative to wind direction
-    yaw_angles = yaw_angles - wind_delta(np.array(wd))
-
-    if color is None:
-        color = "k"
-
-    rotor_diameters = fmodel.core.farm.rotor_diameters.flatten()
-    for x, y, yaw, d in zip(fmodel.layout_x, fmodel.layout_y, yaw_angles[0], rotor_diameters):
-        R = d / 2.0
-        x_0 = x + np.sin(np.deg2rad(yaw)) * R
-        x_1 = x - np.sin(np.deg2rad(yaw)) * R
-        y_0 = y - np.cos(np.deg2rad(yaw)) * R
-        y_1 = y + np.cos(np.deg2rad(yaw)) * R
-        ax.plot([x_0, x_1], [y_0, y_1], color=color)
-
-
-def add_turbine_id_labels(fmodel: FlorisModel, ax: plt.Axes, **kwargs):
-    """
-    Adds index labels to a plot based on the given FlorisModel.
-    See the pyplot.annotate docs for more info:
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.annotate.html.
-    kwargs are passed to Text
-    (https://matplotlib.org/stable/api/text_api.html#matplotlib.text.Text).
-
-    Args:
-        fmodel (FlorisModel): Simulation object to get the layout and index information.
-        ax (plt.Axes): Axes object to add the labels.
-    """
-
-    # Rotate layout to inertial frame for plotting turbines relative to wind direction
-    coordinates_array = np.array([
-        [x, y, 0.0]
-        for x, y in list(zip(fmodel.layout_x, fmodel.layout_y))
-    ])
-    wind_direction = fmodel.core.flow_field.wind_directions[0]
-    layout_x, layout_y, _, _, _ = rotate_coordinates_rel_west(
-        np.array([wind_direction]),
-        coordinates_array
-    )
-
-    for i in range(fmodel.core.farm.n_turbines):
-        ax.annotate(
-            i,
-            (layout_x[0,i], layout_y[0,i]),
-            xytext=(0,10),
-            textcoords="offset points",
-            **kwargs
-        )
 
 
 def line_contour_cut_plane(

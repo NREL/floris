@@ -8,10 +8,9 @@ with open(Path(__file__).parent / "version.py") as _version_file:
 
 from .floris_model import FlorisModel
 from .parallel_computing_interface import ParallelComputingInterface
-# from .uncertainty_interface import UncertaintyInterface
-from .visualization import (
+from .uncertainty_interface import UncertaintyInterface
+from .flow_visualization import (
     plot_rotor_values,
-    plot_turbines_with_fmodel,
     visualize_cut_plane,
     visualize_quiver,
 )

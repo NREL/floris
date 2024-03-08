@@ -96,6 +96,24 @@ WIND_SPEEDS = [
     10.0,
     11.0,
 ]
+TURBULENCE_INTENSITIES = [
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+]
 
 # FINDEX is the length of the number of conditions, so it can be
 # len(WIND_DIRECTIONS) or len(WIND_SPEEDS
@@ -407,7 +425,7 @@ class SampleInputs:
         self.flow_field = {
             "wind_speeds": WIND_SPEEDS,
             "wind_directions": WIND_DIRECTIONS,
-            "turbulence_intensities": [0.1],
+            "turbulence_intensities": TURBULENCE_INTENSITIES,
             "wind_shear": 0.12,
             "wind_veer": 0.0,
             "air_density": 1.225,

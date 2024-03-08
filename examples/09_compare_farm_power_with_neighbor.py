@@ -29,7 +29,12 @@ fi.set(layout_x=layout_x, layout_y=layout_y)
 # Define a simple wind rose with just 1 wind speed
 wd_array = np.arange(0,360,4.)
 ws_array = 8.0 * np.ones_like(wd_array)
-fi.set(wind_directions=wd_array, wind_speeds=ws_array)
+turbulence_intensities = 0.06 * np.ones_like(wd_array)
+fi.set(
+    wind_directions=wd_array,
+    wind_speeds=ws_array,
+    turbulence_intensities=turbulence_intensities
+)
 
 
 # Calculate

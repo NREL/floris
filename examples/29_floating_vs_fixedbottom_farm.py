@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
 
-import floris.tools.visualization as wakeviz
+import floris.tools.flow_visualization as flowviz
 from floris.tools import FlorisInterface
 
 
@@ -46,7 +46,8 @@ for fi in [fi_fixed, fi_floating]:
         layout_x=x,
         layout_y=y,
         wind_speeds=[10],
-        wind_directions=[270]
+        wind_directions=[270],
+        turbulence_intensities=[0.06],
     )
     fi.run()
 
@@ -96,14 +97,14 @@ for fi in [fi_fixed, fi_floating]:
 # Create the plots
 fig, ax_list = plt.subplots(2, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
-wakeviz.visualize_cut_plane(horizontal_planes[0], ax=ax_list[0], title="Horizontal")
-wakeviz.visualize_cut_plane(y_planes[0], ax=ax_list[1], title="Streamwise profile")
+flowviz.visualize_cut_plane(horizontal_planes[0], ax=ax_list[0], title="Horizontal")
+flowviz.visualize_cut_plane(y_planes[0], ax=ax_list[1], title="Streamwise profile")
 fig.suptitle("Fixed-bottom farm")
 
 fig, ax_list = plt.subplots(2, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
-wakeviz.visualize_cut_plane(horizontal_planes[1], ax=ax_list[0], title="Horizontal")
-wakeviz.visualize_cut_plane(y_planes[1], ax=ax_list[1], title="Streamwise profile")
+flowviz.visualize_cut_plane(horizontal_planes[1], ax=ax_list[0], title="Horizontal")
+flowviz.visualize_cut_plane(y_planes[1], ax=ax_list[1], title="Streamwise profile")
 fig.suptitle("Floating farm")
 
 # Compute AEP (see 07_calc_aep_from_rose.py for details)
@@ -121,6 +122,7 @@ for fi in [fi_fixed, fi_floating]:
     fi.set(
         wind_directions=wd_grid.flatten(),
         wind_speeds= ws_grid.flatten(),
+        turbulence_intensities=0.06 * np.ones_like(wd_grid.flatten())
     )
 
 # Compute the AEP

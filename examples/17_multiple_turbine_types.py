@@ -1,7 +1,7 @@
 
 import matplotlib.pyplot as plt
 
-import floris.tools.visualization as wakeviz
+import floris.tools.flow_visualization as flowviz
 from floris.tools import FlorisInterface
 
 
@@ -24,8 +24,8 @@ cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100, downs
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))
 ax_list = ax_list.flatten()
-wakeviz.visualize_cut_plane(horizontal_plane, ax=ax_list[0], title="Horizontal")
-wakeviz.visualize_cut_plane(y_plane, ax=ax_list[1], title="Streamwise profile")
-wakeviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile")
+flowviz.visualize_cut_plane(horizontal_plane, ax=ax_list[0], title="Horizontal")
+flowviz.visualize_cut_plane(y_plane, ax=ax_list[1], title="Streamwise profile")
+flowviz.visualize_cut_plane(cross_plane, ax=ax_list[2], title="Spanwise profile")
 
-wakeviz.show_plots()
+plt.show()

@@ -221,6 +221,7 @@ def test_regression_rotation(sample_inputs_fixture):
     ]
     sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
     sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0, 8.0]
+    sample_inputs_fixture.floris["flow_field"]["turbulence_intensities"] = [0.1, 0.1]
 
     floris = Core.from_dict(sample_inputs_fixture.floris)
     floris.initialize_domain()

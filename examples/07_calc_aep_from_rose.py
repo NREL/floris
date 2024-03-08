@@ -28,6 +28,7 @@ wd_grid, ws_grid = np.meshgrid(
 )
 wind_directions = wd_grid.flatten()
 wind_speeds = ws_grid.flatten()
+turbulence_intensities = np.ones_like(wind_directions) * 0.06
 
 # Format the frequency array into the conventional FLORIS v3 format, which is
 # an np.array with shape (n_wind_directions, n_wind_speeds). To avoid having
@@ -52,6 +53,7 @@ fmodel.set(
     layout_y=[0.0, 0.0, 0.0],
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
+    turbulence_intensities=turbulence_intensities,
 )
 
 # Compute the AEP using the default settings

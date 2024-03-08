@@ -27,7 +27,8 @@ fi.set(layout_x=layout_x, layout_y=layout_y)
 # Sweep wind speeds but keep wind direction fixed
 ws_array = np.arange(5,25,0.5)
 wd_array = 270.0 * np.ones_like(ws_array)
-fi.set(wind_directions=wd_array,wind_speeds=ws_array)
+ti_array = 0.06 * np.ones_like(ws_array)
+fi.set(wind_directions=wd_array,wind_speeds=ws_array, turbulence_intensities=ti_array)
 
 # Define a matrix of yaw angles to be all 0
 # Note that yaw angles is now specified as a matrix whose dimensions are

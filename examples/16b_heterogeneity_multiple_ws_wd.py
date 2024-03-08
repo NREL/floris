@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import FlorisInterface
-from floris.tools.visualization import visualize_cut_plane
+from floris.tools.flow_visualization import visualize_cut_plane
 
 
 """
@@ -28,6 +28,7 @@ fi.set(
     wind_shear=0.0,
     wind_speeds=[8.0],
     wind_directions=[270.],
+    turbulence_intensities=[0.06],
     layout_x=[0, 0],
     layout_y=[-299., 299.],
 )
@@ -55,6 +56,7 @@ heterogenous_inflow_config = {
 fi.set(
     wind_directions=[270.0, 275.0],
     wind_speeds=[8.0, 8.0],
+    turbulence_intensities=[0.06, 0.06],
     heterogenous_inflow_config=heterogenous_inflow_config
 )
 fi.run()

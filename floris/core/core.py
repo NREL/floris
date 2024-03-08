@@ -83,9 +83,9 @@ class Core(BaseClass):
         self.farm.construct_turbine_ref_tilts()
         self.farm.construct_turbine_tilt_interps()
         self.farm.construct_turbine_correct_cp_ct_for_tilt()
-        self.farm.set_yaw_angles(self.flow_field.n_findex)
+        self.farm.set_yaw_angles_to_ref_yaw(self.flow_field.n_findex)
         self.farm.set_tilt_to_ref_tilt(self.flow_field.n_findex)
-        self.farm.set_power_setpoints(self.flow_field.n_findex)
+        self.farm.set_power_setpoints_to_ref_power(self.flow_field.n_findex)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
