@@ -4,8 +4,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.layout_visualization as layoutviz
-from floris.tools.floris_interface import FlorisInterface
+import floris.layout_visualization as layoutviz
+from floris import FlorisModel
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
@@ -24,24 +24,24 @@ def test_get_wake_direction():
 
 def test_plotting_functions():
 
-    fi = FlorisInterface(configuration=YAML_INPUT)
+    fmodel = FlorisModel(configuration=YAML_INPUT)
 
-    ax = layoutviz.plot_turbine_points(fi=fi)
+    ax = layoutviz.plot_turbine_points(fmodel=fmodel)
     assert isinstance(ax, plt.Axes)
 
-    ax = layoutviz.plot_turbine_labels(fi=fi)
+    ax = layoutviz.plot_turbine_labels(fmodel=fmodel)
     assert isinstance(ax, plt.Axes)
 
-    ax = layoutviz.plot_turbine_rotors(fi=fi)
+    ax = layoutviz.plot_turbine_rotors(fmodel=fmodel)
     assert isinstance(ax, plt.Axes)
 
-    ax = layoutviz.plot_waking_directions(fi=fi)
+    ax = layoutviz.plot_waking_directions(fmodel=fmodel)
     assert isinstance(ax, plt.Axes)
 
     # Add additional turbines to test plot farm terrain
-    fi.set(
+    fmodel.set(
         layout_x=[0, 1000, 0, 1000, 3000],
         layout_y=[0, 0, 2000, 2000, 3000],
     )
-    ax = layoutviz.plot_farm_terrain(fi=fi)
+    ax = layoutviz.plot_farm_terrain(fmodel=fmodel)
     assert isinstance(ax, plt.Axes)

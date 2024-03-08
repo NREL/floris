@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import LineString, Polygon
 
-from floris.tools import TimeSeries
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
+from floris import TimeSeries
+from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
-from floris.tools.wind_data import WindDataBase
+from floris.wind_data import WindDataBase
 
-from ....logging_manager import LoggingManager
+from ...logging_manager import LoggingManager
 
 
 class LayoutOptimization(LoggingManager):
