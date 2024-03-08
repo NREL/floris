@@ -428,10 +428,10 @@ def test_set_ti():
         turbulence_intensities=[0.1, 0.1, 0.1],
     )
 
-    # Confirm can change turbulence intensities if not changing the lenght of the array
+    # Confirm can change turbulence intensities if not changing the length of the array
     fi.set(turbulence_intensities=[0.12, 0.12, 0.12])
 
-    # Confirm that changes wind speeds and directions without change turbulence intensities
+    # Confirm that changes to wind speeds and directions without changing turbulence intensities
     # raises an error
     with pytest.raises(ValueError):
         fi.set(

@@ -64,7 +64,7 @@ class FlowField(BaseClass):
                 "turbulence_intensities must have 1-dimension"
             )
 
-        # Check the turbulence intensity is lenght n_findex
+        # Check the turbulence intensity is length n_findex
         if len(value) != self.n_findex:
             raise ValueError("turbulence_intensities must be length n_findex")
 

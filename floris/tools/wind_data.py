@@ -910,7 +910,7 @@ class TimeSeries(WindDataBase):
     turbulence intensity can be assigned as an array of values or a single value.
     At least one of wind_directions, wind_speeds, or turbulence_intensities must
     be an array.  If arrays are provided, they must be the same length as the
-    other arrays or the single values.  If signle values are provided, then an
+    other arrays or the single values.  If single values are provided, then an
     array of the same length as the other arrays will be created with the single
     value.
 
