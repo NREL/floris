@@ -30,7 +30,8 @@ power_thrust_model: 'tum-loss'
 power_thrust_table:
   ### Power thrust table parameters
   # The air density at which the Cp and Ct curves are defined.
-  ref_air_density: 1.225
+  ref_air_density: 1.12
+  rated_rpm: 11.75
   rotor_solidity: 0.0416
   generator_efficiency: 0.925
   rated_power: 3.3e6

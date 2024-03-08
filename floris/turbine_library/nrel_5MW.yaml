@@ -32,6 +32,7 @@ power_thrust_table:
   ### Power thrust table parameters
   # The air density at which the Cp and Ct curves are defined.
   ref_air_density: 1.225
+  rated_rpm: 12.1 
   rotor_solidity: 0.05132
   generator_efficiency: 0.944
   rated_power: 5.0e6
