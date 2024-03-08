@@ -181,9 +181,11 @@ if __name__ == "__main__":
 
     # Create a FLORIS object for AEP calculations
     fi_AEP = fi.copy()
-    fi_AEP.set(wind_speeds=ws_windrose,
-               wind_directions=wd_windrose,
-               turbulence_intensities=turbulence_intensities_windrose)
+    fi_AEP.set(
+        wind_speeds=ws_windrose,
+        wind_directions=wd_windrose,
+        turbulence_intensities=turbulence_intensities_windrose
+    )
 
     # And create a separate FLORIS object for optimization
     fi_opt = fi.copy()

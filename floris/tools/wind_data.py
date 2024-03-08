@@ -966,8 +966,9 @@ class TimeSeries(WindDataBase):
                     "wind_directions and wind_speeds must be the same length if provided as arrays"
                 )
 
-        if isinstance(wind_directions, np.ndarray) and isinstance(
-            turbulence_intensities, np.ndarray
+        if (
+            isinstance(wind_directions, np.ndarray)
+            and isinstance(turbulence_intensities, np.ndarray)
         ):
             if len(wind_directions) != len(turbulence_intensities):
                 raise ValueError(

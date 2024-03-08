@@ -62,15 +62,16 @@ def test_set_run():
     fi.run()
     assert fi.floris.farm.yaw_angles == yaw_angles
 
-    # Verify making changes to the layout, wind speed, and wind direction  and
-    # turbulence intensity both before and after
-    # running the calculation
+    # Verify making changes to the layout, wind speed, wind direction  and
+    # turbulence intensity both before and after running the calculation
     fi.reset_operation()
-    fi.set(layout_x=[0, 0],
-            layout_y=[0, 1000],
-            wind_speeds=[8, 8],
-            wind_directions=[270, 270],
-            turbulence_intensities=[0.06, 0.06])
+    fi.set(
+        layout_x=[0, 0],
+        layout_y=[0, 1000],
+        wind_speeds=[8, 8],
+        wind_directions=[270, 270],
+        turbulence_intensities=[0.06, 0.06]
+    )
     assert np.array_equal(fi.floris.farm.layout_x, np.array([0, 0]))
     assert np.array_equal(fi.floris.farm.layout_y, np.array([0, 1000]))
     assert np.array_equal(fi.floris.flow_field.wind_speeds, np.array([8, 8]))
@@ -435,12 +436,7 @@ def test_set_ti():
     with pytest.raises(ValueError):
         fi.set(
             wind_speeds=[8.0, 8.0, 8.0, 8.0],
-            wind_directions=[
-                240.0,
-                250.0,
-                260.0,
-                270.0,
-            ],
+            wind_directions=[240.0, 250.0, 260.0, 270.0],
         )
 
 

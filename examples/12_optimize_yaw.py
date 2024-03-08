@@ -64,10 +64,12 @@ def calculate_aep(fi, df_windrose, column_name="farm_power"):
     ws_array = np.array(df_windrose["ws"], dtype=float)
     turbulence_intensities = 0.06 * np.ones_like(wd_array)
     yaw_angles = np.array(df_windrose[yaw_cols], dtype=float)
-    fi.set(wind_directions=wd_array,
-           wind_speeds=ws_array,
-           turbulence_intensities=turbulence_intensities,
-           yaw_angles=yaw_angles)
+    fi.set(
+        wind_directions=wd_array,
+        wind_speeds=ws_array,
+        turbulence_intensities=turbulence_intensities,
+        yaw_angles=yaw_angles
+    )
 
     # Calculate FLORIS for every WD and WS combination and get the farm power
     fi.run()

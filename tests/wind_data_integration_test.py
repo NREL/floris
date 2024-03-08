@@ -53,9 +53,11 @@ def test_time_series_instantiation():
     # Test the passing in a 1D array of turbulence intensities which is longer than the
     # wind directions and wind speeds raises an error
     with pytest.raises(ValueError):
-        TimeSeries(wind_directions,
-                   wind_speeds,
-                   turbulence_intensities=np.array([0.06, 0.07, 0.08, 0.09]))
+        TimeSeries(
+            wind_directions,
+            wind_speeds,
+            turbulence_intensities=np.array([0.06, 0.07, 0.08, 0.09])
+        )
 
 
 def test_wind_rose_init():
@@ -68,8 +70,10 @@ def test_wind_rose_init():
 
     # Pass ti_table in as a single float and confirm it is broadcast to the correct shape
     wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06)
-    np.testing.assert_allclose(wind_rose.ti_table,
-                               np.array([[0.06, 0.06], [0.06, 0.06], [0.06, 0.06]]))
+    np.testing.assert_allclose(
+        wind_rose.ti_table,
+        np.array([[0.06, 0.06], [0.06, 0.06], [0.06, 0.06]])
+    )
 
     # Pass ti_table in as a 2D array and confirm it is used as is
     ti_table = np.array([[0.06, 0.06], [0.06, 0.06], [0.06, 0.06]])
@@ -78,9 +82,11 @@ def test_wind_rose_init():
 
     # Confirm passing in a ti_table that is 1D raises an error
     with pytest.raises(ValueError):
-        WindRose(wind_directions,
-                 wind_speeds,
-                 ti_table=np.array([0.06, 0.06, 0.06, 0.06, 0.06, 0.06]))
+        WindRose(
+            wind_directions,
+            wind_speeds,
+            ti_table=np.array([0.06, 0.06, 0.06, 0.06, 0.06, 0.06])
+        )
 
     # Confirm passing in a ti_table that is wrong dimensions raises an error
     with pytest.raises(ValueError):
@@ -125,7 +131,6 @@ def test_wind_rose_unpack():
         freq_table_unpack,
         value_table_unpack,
         heterogenous_inflow_config,
-
     ) = wind_rose.unpack()
 
     # Given the above frequency table with zeros for a few elements,
@@ -477,28 +482,40 @@ def test_time_series_to_wind_ti_rose():
 def test_get_speed_multipliers_by_wd():
 
     heterogenous_inflow_config_by_wd = {
-        'speed_multipliers': np.array([[1.0, 1.1, 1.2],
-                                       [1.1, 1.1, 1.1],
-                                       [1.3, 1.4, 1.5],]),
+        'speed_multipliers': np.array(
+            [
+                [1.0, 1.1, 1.2],
+                [1.1, 1.1, 1.1],
+                [1.3, 1.4, 1.5],
+            ]
+        ),
         'wind_directions': np.array([0, 90, 270])
     }
 
     # Check for correctness
     wind_directions = np.array([240, 80,15])
-    expected_output = np.array([[1.3, 1.4, 1.5],
-                                [1.1, 1.1, 1.1],
-                                [1.0, 1.1, 1.2]])
+    expected_output = np.array(
+        [
+            [1.3, 1.4, 1.5],
+            [1.1, 1.1, 1.1],
+            [1.0, 1.1, 1.2]
+        ]
+    )
     wind_data = WindDataBase()
-    result = wind_data.get_speed_multipliers_by_wd(heterogenous_inflow_config_by_wd,
-                                                   wind_directions)
+    result = wind_data.get_speed_multipliers_by_wd(
+        heterogenous_inflow_config_by_wd,
+        wind_directions
+    )
     assert np.allclose(result, expected_output)
 
     # Confirm wrapping behavior
     wind_directions = np.array([350, 10])
     expected_output = np.array([[1.0, 1.1, 1.2],
                                 [1.0, 1.1, 1.2]])
-    result = wind_data.get_speed_multipliers_by_wd(heterogenous_inflow_config_by_wd,
-                                                   wind_directions)
+    result = wind_data.get_speed_multipliers_by_wd(
+        heterogenous_inflow_config_by_wd,
+        wind_directions
+    )
     assert np.allclose(result, expected_output)
 
     # Confirm can expand the result to match wind directions
@@ -515,9 +532,13 @@ def test_gen_heterogenous_inflow_config():
     turbulence_intensities = 0.06
 
     heterogenous_inflow_config_by_wd = {
-        'speed_multipliers': np.array([[0.9, 0.9],
-                                       [1.0, 1.0],
-                                       [1.1, 1.2],]),
+        'speed_multipliers': np.array(
+            [
+                [0.9, 0.9],
+                [1.0, 1.0],
+                [1.1, 1.2],
+            ]
+        ),
         'wind_directions' : np.array([250, 260, 270]),
         'x' : np.array([0, 1000]),
         'y' : np.array([0, 0]),
@@ -532,10 +553,14 @@ def test_gen_heterogenous_inflow_config():
 
     (_, _, _, _, _, heterogenous_inflow_config) = time_series.unpack()
 
-    expected_result = np.array([[1.0, 1.0],
-                               [1.0, 1.0],
-                               [1.0, 1.0],
-                                 [1.0, 1.0],
-                                 [1.1, 1.2]])
+    expected_result = np.array(
+        [
+            [1.0, 1.0],
+            [1.0, 1.0],
+            [1.0, 1.0],
+            [1.0, 1.0],
+            [1.1, 1.2]
+        ]
+    )
     np.testing.assert_allclose(heterogenous_inflow_config['speed_multipliers'], expected_result)
     np.testing.assert_allclose(heterogenous_inflow_config['x'],heterogenous_inflow_config_by_wd['x'])

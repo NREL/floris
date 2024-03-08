@@ -26,9 +26,11 @@ fi.set(layout_x=[0, 1000.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])
 
 # Set the wind directions and speeds to be constant over n_findex = N time steps
 N = 50
-fi.set(wind_directions=270 * np.ones(N),
-        wind_speeds=10.0 * np.ones(N),
-        turbulence_intensities=0.06 * np.ones(N))
+fi.set(
+    wind_directions=270 * np.ones(N),
+    wind_speeds=10.0 * np.ones(N),
+    turbulence_intensities=0.06 * np.ones(N)
+)
 fi.run()
 turbine_powers_orig = fi.get_turbine_powers()
 

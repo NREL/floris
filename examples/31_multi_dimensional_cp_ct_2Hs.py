@@ -35,12 +35,16 @@ fi_hs_1.set(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
 wind_speeds = np.arange(5, 20, 1.0)
 wind_directions = 270.0 * np.ones_like(wind_speeds)
 turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
-fi.set(wind_directions=wind_directions,
-       wind_speeds=wind_speeds,
-       turbulence_intensities=turbulence_intensities)
-fi_hs_1.set(wind_directions=wind_directions,
-            wind_speeds=wind_speeds,
-            turbulence_intensities=turbulence_intensities)
+fi.set(
+    wind_directions=wind_directions,
+    wind_speeds=wind_speeds,
+    turbulence_intensities=turbulence_intensities
+)
+fi_hs_1.set(
+    wind_directions=wind_directions,
+    wind_speeds=wind_speeds,
+    turbulence_intensities=turbulence_intensities
+)
 
 # Calculate wakes with baseline yaw
 fi.run()

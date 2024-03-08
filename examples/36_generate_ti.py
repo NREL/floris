@@ -53,9 +53,11 @@ N = 100
 wind_directions = 270 * np.ones(N)
 wind_speeds = np.linspace(5, 15, N)
 turbulence_intensities =  0.06 * np.ones(N)
-time_series = TimeSeries(wind_directions=wind_directions,
-                         wind_speeds=wind_speeds,
-                         turbulence_intensities=turbulence_intensities)
+time_series = TimeSeries(
+    wind_directions=wind_directions,
+    wind_speeds=wind_speeds,
+    turbulence_intensities=turbulence_intensities
+)
 time_series.assign_ti_using_IEC_method(Iref=Iref)
 
 fig, axarr = plt.subplots(2, 1, sharex=True, figsize=(7, 8))

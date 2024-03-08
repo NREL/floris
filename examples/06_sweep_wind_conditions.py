@@ -47,9 +47,11 @@ wd_array = wind_directions_grid.flatten()
 turbulence_intensities = 0.06 * np.ones_like(wd_array)
 
 # Now reinitialize FLORIS
-fi.set(wind_speeds=ws_array,
-       wind_directions=wd_array,
-       turbulence_intensities=turbulence_intensities)
+fi.set(
+    wind_speeds=ws_array,
+    wind_directions=wd_array,
+    turbulence_intensities=turbulence_intensities
+)
 
 # Define a matrix of yaw angles to be all 0
 # Note that yaw angles is now specified as a matrix whose dimensions are

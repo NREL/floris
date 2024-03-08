@@ -67,17 +67,19 @@ heterogenous_inflow_config_by_wd = {
 }
 
 # Establish a WindRose object
-wind_rose = WindRose(wind_directions=wind_directions,
-                     wind_speeds=wind_speeds,
-                     freq_table=freq_table,
-                     ti_table=0.06,
-                     heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd)
+wind_rose = WindRose(
+    wind_directions=wind_directions,
+    wind_speeds=wind_speeds,
+    freq_table=freq_table,
+    ti_table=0.06,
+    heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd
+)
 
 
 fi.set(
     layout_x=layout_x,
     layout_y=layout_y,
-    wind_data=wind_rose
+    wind_data=wind_rose,
 )
 
 # Setup and solve the layout optimization problem without heterogeneity

@@ -1014,9 +1014,11 @@ class FlorisInterface(LoggingManager):
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
-        self.set(wind_speeds=wind_speeds,
-                 wind_directions=wind_directions,
-                 turbulence_intensities=turbulence_intensities)
+        self.set(
+            wind_speeds=wind_speeds,
+            wind_directions=wind_directions,
+            turbulence_intensities=turbulence_intensities
+        )
 
         return aep
 

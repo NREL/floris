@@ -42,9 +42,11 @@ wd_array = 270.0 * np.ones_like(ws_array)
 ti_array = 0.06 * np.ones_like(ws_array)
 fi_fixed.set(wind_speeds=ws_array,  wind_directions=wd_array, turbulence_intensities=ti_array)
 fi_floating.set(wind_speeds=ws_array, wind_directions=wd_array, turbulence_intensities=ti_array)
-fi_floating_defined_floating.set(wind_speeds=ws_array,
-                                 wind_directions=wd_array,
-                                   turbulence_intensities=ti_array)
+fi_floating_defined_floating.set(
+    wind_speeds=ws_array,
+    wind_directions=wd_array,
+    turbulence_intensities=ti_array
+)
 
 fi_fixed.run()
 fi_floating.run()
