@@ -321,7 +321,7 @@ class TUMLossTurbine(BaseOperationModel):
 
     The method requires C_P, C_T look-up tables as functions of tip speed ratio and blade pitch
     angle, available here:
-    "../floris/turbine_library/LUT_IEA3MW.npz" for the IEA 3.4 MW (Bortolotti et al., 2019)
+    "../floris/turbine_library/LUT_iea15MW.npz" for the IEA 3.4 MW (Bortolotti et al., 2019)
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively.
     There are also two new functions, i.e. compute_local_vertical_shear() and control_trajectory().
@@ -568,7 +568,7 @@ class TUMLossTurbine(BaseOperationModel):
             return y
 
         pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_IEA3MW.npz"
+        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
         LUT         = np.load(lut_file)
         cp_i = LUT['cp_lut']
         pitch_i = LUT['pitch_lut']
@@ -580,8 +580,8 @@ class TUMLossTurbine(BaseOperationModel):
         max_cp    = cp_i[idx[0],idx[1]]
 
         omega_cut_in = 0     # RPM
-        omega_max    = 11.75 # RPM
-        rated_power_aero  = 3.37e6/0.936  # MW
+        omega_max    = power_thrust_table["rated_rpm"] # RPM 
+        rated_power_aero  = power_thrust_table["rated_power"]/power_thrust_table["generator_efficiency"]  # MW
         #%% Compute torque-rpm relation and check for region 2-and-a-half
         Region2andAhalf = False
 
@@ -896,7 +896,7 @@ class TUMLossTurbine(BaseOperationModel):
     ############################################################################
 
         pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_IEA3MW.npz"
+        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
         LUT         = np.load(lut_file)
         cp_i = LUT['cp_lut']
         pitch_i = LUT['pitch_lut']
@@ -914,8 +914,8 @@ class TUMLossTurbine(BaseOperationModel):
                 cp_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
                 power_coefficient[i,j] = np.squeeze(cp_interp*ratio[i,j])
 
-        # print('Tip speed ratio' + str(tsr_array))
-        # print('Pitch out: ' + str(pitch_out))
+        print('Tip speed ratio' + str(tsr_array))
+        print('Pitch out: ' + str(pitch_out))
         power = (
             0.5*air_density*(rotor_effective_velocities)**3*np.pi*R**2
             *(power_coefficient)*power_thrust_table["generator_efficiency"]
@@ -1060,7 +1060,7 @@ class TUMLossTurbine(BaseOperationModel):
         ratio = thrust_coefficient1/thrust_coefficient0
 
         pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_IEA3MW.npz"
+        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
         LUT         = np.load(lut_file)
         ct_i = LUT['ct_lut']
         pitch_i = LUT['pitch_lut']
@@ -1220,7 +1220,7 @@ class TUMLossTurbine(BaseOperationModel):
         ratio = thrust_coefficient1/thrust_coefficient0
 
         pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_IEA3MW.npz"
+        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
         LUT         = np.load(lut_file)
         ct_i = LUT['ct_lut']
         pitch_i = LUT['pitch_lut']
