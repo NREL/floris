@@ -127,7 +127,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # I001 unsorted-imports: ignore because the import order is meaningful to navigate
 # import dependencies
-"floris/simulation/__init__.py" = ["I001"]
+"floris/core/__init__.py" = ["I001"]
 
 [tool.ruff.isort]
 combine-as-imports = true
