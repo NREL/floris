@@ -4,8 +4,8 @@ from pathlib import Path
 import yaml
 
 from floris.core import (
-    Farm,
     Core,
+    Farm,
     FlowField,
     TurbineGrid,
     WakeModelManager,
