@@ -6,7 +6,7 @@ import warnings
 import numpy as np
 from linux_perf import perf
 
-from floris.simulation import Floris
+from floris.core import Core
 
 
 wd_grid, ws_grid = np.meshgrid(
@@ -33,9 +33,9 @@ N_ITERATIONS = 20
 def run_floris(input_dict):
     try:
         start = time.perf_counter()
-        floris = Floris.from_dict(copy.deepcopy(input_dict.core))
-        floris.initialize_domain()
-        floris.steady_state_atmospheric_condition()
+        core = Core.from_dict(copy.deepcopy(input_dict.core))
+        core.initialize_domain()
+        core.steady_state_atmospheric_condition()
         end = time.perf_counter()
         return end - start
     except KeyError:
@@ -85,15 +85,15 @@ def test_time_cumulative(sample_inputs_fixture):
 
 def memory_profile(input_dict):
     # Run once to initialize Python and memory
-    floris = Floris.from_dict(copy.deepcopy(input_dict.core))
-    floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    core = Core.from_dict(copy.deepcopy(input_dict.core))
+    core.initialize_domain()
+    core.steady_state_atmospheric_condition()
 
     with perf():
         for i in range(N_ITERATIONS):
-            floris = Floris.from_dict(copy.deepcopy(input_dict.core))
-            floris.initialize_domain()
-            floris.steady_state_atmospheric_condition()
+            core = Core.from_dict(copy.deepcopy(input_dict.core))
+            core.initialize_domain()
+            core.steady_state_atmospheric_condition()
 
     print(
         "Size of one data array: "
