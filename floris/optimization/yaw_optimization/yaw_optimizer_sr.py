@@ -76,7 +76,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         layout_x = self.fmodel.layout_x
         layout_y = self.fmodel.layout_y
         turbines_ordered_array = []
-        for wd in self.fi_subset.core.flow_field.wind_directions:
+        for wd in self.fmodel_subset.core.flow_field.wind_directions:
             layout_x_rot = (
                 np.cos((wd - 270.0) * np.pi / 180.0) * layout_x
                 - np.sin((wd - 270.0) * np.pi / 180.0) * layout_y
@@ -90,9 +90,9 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         # Define current optimal solutions and floris wind directions locally
         yaw_angles_opt_subset = self._yaw_angles_opt_subset
         farm_power_opt_subset = self._farm_power_opt_subset
-        wd_array_subset = self.fi_subset.core.flow_field.wind_directions
-        ws_array_subset = self.fi_subset.core.flow_field.wind_speeds
-        ti_array_subset = self.fi_subset.core.flow_field.turbulence_intensities
+        wd_array_subset = self.fmodel_subset.core.flow_field.wind_directions
+        ws_array_subset = self.fmodel_subset.core.flow_field.wind_speeds
+        ti_array_subset = self.fmodel_subset.core.flow_field.turbulence_intensities
         turbine_weights_subset = self._turbine_weights_subset
 
         # Reformat yaw_angles_subset, if necessary
@@ -153,7 +153,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
                 farm_powers,
                 (
                     Ny,
-                    self.fi_subset.core.flow_field.n_findex
+                    self.fmodel_subset.core.flow_field.n_findex
                 )
             )
 

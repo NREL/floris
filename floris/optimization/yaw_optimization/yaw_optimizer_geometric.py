@@ -42,12 +42,12 @@ class YawOptimizationGeometric(YawOptimization):
             array is equal in length to the number of turbines in the farm.
         """
         # Loop through every WD individually. WS ignored!
-        wd_array = self.fi_subset.core.flow_field.wind_directions
+        wd_array = self.fmodel_subset.core.flow_field.wind_directions
 
         for nwdi, wd in enumerate(wd_array):
             self._yaw_angles_opt_subset[nwdi, :] = geometric_yaw(
-                self.fi_subset.layout_x,
-                self.fi_subset.layout_y,
+                self.fmodel_subset.layout_x,
+                self.fmodel_subset.layout_y,
                 wd,
                 self.fmodel.core.farm.turbine_definitions[0]["rotor_diameter"],
                 top_left_yaw_upper=self.maximum_yaw_angle[0, 0],

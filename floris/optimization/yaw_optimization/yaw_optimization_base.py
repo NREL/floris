@@ -224,7 +224,7 @@ class YawOptimization(LoggingManager):
         self.turbs_to_opt = (self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001)
 
         # Initialize subset variables as full set
-        self.fi_subset = self.fmodel.copy()
+        self.fmodel_subset = self.fmodel.copy()
         n_findex_subset = copy.deepcopy(self.fmodel.core.flow_field.n_findex)
         minimum_yaw_angle_subset = copy.deepcopy(self.minimum_yaw_angle)
         maximum_yaw_angle_subset = copy.deepcopy(self.maximum_yaw_angle)
@@ -325,19 +325,19 @@ class YawOptimization(LoggingManager):
             farm_power (float): Weighted wind farm power.
         """
         # Unpack all variables, whichever are defined.
-        fi_subset = copy.deepcopy(self.fi_subset)
+        fmodel_subset = copy.deepcopy(self.fmodel_subset)
         if wd_array is None:
-            wd_array = fi_subset.core.flow_field.wind_directions
+            wd_array = fmodel_subset.core.flow_field.wind_directions
         if ws_array is None:
-            ws_array = fi_subset.core.flow_field.wind_speeds
+            ws_array = fmodel_subset.core.flow_field.wind_speeds
         if ti_array is None:
-            ti_array = fi_subset.core.flow_field.turbulence_intensities
+            ti_array = fmodel_subset.core.flow_field.turbulence_intensities
         if yaw_angles is None:
             yaw_angles = self._yaw_angles_baseline_subset
         if turbine_weights is None:
             turbine_weights = self._turbine_weights_subset
         if heterogeneous_speed_multipliers is not None:
-            fi_subset.core.flow_field.\
+            fmodel_subset.core.flow_field.\
                 heterogenous_inflow_config['speed_multipliers'] = heterogeneous_speed_multipliers
 
         # Ensure format [incompatible with _subset notation]
@@ -348,14 +348,14 @@ class YawOptimization(LoggingManager):
 
         # Calculate solutions
         turbine_power = np.zeros_like(self._minimum_yaw_angle_subset[:, :])
-        fi_subset.set(
+        fmodel_subset.set(
             wind_directions=wd_array,
             wind_speeds=ws_array,
             turbulence_intensities=ti_array,
             yaw_angles=yaw_angles,
         )
-        fi_subset.run()
-        turbine_power = fi_subset.get_turbine_powers()
+        fmodel_subset.run()
+        turbine_power = fmodel_subset.get_turbine_powers()
 
         # Multiply with turbine weighing terms
         turbine_power_weighted = np.multiply(turbine_weights, turbine_power)
@@ -494,9 +494,9 @@ class YawOptimization(LoggingManager):
         # to its baseline value for all conditions.
         n_turbs = len(self.fmodel.layout_x)
         sp = (n_turbs, 1)  # Tile shape for matrix expansion
-        wd_array_nominal = self.fi_subset.core.flow_field.wind_directions
-        ws_array_nominal = self.fi_subset.core.flow_field.wind_speeds
-        ti_array_nominal = self.fi_subset.core.flow_field.turbulence_intensities
+        wd_array_nominal = self.fmodel_subset.core.flow_field.wind_directions
+        ws_array_nominal = self.fmodel_subset.core.flow_field.wind_speeds
+        ti_array_nominal = self.fmodel_subset.core.flow_field.turbulence_intensities
         n_wind_directions = len(wd_array_nominal)
         yaw_angles_verify = np.tile(yaw_angles_opt_subset, sp)
         yaw_angles_bl_verify = np.tile(yaw_angles_baseline_subset, sp)
@@ -564,7 +564,7 @@ class YawOptimization(LoggingManager):
                 diff_uplift = dP_old - dP_new
                 ids_max_loss = np.where(np.nanmax(diff_uplift) == diff_uplift)
                 jj = (ids_max_loss[0][0], ids_max_loss[1][0])
-                ws_array_nominal = self.fi_subset.core.flow_field.wind_speeds
+                ws_array_nominal = self.fmodel_subset.core.flow_field.wind_speeds
                 print(
                     "Nullified the optimal yaw offset for {:d}".format(n) +
                     " conditions and turbines."

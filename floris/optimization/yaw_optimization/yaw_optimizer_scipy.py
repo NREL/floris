@@ -68,12 +68,12 @@ class YawOptimizationScipy(YawOptimization):
             array is equal in length to the number of turbines in the farm.
         """
         # Loop through every wind condition individually
-        wd_array = self.fi_subset.core.flow_field.wind_directions
-        ws_array = self.fi_subset.core.flow_field.wind_speeds
-        ti_array = self.fi_subset.core.flow_field.turbulence_intensities
+        wd_array = self.fmodel_subset.core.flow_field.wind_directions
+        ws_array = self.fmodel_subset.core.flow_field.wind_speeds
+        ti_array = self.fmodel_subset.core.flow_field.turbulence_intensities
         for i, (wd, ws, ti) in enumerate(zip(wd_array, ws_array, ti_array)):
 
-            self.fi_subset.set(
+            self.fmodel_subset.set(
                 wind_directions=[wd],
                 wind_speeds=[ws],
                 turbulence_intensities=[ti]
