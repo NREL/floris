@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=False):
+def derive_downstream_turbines(fmodel, wind_direction, wake_slope=0.30, plot_lines=False):
     """Determine which turbines have no effect on other turbines in the
     farm, i.e., which turbines have wakes that do not impact the other
     turbines in the farm. This allows the user to exclude these turbines
@@ -23,7 +23,7 @@ def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=F
     time compared to FLORIS.
 
     Args:
-        fi ([floris object]): FLORIS object of the farm of interest.
+        fmodel (FlorisModel): A FlorisModel object.
         wind_direction (float): The wind direction in the FLORIS frame
         of reference for which the downstream turbines are to be determined.
         wake_slope (float, optional): linear slope of the wake (dy/dx)
@@ -37,9 +37,9 @@ def derive_downstream_turbines(fi, wind_direction, wake_slope=0.30, plot_lines=F
     """
 
     # Get farm layout
-    x = fi.layout_x
-    y = fi.layout_y
-    D = np.ones_like(x) * fi.floris.farm.rotor_diameters_sorted[0][0]
+    x = fmodel.layout_x
+    y = fmodel.layout_y
+    D = np.ones_like(x) * fmodel.core.farm.rotor_diameters_sorted[0][0]
     n_turbs = len(x)
 
     # Rotate farm and determine freestream/waked turbines

@@ -15,7 +15,7 @@ class YawOptimizationScipy(YawOptimization):
 
     def __init__(
         self,
-        fi,
+        fmodel,
         minimum_yaw_angle=0.0,
         maximum_yaw_angle=25.0,
         yaw_angles_baseline=None,
@@ -41,7 +41,7 @@ class YawOptimizationScipy(YawOptimization):
             }
 
         super().__init__(
-            fi=fi,
+            fmodel=fmodel,
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
             yaw_angles_baseline=yaw_angles_baseline,
@@ -68,9 +68,9 @@ class YawOptimizationScipy(YawOptimization):
             array is equal in length to the number of turbines in the farm.
         """
         # Loop through every wind condition individually
-        wd_array = self.fi_subset.floris.flow_field.wind_directions
-        ws_array = self.fi_subset.floris.flow_field.wind_speeds
-        ti_array = self.fi_subset.floris.flow_field.turbulence_intensities
+        wd_array = self.fi_subset.core.flow_field.wind_directions
+        ws_array = self.fi_subset.core.flow_field.wind_speeds
+        ti_array = self.fi_subset.core.flow_field.turbulence_intensities
         for i, (wd, ws, ti) in enumerate(zip(wd_array, ws_array, ti_array)):
 
             self.fi_subset.set(
@@ -98,10 +98,10 @@ class YawOptimizationScipy(YawOptimization):
             turbine_weights = np.tile(turbine_weights, (1, 1))
 
             # Handle heterogeneous inflow, if there is one
-            if (hasattr(self.fi.floris.flow_field, 'heterogenous_inflow_config') and
-                self.fi.floris.flow_field.heterogenous_inflow_config is not None):
+            if (hasattr(self.fmodel.core.flow_field, 'heterogenous_inflow_config') and
+                self.fmodel.core.flow_field.heterogenous_inflow_config is not None):
                 het_sm_orig = np.array(
-                    self.fi.floris.flow_field.heterogenous_inflow_config['speed_multipliers']
+                    self.fmodel.core.flow_field.heterogenous_inflow_config['speed_multipliers']
                 )
                 het_sm = het_sm_orig[i, :].reshape(1, -1)
             else:

@@ -11,7 +11,7 @@ from .layout_optimization_base import LayoutOptimization
 class LayoutOptimizationScipy(LayoutOptimization):
     def __init__(
         self,
-        fi,
+        fmodel,
         boundaries,
         wind_data,
         bnds=None,
@@ -24,7 +24,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         _summary_
 
         Args:
-            fi (_type_): _description_
+            fmodel (FlorisModel): A FlorisModel object.
             boundaries (iterable(float, float)): Pairs of x- and y-coordinates
                 that represent the boundary's vertices (m).
             wind_data (TimeSeries | WindRose): A TimeSeries or WindRose object
@@ -39,7 +39,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
             optOptions (dict, optional): Dicitonary for setting the
                 optimization options. Defaults to None.
         """
-        super().__init__(fi, boundaries, min_dist=min_dist, wind_data=wind_data,
+        super().__init__(fmodel, boundaries, min_dist=min_dist, wind_data=wind_data,
                     enable_geometric_yaw=enable_geometric_yaw)
 
         self.boundaries_norm = [
@@ -51,10 +51,10 @@ class LayoutOptimizationScipy(LayoutOptimization):
         ]
         self.x0 = [
             self._norm(x, self.xmin, self.xmax)
-            for x in self.fi.layout_x
+            for x in self.fmodel.layout_x
         ] + [
             self._norm(y, self.ymin, self.ymax)
-            for y in self.fi.layout_y
+            for y in self.fmodel.layout_y
         ]
         if bnds is not None:
             self.bnds = bnds
@@ -97,9 +97,9 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self._change_coordinates(locs_unnorm)
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
-        self.fi.set(yaw_angles=yaw_angles)
+        self.fmodel.set(yaw_angles=yaw_angles)
 
-        return (-1 * self.fi.get_farm_AEP_with_wind_data(self.wind_data) /
+        return (-1 * self.fmodel.get_farm_AEP_with_wind_data(self.wind_data) /
                 self.initial_AEP)
 
 
@@ -113,7 +113,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self.y = layout_y
 
         # Update the turbine map in floris
-        self.fi.set(layout_x=layout_x, layout_y=layout_y)
+        self.fmodel.set(layout_x=layout_x, layout_y=layout_y)
 
     def _generate_constraints(self):
         tmp1 = {

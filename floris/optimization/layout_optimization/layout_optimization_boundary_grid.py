@@ -14,7 +14,7 @@ from .layout_optimization_base import LayoutOptimization
 class LayoutOptimizationBoundaryGrid(LayoutOptimization):
     def __init__(
         self,
-        fi,
+        fmodel,
         boundaries,
         start,
         x_spacing,
@@ -27,7 +27,7 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
         n_boundary_turbines=None,
         boundary_spacing=None,
     ):
-        self.fi = fi
+        self.fmodel = fmodel
 
         self.boundary_x = np.array([val[0] for val in boundaries])
         self.boundary_y = np.array([val[1] for val in boundaries])
@@ -612,13 +612,13 @@ class LayoutOptimizationBoundaryGrid(LayoutOptimization):
             self.boundary_spacing,
         )
 
-        self.fi.set(layout=(layout_x, layout_y))
+        self.fmodel.set(layout=(layout_x, layout_y))
 
     def plot_layout(self):
         plt.figure(figsize=(9, 6))
         fontsize = 16
 
-        plt.plot(self.fi.layout_x, self.fi.layout_y, "ob")
+        plt.plot(self.fmodel.layout_x, self.fmodel.layout_y, "ob")
         # plt.plot(locsx, locsy, "or")
 
         plt.xlabel("x (m)", fontsize=fontsize)

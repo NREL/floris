@@ -18,7 +18,7 @@ class LayoutOptimization(LoggingManager):
     but should be subclassed by a specific optimization method.
 
     Args:
-        fi (FlorisInterface): A FlorisInterface object.
+        fmodel (FlorisModel): A FlorisModel object.
         boundaries (iterable(float, float)): Pairs of x- and y-coordinates
             that represent the boundary's vertices (m).
         wind_data (TimeSeries | WindRose): A TimeSeries or WindRose object
@@ -29,8 +29,8 @@ class LayoutOptimization(LoggingManager):
         enable_geometric_yaw (bool, optional): If True, enables geometric yaw
             optimization. Defaults to False.
     """
-    def __init__(self, fi, boundaries, wind_data, min_dist=None, enable_geometric_yaw=False):
-        self.fi = fi.copy()
+    def __init__(self, fmodel, boundaries, wind_data, min_dist=None, enable_geometric_yaw=False):
+        self.fmodel = fmodel.copy()
         self.boundaries = boundaries
         self.enable_geometric_yaw = enable_geometric_yaw
 
@@ -59,12 +59,12 @@ class LayoutOptimization(LoggingManager):
         # Establish geometric yaw class
         if self.enable_geometric_yaw:
             self.yaw_opt = YawOptimizationGeometric(
-                fi,
+                fmodel,
                 minimum_yaw_angle=-30.0,
                 maximum_yaw_angle=30.0,
             )
 
-        self.initial_AEP = fi.get_farm_AEP_with_wind_data(self.wind_data)
+        self.initial_AEP = fmodel.get_farm_AEP_with_wind_data(self.wind_data)
 
     def __str__(self):
         return "layout"
@@ -137,9 +137,9 @@ class LayoutOptimization(LoggingManager):
         Returns:
             nturbs (int): The number of turbines in the FLORIS object.
         """
-        self._nturbs = self.fi.floris.farm.n_turbines
+        self._nturbs = self.fmodel.core.farm.n_turbines
         return self._nturbs
 
     @property
     def rotor_diameter(self):
-        return self.fi.floris.farm.rotor_diameters_sorted[0][0]
+        return self.fmodel.core.farm.rotor_diameters_sorted[0][0]

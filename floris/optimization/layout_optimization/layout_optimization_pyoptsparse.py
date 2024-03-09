@@ -10,7 +10,7 @@ from .layout_optimization_base import LayoutOptimization
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
     def __init__(
         self,
-        fi,
+        fmodel,
         boundaries,
         wind_data,
         min_dist=None,
@@ -21,11 +21,11 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         hotStart=None,
         enable_geometric_yaw=False,
     ):
-        super().__init__(fi, boundaries, wind_data=wind_data, min_dist=min_dist,
+        super().__init__(fmodel, boundaries, wind_data=wind_data, min_dist=min_dist,
                          enable_geometric_yaw=enable_geometric_yaw)
 
-        self.x0 = self._norm(self.fi.layout_x, self.xmin, self.xmax)
-        self.y0 = self._norm(self.fi.layout_y, self.ymin, self.ymax)
+        self.x0 = self._norm(self.fmodel.layout_x, self.xmin, self.xmax)
+        self.y0 = self._norm(self.fmodel.layout_y, self.ymin, self.ymax)
 
         self.storeHistory = storeHistory
         self.timeLimit = timeLimit
@@ -94,13 +94,13 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
         # Update turbine map with turbine locations and yaw angles
-        self.fi.set(layout_x=self.x, layout_y=self.y, yaw_angles=yaw_angles)
+        self.fmodel.set(layout_x=self.x, layout_y=self.y, yaw_angles=yaw_angles)
 
         # Compute the objective function
         funcs = {}
         funcs["obj"] = (
 
-            -1 * self.fi.get_farm_AEP_with_wind_data(self.wind_data)
+            -1 * self.fmodel.get_farm_AEP_with_wind_data(self.wind_data)
               / self.initial_AEP
 
         )

@@ -16,7 +16,7 @@ class YawOptimizationGeometric(YawOptimization):
 
     def __init__(
         self,
-        fi,
+        fmodel,
         minimum_yaw_angle=0.0,
         maximum_yaw_angle=25.0,
     ):
@@ -26,7 +26,7 @@ class YawOptimizationGeometric(YawOptimization):
         """
 
         super().__init__(
-            fi=fi,
+            fmodel=fmodel,
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
             calc_baseline_power=False
@@ -42,14 +42,14 @@ class YawOptimizationGeometric(YawOptimization):
             array is equal in length to the number of turbines in the farm.
         """
         # Loop through every WD individually. WS ignored!
-        wd_array = self.fi_subset.floris.flow_field.wind_directions
+        wd_array = self.fi_subset.core.flow_field.wind_directions
 
         for nwdi, wd in enumerate(wd_array):
             self._yaw_angles_opt_subset[nwdi, :] = geometric_yaw(
                 self.fi_subset.layout_x,
                 self.fi_subset.layout_y,
                 wd,
-                self.fi.floris.farm.turbine_definitions[0]["rotor_diameter"],
+                self.fmodel.core.farm.turbine_definitions[0]["rotor_diameter"],
                 top_left_yaw_upper=self.maximum_yaw_angle[0, 0],
                 bottom_left_yaw_upper=self.maximum_yaw_angle[0, 0],
                 top_left_yaw_lower=self.minimum_yaw_angle[0, 0],

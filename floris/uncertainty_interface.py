@@ -4,15 +4,15 @@ from pathlib import Path
 
 import numpy as np
 
-from floris.logging_manager import LoggingManager
 from floris import FlorisModel
-from floris.utilities import wrap_360
-from floris.wind_data import WindDataBase
+from floris.logging_manager import LoggingManager
 from floris.type_dec import (
     floris_array_converter,
     NDArrayBool,
     NDArrayFloat,
 )
+from floris.utilities import wrap_360
+from floris.wind_data import WindDataBase
 
 
 class UncertaintyInterface(LoggingManager):
@@ -29,7 +29,7 @@ class UncertaintyInterface(LoggingManager):
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
                 - **wake**: See `floris.simulation.wake.WakeManager` for more details.
-                - **logging**: See `floris.simulation.floris.Floris` for more details.
+                - **logging**: See `floris.core.Core` for more details.
         wd_resolution (float, optional): The resolution of wind direction, in degrees.
             Defaults to 1.0.
         ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
@@ -65,7 +65,7 @@ class UncertaintyInterface(LoggingManager):
                     - **farm**: See `floris.simulation.farm.Farm` for more details.
                     - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
                     - **wake**: See `floris.simulation.wake.WakeManager` for more details.
-                    - **logging**: See `floris.simulation.floris.Floris` for more details.
+                    - **logging**: See `floris.simulation.core.core` for more details.
             wd_resolution (float, optional): The resolution of wind direction for generating
                 gaussian blends, in degrees.  Defaults to 1.0.
             ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
@@ -106,7 +106,7 @@ class UncertaintyInterface(LoggingManager):
         self.set()
 
         # Instantiate the expanded FlorisModel
-        # self.floris_interface = FlorisModel(configuration)
+        # self.core_interface = FlorisModel(configuration)
 
 
     def set(
@@ -637,7 +637,7 @@ class UncertaintyInterface(LoggingManager):
         Returns:
             np.array: Wind turbine x-coordinate.
         """
-        return self.floris_interface.floris.farm.layout_x
+        return self.core_interface.core.farm.layout_x
 
     @property
     def layout_y(self):
@@ -647,4 +647,4 @@ class UncertaintyInterface(LoggingManager):
         Returns:
             np.array: Wind turbine y-coordinate.
         """
-        return self.floris_interface.floris.farm.layout_y
+        return self.core_interface.core.farm.layout_y

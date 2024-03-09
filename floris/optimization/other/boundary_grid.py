@@ -246,10 +246,9 @@ class BoundaryGrid:
         FlorisModel object.
 
         Args:
-            fi (:py:class:`~.floris.FlorisModel`):
-                Interface used to interact with the Floris object.
+            fmodel (FlorisModel): A FlorisModel object.
         """
-        self.fi = fi
+        self.fmodel = fi
 
         self.n_boundary_turbs = 0
         self.start = 0.0
@@ -332,7 +331,7 @@ class BoundaryGrid:
             eps=self.eps,
         )
 
-        self.fi.reinitialize_flow_field(layout_array=(layout_x, layout_y))
+        self.fmodel.reinitialize_flow_field(layout_array=(layout_x, layout_y))
 
 
 if __name__ == "__main__":

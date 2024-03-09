@@ -15,10 +15,10 @@ from attrs import define, field
 from matplotlib import rcParams
 from scipy.spatial import ConvexHull
 
+from floris import FlorisModel
 from floris.core import Core
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.cut_plane import CutPlane
-from floris import FlorisModel
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,
@@ -215,7 +215,7 @@ def visualize_heterogeneous_cut_plane(
     Args:
         cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
             plane through wind plant.
-        fmodel (:py:class:`~.floris.FlorisModel`): FlorisModel object.
+        fmodel (FlorisModel): FlorisModel object.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
             to None.
         vel_component (str, optional): The velocity component that the cut plane is
@@ -497,7 +497,7 @@ def calculate_horizontal_plane_with_turbines(
         for models where the visualization capability is not yet available.
 
         Args:
-            fmodel_in (:py:class:`~.floris.FlorisModel`): Preinitialized FlorisModel object.
+            fmodel_in (FlorisModel): Preinitialized FlorisModel object.
             x_resolution (float, optional): Output array resolution. Defaults to 200 points.
             y_resolution (float, optional): Output array resolution. Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.

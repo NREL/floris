@@ -12,31 +12,31 @@ from floris.uncertainty_interface import FlorisModel, UncertaintyInterface
 
 
 def _load_local_floris_object(
-    fi_dict,
+    fmodel_dict,
     unc_pmfs=None,
     fix_yaw_in_relative_frame=False
 ):
     # Load local FLORIS object
     if unc_pmfs is None:
-        fi = FlorisInterface(fi_dict)
+        fmodel = FlorisModel(fmodel_dict)
     else:
-        fi = UncertaintyInterface(
-            fi_dict,
+        fmodel = UncertaintyInterface(
+            fmodel_dict,
             unc_pmfs=unc_pmfs,
             fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
         )
-    return fi
+    return fmodel
 
 
 def _get_turbine_powers_serial(fi_information, yaw_angles=None):
-    fi = _load_local_floris_object(*fi_information)
-    fi.set(yaw_angles=yaw_angles)
-    fi.run()
-    return (fi.get_turbine_powers(), fi.floris.flow_field)
+    fmodel = _load_local_floris_object(*fi_information)
+    fmodel.set(yaw_angles=yaw_angles)
+    fmodel.run()
+    return (fmodel.get_turbine_powers(), fmodel.core.flow_field)
 
 
 def _optimize_yaw_angles_serial(
-    fi_information,
+    fmodel_information,
     minimum_yaw_angle,
     maximum_yaw_angle,
     yaw_angles_baseline,
@@ -47,9 +47,9 @@ def _optimize_yaw_angles_serial(
     verify_convergence,
     print_progress,
 ):
-    fi_opt = _load_local_floris_object(*fi_information)
+    fmodel_opt = _load_local_floris_object(*fmodel_information)
     yaw_opt = YawOptimizationSR(
-        fi=fi_opt,
+        fmodel=fmodel_opt,
         minimum_yaw_angle=minimum_yaw_angle,
         maximum_yaw_angle=maximum_yaw_angle,
         yaw_angles_baseline=yaw_angles_baseline,
@@ -68,7 +68,7 @@ def _optimize_yaw_angles_serial(
 class ParallelComputingInterface(LoggingManager):
     def __init__(
         self,
-        fi,
+        fmodel,
         max_workers,
         n_wind_condition_splits,
         interface="multiprocessing",  # Options are 'multiprocessing', 'mpi4py' or 'concurrent'
@@ -77,11 +77,11 @@ class ParallelComputingInterface(LoggingManager):
         print_timings=False
     ):
         """A wrapper around the nominal floris_interface class that adds
-        parallel computing to common FlorisInterface properties.
+        parallel computing to common FlorisModel properties.
 
         Args:
-        fi (FlorisInterface or UncertaintyInterface object): Interactive FLORIS object used to
-            perform the wake and turbine calculations. Can either be a regular FlorisInterface
+        fmodel (FlorisModel or UncertaintyInterface object): Interactive FLORIS object used to
+            perform the wake and turbine calculations. Can either be a regular FlorisModel
             object or can be an UncertaintyInterface object.
         max_workers (int): Number of parallel workers, typically equal to the number of cores
             you have on your system or HPC.
@@ -128,15 +128,15 @@ class ParallelComputingInterface(LoggingManager):
             )
 
         # Initialize floris object and copy common properties
-        self.fi = fi.copy()
-        self.floris = self.fi.floris  # Static copy as a placeholder
+        self.fmodel = fmodel.copy()
+        self.core = self.fmodel.core  # Static copy as a placeholder
 
         # Save to self
         self._n_wind_condition_splits = n_wind_condition_splits  # Save initial user input
         self._max_workers = max_workers  # Save initial user input
 
         self.n_wind_condition_splits = int(
-            np.min([n_wind_condition_splits, self.fi.floris.flow_field.n_findex])
+            np.min([n_wind_condition_splits, self.fmodel.core.flow_field.n_findex])
         )
         self.max_workers = int(
             np.min([max_workers, self.n_wind_condition_splits])
@@ -148,7 +148,7 @@ class ParallelComputingInterface(LoggingManager):
     def copy(self):
         # Make an independent copy
         self_copy = copy.deepcopy(self)
-        self_copy.fi = self.fi.copy()
+        self_copy.fmodel = self.fmodel.copy()
         return self_copy
 
     def set(
@@ -166,8 +166,8 @@ class ParallelComputingInterface(LoggingManager):
         turbine_type=None,
         solver_settings=None,
     ):
-        """Pass to the FlorisInterface set function. To allow users
-        to directly replace a FlorisInterface object with this
+        """Pass to the FlorisModel set function. To allow users
+        to directly replace a FlorisModel object with this
         UncertaintyInterface object, this function is required."""
 
         if layout is not None:
@@ -178,8 +178,8 @@ class ParallelComputingInterface(LoggingManager):
             layout_y = layout[1]
 
         # Just passes arguments to the floris object
-        fi = self.fi.copy()
-        fi.set(
+        fmodel = self.fmodel.copy()
+        fmodel.set(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
             wind_shear=wind_shear,
@@ -195,7 +195,7 @@ class ParallelComputingInterface(LoggingManager):
 
         # Reinitialize settings
         self.__init__(
-            fi=fi,
+            fmodel=fmodel,
             max_workers=self._max_workers,
             n_wind_condition_splits=self._n_wind_condition_splits,
             interface=self.interface,
@@ -207,43 +207,43 @@ class ParallelComputingInterface(LoggingManager):
         # Format yaw angles
         if yaw_angles is None:
             yaw_angles = np.zeros((
-                self.fi.floris.flow_field.n_findex,
-                self.fi.floris.farm.n_turbines
+                self.fmodel.core.flow_field.n_findex,
+                self.fmodel.core.farm.n_turbines
             ))
 
         # Prepare settings
         n_wind_condition_splits = self.n_wind_condition_splits
         n_wind_condition_splits = np.min(
-            [n_wind_condition_splits, self.fi.floris.flow_field.n_findex]
+            [n_wind_condition_splits, self.fmodel.core.flow_field.n_findex]
         )
 
         # Prepare the input arguments for parallel execution
-        fi_dict = self.fi.floris.as_dict()
+        fi_dict = self.fmodel.core.as_dict()
         wind_condition_id_splits = np.array_split(
-            np.arange(self.fi.floris.flow_field.n_findex),
+            np.arange(self.fmodel.core.flow_field.n_findex),
             n_wind_condition_splits,
         )
         multiargs = []
         for wc_id_split in wind_condition_id_splits:
             # for ws_id_split in wind_speed_id_splits:
             fi_dict_split = copy.deepcopy(fi_dict)
-            wind_directions = self.fi.floris.flow_field.wind_directions[wc_id_split]
-            wind_speeds = self.fi.floris.flow_field.wind_speeds[wc_id_split]
-            turbulence_intensities = self.fi.floris.flow_field.turbulence_intensities[wc_id_split]
+            wind_directions = self.fmodel.core.flow_field.wind_directions[wc_id_split]
+            wind_speeds = self.fmodel.core.flow_field.wind_speeds[wc_id_split]
+            turbulence_intensities = self.fmodel.core.flow_field.turbulence_intensities[wc_id_split]
             yaw_angles_subset = yaw_angles[wc_id_split[0]:wc_id_split[-1]+1, :]
             fi_dict_split["flow_field"]["wind_directions"] = wind_directions
             fi_dict_split["flow_field"]["wind_speeds"] = wind_speeds
             fi_dict_split["flow_field"]["turbulence_intensities"] = turbulence_intensities
 
             # Prepare lightweight data to pass along
-            if isinstance(self.fi, FlorisInterface):
+            if isinstance(self.fmodel, FlorisModel):
                 fi_information = (fi_dict_split, None, None)
             else:
                 fi_information = (
                     fi_dict_split,
-                    self.fi.fi.het_map,
-                    self.fi.unc_pmfs,
-                    self.fi.fix_yaw_in_relative_frame
+                    self.fmodel.fmodel.het_map,
+                    self.fmodel.unc_pmfs,
+                    self.fmodel.fix_yaw_in_relative_frame
                 )
             multiargs.append((fi_information, yaw_angles_subset))
 
@@ -266,14 +266,14 @@ class ParallelComputingInterface(LoggingManager):
 
         # Optionally, also merge flow field dictionaries from individual floris solutions
         if self.propagate_flowfield_from_workers:
-            self.floris = self.fi.floris  # Refresh static copy of underlying floris class
-            # self.floris.flow_field.u_initial = self._merge_subsets("u_initial", flowfield_subsets)
-            # self.floris.flow_field.v_initial = self._merge_subsets("v_initial", flowfield_subsets)
-            # self.floris.flow_field.w_initial = self._merge_subsets("w_initial", flowfield_subsets)
-            self.floris.flow_field.u = self._merge_subsets("u", flowfield_subsets)
-            self.floris.flow_field.v = self._merge_subsets("v", flowfield_subsets)
-            self.floris.flow_field.w = self._merge_subsets("w", flowfield_subsets)
-            self.floris.flow_field.turbulence_intensity_field = self._merge_subsets(
+            self.core = self.fmodel.core  # Refresh static copy of underlying floris class
+            # self.core.flow_field.u_initial = self._merge_subsets("u_initial", flowfield_subsets)
+            # self.core.flow_field.v_initial = self._merge_subsets("v_initial", flowfield_subsets)
+            # self.core.flow_field.w_initial = self._merge_subsets("w_initial", flowfield_subsets)
+            self.core.flow_field.u = self._merge_subsets("u", flowfield_subsets)
+            self.core.flow_field.v = self._merge_subsets("v", flowfield_subsets)
+            self.core.flow_field.w = self._merge_subsets("w", flowfield_subsets)
+            self.core.flow_field.turbulence_intensity_field = self._merge_subsets(
                 "turbulence_intensity_field",
                 flowfield_subsets
             )
@@ -329,8 +329,8 @@ class ParallelComputingInterface(LoggingManager):
             # Default to equal weighing of all turbines when turbine_weights is None
             turbine_weights = np.ones(
                 (
-                    self.fi.floris.flow_field.n_findex,
-                    self.fi.floris.farm.n_turbines
+                    self.fmodel.core.flow_field.n_findex,
+                    self.fmodel.core.farm.n_turbines
                 )
             )
         elif len(np.shape(turbine_weights)) == 1:
@@ -338,7 +338,7 @@ class ParallelComputingInterface(LoggingManager):
             turbine_weights = np.tile(
                 turbine_weights,
                 (
-                    self.fi.floris.flow_field.n_findex,
+                    self.fmodel.core.flow_field.n_findex,
                     1
                 )
             )
@@ -407,7 +407,7 @@ class ParallelComputingInterface(LoggingManager):
 
         # If no_wake==True, ignore parallelization because it's fast enough
         if no_wake:
-            return self.fi.get_farm_AEP(
+            return self.fmodel.get_farm_AEP(
                 freq=freq,
                 cut_in_wind_speed=cut_in_wind_speed,
                 cut_out_wind_speed=cut_out_wind_speed,
@@ -418,8 +418,8 @@ class ParallelComputingInterface(LoggingManager):
 
         # Verify dimensions of the variable "freq"
         if not (
-            (np.shape(freq)[0] == self.fi.floris.flow_field.n_wind_directions)
-            & (np.shape(freq)[1] == self.fi.floris.flow_field.n_wind_speeds)
+            (np.shape(freq)[0] == self.fmodel.core.flow_field.n_wind_directions)
+            & (np.shape(freq)[1] == self.fmodel.core.flow_field.n_wind_speeds)
             & (len(np.shape(freq)) == 2)
         ):
             raise UserWarning(
@@ -435,13 +435,13 @@ class ParallelComputingInterface(LoggingManager):
 
         # Copy the full wind speed array from the floris object and initialize
         # the the farm_power variable as an empty array.
-        wind_speeds = np.array(self.fi.floris.flow_field.wind_speeds, copy=True)
-        wind_directions = np.array(self.fi.floris.flow_field.wind_directions, copy=True)
+        wind_speeds = np.array(self.fmodel.core.flow_field.wind_speeds, copy=True)
+        wind_directions = np.array(self.fmodel.core.flow_field.wind_directions, copy=True)
         turbulence_intensities = np.array(
-            self.fi.floris.flow_field.turbulence_intensities,
+            self.fmodel.core.flow_field.turbulence_intensities,
             copy=True,
         )
-        farm_power = np.zeros((self.fi.floris.flow_field.n_wind_directions, len(wind_speeds)))
+        farm_power = np.zeros((self.fmodel.core.flow_field.n_wind_directions, len(wind_speeds)))
 
         # Determine which wind speeds we must evaluate in floris
         conditions_to_evaluate = wind_speeds >= cut_in_wind_speed
@@ -456,7 +456,7 @@ class ParallelComputingInterface(LoggingManager):
             yaw_angles_subset = None
             if yaw_angles is not None:
                 yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
-            self.fi.set(
+            self.fmodel.set(
                 wind_directions=wind_direction_subset,
                 wind_speeds=wind_speeds_subset,
                 turbulence_intensities=turbulence_intensities_subset,
@@ -469,7 +469,7 @@ class ParallelComputingInterface(LoggingManager):
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
-        self.fi.set(
+        self.fmodel.set(
             wind_directions=wind_directions,
             wind_speeds=wind_speeds,
             turbulence_intensities=turbulence_intensities_subset,
@@ -549,12 +549,12 @@ class ParallelComputingInterface(LoggingManager):
 
     @property
     def layout_x(self):
-        return self.fi.layout_x
+        return self.fmodel.layout_x
 
     @property
     def layout_y(self):
-        return self.fi.layout_y
+        return self.fmodel.layout_y
 
     # @property
     # def floris(self):
-    #     return self.fi.floris
+    #     return self.fmodel.core

@@ -7,7 +7,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from floris.logging_manager import LoggingManager
 from floris.core import Core, State
 from floris.core.rotor_velocity import average_velocity
 from floris.core.turbine.operation_models import (
@@ -20,17 +19,18 @@ from floris.core.turbine.turbine import (
     thrust_coefficient,
 )
 from floris.cut_plane import CutPlane
-from floris.wind_data import WindDataBase
+from floris.logging_manager import LoggingManager
 from floris.type_dec import (
     floris_array_converter,
     NDArrayBool,
     NDArrayFloat,
 )
+from floris.wind_data import WindDataBase
 
 
 class FlorisModel(LoggingManager):
     """
-    FlorisInterface provides a high-level user interface to many of the
+    FlorisModel provides a high-level user interface to many of the
     underlying methods within the FLORIS framework. It is meant to act as a
     single entry-point for the majority of users, simplifying the calls to
     methods on objects within FLORIS.
@@ -42,7 +42,7 @@ class FlorisModel(LoggingManager):
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
                 - **wake**: See `floris.simulation.wake.WakeManager` for more details.
-                - **logging**: See `floris.simulation.floris.Floris` for more details.
+                - **logging**: See `floris.simulation.core.core` for more details.
     """
 
     def __init__(self, configuration: dict | str | Path):
@@ -53,7 +53,7 @@ class FlorisModel(LoggingManager):
                 self.core = Core.from_file(self.configuration)
             except FileNotFoundError:
                 # If the file cannot be found, then attempt the configuration path relative to the
-                # file location from which FlorisInterface was attempted to be run. If successful,
+                # file location from which FlorisModel was attempted to be run. If successful,
                 # update self.configuration to an absolute, working file path and name.
                 base_fn = Path(inspect.stack()[-1].filename).resolve().parent
                 config = (base_fn / self.configuration).resolve()
@@ -108,7 +108,7 @@ class FlorisModel(LoggingManager):
         self.core.flow_field.reference_wind_height = unique_heights[0]
 
     def copy(self):
-        """Create an independent copy of the current FlorisInterface object"""
+        """Create an independent copy of the current FlorisModel object"""
         return FlorisModel(self.core.as_dict())
 
     def set(
@@ -408,7 +408,7 @@ class FlorisModel(LoggingManager):
     ):
         """
         Calculates velocity values through the
-        :py:meth:`FlorisInterface.calculate_wake` method at points in plane
+        :py:meth:`FlorisModel.calculate_wake` method at points in plane
         specified by inputs.
 
         Args:
@@ -568,7 +568,7 @@ class FlorisModel(LoggingManager):
             "z",
         )
 
-        # Reset the fi object back to the turbine grid configuration
+        # Reset the fmodel object back to the turbine grid configuration
         self.core = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
@@ -650,7 +650,7 @@ class FlorisModel(LoggingManager):
         # Compute the cutplane
         cross_plane = CutPlane(df, y_resolution, z_resolution, "x")
 
-        # Reset the fi object back to the turbine grid configuration
+        # Reset the fmodel object back to the turbine grid configuration
         self.core = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
@@ -744,7 +744,7 @@ class FlorisModel(LoggingManager):
         # Compute the cutplane
         y_plane = CutPlane(df, x_resolution, z_resolution, "y")
 
-        # Reset the fi object back to the turbine grid configuration
+        # Reset the fmodel object back to the turbine grid configuration
         self.core = Core.from_dict(floris_dict)
 
         # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
@@ -775,8 +775,8 @@ class FlorisModel(LoggingManager):
         # Confirm calculate wake has been run
         if self.core.state is not State.USED:
             raise RuntimeError(
-                "Can't run function `FlorisInterface.get_turbine_powers` without "
-                "first running `FlorisInterface.run`."
+                "Can't run function `FlorisModel.get_turbine_powers` without "
+                "first running `FlorisModel.run`."
             )
         # Check for negative velocities, which could indicate bad model
         # parameters or turbines very closely spaced.
@@ -888,8 +888,8 @@ class FlorisModel(LoggingManager):
         # Confirm calculate wake has been run
         if self.core.state is not State.USED:
             raise RuntimeError(
-                "Can't run function `FlorisInterface.get_turbine_powers` without "
-                "first running `FlorisInterface.calculate_wake`."
+                "Can't run function `FlorisModel.get_turbine_powers` without "
+                "first running `FlorisModel.calculate_wake`."
             )
 
         if turbine_weights is None:

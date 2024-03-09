@@ -10,7 +10,7 @@ from .layout_optimization_base import LayoutOptimization
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
     def __init__(
         self,
-        fi,
+        fmodel,
         boundaries,
         wind_data,
         min_dist=None,
@@ -20,7 +20,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         storeHistory='hist.hist',
         hotStart=None
     ):
-        super().__init__(fi, boundaries,  wind_data=wind_data, min_dist=min_dist)
+        super().__init__(fmodel, boundaries,  wind_data=wind_data, min_dist=min_dist)
         self._reinitialize(solver=solver, optOptions=optOptions)
 
         self.storeHistory = storeHistory
@@ -88,8 +88,8 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self.parse_opt_vars(varDict)
 
         # Update turbine map with turbince locations
-        # self.fi.reinitialize(layout=[self.x, self.y])
-        # self.fi.calculate_wake()
+        # self.fmodel.reinitialize(layout=[self.x, self.y])
+        # self.fmodel.calculate_wake()
 
         # Compute the objective function
         funcs = {}

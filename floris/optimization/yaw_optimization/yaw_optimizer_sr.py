@@ -15,7 +15,7 @@ from .yaw_optimization_base import YawOptimization
 class YawOptimizationSR(YawOptimization, LoggingManager):
     def __init__(
         self,
-        fi,
+        fmodel,
         minimum_yaw_angle=0.0,
         maximum_yaw_angle=25.0,
         yaw_angles_baseline=None,
@@ -32,7 +32,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
 
         # Initialize base class
         super().__init__(
-            fi=fi,
+            fmodel=fmodel,
             minimum_yaw_angle=minimum_yaw_angle,
             maximum_yaw_angle=maximum_yaw_angle,
             yaw_angles_baseline=yaw_angles_baseline,
@@ -62,8 +62,8 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         # if reduce_ngrid:
         #     for ti in range(self.nturbs):
         #         # Force number of grid points to 2
-        #         self.fi.floris.farm.turbines[ti].ngrid = 2
-        #         self.fi.floris.farm.turbines[ti].initialize_turbine()
+        #         self.fmodel.core.farm.turbines[ti].ngrid = 2
+        #         self.fmodel.core.farm.turbines[ti].initialize_turbine()
         #         print("Reducing ngrid. Unsure if this functionality works!")
 
         # Save optimization choices to self
@@ -73,10 +73,10 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         self._get_turbine_orders()
 
     def _get_turbine_orders(self):
-        layout_x = self.fi.layout_x
-        layout_y = self.fi.layout_y
+        layout_x = self.fmodel.layout_x
+        layout_y = self.fmodel.layout_y
         turbines_ordered_array = []
-        for wd in self.fi_subset.floris.flow_field.wind_directions:
+        for wd in self.fi_subset.core.flow_field.wind_directions:
             layout_x_rot = (
                 np.cos((wd - 270.0) * np.pi / 180.0) * layout_x
                 - np.sin((wd - 270.0) * np.pi / 180.0) * layout_y
@@ -90,9 +90,9 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         # Define current optimal solutions and floris wind directions locally
         yaw_angles_opt_subset = self._yaw_angles_opt_subset
         farm_power_opt_subset = self._farm_power_opt_subset
-        wd_array_subset = self.fi_subset.floris.flow_field.wind_directions
-        ws_array_subset = self.fi_subset.floris.flow_field.wind_speeds
-        ti_array_subset = self.fi_subset.floris.flow_field.turbulence_intensities
+        wd_array_subset = self.fi_subset.core.flow_field.wind_directions
+        ws_array_subset = self.fi_subset.core.flow_field.wind_speeds
+        ti_array_subset = self.fi_subset.core.flow_field.turbulence_intensities
         turbine_weights_subset = self._turbine_weights_subset
 
         # Reformat yaw_angles_subset, if necessary
@@ -129,10 +129,10 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
         if not np.all(idx):
             # Now calculate farm powers for conditions we haven't yet evaluated previously
             start_time = timerpc()
-            if (hasattr(self.fi.floris.flow_field, 'heterogenous_inflow_config') and
-                self.fi.floris.flow_field.heterogenous_inflow_config is not None):
+            if (hasattr(self.fmodel.core.flow_field, 'heterogenous_inflow_config') and
+                self.fmodel.core.flow_field.heterogenous_inflow_config is not None):
                 het_sm_orig = np.array(
-                    self.fi.floris.flow_field.heterogenous_inflow_config['speed_multipliers']
+                    self.fmodel.core.flow_field.heterogenous_inflow_config['speed_multipliers']
                 )
                 het_sm = np.tile(het_sm_orig, (Ny, 1))[~idx, :]
             else:
@@ -153,7 +153,7 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
                 farm_powers,
                 (
                     Ny,
-                    self.fi_subset.floris.flow_field.n_findex
+                    self.fi_subset.core.flow_field.n_findex
                 )
             )
 
