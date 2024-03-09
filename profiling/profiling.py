@@ -9,12 +9,12 @@ import copy
 
 from conftest import SampleInputs
 
-from floris.simulation import Floris
+from floris.core import Core
 
 
 def run_floris():
-    floris = Floris.from_file("examples/example_input.yaml")
-    return floris
+    core = Core.from_file("examples/example_input.yaml")
+    return core
 
 if __name__=="__main__":
     # if len(sys.argv) > 1:
@@ -45,9 +45,10 @@ if __name__=="__main__":
 
     sample_inputs.core["flow_field"]["wind_directions"] = N_FINDEX * [270.0]
     sample_inputs.core["flow_field"]["wind_speeds"] = N_FINDEX * [8.0]
+    sample_inputs.core["flow_field"]["turbulence_intensities"] = N_FINDEX * [0.06]
 
     N = 1
     for i in range(N):
-        floris = Floris.from_dict(copy.deepcopy(sample_inputs.core))
-        floris.initialize_domain()
-        floris.steady_state_atmospheric_condition()
+        core = Core.from_dict(copy.deepcopy(sample_inputs.core))
+        core.initialize_domain()
+        core.steady_state_atmospheric_condition()
