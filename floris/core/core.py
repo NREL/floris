@@ -264,9 +264,7 @@ class Core(BaseClass):
         reference_height: float,
     ) -> list[pd.DataFrame]:
         """
-        Extract velocity deficit profiles. See
-        :py:meth:`~floris.FlorisModel.sample_velocity_deficit_profiles`
-        for more details.
+        Extract velocity deficit profiles.
         """
 
         # Create a grid that contains coordinates for all the sample points in all profiles.
