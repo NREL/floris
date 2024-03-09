@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 import yaml
 
-from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris import FlorisModel
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
@@ -18,28 +18,28 @@ def test_read_yaml():
 
 def test_assign_setpoints():
 
-    fi = FlorisInterface(configuration=YAML_INPUT)
-    fi.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel =  FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
 
     # Test setting yaw angles via a list, integers, numpy array
-    fi.set(yaw_angles=[[20.0, 30.0]])
-    fi.set(yaw_angles=[[20, 30]])
-    fi.set(yaw_angles=np.array([[20.0, 30.0]]))
+    fmodel.set(yaw_angles=[[20.0, 30.0]])
+    fmodel.set(yaw_angles=[[20, 30]])
+    fmodel.set(yaw_angles=np.array([[20.0, 30.0]]))
 
     # Test setting power setpoints in various ways
-    fi.set(power_setpoints=[[1e6, 2e6]])
-    fi.set(power_setpoints=np.array([[1e6, 2e6]]))
+    fmodel.set(power_setpoints=[[1e6, 2e6]])
+    fmodel.set(power_setpoints=np.array([[1e6, 2e6]]))
 
     # Disable turbines
-    fi.set(disable_turbines=[[True, False]])
-    fi.set(disable_turbines=np.array([[True, False]]))
+    fmodel.set(disable_turbines=[[True, False]])
+    fmodel.set(disable_turbines=np.array([[True, False]]))
 
     # Combination
-    fi.set(yaw_angles=[[0, 30]], power_setpoints=np.array([[1e6, None]]))
+    fmodel.set(yaw_angles=[[0, 30]], power_setpoints=np.array([[1e6, None]]))
 
     # power_setpoints and disable_turbines (disable_turbines overrides power_setpoints)
-    fi.set(power_setpoints=[[1e6, 2e6]], disable_turbines=[[True, False]])
-    assert np.allclose(fi.floris.farm.power_setpoints, np.array([[0.001, 2e6]]))
+    fmodel.set(power_setpoints=[[1e6, 2e6]], disable_turbines=[[True, False]])
+    assert np.allclose(fmodel.core.farm.power_setpoints, np.array([[0.001, 2e6]]))
 
 def test_set_run():
     """
@@ -134,7 +134,8 @@ def test_reset_operation():
         (fmodel.core.flow_field.n_findex, fmodel.core.farm.n_turbines)
     )
     assert fmodel.core.farm.power_setpoints == (
-        POWER_SETPOINT_DEFAULT * np.ones((fmodel.core.flow_field.n_findex, fmodel.core.farm.n_turbines))
+        POWER_SETPOINT_DEFAULT * np.ones((fmodel.core.flow_field.n_findex,
+                                          fmodel.core.farm.n_turbines))
     )
 
     # Double check that running the calculate also doesn't change the operating set points
@@ -143,7 +144,8 @@ def test_reset_operation():
         (fmodel.core.flow_field.n_findex, fmodel.core.farm.n_turbines)
     )
     assert fmodel.core.farm.power_setpoints == (
-        POWER_SETPOINT_DEFAULT * np.ones((fmodel.core.flow_field.n_findex, fmodel.core.farm.n_turbines))
+        POWER_SETPOINT_DEFAULT * np.ones((fmodel.core.flow_field.n_findex,
+                                          fmodel.core.farm.n_turbines))
     )
 
 def test_run_no_wake():

@@ -40,9 +40,9 @@ def test_base_class():
         LayoutOptimization(fmodel=fmodel, boundaries=boundaries, wind_data=freq, min_dist=5,)
 
     time_series = TimeSeries(
-        wind_directions=fmodel.floris.flow_field.wind_directions,
-        wind_speeds=fmodel.floris.flow_field.wind_speeds,
-        turbulence_intensities=fmodel.floris.flow_field.turbulence_intensities,
+        wind_directions=fmodel.core.flow_field.wind_directions,
+        wind_speeds=fmodel.core.flow_field.wind_speeds,
+        turbulence_intensities=fmodel.core.flow_field.turbulence_intensities,
     )
     wind_rose = time_series.to_wind_rose()
 

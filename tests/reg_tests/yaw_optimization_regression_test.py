@@ -77,10 +77,10 @@ def test_serial_refine(sample_inputs_fixture):
     optimization scheme. This test compares the optimization results from the SR method for
     a simple farm with a simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    fmodel = FlorisModel(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     ti_array = 0.1 * np.ones_like(wd_array)
@@ -110,10 +110,10 @@ def test_geometric_yaw(sample_inputs_fixture):
     optimal yaw relationships. This test compares the optimization results from the Geometric Yaw
     optimization for a simple farm with a simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    fmodel = FlorisModel(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     ti_array = 0.1 * np.ones_like(wd_array)
@@ -152,8 +152,8 @@ def test_scipy_yaw_opt(sample_inputs_fixture):
     compares the optimization results from the SciPy yaw optimization for a simple farm with a
     simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     opt_options = {
         "maxiter": 5,
@@ -163,7 +163,7 @@ def test_scipy_yaw_opt(sample_inputs_fixture):
         "eps": 0.5,
     }
 
-    fmodel = FlorisModel(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0.0, 360.0, 90.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     ti_array = 0.1 * np.ones_like(wd_array)

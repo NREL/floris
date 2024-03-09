@@ -22,17 +22,17 @@ def test_parallel_turbine_powers(sample_inputs_fixture):
     the serial floris interface. The expected result is that the turbine powers should be
     exactly the same.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    fmodel_serial = FlorisModel(sample_inputs_fixture.floris)
+    fmodel_serial = FlorisModel(sample_inputs_fixture.core)
     fmodel_parallel_input = copy.deepcopy(fmodel_serial)
     fmodel_serial.run()
 
     serial_turbine_powers = fmodel_serial.get_turbine_powers()
 
     fmodel_parallel = ParallelComputingInterface(
-        fi=fmodel_parallel_input,
+        fmodel=fmodel_parallel_input,
         max_workers=2,
         n_wind_condition_splits=2,
         interface="concurrent",

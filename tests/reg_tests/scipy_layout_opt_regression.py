@@ -29,8 +29,8 @@ def test_scipy_layout_opt(sample_inputs_fixture):
     compares the optimization results from the SciPy layout optimizaiton for a simple farm with a
     simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     opt_options = {
         "maxiter": 5,
@@ -42,7 +42,7 @@ def test_scipy_layout_opt(sample_inputs_fixture):
 
     boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
 
-    fmodel = FlorisModel(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0, 360.0, 5.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
