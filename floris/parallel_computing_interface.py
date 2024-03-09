@@ -28,8 +28,8 @@ def _load_local_floris_object(
     return fmodel
 
 
-def _get_turbine_powers_serial(fi_information, yaw_angles=None):
-    fmodel = _load_local_floris_object(*fi_information)
+def _get_turbine_powers_serial(fmodel_information, yaw_angles=None):
+    fmodel = _load_local_floris_object(*fmodel_information)
     fmodel.set(yaw_angles=yaw_angles)
     fmodel.run()
     return (fmodel.get_turbine_powers(), fmodel.core.flow_field)
@@ -218,7 +218,7 @@ class ParallelComputingInterface(LoggingManager):
         )
 
         # Prepare the input arguments for parallel execution
-        fi_dict = self.fmodel.core.as_dict()
+        fmodel_dict = self.fmodel.core.as_dict()
         wind_condition_id_splits = np.array_split(
             np.arange(self.fmodel.core.flow_field.n_findex),
             n_wind_condition_splits,
@@ -226,26 +226,26 @@ class ParallelComputingInterface(LoggingManager):
         multiargs = []
         for wc_id_split in wind_condition_id_splits:
             # for ws_id_split in wind_speed_id_splits:
-            fi_dict_split = copy.deepcopy(fi_dict)
+            fmodel_dict_split = copy.deepcopy(fmodel_dict)
             wind_directions = self.fmodel.core.flow_field.wind_directions[wc_id_split]
             wind_speeds = self.fmodel.core.flow_field.wind_speeds[wc_id_split]
             turbulence_intensities = self.fmodel.core.flow_field.turbulence_intensities[wc_id_split]
             yaw_angles_subset = yaw_angles[wc_id_split[0]:wc_id_split[-1]+1, :]
-            fi_dict_split["flow_field"]["wind_directions"] = wind_directions
-            fi_dict_split["flow_field"]["wind_speeds"] = wind_speeds
-            fi_dict_split["flow_field"]["turbulence_intensities"] = turbulence_intensities
+            fmodel_dict_split["flow_field"]["wind_directions"] = wind_directions
+            fmodel_dict_split["flow_field"]["wind_speeds"] = wind_speeds
+            fmodel_dict_split["flow_field"]["turbulence_intensities"] = turbulence_intensities
 
             # Prepare lightweight data to pass along
             if isinstance(self.fmodel, FlorisModel):
-                fi_information = (fi_dict_split, None, None)
+                fmodel_information = (fmodel_dict_split, None, None)
             else:
-                fi_information = (
-                    fi_dict_split,
+                fmodel_information = (
+                    fmodel_dict_split,
                     self.fmodel.fmodel.het_map,
                     self.fmodel.unc_pmfs,
                     self.fmodel.fix_yaw_in_relative_frame
                 )
-            multiargs.append((fi_information, yaw_angles_subset))
+            multiargs.append((fmodel_information, yaw_angles_subset))
 
         return multiargs
 

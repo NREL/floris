@@ -116,7 +116,7 @@ fmodel.set(
 )
 
 # Save dictionary to modify later
-fi_dict = fmodel.core.as_dict()
+fmodel_dict = fmodel.core.as_dict()
 
 # Run wake calculation
 fmodel.run()
@@ -139,12 +139,12 @@ if show_flow_cuts:
     generate_wake_visualization(fmodel, title)
 
 # Increase the maximum deflection attained
-fi_dict_mod = copy.deepcopy(fi_dict)
+fmodel_dict_mod = copy.deepcopy(fmodel_dict)
 
-fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
+fmodel_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
     ['horizontal_deflection_gain_D'] = 5.0
 
-fmodel = FlorisModel(fi_dict_mod)
+fmodel = FlorisModel(fmodel_dict_mod)
 fmodel.set(
     wind_speeds=[8.0],
     wind_directions=[270.0],
@@ -164,11 +164,11 @@ if show_flow_cuts:
     generate_wake_visualization(fmodel, title)
 
 # Add (increase) influence of wake added mixing
-fi_dict_mod = copy.deepcopy(fi_dict)
-fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
+fmodel_dict_mod = copy.deepcopy(fmodel_dict)
+fmodel_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
    ['mixing_gain_deflection'] = 100.0
 
-fmodel = FlorisModel(fi_dict_mod)
+fmodel = FlorisModel(fmodel_dict_mod)
 fmodel.set(
     wind_speeds=[8.0],
     wind_directions=[270.0],
@@ -188,14 +188,14 @@ if show_flow_cuts:
     generate_wake_visualization(fmodel, title)
 
 # Add (increase) the yaw-added mixing contribution
-fi_dict_mod = copy.deepcopy(fi_dict)
+fmodel_dict_mod = copy.deepcopy(fmodel_dict)
 # Include a WIM gain so that YAM is reflected in deflection as well
 # as deficit
-fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
+fmodel_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
    ['mixing_gain_deflection'] = 100.0
-fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
+fmodel_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
    ['yaw_added_mixing_gain'] = 1.0
-fmodel = FlorisModel(fi_dict_mod)
+fmodel = FlorisModel(fmodel_dict_mod)
 fmodel.set(
     wind_speeds=[8.0],
     wind_directions=[270.0],

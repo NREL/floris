@@ -17,10 +17,10 @@ of vertical deflections due to tilt has not been validated.
 # Initialize two FLORIS objects: one with 5 degrees of tilt (fixed across all
 # wind speeds) and one with 15 degrees of tilt (fixed across all wind speeds).
 
-fi_5 = FlorisModel("inputs_floating/emgauss_floating_fixedtilt5.yaml")
-fi_15 = FlorisModel("inputs_floating/emgauss_floating_fixedtilt15.yaml")
+fmodel_5 = FlorisModel("inputs_floating/emgauss_floating_fixedtilt5.yaml")
+fmodel_15 = FlorisModel("inputs_floating/emgauss_floating_fixedtilt15.yaml")
 
-D = fi_5.core.farm.rotor_diameters[0]
+D = fmodel_5.core.farm.rotor_diameters[0]
 
 num_in_row = 5
 
@@ -46,7 +46,7 @@ fig.set_size_inches(12, 6)
 powers = np.zeros((2, num_in_row))
 
 # Calculate wakes, powers, plot
-for i, (fmodel, tilt) in enumerate(zip([fi_5, fi_15], [5, 15])):
+for i, (fmodel, tilt) in enumerate(zip([fmodel_5, fmodel_15], [5, 15])):
 
     # Farm layout and wind conditions
     fmodel.set(

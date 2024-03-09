@@ -180,8 +180,8 @@ if __name__ == "__main__":
     turbulence_intensities_windrose = 0.06 * np.ones_like(wd_windrose)
 
     # Create a FLORIS object for AEP calculations
-    fi_AEP = fmodel.copy()
-    fi_AEP.set(
+    fmodel_aep = fmodel.copy()
+    fmodel_aep.set(
         wind_speeds=ws_windrose,
         wind_directions=wd_windrose,
         turbulence_intensities=turbulence_intensities_windrose
@@ -202,7 +202,7 @@ if __name__ == "__main__":
     print(" ")
     print("===========================================================")
     print("Calculating baseline annual energy production (AEP)...")
-    aep_bl_subset = 1.0e-9 * fi_AEP.get_farm_AEP(
+    aep_bl_subset = 1.0e-9 * fmodel_aep.get_farm_AEP(
         freq=freq_windrose,
         turbine_weights=turbine_weights
     )
@@ -235,9 +235,9 @@ if __name__ == "__main__":
     )
     yaw_opt_interpolant_nonb = optimize_yaw_angles(fmodel_opt=fmodel_opt_subset)
 
-    # Use interpolant to get optimal yaw angles for fi_AEP object
-    wd = fi_AEP.core.flow_field.wind_directions
-    ws = fi_AEP.core.flow_field.wind_speeds
+    # Use interpolant to get optimal yaw angles for fmodel_aep object
+    wd = fmodel_aep.core.flow_field.wind_directions
+    ws = fmodel_aep.core.flow_field.wind_speeds
     yaw_angles_opt_AEP = yaw_opt_interpolant(wd, ws)
     yaw_angles_opt_nonb_AEP = np.zeros_like(yaw_angles_opt_AEP)  # nonb = no neighbor
     yaw_angles_opt_nonb_AEP[:, turbs_to_opt] = yaw_opt_interpolant_nonb(wd, ws)
@@ -246,13 +246,13 @@ if __name__ == "__main__":
     print(" ")
     print("===========================================================")
     print("Calculating annual energy production with wake steering (AEP)...")
-    fi_AEP.set(yaw_angles=yaw_angles_opt_nonb_AEP)
-    aep_opt_subset_nonb = 1.0e-9 * fi_AEP.get_farm_AEP(
+    fmodel_aep.set(yaw_angles=yaw_angles_opt_nonb_AEP)
+    aep_opt_subset_nonb = 1.0e-9 * fmodel_aep.get_farm_AEP(
         freq=freq_windrose,
         turbine_weights=turbine_weights,
     )
-    fi_AEP.set(yaw_angles=yaw_angles_opt_AEP)
-    aep_opt_subset = 1.0e-9 * fi_AEP.get_farm_AEP(
+    fmodel_aep.set(yaw_angles=yaw_angles_opt_AEP)
+    aep_opt_subset = 1.0e-9 * fmodel_aep.get_farm_AEP(
         freq=freq_windrose,
         turbine_weights=turbine_weights,
     )

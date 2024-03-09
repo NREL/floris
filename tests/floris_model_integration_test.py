@@ -323,10 +323,10 @@ def test_disable_turbines():
     power_with_middle_disabled = fmodel.get_turbine_powers()
 
     # Two turbine case to compare against above
-    fi_remove_middle = fmodel.copy()
-    fi_remove_middle.set(layout_x=[0,2000], layout_y=[0, 0])
-    fi_remove_middle.run()
-    power_with_middle_removed = fi_remove_middle.get_turbine_powers()
+    fmodel_remove_middle = fmodel.copy()
+    fmodel_remove_middle.set(layout_x=[0,2000], layout_y=[0, 0])
+    fmodel_remove_middle.run()
+    power_with_middle_removed = fmodel_remove_middle.get_turbine_powers()
 
     np.testing.assert_almost_equal(power_with_middle_disabled[0,2], power_with_middle_removed[0,1])
     np.testing.assert_almost_equal(power_with_middle_disabled[1,2], power_with_middle_removed[1,1])

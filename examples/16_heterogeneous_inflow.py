@@ -34,20 +34,20 @@ For each case, we are plotting three slices of the resulting flow field:
 # }
 
 
-fi_2d = FlorisModel("inputs/gch_heterogeneous_inflow.yaml")
+fmodel_2d = FlorisModel("inputs/gch_heterogeneous_inflow.yaml")
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
-fi_2d.set(wind_shear=0.0)
+fmodel_2d.set(wind_shear=0.0)
 
 # Using the FlorisModel functions for generating plots, run FLORIS
 # and extract 2D planes of data.
-horizontal_plane_2d = fi_2d.calculate_horizontal_plane(
+horizontal_plane_2d = fmodel_2d.calculate_horizontal_plane(
     x_resolution=200,
     y_resolution=100,
     height=90.0
 )
-y_plane_2d = fi_2d.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=0.0)
-cross_plane_2d = fi_2d.calculate_cross_plane(
+y_plane_2d = fmodel_2d.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=0.0)
+cross_plane_2d = fmodel_2d.calculate_cross_plane(
     y_resolution=100,
     z_resolution=100,
     downstream_dist=500.0
@@ -104,25 +104,25 @@ heterogenous_inflow_config = {
 # Initialize FLORIS with the given input file via FlorisModel.
 # Note that we initialize FLORIS with a homogenous flow input file, but
 # then configure the heterogeneous inflow via the reinitialize method.
-fi_3d = FlorisModel("inputs/gch.yaml")
-fi_3d.set(heterogenous_inflow_config=heterogenous_inflow_config)
+fmodel_3d = FlorisModel("inputs/gch.yaml")
+fmodel_3d.set(heterogenous_inflow_config=heterogenous_inflow_config)
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
-fi_3d.set(wind_shear=0.0)
+fmodel_3d.set(wind_shear=0.0)
 
 # Using the FlorisModel functions for generating plots, run FLORIS
 # and extract 2D planes of data.
-horizontal_plane_3d = fi_3d.calculate_horizontal_plane(
+horizontal_plane_3d = fmodel_3d.calculate_horizontal_plane(
     x_resolution=200,
     y_resolution=100,
     height=90.0
 )
-y_plane_3d = fi_3d.calculate_y_plane(
+y_plane_3d = fmodel_3d.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
     crossstream_dist=0.0
 )
-cross_plane_3d = fi_3d.calculate_cross_plane(
+cross_plane_3d = fmodel_3d.calculate_cross_plane(
     y_resolution=100,
     z_resolution=100,
     downstream_dist=500.0

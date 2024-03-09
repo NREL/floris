@@ -27,21 +27,21 @@ In the example below, a 20-turbine, gridded wind farm is simulated using
 the Empirical Gaussian wake model to show the effects of floating turbines on
 both turbine power and wake development.
 
-fi_fixed: Fixed bottom turbine (no tilt variation with wind speed)
-fi_floating: Floating turbine (tilt varies with wind speed)
+fmodel_fixed: Fixed bottom turbine (no tilt variation with wind speed)
+fmodel_floating: Floating turbine (tilt varies with wind speed)
 """
 
 # Declare the Floris Interface for fixed bottom, provide layout
-fi_fixed = FlorisModel("inputs_floating/emgauss_fixed.yaml")
-fi_floating = FlorisModel("inputs_floating/emgauss_floating.yaml")
+fmodel_fixed = FlorisModel("inputs_floating/emgauss_fixed.yaml")
+fmodel_floating = FlorisModel("inputs_floating/emgauss_floating.yaml")
 x, y = np.meshgrid(np.linspace(0, 4*630., 5), np.linspace(0, 3*630., 4))
 x = x.flatten()
 y = y.flatten()
-for fmodel in [fi_fixed, fi_floating]:
+for fmodel in [fmodel_fixed, fmodel_floating]:
     fmodel.set(layout_x=x, layout_y=y)
 
 # Compute a single wind speed and direction, power and wakes
-for fmodel in [fi_fixed, fi_floating]:
+for fmodel in [fmodel_fixed, fmodel_floating]:
     fmodel.set(
         layout_x=x,
         layout_y=y,
@@ -51,8 +51,8 @@ for fmodel in [fi_fixed, fi_floating]:
     )
     fmodel.run()
 
-powers_fixed = fi_fixed.get_turbine_powers()
-powers_floating = fi_floating.get_turbine_powers()
+powers_fixed = fmodel_fixed.get_turbine_powers()
+powers_floating = fmodel_floating.get_turbine_powers()
 power_difference = powers_floating - powers_fixed
 
 # Show the power differences
@@ -78,7 +78,7 @@ print("Power increase from floating over farm (10m/s, 270deg winds): {0:.2f} kW"
 # Visualize flows (see also 02_visualizations.py)
 horizontal_planes = []
 y_planes = []
-for fmodel in [fi_fixed, fi_floating]:
+for fmodel in [fmodel_fixed, fmodel_floating]:
     horizontal_planes.append(
         fmodel.calculate_horizontal_plane(
             x_resolution=200,
@@ -118,7 +118,7 @@ freq_interp = NearestNDInterpolator(df_wr[["wd", "ws"]], df_wr["freq_val"])
 freq = freq_interp(wd_grid, ws_grid).flatten()
 freq = freq / np.sum(freq)
 
-for fmodel in [fi_fixed, fi_floating]:
+for fmodel in [fmodel_fixed, fmodel_floating]:
     fmodel.set(
         wind_directions=wd_grid.flatten(),
         wind_speeds= ws_grid.flatten(),
@@ -126,8 +126,8 @@ for fmodel in [fi_fixed, fi_floating]:
     )
 
 # Compute the AEP
-aep_fixed = fi_fixed.get_farm_AEP(freq=freq)
-aep_floating = fi_floating.get_farm_AEP(freq=freq)
+aep_fixed = fmodel_fixed.get_farm_AEP(freq=freq)
+aep_floating = fmodel_floating.get_farm_AEP(freq=freq)
 print("Farm AEP (fixed bottom): {:.3f} GWh".format(aep_fixed / 1.0e9))
 print("Farm AEP (floating): {:.3f} GWh".format(aep_floating / 1.0e9))
 print(
