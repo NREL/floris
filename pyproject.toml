@@ -116,12 +116,12 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.per-file-ignores]
 # F841 unused-variable: ignore since this file uses numexpr and many variables look unused
-"floris/simulation/wake_deflection/jimenez.py" = ["F841"]
-"floris/simulation/wake_turbulence/crespo_hernandez.py" = ["F841"]
-"floris/simulation/wake_deflection/gauss.py" = ["F841"]
-"floris/simulation/wake_velocity/jensen.py" = ["F841"]
-"floris/simulation/wake_velocity/gauss.py" = ["F841"]
-"floris/simulation/wake_velocity/empirical_gauss.py" = ["F841"]
+"floris/core/wake_deflection/jimenez.py" = ["F841"]
+"floris/core/wake_turbulence/crespo_hernandez.py" = ["F841"]
+"floris/core/wake_deflection/gauss.py" = ["F841"]
+"floris/core/wake_velocity/jensen.py" = ["F841"]
+"floris/core/wake_velocity/gauss.py" = ["F841"]
+"floris/core/wake_velocity/empirical_gauss.py" = ["F841"]
 # Ignore `F401` (import violations) in all `__init__.py` files, and in `path/to/file.py`.
 "__init__.py" = ["F401"]
 
