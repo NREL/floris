@@ -4,7 +4,7 @@ from time import perf_counter as timerpc
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
@@ -31,15 +31,15 @@ at https://wes.copernicus.org/preprints/wes-2023-1/. See also example 16c.
 """
 
 # Load the default example floris object
-fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+# fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
 # Reinitialize as a 3-turbine farm with range of WDs and 1 WS
 D = 126.0 # Rotor diameter for the NREL 5 MW
 wd_array = np.arange(0.0, 360.0, 3.0)
 ws_array = 8.0 * np.ones_like(wd_array)
 turbulence_intensities = 0.06 * np.ones_like(wd_array)
-fi.set(
+fmodel.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
     wind_directions=wd_array,
@@ -49,19 +49,19 @@ fi.set(
 
 print("Performing optimizations with SciPy...")
 start_time = timerpc()
-yaw_opt_scipy = YawOptimizationScipy(fi)
+yaw_opt_scipy = YawOptimizationScipy(fmodel)
 df_opt_scipy = yaw_opt_scipy.optimize()
 time_scipy = timerpc() - start_time
 
 print("Performing optimizations with Serial Refine...")
 start_time = timerpc()
-yaw_opt_sr = YawOptimizationSR(fi)
+yaw_opt_sr = YawOptimizationSR(fmodel)
 df_opt_sr = yaw_opt_sr.optimize()
 time_sr = timerpc() - start_time
 
 print("Performing optimizations with Geometric Yaw...")
 start_time = timerpc()
-yaw_opt_geo = YawOptimizationGeometric(fi)
+yaw_opt_geo = YawOptimizationGeometric(fmodel)
 df_opt_geo = yaw_opt_geo.optimize()
 time_geo = timerpc() - start_time
 
@@ -94,9 +94,9 @@ for t in range(3):
 
 # Before plotting results, need to compute values for GEOOPT since it doesn't compute
 # power within the optimization
-fi.set(yaw_angles=yaw_angles_opt_geo)
-fi.run()
-geo_farm_power = fi.get_farm_power().squeeze()
+fmodel.set(yaw_angles=yaw_angles_opt_geo)
+fmodel.run()
+geo_farm_power = fmodel.get_farm_power().squeeze()
 
 
 fig, ax = plt.subplots()

@@ -5,7 +5,7 @@ import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
 
 import floris.tools.flow_visualization as flowviz
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 
 
 """
@@ -32,24 +32,24 @@ fi_floating: Floating turbine (tilt varies with wind speed)
 """
 
 # Declare the Floris Interface for fixed bottom, provide layout
-fi_fixed = FlorisInterface("inputs_floating/emgauss_fixed.yaml")
-fi_floating = FlorisInterface("inputs_floating/emgauss_floating.yaml")
+fi_fixed = FlorisModel("inputs_floating/emgauss_fixed.yaml")
+fi_floating = FlorisModel("inputs_floating/emgauss_floating.yaml")
 x, y = np.meshgrid(np.linspace(0, 4*630., 5), np.linspace(0, 3*630., 4))
 x = x.flatten()
 y = y.flatten()
-for fi in [fi_fixed, fi_floating]:
-    fi.set(layout_x=x, layout_y=y)
+for fmodel in [fi_fixed, fi_floating]:
+    fmodel.set(layout_x=x, layout_y=y)
 
 # Compute a single wind speed and direction, power and wakes
-for fi in [fi_fixed, fi_floating]:
-    fi.set(
+for fmodel in [fi_fixed, fi_floating]:
+    fmodel.set(
         layout_x=x,
         layout_y=y,
         wind_speeds=[10],
         wind_directions=[270],
         turbulence_intensities=[0.06],
     )
-    fi.run()
+    fmodel.run()
 
 powers_fixed = fi_fixed.get_turbine_powers()
 powers_floating = fi_floating.get_turbine_powers()
@@ -78,16 +78,16 @@ print("Power increase from floating over farm (10m/s, 270deg winds): {0:.2f} kW"
 # Visualize flows (see also 02_visualizations.py)
 horizontal_planes = []
 y_planes = []
-for fi in [fi_fixed, fi_floating]:
+for fmodel in [fi_fixed, fi_floating]:
     horizontal_planes.append(
-        fi.calculate_horizontal_plane(
+        fmodel.calculate_horizontal_plane(
             x_resolution=200,
             y_resolution=100,
             height=90.0,
         )
     )
     y_planes.append(
-        fi.calculate_y_plane(
+        fmodel.calculate_y_plane(
             x_resolution=200,
             z_resolution=100,
             crossstream_dist=0.0,
@@ -118,8 +118,8 @@ freq_interp = NearestNDInterpolator(df_wr[["wd", "ws"]], df_wr["freq_val"])
 freq = freq_interp(wd_grid, ws_grid).flatten()
 freq = freq / np.sum(freq)
 
-for fi in [fi_fixed, fi_floating]:
-    fi.set(
+for fmodel in [fi_fixed, fi_floating]:
+    fmodel.set(
         wind_directions=wd_grid.flatten(),
         wind_speeds= ws_grid.flatten(),
         turbulence_intensities=0.06 * np.ones_like(wd_grid.flatten())

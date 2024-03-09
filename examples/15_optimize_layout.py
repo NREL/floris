@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface, WindRose
+from floris.tools import FlorisModel, WindRose
 from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
@@ -22,7 +22,7 @@ which makes sense in order to maximize the energy production by minimizing wake 
 
 # Initialize the FLORIS interface fi
 file_dir = os.path.dirname(os.path.abspath(__file__))
-fi = FlorisInterface('inputs/gch.yaml')
+fmodel = FlorisModel('inputs/gch.yaml')
 
 # Setup 72 wind directions with a 1 wind speed and frequency distribution
 wind_directions = np.arange(0, 360.0, 5.0)
@@ -42,7 +42,7 @@ wind_rose = WindRose(
     ti_table=0.06
 )
 
-fi.set(wind_data=wind_rose)
+fmodel.set(wind_data=wind_rose)
 
 # The boundaries for the turbines, specified as vertices
 boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
@@ -51,21 +51,21 @@ boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 
 D = 126.0 # rotor diameter for the NREL 5MW
 layout_x = [0, 0, 6 * D, 6 * D]
 layout_y = [0, 4 * D, 0, 4 * D]
-fi.set(layout_x=layout_x, layout_y=layout_y)
+fmodel.set(layout_x=layout_x, layout_y=layout_y)
 
 # Setup the optimization problem
-layout_opt = LayoutOptimizationScipy(fi, boundaries, wind_data=wind_rose)
+layout_opt = LayoutOptimizationScipy(fmodel, boundaries, wind_data=wind_rose)
 
 # Run the optimization
 sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
-fi.run()
-base_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
-fi.set(layout_x=sol[0], layout_y=sol[1])
-fi.run()
-opt_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose)  / 1e6
+fmodel.run()
+base_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+fmodel.set(layout_x=sol[0], layout_y=sol[1])
+fmodel.run()
+opt_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose)  / 1e6
 
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 

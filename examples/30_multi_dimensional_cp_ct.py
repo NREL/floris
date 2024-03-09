@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 
 
 """
@@ -36,31 +36,31 @@ The solver will then use the nearest-neighbor interpolant. These conditions are 
 and used to select the interpolant at each turbine.
 
 Also note in the example below that there is a specific method for computing powers when
-using turbines with multi-dimensional Cp/Ct data under FlorisInterface, called
+using turbines with multi-dimensional Cp/Ct data under FlorisModel, called
 'get_turbine_powers_multidim'. The normal 'get_turbine_powers' method will not work.
 """
 
-# Initialize FLORIS with the given input file via FlorisInterface.
-fi = FlorisInterface("inputs/gch_multi_dim_cp_ct.yaml")
+# Initialize FLORIS with the given input file via FlorisModel.
+fmodel = FlorisModel("inputs/gch_multi_dim_cp_ct.yaml")
 
 # Convert to a simple two turbine layout
-fi.set(layout_x=[0., 500.], layout_y=[0., 0.])
+fmodel.set(layout_x=[0., 500.], layout_y=[0., 0.])
 
 # Single wind speed and wind direction
 print('\n========================= Single Wind Direction and Wind Speed =========================')
 
 # Get the turbine powers assuming 1 wind speed and 1 wind direction
-fi.set(wind_directions=[270.0], wind_speeds=[8.0], turbulence_intensities=[0.06])
+fmodel.set(wind_directions=[270.0], wind_speeds=[8.0], turbulence_intensities=[0.06])
 
 # Set the yaw angles to 0
 yaw_angles = np.zeros([1, 2]) # 1 wind direction and wind speed, 2 turbines
-fi.set(yaw_angles=yaw_angles)
+fmodel.set(yaw_angles=yaw_angles)
 
 # Calculate
-fi.run()
+fmodel.run()
 
 # Get the turbine powers
-turbine_powers = fi.get_turbine_powers() / 1000.0
+turbine_powers = fmodel.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 1 findex X 2 Turbines")
 print(turbine_powers)
 print("Shape: ",turbine_powers.shape)
@@ -73,14 +73,14 @@ wind_directions = np.array([270.0, 270.0, 270.0])
 turbulence_intensities = np.array([0.06, 0.06, 0.06])
 
 yaw_angles = np.zeros([3, 2])  # 3 wind directions/ speeds, 2 turbines
-fi.set(
+fmodel.set(
     wind_speeds=wind_speeds,
     wind_directions=wind_directions,
     turbulence_intensities=turbulence_intensities,
     yaw_angles=yaw_angles
 )
-fi.run()
-turbine_powers = fi.get_turbine_powers() / 1000.0
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 3 findex X 2 Turbines")
 print(turbine_powers)
 print("Shape: ",turbine_powers.shape)
@@ -93,14 +93,14 @@ wind_directions = np.repeat([260.0, 270.0, 280.0], 3)
 turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
 
 yaw_angles = np.zeros([9, 2])  # 9 wind directions/ speeds, 2 turbines
-fi.set(
+fmodel.set(
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
     turbulence_intensities=turbulence_intensities,
     yaw_angles=yaw_angles
 )
-fi.run()
-turbine_powers = fi.get_turbine_powers()/1000.
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers()/1000.
 print("The turbine power matrix should be of dimensions 9 WD/WS X 2 Turbines")
 print(turbine_powers)
 print("Shape: ",turbine_powers.shape)

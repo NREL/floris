@@ -1,7 +1,7 @@
 
 import matplotlib.pyplot as plt
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 from floris.tools.flow_visualization import visualize_cut_plane
 
 
@@ -22,7 +22,7 @@ For each case, we are plotting three slices of the resulting flow field:
 """
 
 
-# Initialize FLORIS with the given input file via FlorisInterface.
+# Initialize FLORIS with the given input file via FlorisModel.
 # Note that the heterogeneous flow is defined in the input file. The heterogenous_inflow_config
 # dictionary is defined as below. The speed ups are multipliers of the ambient wind speed,
 # and the x and y are the locations of the speed ups.
@@ -34,12 +34,12 @@ For each case, we are plotting three slices of the resulting flow field:
 # }
 
 
-fi_2d = FlorisInterface("inputs/gch_heterogeneous_inflow.yaml")
+fi_2d = FlorisModel("inputs/gch_heterogeneous_inflow.yaml")
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fi_2d.set(wind_shear=0.0)
 
-# Using the FlorisInterface functions for generating plots, run FLORIS
+# Using the FlorisModel functions for generating plots, run FLORIS
 # and extract 2D planes of data.
 horizontal_plane_2d = fi_2d.calculate_horizontal_plane(
     x_resolution=200,
@@ -101,16 +101,16 @@ heterogenous_inflow_config = {
     'z': z_locs,
 }
 
-# Initialize FLORIS with the given input file via FlorisInterface.
+# Initialize FLORIS with the given input file via FlorisModel.
 # Note that we initialize FLORIS with a homogenous flow input file, but
 # then configure the heterogeneous inflow via the reinitialize method.
-fi_3d = FlorisInterface("inputs/gch.yaml")
+fi_3d = FlorisModel("inputs/gch.yaml")
 fi_3d.set(heterogenous_inflow_config=heterogenous_inflow_config)
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fi_3d.set(wind_shear=0.0)
 
-# Using the FlorisInterface functions for generating plots, run FLORIS
+# Using the FlorisModel functions for generating plots, run FLORIS
 # and extract 2D planes of data.
 horizontal_plane_3d = fi_3d.calculate_horizontal_plane(
     x_resolution=200,

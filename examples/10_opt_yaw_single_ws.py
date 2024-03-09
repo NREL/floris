@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
@@ -16,25 +16,25 @@ SerialRefine method. Finally, we plot the results.
 """
 
 # Load the default example floris object
-fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+# fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
 # Reinitialize as a 3-turbine farm with range of WDs and 1 WS
 wd_array = np.arange(0.0, 360.0, 3.0)
 ws_array = 8.0 * np.ones_like(wd_array)
 turbulence_intensities = 0.06 * np.ones_like(wd_array)
 D = 126.0 # Rotor diameter for the NREL 5 MW
-fi.set(
+fmodel.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
     wind_directions=wd_array,
     wind_speeds=ws_array,
     turbulence_intensities=turbulence_intensities,
 )
-print(fi.floris.farm.rotor_diameters)
+print(fmodel.core.farm.rotor_diameters)
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
-yaw_opt = YawOptimizationSR(fi)
+yaw_opt = YawOptimizationSR(fmodel)
 df_opt = yaw_opt.optimize()
 
 print("Optimization results:")

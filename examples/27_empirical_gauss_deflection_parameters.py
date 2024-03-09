@@ -4,7 +4,7 @@ import copy
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 from floris.tools.flow_visualization import plot_rotor_values, visualize_cut_plane
 
 
@@ -13,8 +13,8 @@ This example illustrates the main parameters of the Empirical Gaussian
 deflection model and their effects on the wind turbine wake.
 """
 
-# Initialize FLORIS with the given input file via FlorisInterface.
-# For basic usage, FlorisInterface provides a simplified and expressive
+# Initialize FLORIS with the given input file via FlorisModel.
+# For basic usage, FlorisModel provides a simplified and expressive
 # entry point to the simulation routines.
 
 # Options
@@ -27,8 +27,8 @@ yaw_angles = np.array(first_three_yaw_angles + [0.0]*(num_in_row-3))[None, :]
 print("Turbine yaw angles (degrees): ", yaw_angles[0])
 
 # Define function for visualizing wakes
-def generate_wake_visualization(fi, title=None):
-    # Using the FlorisInterface functions, get 2D slices.
+def generate_wake_visualization(fmodel, title=None):
+    # Using the FlorisModel functions, get 2D slices.
     x_bounds = [-500, 3000]
     y_bounds = [-250, 250]
     z_bounds = [0.001, 500]
@@ -39,7 +39,7 @@ def generate_wake_visualization(fi, title=None):
     min_ws = 4
     max_ws = 10
 
-    horizontal_plane = fi.calculate_horizontal_plane(
+    horizontal_plane = fmodel.calculate_horizontal_plane(
         x_resolution=200,
         y_resolution=100,
         height=horizontal_plane_location,
@@ -47,7 +47,7 @@ def generate_wake_visualization(fi, title=None):
         y_bounds=y_bounds,
         yaw_angles=yaw_angles
     )
-    y_plane = fi.calculate_y_plane(
+    y_plane = fmodel.calculate_y_plane(
         x_resolution=200,
         z_resolution=100,
         crossstream_dist=streamwise_plane_location,
@@ -58,7 +58,7 @@ def generate_wake_visualization(fi, title=None):
     cross_planes = []
     for cpl in cross_plane_locations:
         cross_planes.append(
-            fi.calculate_cross_plane(
+            fmodel.calculate_cross_plane(
                 y_resolution=100,
                 z_resolution=100,
                 downstream_dist=cpl
@@ -105,9 +105,9 @@ def generate_wake_visualization(fi, title=None):
 ## Main script
 
 # Load input yaml and define farm layout
-fi = FlorisInterface("inputs/emgauss.yaml")
-D = fi.floris.farm.rotor_diameters[0]
-fi.set(
+fmodel = FlorisModel("inputs/emgauss.yaml")
+D = fmodel.core.farm.rotor_diameters[0]
+fmodel.set(
     layout_x=[x*5.0*D for x in range(num_in_row)],
     layout_y=[0.0]*num_in_row,
     wind_speeds=[8.0],
@@ -116,13 +116,13 @@ fi.set(
 )
 
 # Save dictionary to modify later
-fi_dict = fi.floris.as_dict()
+fi_dict = fmodel.core.as_dict()
 
 # Run wake calculation
-fi.run()
+fmodel.run()
 
 # Look at the powers of each turbine
-turbine_powers = fi.get_turbine_powers().flatten()/1e6
+turbine_powers = fmodel.get_turbine_powers().flatten()/1e6
 
 fig0, ax0 = plt.subplots(1,1)
 width = 0.1
@@ -136,7 +136,7 @@ ax0.legend()
 
 # Visualize wakes
 if show_flow_cuts:
-    generate_wake_visualization(fi, title)
+    generate_wake_visualization(fmodel, title)
 
 # Increase the maximum deflection attained
 fi_dict_mod = copy.deepcopy(fi_dict)
@@ -144,15 +144,15 @@ fi_dict_mod = copy.deepcopy(fi_dict)
 fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
     ['horizontal_deflection_gain_D'] = 5.0
 
-fi = FlorisInterface(fi_dict_mod)
-fi.set(
+fmodel = FlorisModel(fi_dict_mod)
+fmodel.set(
     wind_speeds=[8.0],
     wind_directions=[270.0],
     yaw_angles=yaw_angles,
 )
 
-fi.run()
-turbine_powers = fi.get_turbine_powers().flatten()/1e6
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers().flatten()/1e6
 
 x = np.array(range(num_in_row))+width*nw
 nw += 1
@@ -161,22 +161,22 @@ title = "Increase max deflection"
 ax0.bar(x, turbine_powers, width=width, label=title)
 
 if show_flow_cuts:
-    generate_wake_visualization(fi, title)
+    generate_wake_visualization(fmodel, title)
 
 # Add (increase) influence of wake added mixing
 fi_dict_mod = copy.deepcopy(fi_dict)
 fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
    ['mixing_gain_deflection'] = 100.0
 
-fi = FlorisInterface(fi_dict_mod)
-fi.set(
+fmodel = FlorisModel(fi_dict_mod)
+fmodel.set(
     wind_speeds=[8.0],
     wind_directions=[270.0],
     yaw_angles=yaw_angles,
 )
 
-fi.run()
-turbine_powers = fi.get_turbine_powers().flatten()/1e6
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers().flatten()/1e6
 
 x = np.array(range(num_in_row))+width*nw
 nw += 1
@@ -185,7 +185,7 @@ title = "Increase mixing gain"
 ax0.bar(x, turbine_powers, width=width, label=title)
 
 if show_flow_cuts:
-    generate_wake_visualization(fi, title)
+    generate_wake_visualization(fmodel, title)
 
 # Add (increase) the yaw-added mixing contribution
 fi_dict_mod = copy.deepcopy(fi_dict)
@@ -195,15 +195,15 @@ fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
    ['mixing_gain_deflection'] = 100.0
 fi_dict_mod['wake']['wake_deflection_parameters']['empirical_gauss']\
    ['yaw_added_mixing_gain'] = 1.0
-fi = FlorisInterface(fi_dict_mod)
-fi.set(
+fmodel = FlorisModel(fi_dict_mod)
+fmodel.set(
     wind_speeds=[8.0],
     wind_directions=[270.0],
     yaw_angles=yaw_angles,
 )
 
-fi.run()
-turbine_powers = fi.get_turbine_powers().flatten()/1e6
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers().flatten()/1e6
 
 x = np.array(range(num_in_row))+width*nw
 nw += 1
@@ -212,7 +212,7 @@ title = "Increase yaw-added mixing"
 ax0.bar(x, turbine_powers, width=width, label=title)
 
 if show_flow_cuts:
-    generate_wake_visualization(fi, title)
+    generate_wake_visualization(fmodel, title)
 
 # Power plot aesthetics
 ax0.set_xticks(range(num_in_row))

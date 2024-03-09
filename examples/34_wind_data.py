@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris.tools import (
-    FlorisInterface,
+    FlorisModel,
     TimeSeries,
     WindRose,
 )
@@ -59,12 +59,12 @@ fig.suptitle("WindTIRose Plots")
 plt.tight_layout()
 
 # Now set up a FLORIS model and initialize it using the time series and wind rose
-fi = FlorisInterface("inputs/gch.yaml")
-fi.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+fmodel = FlorisModel("inputs/gch.yaml")
+fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 
-fi_time_series = fi.copy()
-fi_wind_rose = fi.copy()
-fi_wind_ti_rose = fi.copy()
+fi_time_series = fmodel.copy()
+fi_wind_rose = fmodel.copy()
+fi_wind_ti_rose = fmodel.copy()
 
 fi_time_series.set(wind_data=time_series)
 fi_wind_rose.set(wind_data=wind_rose)

@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 
 
 """
@@ -32,9 +32,9 @@ fi_floating_defined_floating: Floating turbine (tilt varies with wind speed, but
 """
 
 # Declare the Floris Interfaces
-fi_fixed = FlorisInterface("inputs_floating/gch_fixed.yaml")
-fi_floating = FlorisInterface("inputs_floating/gch_floating.yaml")
-fi_floating_defined_floating = FlorisInterface("inputs_floating/gch_floating_defined_floating.yaml")
+fi_fixed = FlorisModel("inputs_floating/gch_fixed.yaml")
+fi_floating = FlorisModel("inputs_floating/gch_floating.yaml")
+fi_floating_defined_floating = FlorisModel("inputs_floating/gch_floating_defined_floating.yaml")
 
 # Calculate across wind speeds
 ws_array = np.arange(3., 25., 1.)
@@ -67,17 +67,17 @@ ct_floating_defined_floating = (
 # Grab turbine tilt angles
 eff_vels = fi_fixed.turbine_average_velocities
 tilt_angles_fixed = np.squeeze(
-    fi_fixed.floris.farm.calculate_tilt_for_eff_velocities(eff_vels)
+    fi_fixed.core.farm.calculate_tilt_for_eff_velocities(eff_vels)
     )
 
 eff_vels = fi_floating.turbine_average_velocities
 tilt_angles_floating = np.squeeze(
-    fi_floating.floris.farm.calculate_tilt_for_eff_velocities(eff_vels)
+    fi_floating.core.farm.calculate_tilt_for_eff_velocities(eff_vels)
     )
 
 eff_vels = fi_floating_defined_floating.turbine_average_velocities
 tilt_angles_floating_defined_floating = np.squeeze(
-    fi_floating_defined_floating.floris.farm.calculate_tilt_for_eff_velocities(eff_vels)
+    fi_floating_defined_floating.core.farm.calculate_tilt_for_eff_velocities(eff_vels)
     )
 
 # Plot results

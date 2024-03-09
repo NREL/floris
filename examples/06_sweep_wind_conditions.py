@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 
 
 """
@@ -20,14 +20,14 @@ axes of the power matrix returned by get_turbine_powers()
 """
 
 # Instantiate FLORIS using either the GCH or CC model
-fi = FlorisInterface("inputs/gch.yaml")  # GCH model matched to the default "legacy_gauss" of V2
-# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+fmodel = FlorisModel("inputs/gch.yaml")  # GCH model matched to the default "legacy_gauss" of V2
+# fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
 # Define a 5 turbine farm
 D = 126.0
 layout_x = np.array([0, D*6, D*12, D*18, D*24])
 layout_y = [0, 0, 0, 0, 0]
-fi.set(layout_x=layout_x, layout_y=layout_y)
+fmodel.set(layout_x=layout_x, layout_y=layout_y)
 
 # In this case we want to check a grid of wind speed and direction combinations
 wind_speeds_to_expand = np.arange(6, 9, 1.0)
@@ -47,7 +47,7 @@ wd_array = wind_directions_grid.flatten()
 turbulence_intensities = 0.06 * np.ones_like(wd_array)
 
 # Now reinitialize FLORIS
-fi.set(
+fmodel.set(
     wind_speeds=ws_array,
     wind_directions=wd_array,
     turbulence_intensities=turbulence_intensities
@@ -61,13 +61,13 @@ num_ws = len(ws_array)
 n_findex = num_wd  # Could be either num_wd or num_ws
 num_turbine = len(layout_x)
 yaw_angles = np.zeros((n_findex, num_turbine))
-fi.set(yaw_angles=yaw_angles)
+fmodel.set(yaw_angles=yaw_angles)
 
 # Calculate
-fi.run()
+fmodel.run()
 
 # Collect the turbine powers
-turbine_powers = fi.get_turbine_powers() / 1e3  # In kW
+turbine_powers = fmodel.get_turbine_powers() / 1e3  # In kW
 
 # Show results by ws and wd
 fig, axarr = plt.subplots(num_unique_ws, 1, sharex=True, sharey=True, figsize=(6, 10))

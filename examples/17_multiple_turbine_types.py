@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 
 import floris.tools.flow_visualization as flowviz
-from floris.tools import FlorisInterface
+from floris.tools import FlorisModel
 
 
 """
@@ -10,16 +10,18 @@ This example uses an input file where multiple turbine types are defined.
 The first two turbines are the NREL 5MW, and the third turbine is the IEA 10MW.
 """
 
-# Initialize FLORIS with the given input file via FlorisInterface.
-# For basic usage, FlorisInterface provides a simplified and expressive
+# Initialize FLORIS with the given input file via FlorisModel.
+# For basic usage, FlorisModel provides a simplified and expressive
 # entry point to the simulation routines.
-fi = FlorisInterface("inputs/gch_multiple_turbine_types.yaml")
+fmodel = FlorisModel("inputs/gch_multiple_turbine_types.yaml")
 
-# Using the FlorisInterface functions for generating plots, run FLORIS
+# Using the FlorisModel functions for generating plots, run FLORIS
 # and extract 2D planes of data.
-horizontal_plane = fi.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height=90)
-y_plane = fi.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=0.0)
-cross_plane = fi.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=500.0)
+horizontal_plane = fmodel.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height=90)
+y_plane = fmodel.calculate_y_plane(x_resolution=200, z_resolution=100, crossstream_dist=0.0)
+cross_plane = fmodel.calculate_cross_plane(y_resolution=100,
+                                           z_resolution=100,
+                                           downstream_dist=500.0)
 
 # Create the plots
 fig, ax_list = plt.subplots(3, 1, figsize=(10, 8))

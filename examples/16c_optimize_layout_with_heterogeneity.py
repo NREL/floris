@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface, WindRose
+from floris.tools import FlorisModel, WindRose
 from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
@@ -24,7 +24,7 @@ show the benefits of coupled optimization when flows are heterogeneous.
 
 # Initialize the FLORIS interface fi
 file_dir = os.path.dirname(os.path.abspath(__file__))
-fi = FlorisInterface('inputs/gch.yaml')
+fmodel = FlorisModel('inputs/gch.yaml')
 
 # Setup 2 wind directions (due east and due west)
 # and 1 wind speed with uniform probability
@@ -76,7 +76,7 @@ wind_rose = WindRose(
 )
 
 
-fi.set(
+fmodel.set(
     layout_x=layout_x,
     layout_y=layout_y,
     wind_data=wind_rose,
@@ -85,7 +85,7 @@ fi.set(
 # Setup and solve the layout optimization problem without heterogeneity
 maxiter = 100
 layout_opt = LayoutOptimizationScipy(
-    fi,
+    fmodel,
     boundaries,
     wind_data=wind_rose,
     min_dist=2*D,
@@ -99,11 +99,11 @@ sol = layout_opt.optimize()
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
 
-fi.run()
-base_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
-fi.set(layout_x=sol[0], layout_y=sol[1])
-fi.run()
-opt_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+fmodel.run()
+base_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+fmodel.set(layout_x=sol[0], layout_y=sol[1])
+fmodel.run()
+opt_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
 
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
@@ -124,9 +124,9 @@ ax.set_title("Geometric yaw disabled")
 
 # Rerun the layout optimization with geometric yaw enabled
 print("\nReoptimizing with geometric yaw enabled.")
-fi.set(layout_x=layout_x, layout_y=layout_y)
+fmodel.set(layout_x=layout_x, layout_y=layout_y)
 layout_opt = LayoutOptimizationScipy(
-    fi,
+    fmodel,
     boundaries,
     wind_data=wind_rose,
     min_dist=2*D,
@@ -141,11 +141,11 @@ sol = layout_opt.optimize()
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
 
-fi.set(yaw_angles=np.zeros_like(layout_opt.yaw_angles))
-base_aep = fi.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
-fi.set(layout_x=sol[0], layout_y=sol[1], yaw_angles=layout_opt.yaw_angles)
-fi.run()
-opt_aep = fi.get_farm_AEP_with_wind_data(
+fmodel.set(yaw_angles=np.zeros_like(layout_opt.yaw_angles))
+base_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+fmodel.set(layout_x=sol[0], layout_y=sol[1], yaw_angles=layout_opt.yaw_angles)
+fmodel.run()
+opt_aep = fmodel.get_farm_AEP_with_wind_data(
     wind_data=wind_rose
 ) / 1e6
 
