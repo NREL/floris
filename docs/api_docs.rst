@@ -13,9 +13,18 @@ more users will interface with the software.
    :template: custom-module-template.rst
    :recursive:
 
-   floris.logging_manager
-   floris.simulation
-   floris.tools
-   floris.type_dec
+   floris.flow_visualization
+   floris.floris_model
+   floris.wind_data
+   floris.uncertainty_interface
    floris.turbine_library
+   floris.parallel_computing_interface
+   floris.optimization
+   floris.layout_visualization
+   floris.cut_plane
+   floris.core
+   floris.convert_turbine_v3_to_v4
+   floris.convert_floris_input_v3_to_v4
    floris.utilities
+   floris.type_dec
+   floris.logging_manager
