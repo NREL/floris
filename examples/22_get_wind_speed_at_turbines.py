@@ -4,7 +4,7 @@ import numpy as np
 from floris import FlorisModel
 
 
-# Initialize FLORIS with the given input file via FlorisModel.
+# Initialize FLORIS with the given input file.
 # For basic usage, FlorisModel provides a simplified and expressive
 # entry point to the simulation routines.
 fmodel = FlorisModel("inputs/gch.yaml")

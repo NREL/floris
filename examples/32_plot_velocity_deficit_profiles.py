@@ -142,8 +142,10 @@ if __name__ == '__main__':
         y_start=y_t1,
     )
 
-    horizontal_plane = fmodel.calculate_horizontal_plane(height=hub_height,
-                                                         x_bounds=[-2 * D, 9 * D])
+    horizontal_plane = fmodel.calculate_horizontal_plane(
+        height=hub_height,
+        x_bounds=[-2 * D, 9 * D]
+    )
     ax = flowviz.visualize_cut_plane(horizontal_plane)
     colors = ['b', 'g', 'c']
     for i, profile in enumerate(cross_profiles):

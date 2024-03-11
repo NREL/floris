@@ -101,7 +101,7 @@ heterogenous_inflow_config = {
     'z': z_locs,
 }
 
-# Initialize FLORIS with the given input file via FlorisModel.
+# Initialize FLORIS with the given input file.
 # Note that we initialize FLORIS with a homogenous flow input file, but
 # then configure the heterogeneous inflow via the reinitialize method.
 fmodel_3d = FlorisModel("inputs/gch.yaml")

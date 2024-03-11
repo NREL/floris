@@ -19,7 +19,7 @@ speed_ups = [[2.0, 1.0, 2.0, 1.0]]
 x_locs = [-300.0, -300.0, 2600.0, 2600.0]
 y_locs = [ -300.0, 300.0, -300.0, 300.0]
 
-# Initialize FLORIS with the given input file via FlorisModel.
+# Initialize FLORIS with the given input.
 # Note the heterogeneous inflow is defined in the input file.
 fmodel = FlorisModel("inputs/gch_heterogeneous_inflow.yaml")
 

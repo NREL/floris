@@ -22,7 +22,7 @@ run without coupled yaw optimization; then a coupled optimization is run to
 show the benefits of coupled optimization when flows are heterogeneous.
 """
 
-# Initialize the FLORIS interface fi
+# Initialize FLORIS
 file_dir = os.path.dirname(os.path.abspath(__file__))
 fmodel = FlorisModel('inputs/gch.yaml')
 

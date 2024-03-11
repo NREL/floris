@@ -13,10 +13,6 @@ This example illustrates the main parameters of the Empirical Gaussian
 velocity deficit model and their effects on the wind turbine wake.
 """
 
-# Initialize FLORIS with the given input file via FlorisModel.
-# For basic usage, FlorisModel provides a simplified and expressive
-# entry point to the simulation routines.
-
 # Options
 show_flow_cuts = True
 num_in_row = 5

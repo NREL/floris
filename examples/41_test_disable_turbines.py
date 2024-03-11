@@ -12,7 +12,7 @@ This example demonstrates the ability of FLORIS to shut down some turbines
 during a simulation.
 """
 
-# Initialize the FLORIS interface
+# Initialize FLORIS
 fmodel = FlorisModel("inputs/gch.yaml")
 
 # Change to the mixed model turbine

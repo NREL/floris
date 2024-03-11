@@ -18,7 +18,7 @@ axarr = axarr.flatten()
 MIN_WS = 1.0
 MAX_WS = 8.0
 
-# Initialize FLORIS with the given input file via FlorisModel
+# Initialize FLORIS with the given input file.
 fmodel = FlorisModel("inputs/gch.yaml")
 
 # Change to 5-turbine layout with a wind direction from northwest

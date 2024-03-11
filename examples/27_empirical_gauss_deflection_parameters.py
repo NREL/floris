@@ -13,7 +13,7 @@ This example illustrates the main parameters of the Empirical Gaussian
 deflection model and their effects on the wind turbine wake.
 """
 
-# Initialize FLORIS with the given input file via FlorisModel.
+# Initialize FLORIS with the given input file.
 # For basic usage, FlorisModel provides a simplified and expressive
 # entry point to the simulation routines.
 

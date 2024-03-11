@@ -40,7 +40,7 @@ using turbines with multi-dimensional Cp/Ct data under FlorisModel, called
 'get_turbine_powers_multidim'. The normal 'get_turbine_powers' method will not work.
 """
 
-# Initialize FLORIS with the given input file via FlorisModel.
+# Initialize FLORIS with the given input file.
 fmodel = FlorisModel("inputs/gch_multi_dim_cp_ct.yaml")
 
 # Convert to a simple two turbine layout

@@ -13,10 +13,10 @@ facilitating this example. The Cp/Ct values for the different wave conditions ar
 values of the original Cp/Ct data for the IEA 15MW turbine.
 """
 
-# Initialize FLORIS with the given input file via FlorisModel.
+# Initialize FLORIS with the given input file.
 fmodel = FlorisModel("inputs/gch_multi_dim_cp_ct.yaml")
 
-# Make a second FLORIS interface with a different setting for Hs.
+# Make a second Floris instance with a different setting for Hs.
 # Note the multi-cp-ct file (iea_15MW_multi_dim_Tp_Hs.csv)
 # for the turbine model iea_15MW_floating_multi_dim_cp_ct.yaml
 # Defines Hs at 1 and 5.

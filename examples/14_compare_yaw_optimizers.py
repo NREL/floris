@@ -15,7 +15,7 @@ from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizatio
 """
 This example compares the SciPy-based yaw optimizer with the new Serial-Refine optimizer.
 
-First, we initialize our Floris Interface, and then generate a 3 turbine wind farm.
+First, we initialize Floris, and then generate a 3 turbine wind farm.
 Next, we create two yaw optimization objects, `yaw_opt_sr` and `yaw_opt_scipy` for the
 Serial-Refine and SciPy methods, respectively.
 We then perform the optimization using both methods.

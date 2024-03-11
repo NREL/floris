@@ -31,7 +31,7 @@ fmodel_floating_defined_floating: Floating turbine (tilt varies with wind speed,
     tilt does not scale cp/ct)
 """
 
-# Declare the Floris Interfaces
+# Create the Floris instances
 fmodel_fixed = FlorisModel("inputs_floating/gch_fixed.yaml")
 fmodel_floating = FlorisModel("inputs_floating/gch_floating.yaml")
 fmodel_floating_defined_floating = FlorisModel("inputs_floating/gch_floating_defined_floating.yaml")
