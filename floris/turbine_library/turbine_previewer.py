@@ -19,7 +19,7 @@ from floris.utilities import (
     round_nearest,
     round_nearest_2_or_5,
 )
-
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 
 INTERNAL_LIBRARY = Path(__file__).parent
 DEFAULT_WIND_SPEEDS = np.linspace(0, 40, 81)
@@ -107,6 +107,7 @@ class TurbineInterface:
                     power_functions={self.turbine.turbine_type: self.turbine.power_function},
                     yaw_angles=np.zeros(shape),
                     tilt_angles=np.full(shape, v["ref_tilt"]),
+                    power_setpoints=np.full(shape, POWER_SETPOINT_DEFAULT),
                     tilt_interps={self.turbine.turbine_type: self.turbine.tilt_interp},
                     turbine_type_map=np.full(shape, self.turbine.turbine_type),
                     turbine_power_thrust_tables={self.turbine.turbine_type: v},
@@ -120,6 +121,7 @@ class TurbineInterface:
                 power_functions={self.turbine.turbine_type: self.turbine.power_function},
                 yaw_angles=np.zeros(shape),
                 tilt_angles=np.full(shape, self.turbine.power_thrust_table["ref_tilt"]),
+                power_setpoints=np.full(shape, POWER_SETPOINT_DEFAULT),
                 tilt_interps={self.turbine.turbine_type: self.turbine.tilt_interp},
                 turbine_type_map=np.full(shape, self.turbine.turbine_type),
                 turbine_power_thrust_tables={
@@ -148,8 +150,10 @@ class TurbineInterface:
             ct_curve = {
                 k: thrust_coefficient(
                     velocities=wind_speeds.reshape(shape),
+                    air_density=np.full(shape, v["ref_air_density"]),
                     yaw_angles=np.zeros(shape),
                     tilt_angles=np.full(shape, v["ref_tilt"]),
+                    power_setpoints=np.full(shape, POWER_SETPOINT_DEFAULT),
                     thrust_coefficient_functions={
                         self.turbine.turbine_type: self.turbine.thrust_coefficient_function
                     },
@@ -163,8 +167,10 @@ class TurbineInterface:
         else:
             ct_curve = thrust_coefficient(
                 velocities=wind_speeds.reshape(shape),
+                air_density=np.full(shape, self.turbine.power_thrust_table["ref_air_density"]),
                 yaw_angles=np.zeros(shape),
                 tilt_angles=np.full(shape, self.turbine.power_thrust_table["ref_tilt"]),
+                power_setpoints=np.full(shape, POWER_SETPOINT_DEFAULT),
                 thrust_coefficient_functions={
                     self.turbine.turbine_type: self.turbine.thrust_coefficient_function
                 },
