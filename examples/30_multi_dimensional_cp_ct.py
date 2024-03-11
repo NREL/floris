@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from floris.tools import FlorisModel
+from floris import FlorisModel
 
 
 """

@@ -9,7 +9,7 @@ from .yaw_optimization_base import YawOptimization
 class YawOptimizationGeometric(YawOptimization):
     """
     YawOptimizationGeometric is a subclass of
-    :py:class:`floris.tools.optimization.general_library.YawOptimization` that is
+    :py:class:`floris.optimization.general_library.YawOptimization` that is
     used to provide a rough estimate of optimal yaw angles based purely on the
     wind farm geometry. Main use case is for coupled layout and yaw optimization.
     """

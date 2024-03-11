@@ -12,7 +12,7 @@ from .yaw_optimization_tools import derive_downstream_turbines
 
 class YawOptimization(LoggingManager):
     """
-    YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.
+    YawOptimization is a subclass of :py:class:`floris.optimization.scipy.
     Optimization` that is used to optimize the yaw angles of all turbines in a Floris
     Farm for a single set of inflow conditions using the SciPy optimize package.
     """

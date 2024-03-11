@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisModel, UncertaintyInterface
+from floris import FlorisModel, UncertaintyInterface
 
 
 """

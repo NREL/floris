@@ -1,8 +1,8 @@
 
 import matplotlib.pyplot as plt
 
-from floris.tools import FlorisModel
-from floris.tools.flow_visualization import visualize_cut_plane
+from floris import FlorisModel
+from floris.flow_visualization import visualize_cut_plane
 
 
 """

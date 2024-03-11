@@ -423,7 +423,7 @@ def plot_rotor_values(
         figure objects are returned for custom editing.
 
     Example:
-        from floris.tools.visualization import plot_rotor_values
+        from floris.visualization import plot_rotor_values
         plot_rotor_values(floris.flow_field.u, findex=0, n_rows=1, ncols=4)
         plot_rotor_values(floris.flow_field.v, findex=0, n_rows=1, ncols=4)
         plot_rotor_values(floris.flow_field.w, findex=0, n_rows=1, ncols=4, show=True)

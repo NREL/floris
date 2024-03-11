@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import (
+from floris import (
     FlorisModel,
     TimeSeries,
     WindRose,

@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
 
-import floris.tools.flow_visualization as flowviz
-from floris.tools import FlorisModel
+import floris.flow_visualization as flowviz
+from floris import FlorisModel
 
 
 """

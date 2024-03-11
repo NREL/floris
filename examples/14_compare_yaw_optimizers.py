@@ -4,12 +4,12 @@ from time import perf_counter as timerpc
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisModel
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
+from floris import FlorisModel
+from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_scipy import YawOptimizationScipy
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris.optimization.yaw_optimization.yaw_optimizer_scipy import YawOptimizationScipy
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 """
@@ -25,7 +25,7 @@ and resulting wind farm powers.
 The example now also compares the Geometric Yaw optimizer, which is fast
 a method to find approximately optimal yaw angles based on the wind farm geometry. Its
 main use case is for coupled layout and yaw optimization.
-see floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric.py and the paper online
+see floris.optimization.yaw_optimization.yaw_optimizer_geometric.py and the paper online
 at https://wes.copernicus.org/preprints/wes-2023-1/. See also example 16c.
 
 """

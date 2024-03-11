@@ -4,8 +4,8 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisModel, WindRose
-from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
+from floris import FlorisModel, WindRose
+from floris.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
 

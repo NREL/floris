@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator
 
-from floris.tools import FlorisModel, ParallelComputingInterface
+from floris import FlorisModel, ParallelComputingInterface
 
 
 """

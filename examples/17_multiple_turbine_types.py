@@ -1,8 +1,8 @@
 
 import matplotlib.pyplot as plt
 
-import floris.tools.flow_visualization as flowviz
-from floris.tools import FlorisModel
+import floris.flow_visualization as flowviz
+from floris import FlorisModel
 
 
 """

@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisModel
+from floris import FlorisModel
 from floris.turbine_library import build_cosine_loss_turbine_dict
 
 

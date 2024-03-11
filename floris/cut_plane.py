@@ -338,7 +338,7 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
     Calculate effective wind speed within specified range of a point.
 
     Args:
-        cross_plane (:py:class:`floris.tools.cut_plane.CrossPlane`):
+        cross_plane (:py:class:`floris.cut_plane.CrossPlane`):
             plane of data.
         x1_loc (float): x1-coordinate of point of interest.
         x2_loc (float): x2-coordinate of point of interest.
@@ -377,7 +377,7 @@ def calculate_power(
     Calculate maximum power available in a given cross plane.
 
     Args:
-        cross_plane (:py:class:`floris.tools.cut_plane.CrossPlane`):
+        cross_plane (:py:class:`floris.cut_plane.CrossPlane`):
             plane of data.
         x1_loc (float): x1-coordinate of point of interest.
         x2_loc (float): x2-coordinate of point of interest.

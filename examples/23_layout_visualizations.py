@@ -2,9 +2,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.layout_visualization as layoutviz
-from floris.tools import FlorisModel
-from floris.tools.flow_visualization import visualize_cut_plane
+import floris.layout_visualization as layoutviz
+from floris import FlorisModel
+from floris.flow_visualization import visualize_cut_plane
 
 
 """

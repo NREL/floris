@@ -8,7 +8,7 @@ from .yaw_optimization_base import YawOptimization
 class YawOptimizationScipy(YawOptimization):
     """
     YawOptimizationScipy is a subclass of
-    :py:class:`floris.tools.optimization.general_library.YawOptimization` that is
+    :py:class:`floris.optimization.general_library.YawOptimization` that is
     used to optimize the yaw angles of all turbines in a Floris Farm for a single
     set of inflow conditions using the SciPy optimize package.
     """

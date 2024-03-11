@@ -186,7 +186,7 @@ and thrust coefficients or as absolute values.
 ## Optimization
 
 These examples demonstrate use of the optimization routines
-included in FLORIS through {py:mod}`floris.tools.optimization`. These
+included in FLORIS through {py:mod}`floris.optimization`. These
 focus on yaw settings and wind farm layout, but the concepts
 are general and can be used for other optimizations.
 
