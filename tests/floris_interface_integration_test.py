@@ -447,3 +447,48 @@ def test_set_ti():
     # Test that applying a float however raises an error
     with pytest.raises(TypeError):
         fi.set(turbulence_intensities=0.12)
+
+def test_calculate_planes():
+    fi = FlorisInterface(configuration=YAML_INPUT)
+
+    # The calculate_plane functions should run directly with the inputs as given
+    fi.calculate_horizontal_plane(90.0)
+    fi.calculate_y_plane(0.0)
+    fi.calculate_cross_plane(500.0)
+
+    # They should also support setting new wind conditions, but they all have to set at once
+    wind_speeds = [8.0, 8.0, 8.0]
+    wind_directions = [270.0, 270.0, 270.0]
+    turbulence_intensities = [0.1, 0.1, 0.1]
+    fi.calculate_horizontal_plane(
+        90.0,
+        ws=[wind_speeds[0]],
+        wd=[wind_directions[0]],
+        ti=[turbulence_intensities[0]]
+    )
+    fi.calculate_y_plane(
+        0.0,
+        ws=[wind_speeds[0]],
+        wd=[wind_directions[0]],
+        ti=[turbulence_intensities[0]]
+    )
+    fi.calculate_cross_plane(
+        500.0,
+        ws=[wind_speeds[0]],
+        wd=[wind_directions[0]],
+        ti=[turbulence_intensities[0]]
+    )
+
+    # If Floris is configured with multiple wind conditions prior to this, then all of the
+    # components must be changed together.
+    fi.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities
+    )
+    with pytest.raises(ValueError):
+        fi.calculate_horizontal_plane(90.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
+    with pytest.raises(ValueError):
+        fi.calculate_y_plane(0.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
+    with pytest.raises(ValueError):
+        fi.calculate_cross_plane(500.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
