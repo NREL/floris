@@ -89,7 +89,7 @@ The typical entry point is
 [FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris.FlorisModel.html#floris.FlorisModel)
 which accepts the path to the input file as an argument. From there,
 changes can be made to the initial configuration through the
-[FlorisInterface.reinitialize](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.reinitialize)
+[FlorisModel.reinitialize](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.reinitialize)
 routine, and the simulation is executed with
 [FlorisInterface.calculate_wake](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.calculate_wake).
 
