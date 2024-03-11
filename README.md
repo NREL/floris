@@ -86,32 +86,36 @@ FLORIS is a Python package run on the command line typically by providing
 an input file with an initial configuration. It can be installed with
 ```pip install floris``` (see [installation](https://github.nrel.io/floris/installation)).
 The typical entry point is
-[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris.FlorisModel.html#floris.FlorisModel)
+[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel)
 which accepts the path to the input file as an argument. From there,
 changes can be made to the initial configuration through the
-[FlorisModel.reinitialize](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.reinitialize)
+[FlorisModel.set](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.set)
 routine, and the simulation is executed with
-[FlorisInterface.calculate_wake](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.calculate_wake).
+[FlorisModel.run](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.run).
 
 ```python
-from floris.tools import FlorisInterface
-fi = FlorisInterface("path/to/input.yaml")
-fi.reinitialize(wind_directions=[i for i in range(10)])
-fi.calculate_wake()
+from floris import FlorisModel
+fmodel = FlorisModel("path/to/input.yaml")
+fmodel.set(
+    wind_directions=[i for i in range(10)],
+    wind_speeds=[i for i in range(10)],
+    turbulence_intensities=[0.1 for i in range(10)],
+)
+fmodel.run()
 ```
 
 Finally, results can be analyzed via post-processing functions available within
-[FlorisInterface](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface)
+[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel)
 such as
-- [FlorisInterface.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_layout)
-- [FlorisInterface.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_powers)
-- [FlorisInterface.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_farm_AEP)
+- [FlorisModel.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_turbine_layout)
+- [FlorisModel.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_turbine_powers)
+- [FlorisModel.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_farm_AEP)
 
-and in a visualization package at [floris.tools.visualization](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.visualization).
+and in two visualization packages: [layoutviz](https://nrel.github.io/floris/_autosummary/floris.layout_visualization.html) and [flowviz](https://nrel.github.io/floris/_autosummary/floris.flow_visualization.html).
 A collection of examples describing the creation of simulations as well as
 analysis and post processing are included in the
 [repository](https://github.com/NREL/floris/tree/main/examples)
-and described in detail in [Examples Index](https://github.nrel.io/floris/examples).
+and described in [Examples Index](https://github.nrel.io/floris/examples).
 
 ## Engaging on GitHub
 
