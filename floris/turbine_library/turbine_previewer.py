@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from attrs import define, field
 
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.core.turbine.turbine import (
     power,
     thrust_coefficient,
@@ -19,7 +20,7 @@ from floris.utilities import (
     round_nearest,
     round_nearest_2_or_5,
 )
-from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+
 
 INTERNAL_LIBRARY = Path(__file__).parent
 DEFAULT_WIND_SPEEDS = np.linspace(0, 40, 81)
