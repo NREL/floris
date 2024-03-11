@@ -491,6 +491,7 @@ class FlorisModel(LoggingManager):
         y_bounds=None,
         wd=None,
         ws=None,
+        ti=None,
         yaw_angles=None,
         power_setpoints=None,
         disable_turbines=None,
@@ -512,6 +513,7 @@ class FlorisModel(LoggingManager):
                 Defaults to None.
             wd (float, optional): Wind direction. Defaults to None.
             ws (float, optional): Wind speed. Defaults to None.
+            ti (float, optional): Turbulence intensity. Defaults to None.
             yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
                 to None.
             power_setpoints (NDArrayFloat, optional):
@@ -528,7 +530,9 @@ class FlorisModel(LoggingManager):
             wd = self.core.flow_field.wind_directions
         if ws is None:
             ws = self.core.flow_field.wind_speeds
-        self.check_wind_condition_for_viz(wd=wd, ws=ws)
+        if ti is None:
+            ti = self.core.flow_field.turbulence_intensities
+        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
 
         # Store the current state for reinitialization
         floris_dict = self.core.as_dict()
@@ -543,6 +547,7 @@ class FlorisModel(LoggingManager):
         self.set(
             wind_directions=wd,
             wind_speeds=ws,
+            turbulence_intensities=ti,
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
@@ -585,6 +590,7 @@ class FlorisModel(LoggingManager):
         z_bounds=None,
         wd=None,
         ws=None,
+        ti=None,
         yaw_angles=None,
         power_setpoints=None,
         disable_turbines=None,
@@ -614,7 +620,9 @@ class FlorisModel(LoggingManager):
             wd = self.core.flow_field.wind_directions
         if ws is None:
             ws = self.core.flow_field.wind_speeds
-        self.check_wind_condition_for_viz(wd=wd, ws=ws)
+        if ti is None:
+            ti = self.core.flow_field.turbulence_intensities
+        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
 
         # Store the current state for reinitialization
         floris_dict = self.core.as_dict()
@@ -630,6 +638,7 @@ class FlorisModel(LoggingManager):
         self.set(
             wind_directions=wd,
             wind_speeds=ws,
+            turbulence_intensities=ti,
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
@@ -667,6 +676,7 @@ class FlorisModel(LoggingManager):
         z_bounds=None,
         wd=None,
         ws=None,
+        ti=None,
         yaw_angles=None,
         power_setpoints=None,
         disable_turbines=None,
@@ -690,6 +700,7 @@ class FlorisModel(LoggingManager):
                 Defaults to None.
             wd (float, optional): Wind direction. Defaults to None.
             ws (float, optional): Wind speed. Defaults to None.
+            ti (float, optional): Turbulence intensity. Defaults to None.
             yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
                 to None.
             power_setpoints (NDArrayFloat, optional):
@@ -708,7 +719,9 @@ class FlorisModel(LoggingManager):
             wd = self.core.flow_field.wind_directions
         if ws is None:
             ws = self.core.flow_field.wind_speeds
-        self.check_wind_condition_for_viz(wd=wd, ws=ws)
+        if ti is None:
+            ti = self.core.flow_field.turbulence_intensities
+        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
 
         # Store the current state for reinitialization
         floris_dict = self.core.as_dict()
@@ -724,6 +737,7 @@ class FlorisModel(LoggingManager):
         self.set(
             wind_directions=wd,
             wind_speeds=ws,
+            turbulence_intensities=ti,
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
@@ -752,7 +766,7 @@ class FlorisModel(LoggingManager):
 
         return y_plane
 
-    def check_wind_condition_for_viz(self, wd=None, ws=None):
+    def check_wind_condition_for_viz(self, wd=None, ws=None, ti=None):
         if len(wd) > 1 or len(wd) < 1:
             raise ValueError(
                 "Wind direction input must be of length 1 for visualization. "
@@ -763,6 +777,12 @@ class FlorisModel(LoggingManager):
             raise ValueError(
                 "Wind speed input must be of length 1 for visualization. "
                 f"Current length is {len(ws)}."
+            )
+
+        if len(ti) != 1:
+            raise ValueError(
+                "Turbulence intensity input must be of length 1 for visualization. "
+                f"Current length is {len(ti)}."
             )
 
     def get_turbine_powers(self) -> NDArrayFloat:

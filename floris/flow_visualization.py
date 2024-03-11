@@ -479,6 +479,7 @@ def calculate_horizontal_plane_with_turbines(
     y_bounds=None,
     wd=None,
     ws=None,
+    ti=None,
     yaw_angles=None,
     power_setpoints=None,
     disable_turbines=None,
@@ -505,6 +506,7 @@ def calculate_horizontal_plane_with_turbines(
             y_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
             wd (float, optional): Wind direction setting. Defaults to None.
             ws (float, optional): Wind speed setting. Defaults to None.
+            ti (float, optional): Turbulence intensity. Defaults to None.
             yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.
             power_setpoints (np.ndarray, optional): Power setpoints settings. Defaults to None.
             disable_turbines (np.ndarray, optional): Disable turbines settings. Defaults to None.
@@ -521,7 +523,9 @@ def calculate_horizontal_plane_with_turbines(
             wd = fmodel.core.flow_field.wind_directions
         if ws is None:
             ws = fmodel.core.flow_field.wind_speeds
-        fmodel.check_wind_condition_for_viz(wd=wd, ws=ws)
+        if ti is None:
+            ti = fmodel.core.flow_field.turbulence_intensities
+        fmodel.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
 
         # Set the ws and wd
         fmodel.set(
