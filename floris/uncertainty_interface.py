@@ -65,7 +65,7 @@ class UncertaintyInterface(LoggingManager):
                     - **farm**: See `floris.simulation.farm.Farm` for more details.
                     - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
                     - **wake**: See `floris.simulation.wake.WakeManager` for more details.
-                    - **logging**: See `floris.simulation.core.core` for more details.
+                    - **logging**: See `floris.simulation.core.Core` for more details.
             wd_resolution (float, optional): The resolution of wind direction for generating
                 gaussian blends, in degrees.  Defaults to 1.0.
             ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.

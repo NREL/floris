@@ -8,7 +8,7 @@ import attrs
 import numpy as np
 from attrs import define, field
 
-from floris.core.base import BaseClass
+from floris.core import BaseClass
 from floris.type_dec import (
     floris_array_converter,
     floris_float_type,

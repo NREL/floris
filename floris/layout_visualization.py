@@ -135,7 +135,7 @@ def plot_turbine_labels(
         if len(turbine_names) != len(fmodel.layout_x):
             raise ValueError(
                 "Length of turbine_names not equal to number turbines in fmodel object"
-                )
+            )
     else:
         # Assign simple default numbering
         turbine_names = [f"{i:03d}" for i in range(len(fmodel.layout_x))]
@@ -470,9 +470,11 @@ def plot_waking_directions(
                 # and i in layout_plotting_dict["turbine_indices"]
                 # and j in layout_plotting_dict["turbine_indices"]
             ):
-                (h,) = ax.plot(fmodel.layout_x[[i, j]],
-                               fmodel.layout_y[[i, j]],
-                               **wake_plotting_dict)
+                (h,) = ax.plot(
+                    fmodel.layout_x[[i, j]],
+                    fmodel.layout_y[[i, j]],
+                    **wake_plotting_dict
+                )
 
                 # Only label in one direction
                 if ~label_exists[i, j]:

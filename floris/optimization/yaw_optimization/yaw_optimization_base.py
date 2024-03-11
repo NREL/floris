@@ -35,7 +35,7 @@ class YawOptimization(LoggingManager):
         and assign parameter values.
 
         Args:
-            fmodel (FlorisModel): A FlorisModel object.
+            fmodel (:py:class:`~.floris_model.FlorisModel`): A FlorisModel object.
             minimum_yaw_angle (float or ndarray): Minimum constraint on yaw
                 angle (deg). If a single value specified, assumes this value
                 for all turbines. If a 1D array is specified, assumes these

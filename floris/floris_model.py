@@ -42,7 +42,7 @@ class FlorisModel(LoggingManager):
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
                 - **wake**: See `floris.simulation.wake.WakeManager` for more details.
-                - **logging**: See `floris.simulation.core.core` for more details.
+                - **logging**: See `floris.simulation.core.Core` for more details.
     """
 
     def __init__(self, configuration: dict | str | Path):

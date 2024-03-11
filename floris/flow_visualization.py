@@ -215,7 +215,7 @@ def visualize_heterogeneous_cut_plane(
     Args:
         cut_plane (:py:class:`~.tools.cut_plane.CutPlane`): 2D
             plane through wind plant.
-        fmodel (FlorisModel): FlorisModel object.
+        fmodel (:py:class:`~.floris_model.FlorisModel`): FlorisModel object.
         ax (:py:class:`matplotlib.pyplot.axes`): Figure axes. Defaults
             to None.
         vel_component (str, optional): The velocity component that the cut plane is
@@ -497,7 +497,8 @@ def calculate_horizontal_plane_with_turbines(
         for models where the visualization capability is not yet available.
 
         Args:
-            fmodel_in (FlorisModel): Preinitialized FlorisModel object.
+            fmodel_in (:py:class:`floris.floris_model.FlorisModel`):
+                Preinitialized FlorisModel object.
             x_resolution (float, optional): Output array resolution. Defaults to 200 points.
             y_resolution (float, optional): Output array resolution. Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
