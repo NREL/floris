@@ -29,12 +29,27 @@ layout_x = np.array([0, D * 6])
 layout_y = [0, 0]
 wd_array = np.arange(240.0, 300.0, 1.0)
 wind_speeds = 8.0 * np.ones_like(wd_array)
-fmodel.set(layout_x=layout_x, layout_y=layout_y, wind_directions=wd_array, wind_speeds=wind_speeds)
+ti_array = 0.06 * np.ones_like(wd_array)
+fmodel.set(
+    layout_x=layout_x,
+    layout_y=layout_y,
+    wind_directions=wd_array,
+    wind_speeds=wind_speeds,
+    turbulence_intensities=ti_array,
+)
 ufmodel_3.set(
-    layout_x=layout_x, layout_y=layout_y, wind_directions=wd_array, wind_speeds=wind_speeds
+    layout_x=layout_x,
+    layout_y=layout_y,
+    wind_directions=wd_array,
+    wind_speeds=wind_speeds,
+    turbulence_intensities=ti_array,
 )
 ufmodel_5.set(
-    layout_x=layout_x, layout_y=layout_y, wind_directions=wd_array, wind_speeds=wind_speeds
+    layout_x=layout_x,
+    layout_y=layout_y,
+    wind_directions=wd_array,
+    wind_speeds=wind_speeds,
+    turbulence_intensities=ti_array,
 )
 
 
