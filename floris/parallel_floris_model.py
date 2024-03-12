@@ -327,7 +327,8 @@ class ParallelFlorisModel(LoggingManager):
             # Default to equal weighing of all turbines when turbine_weights is None
             turbine_weights = np.ones(
                 (
-                    self.fmodel.core.flow_field.n_findex,
+                    (self._n_unexpanded if self._is_uncertain
+                     else self.fmodel.core.flow_field.n_findex),
                     self.fmodel.core.farm.n_turbines
                 )
             )
@@ -336,7 +337,8 @@ class ParallelFlorisModel(LoggingManager):
             turbine_weights = np.tile(
                 turbine_weights,
                 (
-                    self.fmodel.core.flow_field.n_findex,
+                    (self._n_unexpanded if self._is_uncertain
+                     else self.fmodel.core.flow_field.n_findex),
                     1
                 )
             )
@@ -350,7 +352,7 @@ class ParallelFlorisModel(LoggingManager):
     def get_farm_AEP(
         self,
         freq,
-        cut_in_wind_speed=0.001,
+        cut_in_wind_speed=None,
         cut_out_wind_speed=None,
         yaw_angles=None,
         turbine_weights=None,
@@ -366,15 +368,8 @@ class ParallelFlorisModel(LoggingManager):
                 wind speed combination. These frequencies should typically sum
                 up to 1.0 and are used to weigh the wind farm power for every
                 condition in calculating the wind farm's AEP.
-            cut_in_wind_speed (float, optional): Wind speed in m/s below which
-                any calculations are ignored and the wind farm is known to
-                produce 0.0 W of power. Note that to prevent problems with the
-                wake models at negative / zero wind speeds, this variable must
-                always have a positive value. Defaults to 0.001 [m/s].
-            cut_out_wind_speed (float, optional): Wind speed above which the
-                wind farm is known to produce 0.0 W of power. If None is
-                specified, will assume that the wind farm does not cut out
-                at high wind speeds. Defaults to None.
+            cut_in_wind_speed (float, optional): No longer supported.
+            cut_out_wind_speed (float, optional): No longer supported.
             yaw_angles (NDArrayFloat | list[float] | None, optional):
                 The relative turbine yaw angles in degrees. If None is
                 specified, will assume that the turbine yaw angles are all
@@ -415,20 +410,17 @@ class ParallelFlorisModel(LoggingManager):
             )
 
         # Verify dimensions of the variable "freq"
-        if not (
-            (np.shape(freq)[0] == self.fmodel.core.flow_field.n_wind_directions)
-            & (np.shape(freq)[1] == self.fmodel.core.flow_field.n_wind_speeds)
-            & (len(np.shape(freq)) == 2)
-        ):
+        if ((self._is_uncertain and np.shape(freq)[0] != self._n_unexpanded) or 
+            (not self._is_uncertain and np.shape(freq)[0] != self.fmodel.core.flow_field.n_findex)):
             raise UserWarning(
-                "'freq' should be a two-dimensional array with dimensions "
-                + "(n_wind_directions, n_wind_speeds)."
+                "'freq' should be a one-dimensional array with dimensions (n_findex). "
+                f"Given shape is {np.shape(freq)}"
             )
 
         # Check if frequency vector sums to 1.0. If not, raise a warning
         if np.abs(np.sum(freq) - 1.0) > 0.001:
             self.logger.warning(
-                "WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0. "
+                "WARNING: The frequency array provided to get_farm_AEP() does not sum to 1.0."
             )
 
         # Copy the full wind speed array from the floris object and initialize
@@ -439,29 +431,21 @@ class ParallelFlorisModel(LoggingManager):
             self.fmodel.core.flow_field.turbulence_intensities,
             copy=True,
         )
-        farm_power = np.zeros((self.fmodel.core.flow_field.n_wind_directions, len(wind_speeds)))
+        farm_power = np.zeros(
+            self._n_unexpanded if self._is_uncertain else self.core.flow_field.n_findex
+        )
 
         # Determine which wind speeds we must evaluate in floris
-        conditions_to_evaluate = wind_speeds >= cut_in_wind_speed
-        if cut_out_wind_speed is not None:
-            conditions_to_evaluate = conditions_to_evaluate & (wind_speeds < cut_out_wind_speed)
+        if cut_in_wind_speed is not None or cut_out_wind_speed is not None:
+            raise NotImplementedError(
+                "WARNING: The 'cut_in_wind_speed' and 'cut_out_wind_speed' "
+                "parameters are no longer supported in the 'ParallelFlorisModel.get_farm_AEP' "
+                "method."
+            )
 
-        # Evaluate the conditions in floris
-        if np.any(conditions_to_evaluate):
-            wind_speeds_subset = wind_speeds[conditions_to_evaluate]
-            wind_direction_subset = wind_directions[conditions_to_evaluate]
-            turbulence_intensities_subset = turbulence_intensities[conditions_to_evaluate]
-            yaw_angles_subset = None
-            if yaw_angles is not None:
-                yaw_angles_subset = yaw_angles[:, conditions_to_evaluate]
-            self.fmodel.set(
-                wind_directions=wind_direction_subset,
-                wind_speeds=wind_speeds_subset,
-                turbulence_intensities=turbulence_intensities_subset,
-            )
-            farm_power[:, conditions_to_evaluate] = (
-                self.get_farm_power(yaw_angles=yaw_angles_subset, turbine_weights=turbine_weights)
-            )
+        farm_power = (
+            self.get_farm_power(yaw_angles=yaw_angles, turbine_weights=turbine_weights)
+        )
 
         # Finally, calculate AEP in GWh
         aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
@@ -470,7 +454,7 @@ class ParallelFlorisModel(LoggingManager):
         self.fmodel.set(
             wind_directions=wind_directions,
             wind_speeds=wind_speeds,
-            turbulence_intensities=turbulence_intensities_subset,
+            turbulence_intensities=turbulence_intensities,
         )
 
         return aep
