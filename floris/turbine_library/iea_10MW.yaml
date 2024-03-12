@@ -5,9 +5,19 @@ turbine_type: 'iea_10MW'
 hub_height: 119.0
 rotor_diameter: 198.0
 TSR: 8.0
-power_thrust_model: cosine-loss
+power_thrust_model: 'tum-loss'
 power_thrust_table:
   ref_air_density: 1.225
+
+  rotor_solidity: 0.03500415472147307
+  rated_rpm:  8.6
+  generator_efficiency: 0.944
+  rated_power: 10.0e6
+  rotor_diameter: 198
+  beta: -3.8233819218614817
+  cd:  0.004612981322772105
+  cl_alfa: 4.602140680380394
+  
   ref_tilt: 6.0
   cosine_loss_exponent_yaw: 1.88
   cosine_loss_exponent_tilt: 1.88

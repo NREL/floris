@@ -4,4 +4,5 @@ from floris.simulation.turbine.operation_models import (
     MixedOperationTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
+    TUMLossTurbine,
 )
