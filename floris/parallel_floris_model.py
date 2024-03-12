@@ -12,11 +12,6 @@ from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizatio
 from floris.uncertain_floris_model import map_turbine_powers_uncertain, UncertainFlorisModel
 
 
-def _load_local_floris_object(fmodel_dict):
-    # Load local FLORIS object
-    return  FlorisModel(fmodel_dict)
-
-
 def _get_turbine_powers_serial(fmodel_information, yaw_angles=None):
     fmodel = FlorisModel(fmodel_information)
     fmodel.set(yaw_angles=yaw_angles)
@@ -36,7 +31,7 @@ def _optimize_yaw_angles_serial(
     verify_convergence,
     print_progress,
 ):
-    fmodel_opt = _load_local_floris_object(*fmodel_information)
+    fmodel_opt = FlorisModel(fmodel_information)
     yaw_opt = YawOptimizationSR(
         fmodel=fmodel_opt,
         minimum_yaw_angle=minimum_yaw_angle,
