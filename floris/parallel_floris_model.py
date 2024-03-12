@@ -410,7 +410,7 @@ class ParallelFlorisModel(LoggingManager):
             )
 
         # Verify dimensions of the variable "freq"
-        if ((self._is_uncertain and np.shape(freq)[0] != self._n_unexpanded) or 
+        if ((self._is_uncertain and np.shape(freq)[0] != self._n_unexpanded) or
             (not self._is_uncertain and np.shape(freq)[0] != self.fmodel.core.flow_field.n_findex)):
             raise UserWarning(
                 "'freq' should be a one-dimensional array with dimensions (n_findex). "
