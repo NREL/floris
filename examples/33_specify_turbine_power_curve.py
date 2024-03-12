@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris import FlorisModel
 from floris.turbine_library import build_cosine_loss_turbine_dict
 
 
@@ -39,12 +39,12 @@ turbine_dict = build_cosine_loss_turbine_dict(
     ref_tilt=5
 )
 
-fi = FlorisInterface("inputs/gch.yaml")
+fmodel = FlorisModel("inputs/gch.yaml")
 wind_speeds = np.linspace(1, 15, 100)
 wind_directions = 270 * np.ones_like(wind_speeds)
 turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
 # Replace the turbine(s) in the FLORIS model with the created one
-fi.set(
+fmodel.set(
     layout_x=[0],
     layout_y=[0],
     wind_directions=wind_directions,
@@ -52,9 +52,9 @@ fi.set(
     turbulence_intensities=turbulence_intensities,
     turbine_type=[turbine_dict]
 )
-fi.run()
+fmodel.run()
 
-powers = fi.get_farm_power()
+powers = fmodel.get_farm_power()
 
 specified_powers = (
     np.array(turbine_data_dict["power_coefficient"])

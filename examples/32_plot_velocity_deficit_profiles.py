@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import ticker
 
-import floris.tools.flow_visualization as flowviz
-from floris.tools import cut_plane, FlorisInterface
-from floris.tools.flow_visualization import VelocityProfilesFigure
+import floris.flow_visualization as flowviz
+from floris import cut_plane, FlorisModel
+from floris.flow_visualization import VelocityProfilesFigure
 from floris.utilities import reverse_rotate_coordinates_rel_west
 
 
@@ -37,7 +37,7 @@ def annotate_coordinate_system(x_origin, y_origin, quiver_length):
     x2 = np.array([0.0, quiver_length + 0.35 * D])
     x3 = np.array([90.0, 90.0])
     x, y, _ = reverse_rotate_coordinates_rel_west(
-            fi.floris.flow_field.wind_directions,
+            fmodel.core.flow_field.wind_directions,
             x1[None, :],
             x2[None, :],
             x3[None, :],
@@ -54,8 +54,8 @@ if __name__ == '__main__':
     hub_height = 90.0
     homogeneous_wind_speed = 8.0
 
-    fi = FlorisInterface("inputs/gch.yaml")
-    fi.set(layout_x=[0.0], layout_y=[0.0])
+    fmodel = FlorisModel("inputs/gch.yaml")
+    fmodel.set(layout_x=[0.0], layout_y=[0.0])
 
     # ------------------------------ Single-turbine layout ------------------------------
     # We first show how to sample and plot velocity deficit profiles on a single-turbine layout.
@@ -63,13 +63,13 @@ if __name__ == '__main__':
     downstream_dists = D * np.array([3, 5, 7])
     # Sample three profiles along three corresponding lines that are all parallel to the y-axis
     # (cross-stream direction). The streamwise location of each line is given in `downstream_dists`.
-    profiles = fi.sample_velocity_deficit_profiles(
+    profiles = fmodel.sample_velocity_deficit_profiles(
         direction='cross-stream',
         downstream_dists=downstream_dists,
         homogeneous_wind_speed=homogeneous_wind_speed,
     )
 
-    horizontal_plane = fi.calculate_horizontal_plane(height=hub_height)
+    horizontal_plane = fmodel.calculate_horizontal_plane(height=hub_height)
     fig, ax = plt.subplots(figsize=(6.4, 3))
     flowviz.visualize_cut_plane(horizontal_plane, ax)
     colors = ['b', 'g', 'c']
@@ -95,10 +95,10 @@ if __name__ == '__main__':
 
     # Change velocity model to jensen, get the velocity deficit profiles,
     # and add them to the figure.
-    floris_dict = fi.floris.as_dict()
+    floris_dict = fmodel.core.as_dict()
     floris_dict['wake']['model_strings']['velocity_model'] = 'jensen'
-    fi = FlorisInterface(floris_dict)
-    profiles = fi.sample_velocity_deficit_profiles(
+    fmodel = FlorisModel(floris_dict)
+    profiles = fmodel.sample_velocity_deficit_profiles(
         direction='cross-stream',
         downstream_dists=downstream_dists,
         homogeneous_wind_speed=homogeneous_wind_speed,
@@ -125,16 +125,16 @@ if __name__ == '__main__':
     # (i.e. where to start sampling the profiles).
     wind_direction = 315.0 # Try to change this
     downstream_dists = D * np.array([3, 5])
-    floris_dict = fi.floris.as_dict()
+    floris_dict = fmodel.core.as_dict()
     floris_dict['wake']['model_strings']['velocity_model'] = 'gauss'
-    fi = FlorisInterface(floris_dict)
+    fmodel = FlorisModel(floris_dict)
     # Let (x_t1, y_t1) be the location of the second turbine
     x_t1 =  2 * D
     y_t1 = -2 * D
-    fi.set(wind_directions=[wind_direction], layout_x=[0.0, x_t1], layout_y=[0.0, y_t1])
+    fmodel.set(wind_directions=[wind_direction], layout_x=[0.0, x_t1], layout_y=[0.0, y_t1])
 
     # Extract profiles at a set of downstream distances from the starting point (x_start, y_start)
-    cross_profiles = fi.sample_velocity_deficit_profiles(
+    cross_profiles = fmodel.sample_velocity_deficit_profiles(
         direction='cross-stream',
         downstream_dists=downstream_dists,
         homogeneous_wind_speed=homogeneous_wind_speed,
@@ -142,7 +142,10 @@ if __name__ == '__main__':
         y_start=y_t1,
     )
 
-    horizontal_plane = fi.calculate_horizontal_plane(height=hub_height, x_bounds=[-2 * D, 9 * D])
+    horizontal_plane = fmodel.calculate_horizontal_plane(
+        height=hub_height,
+        x_bounds=[-2 * D, 9 * D]
+    )
     ax = flowviz.visualize_cut_plane(horizontal_plane)
     colors = ['b', 'g', 'c']
     for i, profile in enumerate(cross_profiles):
@@ -162,7 +165,7 @@ if __name__ == '__main__':
     # locations as before. We stay directly downstream of the turbine (i.e. x2 = 0). These
     # profiles are almost identical to the cross-stream profiles. However, we now explicitly
     # set the profile range. The default range is [-2 * D, 2 * D].
-    vertical_profiles = fi.sample_velocity_deficit_profiles(
+    vertical_profiles = fmodel.sample_velocity_deficit_profiles(
         direction='vertical',
         profile_range=[-1.5 * D, 1.5 * D],
         downstream_dists=downstream_dists,

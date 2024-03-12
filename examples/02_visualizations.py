@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import floris.tools.flow_visualization as flowviz
-from floris.tools import FlorisInterface
+import floris.flow_visualization as flowviz
+from floris import FlorisModel
 
 
 """
@@ -12,7 +12,7 @@ functions to run a simulation and plot the results. In this case,
 we are plotting three slices of the resulting flow field:
 1. Horizontal slice parallel to the ground and located at the hub height
 2. Vertical slice of parallel with the direction of the wind
-3. Veritical slice parallel to to the turbine disc plane
+3. Vertical slice parallel to to the turbine disc plane
 
 Additionally, an alternative method of plotting a horizontal slice
 is shown. Rather than calculating points in the domain behind a turbine,
@@ -21,36 +21,36 @@ locations throughout the farm while calculating the velocity at it's
 rotor.
 """
 
-# Initialize FLORIS with the given input file via FlorisInterface.
-# For basic usage, FlorisInterface provides a simplified and expressive
+# Initialize FLORIS with the given input file via FlorisModel.
+# For basic usage, FlorisModel provides a simplified and expressive
 # entry point to the simulation routines.
-fi = FlorisInterface("inputs/gch.yaml")
+fmodel = FlorisModel("inputs/gch.yaml")
 
 # The rotor plots show what is happening at each turbine, but we do not
 # see what is happening between each turbine. For this, we use a
 # grid that has points regularly distributed throughout the fluid domain.
-# The FlorisInterface contains functions for configuring the new grid,
+# The FlorisModel contains functions for configuring the new grid,
 # running the simulation, and generating plots of 2D slices of the
 # flow field.
 
 # Note this visualization grid created within the calculate_horizontal_plane function will be reset
 # to what existed previously at the end of the function
 
-# Using the FlorisInterface functions, get 2D slices.
-horizontal_plane = fi.calculate_horizontal_plane(
+# Using the FlorisModel functions, get 2D slices.
+horizontal_plane = fmodel.calculate_horizontal_plane(
     x_resolution=200,
     y_resolution=100,
     height=90.0,
     yaw_angles=np.array([[25.,0.,0.]]),
 )
 
-y_plane = fi.calculate_y_plane(
+y_plane = fmodel.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
     crossstream_dist=0.0,
     yaw_angles=np.array([[25.,0.,0.]]),
 )
-cross_plane = fi.calculate_cross_plane(
+cross_plane = fmodel.calculate_cross_plane(
     y_resolution=100,
     z_resolution=100,
     downstream_dist=630.0,
@@ -82,7 +82,7 @@ flowviz.visualize_cut_plane(
 # Some wake models may not yet have a visualization method included, for these cases can use
 # a slower version which scans a turbine model to produce the horizontal flow
 horizontal_plane_scan_turbine = flowviz.calculate_horizontal_plane_with_turbines(
-    fi,
+    fmodel,
     x_resolution=20,
     y_resolution=10,
     yaw_angles=np.array([[25.,0.,0.]]),
@@ -101,11 +101,11 @@ flowviz.visualize_cut_plane(
 
 # Run the wake calculation to get the turbine-turbine interfactions
 # on the turbine grids
-fi.run()
+fmodel.run()
 
 # Plot the values at each rotor
 fig, axes, _ , _ = flowviz.plot_rotor_values(
-    fi.floris.flow_field.u,
+    fmodel.core.flow_field.u,
     findex=0,
     n_rows=1,
     n_cols=3,
@@ -125,15 +125,15 @@ solver_settings = {
     "type": "turbine_grid",
     "turbine_grid_points": 10
 }
-fi.set(solver_settings=solver_settings)
+fmodel.set(solver_settings=solver_settings)
 
 # Run the wake calculation to get the turbine-turbine interfactions
 # on the turbine grids
-fi.run()
+fmodel.run()
 
 # Plot the values at each rotor
 fig, axes, _ , _ = flowviz.plot_rotor_values(
-    fi.floris.flow_field.u,
+    fmodel.core.flow_field.u,
     findex=0,
     n_rows=1,
     n_cols=3,

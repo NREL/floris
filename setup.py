@@ -67,7 +67,7 @@ setup(
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     package_data={
-        'floris': ['turbine_library/*.yaml', 'simulation/wake_velocity/turbopark_lookup_table.mat']
+        'floris': ['turbine_library/*.yaml', 'core/wake_velocity/turbopark_lookup_table.mat']
     },
     install_requires=REQUIRED,
     extras_require=EXTRAS,

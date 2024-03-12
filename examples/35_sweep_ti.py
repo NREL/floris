@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import (
-    FlorisInterface,
+from floris import (
+    FlorisModel,
     TimeSeries,
     WindRose,
 )
@@ -29,10 +29,10 @@ time_series = TimeSeries(wd_array, ws_array, turbulence_intensities=ti_array)
 
 
 # Now set up a FLORIS model and initialize it using the time
-fi = FlorisInterface("inputs/gch.yaml")
-fi.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0], wind_data=time_series)
-fi.run()
-turbine_power = fi.get_turbine_powers()
+fmodel = FlorisModel("inputs/gch.yaml")
+fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0], wind_data=time_series)
+fmodel.run()
+turbine_power = fmodel.get_turbine_powers()
 
 fig, axarr = plt.subplots(2, 1, sharex=True, figsize=(6, 6))
 ax = axarr[0]

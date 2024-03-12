@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from floris.simulation.turbine.operation_models import (
+from floris.core.turbine.operation_models import (
     CosineLossTurbine,
     MixedOperationTurbine,
     POWER_SETPOINT_DEFAULT,

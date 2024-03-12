@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
-from floris.tools import FlorisInterface
+from floris import FlorisModel
 
 
 """
@@ -12,19 +12,19 @@ This example demonstrates the ability of FLORIS to shut down some turbines
 during a simulation.
 """
 
-# Initialize the FLORIS interface
-fi = FlorisInterface("inputs/gch.yaml")
+# Initialize FLORIS
+fmodel = FlorisModel("inputs/gch.yaml")
 
 # Change to the mixed model turbine
 with open(
     str(
-        fi.floris.as_dict()["farm"]["turbine_library_path"]
-        / (fi.floris.as_dict()["farm"]["turbine_type"][0] + ".yaml")
+        fmodel.core.as_dict()["farm"]["turbine_library_path"]
+        / (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
     )
 ) as t:
     turbine_type = yaml.safe_load(t)
 turbine_type["power_thrust_model"] = "mixed"
-fi.set(turbine_type=[turbine_type])
+fmodel.set(turbine_type=[turbine_type])
 
 # Consider a wind farm of 3 aligned wind turbines
 layout = np.array([[0.0, 0.0], [500.0, 0.0], [1000.0, 0.0]])
@@ -43,7 +43,7 @@ disable_turbines = np.array([[False, False, False], [True, True, False]])
 # ------------------------------------------
 
 # Reinitialize flow field
-fi.set(
+fmodel.set(
     layout_x=layout[:, 0],
     layout_y=layout[:, 1],
     wind_directions=wind_directions,
@@ -53,15 +53,15 @@ fi.set(
 )
 
 # # Compute wakes
-fi.run()
+fmodel.run()
 
 # Results
 # ------------------------------------------
 
 # Get powers and effective wind speeds
-turbine_powers = fi.get_turbine_powers()
+turbine_powers = fmodel.get_turbine_powers()
 turbine_powers = np.round(turbine_powers * 1e-3, decimals=2)
-effective_wind_speeds = fi.turbine_average_velocities
+effective_wind_speeds = fmodel.turbine_average_velocities
 
 
 # Plot the results

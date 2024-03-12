@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from floris.simulation import TurbineGrid
+from floris.core import TurbineGrid
 from tests.conftest import (
     N_FINDEX,
     N_TURBINES,

@@ -2,8 +2,8 @@
 import numpy as np
 import pandas as pd
 
-from floris.tools import FlorisInterface
-from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
+from floris import FlorisModel
+from floris.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
 from tests.conftest import (
@@ -29,8 +29,8 @@ def test_scipy_layout_opt(sample_inputs_fixture):
     compares the optimization results from the SciPy layout optimizaiton for a simple farm with a
     simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     opt_options = {
         "maxiter": 5,
@@ -42,18 +42,18 @@ def test_scipy_layout_opt(sample_inputs_fixture):
 
     boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
 
-    fi = FlorisInterface(sample_inputs_fixture.floris)
+    fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0, 360.0, 5.0)
     ws_array = 8.0 * np.ones_like(wd_array)
     D = 126.0 # Rotor diameter for the NREL 5 MW
-    fi.reinitialize(
+    fmodel.reinitialize(
         layout_x=[0.0, 5 * D, 10 * D],
         layout_y=[0.0, 0.0, 0.0],
         wind_directions=wd_array,
         wind_speeds=ws_array,
     )
 
-    layout_opt = LayoutOptimizationScipy(fi, boundaries, optOptions=opt_options)
+    layout_opt = LayoutOptimizationScipy(fmodel, boundaries, optOptions=opt_options)
     sol = layout_opt.optimize()
     locations_opt = np.array([sol[0], sol[1]])
 

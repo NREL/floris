@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import (
-    FlorisInterface,
+from floris import (
+    FlorisModel,
     TimeSeries,
     WindRose,
 )

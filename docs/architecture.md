@@ -60,7 +60,7 @@ This package contains a wide variety of functionality including but not limited 
 - Initializing and driving a simulation with `tools.floris_interface`
 - Wake field visualization through `tools.visualization`
 - Yaw and layout optimization in `tools.optimization`
-- Parallelizing work load with `tools.parallel_computing_interface`
+- Parallelizing work load with `tools.parallel_floris_model`
 
 ## floris.simulation
 

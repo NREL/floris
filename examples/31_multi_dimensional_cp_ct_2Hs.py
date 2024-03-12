@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris import FlorisModel
 
 
 """
@@ -13,46 +13,46 @@ facilitating this example. The Cp/Ct values for the different wave conditions ar
 values of the original Cp/Ct data for the IEA 15MW turbine.
 """
 
-# Initialize FLORIS with the given input file via FlorisInterface.
-fi = FlorisInterface("inputs/gch_multi_dim_cp_ct.yaml")
+# Initialize FLORIS with the given input file.
+fmodel = FlorisModel("inputs/gch_multi_dim_cp_ct.yaml")
 
-# Make a second FLORIS interface with a different setting for Hs.
+# Make a second Floris instance with a different setting for Hs.
 # Note the multi-cp-ct file (iea_15MW_multi_dim_Tp_Hs.csv)
 # for the turbine model iea_15MW_floating_multi_dim_cp_ct.yaml
 # Defines Hs at 1 and 5.
 # The value in gch_multi_dim_cp_ct.yaml is 3.01 which will map
 # to 5 as the nearer value, so we set the other case to 1
 # for contrast.
-fi_dict_mod = fi.floris.as_dict()
-fi_dict_mod['flow_field']['multidim_conditions']['Hs'] = 1.0
-fi_hs_1 = FlorisInterface(fi_dict_mod)
+fmodel_dict_mod = fmodel.core.as_dict()
+fmodel_dict_mod['flow_field']['multidim_conditions']['Hs'] = 1.0
+fmodel_hs_1 = FlorisModel(fmodel_dict_mod)
 
 # Set both cases to 3 turbine layout
-fi.set(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
-fi_hs_1.set(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
+fmodel.set(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
+fmodel_hs_1.set(layout_x=[0., 500., 1000.], layout_y=[0., 0., 0.])
 
 # Use a sweep of wind speeds
 wind_speeds = np.arange(5, 20, 1.0)
 wind_directions = 270.0 * np.ones_like(wind_speeds)
 turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
-fi.set(
+fmodel.set(
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
     turbulence_intensities=turbulence_intensities
 )
-fi_hs_1.set(
+fmodel_hs_1.set(
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
     turbulence_intensities=turbulence_intensities
 )
 
 # Calculate wakes with baseline yaw
-fi.run()
-fi_hs_1.run()
+fmodel.run()
+fmodel_hs_1.run()
 
 # Collect the turbine powers in kW
-turbine_powers = fi.get_turbine_powers()/1000.
-turbine_powers_hs_1 = fi_hs_1.get_turbine_powers()/1000.
+turbine_powers = fmodel.get_turbine_powers()/1000.
+turbine_powers_hs_1 = fmodel_hs_1.get_turbine_powers()/1000.
 
 # Plot the power in each case and the difference in power
 fig, axarr = plt.subplots(1,3,sharex=True,figsize=(12,4))

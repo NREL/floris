@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris import FlorisModel
 
 
 """
@@ -25,59 +25,61 @@ and no correction is made.
 
 In the example below, three single-turbine simulations are run to show the different behaviors.
 
-fi_fixed: Fixed bottom turbine (no tilt variation with wind speed)
-fi_floating: Floating turbine (tilt varies with wind speed)
-fi_floating_defined_floating: Floating turbine (tilt varies with wind speed, but
+fmodel_fixed: Fixed bottom turbine (no tilt variation with wind speed)
+fmodel_floating: Floating turbine (tilt varies with wind speed)
+fmodel_floating_defined_floating: Floating turbine (tilt varies with wind speed, but
     tilt does not scale cp/ct)
 """
 
-# Declare the Floris Interfaces
-fi_fixed = FlorisInterface("inputs_floating/gch_fixed.yaml")
-fi_floating = FlorisInterface("inputs_floating/gch_floating.yaml")
-fi_floating_defined_floating = FlorisInterface("inputs_floating/gch_floating_defined_floating.yaml")
+# Create the Floris instances
+fmodel_fixed = FlorisModel("inputs_floating/gch_fixed.yaml")
+fmodel_floating = FlorisModel("inputs_floating/gch_floating.yaml")
+fmodel_floating_defined_floating = FlorisModel("inputs_floating/gch_floating_defined_floating.yaml")
 
 # Calculate across wind speeds
 ws_array = np.arange(3., 25., 1.)
 wd_array = 270.0 * np.ones_like(ws_array)
 ti_array = 0.06 * np.ones_like(ws_array)
-fi_fixed.set(wind_speeds=ws_array,  wind_directions=wd_array, turbulence_intensities=ti_array)
-fi_floating.set(wind_speeds=ws_array, wind_directions=wd_array, turbulence_intensities=ti_array)
-fi_floating_defined_floating.set(
+fmodel_fixed.set(wind_speeds=ws_array,  wind_directions=wd_array, turbulence_intensities=ti_array)
+fmodel_floating.set(wind_speeds=ws_array, wind_directions=wd_array, turbulence_intensities=ti_array)
+fmodel_floating_defined_floating.set(
     wind_speeds=ws_array,
     wind_directions=wd_array,
     turbulence_intensities=ti_array
 )
 
-fi_fixed.run()
-fi_floating.run()
-fi_floating_defined_floating.run()
+fmodel_fixed.run()
+fmodel_floating.run()
+fmodel_floating_defined_floating.run()
 
 # Grab power
-power_fixed = fi_fixed.get_turbine_powers().flatten()/1000.
-power_floating = fi_floating.get_turbine_powers().flatten()/1000.
-power_floating_defined_floating = fi_floating_defined_floating.get_turbine_powers().flatten()/1000.
+power_fixed = fmodel_fixed.get_turbine_powers().flatten()/1000.
+power_floating = fmodel_floating.get_turbine_powers().flatten()/1000.
+power_floating_defined_floating = (
+    fmodel_floating_defined_floating.get_turbine_powers().flatten()/1000.
+)
 
 # Grab Ct
-ct_fixed = fi_fixed.get_turbine_thrust_coefficients().flatten()
-ct_floating = fi_floating.get_turbine_thrust_coefficients().flatten()
+ct_fixed = fmodel_fixed.get_turbine_thrust_coefficients().flatten()
+ct_floating = fmodel_floating.get_turbine_thrust_coefficients().flatten()
 ct_floating_defined_floating = (
-    fi_floating_defined_floating.get_turbine_thrust_coefficients().flatten()
+    fmodel_floating_defined_floating.get_turbine_thrust_coefficients().flatten()
 )
 
 # Grab turbine tilt angles
-eff_vels = fi_fixed.turbine_average_velocities
+eff_vels = fmodel_fixed.turbine_average_velocities
 tilt_angles_fixed = np.squeeze(
-    fi_fixed.floris.farm.calculate_tilt_for_eff_velocities(eff_vels)
+    fmodel_fixed.core.farm.calculate_tilt_for_eff_velocities(eff_vels)
     )
 
-eff_vels = fi_floating.turbine_average_velocities
+eff_vels = fmodel_floating.turbine_average_velocities
 tilt_angles_floating = np.squeeze(
-    fi_floating.floris.farm.calculate_tilt_for_eff_velocities(eff_vels)
+    fmodel_floating.core.farm.calculate_tilt_for_eff_velocities(eff_vels)
     )
 
-eff_vels = fi_floating_defined_floating.turbine_average_velocities
+eff_vels = fmodel_floating_defined_floating.turbine_average_velocities
 tilt_angles_floating_defined_floating = np.squeeze(
-    fi_floating_defined_floating.floris.farm.calculate_tilt_for_eff_velocities(eff_vels)
+    fmodel_floating_defined_floating.core.farm.calculate_tilt_for_eff_velocities(eff_vels)
     )
 
 # Plot results

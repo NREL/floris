@@ -6,8 +6,8 @@ import copy
 import numpy as np
 import pytest
 
-from floris.simulation import (
-    Floris,
+from floris.core import (
+    Core,
     FlowField,
     FlowFieldGrid,
     PointsGrid,
@@ -191,7 +191,7 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
 @pytest.fixture
 def floris_fixture():
     sample_inputs = SampleInputs()
-    return Floris(sample_inputs.floris)
+    return Core(sample_inputs.core)
 
 @pytest.fixture
 def sample_inputs_fixture():
@@ -510,7 +510,7 @@ class SampleInputs:
             "enable_transverse_velocities": False,
         }
 
-        self.floris = {
+        self.core = {
             "farm": self.farm,
             "flow_field": self.flow_field,
             "wake": self.wake,

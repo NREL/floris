@@ -3,15 +3,15 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import NearestNDInterpolator
 
-from floris.tools import FlorisInterface
+from floris import FlorisModel
 
 
 """
 This example demonstrates how to calculate the Annual Energy Production (AEP)
 of a wind farm using wind rose information stored in a .csv file.
 
-The wind rose information is first loaded, after which we initialize our Floris
-Interface. A 3 turbine farm is generated, and then the turbine wakes and powers
+The wind rose information is first loaded, after which we initialize our FlorisModel.
+A 3 turbine farm is generated, and then the turbine wakes and powers
 are calculated across all the wind directions. Finally, the farm power is
 converted to AEP and reported out.
 """
@@ -42,13 +42,13 @@ freq = freq_interp(wd_grid, ws_grid).flatten()
 freq = freq / np.sum(freq)
 
 # Load the FLORIS object
-fi = FlorisInterface("inputs/gch.yaml") # GCH model
-# fi = FlorisInterface("inputs/cc.yaml") # CumulativeCurl model
+fmodel = FlorisModel("inputs/gch.yaml") # GCH model
+# fmodel = FlorisModel("inputs/cc.yaml") # CumulativeCurl model
 
 # Assume a three-turbine wind farm with 5D spacing. We reinitialize the
 # floris object and assign the layout, wind speed and wind direction arrays.
-D = fi.floris.farm.rotor_diameters[0] # Rotor diameter for the NREL 5 MW
-fi.set(
+D = fmodel.core.farm.rotor_diameters[0] # Rotor diameter for the NREL 5 MW
+fmodel.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
     wind_directions=wind_directions,
@@ -57,7 +57,7 @@ fi.set(
 )
 
 # Compute the AEP using the default settings
-aep = fi.get_farm_AEP(freq=freq)
+aep = fmodel.get_farm_AEP(freq=freq)
 print("Farm AEP (default options): {:.3f} GWh".format(aep / 1.0e9))
 
 # Compute the AEP again while specifying a cut-in and cut-out wind speed.
@@ -66,7 +66,7 @@ print("Farm AEP (default options): {:.3f} GWh".format(aep / 1.0e9))
 # prevent unexpected behavior for zero/negative and very high wind speeds.
 # In this example, the results should not change between this and the default
 # call to 'get_farm_AEP()'.
-aep = fi.get_farm_AEP(
+aep = fmodel.get_farm_AEP(
     freq=freq,
     cut_in_wind_speed=3.0,  # Wakes are not evaluated below this wind speed
     cut_out_wind_speed=25.0,  # Wakes are not evaluated above this wind speed
@@ -76,5 +76,5 @@ print("Farm AEP (with cut_in/out specified): {:.3f} GWh".format(aep / 1.0e9))
 # Finally, we can also compute the AEP while ignoring all wake calculations.
 # This can be useful to quantity the annual wake losses in the farm. Such
 # calculations can be facilitated by enabling the 'no_wake' handle.
-aep_no_wake = fi.get_farm_AEP(freq, no_wake=True)
+aep_no_wake = fmodel.get_farm_AEP(freq, no_wake=True)
 print("Farm AEP (no_wake=True): {:.3f} GWh".format(aep_no_wake / 1.0e9))

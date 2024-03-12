@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
-from floris.tools.flow_visualization import visualize_cut_plane
+from floris import FlorisModel
+from floris.flow_visualization import visualize_cut_plane
 
 
 """
@@ -19,12 +19,12 @@ speed_ups = [[2.0, 1.0, 2.0, 1.0]]
 x_locs = [-300.0, -300.0, 2600.0, 2600.0]
 y_locs = [ -300.0, 300.0, -300.0, 300.0]
 
-# Initialize FLORIS with the given input file via FlorisInterface.
+# Initialize FLORIS with the given input.
 # Note the heterogeneous inflow is defined in the input file.
-fi = FlorisInterface("inputs/gch_heterogeneous_inflow.yaml")
+fmodel = FlorisModel("inputs/gch_heterogeneous_inflow.yaml")
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
-fi.set(
+fmodel.set(
     wind_shear=0.0,
     wind_speeds=[8.0],
     wind_directions=[270.],
@@ -32,8 +32,8 @@ fi.set(
     layout_x=[0, 0],
     layout_y=[-299., 299.],
 )
-fi.run()
-turbine_powers = fi.get_turbine_powers().flatten() / 1000.
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers().flatten() / 1000.
 
 # Show the initial results
 print('------------------------------------------')
@@ -53,14 +53,14 @@ heterogenous_inflow_config = {
     'x': x_locs,
     'y': y_locs,
 }
-fi.set(
+fmodel.set(
     wind_directions=[270.0, 275.0],
     wind_speeds=[8.0, 8.0],
     turbulence_intensities=[0.06, 0.06],
     heterogenous_inflow_config=heterogenous_inflow_config
 )
-fi.run()
-turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
+fmodel.run()
+turbine_powers = np.round(fmodel.get_turbine_powers() / 1000.)
 print('With wind directions now set to 270 and 275 deg')
 print(f'T0: {turbine_powers[:, 0].flatten()} kW')
 print(f'T1: {turbine_powers[:, 1].flatten()} kW')
@@ -71,6 +71,6 @@ print(f'T1: {turbine_powers[:, 1].flatten()} kW')
 # print()
 # print('~~ Now forcing an error by not matching wd and het_map')
 
-# fi.set(wind_directions=[270, 275, 280], wind_speeds=3*[8.0])
-# fi.run()
-# turbine_powers = np.round(fi.get_turbine_powers() / 1000.)
+# fmodel.set(wind_directions=[270, 275, 280], wind_speeds=3*[8.0])
+# fmodel.run()
+# turbine_powers = np.round(fmodel.get_turbine_powers() / 1000.)

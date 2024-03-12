@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator
 
-from floris.tools import FlorisInterface, ParallelComputingInterface
+from floris import FlorisModel, ParallelFlorisModel
 
 
 """
@@ -14,18 +14,18 @@ This example demonstrates how to perform a yaw optimization using parallel compu
 
 def load_floris():
     # Load the default example floris object
-    fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-    # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+    fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+    # fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
     # Specify wind farm layout and update in the floris object
     N = 4  # number of turbines per row and per column
     X, Y = np.meshgrid(
-        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
-        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
+        5.0 * fmodel.core.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
+        5.0 * fmodel.core.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
     )
-    fi.set(layout_x=X.flatten(), layout_y=Y.flatten())
+    fmodel.set(layout_x=X.flatten(), layout_y=Y.flatten())
 
-    return fi
+    return fmodel
 
 
 def load_windrose():
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     df_windrose, windrose_interpolant = load_windrose()
 
     # Load a FLORIS object for AEP calculations
-    fi_aep = load_floris()
+    fmodel_aep = load_floris()
 
     # Define arrays of wd/ws
     wind_directions_to_expand = np.arange(0.0, 360.0, 1.0)
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     ws_array = wind_speeds_grid.flatten()
     turbulence_intensities = 0.08 * np.ones_like(wd_array)
 
-    fi_aep.set(
+    fmodel_aep.set(
         wind_directions=wd_array,
         wind_speeds=ws_array,
         turbulence_intensities=turbulence_intensities,
@@ -68,8 +68,8 @@ if __name__ == "__main__":
 
     # Pour this into a parallel computing interface
     parallel_interface = "concurrent"
-    fi_aep_parallel = ParallelComputingInterface(
-        fi=fi_aep,
+    pfmodel_aep = ParallelFlorisModel(
+        fmodel=fmodel_aep,
         max_workers=max_workers,
         n_wind_condition_splits=max_workers,
         interface=parallel_interface,
@@ -81,11 +81,11 @@ if __name__ == "__main__":
     freq_grid = freq_grid / np.sum(freq_grid)  # Normalize to 1.0
 
     # Calculate farm power baseline
-    farm_power_bl = fi_aep_parallel.get_farm_power()
+    farm_power_bl = pfmodel_aep.get_farm_power()
     aep_bl = np.sum(24 * 365 * np.multiply(farm_power_bl, freq_grid))
 
     # Alternatively to above code, we could calculate AEP using
-    # 'fi_aep_parallel.get_farm_AEP(...)' but then we would not have the
+    # 'pfmodel_aep.get_farm_AEP(...)' but then we would not have the
     # farm power productions, which we use later on for plotting.
 
     # First, get baseline AEP, without wake steering
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     print(" ")
 
     # Load a FLORIS object for yaw optimization
-    fi_opt = load_floris()
+    fmodel_opt = load_floris()
 
     # Define arrays of wd/ws
     wind_directions_to_expand = np.arange(0.0, 360.0, 3.0)
@@ -114,15 +114,15 @@ if __name__ == "__main__":
     ws_array_opt = wind_speeds_grid.flatten()
     turbulence_intensities = 0.08 * np.ones_like(wd_array_opt)
 
-    fi_opt.set(
+    fmodel_opt.set(
         wind_directions=wd_array_opt,
         wind_speeds=ws_array_opt,
         turbulence_intensities=turbulence_intensities,
     )
 
     # Pour this into a parallel computing interface
-    fi_opt_parallel = ParallelComputingInterface(
-        fi=fi_opt,
+    pfmodel_opt = ParallelFlorisModel(
+        fmodel=fmodel_opt,
         max_workers=max_workers,
         n_wind_condition_splits=max_workers,
         interface=parallel_interface,
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     )
 
     # Now optimize the yaw angles using the Serial Refine method
-    df_opt = fi_opt_parallel.optimize_yaw_angles(
+    df_opt = pfmodel_opt.optimize_yaw_angles(
         minimum_yaw_angle=-25.0,
         maximum_yaw_angle=25.0,
         Ny_passes=[5, 4],
@@ -163,12 +163,12 @@ if __name__ == "__main__":
 
     # Get optimized AEP, with wake steering
     yaw_grid = yaw_angles_interpolant(wd_array, ws_array)
-    farm_power_opt = fi_aep_parallel.get_farm_power(yaw_angles=yaw_grid)
+    farm_power_opt = pfmodel_aep.get_farm_power(yaw_angles=yaw_grid)
     aep_opt = np.sum(24 * 365 * np.multiply(farm_power_opt, freq_grid))
     aep_uplift = 100.0 * (aep_opt / aep_bl - 1)
 
     # Alternatively to above code, we could calculate AEP using
-    # 'fi_aep_parallel.get_farm_AEP(...)' but then we would not have the
+    # 'pfmodel_aep.get_farm_AEP(...)' but then we would not have the
     # farm power productions, which we use later on for plotting.
 
     print(" ")
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     })
 
     # Plot power and AEP uplift across wind direction
-    wd_step = np.diff(fi_aep.floris.flow_field.wind_directions)[0]  # Useful variable for plotting
+    wd_step = np.diff(fmodel_aep.core.flow_field.wind_directions)[0]  # Useful variable for plotting
     fig, ax = plt.subplots(nrows=3, sharex=True)
 
     df_8ms = df[df["ws"] == 8.0].reset_index(drop=True)
@@ -276,7 +276,7 @@ if __name__ == "__main__":
 
     # Now plot yaw angle distributions over wind direction up to first three turbines
     wd_plot = np.arange(0.0, 360.001, 1.0)
-    for ti in range(np.min([fi_aep.floris.farm.n_turbines, 3])):
+    for tindex in range(np.min([fmodel_aep.core.farm.n_turbines, 3])):
         fig, ax = plt.subplots(figsize=(6, 3.5))
         ws_to_plot = [6.0, 9.0, 12.0]
         colors = ["maroon", "dodgerblue", "grey"]
@@ -284,7 +284,7 @@ if __name__ == "__main__":
         for ii, ws in enumerate(ws_to_plot):
             ax.plot(
                 wd_plot,
-                yaw_angles_interpolant(wd_plot, ws * np.ones_like(wd_plot))[:, ti],
+                yaw_angles_interpolant(wd_plot, ws * np.ones_like(wd_plot))[:, tindex],
                 styles[ii],
                 color=colors[ii],
                 markersize=3,
@@ -292,7 +292,7 @@ if __name__ == "__main__":
             )
         ax.set_ylabel("Assigned yaw offsets (deg)")
         ax.set_xlabel("Wind direction (deg)")
-        ax.set_title("Turbine {:d}".format(ti))
+        ax.set_title("Turbine {:d}".format(tindex))
         ax.grid(True)
         ax.legend()
         plt.tight_layout()
