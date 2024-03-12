@@ -16,10 +16,10 @@ historical SCADA data and robust optimization.
 
 # Instantiate FLORIS using either the GCH or CC model
 fmodel = FlorisModel("inputs/gch.yaml")  # GCH model
-umodel_unc_3 = UncertainFlorisModel(
+ufmodel_3 = UncertainFlorisModel(
     "inputs/gch.yaml", verbose=True, wd_std=3
 )
-umodel_unc_5 = UncertainFlorisModel(
+ufmodel_5 = UncertainFlorisModel(
     "inputs/gch.yaml", verbose=True, wd_std=5
 )
 
@@ -30,26 +30,26 @@ layout_y = [0, 0]
 wd_array = np.arange(240.0, 300.0, 1.0)
 wind_speeds = 8.0 * np.ones_like(wd_array)
 fmodel.set(layout_x=layout_x, layout_y=layout_y, wind_directions=wd_array, wind_speeds=wind_speeds)
-umodel_unc_3.set(
+ufmodel_3.set(
     layout_x=layout_x, layout_y=layout_y, wind_directions=wd_array, wind_speeds=wind_speeds
 )
-umodel_unc_5.set(
+ufmodel_5.set(
     layout_x=layout_x, layout_y=layout_y, wind_directions=wd_array, wind_speeds=wind_speeds
 )
 
 
 # Run both models
 fmodel.run()
-umodel_unc_3.run()
-umodel_unc_5.run()
+ufmodel_3.run()
+ufmodel_5.run()
 
 # Collect the nominal and uncertain farm power
 turbine_powers_nom = fmodel.get_turbine_powers() / 1e3
-turbine_powers_unc_3 = umodel_unc_3.get_turbine_powers() / 1e3
-turbine_powers_unc_5 = umodel_unc_5.get_turbine_powers() / 1e3
+turbine_powers_unc_3 = ufmodel_3.get_turbine_powers() / 1e3
+turbine_powers_unc_5 = ufmodel_5.get_turbine_powers() / 1e3
 farm_powers_nom = fmodel.get_farm_power() / 1e3
-farm_powers_unc_3 = umodel_unc_3.get_farm_power() / 1e3
-farm_powers_unc_5 = umodel_unc_5.get_farm_power() / 1e3
+farm_powers_unc_3 = ufmodel_3.get_farm_power() / 1e3
+farm_powers_unc_5 = ufmodel_5.get_farm_power() / 1e3
 
 # Plot results
 fig, axarr = plt.subplots(1, 3, figsize=(15, 5))
@@ -109,8 +109,8 @@ freq = np.ones_like(wd_array)
 freq = freq / freq.sum()
 
 aep_nom = fmodel.get_farm_AEP(freq=freq)
-aep_unc_3 = umodel_unc_3.get_farm_AEP(freq=freq)
-aep_unc_5 = umodel_unc_5.get_farm_AEP(freq=freq)
+aep_unc_3 = ufmodel_3.get_farm_AEP(freq=freq)
+aep_unc_5 = ufmodel_5.get_farm_AEP(freq=freq)
 
 print(f"AEP without uncertainty {aep_nom}")
 print(f"AEP without uncertainty (3 deg) {aep_unc_3} ({100*aep_unc_3/aep_nom:.2f}%)")

@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     # Pour this into a parallel computing interface
     parallel_interface = "concurrent"
-    fmodel_aep_parallel = ParallelFlorisModel(
+    pfmodel_aep = ParallelFlorisModel(
         fmodel=fmodel_aep,
         max_workers=max_workers,
         n_wind_condition_splits=max_workers,
@@ -81,11 +81,11 @@ if __name__ == "__main__":
     freq_grid = freq_grid / np.sum(freq_grid)  # Normalize to 1.0
 
     # Calculate farm power baseline
-    farm_power_bl = fmodel_aep_parallel.get_farm_power()
+    farm_power_bl = pfmodel_aep.get_farm_power()
     aep_bl = np.sum(24 * 365 * np.multiply(farm_power_bl, freq_grid))
 
     # Alternatively to above code, we could calculate AEP using
-    # 'fmodel_aep_parallel.get_farm_AEP(...)' but then we would not have the
+    # 'pfmodel_aep.get_farm_AEP(...)' but then we would not have the
     # farm power productions, which we use later on for plotting.
 
     # First, get baseline AEP, without wake steering
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     )
 
     # Pour this into a parallel computing interface
-    fmodel_opt_parallel = ParallelFlorisModel(
+    pfmodel_opt = ParallelFlorisModel(
         fmodel=fmodel_opt,
         max_workers=max_workers,
         n_wind_condition_splits=max_workers,
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     )
 
     # Now optimize the yaw angles using the Serial Refine method
-    df_opt = fmodel_opt_parallel.optimize_yaw_angles(
+    df_opt = pfmodel_opt.optimize_yaw_angles(
         minimum_yaw_angle=-25.0,
         maximum_yaw_angle=25.0,
         Ny_passes=[5, 4],
@@ -163,12 +163,12 @@ if __name__ == "__main__":
 
     # Get optimized AEP, with wake steering
     yaw_grid = yaw_angles_interpolant(wd_array, ws_array)
-    farm_power_opt = fmodel_aep_parallel.get_farm_power(yaw_angles=yaw_grid)
+    farm_power_opt = pfmodel_aep.get_farm_power(yaw_angles=yaw_grid)
     aep_opt = np.sum(24 * 365 * np.multiply(farm_power_opt, freq_grid))
     aep_uplift = 100.0 * (aep_opt / aep_bl - 1)
 
     # Alternatively to above code, we could calculate AEP using
-    # 'fmodel_aep_parallel.get_farm_AEP(...)' but then we would not have the
+    # 'pfmodel_aep.get_farm_AEP(...)' but then we would not have the
     # farm power productions, which we use later on for plotting.
 
     print(" ")
@@ -276,7 +276,7 @@ if __name__ == "__main__":
 
     # Now plot yaw angle distributions over wind direction up to first three turbines
     wd_plot = np.arange(0.0, 360.001, 1.0)
-    for ti in range(np.min([fmodel_aep.core.farm.n_turbines, 3])):
+    for tindex in range(np.min([fmodel_aep.core.farm.n_turbines, 3])):
         fig, ax = plt.subplots(figsize=(6, 3.5))
         ws_to_plot = [6.0, 9.0, 12.0]
         colors = ["maroon", "dodgerblue", "grey"]
@@ -284,7 +284,7 @@ if __name__ == "__main__":
         for ii, ws in enumerate(ws_to_plot):
             ax.plot(
                 wd_plot,
-                yaw_angles_interpolant(wd_plot, ws * np.ones_like(wd_plot))[:, ti],
+                yaw_angles_interpolant(wd_plot, ws * np.ones_like(wd_plot))[:, tindex],
                 styles[ii],
                 color=colors[ii],
                 markersize=3,
@@ -292,7 +292,7 @@ if __name__ == "__main__":
             )
         ax.set_ylabel("Assigned yaw offsets (deg)")
         ax.set_xlabel("Wind direction (deg)")
-        ax.set_title("Turbine {:d}".format(ti))
+        ax.set_title("Turbine {:d}".format(tindex))
         ax.grid(True)
         ax.legend()
         plt.tight_layout()

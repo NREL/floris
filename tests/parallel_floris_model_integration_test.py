@@ -25,21 +25,21 @@ def test_parallel_turbine_powers(sample_inputs_fixture):
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    fmodel_serial = FlorisModel(sample_inputs_fixture.core)
-    fmodel_parallel_input = copy.deepcopy(fmodel_serial)
-    fmodel_serial.run()
+    fmodel = FlorisModel(sample_inputs_fixture.core)
+    pfmodel_input = copy.deepcopy(fmodel)
+    fmodel.run()
 
-    serial_turbine_powers = fmodel_serial.get_turbine_powers()
+    serial_turbine_powers = fmodel.get_turbine_powers()
 
-    fmodel_parallel = ParallelFlorisModel(
-        fmodel=fmodel_parallel_input,
+    pfmodel = ParallelFlorisModel(
+        fmodel=pfmodel_input,
         max_workers=2,
         n_wind_condition_splits=2,
         interface="concurrent",
         print_timings=False,
     )
 
-    parallel_turbine_powers = fmodel_parallel.get_turbine_powers()
+    parallel_turbine_powers = pfmodel.get_turbine_powers()
 
     if DEBUG:
         print(serial_turbine_powers)
