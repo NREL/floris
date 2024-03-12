@@ -234,31 +234,19 @@ class UncertainFlorisModel(LoggingManager):
         the underlying turbine powers and applying a weighted sum to handle uncertainty.
 
         Returns:
-            NDArrayFloat: An array containing the powers at each turbine for each finde.
+            NDArrayFloat: An array containing the powers at each turbine for each findex.
 
         """
 
-        # First call the underlying function
-        unique_turbine_powers = self.fmodel_expanded.get_turbine_powers()
-
-        # Expand back to the expanded value
-        expanded_turbine_powers = unique_turbine_powers[self.map_to_expanded_inputs]
-
-        # Reshape the weights array to make it compatible with broadcasting
-        weights_reshaped = self.weights[:, np.newaxis]
-
-        # Reshape expanded_turbine_powers into blocks
-        blocks = np.reshape(
-            expanded_turbine_powers,
-            (self.n_unexpanded, self.n_sample_points, self.fmodel_unexpanded.core.farm.n_turbines),
-            order="F",
+        # Pass to off-class function
+        result = map_turbine_powers_uncertain(
+            unique_turbine_powers=self.fmodel_expanded.get_turbine_powers(),
+            map_to_expanded_inputs=self.map_to_expanded_inputs,
+            weights=self.weights,
+            n_unexpanded=self.n_unexpanded,
+            n_sample_points=self.n_sample_points,
+            n_turbines=self.fmodel_unexpanded.core.farm.n_turbines
         )
-
-        # Multiply each block by the corresponding weight
-        weighted_blocks = blocks * weights_reshaped
-
-        # Sum the blocks along the second axis
-        result = np.sum(weighted_blocks, axis=1)
 
         return result
 
@@ -474,6 +462,25 @@ class UncertainFlorisModel(LoggingManager):
             no_wake=no_wake,
         )
 
+    # def copy(self):
+    #     """Create an independent copy of the current UncertainFlorisModel object"""
+    #     return UncertainFlorisModel(
+    #         self.fmodel_unexpanded.core.as_dict(),
+    #         wd_resolution=self.wd_resolution,
+    #         ws_resolution=self.ws_resolution,
+    #         ti_resolution=self.ti_resolution,
+    #         yaw_resolution=self.yaw_resolution,
+    #         power_setpoint_resolution=self.power_setpoint_resolution,
+    #         wd_std=self.wd_std,
+    #         wd_sample_points=self.wd_sample_points,
+    #         verbose=self.verbose,
+    #     )
+
+    # @property
+    # def core(self):
+    #     """Return core of underlying expanded FlorisModel object"""
+    #     return self.fmodel_expanded.core
+
     def _get_rounded_inputs(
         self,
         input_array,
@@ -648,3 +655,52 @@ class UncertainFlorisModel(LoggingManager):
             np.array: Wind turbine y-coordinate.
         """
         return self.core_interface.core.farm.layout_y
+
+def map_turbine_powers_uncertain(
+        unique_turbine_powers,
+        map_to_expanded_inputs,
+        weights,
+        n_unexpanded,
+        n_sample_points,
+        n_turbines
+):
+    """Calculates the power at each turbine in the wind farm based on uncertainty weights.
+
+    This function calculates the power at each turbine in the wind farm, considering
+    the underlying turbine powers and applying a weighted sum to handle uncertainty.
+
+    Args:
+        unique_turbine_powers (NDArrayFloat): An array of unique turbine powers from the
+            underlying FlorisModel
+        map_to_expanded_inputs (NDArrayFloat): An array of indices mapping the unique powers to
+            the expanded powers
+        weights (NDArrayFloat): An array of weights for each wind direction sample point
+        n_unexpanded (int): The number of unexpanded conditions
+        n_sample_points (int): The number of wind direction sample points
+        n_turbines (int): The number of turbines in the wind farm
+
+    Returns:
+        NDArrayFloat: An array containing the powers at each turbine for each findex.
+
+    """
+
+    # Expand back to the expanded value
+    expanded_turbine_powers = unique_turbine_powers[map_to_expanded_inputs]
+
+    # Reshape the weights array to make it compatible with broadcasting
+    weights_reshaped = weights[:, np.newaxis]
+
+    # Reshape expanded_turbine_powers into blocks
+    blocks = np.reshape(
+        expanded_turbine_powers,
+        (n_unexpanded, n_sample_points, n_turbines),
+        order="F",
+    )
+
+    # Multiply each block by the corresponding weight
+    weighted_blocks = blocks * weights_reshaped
+
+    # Sum the blocks along the second axis
+    result = np.sum(weighted_blocks, axis=1)
+
+    return result

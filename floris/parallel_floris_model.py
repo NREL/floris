@@ -6,30 +6,19 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
+from floris.floris_model import FlorisModel
 from floris.logging_manager import LoggingManager
 from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
-from floris.uncertain_floris_model import FlorisModel, UncertainFlorisModel
+from floris.uncertain_floris_model import map_turbine_powers_uncertain, UncertainFlorisModel
 
 
-def _load_local_floris_object(
-    fmodel_dict,
-    unc_pmfs=None,
-    fix_yaw_in_relative_frame=False
-):
+def _load_local_floris_object(fmodel_dict):
     # Load local FLORIS object
-    if unc_pmfs is None:
-        fmodel = FlorisModel(fmodel_dict)
-    else:
-        fmodel = UncertainFlorisModel(
-            fmodel_dict,
-            unc_pmfs=unc_pmfs,
-            fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
-        )
-    return fmodel
+    return  FlorisModel(fmodel_dict)
 
 
 def _get_turbine_powers_serial(fmodel_information, yaw_angles=None):
-    fmodel = _load_local_floris_object(*fmodel_information)
+    fmodel = FlorisModel(fmodel_information)
     fmodel.set(yaw_angles=yaw_angles)
     fmodel.run()
     return (fmodel.get_turbine_powers(), fmodel.core.flow_field)
@@ -128,8 +117,17 @@ class ParallelFlorisModel(LoggingManager):
             )
 
         # Initialize floris object and copy common properties
-        self.fmodel = fmodel.copy()
-        self.core = self.fmodel.core  # Static copy as a placeholder
+        if isinstance(fmodel, FlorisModel):
+            self.fmodel = fmodel.copy()
+            self._is_uncertain = False
+        elif isinstance(fmodel, UncertainFlorisModel):
+            self.fmodel = fmodel.fmodel_expanded.copy()
+            self._is_uncertain = True
+            self._weights = fmodel.weights
+            self._n_unexpanded = fmodel.n_unexpanded
+            self._n_sample_points = fmodel.n_sample_points
+            self._map_to_expanded_inputs = fmodel.map_to_expanded_inputs
+        self.core = self.fmodel.core # Static copy as a placeholder
 
         # Save to self
         self._n_wind_condition_splits = n_wind_condition_splits  # Save initial user input
@@ -236,16 +234,7 @@ class ParallelFlorisModel(LoggingManager):
             fmodel_dict_split["flow_field"]["turbulence_intensities"] = turbulence_intensities
 
             # Prepare lightweight data to pass along
-            if isinstance(self.fmodel, FlorisModel):
-                fmodel_information = (fmodel_dict_split, None, None)
-            else:
-                fmodel_information = (
-                    fmodel_dict_split,
-                    self.fmodel.fmodel.het_map,
-                    self.fmodel.unc_pmfs,
-                    self.fmodel.fix_yaw_in_relative_frame
-                )
-            multiargs.append((fmodel_information, yaw_angles_subset))
+            multiargs.append((fmodel_dict_split, yaw_angles_subset))
 
         return multiargs
 
@@ -309,6 +298,15 @@ class ParallelFlorisModel(LoggingManager):
         # Postprocessing: merge power production (and opt. flow field) from individual runs
         t2 = timerpc()
         turbine_powers = self._postprocessing(out)
+        if self._is_uncertain:
+            turbine_powers = map_turbine_powers_uncertain(
+                unique_turbine_powers=turbine_powers,
+                map_to_expanded_inputs=self._map_to_expanded_inputs,
+                weights=self._weights,
+                n_unexpanded=self._n_unexpanded,
+                n_sample_points=self._n_sample_points,
+                n_turbines=self.fmodel.core.farm.n_turbines,
+            )
         t_postprocessing = timerpc() - t2
         t_total = timerpc() - t0
 

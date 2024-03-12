@@ -3,7 +3,11 @@ import copy
 
 import numpy as np
 
-from floris import FlorisModel, ParallelFlorisModel, UncertainFlorisModel
+from floris import (
+    FlorisModel,
+    ParallelFlorisModel,
+    UncertainFlorisModel,
+)
 from tests.conftest import (
     assert_results_arrays,
 )
@@ -68,7 +72,7 @@ def test_parallel_uncertain_turbine_powers(sample_inputs_fixture):
         fmodel=pfmodel_input,
         max_workers=2,
         n_wind_condition_splits=2,
-        interface="concurrent",
+        interface="multiprocessing",
         print_timings=False,
     )
 
