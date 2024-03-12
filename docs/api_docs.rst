@@ -16,9 +16,9 @@ more users will interface with the software.
    floris.flow_visualization
    floris.floris_model
    floris.wind_data
-   floris.uncertainty_interface
+   floris.uncertain_floris_model
    floris.turbine_library
-   floris.parallel_computing_interface
+   floris.parallel_floris_model
    floris.optimization
    floris.layout_visualization
    floris.cut_plane

@@ -1,25 +1,25 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris import FlorisModel, UncertaintyInterface
+from floris import FlorisModel, UncertainFlorisModel
 
 
 """
-This example demonstrates how one can create an "UncertaintyInterface" object,
+This example demonstrates how one can create an "UncertainFlorisModel" object,
 which adds uncertainty on the inflow wind direction on the FlorisModel
-class. The UncertaintyInterface class is interacted with in the exact same
+class. The UncertainFlorisModel class is interacted with in the exact same
 manner as the FlorisModel class is. This example demonstrates how the
 wind farm power production is calculated with and without uncertainty.
-Other use cases of UncertaintyInterface are, e.g., comparing FLORIS to
+Other use cases of UncertainFlorisModel are, e.g., comparing FLORIS to
 historical SCADA data and robust optimization.
 """
 
 # Instantiate FLORIS using either the GCH or CC model
 fmodel = FlorisModel("inputs/gch.yaml")  # GCH model
-umodel_unc_3 = UncertaintyInterface(
+umodel_unc_3 = UncertainFlorisModel(
     "inputs/gch.yaml", verbose=True, wd_std=3
 )
-umodel_unc_5 = UncertaintyInterface(
+umodel_unc_5 = UncertainFlorisModel(
     "inputs/gch.yaml", verbose=True, wd_std=5
 )
 

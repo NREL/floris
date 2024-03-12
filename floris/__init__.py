@@ -12,8 +12,8 @@ from .flow_visualization import (
     visualize_cut_plane,
     visualize_quiver,
 )
-from .parallel_computing_interface import ParallelComputingInterface
-from .uncertainty_interface import UncertaintyInterface
+from .parallel_floris_model import ParallelFlorisModel
+from .uncertain_floris_model import UncertainFlorisModel
 from .wind_data import (
     TimeSeries,
     WindRose,

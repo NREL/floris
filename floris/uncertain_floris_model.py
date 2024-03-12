@@ -15,7 +15,7 @@ from floris.utilities import wrap_360
 from floris.wind_data import WindDataBase
 
 
-class UncertaintyInterface(LoggingManager):
+class UncertainFlorisModel(LoggingManager):
     """
     An interface for handling uncertainty in wind farm simulations.
 
@@ -56,7 +56,7 @@ class UncertaintyInterface(LoggingManager):
         verbose=False,
     ):
         """
-        Instantiate the UncertaintyInterface.
+        Instantiate the UncertainFlorisModel.
 
         Args:
             configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.
@@ -114,7 +114,7 @@ class UncertaintyInterface(LoggingManager):
         **kwargs,
     ):
         """
-        Set the wind farm conditions in the UncertaintyInterface.
+        Set the wind farm conditions in the UncertainFlorisModel.
 
         See FlorisInterace.set() for details of the contents of kwargs.
 

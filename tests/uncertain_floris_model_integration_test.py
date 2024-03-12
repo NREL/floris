@@ -6,7 +6,7 @@ import yaml
 
 from floris import FlorisModel
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
-from floris.uncertainty_interface import UncertaintyInterface
+from floris.uncertain_floris_model import UncertainFlorisModel
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
@@ -14,12 +14,12 @@ YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 
 def test_read_yaml():
-    umodel = UncertaintyInterface(configuration=YAML_INPUT)
-    assert isinstance(umodel, UncertaintyInterface)
+    umodel = UncertainFlorisModel(configuration=YAML_INPUT)
+    assert isinstance(umodel, UncertainFlorisModel)
 
 
 def test_rounded_inputs():
-    umodel = UncertaintyInterface(configuration=YAML_INPUT)
+    umodel = UncertainFlorisModel(configuration=YAML_INPUT)
 
     # Using defaults
     # Example input array
@@ -35,7 +35,7 @@ def test_rounded_inputs():
 
 
 def test_expand_wind_directions():
-    umodel = UncertaintyInterface(configuration=YAML_INPUT)
+    umodel = UncertainFlorisModel(configuration=YAML_INPUT)
 
     input_array = np.array(
         [[1, 20, 30], [40, 50, 60], [70, 80, 90], [100, 110, 120], [359, 140, 150]]
@@ -68,7 +68,7 @@ def test_expand_wind_directions():
 
 
 def test_get_unique_inputs():
-    umodel = UncertaintyInterface(configuration=YAML_INPUT)
+    umodel = UncertainFlorisModel(configuration=YAML_INPUT)
 
     input_array = np.array(
         [
@@ -92,18 +92,18 @@ def test_get_unique_inputs():
 
 
 def test_get_weights():
-    umodel = UncertaintyInterface(configuration=YAML_INPUT)
+    umodel = UncertainFlorisModel(configuration=YAML_INPUT)
     weights = umodel._get_weights(3.0, [-6, -3, 0, 3, 6])
     np.testing.assert_allclose(
         weights, np.array([0.05448868, 0.24420134, 0.40261995, 0.24420134, 0.05448868])
     )
 
 
-def test_uncertainty_interface():
+def test_uncertain_floris_model():
     # Recompute uncertain result using certain result with 1 deg
 
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    umodel = UncertaintyInterface(configuration=YAML_INPUT, wd_sample_points=[-3, 0, 3], wd_std=3)
+    umodel = UncertainFlorisModel(configuration=YAML_INPUT, wd_sample_points=[-3, 0, 3], wd_std=3)
 
     fmodel.set(
         layout_x=[0, 300],
@@ -131,10 +131,10 @@ def test_uncertainty_interface():
 
     np.testing.assert_allclose(np.sum(nom_powers * weights), unc_powers)
 
-def test_uncertainty_interface_setpoints():
+def test_uncertain_floris_model_setpoints():
 
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    umodel = UncertaintyInterface(configuration=YAML_INPUT, wd_sample_points=[-3, 0, 3], wd_std=3)
+    umodel = UncertainFlorisModel(configuration=YAML_INPUT, wd_sample_points=[-3, 0, 3], wd_std=3)
 
     fmodel.set(
         layout_x=[0, 300],

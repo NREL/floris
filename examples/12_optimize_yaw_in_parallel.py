@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import LinearNDInterpolator
 
-from floris import FlorisModel, ParallelComputingInterface
+from floris import FlorisModel, ParallelFlorisModel
 
 
 """
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     # Pour this into a parallel computing interface
     parallel_interface = "concurrent"
-    fmodel_aep_parallel = ParallelComputingInterface(
+    fmodel_aep_parallel = ParallelFlorisModel(
         fmodel=fmodel_aep,
         max_workers=max_workers,
         n_wind_condition_splits=max_workers,
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     )
 
     # Pour this into a parallel computing interface
-    fmodel_opt_parallel = ParallelComputingInterface(
+    fmodel_opt_parallel = ParallelFlorisModel(
         fmodel=fmodel_opt,
         max_workers=max_workers,
         n_wind_condition_splits=max_workers,

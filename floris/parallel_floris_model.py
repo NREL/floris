@@ -8,7 +8,7 @@ import pandas as pd
 
 from floris.logging_manager import LoggingManager
 from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
-from floris.uncertainty_interface import FlorisModel, UncertaintyInterface
+from floris.uncertain_floris_model import FlorisModel, UncertainFlorisModel
 
 
 def _load_local_floris_object(
@@ -20,7 +20,7 @@ def _load_local_floris_object(
     if unc_pmfs is None:
         fmodel = FlorisModel(fmodel_dict)
     else:
-        fmodel = UncertaintyInterface(
+        fmodel = UncertainFlorisModel(
             fmodel_dict,
             unc_pmfs=unc_pmfs,
             fix_yaw_in_relative_frame=fix_yaw_in_relative_frame,
@@ -65,7 +65,7 @@ def _optimize_yaw_angles_serial(
     return df_opt
 
 
-class ParallelComputingInterface(LoggingManager):
+class ParallelFlorisModel(LoggingManager):
     def __init__(
         self,
         fmodel,
@@ -80,9 +80,9 @@ class ParallelComputingInterface(LoggingManager):
         parallel computing to common FlorisModel properties.
 
         Args:
-        fmodel (FlorisModel or UncertaintyInterface object): Interactive FLORIS object used to
+        fmodel (FlorisModel or UncertainFlorisModel object): Interactive FLORIS object used to
             perform the wake and turbine calculations. Can either be a regular FlorisModel
-            object or can be an UncertaintyInterface object.
+            object or can be an UncertainFlorisModel object.
         max_workers (int): Number of parallel workers, typically equal to the number of cores
             you have on your system or HPC.
         n_wind_condition_splits (int): Number of sectors to split the wind findex array over.
@@ -168,7 +168,7 @@ class ParallelComputingInterface(LoggingManager):
     ):
         """Pass to the FlorisModel set function. To allow users
         to directly replace a FlorisModel object with this
-        UncertaintyInterface object, this function is required."""
+        UncertainFlorisModel object, this function is required."""
 
         if layout is not None:
             msg = "Use the `layout_x` and `layout_y` parameters in place of `layout` "
@@ -282,7 +282,7 @@ class ParallelComputingInterface(LoggingManager):
 
     def run(self): # TODO: Remove or update this function?
         raise UserWarning(
-            "'run' not supported on ParallelComputingInterface. Please use "
+            "'run' not supported on ParallelFlorisModel. Please use "
             "'get_turbine_powers' or 'get_farm_power' directly."
         )
 

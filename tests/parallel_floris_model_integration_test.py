@@ -3,7 +3,7 @@ import copy
 
 import numpy as np
 
-from floris import FlorisModel, ParallelComputingInterface
+from floris import FlorisModel, ParallelFlorisModel
 from tests.conftest import (
     assert_results_arrays,
 )
@@ -31,7 +31,7 @@ def test_parallel_turbine_powers(sample_inputs_fixture):
 
     serial_turbine_powers = fmodel_serial.get_turbine_powers()
 
-    fmodel_parallel = ParallelComputingInterface(
+    fmodel_parallel = ParallelFlorisModel(
         fmodel=fmodel_parallel_input,
         max_workers=2,
         n_wind_condition_splits=2,
