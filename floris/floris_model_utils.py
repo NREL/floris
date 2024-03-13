@@ -19,11 +19,13 @@ from floris import FlorisModel
 from floris.type_dec import floris_array_converter, NDArrayFloat
 
 
-def nested_get(d: Dict[str, Any],
-               keys: List[str]
-    ) -> Any:
+def nested_get(
+    d: Dict[str, Any],
+    keys: List[str]
+) -> Any:
     """Get a value from a nested dictionary using a list of keys.
-    Based on: stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
+    Based on:
+    https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
 
     Args:
         d (Dict[str, Any]): The dictionary to get the value from.
@@ -36,22 +38,22 @@ def nested_get(d: Dict[str, Any],
         d = d[key]
     return d
 
-
-
-def nested_set(d: Dict[str, Any],
-               keys: List[str],
-               value: Any,
-               idx: Optional[int] = None
-    ) -> None:
+def nested_set(
+    d: Dict[str, Any],
+    keys: List[str],
+    value: Any,
+    idx: Optional[int] = None
+) -> None:
     """Set a value in a nested dictionary using a list of keys.
-    Based on: stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
+    Based on:
+    https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
 
     Args:
         dic (Dict[str, Any]): The dictionary to set the value in.
         keys (List[str]): A list of keys to traverse the dictionary.
         value (Any): The value to set.
         idx (Optional[int], optional): If the value is an list, the index to change.
-         Defaults to None.
+            Defaults to None.
     """
     d_in = d.copy()
 
