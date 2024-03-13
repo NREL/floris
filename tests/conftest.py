@@ -214,6 +214,11 @@ class SampleInputs:
                 "cosine_loss_exponent_tilt": 1.88,
                 "ref_air_density": 1.225,
                 "ref_tilt": 5.0,
+                "helix_a": 0.0, # TODO: replace with suitable value
+                "helix_thrust_b": 0.0, # TODO: replace with suitable value
+                "helix_thrust_c": 0.0, # TODO: replace with suitable value
+                "helix_power_b": 0.0, # TODO: replace with suitable value
+                "helix_power_c": 0.0, # TODO: replace with suitable value
                 "power": [
                     0.0,
                     0.0,

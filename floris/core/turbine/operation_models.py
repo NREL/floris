@@ -530,7 +530,6 @@ class HelixTurbine(BaseOperationModel):
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
-        air_density: float,
         helix_amplitudes: NDArrayFloat,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
@@ -555,7 +554,6 @@ class HelixTurbine(BaseOperationModel):
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
-        air_density: float,
         helix_amplitudes: NDArrayFloat,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
@@ -564,7 +562,6 @@ class HelixTurbine(BaseOperationModel):
         thrust_coefficient = HelixTurbine.thrust_coefficient(
             power_thrust_table=power_thrust_table,
             velocities=velocities,
-            air_density=air_density,
             helix_amplitudes=helix_amplitudes,
             average_method=average_method,
             cubature_weights=cubature_weights,
