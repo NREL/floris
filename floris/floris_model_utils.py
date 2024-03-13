@@ -19,28 +19,30 @@ from floris import FlorisModel
 from floris.type_dec import floris_array_converter, NDArrayFloat
 
 
-def nested_get(dic: Dict[str, Any],
-               keys: List[str]) -> Any:
+def nested_get(d: Dict[str, Any],
+               keys: List[str]
+    ) -> Any:
     """Get a value from a nested dictionary using a list of keys.
     Based on: stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
 
     Args:
-        dic (Dict[str, Any]): The dictionary to get the value from.
+        d (Dict[str, Any]): The dictionary to get the value from.
         keys (List[str]): A list of keys to traverse the dictionary.
 
     Returns:
         Any: The value at the end of the key traversal.
     """
     for key in keys:
-        dic = dic[key]
-    return dic
+        d = d[key]
+    return d
 
 
 
-def nested_set(dic: Dict[str, Any],
+def nested_set(d: Dict[str, Any],
                keys: List[str],
                value: Any,
-               idx: Optional[int] = None) -> None:
+               idx: Optional[int] = None
+    ) -> None:
     """Set a value in a nested dictionary using a list of keys.
     Based on: stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
 
@@ -51,20 +53,20 @@ def nested_set(dic: Dict[str, Any],
         idx (Optional[int], optional): If the value is an list, the index to change.
          Defaults to None.
     """
-    dic_in = dic.copy()
+    d_in = d.copy()
 
     for key in keys[:-1]:
-        dic = dic.setdefault(key, {})
+        d = d.setdefault(key, {})
     if idx is None:
-        # Parameter is a scaler, set directly
-        dic[keys[-1]] = value
+        # Parameter is a scalar, set directly
+        d[keys[-1]] = value
     else:
         # Parameter is a list, need to first get the list, change the values at idx
 
         # # Get the underlying list
-        par_list = nested_get(dic_in, keys)
+        par_list = nested_get(d_in, keys)
         par_list[idx] = value
-        dic[keys[-1]] = par_list
+        d[keys[-1]] = par_list
 
 def print_nested_dict(dictionary: Dict[str, Any], indent: int = 0) -> None:
     """Print a nested dictionary with indentation.
