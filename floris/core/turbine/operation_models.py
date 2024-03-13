@@ -571,4 +571,3 @@ class HelixTurbine(BaseOperationModel):
         )
 
         return (1 - np.sqrt(1 - thrust_coefficient))/2
-

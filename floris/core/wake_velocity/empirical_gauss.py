@@ -294,4 +294,3 @@ def helix_added_wake_mixing(
     ## TODO: Add TI in the mix, finetune amplitude/freq effect
 
     return helix_amplitude_i[:,:,0,0]**helix_wake_exp/helix_wake_denominator
-

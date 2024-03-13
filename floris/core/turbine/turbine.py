@@ -14,10 +14,10 @@ from scipy.interpolate import interp1d
 from floris.core import BaseClass
 from floris.core.turbine import (
     CosineLossTurbine,
+    HelixTurbine,
     MixedOperationTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
-    HelixTurbine,
 )
 from floris.type_dec import (
     convert_to_path,
