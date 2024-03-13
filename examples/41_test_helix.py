@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
-from floris.tools import FlorisInterface
-import floris.tools.visualization as wakeviz
+from floris import FlorisModel
+import floris.flow_visualization as flowviz
 
 
 """
@@ -26,32 +26,32 @@ release. TODO: Demonstrate shutting off turbines also, once developed.
 """
 
 # Grab model of FLORIS and update to deratable turbines
-fi = FlorisInterface("inputs/emgauss_iea_15MW.yaml")
+fmodel = FlorisModel("inputs/emgauss_iea_15MW.yaml")
 with open(str(
-    fi.floris.as_dict()["farm"]["turbine_library_path"] /
-    (fi.floris.as_dict()["farm"]["turbine_type"][0] + ".yaml")
+    fmodel.core.as_dict()["farm"]["turbine_library_path"] /
+    (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
 )) as t:
     turbine_type = yaml.safe_load(t)
 turbine_type["power_thrust_model"] = "helix"
 
-# Convert to a simple two turbine layout with derating turbines
-fi.reinitialize(layout_x=[0, 2000.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])
-
 # Set the wind directions and speeds to be constant over n_findex = N time steps
 N = 50
-fi.reinitialize(wind_directions=270 * np.ones(N), wind_speeds=10.0 * np.ones(N))
-fi.calculate_wake()
-turbine_powers_orig = fi.get_turbine_powers()
+fmodel.set(layout_x=[0, 2000.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type], \
+           wind_directions=270 * np.ones(N), wind_speeds=10.0 * np.ones(N), turbulence_intensities=0.06*np.ones(N))
+fmodel.run()
+turbine_powers_orig = fmodel.get_turbine_powers()
 
 # Add helix
 helix_amplitudes = np.array([np.linspace(0, 5, N), np.zeros(N)]).reshape(2, N).T
-fi.calculate_wake(helix_amplitudes=helix_amplitudes)
-turbine_powers_helix = fi.get_turbine_powers()
+fmodel.set(helix_amplitudes=helix_amplitudes)
+fmodel.run()
+turbine_powers_helix = fmodel.get_turbine_powers()
 
 # Compute available power at downstream turbine
 power_setpoints_2 = np.array([np.linspace(0, 0, N), np.full(N, None)]).T
-fi.calculate_wake(power_setpoints=power_setpoints_2)
-turbine_powers_avail_ds = fi.get_turbine_powers()[:,1]
+fmodel.set(power_setpoints=power_setpoints_2)
+fmodel.run()
+turbine_powers_avail_ds = fmodel.get_turbine_powers()[:,1]
 
 # Plot the results
 fig, ax = plt.subplots(1, 1)

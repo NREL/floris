@@ -86,8 +86,8 @@ class Core(BaseClass):
         self.farm.set_yaw_angles_to_ref_yaw(self.flow_field.n_findex)
         self.farm.set_tilt_to_ref_tilt(self.flow_field.n_findex)
         self.farm.set_power_setpoints_to_ref_power(self.flow_field.n_findex)
-        self.farm.set_helix_amplitudes(self.flow_field.n_findex)
-        self.farm.set_helix_frequencies(self.flow_field.n_findex)
+        self.farm.set_helix_amplitudes_to_ref_amp(self.flow_field.n_findex)
+        self.farm.set_helix_frequencies_to_ref_freq(self.flow_field.n_findex)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(

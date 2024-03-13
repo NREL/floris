@@ -371,12 +371,20 @@ class Farm(BaseClass):
         self.set_power_setpoints(power_setpoints)
         self.power_setpoints_sorted = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
 
-    def set_helix_amplitudes(self, n_findex: int):
-        self.helix_amplitudes = np.zeros((n_findex, self.n_turbines))
+    def set_helix_amplitudes(self, helix_amplitudes: NDArrayFloat):
+        self.helix_amplitudes = np.array(helix_amplitudes)
+
+    def set_helix_amplitudes_to_ref_amp(self, n_findex: int):
+        helix_amplitudes = np.zeros((n_findex, self.n_turbines))
+        self.set_helix_amplitudes(helix_amplitudes)
         self.helix_amplitudes_sorted = np.zeros((n_findex, self.n_turbines))
 
-    def set_helix_frequencies(self, n_findex: int):
-        self.helix_frequencies = np.zeros((n_findex, self.n_turbines))
+    def set_helix_frequencies(self, helix_frequencies: NDArrayFloat):
+        self.helix_frequencies = np.array(helix_frequencies)
+
+    def set_helix_frequencies_to_ref_freq(self, n_findex: int):
+        helix_frequencies = np.zeros((n_findex, self.n_turbines))
+        self.set_helix_frequencies(helix_frequencies)
         self.helix_frequencies_sorted = np.zeros((n_findex, self.n_turbines))
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
