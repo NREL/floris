@@ -496,7 +496,7 @@ class HelixTurbine(BaseOperationModel):
     added to the kwargs dictionaries in the respective functions on turbine.py. They won't affect
     the other operation models.
     """
-    
+
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -513,12 +513,16 @@ class HelixTurbine(BaseOperationModel):
             average_method=average_method,
             cubature_weights=cubature_weights
         )
-        
+
         if helix_amplitudes is None:
             return base_powers
         else:
-            return base_powers * (1 - (power_thrust_table['helix_power_b']+power_thrust_table['helix_power_c']*base_powers)\
-                                  *helix_amplitudes**power_thrust_table['helix_a']) ## Should probably add max function here
+            return base_powers * (1 - (
+                power_thrust_table['helix_power_b']
+                + power_thrust_table['helix_power_c']*base_powers
+                )
+                *helix_amplitudes**power_thrust_table['helix_a']
+            ) ## TODO: Should probably add max function here
 
         # TODO: would we like special handling of zero power setpoints
         # (mixed with non-zero values) to speed up computation in that case?
@@ -541,8 +545,12 @@ class HelixTurbine(BaseOperationModel):
         if helix_amplitudes is None:
             return base_thrust_coefficients
         else:
-            return base_thrust_coefficients * (1 - (power_thrust_table['helix_thrust_b']+power_thrust_table['helix_thrust_c']*base_thrust_coefficients)\
-                                               *helix_amplitudes**power_thrust_table['helix_a'])
+            return base_thrust_coefficients * (1 - (
+                power_thrust_table['helix_thrust_b']
+                + power_thrust_table['helix_thrust_c']*base_thrust_coefficients
+                )
+                *helix_amplitudes**power_thrust_table['helix_a']
+            )
 
     def axial_induction(
         power_thrust_table: dict,

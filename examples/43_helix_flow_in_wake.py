@@ -59,7 +59,12 @@ fig, ax = plt.subplots(2,1)
 # Set the wind direction to run 360 degrees
 N = 4
 helix_amplitudes = np.array([0, 1, 2.5, 4]).reshape(1, N).T
-fmodel.set(wind_directions=270 * np.ones(N), wind_speeds=7.5 * np.ones(N), turbulence_intensities=0.06*np.ones(N),helix_amplitudes=helix_amplitudes)
+fmodel.set(
+    wind_directions=270 * np.ones(N),
+    wind_speeds=7.5 * np.ones(N),
+    turbulence_intensities=0.06 * np.ones(N),
+    helix_amplitudes=helix_amplitudes
+)
 fmodel.run()
 
 # Simulate a met mast in between the turbines

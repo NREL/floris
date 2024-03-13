@@ -36,8 +36,14 @@ turbine_type["power_thrust_model"] = "helix"
 
 # Set the wind directions and speeds to be constant over n_findex = N time steps
 N = 50
-fmodel.set(layout_x=[0, 2000.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type], \
-           wind_directions=270 * np.ones(N), wind_speeds=10.0 * np.ones(N), turbulence_intensities=0.06*np.ones(N))
+fmodel.set(
+    layout_x=[0, 2000.0],
+    ayout_y=[0.0, 0.0],
+    turbine_type=[turbine_type],
+    wind_directions=270 * np.ones(N),
+    wind_speeds=10.0 * np.ones(N),
+    turbulence_intensities=0.06*np.ones(N)
+)
 fmodel.run()
 turbine_powers_orig = fmodel.get_turbine_powers()
 
@@ -56,9 +62,9 @@ turbine_powers_avail_ds = fmodel.get_turbine_powers()[:,1]
 # Plot the results
 fig, ax = plt.subplots(1, 1)
 ax.plot(
-    helix_amplitudes[:, 0], 
-    turbine_powers_helix[:, 0]/1000, 
-    color="C0", 
+    helix_amplitudes[:, 0],
+    turbine_powers_helix[:, 0]/1000,
+    color="C0",
     label="Helix, turbine 1"
 )
 ax.plot(
