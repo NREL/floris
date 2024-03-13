@@ -1,22 +1,9 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris import FlorisModel
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 """
@@ -29,16 +16,32 @@ the SerialRefine method. Finally, we plot the results.
 """
 
 # Load the default example floris object
-fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+# fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
-# Reinitialize as a 3-turbine farm with range of WDs and 1 WS
+# Define arrays of ws/wd
+wind_speeds_to_expand = np.arange(2.0, 18.0, 1.0)
+wind_directions_to_expand = np.arange(0.0, 360.0, 3.0)
+
+# Create grids to make combinations of ws/wd
+wind_speeds_grid, wind_directions_grid = np.meshgrid(
+    wind_speeds_to_expand,
+    wind_directions_to_expand
+)
+
+# Flatten the grids back to 1D arrays
+wd_array = wind_directions_grid.flatten()
+ws_array = wind_speeds_grid.flatten()
+turbulence_intensities = 0.06 * np.ones_like(wd_array)
+
+# Reinitialize as a 3-turbine farm with range of WDs and WSs
 D = 126.0 # Rotor diameter for the NREL 5 MW
-fi.reinitialize(
+fmodel.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=np.arange(0.0, 360.0, 3.0),
-    wind_speeds=np.arange(2.0, 18.0, 1.0),
+    wind_directions=wd_array,
+    wind_speeds=ws_array,
+    turbulence_intensities=turbulence_intensities,
 )
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
@@ -52,7 +55,7 @@ fi.reinitialize(
 # but has no effect on the predicted power uplift from wake steering.
 # Hence, it should mostly be used when actually synthesizing a practicable
 # wind farm controller.
-yaw_opt = YawOptimizationSR(fi, verify_convergence=True)
+yaw_opt = YawOptimizationSR(fmodel)
 df_opt = yaw_opt.optimize()
 
 print("Optimization results:")
@@ -71,7 +74,7 @@ fig, axarr = plt.subplots(
     figsize=(10, 8)
 )
 jj = 0
-for ii, ws in enumerate(fi.floris.flow_field.wind_speeds):
+for ii, ws in enumerate(np.unique(fmodel.core.flow_field.wind_speeds)):
     xi = np.remainder(ii, 4)
     if ((ii > 0) & (xi == 0)):
         jj += 1
@@ -101,7 +104,7 @@ fig, axarr = plt.subplots(
     figsize=(10, 8)
 )
 jj = 0
-for ii, ws in enumerate(fi.floris.flow_field.wind_speeds):
+for ii, ws in enumerate(np.unique(fmodel.core.flow_field.wind_speeds)):
     xi = np.remainder(ii, 4)
     if ((ii > 0) & (xi == 0)):
         jj += 1

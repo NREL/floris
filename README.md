@@ -86,32 +86,36 @@ FLORIS is a Python package run on the command line typically by providing
 an input file with an initial configuration. It can be installed with
 ```pip install floris``` (see [installation](https://github.nrel.io/floris/installation)).
 The typical entry point is
-[FlorisInterface](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface)
+[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel)
 which accepts the path to the input file as an argument. From there,
 changes can be made to the initial configuration through the
-[FlorisInterface.reinitialize](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.reinitialize)
+[FlorisModel.set](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.set)
 routine, and the simulation is executed with
-[FlorisInterface.calculate_wake](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.calculate_wake).
+[FlorisModel.run](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.run).
 
 ```python
-from floris.tools import FlorisInterface
-fi = FlorisInterface("path/to/input.yaml")
-fi.reinitialize(wind_directions=[i for i in range(10)])
-fi.calculate_wake()
+from floris import FlorisModel
+fmodel = FlorisModel("path/to/input.yaml")
+fmodel.set(
+    wind_directions=[i for i in range(10)],
+    wind_speeds=[i for i in range(10)],
+    turbulence_intensities=[0.1 for i in range(10)],
+)
+fmodel.run()
 ```
 
 Finally, results can be analyzed via post-processing functions available within
-[FlorisInterface](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface)
+[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel)
 such as
-- [FlorisInterface.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_layout)
-- [FlorisInterface.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_turbine_powers)
-- [FlorisInterface.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.floris_interface.FlorisInterface.get_farm_AEP)
+- [FlorisModel.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_turbine_layout)
+- [FlorisModel.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_turbine_powers)
+- [FlorisModel.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_farm_AEP)
 
-and in a visualization package at [floris.tools.visualization](https://nrel.github.io/floris/_autosummary/floris.tools.floris_interface.FlorisInterface.html#floris.tools.visualization).
+and in two visualization packages: [layoutviz](https://nrel.github.io/floris/_autosummary/floris.layout_visualization.html) and [flowviz](https://nrel.github.io/floris/_autosummary/floris.flow_visualization.html).
 A collection of examples describing the creation of simulations as well as
 analysis and post processing are included in the
 [repository](https://github.com/NREL/floris/tree/main/examples)
-and described in detail in [Examples Index](https://github.nrel.io/floris/examples).
+and described in [Examples Index](https://github.nrel.io/floris/examples).
 
 ## Engaging on GitHub
 
@@ -132,16 +136,29 @@ space to show off the things you are doing with FLORIS.
 
 # License
 
-Copyright 2022 NREL
+BSD 3-Clause License
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Copyright (c) 2024, Alliance for Sustainable Energy LLC, All rights reserved.
 
-   http://www.apache.org/licenses/LICENSE-2.0
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+* Redistributions of source code must retain the above copyright notice, this list of conditions
+and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided
+with the distribution.
+
+* Neither the name of the copyright holder nor the names of its contributors may be used to
+endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.

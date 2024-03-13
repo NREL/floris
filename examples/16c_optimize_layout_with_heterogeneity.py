@@ -1,25 +1,11 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
-from floris.tools.optimization.layout_optimization.layout_optimization_scipy import (
+from floris import FlorisModel, WindRose
+from floris.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
 
@@ -36,18 +22,20 @@ run without coupled yaw optimization; then a coupled optimization is run to
 show the benefits of coupled optimization when flows are heterogeneous.
 """
 
-# Initialize the FLORIS interface fi
+# Initialize FLORIS
 file_dir = os.path.dirname(os.path.abspath(__file__))
-fi = FlorisInterface('inputs/gch.yaml')
+fmodel = FlorisModel('inputs/gch.yaml')
 
 # Setup 2 wind directions (due east and due west)
 # and 1 wind speed with uniform probability
-wind_directions = [270., 90.]
+wind_directions = np.array([270., 90.])
 n_wds = len(wind_directions)
-wind_speeds = [8.0]
+wind_speeds = [8.0] * np.ones_like(wind_directions)
+turbulence_intensities = 0.06 * np.ones_like(wind_directions)
 # Shape frequency distribution to match number of wind directions and wind speeds
-freq = np.ones((len(wind_directions), len(wind_speeds)))
-freq = freq / freq.sum()
+freq_table = np.ones((len(wind_directions), len(wind_speeds)))
+freq_table = freq_table / freq_table.sum()
+
 
 # The boundaries for the turbines, specified as vertices
 D = 126.0 # rotor diameter for the NREL 5MW
@@ -71,26 +59,35 @@ x_locs = [0, size_D * D, 0, size_D * D]
 y_locs = [-D, -D, D, D]
 
 # Create the configuration dictionary to be used for the heterogeneous inflow.
-heterogenous_inflow_config = {
+heterogenous_inflow_config_by_wd = {
     'speed_multipliers': speed_multipliers,
+    'wind_directions': wind_directions,
     'x': x_locs,
     'y': y_locs,
 }
 
-fi.reinitialize(
-    layout_x=layout_x,
-    layout_y=layout_y,
+# Establish a WindRose object
+wind_rose = WindRose(
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
-    heterogenous_inflow_config=heterogenous_inflow_config
+    freq_table=freq_table,
+    ti_table=0.06,
+    heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd
+)
+
+
+fmodel.set(
+    layout_x=layout_x,
+    layout_y=layout_y,
+    wind_data=wind_rose,
 )
 
 # Setup and solve the layout optimization problem without heterogeneity
 maxiter = 100
 layout_opt = LayoutOptimizationScipy(
-    fi,
+    fmodel,
     boundaries,
-    freq=freq,
+    wind_data=wind_rose,
     min_dist=2*D,
     optOptions={"maxiter":maxiter}
 )
@@ -101,11 +98,13 @@ sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
-fi.calculate_wake()
-base_aep = fi.get_farm_AEP(freq=freq) / 1e6
-fi.reinitialize(layout_x=sol[0], layout_y=sol[1])
-fi.calculate_wake()
-opt_aep = fi.get_farm_AEP(freq=freq) / 1e6
+
+fmodel.run()
+base_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+fmodel.set(layout_x=sol[0], layout_y=sol[1])
+fmodel.run()
+opt_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results
@@ -125,11 +124,11 @@ ax.set_title("Geometric yaw disabled")
 
 # Rerun the layout optimization with geometric yaw enabled
 print("\nReoptimizing with geometric yaw enabled.")
-fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
+fmodel.set(layout_x=layout_x, layout_y=layout_y)
 layout_opt = LayoutOptimizationScipy(
-    fi,
+    fmodel,
     boundaries,
-    freq=freq,
+    wind_data=wind_rose,
     min_dist=2*D,
     enable_geometric_yaw=True,
     optOptions={"maxiter":maxiter}
@@ -141,11 +140,15 @@ sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
-fi.calculate_wake()
-base_aep = fi.get_farm_AEP(freq=freq) / 1e6
-fi.reinitialize(layout_x=sol[0], layout_y=sol[1])
-fi.calculate_wake()
-opt_aep = fi.get_farm_AEP(freq=freq, yaw_angles=layout_opt.yaw_angles) / 1e6
+
+fmodel.set(yaw_angles=np.zeros_like(layout_opt.yaw_angles))
+base_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+fmodel.set(layout_x=sol[0], layout_y=sol[1], yaw_angles=layout_opt.yaw_angles)
+fmodel.run()
+opt_aep = fmodel.get_farm_AEP_with_wind_data(
+    wind_data=wind_rose
+) / 1e6
+
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
 # Print and plot the results
@@ -165,7 +168,7 @@ ax.set_title("Geometric yaw enabled")
 print(
     'Turbine geometric yaw angles for wind direction {0:.2f}'.format(wind_directions[1])\
     +' and wind speed {0:.2f} m/s:'.format(wind_speeds[0]),
-    f'{layout_opt.yaw_angles[1,0,:]}'
+    f'{layout_opt.yaw_angles[1, :]}'
 )
 
 plt.show()

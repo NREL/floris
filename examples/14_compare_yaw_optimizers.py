@@ -1,34 +1,21 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from time import perf_counter as timerpc
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
+from floris import FlorisModel
+from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_scipy import YawOptimizationScipy
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris.optimization.yaw_optimization.yaw_optimizer_scipy import YawOptimizationScipy
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 """
 This example compares the SciPy-based yaw optimizer with the new Serial-Refine optimizer.
 
-First, we initialize our Floris Interface, and then generate a 3 turbine wind farm.
+First, we initialize Floris, and then generate a 3 turbine wind farm.
 Next, we create two yaw optimization objects, `yaw_opt_sr` and `yaw_opt_scipy` for the
 Serial-Refine and SciPy methods, respectively.
 We then perform the optimization using both methods.
@@ -38,39 +25,43 @@ and resulting wind farm powers.
 The example now also compares the Geometric Yaw optimizer, which is fast
 a method to find approximately optimal yaw angles based on the wind farm geometry. Its
 main use case is for coupled layout and yaw optimization.
-see floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric.py and the paper online
+see floris.optimization.yaw_optimization.yaw_optimizer_geometric.py and the paper online
 at https://wes.copernicus.org/preprints/wes-2023-1/. See also example 16c.
 
 """
 
 # Load the default example floris object
-fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-# fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+# fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
 # Reinitialize as a 3-turbine farm with range of WDs and 1 WS
 D = 126.0 # Rotor diameter for the NREL 5 MW
-fi.reinitialize(
+wd_array = np.arange(0.0, 360.0, 3.0)
+ws_array = 8.0 * np.ones_like(wd_array)
+turbulence_intensities = 0.06 * np.ones_like(wd_array)
+fmodel.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=np.arange(0.0, 360.0, 3.0),
-    wind_speeds=[8.0],
+    wind_directions=wd_array,
+    wind_speeds=ws_array,
+    turbulence_intensities=turbulence_intensities,
 )
 
 print("Performing optimizations with SciPy...")
 start_time = timerpc()
-yaw_opt_scipy = YawOptimizationScipy(fi)
+yaw_opt_scipy = YawOptimizationScipy(fmodel)
 df_opt_scipy = yaw_opt_scipy.optimize()
 time_scipy = timerpc() - start_time
 
 print("Performing optimizations with Serial Refine...")
 start_time = timerpc()
-yaw_opt_sr = YawOptimizationSR(fi)
+yaw_opt_sr = YawOptimizationSR(fmodel)
 df_opt_sr = yaw_opt_sr.optimize()
 time_sr = timerpc() - start_time
 
 print("Performing optimizations with Geometric Yaw...")
 start_time = timerpc()
-yaw_opt_geo = YawOptimizationGeometric(fi)
+yaw_opt_geo = YawOptimizationGeometric(fmodel)
 df_opt_geo = yaw_opt_geo.optimize()
 time_geo = timerpc() - start_time
 
@@ -103,9 +94,9 @@ for t in range(3):
 
 # Before plotting results, need to compute values for GEOOPT since it doesn't compute
 # power within the optimization
-yaw_angles_opt_geo_3d = np.expand_dims(yaw_angles_opt_geo, axis=1)
-fi.calculate_wake(yaw_angles=yaw_angles_opt_geo_3d)
-geo_farm_power = fi.get_farm_power().squeeze()
+fmodel.set(yaw_angles=yaw_angles_opt_geo)
+fmodel.run()
+geo_farm_power = fmodel.get_farm_power().squeeze()
 
 
 fig, ax = plt.subplots()

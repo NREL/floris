@@ -1,83 +1,62 @@
-# Copyright 2021 NREL
+"""Example 1: Opening FLORIS and Computing Power
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
+This first example illustrates several of the key concepts in FLORIS. It:
 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
-
-import numpy as np
-
-from floris.tools import FlorisInterface
-
-
-"""
-This example creates a FLORIS instance
-1) Makes a two-turbine layout
-2) Demonstrates single ws/wd simulations
-3) Demonstrates mulitple ws/wd simulations
+  1) Initializing FLORIS
+  2) Changing the wind farm layout
+  3) Changing the incoming wind speed, wind direction and turbulence intensity
+  4) Running the FLORIS simulation
+  5) Getting the power output of the turbines
 
 Main concept is introduce FLORIS and illustrate essential structure of most-used FLORIS calls
 """
 
-# Initialize FLORIS with the given input file via FlorisInterface.
-# For basic usage, FlorisInterface provides a simplified and expressive
-# entry point to the simulation routines.
-fi = FlorisInterface("inputs/gch.yaml")
 
-# Convert to a simple two turbine layout
-fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+import numpy as np
 
-# Single wind speed and wind direction
-print("\n========================= Single Wind Direction and Wind Speed =========================")
+from floris import FlorisModel
 
-# Get the turbine powers assuming 1 wind direction and speed
-fi.reinitialize(wind_directions=[270.0], wind_speeds=[8.0])
 
-# Set the yaw angles to 0
-yaw_angles = np.zeros([1, 2])  # 1 wind direction and speed, 2 turbines
-fi.calculate_wake(yaw_angles=yaw_angles)
+# Initialize FLORIS with the given input file.
+# The Floris class is the entry point for most usage.
+fmodel = FlorisModel("inputs/gch.yaml")
 
-# Get the turbine powers
-turbine_powers = fi.get_turbine_powers() / 1000.0
+# Changing the wind farm layout uses FLORIS' set method to a two-turbine layout
+fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 
-print("The turbine power matrix should be of dimensions 1 findex X 2 Turbines")
+# Changing wind speed, wind direction, and turbulence intensity using the set method
+# as well. Note that the wind_speeds, wind_directions, and turbulence_intensities
+# are all specified as arrays of the same length.
+fmodel.set(wind_directions=np.array([270.0]),
+       wind_speeds=[8.0],
+        turbulence_intensities=np.array([0.06]))
+
+# Note that typically all 3, wind_directions, wind_speeds and turbulence_intensities
+# must be supplied to set.  However, the exception is if not changing the lenght
+# of the arrays, then only one or two may be supplied.
+fmodel.set(turbulence_intensities=np.array([0.07]))
+
+# The number of elements in the wind_speeds, wind_directions, and turbulence_intensities
+# corresponds to the number of conditions to be simulated.  In FLORIS, each of these are
+# tracked by a simple index called a findex.  There is no requirement that the values
+# be unique.  Internally in FLORIS, most data structures will have the findex as their
+# 0th dimension.  The value n_findex is the total number of conditions to be simulated.
+# This command would simulate 4 conditions (n_findex = 4).
+fmodel.set(wind_directions=np.array([270.0, 270.0, 270.0, 270.0]),
+        wind_speeds=[8.0, 8.0, 10.0, 10.0],
+        turbulence_intensities=np.array([0.06, 0.06, 0.06, 0.06]))
+
+# After the set method, the run method is called to perform the simulation
+fmodel.run()
+
+# There are functions to get either the power of each turbine, or the farm power
+turbine_powers = fmodel.get_turbine_powers() / 1000.0
+farm_power = fmodel.get_farm_power() / 1000.0
+
+print("The turbine power matrix should be of dimensions 4 (n_findex) X 2 (n_turbines)")
 print(turbine_powers)
 print("Shape: ", turbine_powers.shape)
 
-# Single wind speed and multiple wind directions
-print("\n========================= Single Wind Direction and Multiple Wind Speeds ===============")
-
-wind_speeds = np.array([8.0, 9.0, 10.0])
-wind_directions = np.array([270.0, 270.0, 270.0])
-
-fi.reinitialize(wind_speeds=wind_speeds, wind_directions=wind_directions)
-yaw_angles = np.zeros([3, 2])  # 3 wind directions/ speeds, 2 turbines
-fi.calculate_wake(yaw_angles=yaw_angles)
-turbine_powers = fi.get_turbine_powers() / 1000.0
-print("The turbine power matrix should be of dimensions 3 findex X 2 Turbines")
-print(turbine_powers)
-print("Shape: ", turbine_powers.shape)
-
-# Multiple wind speeds and multiple wind directions
-print("\n========================= Multiple Wind Directions and Multiple Wind Speeds ============")
-
-# To consider each combination, this needs to be broadcast out in advance
-
-wind_speeds = np.tile([8.0, 9.0, 10.0], 3)
-wind_directions = np.repeat([260.0, 270.0, 280.0], 3)
-
-fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
-yaw_angles = np.zeros([9, 2])  # 9 wind directions/ speeds, 2 turbines
-fi.calculate_wake(yaw_angles=yaw_angles)
-turbine_powers = fi.get_turbine_powers() / 1000.0
-print("The turbine power matrix should be of dimensions 9 WD/WS X 2 Turbines")
-print(turbine_powers)
-print("Shape: ", turbine_powers.shape)
+print("The farm power should be a 1D array of length 4 (n_findex)")
+print(farm_power)
+print("Shape: ", farm_power.shape)

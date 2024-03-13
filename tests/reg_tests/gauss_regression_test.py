@@ -1,23 +1,10 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import numpy as np
 
-from floris.simulation import (
+from floris.core import (
     average_velocity,
     axial_induction,
-    Floris,
+    Core,
     power,
     rotor_effective_velocity,
     thrust_coefficient,
@@ -91,6 +78,49 @@ yawed_baseline = np.array(
         ],
     ]
 )
+
+full_flow_baseline = np.array(
+    [
+        [
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772264, 7.99999899, 8.10178721],
+                [7.80183828, 7.91077933, 8.01357204],
+                [4.05787708, 4.02142188, 4.16800363],
+                [7.80183828, 7.91077933, 8.01357204],
+                [7.88772264, 7.99999899, 8.10178721],
+            ],
+            [
+                [7.88365433, 7.9958357 , 8.09760849],
+                [7.54214774, 7.64551046, 7.74683377],
+                [4.99852407, 5.0247459 , 5.13417881],
+                [7.54214774, 7.64551046, 7.74683377],
+                [7.88365433, 7.9958357 , 8.09760849],
+            ],
+            [
+                [7.85066049, 7.96222083, 8.06371923],
+                [7.39444624, 7.49602334, 7.5951238 ],
+                [5.50716692, 5.55540288, 5.65662569],
+                [7.39444624, 7.49602334, 7.5951238 ],
+                [7.85066049, 7.96222083, 8.06371923],
+            ],
+            [
+                [7.79761973, 7.90832696, 8.009239  ],
+                [7.41896092, 7.52268669, 7.62030379],
+                [6.98565022, 7.0811275 , 7.17523349],
+                [7.41896092, 7.52268669, 7.62030379],
+                [7.79761973, 7.90832696, 8.009239  ],
+            ]
+        ]
+    ]
+)
+
 
 """
 # These are the results from v2.4 develop branch
@@ -251,10 +281,10 @@ def test_regression_tandem(sample_inputs_fixture):
     """
     Tandem turbines
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
@@ -364,24 +394,26 @@ def test_regression_rotation(sample_inputs_fixture):
     """
     TURBINE_DIAMETER = 126.0
 
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
-    sample_inputs_fixture.floris["farm"]["layout_x"] = [
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["farm"]["layout_x"] = [
         0.0,
         0.0,
         5 * TURBINE_DIAMETER,
         5 * TURBINE_DIAMETER,
     ]
-    sample_inputs_fixture.floris["farm"]["layout_y"] = [
+    sample_inputs_fixture.core["farm"]["layout_y"] = [
         0.0,
         5 * TURBINE_DIAMETER,
         0.0,
         5 * TURBINE_DIAMETER
     ]
-    sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
-    sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0, 8.0]
+    sample_inputs_fixture.core["flow_field"]["wind_directions"] = [270.0, 360.0]
+    sample_inputs_fixture.core["flow_field"]["wind_speeds"] = [8.0, 8.0]
+    sample_inputs_fixture.core["flow_field"]["turbulence_intensities"] = [0.1, 0.1]
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+
+    floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
@@ -407,10 +439,10 @@ def test_regression_yaw(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
 
     yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,0] = 5.0
@@ -491,12 +523,12 @@ def test_regression_gch(sample_inputs_fixture):
     Tandem turbines with the upstream turbine yawed, yaw added recovery
     correction enabled, and secondary steering enabled
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     ### With GCH off (via conftest), GCH should be same as Gauss
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
 
     yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,0] = 5.0
@@ -573,11 +605,11 @@ def test_regression_gch(sample_inputs_fixture):
 
 
     ### With GCH on, the results should change
-    sample_inputs_fixture.floris["wake"]["enable_transverse_velocities"] = True
-    sample_inputs_fixture.floris["wake"]["enable_secondary_steering"] = True
-    sample_inputs_fixture.floris["wake"]["enable_yaw_added_recovery"] = True
+    sample_inputs_fixture.core["wake"]["enable_transverse_velocities"] = True
+    sample_inputs_fixture.core["wake"]["enable_secondary_steering"] = True
+    sample_inputs_fixture.core["wake"]["enable_yaw_added_recovery"] = True
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
 
     yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,0] = 5.0
@@ -659,14 +691,14 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     correction enabled
     """
 
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    sample_inputs_fixture.floris["wake"]["enable_transverse_velocities"] = True
-    sample_inputs_fixture.floris["wake"]["enable_secondary_steering"] = False
-    sample_inputs_fixture.floris["wake"]["enable_yaw_added_recovery"] = True
+    sample_inputs_fixture.core["wake"]["enable_transverse_velocities"] = True
+    sample_inputs_fixture.core["wake"]["enable_secondary_steering"] = False
+    sample_inputs_fixture.core["wake"]["enable_yaw_added_recovery"] = True
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
 
     yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,0] = 5.0
@@ -747,14 +779,14 @@ def test_regression_secondary_steering(sample_inputs_fixture):
     Tandem turbines with the upstream turbine yawed and secondary steering enabled
     """
 
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    sample_inputs_fixture.floris["wake"]["enable_transverse_velocities"] = True
-    sample_inputs_fixture.floris["wake"]["enable_secondary_steering"] = True
-    sample_inputs_fixture.floris["wake"]["enable_yaw_added_recovery"] = False
+    sample_inputs_fixture.core["wake"]["enable_transverse_velocities"] = True
+    sample_inputs_fixture.core["wake"]["enable_secondary_steering"] = True
+    sample_inputs_fixture.core["wake"]["enable_yaw_added_recovery"] = False
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
 
     yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
     yaw_angles[:,0] = 5.0
@@ -851,8 +883,8 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     turbine to be affected by its own wake. This test requires that at least in this particular
     configuration the masking correctly filters grid points.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
     X, Y = np.meshgrid(
         6.0 * 126.0 * np.arange(0, 5, 1),
         6.0 * 126.0 * np.arange(0, 5, 1)
@@ -860,10 +892,10 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     X = X.flatten()
     Y = Y.flatten()
 
-    sample_inputs_fixture.floris["farm"]["layout_x"] = X
-    sample_inputs_fixture.floris["farm"]["layout_y"] = Y
+    sample_inputs_fixture.core["farm"]["layout_x"] = X
+    sample_inputs_fixture.core["farm"]["layout_y"] = Y
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
@@ -894,3 +926,33 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     assert np.allclose(farm_powers[8,0:5], farm_powers[8,15:20])
     assert np.allclose(farm_powers[8,20], farm_powers[8,0])
     assert np.allclose(farm_powers[8,21], farm_powers[8,21:25])
+
+
+def test_full_flow_solver(sample_inputs_fixture):
+    """
+    Full flow solver test with the flow field planar grid.
+    This requires one wind condition, and the grid is deliberately coarse to allow for
+    visually comparing results, as needed.
+    The u-component of velocity is compared, and the array has the shape
+    (n_findex, n_turbines, n grid points in x, n grid points in y, 3 grid points in z).
+    """
+
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["solver"] = {
+        "type": "flow_field_planar_grid",
+        "normal_vector": "z",
+        "planar_coordinate": sample_inputs_fixture.core["farm"]["turbine_type"][0]["hub_height"],
+        "flow_field_grid_points": [5, 5],
+        "flow_field_bounds": [None, None],
+    }
+    sample_inputs_fixture.core["flow_field"]["wind_directions"] = [270.0]
+    sample_inputs_fixture.core["flow_field"]["wind_speeds"] = [8.0]
+    sample_inputs_fixture.core["flow_field"]["turbulence_intensities"] = [0.1]
+
+    floris = Core.from_dict(sample_inputs_fixture.core)
+    floris.solve_for_viz()
+
+    velocities = floris.flow_field.u_sorted
+
+    assert_results_arrays(velocities, full_flow_baseline)

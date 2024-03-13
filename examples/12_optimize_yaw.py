@@ -1,17 +1,3 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 from time import perf_counter as timerpc
 
@@ -19,8 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from floris.tools import FlorisInterface
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+from floris import FlorisModel
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 """
@@ -40,18 +26,18 @@ shown in several plots.
 
 def load_floris():
     # Load the default example floris object
-    fi = FlorisInterface("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-    # fi = FlorisInterface("inputs/cc.yaml") # New CumulativeCurl model
+    fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+    # fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
     # Specify wind farm layout and update in the floris object
     N = 5  # number of turbines per row and per column
     X, Y = np.meshgrid(
-        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
-        5.0 * fi.floris.farm.rotor_diameters_sorted[0][0][0] * np.arange(0, N, 1),
+        5.0 * fmodel.core.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
+        5.0 * fmodel.core.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
     )
-    fi.reinitialize(layout_x=X.flatten(), layout_y=Y.flatten())
+    fmodel.set(layout_x=X.flatten(), layout_y=Y.flatten())
 
-    return fi
+    return fmodel
 
 
 def load_windrose():
@@ -63,34 +49,35 @@ def load_windrose():
     return df
 
 
-def calculate_aep(fi, df_windrose, column_name="farm_power"):
+def calculate_aep(fmodel, df_windrose, column_name="farm_power"):
     from scipy.interpolate import NearestNDInterpolator
 
     # Define columns
-    nturbs = len(fi.layout_x)
+    nturbs = len(fmodel.layout_x)
     yaw_cols = ["yaw_{:03d}".format(ti) for ti in range(nturbs)]
 
     if "yaw_000" not in df_windrose.columns:
         df_windrose[yaw_cols] = 0.0  # Add zeros
 
     # Derive the wind directions and speeds we need to evaluate in FLORIS
-    wd_array = np.array(df_windrose["wd"].unique(), dtype=float)
-    ws_array = np.array(df_windrose["ws"].unique(), dtype=float)
+    wd_array = np.array(df_windrose["wd"], dtype=float)
+    ws_array = np.array(df_windrose["ws"], dtype=float)
+    turbulence_intensities = 0.06 * np.ones_like(wd_array)
     yaw_angles = np.array(df_windrose[yaw_cols], dtype=float)
-    fi.reinitialize(wind_directions=wd_array, wind_speeds=ws_array)
-
-    # Map angles from dataframe onto floris wind direction/speed grid
-    X, Y = np.meshgrid(wd_array, ws_array, indexing='ij')
-    interpolant = NearestNDInterpolator(df_windrose[["wd", "ws"]], yaw_angles)
-    yaw_angles_floris = interpolant(X, Y)
+    fmodel.set(
+        wind_directions=wd_array,
+        wind_speeds=ws_array,
+        turbulence_intensities=turbulence_intensities,
+        yaw_angles=yaw_angles
+    )
 
     # Calculate FLORIS for every WD and WS combination and get the farm power
-    fi.calculate_wake(yaw_angles_floris)
-    farm_power_array = fi.get_farm_power()
+    fmodel.run()
+    farm_power_array = fmodel.get_farm_power()
 
     # Now map FLORIS solutions to dataframe
     interpolant = NearestNDInterpolator(
-        np.vstack([X.flatten(), Y.flatten()]).T,
+        np.vstack([wd_array, ws_array]).T,
         farm_power_array.flatten()
     )
     df_windrose[column_name] = interpolant(df_windrose[["wd", "ws"]])  # Save to dataframe
@@ -107,16 +94,17 @@ if __name__ == "__main__":
     df_windrose = load_windrose()
 
     # Load FLORIS
-    fi = load_floris()
-    fi.reinitialize(wind_speeds=8.0)
-    nturbs = len(fi.layout_x)
+    fmodel = load_floris()
+    ws_array = 8.0 * np.ones_like(fmodel.core.flow_field.wind_directions)
+    fmodel.set(wind_speeds=ws_array)
+    nturbs = len(fmodel.layout_x)
 
     # First, get baseline AEP, without wake steering
     start_time = timerpc()
     print(" ")
     print("===========================================================")
     print("Calculating baseline annual energy production (AEP)...")
-    aep_bl = calculate_aep(fi, df_windrose, "farm_power_baseline")
+    aep_bl = calculate_aep(fmodel, df_windrose, "farm_power_baseline")
     t = timerpc() - start_time
     print("Baseline AEP: {:.3f} GWh. Time spent: {:.1f} s.".format(aep_bl, t))
     print("===========================================================")
@@ -125,23 +113,26 @@ if __name__ == "__main__":
     # Now optimize the yaw angles using the Serial Refine method
     print("Now starting yaw optimization for the entire wind rose...")
     start_time = timerpc()
-    fi.reinitialize(
-        wind_directions=np.arange(0.0, 360.0, 5.0),
-        wind_speeds=[8.0]
+    wd_array = np.arange(0.0, 360.0, 5.0)
+    ws_array = 8.0 * np.ones_like(wd_array)
+    turbulence_intensities = 0.06 * np.ones_like(wd_array)
+    fmodel.set(
+        wind_directions=wd_array,
+        wind_speeds=ws_array,
+        turbulence_intensities=turbulence_intensities,
     )
     yaw_opt = YawOptimizationSR(
-        fi=fi,
+        fmodel=fmodel,
         minimum_yaw_angle=0.0,  # Allowable yaw angles lower bound
         maximum_yaw_angle=20.0,  # Allowable yaw angles upper bound
         Ny_passes=[5, 4],
         exclude_downstream_turbines=True,
-        exploit_layout_symmetry=True,
     )
 
     df_opt = yaw_opt.optimize()
     end_time = timerpc()
     t_tot = end_time - start_time
-    t_fi = yaw_opt.time_spent_in_floris
+    t_fmodel = yaw_opt.time_spent_in_floris
 
     print("Optimization finished in {:.2f} seconds.".format(t_tot))
     print(" ")
@@ -180,7 +171,7 @@ if __name__ == "__main__":
     start_time = timerpc()
     print("==================================================================")
     print("Calculating annual energy production (AEP) with wake steering...")
-    aep_opt = calculate_aep(fi, df_windrose, "farm_power_opt")
+    aep_opt = calculate_aep(fmodel, df_windrose, "farm_power_opt")
     aep_uplift = 100.0 * (aep_opt / aep_bl - 1)
     t = timerpc() - start_time
     print("Optimal AEP: {:.3f} GWh. Time spent: {:.1f} s.".format(aep_opt, t))

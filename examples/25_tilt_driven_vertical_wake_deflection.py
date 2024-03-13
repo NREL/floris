@@ -1,23 +1,9 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
-from floris.tools.visualization import visualize_cut_plane
+from floris import FlorisModel
+from floris.flow_visualization import visualize_cut_plane
 
 
 """
@@ -31,10 +17,10 @@ of vertical deflections due to tilt has not been validated.
 # Initialize two FLORIS objects: one with 5 degrees of tilt (fixed across all
 # wind speeds) and one with 15 degrees of tilt (fixed across all wind speeds).
 
-fi_5 = FlorisInterface("inputs_floating/emgauss_floating_fixedtilt5.yaml")
-fi_15 = FlorisInterface("inputs_floating/emgauss_floating_fixedtilt15.yaml")
+fmodel_5 = FlorisModel("inputs_floating/emgauss_floating_fixedtilt5.yaml")
+fmodel_15 = FlorisModel("inputs_floating/emgauss_floating_fixedtilt15.yaml")
 
-D = fi_5.floris.farm.rotor_diameters[0]
+D = fmodel_5.core.farm.rotor_diameters[0]
 
 num_in_row = 5
 
@@ -60,10 +46,10 @@ fig.set_size_inches(12, 6)
 powers = np.zeros((2, num_in_row))
 
 # Calculate wakes, powers, plot
-for i, (fi, tilt) in enumerate(zip([fi_5, fi_15], [5, 15])):
+for i, (fmodel, tilt) in enumerate(zip([fmodel_5, fmodel_15], [5, 15])):
 
     # Farm layout and wind conditions
-    fi.reinitialize(
+    fmodel.set(
         layout_x=[x * 5.0 * D for x in range(num_in_row)],
         layout_y=[0.0]*num_in_row,
         wind_speeds=[8.0],
@@ -71,11 +57,11 @@ for i, (fi, tilt) in enumerate(zip([fi_5, fi_15], [5, 15])):
     )
 
     # Flow solve and power computation
-    fi.calculate_wake()
-    powers[i,:] = fi.get_turbine_powers().flatten()
+    fmodel.run()
+    powers[i,:] = fmodel.get_turbine_powers().flatten()
 
     # Compute flow slices
-    y_plane = fi.calculate_y_plane(
+    y_plane = fmodel.calculate_y_plane(
         x_resolution=200,
         z_resolution=100,
         crossstream_dist=streamwise_plane_location,

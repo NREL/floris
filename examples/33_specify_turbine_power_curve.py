@@ -1,22 +1,8 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris import FlorisModel
 from floris.turbine_library import build_cosine_loss_turbine_dict
 
 
@@ -45,28 +31,30 @@ turbine_dict = build_cosine_loss_turbine_dict(
     file_name=None,
     generator_efficiency=1,
     hub_height=90,
-    pP=1.88,
-    pT=1.88,
+    cosine_loss_exponent_yaw=1.88,
+    cosine_loss_exponent_tilt=1.88,
     rotor_diameter=126,
     TSR=8,
     ref_air_density=1.225,
     ref_tilt=5
 )
 
-fi = FlorisInterface("inputs/gch.yaml")
+fmodel = FlorisModel("inputs/gch.yaml")
 wind_speeds = np.linspace(1, 15, 100)
 wind_directions = 270 * np.ones_like(wind_speeds)
+turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
 # Replace the turbine(s) in the FLORIS model with the created one
-fi.reinitialize(
+fmodel.set(
     layout_x=[0],
     layout_y=[0],
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
+    turbulence_intensities=turbulence_intensities,
     turbine_type=[turbine_dict]
 )
-fi.calculate_wake()
+fmodel.run()
 
-powers = fi.get_farm_power()
+powers = fmodel.get_farm_power()
 
 specified_powers = (
     np.array(turbine_data_dict["power_coefficient"])

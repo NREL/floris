@@ -1,22 +1,8 @@
-# Copyright 2024 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import (
-    FlorisInterface,
+from floris import (
+    FlorisModel,
     TimeSeries,
     WindRose,
 )
@@ -57,28 +43,47 @@ wind_rose = time_series.to_wind_rose()
 
 # Plot the wind rose
 fig, ax = plt.subplots(subplot_kw={"polar": True})
-wind_rose.plot_wind_rose(ax=ax)
+wind_rose.plot_wind_rose(ax=ax,legend_kwargs={"title": "WS"})
+fig.suptitle("WindRose Plot")
+
+# Now build a wind rose with turbulence intensity
+wind_ti_rose = time_series.to_wind_ti_rose()
+
+# Plot the wind rose with TI
+fig, axs = plt.subplots(2, 1, figsize=(6,8), subplot_kw={"polar": True})
+wind_ti_rose.plot_wind_rose(ax=axs[0], wind_rose_var="ws",legend_kwargs={"title": "WS"})
+axs[0].set_title("Wind Direction and Wind Speed Frequencies")
+wind_ti_rose.plot_wind_rose(ax=axs[1], wind_rose_var="ti",legend_kwargs={"title": "TI"})
+axs[1].set_title("Wind Direction and Turbulence Intensity Frequencies")
+fig.suptitle("WindTIRose Plots")
+plt.tight_layout()
 
 # Now set up a FLORIS model and initialize it using the time series and wind rose
-fi = FlorisInterface("inputs/gch.yaml")
-fi.reinitialize(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+fmodel = FlorisModel("inputs/gch.yaml")
+fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 
-fi_time_series = fi.copy()
-fi_wind_rose = fi.copy()
+fmodel_time_series = fmodel.copy()
+fmodel_wind_rose = fmodel.copy()
+fmodel_wind_ti_rose = fmodel.copy()
 
-fi_time_series.reinitialize(wind_data=time_series)
-fi_wind_rose.reinitialize(wind_data=wind_rose)
+fmodel_time_series.set(wind_data=time_series)
+fmodel_wind_rose.set(wind_data=wind_rose)
+fmodel_wind_ti_rose.set(wind_data=wind_ti_rose)
 
-fi_time_series.calculate_wake()
-fi_wind_rose.calculate_wake()
+fmodel_time_series.run()
+fmodel_wind_rose.run()
+fmodel_wind_ti_rose.run()
 
-time_series_power = fi_time_series.get_farm_power()
-wind_rose_power = fi_wind_rose.get_farm_power()
+time_series_power = fmodel_time_series.get_farm_power()
+wind_rose_power = fmodel_wind_rose.get_farm_power()
+wind_ti_rose_power = fmodel_wind_ti_rose.get_farm_power()
 
-time_series_aep = fi_time_series.get_farm_AEP_with_wind_data(time_series)
-wind_rose_aep = fi_wind_rose.get_farm_AEP_with_wind_data(wind_rose)
+time_series_aep = fmodel_time_series.get_farm_AEP_with_wind_data(time_series)
+wind_rose_aep = fmodel_wind_rose.get_farm_AEP_with_wind_data(wind_rose)
+wind_ti_rose_aep = fmodel_wind_ti_rose.get_farm_AEP_with_wind_data(wind_ti_rose)
 
 print(f"AEP from TimeSeries {time_series_aep / 1e9:.2f} GWh")
 print(f"AEP from WindRose {wind_rose_aep / 1e9:.2f} GWh")
+print(f"AEP from WindTIRose {wind_ti_rose_aep / 1e9:.2f} GWh")
 
 plt.show()

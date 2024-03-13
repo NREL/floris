@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
 
@@ -24,10 +11,10 @@ def build_cosine_loss_turbine_dict(
     turbine_data_dict,
     turbine_name,
     file_name=None,
-    generator_efficiency=0.944,
+    generator_efficiency=None,
     hub_height=90.0,
-    pP=1.88,
-    pT=1.88,
+    cosine_loss_exponent_yaw=1.88,
+    cosine_loss_exponent_tilt=1.88,
     rotor_diameter=125.88,
     TSR=8.0,
     ref_air_density=1.225,
@@ -47,14 +34,15 @@ def build_cosine_loss_turbine_dict(
     turbine power and thrust as a function of wind speed. The following keys
     are possible:
     - wind_speed [m/s]
-    - power_absolute [kW]
+    - power [kW]
     - power_coefficient [-]
-    - thrust_absolute [kN]
+    - thrust [kN]
     - thrust_coefficient [-]
-    Of these, wind_speed is required. One of power_absolute and power_coefficient
-    must be specified; and one of thrust_absolute and thrust_coefficient must be
-    specified. If both _absolute and _coefficient versions are specified, the
-    _coefficient entry will be used and the _absolute entry ignored.
+    Of these, wind_speed is required. One of power and power_coefficient
+    must be specified; and one of thrust and thrust_coefficient must be
+    specified. If both (absolute) and _coefficient versions are specified, the
+    (absolute) power will be used along with the thrust_coefficient, with the
+    other entries ignored.
 
     Args:
         turbine_data_dict (dict): Dictionary containing performance of the wind
@@ -63,10 +51,14 @@ def build_cosine_loss_turbine_dict(
             turbine_type field as well as the filename.
         file_name (): Name for the produced yaml, including possibly path.
             Defaults to None, in which case no yaml is written.
-        generator_efficiency (float): Generator efficiency [-]. Defaults to 1.0.
+        generator_efficiency (float): Generator efficiency [-]. Unused if power is specified
+            in absolute terms in the turbine_data_dict. Must be specified if
+            power not specified and power_coefficient specified instead. Defaults to None.
         hub_height (float): Hub height [m]. Defaults to 90.0.
-        pP (float): Cosine exponent for power loss to yaw [-]. Defaults to 1.88.
-        pT (float): Cosine exponent for thrust loss to yaw [-]. Defaults to 1.88.
+        cosine_loss_exponent_yaw (float): Cosine exponent for power loss to yaw [-].
+            Defaults to 1.88.
+        cosine_loss_exponent_tilt (float): Cosine exponent for thrust loss to yaw [-].
+            Defaults to 1.88.
         rotor_diameter (float). Rotor diameter [m]. Defaults to 126.0.
         TSR (float). Turbine optimal tip-speed ratio [-]. Defaults to 8.0.
         ref_air_density (float). Air density used to specify power and thrust
@@ -95,6 +87,10 @@ def build_cosine_loss_turbine_dict(
         p = np.array(turbine_data_dict["power"])
 
     elif "power_coefficient" in turbine_data_dict:
+        if generator_efficiency is None:
+            raise KeyError(
+                "generator_efficiency must be specified to convert power_coefficient to power."
+            )
         Cp = np.array(turbine_data_dict["power_coefficient"])
         if _find_nearest_value_for_wind_speed(Cp, u, 10) > 16.0/27.0 or \
            _find_nearest_value_for_wind_speed(Cp, u, 10) < 0.0:
@@ -150,8 +146,8 @@ def build_cosine_loss_turbine_dict(
     power_thrust_dict = {
         "ref_air_density": ref_air_density,
         "ref_tilt": ref_tilt,
-        "pP": pP,
-        "pT": pT,
+        "cosine_loss_exponent_yaw": cosine_loss_exponent_yaw,
+        "cosine_loss_exponent_tilt": cosine_loss_exponent_tilt,
         "wind_speed": u.tolist(),
         "power": p.tolist(),
         "thrust_coefficient": Ct.tolist()
@@ -159,7 +155,6 @@ def build_cosine_loss_turbine_dict(
 
     turbine_dict = {
         "turbine_type": turbine_name,
-        "generator_efficiency": generator_efficiency,
         "hub_height": hub_height,
         "rotor_diameter": rotor_diameter,
         "TSR": TSR,

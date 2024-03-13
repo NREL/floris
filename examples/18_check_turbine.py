@@ -1,24 +1,10 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris.tools import FlorisInterface
+from floris import FlorisModel
 
 
 """
@@ -27,23 +13,28 @@ curve and power loss to yaw are reasonable and  reasonably smooth
 """
 ws_array = np.arange(0.1,30,0.2)
 wd_array = 270.0 * np.ones_like(ws_array)
+turbulence_intensities = 0.06 * np.ones_like(ws_array)
 yaw_angles = np.linspace(-30,30,60)
 wind_speed_to_test_yaw = 11
 
 # Grab the gch model
-fi = FlorisInterface("inputs/gch.yaml")
+fmodel = FlorisModel("inputs/gch.yaml")
 
-# Make one turbine sim
-fi.reinitialize(layout_x=[0], layout_y=[0])
+# Make one turbine simulation
+fmodel.set(layout_x=[0], layout_y=[0])
 
-# Apply wind speeds
-fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
+# Apply wind directions and wind speeds
+fmodel.set(
+    wind_speeds=ws_array,
+    wind_directions=wd_array,
+    turbulence_intensities=turbulence_intensities
+)
 
 # Get a list of available turbine models provided through FLORIS, and remove
 # multi-dimensional Cp/Ct turbine definitions as they require different handling
 turbines = [
     t.stem
-    for t in fi.floris.farm.internal_turbine_library.iterdir()
+    for t in fmodel.core.farm.internal_turbine_library.iterdir()
     if t.suffix == ".yaml" and ("multi_dim" not in t.stem)
 ]
 
@@ -54,22 +45,22 @@ fig_pow_ct, axarr_pow_ct = plt.subplots(2,1,sharex=True,figsize=(10,10))
 for t in turbines:
 
     # Set t as the turbine
-    fi.reinitialize(turbine_type=[t])
+    fmodel.set(turbine_type=[t])
 
     # Since we are changing the turbine type, make a matching change to the reference wind height
-    fi.assign_hub_height_to_ref_height()
+    fmodel.assign_hub_height_to_ref_height()
 
     # Plot power and ct onto the fig_pow_ct plot
     axarr_pow_ct[0].plot(
-        fi.floris.farm.turbine_map[0].power_thrust_table["wind_speed"],
-        fi.floris.farm.turbine_map[0].power_thrust_table["power"],label=t
+        fmodel.core.farm.turbine_map[0].power_thrust_table["wind_speed"],
+        fmodel.core.farm.turbine_map[0].power_thrust_table["power"],label=t
     )
     axarr_pow_ct[0].grid(True)
     axarr_pow_ct[0].legend()
     axarr_pow_ct[0].set_ylabel('Power (kW)')
     axarr_pow_ct[1].plot(
-        fi.floris.farm.turbine_map[0].power_thrust_table["wind_speed"],
-        fi.floris.farm.turbine_map[0].power_thrust_table["thrust_coefficient"],label=t
+        fmodel.core.farm.turbine_map[0].power_thrust_table["wind_speed"],
+        fmodel.core.farm.turbine_map[0].power_thrust_table["thrust_coefficient"],label=t
     )
     axarr_pow_ct[1].grid(True)
     axarr_pow_ct[1].legend()
@@ -82,13 +73,17 @@ for t in turbines:
     # Try a few density
     for density in [1.15,1.225,1.3]:
 
-        fi.reinitialize(air_density=density)
+        fmodel.set(air_density=density)
 
         # POWER CURVE
         ax = axarr[0]
-        fi.reinitialize(wind_speeds=ws_array, wind_directions=wd_array)
-        fi.calculate_wake()
-        turbine_powers = fi.get_turbine_powers().flatten() / 1e3
+        fmodel.set(
+            wind_speeds=ws_array,
+            wind_directions=wd_array,
+            turbulence_intensities=turbulence_intensities
+        )
+        fmodel.run()
+        turbine_powers = fmodel.get_turbine_powers().flatten() / 1e3
         if density == 1.225:
             ax.plot(ws_array,turbine_powers,label='Air Density = %.3f' % density, lw=2, color='k')
         else:
@@ -101,11 +96,16 @@ for t in turbines:
         # Power loss to yaw, try a range of yaw angles
         ax = axarr[1]
 
-        fi.reinitialize(wind_speeds=[wind_speed_to_test_yaw], wind_directions=[270.0])
+        fmodel.set(
+            wind_speeds=[wind_speed_to_test_yaw],
+            wind_directions=[270.0],
+            turbulence_intensities=[0.06]
+        )
         yaw_result = []
         for yaw in yaw_angles:
-            fi.calculate_wake(yaw_angles=np.array([[yaw]]))
-            turbine_powers = fi.get_turbine_powers().flatten() / 1e3
+            fmodel.set(yaw_angles=np.array([[yaw]]))
+            fmodel.run()
+            turbine_powers = fmodel.get_turbine_powers().flatten() / 1e3
             yaw_result.append(turbine_powers[0])
         if density == 1.225:
             ax.plot(yaw_angles,yaw_result,label='Air Density = %.3f' % density, lw=2, color='k')

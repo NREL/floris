@@ -11,19 +11,19 @@ from floris.simulation import Floris
 
 
 def time_profile(input_dict):
-    floris = Floris.from_dict(input_dict.floris)
+    floris = Floris.from_dict(input_dict.core)
     start = time.perf_counter()
     floris.steady_state_atmospheric_condition()
     end = time.perf_counter()
     return end - start
 
 def internal_probe(input_dict):
-    floris = Floris(input_dict=input_dict.floris)
+    floris = Floris(input_dict=input_dict.core)
     internal_quantity = floris.steady_state_atmospheric_condition()
     return internal_quantity
 
 def memory_profile(input_dict):
-    floris = Floris(input_dict=input_dict.floris)
+    floris = Floris(input_dict=input_dict.core)
     mem_usage = memory_profiler.memory_usage(
         (floris.steady_state_atmospheric_condition, (), {}),
         max_usage=True
@@ -32,10 +32,10 @@ def memory_profile(input_dict):
 
 if __name__=="__main__":
     sample_inputs = SampleInputs()
-    TURBINE_DIAMETER = sample_inputs.floris["turbine"]["rotor_diameter"]
+    TURBINE_DIAMETER = sample_inputs.core["turbine"]["rotor_diameter"]
 
     # Use Gauss models
-    sample_inputs.floris["wake"]["model_strings"] = {
+    sample_inputs.core["wake"]["model_strings"] = {
         "velocity_model": "gauss",
         "deflection_model": "gauss",
         "combination_model": None,
@@ -51,8 +51,8 @@ if __name__=="__main__":
     # wind_direction_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 50
-    #     wind_direction_scaling_inputs.floris["flow_field"]["wind_directions"] = factor * [270.0]
-    #     wind_direction_scaling_inputs.floris["flow_field"]["wind_speeds"] = [8.0]
+    #     wind_direction_scaling_inputs.core["flow_field"]["wind_directions"] = factor * [270.0]
+    #     wind_direction_scaling_inputs.core["flow_field"]["wind_speeds"] = [8.0]
 
     #     wd_calc_time[i] = time_profile(copy.deepcopy(wind_direction_scaling_inputs))
     #     wd_size[i] = factor
@@ -64,8 +64,8 @@ if __name__=="__main__":
     # wind_speed_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 50
-    #     wind_speed_scaling_inputs.floris["flow_field"]["wind_directions"] = [270.0]
-    #     wind_speed_scaling_inputs.floris["flow_field"]["wind_speeds"] = factor * [8.0]
+    #     wind_speed_scaling_inputs.core["flow_field"]["wind_directions"] = [270.0]
+    #     wind_speed_scaling_inputs.core["flow_field"]["wind_speeds"] = factor * [8.0]
 
     #     ws_calc_time[i] = time_profile(copy.deepcopy(wind_speed_scaling_inputs))
     #     ws_size[i] = factor
@@ -77,11 +77,11 @@ if __name__=="__main__":
     # turbine_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 3
-    #     turbine_scaling_inputs.floris["farm"]["layout_x"] = [
+    #     turbine_scaling_inputs.core["farm"]["layout_x"] = [
     #         5 * TURBINE_DIAMETER * j
     #         for j in range(factor)
     #     ]
-    #     turbine_scaling_inputs.floris["farm"]["layout_y"] = factor * [0.0]
+    #     turbine_scaling_inputs.core["farm"]["layout_y"] = factor * [0.0]
 
     #     turb_calc_time[i] = time_profile(copy.deepcopy(turbine_scaling_inputs))
     #     turb_size[i] = factor
@@ -92,14 +92,14 @@ if __name__=="__main__":
     # scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(5):
     #     factor = (i+1) * 2
-    #     scaling_inputs.floris["farm"]["layout_x"] = [
+    #     scaling_inputs.core["farm"]["layout_x"] = [
     #         5 * TURBINE_DIAMETER * j
     #         for j in range(factor)
     #     ]
-    #     scaling_inputs.floris["farm"]["layout_y"] = factor * [0.0]
+    #     scaling_inputs.core["farm"]["layout_y"] = factor * [0.0]
     #     factor = (i+1) * 20
-    #     scaling_inputs.floris["flow_field"]["wind_directions"] = factor * [270.0]
-    #     scaling_inputs.floris["flow_field"]["wind_speeds"] = factor * [8.0]
+    #     scaling_inputs.core["flow_field"]["wind_directions"] = factor * [270.0]
+    #     scaling_inputs.core["flow_field"]["wind_speeds"] = factor * [8.0]
 
     #     internal_quantity[i] = time_profile(scaling_inputs)
     #     print("n turbine", i, internal_quantity[i])
@@ -118,7 +118,7 @@ if __name__=="__main__":
     n_wind_directions = 1
     n_wind_speeds = 1
     n_turbines = 3
-    sample_inputs.floris["wake"]["model_strings"] = {
+    sample_inputs.core["wake"]["model_strings"] = {
         # "velocity_model": "jensen",
         # "deflection_model": "jimenez",
         "velocity_model": "cc",
@@ -126,18 +126,18 @@ if __name__=="__main__":
         "combination_model": None,
         "turbulence_model": None,
     }
-    sample_inputs.floris["solver"] = {
+    sample_inputs.core["solver"] = {
         "type": "turbine_grid",
         "turbine_grid_points": 5
     }
 
-    # sample_inputs.floris["wake"]["enable_transverse_velocities"] = False
-    # sample_inputs.floris["wake"]["enable_secondary_steering"] = False
-    # sample_inputs.floris["wake"]["enable_yaw_added_recovery"] = False
-    sample_inputs.floris["flow_field"]["wind_directions"] = n_wind_directions * [270.0]
-    sample_inputs.floris["flow_field"]["wind_speeds"] = n_wind_speeds * [8.0]
-    sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(n_turbines)]
-    sample_inputs.floris["farm"]["layout_y"] = n_turbines * [0.0]
+    # sample_inputs.core["wake"]["enable_transverse_velocities"] = False
+    # sample_inputs.core["wake"]["enable_secondary_steering"] = False
+    # sample_inputs.core["wake"]["enable_yaw_added_recovery"] = False
+    sample_inputs.core["flow_field"]["wind_directions"] = n_wind_directions * [270.0]
+    sample_inputs.core["flow_field"]["wind_speeds"] = n_wind_speeds * [8.0]
+    sample_inputs.core["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(n_turbines)]
+    sample_inputs.core["farm"]["layout_y"] = n_turbines * [0.0]
 
     N = 1
     times = np.zeros(N)
@@ -158,8 +158,8 @@ if __name__=="__main__":
     # wind_direction_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 50
-    #     wind_direction_scaling_inputs.floris["farm"]["wind_directions"] = factor * [270.0]
-    #     wind_direction_scaling_inputs.floris["farm"]["wind_speeds"] = [8.0]
+    #     wind_direction_scaling_inputs.core["farm"]["wind_directions"] = factor * [270.0]
+    #     wind_direction_scaling_inputs.core["farm"]["wind_speeds"] = [8.0]
 
     #     wd_space[i] = memory_profile(wind_direction_scaling_inputs)
     #     print("wind direction", i, wd_space[i])
@@ -169,8 +169,8 @@ if __name__=="__main__":
     # wind_speed_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 50
-    #     wind_speed_scaling_inputs.floris["farm"]["wind_directions"] = [270.0]
-    #     wind_speed_scaling_inputs.floris["farm"]["wind_speeds"] = factor * [8.0]
+    #     wind_speed_scaling_inputs.core["farm"]["wind_directions"] = [270.0]
+    #     wind_speed_scaling_inputs.core["farm"]["wind_speeds"] = factor * [8.0]
 
     #     ws_space[i] = memory_profile(wind_speed_scaling_inputs)
     #     print("wind speed", i, ws_space[i])
@@ -180,11 +180,11 @@ if __name__=="__main__":
     # turbine_scaling_inputs = copy.deepcopy(sample_inputs)
     # for i in range(N):
     #     factor = (i+1) * 50
-    #     turbine_scaling_inputs.floris["farm"]["layout_x"] = [
+    #     turbine_scaling_inputs.core["farm"]["layout_x"] = [
     #         5 * TURBINE_DIAMETER * j
     #         for j in range(factor)
     #     ]
-    #     turbine_scaling_inputs.floris["farm"]["layout_y"] = factor * [0.0]
+    #     turbine_scaling_inputs.core["farm"]["layout_y"] = factor * [0.0]
 
     #     turb_space[i] = memory_profile(turbine_scaling_inputs)
     #     print("n turbine", turb_space[i])
