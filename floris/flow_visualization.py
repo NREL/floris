@@ -442,7 +442,7 @@ def plot_rotor_values(
     if n_rows == 1 and n_cols == 1:
         axes = np.array([axes])
 
-    titles = np.array([f"T{i}" for i in t_range])
+    titles = np.array([f"tindex: {i}" for i in t_range])
 
     for ax, t, i in zip(axes.flatten(), titles, t_range):
 
