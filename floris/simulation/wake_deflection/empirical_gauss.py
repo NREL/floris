@@ -165,19 +165,4 @@ def helix_added_wake_mixing(
     
     ## TODO: Add TI in the mix, finetune amplitude/freq effect
 
-    return helix_amplitude_i[:,:,0,0]/(200*downstream_distance_D_i**2)#axial_induction_i[:,:,0,0] * (1 - helix_amplitude_i[:,:,0,0]/20) / downstream_distance_D_i
-    
-    # a1 = 0.988*np.sqrt(helix_amplitude_i[:,:,0,0])
-    # a2 = -0.214*np.sqrt(helix_amplitude_i[:,:,0,0])
-    # d1 = 6.144
-    # d2 = 2.889
-    # c1 = 14.669
-    # c2 = 1.024
-
-    # print(f"Helix amp: {helix_amplitude_i[:,:,0,0]}, added mixing: {( 1 + a1 * np.exp(- (downstream_distance_D_i - d1) / c1 ) + a2 * np.exp(- (downstream_distance_D_i - d2) / c2 ))}")
-    # return (
-    #     axial_induction_i[:,:,0,0]
-    #     * ( 1 + a1 * np.exp(- (downstream_distance_D_i - d1) / c1 )
-    #           + a2 * np.exp(- (downstream_distance_D_i - d2) / c2 )
-    #     )
-    # )
+    return helix_amplitude_i[:,:,0,0]**1.2/400

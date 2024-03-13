@@ -26,7 +26,7 @@ release. TODO: Demonstrate shutting off turbines also, once developed.
 """
 
 # Grab model of FLORIS and update to deratable turbines
-fi = FlorisInterface("inputs/emgauss.yaml")
+fi = FlorisInterface("inputs/emgauss_iea_15MW.yaml")
 with open(str(
     fi.floris.as_dict()["farm"]["turbine_library_path"] /
     (fi.floris.as_dict()["farm"]["turbine_type"][0] + ".yaml")
@@ -35,7 +35,7 @@ with open(str(
 turbine_type["power_thrust_model"] = "helix"
 
 # Convert to a simple two turbine layout with derating turbines
-fi.reinitialize(layout_x=[0, 2000.0], layout_y=[0.0, 0.0], turbine_type=['iea_15mw'])
+fi.reinitialize(layout_x=[0, 2000.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])
 
 # Set the wind directions and speeds to be constant over n_findex = N time steps
 N = 50

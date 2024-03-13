@@ -1355,7 +1355,6 @@ def empirical_gauss_solver(
                 model_manager.deflection_model.yaw_added_mixing_gain
             )
         if model_manager.enable_helix_added_recovery:
-            print(f'pre helix mixing: {mixing_factor[:,:,i]}')
             mixing_factor[:,:,i] += \
                 area_overlap * helix_added_wake_mixing(
                 axial_induction_i,
@@ -1364,7 +1363,6 @@ def empirical_gauss_solver(
                 downstream_distance_D[:,:,i],
                 # model_manager.velocity_model.helix_added_mixing_gain
             )
-            print(f'post helix mixing: {mixing_factor[:,:,i]}')
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake

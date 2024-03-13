@@ -39,16 +39,16 @@ rotor.
 # Initialize FLORIS with the given input file via FlorisInterface.
 # For basic usage, FlorisInterface provides a simplified and expressive
 # entry point to the simulation routines.
-fi = FlorisInterface("inputs/emgauss.yaml")
+fi = FlorisInterface("inputs/emgauss_iea_15MW.yaml")
 
 with open(str(
     fi.floris.as_dict()["farm"]["turbine_library_path"] /
     (fi.floris.as_dict()["farm"]["turbine_type"][0] + ".yaml")
 )) as t:
     turbine_type = yaml.safe_load(t)
-turbine_type["power_thrust_model"] = "helix"
+# turbine_type["power_thrust_model"] = "helix"
 
-fi.reinitialize(layout_x=[0, 0.0, 1000, 1000], layout_y=[0.0, 600.0, 0, 600], turbine_type=['iea_15mw'])
+fi.reinitialize(layout_x=[0, 0.0], layout_y=[-300.0, 300.0])
 
 # Set the wind directions and speeds to be constant over n_findex = N time steps
 N = 1
@@ -57,7 +57,7 @@ fi.calculate_wake()
 turbine_powers_orig = fi.get_turbine_powers()
 
 # Add helix
-helix_amplitudes = np.array([5, 0, 0, 0]).reshape(4, N).T
+helix_amplitudes = np.array([5, 0]).reshape(2, N).T
 fi.calculate_wake(helix_amplitudes=helix_amplitudes)
 turbine_powers_helix = fi.get_turbine_powers()
 
@@ -76,20 +76,20 @@ horizontal_plane = fi.calculate_horizontal_plane(
     x_resolution=200,
     y_resolution=100,
     height=150.0,
-    yaw_angles=np.array([[0.,0.,0,0]]),
+    yaw_angles=np.array([[0.,0.]]),
 )
 
 y_plane = fi.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
-    crossstream_dist=0.0,
-    yaw_angles=np.array([[0.,0.,0,0]]),
+    crossstream_dist=300.0,
+    yaw_angles=np.array([[0.,0.]]),
 )
 cross_plane = fi.calculate_cross_plane(
     y_resolution=100,
     z_resolution=100,
     downstream_dist=1200.0,
-    yaw_angles=np.array([[0.,0.,0,0]]),
+    yaw_angles=np.array([[0.,0.]]),
 )
 
 # Create the plots
