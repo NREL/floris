@@ -17,7 +17,8 @@ from floris.core import (
 )
 from floris.core.rotor_velocity import average_velocity
 from floris.core.wake import WakeModelManager
-from floris.core.wake_deflection.empirical_gauss import (yaw_added_wake_mixing, helix_added_wake_mixing)
+from floris.core.wake_deflection.empirical_gauss import yaw_added_wake_mixing
+from floris.core.wake_velocity.empirical_gauss import helix_added_wake_mixing
 from floris.core.wake_deflection.gauss import (
     calculate_transverse_velocity,
     wake_added_yaw,
@@ -1253,10 +1254,10 @@ def empirical_gauss_solver(
             # Influence of helix on turbine's own wake
             mixing_factor[:, i:i+1, i] += \
                 helix_added_wake_mixing(
-                    axial_induction_i,
                     helix_amplitude_i,
                     helix_frequency_i,
-                    1
+                    model_manager.velocity_model.helix_wake_exp,
+                    model_manager.velocity_model.helix_wake_denominator
                 )
 
         # Extract total wake induced mixing for turbine i
@@ -1320,11 +1321,10 @@ def empirical_gauss_solver(
         if model_manager.enable_helix_added_recovery:
             mixing_factor[:,:,i] += \
                 area_overlap * helix_added_wake_mixing(
-                axial_induction_i,
                 helix_amplitude_i,
                 helix_frequency_i,
-                downstream_distance_D[:,:,i],
-                # model_manager.velocity_model.helix_added_mixing_gain
+                model_manager.velocity_model.helix_wake_exp,
+                model_manager.velocity_model.helix_wake_denominator
             )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field

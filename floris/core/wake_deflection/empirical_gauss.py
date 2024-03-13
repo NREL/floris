@@ -143,15 +143,3 @@ def yaw_added_wake_mixing(
         * (1 - cosd(yaw_angle_i[:,:,0,0]))
         / downstream_distance_D_i**2
     )
-
-def helix_added_wake_mixing(
-    axial_induction_i,
-    helix_amplitude_i,
-    helix_frequency_i,
-    downstream_distance_D_i
-    #helix_added_mixing_gain
-):
-    
-    ## TODO: Add TI in the mix, finetune amplitude/freq effect
-
-    return helix_amplitude_i[:,:,0,0]**1.2/400

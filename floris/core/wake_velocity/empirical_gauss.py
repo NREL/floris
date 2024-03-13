@@ -59,6 +59,8 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
     sigma_0_D: float = field(default=0.28)
     smoothing_length_D: float = field(default=2.0)
     mixing_gain_velocity: float = field(default=2.0)
+    helix_wake_exp: float = field(default=1.2)
+    helix_wake_denominator: float = field(default=400)
 
     def prepare_function(
         self,
@@ -281,3 +283,15 @@ def empirical_gauss_model_wake_width(
             sigmoid_integral(x, center=b, width=smoothing_length)
 
     return sigma
+
+def helix_added_wake_mixing(
+    helix_amplitude_i,
+    helix_frequency_i,
+    helix_wake_exp,
+    helix_wake_denominator
+):
+    
+    ## TODO: Add TI in the mix, finetune amplitude/freq effect
+
+    return helix_amplitude_i[:,:,0,0]**helix_wake_exp/helix_wake_denominator
+
