@@ -517,7 +517,8 @@ class HelixTurbine(BaseOperationModel):
         if helix_amplitudes is None:
             return base_powers
         else:
-            return base_powers * (1 - (4.828e-3+4.017e-11*base_powers)*helix_amplitudes**1.809) ## Should probably add max function here
+            return base_powers * (1 - (power_thrust_table['helix_power_b']+power_thrust_table['helix_power_c']*base_powers)\
+                                  *helix_amplitudes**power_thrust_table['helix_a']) ## Should probably add max function here
 
         # TODO: would we like special handling of zero power setpoints
         # (mixed with non-zero values) to speed up computation in that case?
@@ -540,7 +541,8 @@ class HelixTurbine(BaseOperationModel):
         if helix_amplitudes is None:
             return base_thrust_coefficients
         else:
-            return base_thrust_coefficients * (1 - (1.390e-3+5.084e-4*base_thrust_coefficients)*helix_amplitudes**1.809)
+            return base_thrust_coefficients * (1 - (power_thrust_table['helix_thrust_b']+power_thrust_table['helix_thrust_c']*base_thrust_coefficients)\
+                                               *helix_amplitudes**power_thrust_table['helix_a'])
 
     def axial_induction(
         power_thrust_table: dict,
