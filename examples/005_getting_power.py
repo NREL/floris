@@ -1,4 +1,4 @@
-"""Example 4: Getting Power
+"""Example 5: Getting Turbine and Farm Power
 
 After setting the FlorisModel and running, the next step is typically to get the power output
 of the turbines.
