@@ -6,25 +6,45 @@ def toy_ode_system(t, y):
     return [y[1], -np.sin(y[0])]
 
 
-def compute_centerline_velocities(x_, U_inf):
+def compute_centerline_velocities(x_, U_inf, ambient_ti, Ct, hh, D):
     """
     Compute the centerline velocities using the eddy viscosity model
     x_ supposed to be defined from the center of the rotor
     (0 at the rotor location).
     """
-    U_c = 0
-    return U_c
+
+    U_c0_ = initial_U_c_(Ct, ambient_ti)
+
+    # Set span
+    x__span = [2, x_[-1]]
+
+    # Solve the ODE
+    sol = solve_ivp(
+        fun=centerline_ode,
+        t_span=x__span,
+        y0=[U_c0_],
+        method='RK45',
+        t_eval=x_,
+        args=(U_inf, ambient_ti, Ct, hh, D)
+    )
+
+    # Extract the solution
+    x__out = sol.t
+    U_c__out = sol.y.flatten()
+
+    return U_c__out, x__out
 
 
-def compute_off_center_velocities(U_c, y_, z_, Ct):
+def compute_off_center_velocities(U_c_, y_, z_, Ct):
     """
     Compute the off-centerline velocities using the eddy viscosity model
     y_, z_ supposed to be defined from the center of the rotor.
     """
+    U_c_ = U_c_[:, None]
     
-    w_sq = wake_width_squared(Ct, U_c)
-    U_r = 1 - (1-U_c) * np.exp(-(y_**2 + z_**2)/w_sq)
-    return U_r
+    w_sq = wake_width_squared(Ct, U_c_)
+    U_r_ = 1 - (1 - U_c_) * np.exp(-(y_**2 + z_**2)/w_sq)
+    return U_r_
 
 def wake_width_squared(Ct, U_c):
     """
@@ -88,39 +108,43 @@ def initial_U_c_(Ct, ambient_ti):
 
 if __name__ == "__main__":
 
-    # 0 to 20 diameters
-    x__span = [0, 20] # 
+    plot_offcenter_velocities = True
 
+    # Test inputs
     Ct = 0.8
     hh = 90.0
     D = 126.0
     ambient_ti = 0.06
     U_inf = 8.0
 
-    U_c0_ = initial_U_c_(Ct, ambient_ti)
+    x_test = np.linspace(2, 20, 100)
+    U_c__out, x__out = compute_centerline_velocities(x_test, U_inf, ambient_ti, Ct, hh, D)
+    y_test = np.tile(np.linspace(-2, 2, 9), (100,1))
+    z_test = np.zeros_like(y_test)
+    U_r__out = compute_off_center_velocities(U_c__out, y_test, z_test, Ct)
 
-    # Solve the ODE
-    sol = solve_ivp(
-        centerline_ode,
-        x__span,
-        [U_c0_],
-        method='RK45',
-        args=(U_inf, ambient_ti, Ct, hh, D)
-    )
-
-    # Extract the solution
-    x__out = sol.t
-    U_c__out = sol.y.flatten()
 
     fig, ax = plt.subplots(2,1)
-    ax[0].plot(x__out, U_c__out)
+    if plot_offcenter_velocities:
+        for i in range(9):
+            alpha = (3-abs(y_test[0,i]))/3
+            ax[0].plot(x__out, U_r__out[:,i], color="lightgray", alpha=alpha)
+    ax[0].plot(x__out, U_c__out, color="C0")
     ax[0].set_xlabel("x [D]")
     ax[0].set_ylabel("U_c_ [-]")
+    ax[0].set_xlim([0, 20])
+    ax[0].grid()
 
+    if plot_offcenter_velocities:
+        for i in range(9):
+            alpha = (3-abs(y_test[0,i]))/3
+            ax[1].plot(x__out*D, U_r__out[:,i]*U_inf, color="lightgray", alpha=alpha)
     ax[1].plot(x__out*D, U_c__out*U_inf)
-    ax[1].plot(x__out*D, np.ones_like(x__out)*U_inf)
+    ax[1].plot([0, 20*D], [U_inf, U_inf], linestyle="dotted", color="black")
     ax[1].set_xlabel("x [m]")
     ax[1].set_ylabel("U_c [m/s]")
-    
+    ax[1].set_xlim([0, 20*D])
+    ax[1].grid()
+
     plt.show()
 
