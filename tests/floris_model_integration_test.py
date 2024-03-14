@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import yaml
 
-from floris import FlorisModel
+from floris import FlorisModel, WindRose
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 
 
@@ -493,3 +493,114 @@ def test_calculate_planes():
         fmodel.calculate_y_plane(0.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
     with pytest.raises(ValueError):
         fmodel.calculate_cross_plane(500.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
+
+def test_get_turbine_powers_in_rose():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    # Test that if wind directions and speeds are not unique
+    # calling get_turbine_powers_in_rose raises a ValueError
+    wind_speeds = np.array([8.0, 8.0])
+    wind_directions = np.array([270.0, 270.0])
+    turbulence_intensities = np.array([0.06, 0.06])
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+    )
+
+    fmodel.run()
+
+    with pytest.raises(ValueError):
+        fmodel.get_turbine_powers_in_rose()
+
+    # Now declare a WindRose with 2 wind directions and 3 wind speeds
+    # uniform TI and frequency
+    wind_rose = WindRose(
+        wind_directions = np.array([270.0, 280.0]),
+        wind_speeds = np.array([8.0, 10.0, 12.0]),
+        ti_table=0.06
+    )
+
+    # Set this wind rose and set the layout to have 4 turbines
+    fmodel.set(wind_data=wind_rose, layout_x=[0, 1000, 2000, 3000], layout_y=[0, 0, 0, 0])
+
+    # Run
+    fmodel.run()
+
+    # Get the turbine powers in the wind rose
+    turbine_powers = fmodel.get_turbine_powers_in_rose()
+
+    # Turbine power should have shape (n_wind_directions, n_wind_speeds, n_turbines)
+    assert turbine_powers.shape == (2, 3, 4)
+
+    # Rerun the model with single wind speed and directions to confirm results
+    fmodel.set(
+        wind_directions=np.array([270.]),
+        wind_speeds=np.array([10.]),
+        turbulence_intensities=np.array([0.06])
+    )
+    fmodel.run()
+    test_power = fmodel.get_turbine_powers()
+    assert np.allclose(turbine_powers[0, 1, :], test_power)
+
+    fmodel.set(
+        wind_directions=np.array([280.]),
+        wind_speeds=np.array([12.]),
+        turbulence_intensities=np.array([0.06])
+    )
+    fmodel.run()
+    test_power = fmodel.get_turbine_powers()
+    assert np.allclose(turbine_powers[-1, -1, :], test_power)
+
+    # Test that if certain combinations in the wind rose have 0 frequency, the power in
+    # those locations is nan
+    wind_rose = WindRose(
+        wind_directions = np.array([270.0, 280.0]),
+        wind_speeds = np.array([8.0, 10.0, 12.0]),
+        ti_table=0.06,
+        freq_table=np.array([[0.25, 0.25, 0.0], [0.0, 0.0, 0.5]])
+    )
+    fmodel.set(wind_data=wind_rose)
+    fmodel.run()
+    turbine_powers = fmodel.get_turbine_powers_in_rose()
+    assert np.isnan(turbine_powers[0, 2, 0])
+
+def test_get_farm_power_in_rose():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    # Now declare a WindRose with 2 wind directions and 3 wind speeds
+    # uniform TI and frequency
+    wind_rose = WindRose(
+        wind_directions = np.array([270.0, 280.0]),
+        wind_speeds = np.array([8.0, 10.0, 12.0]),
+        ti_table=0.06
+    )
+
+    # Set this wind rose and set the layout to have 4 turbines
+    fmodel.set(wind_data=wind_rose, layout_x=[0, 1000, 2000, 3000], layout_y=[0, 0, 0, 0])
+
+    # Run
+    fmodel.run()
+
+    # Get the turbine powers in the wind rose
+    turbine_powers = fmodel.get_turbine_powers_in_rose()
+
+    # Test that the farm power is the same as the sum of the turbine powers
+    farm_power = fmodel.get_farm_power_in_rose()
+
+    # Sum the turbine powers over the turbine axis
+    turbine_powers_sum = turbine_powers.sum(axis=2)
+
+    assert np.allclose(farm_power, turbine_powers_sum)
+
+    # Test that if the last turbine's weight is set to 0, the farm power is the same as the
+    # sum of the first 3 turbines
+    turbine_weights = np.array([1.0, 1.0, 1.0, 0.0])
+    farm_power = fmodel.get_farm_power_in_rose(turbine_weights=turbine_weights)
+
+    # Sum the turbine powers over the turbine axis
+    turbine_powers_sum = turbine_powers[:, :, :-1].sum(axis=2)
+
+    assert np.allclose(farm_power, turbine_powers_sum)
