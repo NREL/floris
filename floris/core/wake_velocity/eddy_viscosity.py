@@ -2,10 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
-def toy_ode_system(t, y):
-    return [y[1], -np.sin(y[0])]
-
-
 def compute_centerline_velocities(x_, U_inf, ambient_ti, Ct, hh, D):
     """
     Compute the centerline velocities using the eddy viscosity model
@@ -78,13 +74,14 @@ def centerline_ode(x_, U_c_, U_inf, ambient_ti, Ct, hh, D):
         filter_const_2 = 4.5
         filter_const_3 = 23.32
         filter_const_4 = 1/3
-        filter_cutoff_x_ = 5.5
+        filter_cutoff_x_ = 0.0 # 5.5 doesn't seem to work; F negative, not good for EV model
         if x_ < filter_cutoff_x_: # How should this work? Is this smooth??
             return filter_const_1 * ((x_ - filter_const_2) / filter_const_3)**filter_const_4
         else:
-            return x_
+            return 1
 
-    eddy_viscosity = filter_function(K_l + K_a)
+    #eddy_viscosity = filter_function(K_l + K_a)
+    eddy_viscosity = filter_function(x_)*(K_l + K_a)
     ev_ = eddy_viscosity/(U_inf*D)
 
     dU_c__dx_ = 16 * ev_ * (U_c_**3 - U_c_**2 - U_c_ + 1) / (U_c_ * Ct)
@@ -103,7 +100,6 @@ def initial_U_c_(Ct, ambient_ti):
     U_c0_ = 1 - initial_vel_def
 
     return U_c0_
-
 
 
 if __name__ == "__main__":
@@ -130,7 +126,7 @@ if __name__ == "__main__":
             alpha = (3-abs(y_test[0,i]))/3
             ax[0,0].plot(x__out, U_r__out[:,i], color="lightgray", alpha=alpha)
     ax[0,0].plot(x__out, U_c__out, color="C0")
-    ax[0,0].set_xlabel("x [D]")
+    ax[0,0].set_xlabel("x_ [D]")
     ax[0,0].set_ylabel("U_c_ [-]")
     ax[0,0].set_xlim([0, 20])
     ax[0,0].grid()
@@ -147,7 +143,7 @@ if __name__ == "__main__":
     ax[0,1].grid()
 
     ax[1,0].plot(x__out, np.sqrt(wake_width_squared(Ct, U_c__out)), color="C1")
-    ax[1,0].set_xlabel("x [m]")
+    ax[1,0].set_xlabel("x_ [D]")
     ax[1,0].set_ylabel("w_ [-]")
     ax[1,0].set_xlim([0, 20])
     ax[1,0].grid()
