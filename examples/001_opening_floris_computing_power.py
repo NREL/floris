@@ -1,6 +1,6 @@
 """Example 1: Opening FLORIS and Computing Power
 
-This first example illustrates several of the key concepts in FLORIS. It:
+This example illustrates several of the key concepts in FLORIS. It:
 
   1) Initializing FLORIS
   2) Changing the wind farm layout

@@ -1,6 +1,6 @@
-"""Example 2: Wind Data Objects
+"""Example 3: Wind Data Objects
 
-This second example demonstrates the use of wind data objects in FLORIS:
+This example demonstrates the use of wind data objects in FLORIS:
  TimeSeries,
  WindRose, and WindTIRose.
 
