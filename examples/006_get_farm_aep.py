@@ -21,8 +21,10 @@ from floris import (
 fmodel = FlorisModel("inputs/gch.yaml")
 
 
-# Set to a 5-turbine layout
-fmodel.set(layout_x=[0, 126 * 5, 126 * 10, 126 * 15, 126 * 20], layout_y=[0, 0, 0, 0, 0])
+# Set to a 3-turbine layout
+D = 126.
+fmodel.set(layout_x=[0.0, 5 * D, 10 * D],
+            layout_y=[0.0, 0.0, 0.0])
 
 # Using TimeSeries
 
@@ -140,4 +142,4 @@ print(f"n_findex: {fmodel.core.flow_field.n_findex}")
 aep = fmodel.get_farm_AEP_with_wind_data(wind_rose)
 
 # Print the AEP
-print(f"AEP from wind rose: {aep/1E9:.1f} (GW-h)")
+print(f"AEP from wind rose: {aep/1E9:.3f} (GW-h)")
