@@ -512,18 +512,26 @@ def test_HelixTurbine():
     wind_speed = 10.0
     turbine_data = SampleInputs().turbine
 
-    # Will want to update these
-    baseline_power = 0
-    baseline_ai = 0
+    # Baseline
+    base_power = SimpleTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+    )
 
-    temporary_skip_tests = True
+    base_ai = SimpleTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        # Any other necessary arguments...
+    )
+
+    temporary_skip_tests = False
 
     # Test no change to Ct when helix amplitudes are 0
-    baseline_Ct = SimpleTurbine.axial_induction(
+    base_Ct = SimpleTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
     )
-
     test_Ct = HelixTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
@@ -534,20 +542,34 @@ def test_HelixTurbine():
     if temporary_skip_tests:
         assert True
     else:
-        assert np.allclose(test_Ct, baseline_Ct)
+        assert np.allclose(test_Ct, base_Ct)
 
-    test_power = HelixTurbine.power(
+    test_Ct = HelixTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
-        helix_amplitudes=np.zeros((1, n_turbines)),
+        helix_amplitudes=2*np.ones((1, n_turbines)),
         # Any other necessary arguments...
     )
 
     if temporary_skip_tests:
         assert True
     else:
-        assert np.allclose(test_power, baseline_power)
+        assert test_Ct < base_Ct
+        assert test_Ct > 0
+
+    test_power = HelixTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        helix_amplitudes=2*np.ones((1, n_turbines)),
+        # Any other necessary arguments...
+    )
+
+    if temporary_skip_tests:
+        assert True
+    else:
+        assert test_power < base_power 
+        assert test_power > 0
 
     test_ai = HelixTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
@@ -559,4 +581,17 @@ def test_HelixTurbine():
     if temporary_skip_tests:
         assert True
     else:
-        assert np.allclose(test_ai, baseline_ai)
+        assert np.allclose(test_ai, base_ai)
+
+    test_ai = HelixTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        helix_amplitudes=2*np.ones((1, n_turbines)),
+        # Any other necessary arguments...
+    )
+
+    if temporary_skip_tests:
+        assert True
+    else:
+        assert test_ai < base_ai
+        assert test_ai > 0
