@@ -818,6 +818,53 @@ class FlorisModel(LoggingManager):
         )
         return turbine_powers
 
+    def get_turbine_powers_in_rose(self) -> NDArrayFloat:
+        """Calculates the power at each turbine in the wind farm and returns
+        the power reshaped into a matrix of wind_directions x wind_speeds
+
+        Returns:
+            NDArrayFloat: Powers at each turbine (wind_directions x wind_speeds)
+        """
+
+        # Check that each unique combination self.wind_directions
+        # and self_wind_speeds occurs no more than once
+        # Assuming wind_directions and wind_speeds are your arrays
+        flow_field_dict = self.core.as_dict()["flow_field"]
+        wind_directions = np.array(flow_field_dict["wind_directions"])
+        wind_speeds = np.array(flow_field_dict["wind_speeds"])
+        combined_wd_ws = np.stack((wind_directions, wind_speeds), axis=-1)
+
+        unique_rows = np.unique(combined_wd_ws, axis=0)
+
+        if unique_rows.shape[0] < wind_directions.shape[0]:
+            raise ValueError(
+                "Wind direction and wind speed combinations must be unique in order"
+                "to reshape the power array into a matrix of wind_directions x wind_speeds"
+                "ensure that FlorisModel run with WindRose, or WindRose-like input"
+            )
+
+        # Collect the turbine powers
+        turbine_powers = self.get_turbine_powers()
+
+        # Get the unique wind directions and wind speeds and note the lengths
+        unique_wind_directions = np.unique(wind_directions)
+        unique_wind_speeds = np.unique(wind_speeds)
+        n_wd = len(unique_wind_directions)
+        n_ws = len(unique_wind_speeds)
+
+        # Declare an array of size n_wd x n_ws x n_turbines, initialized to nans
+        reshaped_powers = np.full((n_wd, n_ws, turbine_powers.shape[1]), np.nan)
+
+        # Fill the matrix with the turbine powers according to the entries in
+        # wind_directions and wind_speeds
+        for findex in range(turbine_powers.shape[0]):
+            wd_index = np.where(unique_wind_directions == wind_directions[findex])[0][0]
+            ws_index = np.where(unique_wind_speeds == wind_speeds[findex])[0][0]
+            reshaped_powers[wd_index, ws_index, :] = turbine_powers[findex, :]
+
+        return reshaped_powers
+
+
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
             velocities=self.core.flow_field.u,
@@ -905,7 +952,7 @@ class FlorisModel(LoggingManager):
         # for turbine in self.core.farm.turbines:
         #     turbine.use_turbulence_correction = use_turbulence_correction
 
-        # Confirm calculate wake has been run
+        # Confirm run() has been run
         if self.core.state is not State.USED:
             raise RuntimeError(
                 "Can't run function `FlorisModel.get_turbine_powers` without "
@@ -932,6 +979,60 @@ class FlorisModel(LoggingManager):
         turbine_powers = np.multiply(turbine_weights, turbine_powers)
 
         return np.sum(turbine_powers, axis=1)
+
+    def get_farm_power_in_rose(
+        self,
+        turbine_weights=None,
+    ) -> NDArrayFloat:
+        """
+        Report wind plant power from instance of floris. Optionally includes
+        uncertainty in wind direction and yaw position when determining power.
+        Uncertainty is included by computing the mean wind farm power for a
+        distribution of wind direction and yaw position deviations from the
+        original wind direction and yaw angles.
+
+        Args:
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. For wind rose case, this should be
+                a 1D array with length equal to the number of turbines.
+
+        Returns:
+            NDArrayFloat: Sum of wind turbine powers in W reshaped into a matrix
+                of wind_directions x wind_speeds.
+        """
+
+        # Confirm run() has been run
+        if self.core.state is not State.USED:
+            raise RuntimeError(
+                "Can't run function `FlorisModel.get_turbine_powers` without "
+                "first running `FlorisModel.calculate_wake`."
+            )
+
+        if turbine_weights is None:
+            # Default to equal weighing of all turbines when turbine_weights is None
+            turbine_weights = np.ones(
+                (
+                    self.core.farm.n_turbines,
+                )
+            )
+
+        # Confirm that the turbine weights are of the correct length
+        elif len(turbine_weights) != self.core.farm.n_turbines:
+            raise ValueError(
+                "The length of the turbine weights must be equal "
+                "to the number of turbines in the wind farm."
+            )
+
+        # Get the turbine powers
+        turbine_powers = self.get_turbine_powers_in_rose()
+
+        # Turbine powers will be (n_wd, n_ws, n_turbines)
+        # Multiply the turbine powers by the weights (n_turbines) along
+        # the turbine axis
+        # and sum along the turbine axis to get the farm power
+        return np.sum(turbine_powers * turbine_weights[None, None, :], axis=-1)
 
     def get_farm_AEP(
         self,
