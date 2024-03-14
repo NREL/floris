@@ -1,6 +1,8 @@
 """Example 4: Set
 
-This example illustrates the use of the set method.
+This example illustrates the use of the set method.  The set method is used to
+change the wind conditions, the wind farm layout, the turbine type,
+and the controls settings.
 
 """
 
@@ -13,7 +15,6 @@ from floris import (
     FlorisModel,
     TimeSeries,
     WindRose,
-    WindTIRose,
 )
 
 
