@@ -17,7 +17,7 @@ from tests.conftest import (
 )
 
 
-DEBUG = False
+DEBUG = True
 VELOCITY_MODEL = "empirical_gauss"
 DEFLECTION_MODEL = "empirical_gauss"
 TURBULENCE_MODEL = "wake_induced_mixing"
@@ -106,6 +106,35 @@ yaw_added_recovery_baseline = np.array(
             [10.9638180, 0.7536370, 4488242.9153943, 0.2513413],
             [8.1895130, 0.7868837, 1912805.5199083, 0.2691774],
             [8.3154794, 0.7867214, 2006951.2349727, 0.2690895],
+        ],
+    ]
+)
+
+helix_added_recovery = np.array(
+    [
+        # 8 m/s
+        [
+            [7.9736858, 0.7871515, 1753954.4591792, 0.2693224],
+            [5.8181628, 0.8711866, 676912.0380737, 0.3205471],
+            [5.8941747, 0.8668654, 702276.3178047, 0.3175620],
+        ],
+        # 9 m/s
+        [
+            [8.9703965, 0.7858774, 2496427.8618358, 0.2686331],
+            [6.5498312, 0.8358441, 984786.7218587, 0.2974192],
+            [6.6883370, 0.8295451, 1047057.3206209, 0.2935691],
+        ],
+        # 10 m/s
+        [
+            [9.9671073, 0.7838789, 3417797.0050916, 0.2675559],
+            [7.2852518, 0.8049506, 1339238.8882972, 0.2791780],
+            [7.4865891, 0.7981254, 1452997.4778680, 0.2753477],
+        ],
+        # 11 m/s
+        [
+            [10.9638180, 0.7565157, 4519404.3072862, 0.2532794],
+            [8.1286243, 0.7869622, 1867298.1260108, 0.2692199],
+            [8.2872457, 0.7867578, 1985849.6635654, 0.2691092],
         ],
     ]
 )
@@ -576,6 +605,93 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         )
 
     assert_results_arrays(test_results[0:4], yaw_added_recovery_baseline)
+
+def test_regression_helix(sample_inputs_fixture):
+    """
+    Tandem turbines with the upstream turbine applying the helix
+    """
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["turbulence_model"] = TURBULENCE_MODEL
+
+    floris = Core.from_dict(sample_inputs_fixture.core)
+
+    helix_amplitudes = np.zeros((N_FINDEX, N_TURBINES))
+    helix_amplitudes[:,0] = 5.0
+    floris.farm.helix_amplitudes = helix_amplitudes
+
+    floris.initialize_domain()
+    floris.steady_state_atmospheric_condition()
+
+    n_turbines = floris.farm.n_turbines
+    n_findex = floris.flow_field.n_findex
+
+    velocities = floris.flow_field.u
+    air_density = floris.flow_field.air_density
+    yaw_angles = floris.farm.yaw_angles
+    tilt_angles = floris.farm.tilt_angles
+    power_setpoints = floris.farm.power_setpoints
+    helix_amplitudes = floris.farm.helix_amplitudes
+    test_results = np.zeros((n_findex, n_turbines, 4))
+
+    farm_avg_velocities = average_velocity(
+        velocities,
+    )
+    farm_cts = thrust_coefficient(
+        velocities,
+        air_density,
+        yaw_angles,
+        tilt_angles,
+        power_setpoints,
+        helix_amplitudes,
+        floris.farm.turbine_thrust_coefficient_functions,
+        floris.farm.turbine_tilt_interps,
+        floris.farm.correct_cp_ct_for_tilt,
+        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
+    )
+    farm_powers = power(
+        velocities,
+        air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        power_setpoints,
+        helix_amplitudes,
+        floris.farm.turbine_tilt_interps,
+        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
+    )
+    farm_axial_inductions = axial_induction(
+        velocities,
+        air_density,
+        yaw_angles,
+        tilt_angles,
+        power_setpoints,
+        helix_amplitudes,
+        floris.farm.turbine_axial_induction_functions,
+        floris.farm.turbine_tilt_interps,
+        floris.farm.correct_cp_ct_for_tilt,
+        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
+    )
+    for i in range(n_findex):
+        for j in range(n_turbines):
+            test_results[i, j, 0] = farm_avg_velocities[i, j]
+            test_results[i, j, 1] = farm_cts[i, j]
+            test_results[i, j, 2] = farm_powers[i, j]
+            test_results[i, j, 3] = farm_axial_inductions[i, j]
+
+    if DEBUG:
+        print_test_values(
+            farm_avg_velocities,
+            farm_cts,
+            farm_powers,
+            farm_axial_inductions,
+            max_findex_print=4
+        )
+
+    assert_results_arrays(test_results[0:4], helix_added_recovery)
 
 
 def test_regression_small_grid_rotation(sample_inputs_fixture):

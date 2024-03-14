@@ -568,7 +568,7 @@ def test_HelixTurbine():
     if temporary_skip_tests:
         assert True
     else:
-        assert test_power < base_power 
+        assert test_power < base_power
         assert test_power > 0
 
     test_ai = HelixTurbine.axial_induction(
