@@ -67,7 +67,7 @@ def centerline_ode(x_, U_c_, U_inf, ambient_ti, Ct, hh, D):
     
     length_scale = von_Karman*hh
 
-    K_l = k_l * np.sqrt(wake_width_squared(Ct, U_c_)) * (U_inf - U_c_*U_inf) # local component
+    K_l = k_l * np.sqrt(wake_width_squared(Ct, U_c_)) * D * (U_inf - U_c_*U_inf) # local component
     K_a = k_a * ambient_ti * U_inf * length_scale # ambient component (9)
 
     def filter_function(x_):
@@ -124,27 +124,39 @@ if __name__ == "__main__":
     U_r__out = compute_off_center_velocities(U_c__out, y_test, z_test, Ct)
 
 
-    fig, ax = plt.subplots(2,1)
+    fig, ax = plt.subplots(2,2)
     if plot_offcenter_velocities:
         for i in range(9):
             alpha = (3-abs(y_test[0,i]))/3
-            ax[0].plot(x__out, U_r__out[:,i], color="lightgray", alpha=alpha)
-    ax[0].plot(x__out, U_c__out, color="C0")
-    ax[0].set_xlabel("x [D]")
-    ax[0].set_ylabel("U_c_ [-]")
-    ax[0].set_xlim([0, 20])
-    ax[0].grid()
+            ax[0,0].plot(x__out, U_r__out[:,i], color="lightgray", alpha=alpha)
+    ax[0,0].plot(x__out, U_c__out, color="C0")
+    ax[0,0].set_xlabel("x [D]")
+    ax[0,0].set_ylabel("U_c_ [-]")
+    ax[0,0].set_xlim([0, 20])
+    ax[0,0].grid()
 
     if plot_offcenter_velocities:
         for i in range(9):
             alpha = (3-abs(y_test[0,i]))/3
-            ax[1].plot(x__out*D, U_r__out[:,i]*U_inf, color="lightgray", alpha=alpha)
-    ax[1].plot(x__out*D, U_c__out*U_inf)
-    ax[1].plot([0, 20*D], [U_inf, U_inf], linestyle="dotted", color="black")
-    ax[1].set_xlabel("x [m]")
-    ax[1].set_ylabel("U_c [m/s]")
-    ax[1].set_xlim([0, 20*D])
-    ax[1].grid()
+            ax[0,1].plot(x__out*D, U_r__out[:,i]*U_inf, color="lightgray", alpha=alpha)
+    ax[0,1].plot(x__out*D, U_c__out*U_inf)
+    ax[0,1].plot([0, 20*D], [U_inf, U_inf], linestyle="dotted", color="black")
+    ax[0,1].set_xlabel("x [m]")
+    ax[0,1].set_ylabel("U_c [m/s]")
+    ax[0,1].set_xlim([0, 20*D])
+    ax[0,1].grid()
+
+    ax[1,0].plot(x__out, np.sqrt(wake_width_squared(Ct, U_c__out)), color="C1")
+    ax[1,0].set_xlabel("x [m]")
+    ax[1,0].set_ylabel("w_ [-]")
+    ax[1,0].set_xlim([0, 20])
+    ax[1,0].grid()
+
+    ax[1,1].plot(x__out*D, np.sqrt(wake_width_squared(Ct, U_c__out))*D, color="C1")
+    ax[1,1].set_xlabel("x [m]")
+    ax[1,1].set_ylabel("w [m]")
+    ax[1,1].set_xlim([0, 20*D])
+    ax[1,1].grid()
 
     plt.show()
 
