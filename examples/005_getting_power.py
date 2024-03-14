@@ -103,5 +103,6 @@ ax.set_title("Percent Wake Losses")
 
 # When calculating AEP, the bins can be combined automatically
 
+#TODO: Revist this section after https://github.com/NREL/floris/pull/844 is merged
 
 plt.show()
