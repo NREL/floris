@@ -17,7 +17,7 @@ from tests.conftest import (
 )
 
 
-DEBUG = True
+DEBUG = False
 VELOCITY_MODEL = "empirical_gauss"
 DEFLECTION_MODEL = "empirical_gauss"
 TURBULENCE_MODEL = "wake_induced_mixing"
@@ -110,7 +110,7 @@ yaw_added_recovery_baseline = np.array(
     ]
 )
 
-helix_added_recovery = np.array(
+helix_added_recovery_baseline = np.array(
     [
         # 8 m/s
         [
@@ -691,7 +691,7 @@ def test_regression_helix(sample_inputs_fixture):
             max_findex_print=4
         )
 
-    assert_results_arrays(test_results[0:4], helix_added_recovery)
+    assert_results_arrays(test_results[0:4], helix_added_recovery_baseline)
 
 
 def test_regression_small_grid_rotation(sample_inputs_fixture):
