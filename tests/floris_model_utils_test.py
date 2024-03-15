@@ -4,9 +4,11 @@ from pathlib import Path
 from floris import FlorisModel
 from floris.floris_model_utils import (
     get_fmodel_param,
+    get_power_thrust_model,
     nested_get,
     nested_set,
     set_fmodel_param,
+    set_power_thrust_model,
 )
 
 
@@ -55,3 +57,13 @@ def test_get_and_set_fmodel_param():
     fmodel = set_fmodel_param(fmodel, ['wake', 'wake_velocity_parameters', 'gauss', 'alpha'], 0.1)
     alpha = get_fmodel_param(fmodel, ['wake', 'wake_velocity_parameters', 'gauss', 'alpha'])
     assert alpha == 0.1
+
+def test_get_power_thrust_model():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    assert get_power_thrust_model(fmodel) == "cosine-loss"
+
+def test_set_power_thrust_model():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel = set_power_thrust_model(fmodel, "simple-derating")
+    assert get_power_thrust_model(fmodel) == "simple-derating"

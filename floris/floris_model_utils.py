@@ -75,3 +75,41 @@ def get_fmodel_param(
         return nested_get(fm_dict, param)
     else:
         return nested_get(fm_dict, param)[param_idx]
+
+
+
+def get_power_thrust_model(fmodel: FlorisModel) -> str:
+    """Get the power thrust model of a FlorisModel.
+
+    Args:
+        fmodel (FlorisModel): The FlorisModel to get the power_thrust_model from.
+
+    Returns:
+        str: The power_thrust_model.
+    """
+    with open(str(
+        fmodel.core.as_dict()["farm"]["turbine_library_path"] /
+        (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
+    )) as t:
+        turbine_type = yaml.safe_load(t)
+    return turbine_type["power_thrust_model"]
+
+
+def set_power_thrust_model(fmodel: FlorisModel, power_thrust_model: str) -> FlorisModel:
+    """Set the power thrust model of a FlorisModel.
+
+    Args:
+        fmodel (FlorisModel): The FlorisModel to set the power_thrust_model of.
+        power_thrust_model (str): The power thrust model to set.
+
+    Returns:
+        FlorisModel: The modified FlorisModel.
+    """
+    with open(str(
+        fmodel.core.as_dict()["farm"]["turbine_library_path"] /
+        (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
+    )) as t:
+        turbine_type = yaml.safe_load(t)
+    turbine_type["power_thrust_model"] = power_thrust_model
+    fmodel.set(turbine_type=[turbine_type])
+    return fmodel
