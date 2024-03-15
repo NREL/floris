@@ -27,12 +27,12 @@ fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 # Changing wind speed, wind direction, and turbulence intensity using the set method
 # as well. Note that the wind_speeds, wind_directions, and turbulence_intensities
 # are all specified as arrays of the same length.
-fmodel.set(wind_directions=np.array([270.0]),
-       wind_speeds=[8.0],
-        turbulence_intensities=np.array([0.06]))
+fmodel.set(
+    wind_directions=np.array([270.0]), wind_speeds=[8.0], turbulence_intensities=np.array([0.06])
+)
 
 # Note that typically all 3, wind_directions, wind_speeds and turbulence_intensities
-# must be supplied to set.  However, the exception is if not changing the lenght
+# must be supplied to set.  However, the exception is if not changing the length
 # of the arrays, then only one or two may be supplied.
 fmodel.set(turbulence_intensities=np.array([0.07]))
 
@@ -42,9 +42,11 @@ fmodel.set(turbulence_intensities=np.array([0.07]))
 # be unique.  Internally in FLORIS, most data structures will have the findex as their
 # 0th dimension.  The value n_findex is the total number of conditions to be simulated.
 # This command would simulate 4 conditions (n_findex = 4).
-fmodel.set(wind_directions=np.array([270.0, 270.0, 270.0, 270.0]),
-        wind_speeds=[8.0, 8.0, 10.0, 10.0],
-        turbulence_intensities=np.array([0.06, 0.06, 0.06, 0.06]))
+fmodel.set(
+    wind_directions=np.array([270.0, 270.0, 270.0, 270.0]),
+    wind_speeds=[8.0, 8.0, 10.0, 10.0],
+    turbulence_intensities=np.array([0.06, 0.06, 0.06, 0.06]),
+)
 
 # After the set method, the run method is called to perform the simulation
 fmodel.run()
