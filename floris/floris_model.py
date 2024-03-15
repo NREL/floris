@@ -3,6 +3,11 @@ from __future__ import annotations
 
 import inspect
 from pathlib import Path
+from typing import (
+    Any,
+    List,
+    Optional,
+)
 
 import numpy as np
 import pandas as pd
@@ -24,6 +29,11 @@ from floris.type_dec import (
     floris_array_converter,
     NDArrayBool,
     NDArrayFloat,
+)
+from floris.utilities import (
+    nested_get,
+    nested_set,
+    print_nested_dict,
 )
 from floris.wind_data import WindDataBase
 
@@ -1269,6 +1279,50 @@ class FlorisModel(LoggingManager):
     def copy(self):
         """Create an independent copy of the current FlorisModel object"""
         return FlorisModel(self.core.as_dict())
+
+    def get_param(
+        self,
+        param: List[str],
+        param_idx: Optional[int] = None
+    ) -> Any:
+        """Get a parameter from a FlorisModel object.
+
+        Args:
+            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            param_idx (Optional[int], optional): The index to get the value at. Defaults to None.
+                If None, the entire parameter is returned.
+
+        Returns:
+            Any: The value of the parameter.
+        """
+        fm_dict = self.core.as_dict()
+
+        if param_idx is None:
+            return nested_get(fm_dict, param)
+        else:
+            return nested_get(fm_dict, param)[param_idx]
+
+    def print_dict(self) -> None:
+        """Print the FlorisModel dictionary.
+        """
+        print_nested_dict(self.core.as_dict())
+
+    def set_param(
+        self,
+        param: List[str],
+        value: Any,
+        param_idx: Optional[int] = None
+    ):
+        """Set a parameter in a FlorisModel object.
+
+        Args:
+            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            value (Any): The value to set.
+            param_idx (Optional[int], optional): The index to set the value at. Defaults to None.
+        """
+        fm_dict_mod = self.core.as_dict()
+        nested_set(fm_dict_mod, param, value, param_idx)
+        self.__init__(fm_dict_mod)
 
 
     ### Properties
