@@ -108,6 +108,19 @@ class UncertainFlorisModel(LoggingManager):
         # Instantiate the expanded FlorisModel
         # self.core_interface = FlorisModel(configuration)
 
+    def copy(self):
+        """Create an independent copy of the current UncertainFlorisModel object"""
+        return UncertainFlorisModel(
+            self.fmodel_unexpanded.core.as_dict(),
+            wd_resolution=self.wd_resolution,
+            ws_resolution=self.ws_resolution,
+            ti_resolution=self.ti_resolution,
+            yaw_resolution=self.yaw_resolution,
+            power_setpoint_resolution=self.power_setpoint_resolution,
+            wd_std=self.wd_std,
+            wd_sample_points=self.wd_sample_points,
+            verbose=self.verbose,
+        )
 
     def set(
         self,
@@ -525,11 +538,18 @@ class UncertainFlorisModel(LoggingManager):
         rounded_input_array[:, 2] = (
             np.round(rounded_input_array[:, 2] / ti_resolution) * ti_resolution
         )
-        rounded_input_array[:, 3] = (
-            np.round(rounded_input_array[:, 3] / yaw_resolution) * yaw_resolution
+        rounded_input_array[:, 3 : 3 + self.fmodel_unexpanded.core.farm.n_turbines] = (
+            np.round(
+                rounded_input_array[:, 3 : 3 + self.fmodel_unexpanded.core.farm.n_turbines]
+                / yaw_resolution
+            )
+            * yaw_resolution
         )
-        rounded_input_array[:, 4] = (
-            np.round(rounded_input_array[:, 4] / power_setpoint_resolution)
+        rounded_input_array[:, 3 + self.fmodel_unexpanded.core.farm.n_turbines :] = (
+            np.round(
+                rounded_input_array[:, 3 + self.fmodel_unexpanded.core.farm.n_turbines :]
+                / power_setpoint_resolution
+            )
             * power_setpoint_resolution
         )
 
@@ -644,7 +664,7 @@ class UncertainFlorisModel(LoggingManager):
         Returns:
             np.array: Wind turbine x-coordinate.
         """
-        return self.core_interface.core.farm.layout_x
+        return self.fmodel_unexpanded.core.farm.layout_x
 
     @property
     def layout_y(self):
@@ -654,7 +674,18 @@ class UncertainFlorisModel(LoggingManager):
         Returns:
             np.array: Wind turbine y-coordinate.
         """
-        return self.core_interface.core.farm.layout_y
+        return self.fmodel_unexpanded.core.farm.layout_y
+
+    @property
+    def core(self):
+        """
+        Returns the core of the unexpanded model.
+
+        Returns:
+            Floris: The core of the unexpanded model.
+        """
+        return self.fmodel_unexpanded.core
+
 
 def map_turbine_powers_uncertain(
         unique_turbine_powers,
