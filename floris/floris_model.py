@@ -524,6 +524,7 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        helix_amplitudes=None,
         disable_turbines=None,
     ):
         """
@@ -581,6 +582,7 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            helix_amplitudes=helix_amplitudes,
             disable_turbines=disable_turbines,
         )
 
@@ -623,6 +625,7 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        helix_amplitudes=None,
         disable_turbines=None,
     ):
         """
@@ -672,6 +675,7 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            helix_amplitudes=helix_amplitudes,
             disable_turbines=disable_turbines,
         )
 
@@ -709,6 +713,7 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        helix_amplitudes=None,
         disable_turbines=None,
     ):
         """
@@ -771,6 +776,7 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            helix_amplitudes=helix_amplitudes,
             disable_turbines=disable_turbines,
         )
 
