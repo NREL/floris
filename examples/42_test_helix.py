@@ -17,10 +17,12 @@ import numpy as np
 import yaml
 
 from floris import FlorisModel
-
+import floris.flow_visualization as flowviz
 
 """
 Example to test out using helix wake mixing of upstream turbines. 
+Helix wake mixing is turned on at turbine 1, off at turbines 2-4;
+Turbine 2 is in wake turbine 1, turbine 4 in wake of turbine 3.
 Will be refined before release. 
 TODO: merge the three examples into one.
 """
@@ -34,66 +36,130 @@ with open(str(
     turbine_type = yaml.safe_load(t)
 turbine_type["power_thrust_model"] = "helix"
 
-# Set the wind directions and speeds to be constant over n_findex = N time steps
-N = 50
+# Set the wind directions and speeds to be constant over N different helix amplitudes
+N = 1
+helix_amplitudes = np.array([2.5, 0, 0, 0]).reshape(4, N).T
+
+# Create 4 WT WF layout with lateral offset of 3D and streamwise offset of 4D
+D = 240
 fmodel.set(
-    layout_x=[0, 2000.0],
-    layout_y=[0.0, 0.0],
+    layout_x=[0.0, 4*D, 0.0, 4*D],
+    layout_y=[0.0, 0.0, 3*D, 3*D],
     turbine_type=[turbine_type],
     wind_directions=270 * np.ones(N),
-    wind_speeds=10.0 * np.ones(N),
-    turbulence_intensities=0.06*np.ones(N)
+    wind_speeds=8.0 * np.ones(N),
+    turbulence_intensities=0.06*np.ones(N),
+    helix_amplitudes=helix_amplitudes
 )
 fmodel.run()
-turbine_powers_orig = fmodel.get_turbine_powers()
+turbine_powers = fmodel.get_turbine_powers()
 
-# Add helix
-helix_amplitudes = np.array([np.linspace(0, 5, N), np.zeros(N)]).reshape(2, N).T
+# Plot the flow fields for T1 helix_amplitude = 2.5
+horizontal_plane = fmodel.calculate_horizontal_plane(
+    x_resolution=200,
+    y_resolution=100,
+    height=150.0,
+    helix_amplitudes=helix_amplitudes
+)
+
+y_plane_baseline = fmodel.calculate_y_plane(
+    x_resolution=200,
+    z_resolution=100,
+    crossstream_dist=3*D,
+    helix_amplitudes=helix_amplitudes
+)
+y_plane_helix = fmodel.calculate_y_plane(
+    x_resolution=200,
+    z_resolution=100,
+    crossstream_dist=0.0,
+    helix_amplitudes=helix_amplitudes
+)
+
+cross_plane = fmodel.calculate_cross_plane(
+    y_resolution=100,
+    z_resolution=100,
+    downstream_dist=720.0,
+    helix_amplitudes=helix_amplitudes
+)
+
+# Create the plots
+fig, ax_list = plt.subplots(2, 2, figsize=(10, 8), tight_layout=True)
+ax_list = ax_list.flatten()
+flowviz.visualize_cut_plane(
+    horizontal_plane,
+    ax=ax_list[0],
+    label_contours=True,
+    title="Horizontal"
+)
+flowviz.visualize_cut_plane(
+    cross_plane,
+    ax=ax_list[2],
+    label_contours=True,
+    title="Spanwise profile at 3D"
+)
+
+# fig2, ax_list2 = plt.subplots(2, 1, figsize=(10, 8), tight_layout=True)
+# ax_list2 = ax_list2.flatten()
+flowviz.visualize_cut_plane(
+    y_plane_baseline,
+    ax=ax_list[1],
+    label_contours=True,
+    title="Streamwise profile, baseline"
+)
+flowviz.visualize_cut_plane(
+    y_plane_helix,
+    ax=ax_list[3],
+    label_contours=True,
+    title="Streamwise profile, helix"
+)
+
+flowviz.show()
+
+# Calculate the effect of changing helix_amplitudes
+N = 50
+helix_amplitudes = np.array([
+    np.linspace(0, 5, N), 
+    np.zeros(N), np.zeros(N), np.zeros(N)
+    ]).reshape(4, N).T
+
+# Reset FlorisModel for different helix amplitudes
 fmodel.set(helix_amplitudes=helix_amplitudes)
-fmodel.run()
-turbine_powers_helix = fmodel.get_turbine_powers()
 
-# Compute available power at downstream turbine
-power_setpoints_2 = np.array([np.linspace(0, 0, N), np.full(N, None)]).T
-fmodel.set(power_setpoints=power_setpoints_2)
-fmodel.run()
-turbine_powers_avail_ds = fmodel.get_turbine_powers()[:,1]
-
-# Plot the results
+# Plot the power as a function of helix amplitude
 fig, ax = plt.subplots(1, 1)
 ax.plot(
     helix_amplitudes[:, 0],
-    turbine_powers_helix[:, 0]/1000,
+    turbine_powers[:, 0]/1000,
     color="C0",
     label="Helix, turbine 1"
 )
 ax.plot(
     helix_amplitudes[:, 0],
-    turbine_powers_helix[:, 1]/1000,
+    turbine_powers[:, 1]/1000,
     color="C1",
     label="Helix, turbine 2"
 )
 ax.plot(
     helix_amplitudes[:, 0],
-    np.sum(turbine_powers_helix, axis=1)/1000,
+    np.sum(turbine_powers[:,0:2], axis=1)/1000,
     color="C2",
     label="Helix, turbine 1+2"
 )
 ax.plot(
     helix_amplitudes[:, 0],
-    turbine_powers_orig[:, 0]/1000,
+    turbine_powers[:, 2]/1000,
     color="C0",
     linestyle="dotted", label="Helix, turbine 2"
 )
 ax.plot(
     helix_amplitudes[:, 0],
-    turbine_powers_avail_ds/1000,
+    turbine_powers[:, 3]/1000,
     color="C1",
     linestyle="dotted", label="Baseline, turbine 2"
 )
 ax.plot(
     helix_amplitudes[:, 0],
-    np.sum(turbine_powers_orig, axis=1)/1000,
+    np.sum(turbine_powers[:, 2:], axis=1)/1000,
     color="C2",
     linestyle="dotted", label="Baseline, turbine 1+2"
 )
@@ -109,23 +175,5 @@ ax.set_xlim([0, 5])
 ax.set_xlabel("Helix amplitude (deg)")
 ax.set_ylabel("Power produced (kW)")
 
-fig2, ax2 = plt.subplots()
-
-ax2.plot(
-    helix_amplitudes[:,0],
-    turbine_powers_helix/turbine_powers_orig
-)
-ax2.plot(
-    helix_amplitudes[:,0],
-    np.sum(turbine_powers_helix, axis=1)/np.sum(turbine_powers_orig, axis=1)
-)
-
-ax2.legend(['Turbine 1','Turbine 2','Total power'])
-ax2.grid()
-ax2.set_title('Relative power gain, helix v baseline')
-ax2.set_xlabel('Amplitude [deg]')
-ax2.set_ylabel('Relative power [-]')
 
 plt.show()
-
-# fmodel.set()
