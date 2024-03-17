@@ -20,10 +20,10 @@ from floris import FlorisModel
 import floris.flow_visualization as flowviz
 
 """
-Example to test out using helix wake mixing of upstream turbines. 
+Example to test out using helix wake mixing of upstream turbines.
 Helix wake mixing is turned on at turbine 1, off at turbines 2-4;
 Turbine 2 is in wake turbine 1, turbine 4 in wake of turbine 3.
-Will be refined before release. 
+Will be refined before release.
 TODO: merge the three examples into one.
 """
 
@@ -113,67 +113,72 @@ flowviz.visualize_cut_plane(
     title="Streamwise profile, helix"
 )
 
-flowviz.show()
-
 # Calculate the effect of changing helix_amplitudes
 N = 50
 helix_amplitudes = np.array([
-    np.linspace(0, 5, N), 
+    np.linspace(0, 5, N),
     np.zeros(N), np.zeros(N), np.zeros(N)
     ]).reshape(4, N).T
 
 # Reset FlorisModel for different helix amplitudes
-fmodel.set(helix_amplitudes=helix_amplitudes)
+
+fmodel.set(
+    wind_directions=270 * np.ones(N),
+    wind_speeds=10.0 * np.ones(N),
+    turbulence_intensities=0.06*np.ones(N),
+    helix_amplitudes=helix_amplitudes
+    )
+fmodel.run()
+turbine_powers = fmodel.get_turbine_powers()
 
 # Plot the power as a function of helix amplitude
-fig, ax = plt.subplots(1, 1)
-ax.plot(
+fig_power, ax_power = plt.subplots(1, 1)
+ax_power.plot(
     helix_amplitudes[:, 0],
     turbine_powers[:, 0]/1000,
     color="C0",
     label="Helix, turbine 1"
 )
-ax.plot(
+ax_power.plot(
     helix_amplitudes[:, 0],
     turbine_powers[:, 1]/1000,
     color="C1",
     label="Helix, turbine 2"
 )
-ax.plot(
+ax_power.plot(
     helix_amplitudes[:, 0],
     np.sum(turbine_powers[:,0:2], axis=1)/1000,
     color="C2",
     label="Helix, turbine 1+2"
 )
-ax.plot(
+ax_power.plot(
     helix_amplitudes[:, 0],
     turbine_powers[:, 2]/1000,
     color="C0",
     linestyle="dotted", label="Helix, turbine 2"
 )
-ax.plot(
+ax_power.plot(
     helix_amplitudes[:, 0],
     turbine_powers[:, 3]/1000,
     color="C1",
     linestyle="dotted", label="Baseline, turbine 2"
 )
-ax.plot(
+ax_power.plot(
     helix_amplitudes[:, 0],
     np.sum(turbine_powers[:, 2:], axis=1)/1000,
     color="C2",
     linestyle="dotted", label="Baseline, turbine 1+2"
 )
-ax.plot(
+ax_power.plot(
     helix_amplitudes[:, 0],
     np.ones(N)*np.max(turbine_type["power_thrust_table"]["power"]),
     color="k",
     linestyle="dashed", label="Rated power"
 )
-ax.grid()
-ax.legend()
-ax.set_xlim([0, 5])
-ax.set_xlabel("Helix amplitude (deg)")
-ax.set_ylabel("Power produced (kW)")
+ax_power.grid()
+ax_power.legend()
+ax_power.set_xlim([0, 5])
+ax_power.set_xlabel("Helix amplitude (deg)")
+ax_power.set_ylabel("Power produced (kW)")
 
-
-plt.show()
+flowviz.show()
