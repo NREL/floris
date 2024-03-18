@@ -538,6 +538,89 @@ class WindRose(WindDataBase):
         ax.set_ylabel("Turbulence Intensity (%)")
         ax.grid(True)
 
+    def read_csv_long(file_path: str,
+                       ws_col: str = 'wind_speeds',
+                       wd_col: str = 'wind_directions',
+                       ti_col_or_value: str | float = 'turbulence_intensities',
+                       freq_col: str | None = None,
+                       sep: str = ",",
+                       ) -> WindRose:
+        """
+        Read a long-formatted CSV file into the wind rose object. By long, what is meant
+        is that the wind speed, wind direction combination is given for each row in the
+        CSV file. The wind speed, wind direction, are
+        given in separate columns, and the frequency of occurrence of each combination
+        is given in a separate column. The frequency column is optional, and if not
+        provided, uniform frequency of all bins is assumed.
+
+        The value of ti_col_or_value can be either a string or a float. If it is a string,
+        it is assumed to be the name of the column in the CSV file that contains the
+        turbulence intensity values. If it is a float, it is assumed to be a constant
+        turbulence intensity value for all wind speed and direction combinations.
+
+        Args:
+            file_path (str): Path to the CSV file.
+            ws_col (str): Name of the column in the CSV file that contains the wind speed
+                values. Defaults to 'wind_speeds'.
+            wd_col (str): Name of the column in the CSV file that contains the wind direction
+                values. Defaults to 'wind_directions'.
+            ti_col_or_value (str or float): Name of the column in the CSV file that contains
+                the turbulence intensity values, or a constant turbulence intensity value.
+            freq_col (str): Name of the column in the CSV file that contains the frequency
+                values. Defaults to None in which case constant frequency assumed.
+            sep (str): Delimiter to use. Defaults to ','.
+
+        Returns:
+            WindRose: Wind rose object created from the CSV file.
+        """
+
+        # Read in the CSV file
+        df = pd.read_csv(file_path, sep=sep)
+
+        # Check that ti_col_or_value is a string or a float
+        if not isinstance(ti_col_or_value, (str, float)):
+            raise TypeError("ti_col_or_value must be a string or a float")
+
+        # Check that the required columns are present
+        if ws_col not in df.columns:
+            raise ValueError(f"Column {ws_col} not found in CSV file")
+        if wd_col not in df.columns:
+            raise ValueError(f"Column {wd_col} not found in CSV file")
+        if ti_col_or_value not in df.columns and isinstance(ti_col_or_value, str):
+            raise ValueError(f"Column {ti_col_or_value} not found in CSV file")
+        if freq_col not in df.columns and freq_col is not None:
+            raise ValueError(f"Column {freq_col} not found in CSV file")
+
+        # Get the wind speed, wind direction, and turbulence intensity values
+        wind_directions = df[wd_col].values
+        wind_speeds = df[ws_col].values
+        if isinstance(ti_col_or_value, str):
+            turbulence_intensities = df[ti_col_or_value].values
+        else:
+            turbulence_intensities = ti_col_or_value * np.ones(len(wind_speeds))
+        if freq_col is not None:
+            freq_values = df[freq_col].values
+        else:
+            freq_values = np.ones(len(wind_speeds))
+
+        # Normalize freq_values
+        freq_values = freq_values / np.sum(freq_values)
+
+        # Get the unique values of wind directions and wind speeds
+        unique_wd = np.unique(wind_directions)
+        unique_ws = np.unique(wind_speeds)
+
+        # Get the step side for wind direction and wind speed
+        wd_step = unique_wd[1] - unique_wd[0]
+        ws_step = unique_ws[1] - unique_ws[0]
+
+        # Now use TimeSeries to create a wind rose
+        time_series = TimeSeries(wind_directions, wind_speeds, turbulence_intensities)
+
+        # Now build a new wind rose using the new steps
+        return time_series.to_wind_rose(
+            wd_step=wd_step, ws_step=ws_step, bin_weights=freq_values
+        )
 
 class WindTIRose(WindDataBase):
     """
