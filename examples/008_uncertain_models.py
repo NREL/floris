@@ -7,6 +7,9 @@ wind farm power production is calculated with and without uncertainty.
 Other use cases of UncertainFlorisModel are, e.g., comparing FLORIS to
 historical SCADA data and robust optimization.
 
+For more details on using uncertain models, see further examples within the
+examples_uncertain directory.
+
 """
 
 import matplotlib.pyplot as plt
