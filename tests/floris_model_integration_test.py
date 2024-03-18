@@ -510,3 +510,13 @@ def test_get_and_set_param():
     fmodel.set_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'], 0.1)
     alpha = fmodel.get_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'])
     assert alpha == 0.1
+
+def test_get_power_thrust_model():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    assert fmodel.get_power_thrust_model() == "cosine-loss"
+
+def test_set_power_thrust_model():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set_power_thrust_model("simple-derating")
+    assert fmodel.get_power_thrust_model() == "simple-derating"
