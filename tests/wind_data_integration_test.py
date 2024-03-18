@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -7,6 +9,9 @@ from floris import (
     WindTIRose,
 )
 from floris.wind_data import WindDataBase
+
+
+TEST_DATA = Path(__file__).resolve().parent / "data"
 
 
 class ChildClassTest(WindDataBase):
@@ -37,13 +42,13 @@ def test_time_series_instantiation():
 
     # Test that passing floats to wind directions and wind speeds returns a list of
     # length turbulence intensities
-    time_series = TimeSeries(270., 8.0, turbulence_intensities=np.array([0.06, 0.07, 0.08]))
+    time_series = TimeSeries(270.0, 8.0, turbulence_intensities=np.array([0.06, 0.07, 0.08]))
     np.testing.assert_allclose(time_series.wind_directions, [270, 270, 270])
     np.testing.assert_allclose(time_series.wind_speeds, [8, 8, 8])
 
     # Test that passing in all floats raises a type error
     with pytest.raises(TypeError):
-        TimeSeries(270., 8.0, 0.06)
+        TimeSeries(270.0, 8.0, 0.06)
 
     # Test casting of both wind speeds and TI
     time_series = TimeSeries(wind_directions, 8.0, 0.06)
@@ -54,9 +59,7 @@ def test_time_series_instantiation():
     # wind directions and wind speeds raises an error
     with pytest.raises(ValueError):
         TimeSeries(
-            wind_directions,
-            wind_speeds,
-            turbulence_intensities=np.array([0.06, 0.07, 0.08, 0.09])
+            wind_directions, wind_speeds, turbulence_intensities=np.array([0.06, 0.07, 0.08, 0.09])
         )
 
 
@@ -71,8 +74,7 @@ def test_wind_rose_init():
     # Pass ti_table in as a single float and confirm it is broadcast to the correct shape
     wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06)
     np.testing.assert_allclose(
-        wind_rose.ti_table,
-        np.array([[0.06, 0.06], [0.06, 0.06], [0.06, 0.06]])
+        wind_rose.ti_table, np.array([[0.06, 0.06], [0.06, 0.06], [0.06, 0.06]])
     )
 
     # Pass ti_table in as a 2D array and confirm it is used as is
@@ -83,9 +85,7 @@ def test_wind_rose_init():
     # Confirm passing in a ti_table that is 1D raises an error
     with pytest.raises(ValueError):
         WindRose(
-            wind_directions,
-            wind_speeds,
-            ti_table=np.array([0.06, 0.06, 0.06, 0.06, 0.06, 0.06])
+            wind_directions, wind_speeds, ti_table=np.array([0.06, 0.06, 0.06, 0.06, 0.06, 0.06])
         )
 
     # Confirm passing in a ti_table that is wrong dimensions raises an error
@@ -94,12 +94,12 @@ def test_wind_rose_init():
 
     # This should be ok since the frequency array shape matches the wind directions
     # and wind speeds
-    _ = WindRose(wind_directions, wind_speeds, ti_table= .06 ,freq_table=np.ones((3, 2)))
+    _ = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=np.ones((3, 2)))
 
     # This should raise an error since the frequency array shape does not
     # match the wind directions and wind speeds
     with pytest.raises(ValueError):
-        WindRose(wind_directions, wind_speeds, 0.06,  np.ones((3, 3)))
+        WindRose(wind_directions, wind_speeds, 0.06, np.ones((3, 3)))
 
 
 def test_wind_rose_grid():
@@ -171,7 +171,7 @@ def test_unpack_for_reinitialize():
     freq_table = np.array([[1.0, 0.0], [0, 1.0], [0, 0]])
 
     # First test using default assumption only non-zero frequency cases computed
-    wind_rose = WindRose(wind_directions, wind_speeds, 0.06,  freq_table)
+    wind_rose = WindRose(wind_directions, wind_speeds, 0.06, freq_table)
 
     (
         wind_directions_unpack,
@@ -479,88 +479,117 @@ def test_time_series_to_wind_ti_rose():
     freq_table = wind_rose.freq_table
     np.testing.assert_almost_equal(freq_table[0, 1, :], [0, 0])
 
-def test_get_speed_multipliers_by_wd():
 
+def test_get_speed_multipliers_by_wd():
     heterogenous_inflow_config_by_wd = {
-        'speed_multipliers': np.array(
+        "speed_multipliers": np.array(
             [
                 [1.0, 1.1, 1.2],
                 [1.1, 1.1, 1.1],
                 [1.3, 1.4, 1.5],
             ]
         ),
-        'wind_directions': np.array([0, 90, 270])
+        "wind_directions": np.array([0, 90, 270]),
     }
 
     # Check for correctness
-    wind_directions = np.array([240, 80,15])
-    expected_output = np.array(
-        [
-            [1.3, 1.4, 1.5],
-            [1.1, 1.1, 1.1],
-            [1.0, 1.1, 1.2]
-        ]
-    )
+    wind_directions = np.array([240, 80, 15])
+    expected_output = np.array([[1.3, 1.4, 1.5], [1.1, 1.1, 1.1], [1.0, 1.1, 1.2]])
     wind_data = WindDataBase()
     result = wind_data.get_speed_multipliers_by_wd(
-        heterogenous_inflow_config_by_wd,
-        wind_directions
+        heterogenous_inflow_config_by_wd, wind_directions
     )
     assert np.allclose(result, expected_output)
 
     # Confirm wrapping behavior
     wind_directions = np.array([350, 10])
-    expected_output = np.array([[1.0, 1.1, 1.2],
-                                [1.0, 1.1, 1.2]])
+    expected_output = np.array([[1.0, 1.1, 1.2], [1.0, 1.1, 1.2]])
     result = wind_data.get_speed_multipliers_by_wd(
-        heterogenous_inflow_config_by_wd,
-        wind_directions
+        heterogenous_inflow_config_by_wd, wind_directions
     )
     assert np.allclose(result, expected_output)
 
     # Confirm can expand the result to match wind directions
-    wind_directions = np.arange(0.0,360.0,10.0)
+    wind_directions = np.arange(0.0, 360.0, 10.0)
     num_wd = len(wind_directions)
-    result = wind_data.get_speed_multipliers_by_wd(heterogenous_inflow_config_by_wd,
-                                                    wind_directions)
+    result = wind_data.get_speed_multipliers_by_wd(
+        heterogenous_inflow_config_by_wd, wind_directions
+    )
     assert result.shape[0] == num_wd
 
-def test_gen_heterogenous_inflow_config():
 
+def test_gen_heterogenous_inflow_config():
     wind_directions = np.array([259.8, 260.2, 260.3, 260.1, 270.0])
     wind_speeds = 8
     turbulence_intensities = 0.06
 
     heterogenous_inflow_config_by_wd = {
-        'speed_multipliers': np.array(
+        "speed_multipliers": np.array(
             [
                 [0.9, 0.9],
                 [1.0, 1.0],
                 [1.1, 1.2],
             ]
         ),
-        'wind_directions' : np.array([250, 260, 270]),
-        'x' : np.array([0, 1000]),
-        'y' : np.array([0, 0]),
+        "wind_directions": np.array([250, 260, 270]),
+        "x": np.array([0, 1000]),
+        "y": np.array([0, 0]),
     }
 
     time_series = TimeSeries(
         wind_directions,
         wind_speeds,
         turbulence_intensities=turbulence_intensities,
-        heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd
+        heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd,
     )
 
     (_, _, _, _, _, heterogenous_inflow_config) = time_series.unpack()
 
-    expected_result = np.array(
-        [
-            [1.0, 1.0],
-            [1.0, 1.0],
-            [1.0, 1.0],
-            [1.0, 1.0],
-            [1.1, 1.2]
-        ]
+    expected_result = np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.1, 1.2]])
+    np.testing.assert_allclose(heterogenous_inflow_config["speed_multipliers"], expected_result)
+    np.testing.assert_allclose(
+        heterogenous_inflow_config["x"], heterogenous_inflow_config_by_wd["x"]
     )
-    np.testing.assert_allclose(heterogenous_inflow_config['speed_multipliers'], expected_result)
-    np.testing.assert_allclose(heterogenous_inflow_config['x'],heterogenous_inflow_config_by_wd['x'])
+
+
+def test_read_csv_long():
+    # Read in the wind rose data from the csv file
+
+    # First confirm that the data raises value error when wrong columns passed
+    with pytest.raises(ValueError):
+        wind_rose = WindRose.read_csv_long(TEST_DATA / "wind_rose.csv")
+
+    # Since TI not specified in table, not giving a fixed TI should raise an error
+    with pytest.raises(ValueError):
+        wind_rose = WindRose.read_csv_long(
+            TEST_DATA / "wind_rose.csv", wd_col="wd", ws_col="ws", freq_col="freq_val"
+        )
+
+    # Now read in with correct columns
+    wind_rose = WindRose.read_csv_long(
+        TEST_DATA / "wind_rose.csv",
+        wd_col="wd",
+        ws_col="ws",
+        freq_col="freq_val",
+        ti_col_or_value=0.06,
+    )
+
+    # Confirm that data read in correctly, and the missing wd/ws bins are filled with zeros
+    expected_result = np.array([[0.25, 0.25], [0.5, 0]])
+    np.testing.assert_allclose(wind_rose.freq_table, expected_result)
+
+    # Confirm expected wind direction and wind speed values
+    expected_result = np.array([270, 280])
+    np.testing.assert_allclose(wind_rose.wind_directions, expected_result)
+
+    expected_result = np.array([8, 9])
+    np.testing.assert_allclose(wind_rose.wind_speeds, expected_result)
+
+    # Confirm expected TI values
+    expected_result = np.array([[0.06, 0.06], [0.06, np.nan]])
+
+    # Confirm all elements which aren't nan are close
+    np.testing.assert_allclose(
+        wind_rose.ti_table[~np.isnan(wind_rose.ti_table)],
+        expected_result[~np.isnan(expected_result)],
+    )
