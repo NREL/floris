@@ -42,7 +42,7 @@ fmodel.run()
 turbine_powers = fmodel.get_turbine_powers()
 
 # Turbines powers will have shape (n_findex, n_turbines) where n_findex is the number of unique
-# wind conditions and n_tindex is the number of turbines in the farm
+# wind conditions and n_turbines is the number of turbines in the farm
 print(f"Turbine power has shape {turbine_powers.shape}")
 
 # It is also possible to get the farm power directly
