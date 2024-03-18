@@ -683,6 +683,24 @@ class FlorisModel(LoggingManager):
         """
         self._reinitialize()
 
+    def get_power_thrust_model(self) -> str:
+        """Get the power thrust model of a FlorisModel.
+
+        Returns:
+            str: The power_thrust_model.
+        """
+        return self.core.farm.turbine_definitions[0]["power_thrust_model"]
+
+    def set_power_thrust_model(self, power_thrust_model: str):
+        """Set the power thrust model of a FlorisModel.
+
+        Args:
+            power_thrust_model (str): The power thrust model to set.
+        """
+        turbine_type = self.core.farm.turbine_definitions[0]
+        turbine_type["power_thrust_model"] = power_thrust_model
+        self.set(turbine_type=[turbine_type])
+
     def _set_operation(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
