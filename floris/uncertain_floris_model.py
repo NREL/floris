@@ -70,7 +70,7 @@ class UncertainFlorisModel(LoggingManager):
                 gaussian blends, in degrees.  Defaults to 1.0.
             ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
             ti_resolution (float, optional): The resolution of turbulence intensity.
-                efaults to 0.01.
+                Defaults to 0.01.
             yaw_resolution (float, optional): The resolution of yaw angle, in degrees.
                 Defaults to 1.0.
             power_setpoint_resolution (int, optional): The resolution of power setpoints, in kW.
@@ -129,7 +129,7 @@ class UncertainFlorisModel(LoggingManager):
         """
         Set the wind farm conditions in the UncertainFlorisModel.
 
-        See FlorisInterace.set() for details of the contents of kwargs.
+        See FlorisModel.set() for details of the contents of kwargs.
 
         Args:
             **kwargs: The wind farm conditions to set.
