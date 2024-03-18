@@ -1,47 +1,39 @@
 
-import matplotlib.pyplot as plt
-import numpy as np
-
-from floris import FlorisModel
-from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
-
-
-"""
+"""Example: Optimize yaw for multiple wind directions and multiple wind speeds.
 This example demonstrates how to perform a yaw optimization for multiple wind directions
-and multiple wind speeds.
+and multiple wind speeds using the WindRose object
 
 First, we initialize our Floris Interface, and then generate a 3 turbine wind farm.
 Next, we create the yaw optimization object `yaw_opt` and perform the optimization using
 the SerialRefine method. Finally, we plot the results.
 """
 
+import matplotlib.pyplot as plt
+import numpy as np
+
+from floris import FlorisModel, WindRose
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+
+
 # Load the default example floris object
-fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+fmodel = FlorisModel("../inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
 # fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
-# Define arrays of ws/wd
-wind_speeds_to_expand = np.arange(2.0, 18.0, 1.0)
-wind_directions_to_expand = np.arange(0.0, 360.0, 3.0)
-
-# Create grids to make combinations of ws/wd
-wind_speeds_grid, wind_directions_grid = np.meshgrid(
-    wind_speeds_to_expand,
-    wind_directions_to_expand
+# Define a WindRose object with uniform TI and frequency table
+wind_rose = WindRose(
+    wind_directions=np.arange(0.0, 360.0, 3.0),
+    wind_speeds=np.arange(2.0, 18.0, 1.0),
+    ti_table=0.06,
 )
 
-# Flatten the grids back to 1D arrays
-wd_array = wind_directions_grid.flatten()
-ws_array = wind_speeds_grid.flatten()
-turbulence_intensities = 0.06 * np.ones_like(wd_array)
+
 
 # Reinitialize as a 3-turbine farm with range of WDs and WSs
 D = 126.0 # Rotor diameter for the NREL 5 MW
 fmodel.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=wd_array,
-    wind_speeds=ws_array,
-    turbulence_intensities=turbulence_intensities,
+    wind_data=wind_rose,
 )
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
@@ -49,7 +41,7 @@ fmodel.set(
 # yaw misalignment that increases the wind farm power production by a negligible
 # amount. For example, at high wind speeds (e.g., 16 m/s), a turbine might yaw
 # by a substantial amount to increase the power production by less than 1 W. This
-# is typically the result of numerical inprecision of the power coefficient curve,
+# is typically the result of numerical imprecision of the power coefficient curve,
 # which slightly differs for different above-rated wind speeds. The option
 # verify_convergence therefore refines and validates the yaw angle choices
 # but has no effect on the predicted power uplift from wake steering.
