@@ -25,7 +25,7 @@ from floris.type_dec import (
     NDArrayBool,
     NDArrayFloat,
 )
-from floris.wind_data import WindDataBase
+from floris.wind_data import WindDataBase, WindRose, WindTIRose
 
 
 class FlorisModel(LoggingManager):
@@ -93,6 +93,9 @@ class FlorisModel(LoggingManager):
                     "but have a small change on accuracy."
                 )
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
+        
+        # Initialize stored wind_data object to None
+        self._wind_data = None
 
     def assign_hub_height_to_ref_height(self):
 
@@ -256,30 +259,31 @@ class FlorisModel(LoggingManager):
         flow_field_dict = floris_dict["flow_field"]
         farm_dict = floris_dict["farm"]
 
-        # Make the given changes
-
-        # First check if wind data is not None,
-        # if not, get wind speeds, wind direction and
-        # turbulence intensity using the unpack_for_reinitialize
-        # method
-        if wind_data is not None:
-            if (
-                (wind_directions is not None)
-                or (wind_speeds is not None)
-                or (turbulence_intensities is not None)
-                or (heterogenous_inflow_config is not None)
-            ):
+        # 
+        if (
+            (wind_directions is not None)
+            or (wind_speeds is not None)
+            or (turbulence_intensities is not None)
+            or (heterogenous_inflow_config is not None)
+        ):
+            if wind_data is not None:
                 raise ValueError(
                     "If wind_data is passed to reinitialize, then do not pass wind_directions, "
                     "wind_speeds, turbulence_intensities or "
                     "heterogenous_inflow_config as this is redundant"
                 )
-            (
-                wind_directions,
-                wind_speeds,
-                turbulence_intensities,
-                heterogenous_inflow_config,
-            ) = wind_data.unpack_for_reinitialize()
+            elif self._wind_data is not None:
+                self.logger.warning("Deleting stored wind_data information.")
+                self._wind_data = None
+        if wind_data is not None: 
+                # Unpack wind data for reinitialization and save wind_data for use in output
+                (
+                    wind_directions,
+                    wind_speeds,
+                    turbulence_intensities,
+                    heterogenous_inflow_config,
+                ) = wind_data.unpack_for_reinitialize()
+                self._wind_data = wind_data
 
         ## FlowField
         if wind_speeds is not None:
@@ -576,7 +580,7 @@ class FlorisModel(LoggingManager):
         # Reset the fmodel object back to the turbine grid configuration
         self.core = Core.from_dict(floris_dict)
 
-        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        # Run the simulation again for further postprocessing (i.e. now we can get farm power)
         self.run()
 
         return horizontal_plane
@@ -650,7 +654,7 @@ class FlorisModel(LoggingManager):
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="x",
             planar_coordinate=downstream_dist,
@@ -662,7 +666,7 @@ class FlorisModel(LoggingManager):
         # Reset the fmodel object back to the turbine grid configuration
         self.core = Core.from_dict(floris_dict)
 
-        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        # Run the simulation again for further postprocessing (i.e. now we can get farm power)
         self.run()
 
         return cross_plane
@@ -749,7 +753,7 @@ class FlorisModel(LoggingManager):
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="y",
             planar_coordinate=crossstream_dist,
@@ -761,7 +765,7 @@ class FlorisModel(LoggingManager):
         # Reset the fmodel object back to the turbine grid configuration
         self.core = Core.from_dict(floris_dict)
 
-        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        # Run the simulation again for further postprocessing (i.e. now we can get farm power)
         self.run()
 
         return y_plane
@@ -912,7 +916,7 @@ class FlorisModel(LoggingManager):
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.core.flow_field.turbulence_intensity_field
 
-    def get_farm_power(
+    def _get_farm_power(
         self,
         turbine_weights=None,
         use_turbulence_correction=False,
@@ -951,12 +955,16 @@ class FlorisModel(LoggingManager):
         # TODO: Uncomment out the following two lines once the above are resolved
         # for turbine in self.core.farm.turbines:
         #     turbine.use_turbulence_correction = use_turbulence_correction
+        if use_turbulence_correction:
+            raise NotImplementedError(
+                "Turbulence correction is not yet implemented in the power calculation."
+            )
 
         # Confirm run() has been run
         if self.core.state is not State.USED:
             raise RuntimeError(
-                "Can't run function `FlorisModel.get_turbine_powers` without "
-                "first running `FlorisModel.calculate_wake`."
+                "Can't run function `FlorisModel.get_farm_power` without "
+                "first running `FlorisModel.run`."
             )
 
         if turbine_weights is None:
@@ -979,6 +987,24 @@ class FlorisModel(LoggingManager):
         turbine_powers = np.multiply(turbine_weights, turbine_powers)
 
         return np.sum(turbine_powers, axis=1)
+    
+    def get_farm_power(
+        self,
+        turbine_weights=None,
+        use_turbulence_correction=False,
+    ):
+        farm_power = self._get_farm_power(turbine_weights, use_turbulence_correction)
+
+        if self._wind_data is not None:
+            if type(self._wind_data) is WindRose:
+                raise NotImplementedError("Figure out for WindRose")
+                # Todo : repackage power as a rose
+            elif type(self._wind_data) is WindTIRose:
+                raise NotImplementedError("Figure out for WindTIRose")
+                #repackage power as TI rose
+                # Wind Task 57
+
+        return farm_power
 
     def get_farm_power_in_rose(
         self,
@@ -1006,8 +1032,7 @@ class FlorisModel(LoggingManager):
         # Confirm run() has been run
         if self.core.state is not State.USED:
             raise RuntimeError(
-                "Can't run function `FlorisModel.get_turbine_powers` without "
-                "first running `FlorisModel.calculate_wake`."
+                "Can't extract powers without first running `FlorisModel.run()`."
             )
 
         if turbine_weights is None:
@@ -1033,8 +1058,65 @@ class FlorisModel(LoggingManager):
         # the turbine axis
         # and sum along the turbine axis to get the farm power
         return np.sum(turbine_powers * turbine_weights[None, None, :], axis=-1)
+    
+    def get_expected_farm_power(
+            self,
+            freq=None,
+            turbine_weights=None,
+    ) -> float:
 
+        farm_power = self._get_farm_power(turbine_weights=turbine_weights)
+
+        if freq is None:
+            if self._wind_data is None:
+                freq = np.array([1.0])
+            else:
+                freq = self._wind_data.unpack_freq()
+        
+        return np.sum(np.multiply(freq, farm_power))
+    
     def get_farm_AEP(
+        self,
+        freq=None,
+        turbine_weights=None,
+        hours_per_year=8760,
+    ) -> float:
+        """
+        Estimate annual energy production (AEP) for distributions of wind speed, wind
+        direction, frequency of occurrence, and yaw offset.
+
+        Args:
+            freq (NDArrayFloat): NumPy array with shape (n_findex)
+                with the frequencies of each wind direction and
+                wind speed combination. These frequencies should typically sum
+                up to 1.0 and are used to weigh the wind farm power for every
+                condition in calculating the wind farm's AEP. Defaults to None.
+                If None and a WindData object was supplied, the WindData object's
+                frequencies will be used. Otherwise, uniform frequencies are assumed.
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the power production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                objective function. If None, this  is an array with all values
+                1.0 and with shape equal to (n_findex,
+                n_turbines). Defaults to None.
+
+        Returns:
+            float:
+                The Annual Energy Production (AEP) for the wind farm in
+                watt-hours.
+        """
+        return self.get_expected_farm_power(
+            freq=freq, turbine_weights=turbine_weights
+        ) * hours_per_year
+
+    def get_farm_AEP_(
         self,
         freq,
         cut_in_wind_speed=0.001,

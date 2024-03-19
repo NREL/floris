@@ -49,16 +49,7 @@ class WindDataBase:
     def unpack_freq(self):
         """Unpack frequency weighting"""
 
-        (
-            _,
-            _,
-            _,
-            freq_table_unpack,
-            _,
-            _,
-        ) = self.unpack()
-
-        return freq_table_unpack
+        return self.unpack()[3]
 
     def check_heterogenous_inflow_config_by_wd(self, heterogenous_inflow_config_by_wd):
         """
