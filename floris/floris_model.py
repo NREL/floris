@@ -1073,7 +1073,7 @@ class FlorisModel(LoggingManager):
             else:
                 freq = self.wind_data.unpack_freq()
         
-        return np.sum(np.multiply(freq, farm_power))
+        return np.nansum(np.multiply(freq, farm_power))
     
     def get_farm_AEP(
         self,
@@ -1106,6 +1106,7 @@ class FlorisModel(LoggingManager):
                 objective function. If None, this  is an array with all values
                 1.0 and with shape equal to (n_findex,
                 n_turbines). Defaults to None.
+            hours_per_year (float, optional): Number of hours in a year. Defaults to 365 * 24.
 
         Returns:
             float:

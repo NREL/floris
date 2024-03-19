@@ -55,26 +55,15 @@ fmodel.set(
     wind_speeds=wind_speeds,
     turbulence_intensities=turbulence_intensities,
 )
+fmodel.run()
 
 # Compute the AEP using the default settings
 aep = fmodel.get_farm_AEP(freq=freq)
-print("Farm AEP (default options): {:.3f} GWh".format(aep / 1.0e9))
-
-# Compute the AEP again while specifying a cut-in and cut-out wind speed.
-# The wake calculations are skipped for any wind speed below respectively
-# above the cut-in and cut-out wind speed. This can speed up computation and
-# prevent unexpected behavior for zero/negative and very high wind speeds.
-# In this example, the results should not change between this and the default
-# call to 'get_farm_AEP()'.
-aep = fmodel.get_farm_AEP(
-    freq=freq,
-    cut_in_wind_speed=3.0,  # Wakes are not evaluated below this wind speed
-    cut_out_wind_speed=25.0,  # Wakes are not evaluated above this wind speed
-)
-print("Farm AEP (with cut_in/out specified): {:.3f} GWh".format(aep / 1.0e9))
+print("Farm AEP: {:.3f} GWh".format(aep / 1.0e9))
 
 # Finally, we can also compute the AEP while ignoring all wake calculations.
 # This can be useful to quantity the annual wake losses in the farm. Such
-# calculations can be facilitated by enabling the 'no_wake' handle.
-aep_no_wake = fmodel.get_farm_AEP(freq, no_wake=True)
-print("Farm AEP (no_wake=True): {:.3f} GWh".format(aep_no_wake / 1.0e9))
+# calculations can be facilitated by first running with run_no_wake().
+fmodel.run_no_wake()
+aep_no_wake = fmodel.get_farm_AEP(freq=freq)
+print("Farm AEP (no wakes): {:.3f} GWh".format(aep_no_wake / 1.0e9))
