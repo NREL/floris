@@ -21,15 +21,13 @@ class LayoutOptimization(LoggingManager):
         fmodel (FlorisModel): A FlorisModel object.
         boundaries (iterable(float, float)): Pairs of x- and y-coordinates
             that represent the boundary's vertices (m).
-        wind_data (TimeSeries | WindRose): A TimeSeries or WindRose object
-            values.
         min_dist (float, optional): The minimum distance to be maintained
             between turbines during the optimization (m). If not specified,
             initializes to 2 rotor diameters. Defaults to None.
         enable_geometric_yaw (bool, optional): If True, enables geometric yaw
             optimization. Defaults to False.
     """
-    def __init__(self, fmodel, boundaries, wind_data, min_dist=None, enable_geometric_yaw=False):
+    def __init__(self, fmodel, boundaries, min_dist=None, enable_geometric_yaw=False):
         self.fmodel = fmodel.copy()
         self.boundaries = boundaries
         self.enable_geometric_yaw = enable_geometric_yaw
@@ -49,12 +47,13 @@ class LayoutOptimization(LoggingManager):
             self.min_dist = min_dist
 
         # Check that wind_data is a WindDataBase object
-        if (not isinstance(wind_data, WindDataBase)):
+        if (not isinstance(fmodel.wind_data, WindDataBase)):
+            # NOTE: it is no longer strictly necessary that fmodel use 
+            # a WindData object, but it is still recommended.
             raise ValueError(
                 "wind_data entry is not an object of WindDataBase"
                 " (eg TimeSeries, WindRose, WindTIRose)"
             )
-        self.wind_data = wind_data
 
         # Establish geometric yaw class
         if self.enable_geometric_yaw:
@@ -63,8 +62,9 @@ class LayoutOptimization(LoggingManager):
                 minimum_yaw_angle=-30.0,
                 maximum_yaw_angle=30.0,
             )
-
-        self.initial_AEP = fmodel.get_farm_AEP_with_wind_data(self.wind_data)
+            # TODO: is this being used?
+        fmodel.run()
+        self.initial_AEP = fmodel.get_farm_AEP()
 
     def __str__(self):
         return "layout"

@@ -32,24 +32,25 @@ def test_base_class():
     # (this should fail)
     freq = np.ones((5, 5))
     freq = freq / freq.sum()
-    with pytest.raises(ValueError):
-        LayoutOptimization(fmodel, boundaries, freq, 5)
 
-    # Passing as a keyword freq to wind_data should also fail
+    # Check that ValueError raised if fmodel does not contain wind_data
     with pytest.raises(ValueError):
-        LayoutOptimization(fmodel=fmodel, boundaries=boundaries, wind_data=freq, min_dist=5,)
+        LayoutOptimization(fmodel, boundaries, 5)
+    with pytest.raises(ValueError):
+        LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5,)
 
     time_series = TimeSeries(
         wind_directions=fmodel.core.flow_field.wind_directions,
         wind_speeds=fmodel.core.flow_field.wind_speeds,
         turbulence_intensities=fmodel.core.flow_field.turbulence_intensities,
     )
-    wind_rose = time_series.to_wind_rose()
+    fmodel.set(wind_data=time_series)
+    
+    # Passing without keyword arguments should work, or with keyword arguments
+    LayoutOptimization(fmodel, boundaries, 5)
+    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)
 
-    # Passing wind_data objects in the 3rd position should not fail
-    LayoutOptimization(fmodel, boundaries, time_series, 5)
-    LayoutOptimization(fmodel, boundaries, wind_rose, 5)
-
-    # Passing wind_data objects by keyword should not fail
-    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, wind_data=time_series, min_dist=5)
-    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, wind_data=wind_rose, min_dist=5)
+    # Check with WindRose on fmodel
+    fmodel.set(wind_data=time_series.to_wind_rose())
+    LayoutOptimization(fmodel, boundaries, 5)
+    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)

@@ -95,7 +95,7 @@ class FlorisModel(LoggingManager):
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
         
         # Initialize stored wind_data object to None
-        self._wind_data = None
+        self.wind_data = None
 
     def assign_hub_height_to_ref_height(self):
 
@@ -272,9 +272,9 @@ class FlorisModel(LoggingManager):
                     "wind_speeds, turbulence_intensities or "
                     "heterogenous_inflow_config as this is redundant"
                 )
-            elif self._wind_data is not None:
+            elif self.wind_data is not None:
                 self.logger.warning("Deleting stored wind_data information.")
-                self._wind_data = None
+                self.wind_data = None
         if wind_data is not None: 
                 # Unpack wind data for reinitialization and save wind_data for use in output
                 (
@@ -283,7 +283,7 @@ class FlorisModel(LoggingManager):
                     turbulence_intensities,
                     heterogenous_inflow_config,
                 ) = wind_data.unpack_for_reinitialize()
-                self._wind_data = wind_data
+                self.wind_data = wind_data
 
         ## FlowField
         if wind_speeds is not None:
@@ -995,11 +995,11 @@ class FlorisModel(LoggingManager):
     ):
         farm_power = self._get_farm_power(turbine_weights, use_turbulence_correction)
 
-        if self._wind_data is not None:
-            if type(self._wind_data) is WindRose:
+        if self.wind_data is not None:
+            if type(self.wind_data) is WindRose:
                 raise NotImplementedError("Figure out for WindRose")
                 # Todo : repackage power as a rose
-            elif type(self._wind_data) is WindTIRose:
+            elif type(self.wind_data) is WindTIRose:
                 raise NotImplementedError("Figure out for WindTIRose")
                 #repackage power as TI rose
                 # Wind Task 57
@@ -1068,10 +1068,10 @@ class FlorisModel(LoggingManager):
         farm_power = self._get_farm_power(turbine_weights=turbine_weights)
 
         if freq is None:
-            if self._wind_data is None:
+            if self.wind_data is None:
                 freq = np.array([1.0])
             else:
-                freq = self._wind_data.unpack_freq()
+                freq = self.wind_data.unpack_freq()
         
         return np.sum(np.multiply(freq, farm_power))
     

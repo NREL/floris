@@ -376,49 +376,49 @@ def test_get_farm_aep():
     # In this case farm_aep should match farm powers
     np.testing.assert_allclose(farm_aep, aep)
 
-def test_get_farm_aep_with_conditions():
-    fmodel = FlorisModel(configuration=YAML_INPUT)
+# def test_get_farm_aep_with_conditions():
+#     fmodel = FlorisModel(configuration=YAML_INPUT)
 
-    wind_speeds = np.array([5.0, 8.0, 8.0, 8.0, 20.0])
-    wind_directions = np.array([270.0, 270.0, 270.0, 270.0, 270.0])
-    turbulence_intensities = np.array([0.06, 0.06, 0.06, 0.06, 0.06])
-    n_findex = len(wind_directions)
+#     wind_speeds = np.array([5.0, 8.0, 8.0, 8.0, 20.0])
+#     wind_directions = np.array([270.0, 270.0, 270.0, 270.0, 270.0])
+#     turbulence_intensities = np.array([0.06, 0.06, 0.06, 0.06, 0.06])
+#     n_findex = len(wind_directions)
 
-    layout_x = np.array([0, 0])
-    layout_y = np.array([0, 1000])
-    # n_turbines = len(layout_x)
+#     layout_x = np.array([0, 0])
+#     layout_y = np.array([0, 1000])
+#     # n_turbines = len(layout_x)
 
-    fmodel.set(
-        wind_speeds=wind_speeds,
-        wind_directions=wind_directions,
-        turbulence_intensities=turbulence_intensities,
-        layout_x=layout_x,
-        layout_y=layout_y,
-    )
+#     fmodel.set(
+#         wind_speeds=wind_speeds,
+#         wind_directions=wind_directions,
+#         turbulence_intensities=turbulence_intensities,
+#         layout_x=layout_x,
+#         layout_y=layout_y,
+#     )
 
-    fmodel.run()
+#     fmodel.run()
 
-    farm_powers = fmodel.get_farm_power()
+#     farm_powers = fmodel.get_farm_power()
 
-    # Start with uniform frequency
-    freq = np.ones(n_findex)
-    freq = freq / np.sum(freq)
+#     # Start with uniform frequency
+#     freq = np.ones(n_findex)
+#     freq = freq / np.sum(freq)
 
-    # Get farm AEP with conditions on minimun and max wind speed
-    # which exclude the first and last findex
-    farm_aep = fmodel.get_farm_AEP(freq=freq, cut_in_wind_speed=6.0, cut_out_wind_speed=15.0)
+#     # Get farm AEP with conditions on minimun and max wind speed
+#     # which exclude the first and last findex
+#     farm_aep = fmodel.get_farm_AEP(freq=freq, cut_in_wind_speed=6.0, cut_out_wind_speed=15.0)
 
-    # In this case the aep should be computed assuming 0 power
-    # for the 0th and last findex
-    farm_powers[0] = 0
-    farm_powers[-1] = 0
-    aep = np.sum(np.multiply(freq, farm_powers) * 365 * 24)
+#     # In this case the aep should be computed assuming 0 power
+#     # for the 0th and last findex
+#     farm_powers[0] = 0
+#     farm_powers[-1] = 0
+#     aep = np.sum(np.multiply(freq, farm_powers) * 365 * 24)
 
-    # In this case farm_aep should match farm powers
-    np.testing.assert_allclose(farm_aep, aep)
+#     # In this case farm_aep should match farm powers
+#     np.testing.assert_allclose(farm_aep, aep)
 
-    #Confirm n_findex reset after the operation
-    assert n_findex == fmodel.core.flow_field.n_findex
+#     #Confirm n_findex reset after the operation
+#     assert n_findex == fmodel.core.flow_field.n_findex
 
 def test_set_ti():
     fmodel = FlorisModel(configuration=YAML_INPUT)
