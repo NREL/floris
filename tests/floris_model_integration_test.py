@@ -493,3 +493,30 @@ def test_calculate_planes():
         fmodel.calculate_y_plane(0.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
     with pytest.raises(ValueError):
         fmodel.calculate_cross_plane(500.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
+
+def test_get_and_set_param():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    # Get the wind speed
+    wind_speeds = fmodel.get_param(['flow_field', 'wind_speeds'])
+    assert wind_speeds[0] == 8.0
+
+    # Set the wind speed
+    fmodel.set_param(['flow_field', 'wind_speeds'], 10.0, param_idx=0)
+    wind_speed = fmodel.get_param(['flow_field', 'wind_speeds'], param_idx=0  )
+    assert wind_speed == 10.0
+
+    # Repeat with wake parameter
+    fmodel.set_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'], 0.1)
+    alpha = fmodel.get_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'])
+    assert alpha == 0.1
+
+def test_get_power_thrust_model():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    assert fmodel.get_power_thrust_model() == "cosine-loss"
+
+def test_set_power_thrust_model():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set_power_thrust_model("simple-derating")
+    assert fmodel.get_power_thrust_model() == "simple-derating"
