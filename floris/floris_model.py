@@ -934,9 +934,9 @@ class FlorisModel(LoggingManager):
                 objective function. If None, this  is an array with all values
                 1.0 and with shape equal to (n_findex, n_turbines).
                 Defaults to None.
-            use_turbulence_correction: (bool, optional): When *True* uses a
+            use_turbulence_correction: (bool, optional): When True uses a
                 turbulence parameter to adjust power output calculations.
-                Defaults to *False*.
+                Defaults to False. Not currently implemented.
 
         Returns:
             float: Sum of wind turbine powers in W.
@@ -985,6 +985,34 @@ class FlorisModel(LoggingManager):
         turbine_weights=None,
         use_turbulence_correction=False,
     ):
+        """
+        Report wind plant power from instance of floris. Optionally includes
+        uncertainty in wind direction and yaw position when determining power.
+        Uncertainty is included by computing the mean wind farm power for a
+        distribution of wind direction and yaw position deviations from the
+        original wind direction and yaw angles.
+
+        Args:
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the power production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                objective function. If None, this  is an array with all values
+                1.0 and with shape equal to (n_findex, n_turbines).
+                Defaults to None.
+            use_turbulence_correction: (bool, optional): When True uses a
+                turbulence parameter to adjust power output calculations.
+                Defaults to False. Not currently implemented.
+
+        Returns:
+            float: Sum of wind turbine powers in W.
+        """
         farm_power = self._get_farm_power(turbine_weights, use_turbulence_correction)
 
         if self.wind_data is not None:
