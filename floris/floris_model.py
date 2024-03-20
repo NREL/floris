@@ -99,7 +99,7 @@ class FlorisModel(LoggingManager):
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
         # Initialize stored wind_data object to None
-        self.wind_data = None
+        self._wind_data = None
 
     def assign_hub_height_to_ref_height(self):
 
@@ -278,7 +278,7 @@ class FlorisModel(LoggingManager):
                 )
             elif self.wind_data is not None:
                 self.logger.warning("Deleting stored wind_data information.")
-                self.wind_data = None
+                self._wind_data = None
         if wind_data is not None:
                 # Unpack wind data for reinitialization and save wind_data for use in output
                 (
@@ -287,7 +287,7 @@ class FlorisModel(LoggingManager):
                     turbulence_intensities,
                     heterogenous_inflow_config,
                 ) = wind_data.unpack_for_reinitialize()
-                self.wind_data = wind_data
+                self._wind_data = wind_data
 
         ## FlowField
         if wind_speeds is not None:
@@ -1253,6 +1253,10 @@ class FlorisModel(LoggingManager):
             np.array: Wind turbine y-coordinate.
         """
         return self.core.farm.layout_y
+
+    @property
+    def wind_data(self):
+        return self._wind_data
 
     def get_turbine_layout(self, z=False):
         """
