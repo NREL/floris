@@ -93,7 +93,7 @@ class FlorisModel(LoggingManager):
                     "but have a small change on accuracy."
                 )
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
-        
+
         # Initialize stored wind_data object to None
         self.wind_data = None
 
@@ -259,7 +259,7 @@ class FlorisModel(LoggingManager):
         flow_field_dict = floris_dict["flow_field"]
         farm_dict = floris_dict["farm"]
 
-        # 
+        #
         if (
             (wind_directions is not None)
             or (wind_speeds is not None)
@@ -275,7 +275,7 @@ class FlorisModel(LoggingManager):
             elif self.wind_data is not None:
                 self.logger.warning("Deleting stored wind_data information.")
                 self.wind_data = None
-        if wind_data is not None: 
+        if wind_data is not None:
                 # Unpack wind data for reinitialization and save wind_data for use in output
                 (
                     wind_directions,
@@ -821,6 +821,42 @@ class FlorisModel(LoggingManager):
         )
         return turbine_powers
 
+    def get_turbine_powers(self):
+        """
+        Calculates the power at each turbine in the wind farm.
+
+        Returns:
+            NDArrayFloat: Powers at each turbine.
+        """
+        turbine_powers = self._get_turbine_powers()
+
+        if self.wind_data is not None:
+            if type(self.wind_data) is WindRose:
+                turbine_powers_expanded = np.full(
+                    (len(self.wind_data.wd_flat), self.core.farm.n_turbines),
+                    np.nan
+                )
+                turbine_powers_expanded[self.wind_data.non_zero_freq_mask, :] = turbine_powers
+                turbine_powers = turbine_powers_expanded.reshape(
+                    len(self.wind_data.wind_directions),
+                    len(self.wind_data.wind_speeds),
+                    self.core.farm.n_turbines
+                )
+            elif type(self.wind_data) is WindTIRose:
+                turbine_powers_expanded = np.full(
+                    (len(self.wind_data.wd_flat), self.core.farm.n_turbines),
+                    np.nan
+                )
+                turbine_powers_expanded[self.wind_data.non_zero_freq_mask, :] = turbine_powers
+                turbine_powers = turbine_powers_expanded.reshape(
+                    len(self.wind_data.wind_directions),
+                    len(self.wind_data.wind_speeds),
+                    len(self.wind_data.turbulence_intensities),
+                    self.core.farm.n_turbines
+                )
+
+        return turbine_powers
+
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
             velocities=self.core.flow_field.u,
@@ -939,7 +975,7 @@ class FlorisModel(LoggingManager):
         turbine_powers = np.multiply(turbine_weights, turbine_powers)
 
         return np.sum(turbine_powers, axis=1)
-    
+
     def get_farm_power(
         self,
         turbine_weights=None,
@@ -965,43 +1001,7 @@ class FlorisModel(LoggingManager):
                 )
 
         return farm_power
-    
-    def get_turbine_powers(self):
-        """
-        Calculates the power at each turbine in the wind farm.
 
-        Returns:
-            NDArrayFloat: Powers at each turbine.
-        """
-        turbine_powers = self._get_turbine_powers()
-
-        if self.wind_data is not None:
-            if type(self.wind_data) is WindRose:
-                turbine_powers_expanded = np.full(
-                    (len(self.wind_data.wd_flat), self.core.farm.n_turbines), 
-                    np.nan
-                )
-                turbine_powers_expanded[self.wind_data.non_zero_freq_mask, :] = turbine_powers
-                turbine_powers = turbine_powers_expanded.reshape(
-                    len(self.wind_data.wind_directions),
-                    len(self.wind_data.wind_speeds),
-                    self.core.farm.n_turbines
-                )
-            elif type(self.wind_data) is WindTIRose:
-                turbine_powers_expanded = np.full(
-                    (len(self.wind_data.wd_flat), self.core.farm.n_turbines), 
-                    np.nan
-                )
-                turbine_powers_expanded[self.wind_data.non_zero_freq_mask, :] = turbine_powers
-                turbine_powers = turbine_powers_expanded.reshape(
-                    len(self.wind_data.wind_directions),
-                    len(self.wind_data.wind_speeds),
-                    len(self.wind_data.turbulence_intensities),
-                    self.core.farm.n_turbines
-                )
-
-        return turbine_powers
-    
     def get_expected_farm_power(
             self,
             freq=None,
@@ -1040,9 +1040,9 @@ class FlorisModel(LoggingManager):
                 freq = np.array([1.0])
             else:
                 freq = self.wind_data.unpack_freq()
-        
+
         return np.nansum(np.multiply(freq, farm_power))
-    
+
     def get_farm_AEP(
         self,
         freq=None,
