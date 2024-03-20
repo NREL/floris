@@ -49,7 +49,7 @@ class LayoutOptimization(LoggingManager):
 
         # Check that wind_data is a WindDataBase object
         if (not isinstance(self.fmodel.wind_data, WindDataBase)):
-            # NOTE: it is no longer strictly necessary that fmodel use 
+            # NOTE: it is no longer strictly necessary that fmodel use
             # a WindData object, but it is still recommended.
             raise ValueError(
                 "wind_data entry is not an object of WindDataBase"

@@ -45,7 +45,7 @@ def test_base_class():
         turbulence_intensities=fmodel.core.flow_field.turbulence_intensities,
     )
     fmodel.set(wind_data=time_series)
-    
+
     # Passing without keyword arguments should work, or with keyword arguments
     LayoutOptimization(fmodel, boundaries, 5)
     LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)

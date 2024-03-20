@@ -60,7 +60,7 @@ def test_parallel_get_AEP(sample_inputs_fixture):
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel_input = copy.deepcopy(fmodel)
-    
+
     fmodel.run()
     serial_farm_AEP = fmodel.get_farm_AEP(freq=freq)
 

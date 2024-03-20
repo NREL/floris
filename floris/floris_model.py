@@ -25,7 +25,11 @@ from floris.type_dec import (
     NDArrayBool,
     NDArrayFloat,
 )
-from floris.wind_data import WindDataBase, WindRose, WindTIRose
+from floris.wind_data import (
+    WindDataBase,
+    WindRose,
+    WindTIRose,
+)
 
 
 class FlorisModel(LoggingManager):
