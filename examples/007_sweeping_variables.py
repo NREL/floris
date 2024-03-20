@@ -125,18 +125,11 @@ ax.set_ylabel("Power (kW)")
 ######################################################
 
 # Since we're changing control modes, need to reset the operation
+#TODO: Needed?
 fmodel.reset_operation()
 
 # To the de-rating need to change the power_thrust_mode to mixed or simple de-rating
-with open(
-    str(
-        fmodel.core.as_dict()["farm"]["turbine_library_path"]
-        / (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
-    )
-) as t:
-    turbine_type = yaml.safe_load(t)
-turbine_type["power_thrust_model"] = "mixed"
-fmodel.set(turbine_type=[turbine_type])
+fmodel.set_power_thrust_model("simple-derating")
 
 # Sweep the de-rating levels
 RATED_POWER = 5e6  # For NREL 5MW

@@ -113,6 +113,11 @@ wind_rose = time_series.to_wind_rose(
     wd_edges=np.arange(0, 360, 3.0), ws_edges=np.arange(4, 20, 2.0)
 )
 
+##################################################
+# Wind Rose from long CSV FILE
+##################################################
+
+#TODO
 
 ##################################################
 # Setting turbulence intensity

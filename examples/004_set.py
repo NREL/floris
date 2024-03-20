@@ -88,17 +88,10 @@ fmodel.set(yaw_angles=yaw_angles)
 #  which provides the same cosine loss model, and
 # additionally methods for specifying derating levels for power and disabling turbines.
 
+#TODO: RESET OPERATION HERE?
+
 # Change to the mixed model turbine
-# TODO: Could this process be added to the fmodel_utils?
-with open(
-    str(
-        fmodel.core.as_dict()["farm"]["turbine_library_path"]
-        / (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
-    )
-) as t:
-    turbine_type = yaml.safe_load(t)
-turbine_type["power_thrust_model"] = "mixed"
-fmodel.set(turbine_type=[turbine_type])
+fmodel.set_power_thrust_model("mixed")
 
 # Shut down the front turbine for the first two findex
 disable_turbines = np.array([[True, False], [True, False], [False, False]])
