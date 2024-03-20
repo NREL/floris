@@ -1021,7 +1021,8 @@ class FlorisModel(LoggingManager):
                 up to 1.0 and are used to weigh the wind farm power for every
                 condition in calculating the wind farm's AEP. Defaults to None.
                 If None and a WindData object was supplied, the WindData object's
-                frequencies will be used. Otherwise, uniform frequencies are assumed.
+                frequencies will be used. Otherwise, uniform frequencies are assumed
+                (i.e., a simple mean over the findices is computed).
             turbine_weights (NDArrayFloat | list[float] | None, optional):
                 weighing terms that allow the user to emphasize power at
                 particular turbines and/or completely ignore the power
