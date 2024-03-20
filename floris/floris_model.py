@@ -105,7 +105,7 @@ class FlorisModel(LoggingManager):
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
 
-    ### Methods for setting and running the Floris Model
+    ### Methods for setting and running the FlorisModel
 
     def _reinitialize(
         self,
@@ -692,24 +692,6 @@ class FlorisModel(LoggingManager):
             multidim_condition=self.core.flow_field.multidim_conditions,
         )
         return turbine_ais
-
-    def get_turbine_layout(self, z=False):
-        """
-        Get turbine layout
-
-        Args:
-            z (bool): When *True*, return lists of x, y, and z coords,
-            otherwise, return x and y only. Defaults to *False*.
-
-        Returns:
-            np.array: lists of x, y, and (optionally) z coordinates of
-                each turbine
-        """
-        xcoords, ycoords, zcoords = self.core.farm.coordinates.T
-        if z:
-            return xcoords, ycoords, zcoords
-        else:
-            return xcoords, ycoords
 
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
@@ -1339,6 +1321,24 @@ class FlorisModel(LoggingManager):
         fm_dict_mod = self.core.as_dict()
         nested_set(fm_dict_mod, param, value, param_idx)
         self.__init__(fm_dict_mod)
+
+    def get_turbine_layout(self, z=False):
+        """
+        Get turbine layout
+
+        Args:
+            z (bool): When *True*, return lists of x, y, and z coords,
+            otherwise, return x and y only. Defaults to *False*.
+
+        Returns:
+            np.array: lists of x, y, and (optionally) z coordinates of
+                each turbine
+        """
+        xcoords, ycoords, zcoords = self.core.farm.coordinates.T
+        if z:
+            return xcoords, ycoords, zcoords
+        else:
+            return xcoords, ycoords
 
     def print_dict(self) -> None:
         """Print the FlorisModel dictionary.
