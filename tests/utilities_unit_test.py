@@ -1,10 +1,14 @@
 
+from pathlib import Path
+
 import attr
 import numpy as np
 import pytest
 
 from floris.utilities import (
     cosd,
+    nested_get,
+    nested_set,
     reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
     sind,
@@ -18,6 +22,10 @@ from tests.conftest import (
     Y_COORDS,
     Z_COORDS,
 )
+
+
+TEST_DATA = Path(__file__).resolve().parent / "data"
+YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 
 def test_cosd():
@@ -154,3 +162,28 @@ def test_reverse_rotate_coordinates_rel_west():
     np.testing.assert_almost_equal(grid_x_reversed.squeeze(), coordinates[:,0].squeeze())
     np.testing.assert_almost_equal(grid_y_reversed.squeeze(), coordinates[:,1].squeeze())
     np.testing.assert_almost_equal(grid_z_reversed.squeeze(), coordinates[:,2].squeeze())
+
+
+def test_nested_get():
+    example_dict = {
+        'a': {
+            'b': {
+                'c': 10
+            }
+        }
+    }
+
+    assert nested_get(example_dict, ['a', 'b', 'c']) == 10
+
+
+def test_nested_set():
+    example_dict = {
+        'a': {
+            'b': {
+                'c': 10
+            }
+        }
+    }
+
+    nested_set(example_dict, ['a', 'b', 'c'], 20)
+    assert nested_get(example_dict, ['a', 'b', 'c']) == 20
