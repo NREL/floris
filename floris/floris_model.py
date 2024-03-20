@@ -30,16 +30,17 @@ from floris.type_dec import (
     NDArrayBool,
     NDArrayFloat,
 )
-from floris.wind_data import (
-    WindDataBase,
-    WindRose,
-    WindTIRose,
-)
 from floris.utilities import (
     nested_get,
     nested_set,
     print_nested_dict,
 )
+from floris.wind_data import (
+    WindDataBase,
+    WindRose,
+    WindTIRose,
+)
+
 
 class FlorisModel(LoggingManager):
     """
@@ -106,7 +107,7 @@ class FlorisModel(LoggingManager):
                     "but have a small change on accuracy."
                 )
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
-            
+
         # Initialize stored wind_data object to None
         self._wind_data = None
 
@@ -440,7 +441,7 @@ class FlorisModel(LoggingManager):
             multidim_condition=self.core.flow_field.multidim_conditions,
         )
         return turbine_powers
-    
+
 
     def get_turbine_powers(self):
         """
@@ -1389,7 +1390,7 @@ class FlorisModel(LoggingManager):
             method=self.core.grid.average_method,
             cubature_weights=self.core.grid.cubature_weights,
         )
-    
+
     @property
     def wind_data(self):
         return self._wind_data
