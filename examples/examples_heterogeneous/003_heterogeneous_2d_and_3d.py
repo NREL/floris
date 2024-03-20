@@ -16,8 +16,8 @@ For each case, we are plotting three slices of the resulting flow field:
 3. Vertical slice parallel to to the turbine disc plane
 
 Since the intention is for plotting, only a single condition is run and in
-this case the heterogenous_inflow_config is more convenient to use than
-heterogenous_inflow_config_by_wd. However, the latter is more convenient
+this case the heterogeneous_inflow_config is more convenient to use than
+heterogeneous_inflow_config_by_wd. However, the latter is more convenient
 when running multiple conditions.
 """
 
@@ -29,11 +29,11 @@ from floris.flow_visualization import visualize_cut_plane
 
 
 # Initialize FLORIS with the given input file via FlorisModel.
-# Note that the heterogeneous flow is defined in the input file. The heterogenous_inflow_config
+# Note that the heterogeneous flow is defined in the input file. The heterogeneous_inflow_config
 # dictionary is defined as below. The speed ups are multipliers of the ambient wind speed,
 # and the x and y are the locations of the speed ups.
 #
-# heterogenous_inflow_config = {
+# heterogeneous_inflow_config = {
 #     'speed_multipliers': [[2.0, 1.0, 2.0, 1.0]],
 #     'x': [-300.0, -300.0, 2600.0, 2600.0],
 #     'y': [ -300.0, 300.0, -300.0, 300.0],
@@ -88,7 +88,7 @@ y_locs = [-300.0, 300.0, -300.0, 300.0, -300.0, 300.0, -300.0, 300.0]
 z_locs = [540.0, 540.0, 0.0, 0.0, 540.0, 540.0, 0.0, 0.0]
 
 # Create the configuration dictionary to be used for the heterogeneous inflow.
-heterogenous_inflow_config = {
+heterogeneous_inflow_config = {
     "speed_multipliers": speed_multipliers,
     "x": x_locs,
     "y": y_locs,
@@ -99,7 +99,7 @@ heterogenous_inflow_config = {
 # Note that we initialize FLORIS with a homogenous flow input file, but
 # then configure the heterogeneous inflow via the reinitialize method.
 fmodel_3d = FlorisModel("../inputs/gch.yaml")
-fmodel_3d.set(heterogenous_inflow_config=heterogenous_inflow_config)
+fmodel_3d.set(heterogeneous_inflow_config=heterogeneous_inflow_config)
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fmodel_3d.set(wind_shear=0.0)

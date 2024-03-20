@@ -59,7 +59,7 @@ x_locs = [0, size_D * D, 0, size_D * D]
 y_locs = [-D, -D, D, D]
 
 # Create the configuration dictionary to be used for the heterogeneous inflow.
-heterogenous_inflow_config_by_wd = {
+heterogeneous_inflow_config_by_wd = {
     'speed_multipliers': speed_multipliers,
     'wind_directions': wind_directions,
     'x': x_locs,
@@ -72,7 +72,7 @@ wind_rose = WindRose(
     wind_speeds=wind_speeds,
     freq_table=freq_table,
     ti_table=0.06,
-    heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd
+    heterogeneous_inflow_config_by_wd=heterogeneous_inflow_config_by_wd
 )
 
 

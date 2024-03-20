@@ -1,4 +1,4 @@
-"""Example: Hetereogeneous Inflow for single case
+"""Example: Heterogeneous Inflow for single case
 
 This example illustrates how to set up a heterogeneous inflow condition in FLORIS.  It:
 
@@ -32,21 +32,21 @@ fmodel.set(wind_speeds=[8.0], wind_directions=[270.0], turbulence_intensities=[0
 
 # Define the speed-ups of the heterogeneous inflow, and their locations.
 # Note that heterogeneity is only applied within the bounds of the points defined in the
-# heterogenous_inflow_config dictionary.  In this case, set the inflow to be 1.25x the ambient
+# heterogeneous_inflow_config dictionary.  In this case, set the inflow to be 1.25x the ambient
 # wind speed for the upper turbines at y = 500m.
 speed_ups = [[1.0, 1.25, 1.0, 1.25]]  # Note speed-ups has dimensions of n_findex X n_points
 x_locs = [-500.0, -500.0, 1000.0, 1000.0]
 y_locs = [-500.0, 1000.0, -500.0, 1000.0]
 
 # Create the configuration dictionary to be used for the heterogeneous inflow.
-heterogenous_inflow_config = {
+heterogeneous_inflow_config = {
     "speed_multipliers": speed_ups,
     "x": x_locs,
     "y": y_locs,
 }
 
 # Set the heterogeneous inflow configuration
-fmodel.set(heterogenous_inflow_config=heterogenous_inflow_config)
+fmodel.set(heterogeneous_inflow_config=heterogeneous_inflow_config)
 
 # Run the FLORIS simulation
 fmodel.run()

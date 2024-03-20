@@ -297,8 +297,8 @@ def visualize_heterogeneous_cut_plane(
         points = np.array(
             list(
                 zip(
-                    fmodel.core.flow_field.heterogenous_inflow_config['x'],
-                    fmodel.core.flow_field.heterogenous_inflow_config['y'],
+                    fmodel.core.flow_field.heterogeneous_inflow_config['x'],
+                    fmodel.core.flow_field.heterogeneous_inflow_config['y'],
                 )
             )
         )
