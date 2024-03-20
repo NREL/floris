@@ -640,7 +640,7 @@ class FlorisModel(LoggingManager):
 
         if freq is None:
             if self.wind_data is None:
-                freq = np.array([1.0])
+                freq = np.array([1.0/self.core.flow_field.n_findex])
             else:
                 freq = self.wind_data.unpack_freq()
 
