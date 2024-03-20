@@ -29,20 +29,27 @@ class UncertainFlorisModel(LoggingManager):
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
                 - **wake**: See `floris.simulation.wake.WakeManager` for more details.
-                - **logging**: See `floris.core.Core` for more details.
-        wd_resolution (float, optional): The resolution of wind direction, in degrees.
-            Defaults to 1.0.
+                - **logging**: See `floris.simulation.core.Core` for more details.
+        wd_resolution (float, optional): The resolution of wind direction for generating
+            gaussian blends, in degrees.  Defaults to 1.0.
         ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
-        ti_resolution (float, optional): The resolution of turbulence intensity. Defaults to 0.01.
-        yaw_resolution (float, optional): The resolution of yaw angle, in degrees. Defaults to 1.0.
+        ti_resolution (float, optional): The resolution of turbulence intensity.
+            Defaults to 0.01.
+        yaw_resolution (float, optional): The resolution of yaw angle, in degrees.
+            Defaults to 1.0.
         power_setpoint_resolution (int, optional): The resolution of power setpoints, in kW.
             Defaults to 100.
         wd_std (float, optional): The standard deviation of wind direction. Defaults to 3.0.
         wd_sample_points (list[float], optional): The sample points for wind direction.
             If not provided, defaults to [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std].
+        fix_yaw_to_nominal_direction (bool, optional): Fix the yaw angle to the nominal
+            direction?   When False,
+            the yaw angle is the same across the sampled wind directions.  When True, the yaw
+            angle is fixed to the nominal wind direction and so of offset by the negative of
+            wind direction offset. Defaults to False.
         verbose (bool, optional): Verbosity flag for printing messages. Defaults to False.
-
     """
+
     def __init__(
         self,
         configuration: dict | str | Path,
@@ -53,33 +60,9 @@ class UncertainFlorisModel(LoggingManager):
         power_setpoint_resolution=100,  # kW
         wd_std=3.0,
         wd_sample_points=None,
+        fix_yaw_to_nominal_direction=False,
         verbose=False,
     ):
-        """
-        Instantiate the UncertainFlorisModel.
-
-        Args:
-            configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.
-                The configuration should have the following inputs specified.
-                    - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
-                    - **farm**: See `floris.simulation.farm.Farm` for more details.
-                    - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
-                    - **wake**: See `floris.simulation.wake.WakeManager` for more details.
-                    - **logging**: See `floris.simulation.core.Core` for more details.
-            wd_resolution (float, optional): The resolution of wind direction for generating
-                gaussian blends, in degrees.  Defaults to 1.0.
-            ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
-            ti_resolution (float, optional): The resolution of turbulence intensity.
-                efaults to 0.01.
-            yaw_resolution (float, optional): The resolution of yaw angle, in degrees.
-                Defaults to 1.0.
-            power_setpoint_resolution (int, optional): The resolution of power setpoints, in kW.
-                Defaults to 100.
-            wd_std (float, optional): The standard deviation of wind direction. Defaults to 3.0.
-            wd_sample_points (list[float], optional): The sample points for wind direction.
-                If not provided, defaults to [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std].
-            verbose (bool, optional): Verbosity flag for printing messages. Defaults to False.
-        """
         # Save these inputs
         self.wd_resolution = wd_resolution
         self.ws_resolution = ws_resolution
@@ -87,6 +70,7 @@ class UncertainFlorisModel(LoggingManager):
         self.yaw_resolution = yaw_resolution
         self.power_setpoint_resolution = power_setpoint_resolution
         self.wd_std = wd_std
+        self.fix_yaw_to_nominal_direction = fix_yaw_to_nominal_direction
         self.verbose = verbose
 
         # If wd_sample_points, default to 1 and 2 std
@@ -108,6 +92,20 @@ class UncertainFlorisModel(LoggingManager):
         # Instantiate the expanded FlorisModel
         # self.core_interface = FlorisModel(configuration)
 
+    def copy(self):
+        """Create an independent copy of the current UncertainFlorisModel object"""
+        return UncertainFlorisModel(
+            self.fmodel_unexpanded.core.as_dict(),
+            wd_resolution=self.wd_resolution,
+            ws_resolution=self.ws_resolution,
+            ti_resolution=self.ti_resolution,
+            yaw_resolution=self.yaw_resolution,
+            power_setpoint_resolution=self.power_setpoint_resolution,
+            wd_std=self.wd_std,
+            wd_sample_points=self.wd_sample_points,
+            fix_yaw_to_nominal_direction=self.fix_yaw_to_nominal_direction,
+            verbose=self.verbose,
+        )
 
     def set(
         self,
@@ -116,15 +114,13 @@ class UncertainFlorisModel(LoggingManager):
         """
         Set the wind farm conditions in the UncertainFlorisModel.
 
-        See FlorisInterace.set() for details of the contents of kwargs.
+        See FlorisModel.set() for details of the contents of kwargs.
 
         Args:
             **kwargs: The wind farm conditions to set.
         """
         # Call the nominal set function
-        self.fmodel_unexpanded.set(
-            **kwargs
-        )
+        self.fmodel_unexpanded.set(**kwargs)
 
         self._set_uncertain()
 
@@ -171,7 +167,10 @@ class UncertainFlorisModel(LoggingManager):
 
         # Get the expanded inputs
         self._expanded_wind_directions = self._expand_wind_directions(
-            self.rounded_inputs, self.wd_sample_points
+            self.rounded_inputs,
+            self.wd_sample_points,
+            self.fix_yaw_to_nominal_direction,
+            self.fmodel_unexpanded.core.farm.n_turbines,
         )
         self.n_expanded = self._expanded_wind_directions.shape[0]
 
@@ -196,7 +195,9 @@ class UncertainFlorisModel(LoggingManager):
             wind_speeds=self.unique_inputs[:, 1],
             turbulence_intensities=self.unique_inputs[:, 2],
             yaw_angles=self.unique_inputs[:, 3 : 3 + self.fmodel_unexpanded.core.farm.n_turbines],
-            power_setpoints=self.unique_inputs[:, 3 + self.fmodel_unexpanded.core.farm.n_turbines:]
+            power_setpoints=self.unique_inputs[
+                :, 3 + self.fmodel_unexpanded.core.farm.n_turbines :
+            ],
         )
 
     def run(self):
@@ -245,7 +246,7 @@ class UncertainFlorisModel(LoggingManager):
             weights=self.weights,
             n_unexpanded=self.n_unexpanded,
             n_sample_points=self.n_sample_points,
-            n_turbines=self.fmodel_unexpanded.core.farm.n_turbines
+            n_turbines=self.fmodel_unexpanded.core.farm.n_turbines,
         )
 
         return result
@@ -525,17 +526,26 @@ class UncertainFlorisModel(LoggingManager):
         rounded_input_array[:, 2] = (
             np.round(rounded_input_array[:, 2] / ti_resolution) * ti_resolution
         )
-        rounded_input_array[:, 3] = (
-            np.round(rounded_input_array[:, 3] / yaw_resolution) * yaw_resolution
+        rounded_input_array[:, 3 : 3 + self.fmodel_unexpanded.core.farm.n_turbines] = (
+            np.round(
+                rounded_input_array[:, 3 : 3 + self.fmodel_unexpanded.core.farm.n_turbines]
+                / yaw_resolution
+            )
+            * yaw_resolution
         )
-        rounded_input_array[:, 4] = (
-            np.round(rounded_input_array[:, 4] / power_setpoint_resolution)
+        rounded_input_array[:, 3 + self.fmodel_unexpanded.core.farm.n_turbines :] = (
+            np.round(
+                rounded_input_array[:, 3 + self.fmodel_unexpanded.core.farm.n_turbines :]
+                / power_setpoint_resolution
+            )
             * power_setpoint_resolution
         )
 
         return rounded_input_array
 
-    def _expand_wind_directions(self, input_array, wd_sample_points):
+    def _expand_wind_directions(
+        self, input_array, wd_sample_points, fix_yaw_to_nominal_direction=False, n_turbines=None
+    ):
         """
         Expand wind direction data.
 
@@ -547,6 +557,10 @@ class UncertainFlorisModel(LoggingManager):
                 represents wind direction.
             wd_sample_points (list): List of integers representing
             wind direction sample points.
+            fix_yaw_to_nominal_direction (bool): Fix the yaw angle to the nominal
+                direction?   Defaults to False
+            n_turbines (int): The number of turbines in the wind farm.  Must be supplied
+                if fix_yaw_to_nominal_direction is True.
 
         Returns:
             numpy.ndarray: Expanded wind direction data as a 2D numpy array
@@ -572,6 +586,10 @@ class UncertainFlorisModel(LoggingManager):
         if wd_sample_points[len(wd_sample_points) // 2] != 0:
             raise ValueError("The middle element of wd_sample_points must be 0.")
 
+        # If fix_yaw_to_nominal_direction is True, n_turbines must be supplied
+        if fix_yaw_to_nominal_direction and n_turbines is None:
+            raise ValueError("The number of turbines in the wind farm must be supplied")
+
         num_samples = len(wd_sample_points)
         num_rows = input_array.shape[0]
 
@@ -588,6 +606,13 @@ class UncertainFlorisModel(LoggingManager):
             output_array[start_idx:end_idx, 0] = (
                 output_array[start_idx:end_idx, 0] + wd_sample_points[i]
             ) % 360
+
+            # If fix_yaw_to_nominal_direction is True, set the yaw angle to relative
+            # to the nominal wind direction
+            if fix_yaw_to_nominal_direction:
+                output_array[start_idx:end_idx, 3 : 3 + n_turbines] = (
+                    output_array[start_idx:end_idx, 3 : 3 + n_turbines] - wd_sample_points[i]
+                ) % 360
 
         return output_array
 
@@ -644,7 +669,7 @@ class UncertainFlorisModel(LoggingManager):
         Returns:
             np.array: Wind turbine x-coordinate.
         """
-        return self.core_interface.core.farm.layout_x
+        return self.fmodel_unexpanded.core.farm.layout_x
 
     @property
     def layout_y(self):
@@ -654,15 +679,26 @@ class UncertainFlorisModel(LoggingManager):
         Returns:
             np.array: Wind turbine y-coordinate.
         """
-        return self.core_interface.core.farm.layout_y
+        return self.fmodel_unexpanded.core.farm.layout_y
+
+    @property
+    def core(self):
+        """
+        Returns the core of the unexpanded model.
+
+        Returns:
+            Floris: The core of the unexpanded model.
+        """
+        return self.fmodel_unexpanded.core
+
 
 def map_turbine_powers_uncertain(
-        unique_turbine_powers,
-        map_to_expanded_inputs,
-        weights,
-        n_unexpanded,
-        n_sample_points,
-        n_turbines
+    unique_turbine_powers,
+    map_to_expanded_inputs,
+    weights,
+    n_unexpanded,
+    n_sample_points,
+    n_turbines,
 ):
     """Calculates the power at each turbine in the wind farm based on uncertainty weights.
 
