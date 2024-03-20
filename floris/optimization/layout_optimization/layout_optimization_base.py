@@ -28,7 +28,8 @@ class LayoutOptimization(LoggingManager):
             optimization. Defaults to False.
     """
     def __init__(self, fmodel, boundaries, min_dist=None, enable_geometric_yaw=False):
-        self.fmodel = fmodel.copy()
+        self.fmodel = fmodel.copy() # Does not copy over the wind_data object
+        self.fmodel.set(wind_data=fmodel.wind_data)
         self.boundaries = boundaries
         self.enable_geometric_yaw = enable_geometric_yaw
 
@@ -47,7 +48,7 @@ class LayoutOptimization(LoggingManager):
             self.min_dist = min_dist
 
         # Check that wind_data is a WindDataBase object
-        if (not isinstance(fmodel.wind_data, WindDataBase)):
+        if (not isinstance(self.fmodel.wind_data, WindDataBase)):
             # NOTE: it is no longer strictly necessary that fmodel use 
             # a WindData object, but it is still recommended.
             raise ValueError(
