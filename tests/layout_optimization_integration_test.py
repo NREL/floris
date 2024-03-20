@@ -51,6 +51,6 @@ def test_base_class():
     LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)
 
     # Check with WindRose on fmodel
-    fmodel.set(wind_data=time_series.to_wind_rose())
+    fmodel.set(wind_data=time_series.to_WindRose())
     LayoutOptimization(fmodel, boundaries, 5)
     LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)

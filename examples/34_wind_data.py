@@ -39,7 +39,7 @@ ax.set_ylabel("Turbulence Intensity")
 time_series = TimeSeries(wd_array, ws_array, turbulence_intensities=ti_array)
 
 # Now build the wind rose
-wind_rose = time_series.to_wind_rose()
+wind_rose = time_series.to_WindRose()
 
 # Plot the wind rose
 fig, ax = plt.subplots(subplot_kw={"polar": True})
@@ -47,7 +47,7 @@ wind_rose.plot_wind_rose(ax=ax,legend_kwargs={"title": "WS"})
 fig.suptitle("WindRose Plot")
 
 # Now build a wind rose with turbulence intensity
-wind_ti_rose = time_series.to_wind_ti_rose()
+wind_ti_rose = time_series.to_WindTIRose()
 
 # Plot the wind rose with TI
 fig, axs = plt.subplots(2, 1, figsize=(6,8), subplot_kw={"polar": True})
