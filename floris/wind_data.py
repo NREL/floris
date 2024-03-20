@@ -538,6 +538,7 @@ class WindRose(WindDataBase):
         ax.set_ylabel("Turbulence Intensity (%)")
         ax.grid(True)
 
+    @staticmethod
     def read_csv_long(file_path: str,
                        ws_col: str = 'wind_speeds',
                        wd_col: str = 'wind_directions',
