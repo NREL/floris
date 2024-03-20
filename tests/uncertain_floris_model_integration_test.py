@@ -88,7 +88,7 @@ def test_expand_wind_directions_with_yaw_nom():
     np.testing.assert_almost_equal(output_array[0, 0], 267)
 
     # Check the first yaw
-    np.testing.assert_almost_equal(output_array[0, 4], 3)
+    np.testing.assert_almost_equal(output_array[0, 4], -3)
 
     # Rerun with fix_yaw_to_nominal_direction = False, and now the yaw should be 0
     output_array = ufmodel._expand_wind_directions(input_array, wd_sample_points, False, n_turbines)

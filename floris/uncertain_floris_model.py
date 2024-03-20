@@ -11,7 +11,7 @@ from floris.type_dec import (
     NDArrayBool,
     NDArrayFloat,
 )
-from floris.utilities import wrap_360
+from floris.utilities import wrap_180
 from floris.wind_data import WindDataBase
 
 
@@ -610,9 +610,11 @@ class UncertainFlorisModel(LoggingManager):
             # If fix_yaw_to_nominal_direction is True, set the yaw angle to relative
             # to the nominal wind direction
             if fix_yaw_to_nominal_direction:
-                output_array[start_idx:end_idx, 3 : 3 + n_turbines] = (
-                    output_array[start_idx:end_idx, 3 : 3 + n_turbines] - wd_sample_points[i]
-                ) % 360
+
+                # Wrap between -180 and 180
+                output_array[start_idx:end_idx, 3 : 3 + n_turbines] = wrap_180(
+                    output_array[start_idx:end_idx, 3 : 3 + n_turbines] + wd_sample_points[i]
+                )
 
         return output_array
 
