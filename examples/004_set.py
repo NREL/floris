@@ -7,9 +7,7 @@ and the controls settings.
 """
 
 
-import matplotlib.pyplot as plt
 import numpy as np
-import yaml
 
 from floris import (
     FlorisModel,

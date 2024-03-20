@@ -6,7 +6,6 @@ This example demonstrates the use of the flow and layout visualizations in FLORI
 
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 import floris.layout_visualization as layoutviz
 from floris import FlorisModel

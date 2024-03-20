@@ -5,10 +5,8 @@ example demonstrates how to calculate the AEP
 
 """
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.interpolate import NearestNDInterpolator
 
 from floris import (
     FlorisModel,

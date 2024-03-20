@@ -9,7 +9,6 @@ and run in one call to run().
 
 import matplotlib.pyplot as plt
 import numpy as np
-import yaml
 
 from floris import (
     FlorisModel,
