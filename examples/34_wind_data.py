@@ -78,9 +78,9 @@ time_series_power = fmodel_time_series.get_farm_power()
 wind_rose_power = fmodel_wind_rose.get_farm_power()
 wind_ti_rose_power = fmodel_wind_ti_rose.get_farm_power()
 
-time_series_aep = fmodel_time_series.get_farm_AEP_with_wind_data(time_series)
-wind_rose_aep = fmodel_wind_rose.get_farm_AEP_with_wind_data(wind_rose)
-wind_ti_rose_aep = fmodel_wind_ti_rose.get_farm_AEP_with_wind_data(wind_ti_rose)
+time_series_aep = fmodel_time_series.get_farm_AEP()
+wind_rose_aep = fmodel_wind_rose.get_farm_AEP()
+wind_ti_rose_aep = fmodel_wind_ti_rose.get_farm_AEP()
 
 print(f"AEP from TimeSeries {time_series_aep / 1e9:.2f} GWh")
 print(f"AEP from WindRose {wind_rose_aep / 1e9:.2f} GWh")
