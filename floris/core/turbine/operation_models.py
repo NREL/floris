@@ -517,15 +517,22 @@ class HelixTurbine(BaseOperationModel):
         if helix_amplitudes is None:
             return base_powers
         else:
+            if np.any(np.isclose(
+                base_powers/1000, 
+                np.max(power_thrust_table['power'])
+                )):
+                raise UserWarning(
+                    'The selected wind speed is above or near rated wind speed. '
+                    '`HelixTurbine` operation model is not designed '
+                    'or verified for above-rated conditions.'
+                    )
             return base_powers * (1 - (
                 power_thrust_table['helix_power_b']
                 + power_thrust_table['helix_power_c']*base_powers
                 )
                 *helix_amplitudes**power_thrust_table['helix_a']
-            ) ## TODO: Should probably add max function here
 
-        # TODO: would we like special handling of zero power setpoints
-        # (mixed with non-zero values) to speed up computation in that case?
+            ) ## TODO: Should probably add max function here
 
     def thrust_coefficient(
         power_thrust_table: dict,
