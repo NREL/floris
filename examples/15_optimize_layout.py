@@ -54,7 +54,7 @@ layout_y = [0, 4 * D, 0, 4 * D]
 fmodel.set(layout_x=layout_x, layout_y=layout_y)
 
 # Setup the optimization problem
-layout_opt = LayoutOptimizationScipy(fmodel, boundaries, wind_data=wind_rose)
+layout_opt = LayoutOptimizationScipy(fmodel, boundaries)
 
 # Run the optimization
 sol = layout_opt.optimize()
@@ -62,10 +62,10 @@ sol = layout_opt.optimize()
 # Get the resulting improvement in AEP
 print('... calcuating improvement in AEP')
 fmodel.run()
-base_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+base_aep = fmodel.get_farm_AEP() / 1e6
 fmodel.set(layout_x=sol[0], layout_y=sol[1])
 fmodel.run()
-opt_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose)  / 1e6
+opt_aep = fmodel.get_farm_AEP() / 1e6
 
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
