@@ -3,6 +3,11 @@ from __future__ import annotations
 
 import inspect
 from pathlib import Path
+from typing import (
+    Any,
+    List,
+    Optional,
+)
 
 import numpy as np
 import pandas as pd
@@ -30,7 +35,11 @@ from floris.wind_data import (
     WindRose,
     WindTIRose,
 )
-
+from floris.utilities import (
+    nested_get,
+    nested_set,
+    print_nested_dict,
+)
 
 class FlorisModel(LoggingManager):
     """
@@ -97,122 +106,11 @@ class FlorisModel(LoggingManager):
                     "but have a small change on accuracy."
                 )
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
-
+            
         # Initialize stored wind_data object to None
         self._wind_data = None
 
-    def assign_hub_height_to_ref_height(self):
-
-        # Confirm can do this operation
-        unique_heights = np.unique(self.core.farm.hub_heights)
-        if len(unique_heights) > 1:
-            raise ValueError(
-                "To assign hub heights to reference height, can not have more than one "
-                "specified height. "
-                f"Current length is {unique_heights}."
-            )
-
-        self.core.flow_field.reference_wind_height = unique_heights[0]
-
-    def copy(self):
-        """Create an independent copy of the current FlorisModel object"""
-        return FlorisModel(self.core.as_dict())
-
-    def set(
-        self,
-        wind_speeds: list[float] | NDArrayFloat | None = None,
-        wind_directions: list[float] | NDArrayFloat | None = None,
-        wind_shear: float | None = None,
-        wind_veer: float | None = None,
-        reference_wind_height: float | None = None,
-        turbulence_intensities: list[float] | NDArrayFloat | None = None,
-        air_density: float | None = None,
-        layout_x: list[float] | NDArrayFloat | None = None,
-        layout_y: list[float] | NDArrayFloat | None = None,
-        turbine_type: list | None = None,
-        turbine_library_path: str | Path | None = None,
-        solver_settings: dict | None = None,
-        heterogenous_inflow_config=None,
-        wind_data: type[WindDataBase] | None = None,
-        yaw_angles: NDArrayFloat | list[float] | None = None,
-        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
-        disable_turbines: NDArrayBool | list[bool] | None = None,
-    ):
-        """
-        Set the wind conditions and operation setpoints for the wind farm.
-
-        Args:
-            wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
-                Defaults to None.
-            wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each
-                findex. Defaults to None.
-            wind_shear (float | None, optional): Wind shear exponent. Defaults to None.
-            wind_veer (float | None, optional): Wind veer. Defaults to None.
-            reference_wind_height (float | None, optional): Reference wind height. Defaults to None.
-            turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence
-                intensities at each findex. Defaults to None.
-            air_density (float | None, optional): Air density. Defaults to None.
-            layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.
-                Defaults to None.
-            layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.
-                Defaults to None.
-            turbine_type (list | None, optional): Turbine type. Defaults to None.
-            turbine_library_path (str | Path | None, optional): Path to the turbine library.
-                Defaults to None.
-            solver_settings (dict | None, optional): Solver settings. Defaults to None.
-            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
-                to None.
-            wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
-            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
-                Defaults to None.
-            power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):
-                Turbine power setpoints.
-            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions
-                n_findex x n_turbines. True values indicate the turbine is disabled at that findex
-                and the power setpoint at that position is set to 0. Defaults to None.
-        """
-        # Initialize a new Floris object after saving the setpoints
-        _yaw_angles = self.core.farm.yaw_angles
-        _power_setpoints = self.core.farm.power_setpoints
-        self._reinitialize(
-            wind_speeds=wind_speeds,
-            wind_directions=wind_directions,
-            wind_shear=wind_shear,
-            wind_veer=wind_veer,
-            reference_wind_height=reference_wind_height,
-            turbulence_intensities=turbulence_intensities,
-            air_density=air_density,
-            layout_x=layout_x,
-            layout_y=layout_y,
-            turbine_type=turbine_type,
-            turbine_library_path=turbine_library_path,
-            solver_settings=solver_settings,
-            heterogenous_inflow_config=heterogenous_inflow_config,
-            wind_data=wind_data,
-        )
-
-        # If the yaw angles or power setpoints are not the default, set them back to the
-        # previous setting
-        if not (_yaw_angles == 0).all():
-            self.core.farm.set_yaw_angles(_yaw_angles)
-        if not (
-            (_power_setpoints == POWER_SETPOINT_DEFAULT)
-            | (_power_setpoints == POWER_SETPOINT_DISABLED)
-        ).all():
-            self.core.farm.set_power_setpoints(_power_setpoints)
-
-        # Set the operation
-        self._set_operation(
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            disable_turbines=disable_turbines,
-        )
-
-    def reset_operation(self):
-        """
-        Instantiate a new Floris object to set all operation setpoints to their default values.
-        """
-        self._reinitialize()
+    ### Methods for setting and running the FlorisModel
 
     def _reinitialize(
         self,
@@ -234,6 +132,9 @@ class FlorisModel(LoggingManager):
         """
         Instantiate a new Floris object with updated conditions set by arguments. Any parameters
         in Floris that aren't changed by arguments to this function retain their values.
+        Note that, although it's name is similar to the reinitialize() method from Floris v3,
+        this function is not meant to be called directly by the user---users should instead call
+        the set() method.
 
         Args:
             wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
@@ -385,6 +286,102 @@ class FlorisModel(LoggingManager):
             self.core.farm.yaw_angles[disable_turbines] = 0.0
             self.core.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
 
+    def set(
+        self,
+        wind_speeds: list[float] | NDArrayFloat | None = None,
+        wind_directions: list[float] | NDArrayFloat | None = None,
+        wind_shear: float | None = None,
+        wind_veer: float | None = None,
+        reference_wind_height: float | None = None,
+        turbulence_intensities: list[float] | NDArrayFloat | None = None,
+        air_density: float | None = None,
+        layout_x: list[float] | NDArrayFloat | None = None,
+        layout_y: list[float] | NDArrayFloat | None = None,
+        turbine_type: list | None = None,
+        turbine_library_path: str | Path | None = None,
+        solver_settings: dict | None = None,
+        heterogenous_inflow_config=None,
+        wind_data: type[WindDataBase] | None = None,
+        yaw_angles: NDArrayFloat | list[float] | None = None,
+        power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        disable_turbines: NDArrayBool | list[bool] | None = None,
+    ):
+        """
+        Set the wind conditions and operation setpoints for the wind farm.
+
+        Args:
+            wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
+                Defaults to None.
+            wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each
+                findex. Defaults to None.
+            wind_shear (float | None, optional): Wind shear exponent. Defaults to None.
+            wind_veer (float | None, optional): Wind veer. Defaults to None.
+            reference_wind_height (float | None, optional): Reference wind height. Defaults to None.
+            turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence
+                intensities at each findex. Defaults to None.
+            air_density (float | None, optional): Air density. Defaults to None.
+            layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.
+                Defaults to None.
+            layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.
+                Defaults to None.
+            turbine_type (list | None, optional): Turbine type. Defaults to None.
+            turbine_library_path (str | Path | None, optional): Path to the turbine library.
+                Defaults to None.
+            solver_settings (dict | None, optional): Solver settings. Defaults to None.
+            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
+                to None.
+            wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+            power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):
+                Turbine power setpoints.
+            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions
+                n_findex x n_turbines. True values indicate the turbine is disabled at that findex
+                and the power setpoint at that position is set to 0. Defaults to None.
+        """
+        # Initialize a new Floris object after saving the setpoints
+        _yaw_angles = self.core.farm.yaw_angles
+        _power_setpoints = self.core.farm.power_setpoints
+        self._reinitialize(
+            wind_speeds=wind_speeds,
+            wind_directions=wind_directions,
+            wind_shear=wind_shear,
+            wind_veer=wind_veer,
+            reference_wind_height=reference_wind_height,
+            turbulence_intensities=turbulence_intensities,
+            air_density=air_density,
+            layout_x=layout_x,
+            layout_y=layout_y,
+            turbine_type=turbine_type,
+            turbine_library_path=turbine_library_path,
+            solver_settings=solver_settings,
+            heterogenous_inflow_config=heterogenous_inflow_config,
+            wind_data=wind_data,
+        )
+
+        # If the yaw angles or power setpoints are not the default, set them back to the
+        # previous setting
+        if not (_yaw_angles == 0).all():
+            self.core.farm.set_yaw_angles(_yaw_angles)
+        if not (
+            (_power_setpoints == POWER_SETPOINT_DEFAULT)
+            | (_power_setpoints == POWER_SETPOINT_DISABLED)
+        ).all():
+            self.core.farm.set_power_setpoints(_power_setpoints)
+
+        # Set the operation
+        self._set_operation(
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
+
+    def reset_operation(self):
+        """
+        Instantiate a new Floris object to set all operation setpoints to their default values.
+        """
+        self._reinitialize()
+
     def run(self) -> None:
         """
         Run the FLORIS solve to compute the velocity field and wake effects.
@@ -409,389 +406,8 @@ class FlorisModel(LoggingManager):
         # Finalize values to user-supplied order
         self.core.finalize()
 
-    def get_plane_of_points(
-        self,
-        normal_vector="z",
-        planar_coordinate=None,
-    ):
-        """
-        Calculates velocity values through the
-        :py:meth:`FlorisModel.calculate_wake` method at points in plane
-        specified by inputs.
 
-        Args:
-            normal_vector (string, optional): Vector normal to plane.
-                Defaults to z.
-            planar_coordinate (float, optional): Value of normal vector
-                to slice through. Defaults to None.
-
-        Returns:
-            :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w
-        """
-        # Get results vectors
-        if normal_vector == "z":
-            x_flat = self.core.grid.x_sorted_inertial_frame[0].flatten()
-            y_flat = self.core.grid.y_sorted_inertial_frame[0].flatten()
-            z_flat = self.core.grid.z_sorted_inertial_frame[0].flatten()
-        else:
-            x_flat = self.core.grid.x_sorted[0].flatten()
-            y_flat = self.core.grid.y_sorted[0].flatten()
-            z_flat = self.core.grid.z_sorted[0].flatten()
-        u_flat = self.core.flow_field.u_sorted[0].flatten()
-        v_flat = self.core.flow_field.v_sorted[0].flatten()
-        w_flat = self.core.flow_field.w_sorted[0].flatten()
-
-        # Create a df of these
-        if normal_vector == "z":
-            df = pd.DataFrame(
-                {
-                    "x1": x_flat,
-                    "x2": y_flat,
-                    "x3": z_flat,
-                    "u": u_flat,
-                    "v": v_flat,
-                    "w": w_flat,
-                }
-            )
-        if normal_vector == "x":
-            df = pd.DataFrame(
-                {
-                    "x1": y_flat,
-                    "x2": z_flat,
-                    "x3": x_flat,
-                    "u": u_flat,
-                    "v": v_flat,
-                    "w": w_flat,
-                }
-            )
-        if normal_vector == "y":
-            df = pd.DataFrame(
-                {
-                    "x1": x_flat,
-                    "x2": z_flat,
-                    "x3": y_flat,
-                    "u": u_flat,
-                    "v": v_flat,
-                    "w": w_flat,
-                }
-            )
-
-        # Subset to plane
-        # TODO: Seems sloppy as need more than one plane in the z-direction for GCH
-        if planar_coordinate is not None:
-            df = df[np.isclose(df.x3, planar_coordinate)]  # , atol=0.1, rtol=0.0)]
-
-        # Drop duplicates
-        # TODO is this still needed now that we setup a grid for just this plane?
-        df = df.drop_duplicates()
-
-        # Sort values of df to make sure plotting is acceptable
-        df = df.sort_values(["x2", "x1"]).reset_index(drop=True)
-
-        return df
-
-    def calculate_horizontal_plane(
-        self,
-        height,
-        x_resolution=200,
-        y_resolution=200,
-        x_bounds=None,
-        y_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
-        yaw_angles=None,
-        power_setpoints=None,
-        disable_turbines=None,
-    ):
-        """
-        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
-        object containing the velocity field in a horizontal plane cut through
-        the simulation domain at a specific height.
-
-        Args:
-            height (float): Height of cut plane. Defaults to Hub-height.
-            x_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            y_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            x_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            y_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            wd (float, optional): Wind direction. Defaults to None.
-            ws (float, optional): Wind speed. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
-            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
-                to None.
-            power_setpoints (NDArrayFloat, optional):
-                Turbine power setpoints. Defaults to None.
-            disable_turbines (NDArrayBool, optional): Boolean array on whether
-                to disable turbines. Defaults to None.
-
-        Returns:
-            :py:class:`~.tools.cut_plane.CutPlane`: containing values
-            of x, y, u, v, w
-        """
-        # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
-
-        # Store the current state for reinitialization
-        floris_dict = self.core.as_dict()
-        # Set the solver to a flow field planar grid
-        solver_settings = {
-            "type": "flow_field_planar_grid",
-            "normal_vector": "z",
-            "planar_coordinate": height,
-            "flow_field_grid_points": [x_resolution, y_resolution],
-            "flow_field_bounds": [x_bounds, y_bounds],
-        }
-        self.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            disable_turbines=disable_turbines,
-        )
-
-        # Calculate wake
-        self.core.solve_for_viz()
-
-        # Get the points of data in a dataframe
-        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
-        df = self.get_plane_of_points(
-            normal_vector="z",
-            planar_coordinate=height,
-        )
-
-        # Compute the cutplane
-        horizontal_plane = CutPlane(
-            df,
-            self.core.grid.grid_resolution[0],
-            self.core.grid.grid_resolution[1],
-            "z",
-        )
-
-        # Reset the fmodel object back to the turbine grid configuration
-        self.core = Core.from_dict(floris_dict)
-
-        # Run the simulation again for further postprocessing (i.e. now we can get farm power)
-        self.run()
-
-        return horizontal_plane
-
-    def calculate_cross_plane(
-        self,
-        downstream_dist,
-        y_resolution=200,
-        z_resolution=200,
-        y_bounds=None,
-        z_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
-        yaw_angles=None,
-        power_setpoints=None,
-        disable_turbines=None,
-    ):
-        """
-        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
-        object containing the velocity field in a horizontal plane cut through
-        the simulation domain at a specific height.
-
-        Args:
-            height (float): Height of cut plane. Defaults to Hub-height.
-            x_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            y_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            x_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            y_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-
-        Returns:
-            :py:class:`~.tools.cut_plane.CutPlane`: containing values
-            of x, y, u, v, w
-        """
-        # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
-
-        # Store the current state for reinitialization
-        floris_dict = self.core.as_dict()
-
-        # Set the solver to a flow field planar grid
-        solver_settings = {
-            "type": "flow_field_planar_grid",
-            "normal_vector": "x",
-            "planar_coordinate": downstream_dist,
-            "flow_field_grid_points": [y_resolution, z_resolution],
-            "flow_field_bounds": [y_bounds, z_bounds],
-        }
-        self.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            disable_turbines=disable_turbines,
-        )
-
-        # Calculate wake
-        self.core.solve_for_viz()
-
-        # Get the points of data in a dataframe
-        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
-        df = self.get_plane_of_points(
-            normal_vector="x",
-            planar_coordinate=downstream_dist,
-        )
-
-        # Compute the cutplane
-        cross_plane = CutPlane(df, y_resolution, z_resolution, "x")
-
-        # Reset the fmodel object back to the turbine grid configuration
-        self.core = Core.from_dict(floris_dict)
-
-        # Run the simulation again for further postprocessing (i.e. now we can get farm power)
-        self.run()
-
-        return cross_plane
-
-    def calculate_y_plane(
-        self,
-        crossstream_dist,
-        x_resolution=200,
-        z_resolution=200,
-        x_bounds=None,
-        z_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
-        yaw_angles=None,
-        power_setpoints=None,
-        disable_turbines=None,
-    ):
-        """
-        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
-        object containing the velocity field in a horizontal plane cut through
-        the simulation domain at a specific height.
-
-        Args:
-            height (float): Height of cut plane. Defaults to Hub-height.
-            x_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            y_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
-            x_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            y_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            z_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
-            wd (float, optional): Wind direction. Defaults to None.
-            ws (float, optional): Wind speed. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
-            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
-                to None.
-            power_setpoints (NDArrayFloat, optional):
-                Turbine power setpoints. Defaults to None.
-            disable_turbines (NDArrayBool, optional): Boolean array on whether
-                to disable turbines. Defaults to None.
-
-
-
-        Returns:
-            :py:class:`~.tools.cut_plane.CutPlane`: containing values
-            of x, y, u, v, w
-        """
-        # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
-
-        # Store the current state for reinitialization
-        floris_dict = self.core.as_dict()
-
-        # Set the solver to a flow field planar grid
-        solver_settings = {
-            "type": "flow_field_planar_grid",
-            "normal_vector": "y",
-            "planar_coordinate": crossstream_dist,
-            "flow_field_grid_points": [x_resolution, z_resolution],
-            "flow_field_bounds": [x_bounds, z_bounds],
-        }
-        self.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            disable_turbines=disable_turbines,
-        )
-
-        # Calculate wake
-        self.core.solve_for_viz()
-
-        # Get the points of data in a dataframe
-        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
-        df = self.get_plane_of_points(
-            normal_vector="y",
-            planar_coordinate=crossstream_dist,
-        )
-
-        # Compute the cutplane
-        y_plane = CutPlane(df, x_resolution, z_resolution, "y")
-
-        # Reset the fmodel object back to the turbine grid configuration
-        self.core = Core.from_dict(floris_dict)
-
-        # Run the simulation again for further postprocessing (i.e. now we can get farm power)
-        self.run()
-
-        return y_plane
-
-    def check_wind_condition_for_viz(self, wd=None, ws=None, ti=None):
-        if len(wd) > 1 or len(wd) < 1:
-            raise ValueError(
-                "Wind direction input must be of length 1 for visualization. "
-                f"Current length is {len(wd)}."
-            )
-
-        if len(ws) > 1 or len(ws) < 1:
-            raise ValueError(
-                "Wind speed input must be of length 1 for visualization. "
-                f"Current length is {len(ws)}."
-            )
-
-        if len(ti) != 1:
-            raise ValueError(
-                "Turbulence intensity input must be of length 1 for visualization. "
-                f"Current length is {len(ti)}."
-            )
+    ### Methods for extracting turbine performance after running
 
     def _get_turbine_powers(self) -> NDArrayFloat:
         """Calculates the power at each turbine in the wind farm.
@@ -824,6 +440,7 @@ class FlorisModel(LoggingManager):
             multidim_condition=self.core.flow_field.multidim_conditions,
         )
         return turbine_powers
+    
 
     def get_turbine_powers(self):
         """
@@ -860,53 +477,6 @@ class FlorisModel(LoggingManager):
                 )
 
         return turbine_powers
-
-    def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
-        turbine_thrust_coefficients = thrust_coefficient(
-            velocities=self.core.flow_field.u,
-            air_density=self.core.flow_field.air_density,
-            yaw_angles=self.core.farm.yaw_angles,
-            tilt_angles=self.core.farm.tilt_angles,
-            power_setpoints=self.core.farm.power_setpoints,
-            thrust_coefficient_functions=self.core.farm.turbine_thrust_coefficient_functions,
-            tilt_interps=self.core.farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
-            turbine_type_map=self.core.farm.turbine_type_map,
-            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
-            average_method=self.core.grid.average_method,
-            cubature_weights=self.core.grid.cubature_weights,
-            multidim_condition=self.core.flow_field.multidim_conditions,
-        )
-        return turbine_thrust_coefficients
-
-    def get_turbine_ais(self) -> NDArrayFloat:
-        turbine_ais = axial_induction(
-            velocities=self.core.flow_field.u,
-            air_density=self.core.flow_field.air_density,
-            yaw_angles=self.core.farm.yaw_angles,
-            tilt_angles=self.core.farm.tilt_angles,
-            power_setpoints=self.core.farm.power_setpoints,
-            axial_induction_functions=self.core.farm.turbine_axial_induction_functions,
-            tilt_interps=self.core.farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
-            turbine_type_map=self.core.farm.turbine_type_map,
-            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
-            average_method=self.core.grid.average_method,
-            cubature_weights=self.core.grid.cubature_weights,
-            multidim_condition=self.core.flow_field.multidim_conditions,
-        )
-        return turbine_ais
-
-    @property
-    def turbine_average_velocities(self) -> NDArrayFloat:
-        return average_velocity(
-            velocities=self.core.flow_field.u,
-            method=self.core.grid.average_method,
-            cubature_weights=self.core.grid.cubature_weights,
-        )
-
-    def get_turbine_TIs(self) -> NDArrayFloat:
-        return self.core.flow_field.turbulence_intensity_field
 
     def _get_farm_power(
         self,
@@ -1119,6 +689,432 @@ class FlorisModel(LoggingManager):
             turbine_weights=turbine_weights
         ) * hours_per_year
 
+    def get_turbine_ais(self) -> NDArrayFloat:
+        turbine_ais = axial_induction(
+            velocities=self.core.flow_field.u,
+            air_density=self.core.flow_field.air_density,
+            yaw_angles=self.core.farm.yaw_angles,
+            tilt_angles=self.core.farm.tilt_angles,
+            power_setpoints=self.core.farm.power_setpoints,
+            axial_induction_functions=self.core.farm.turbine_axial_induction_functions,
+            tilt_interps=self.core.farm.turbine_tilt_interps,
+            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
+            turbine_type_map=self.core.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
+            average_method=self.core.grid.average_method,
+            cubature_weights=self.core.grid.cubature_weights,
+            multidim_condition=self.core.flow_field.multidim_conditions,
+        )
+        return turbine_ais
+
+    def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
+        turbine_thrust_coefficients = thrust_coefficient(
+            velocities=self.core.flow_field.u,
+            air_density=self.core.flow_field.air_density,
+            yaw_angles=self.core.farm.yaw_angles,
+            tilt_angles=self.core.farm.tilt_angles,
+            power_setpoints=self.core.farm.power_setpoints,
+            thrust_coefficient_functions=self.core.farm.turbine_thrust_coefficient_functions,
+            tilt_interps=self.core.farm.turbine_tilt_interps,
+            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
+            turbine_type_map=self.core.farm.turbine_type_map,
+            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
+            average_method=self.core.grid.average_method,
+            cubature_weights=self.core.grid.cubature_weights,
+            multidim_condition=self.core.flow_field.multidim_conditions,
+        )
+        return turbine_thrust_coefficients
+
+    def get_turbine_TIs(self) -> NDArrayFloat:
+        return self.core.flow_field.turbulence_intensity_field
+
+
+    ### Methods for sampling and visualization
+
+    def calculate_cross_plane(
+        self,
+        downstream_dist,
+        y_resolution=200,
+        z_resolution=200,
+        y_bounds=None,
+        z_bounds=None,
+        wd=None,
+        ws=None,
+        ti=None,
+        yaw_angles=None,
+        power_setpoints=None,
+        disable_turbines=None,
+    ):
+        """
+        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
+        object containing the velocity field in a horizontal plane cut through
+        the simulation domain at a specific height.
+
+        Args:
+            height (float): Height of cut plane. Defaults to Hub-height.
+            x_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            y_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            x_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            y_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+
+        Returns:
+            :py:class:`~.tools.cut_plane.CutPlane`: containing values
+            of x, y, u, v, w
+        """
+        # TODO update docstring
+        if wd is None:
+            wd = self.core.flow_field.wind_directions
+        if ws is None:
+            ws = self.core.flow_field.wind_speeds
+        if ti is None:
+            ti = self.core.flow_field.turbulence_intensities
+        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+
+        # Store the current state for reinitialization
+        floris_dict = self.core.as_dict()
+
+        # Set the solver to a flow field planar grid
+        solver_settings = {
+            "type": "flow_field_planar_grid",
+            "normal_vector": "x",
+            "planar_coordinate": downstream_dist,
+            "flow_field_grid_points": [y_resolution, z_resolution],
+            "flow_field_bounds": [y_bounds, z_bounds],
+        }
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            turbulence_intensities=ti,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
+
+        # Calculate wake
+        self.core.solve_for_viz()
+
+        # Get the points of data in a dataframe
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
+        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        df = self.get_plane_of_points(
+            normal_vector="x",
+            planar_coordinate=downstream_dist,
+        )
+
+        # Compute the cutplane
+        cross_plane = CutPlane(df, y_resolution, z_resolution, "x")
+
+        # Reset the fmodel object back to the turbine grid configuration
+        self.core = Core.from_dict(floris_dict)
+
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.run()
+
+        return cross_plane
+
+    def calculate_horizontal_plane(
+        self,
+        height,
+        x_resolution=200,
+        y_resolution=200,
+        x_bounds=None,
+        y_bounds=None,
+        wd=None,
+        ws=None,
+        ti=None,
+        yaw_angles=None,
+        power_setpoints=None,
+        disable_turbines=None,
+    ):
+        """
+        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
+        object containing the velocity field in a horizontal plane cut through
+        the simulation domain at a specific height.
+
+        Args:
+            height (float): Height of cut plane. Defaults to Hub-height.
+            x_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            y_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            x_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            y_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            wd (float, optional): Wind direction. Defaults to None.
+            ws (float, optional): Wind speed. Defaults to None.
+            ti (float, optional): Turbulence intensity. Defaults to None.
+            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
+
+        Returns:
+            :py:class:`~.tools.cut_plane.CutPlane`: containing values
+            of x, y, u, v, w
+        """
+        # TODO update docstring
+        if wd is None:
+            wd = self.core.flow_field.wind_directions
+        if ws is None:
+            ws = self.core.flow_field.wind_speeds
+        if ti is None:
+            ti = self.core.flow_field.turbulence_intensities
+        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+
+        # Store the current state for reinitialization
+        floris_dict = self.core.as_dict()
+        # Set the solver to a flow field planar grid
+        solver_settings = {
+            "type": "flow_field_planar_grid",
+            "normal_vector": "z",
+            "planar_coordinate": height,
+            "flow_field_grid_points": [x_resolution, y_resolution],
+            "flow_field_bounds": [x_bounds, y_bounds],
+        }
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            turbulence_intensities=ti,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
+
+        # Calculate wake
+        self.core.solve_for_viz()
+
+        # Get the points of data in a dataframe
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
+        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        df = self.get_plane_of_points(
+            normal_vector="z",
+            planar_coordinate=height,
+        )
+
+        # Compute the cutplane
+        horizontal_plane = CutPlane(
+            df,
+            self.core.grid.grid_resolution[0],
+            self.core.grid.grid_resolution[1],
+            "z",
+        )
+
+        # Reset the fmodel object back to the turbine grid configuration
+        self.core = Core.from_dict(floris_dict)
+
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.run()
+
+        return horizontal_plane
+
+    def calculate_y_plane(
+        self,
+        crossstream_dist,
+        x_resolution=200,
+        z_resolution=200,
+        x_bounds=None,
+        z_bounds=None,
+        wd=None,
+        ws=None,
+        ti=None,
+        yaw_angles=None,
+        power_setpoints=None,
+        disable_turbines=None,
+    ):
+        """
+        Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
+        object containing the velocity field in a horizontal plane cut through
+        the simulation domain at a specific height.
+
+        Args:
+            height (float): Height of cut plane. Defaults to Hub-height.
+            x_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            y_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
+            x_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            y_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            z_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            wd (float, optional): Wind direction. Defaults to None.
+            ws (float, optional): Wind speed. Defaults to None.
+            ti (float, optional): Turbulence intensity. Defaults to None.
+            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
+                to None.
+            power_setpoints (NDArrayFloat, optional):
+                Turbine power setpoints. Defaults to None.
+            disable_turbines (NDArrayBool, optional): Boolean array on whether
+                to disable turbines. Defaults to None.
+
+
+
+        Returns:
+            :py:class:`~.tools.cut_plane.CutPlane`: containing values
+            of x, y, u, v, w
+        """
+        # TODO update docstring
+        if wd is None:
+            wd = self.core.flow_field.wind_directions
+        if ws is None:
+            ws = self.core.flow_field.wind_speeds
+        if ti is None:
+            ti = self.core.flow_field.turbulence_intensities
+        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+
+        # Store the current state for reinitialization
+        floris_dict = self.core.as_dict()
+
+        # Set the solver to a flow field planar grid
+        solver_settings = {
+            "type": "flow_field_planar_grid",
+            "normal_vector": "y",
+            "planar_coordinate": crossstream_dist,
+            "flow_field_grid_points": [x_resolution, z_resolution],
+            "flow_field_bounds": [x_bounds, z_bounds],
+        }
+        self.set(
+            wind_directions=wd,
+            wind_speeds=ws,
+            turbulence_intensities=ti,
+            solver_settings=solver_settings,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            disable_turbines=disable_turbines,
+        )
+
+        # Calculate wake
+        self.core.solve_for_viz()
+
+        # Get the points of data in a dataframe
+        # TODO this just seems to be flattening and storing the data in a df; is this necessary?
+        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        df = self.get_plane_of_points(
+            normal_vector="y",
+            planar_coordinate=crossstream_dist,
+        )
+
+        # Compute the cutplane
+        y_plane = CutPlane(df, x_resolution, z_resolution, "y")
+
+        # Reset the fmodel object back to the turbine grid configuration
+        self.core = Core.from_dict(floris_dict)
+
+        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
+        self.run()
+
+        return y_plane
+
+    def check_wind_condition_for_viz(self, wd=None, ws=None, ti=None):
+        if len(wd) > 1 or len(wd) < 1:
+            raise ValueError(
+                "Wind direction input must be of length 1 for visualization. "
+                f"Current length is {len(wd)}."
+            )
+
+        if len(ws) > 1 or len(ws) < 1:
+            raise ValueError(
+                "Wind speed input must be of length 1 for visualization. "
+                f"Current length is {len(ws)}."
+            )
+
+        if len(ti) != 1:
+            raise ValueError(
+                "Turbulence intensity input must be of length 1 for visualization. "
+                f"Current length is {len(ti)}."
+            )
+
+    def get_plane_of_points(
+        self,
+        normal_vector="z",
+        planar_coordinate=None,
+    ):
+        """
+        Calculates velocity values through the
+        :py:meth:`FlorisModel.calculate_wake` method at points in plane
+        specified by inputs.
+
+        Args:
+            normal_vector (string, optional): Vector normal to plane.
+                Defaults to z.
+            planar_coordinate (float, optional): Value of normal vector
+                to slice through. Defaults to None.
+
+        Returns:
+            :py:class:`pandas.DataFrame`: containing values of x1, x2, x3, u, v, w
+        """
+        # Get results vectors
+        if normal_vector == "z":
+            x_flat = self.core.grid.x_sorted_inertial_frame[0].flatten()
+            y_flat = self.core.grid.y_sorted_inertial_frame[0].flatten()
+            z_flat = self.core.grid.z_sorted_inertial_frame[0].flatten()
+        else:
+            x_flat = self.core.grid.x_sorted[0].flatten()
+            y_flat = self.core.grid.y_sorted[0].flatten()
+            z_flat = self.core.grid.z_sorted[0].flatten()
+        u_flat = self.core.flow_field.u_sorted[0].flatten()
+        v_flat = self.core.flow_field.v_sorted[0].flatten()
+        w_flat = self.core.flow_field.w_sorted[0].flatten()
+
+        # Create a df of these
+        if normal_vector == "z":
+            df = pd.DataFrame(
+                {
+                    "x1": x_flat,
+                    "x2": y_flat,
+                    "x3": z_flat,
+                    "u": u_flat,
+                    "v": v_flat,
+                    "w": w_flat,
+                }
+            )
+        if normal_vector == "x":
+            df = pd.DataFrame(
+                {
+                    "x1": y_flat,
+                    "x2": z_flat,
+                    "x3": x_flat,
+                    "u": u_flat,
+                    "v": v_flat,
+                    "w": w_flat,
+                }
+            )
+        if normal_vector == "y":
+            df = pd.DataFrame(
+                {
+                    "x1": x_flat,
+                    "x2": z_flat,
+                    "x3": y_flat,
+                    "u": u_flat,
+                    "v": v_flat,
+                    "w": w_flat,
+                }
+            )
+
+        # Subset to plane
+        # TODO: Seems sloppy as need more than one plane in the z-direction for GCH
+        if planar_coordinate is not None:
+            df = df[np.isclose(df.x3, planar_coordinate)]  # , atol=0.1, rtol=0.0)]
+
+        # Drop duplicates
+        # TODO is this still needed now that we setup a grid for just this plane?
+        df = df.drop_duplicates()
+
+        # Sort values of df to make sure plotting is acceptable
+        df = df.sort_values(["x2", "x1"]).reset_index(drop=True)
+
+        return df
+
     def sample_flow_at_points(self, x: NDArrayFloat, y: NDArrayFloat, z: NDArrayFloat):
         """
         Extract the wind speed at points in the flow.
@@ -1263,6 +1259,109 @@ class FlorisModel(LoggingManager):
 
         return velocity_deficit_profiles
 
+
+    ### Utility methods
+
+    def assign_hub_height_to_ref_height(self):
+
+        # Confirm can do this operation
+        unique_heights = np.unique(self.core.farm.hub_heights)
+        if len(unique_heights) > 1:
+            raise ValueError(
+                "To assign hub heights to reference height, can not have more than one "
+                "specified height. "
+                f"Current length is {unique_heights}."
+            )
+
+        self.core.flow_field.reference_wind_height = unique_heights[0]
+
+    def get_power_thrust_model(self) -> str:
+        """Get the power thrust model of a FlorisModel.
+
+        Returns:
+            str: The power_thrust_model.
+        """
+        return self.core.farm.turbine_definitions[0]["power_thrust_model"]
+
+    def set_power_thrust_model(self, power_thrust_model: str):
+        """Set the power thrust model of a FlorisModel.
+
+        Args:
+            power_thrust_model (str): The power thrust model to set.
+        """
+        turbine_type = self.core.farm.turbine_definitions[0]
+        turbine_type["power_thrust_model"] = power_thrust_model
+        self.set(turbine_type=[turbine_type])
+
+    def copy(self):
+        """Create an independent copy of the current FlorisModel object"""
+        return FlorisModel(self.core.as_dict())
+
+    def get_param(
+        self,
+        param: List[str],
+        param_idx: Optional[int] = None
+    ) -> Any:
+        """Get a parameter from a FlorisModel object.
+
+        Args:
+            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            param_idx (Optional[int], optional): The index to get the value at. Defaults to None.
+                If None, the entire parameter is returned.
+
+        Returns:
+            Any: The value of the parameter.
+        """
+        fm_dict = self.core.as_dict()
+
+        if param_idx is None:
+            return nested_get(fm_dict, param)
+        else:
+            return nested_get(fm_dict, param)[param_idx]
+
+    def set_param(
+        self,
+        param: List[str],
+        value: Any,
+        param_idx: Optional[int] = None
+    ):
+        """Set a parameter in a FlorisModel object.
+
+        Args:
+            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            value (Any): The value to set.
+            param_idx (Optional[int], optional): The index to set the value at. Defaults to None.
+        """
+        fm_dict_mod = self.core.as_dict()
+        nested_set(fm_dict_mod, param, value, param_idx)
+        self.__init__(fm_dict_mod)
+
+    def get_turbine_layout(self, z=False):
+        """
+        Get turbine layout
+
+        Args:
+            z (bool): When *True*, return lists of x, y, and z coords,
+            otherwise, return x and y only. Defaults to *False*.
+
+        Returns:
+            np.array: lists of x, y, and (optionally) z coordinates of
+                each turbine
+        """
+        xcoords, ycoords, zcoords = self.core.farm.coordinates.T
+        if z:
+            return xcoords, ycoords, zcoords
+        else:
+            return xcoords, ycoords
+
+    def print_dict(self) -> None:
+        """Print the FlorisModel dictionary.
+        """
+        print_nested_dict(self.core.as_dict())
+
+
+    ### Properties
+
     @property
     def layout_x(self):
         """
@@ -1284,26 +1383,17 @@ class FlorisModel(LoggingManager):
         return self.core.farm.layout_y
 
     @property
+    def turbine_average_velocities(self) -> NDArrayFloat:
+        return average_velocity(
+            velocities=self.core.flow_field.u,
+            method=self.core.grid.average_method,
+            cubature_weights=self.core.grid.cubature_weights,
+        )
+    
+    @property
     def wind_data(self):
         return self._wind_data
 
-    def get_turbine_layout(self, z=False):
-        """
-        Get turbine layout
-
-        Args:
-            z (bool): When *True*, return lists of x, y, and z coords,
-            otherwise, return x and y only. Defaults to *False*.
-
-        Returns:
-            np.array: lists of x, y, and (optionally) z coordinates of
-                each turbine
-        """
-        xcoords, ycoords, zcoords = self.core.farm.coordinates.T
-        if z:
-            return xcoords, ycoords, zcoords
-        else:
-            return xcoords, ycoords
 
     ### v3 functions that are removed - raise an error if used
 
