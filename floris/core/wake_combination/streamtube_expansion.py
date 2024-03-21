@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 import floris.core.wake_velocity.eddy_viscosity as evwv
 
@@ -24,15 +24,16 @@ def expanded_wake_width_squared(w_sq, e_ij_):
 
 def expanded_wake_centerline_velocity(Ct, w_sq):
 
-    return np.sqrt(1-Ct/(4*w_sq**2))
+    return np.sqrt(1-Ct/(4*w_sq))
 
 def combine_wake_velocities(U_v_):
     N = len(U_v_)
-    if np.sum(U_v_**2) < N - 1:
+    U_comb_ = np.sqrt(1 - N + np.sum(U_v_**2, axis=0))
+    if (U_comb_ < 0).any() or np.isnan(U_comb_).any():
         print("uh oh")
-        return 0
-    else:
-        return np.sqrt(1 - N + np.sum(U_v_**2))
+        U_comb_[U_comb_ < 0] = 0
+        U_comb_[np.isnan(U_comb_)] = 0
+    return U_comb_
 
 #def combine_wake_velocities(U_v_, U_inf):
 #    U_v = U_v_*U_inf
@@ -50,7 +51,8 @@ if __name__ == "__main__":
     U_inf = 8.0
 
     # Second turbine's effect on first
-    ai_j = 0.3
+    Ct_j = 0.8
+    ai_j = 0.5*(1-np.sqrt(1-Ct_j))
     y_ij_ = 0.0 # 0 rotor diameters laterally
     x_ij_ = 5 # 5 rotor diameters downstream
 
@@ -64,14 +66,32 @@ if __name__ == "__main__":
 
     # Correct first turbine wake for second turbine
     e_ij_ = wake_width_correction(ai_j, y_ij_)
-    w_sq_2 = expanded_wake_width_squared(w_sq, e_ij_)
+    w_sq_2 = w_sq.copy()
+    w_sq_2[x_test >= x_ij_] = expanded_wake_width_squared(w_sq, e_ij_)[x_test >= x_ij_]
     U_c__out_2 = U_c__out.copy()
     U_c__out_2[x_test >= x_ij_] = expanded_wake_centerline_velocity(Ct, w_sq_2)[x_test >= x_ij_]
+
+    # Compute the centerline velocity of the second wake
+    U_c__out_j, x__out_j = evwv.compute_centerline_velocities(
+        x_test,
+        U_inf,
+        ambient_ti,
+        Ct_j,
+        hh,
+        D
+    )
+    U_c__out_j_2 = np.ones_like(U_c__out_j)
+    n_valid = np.sum(x_test >= x_ij_ + x_test[0])
+    U_c__out_j_2[x_test >= x_ij_ + x_test[0]] = U_c__out_j[:n_valid]
+
+    U_c__out_comb = combine_wake_velocities(np.stack((U_c__out_2, U_c__out_j_2)))
 
 
     fig, ax = plt.subplots(2,2)
     ax[0,0].plot(x__out, U_c__out, color="C0", label="Single turbine center")
     ax[0,0].plot(x__out, U_c__out_2, color="C2", label="Upstream turbine center")
+    ax[0,0].plot(x__out, U_c__out_j_2, color="C1",  label="Downstream turbine center")
+    ax[0,0].plot(x__out, U_c__out_comb, color="black",  label="Combined center")
     ax[0,0].set_xlabel("x_ [D]")
     ax[0,0].set_ylabel("U_c_ [-]")
     ax[0,0].set_xlim([0, 20])
@@ -80,6 +100,8 @@ if __name__ == "__main__":
 
     ax[0,1].plot(x__out*D, U_c__out*U_inf, color="C0")
     ax[0,1].plot(x__out*D, U_c__out_2*U_inf, color="C2")
+    ax[0,1].plot(x__out*D, U_c__out_j_2*U_inf, color="C1")
+    ax[0,1].plot(x__out*D, U_c__out_comb*U_inf, color="black")
     ax[0,1].plot([0, 20*D], [U_inf, U_inf], linestyle="dotted", color="black")
     ax[0,1].set_xlabel("x [m]")
     ax[0,1].set_ylabel("U_c [m/s]")
@@ -100,10 +122,4 @@ if __name__ == "__main__":
     ax[1,1].set_xlim([0, 20*D])
     ax[1,1].grid()
 
-    U_inf = 8
-    U_v_ = np.array([0.75, 0.75])
-    U_combined_ = combine_wake_velocities(U_v_)
-    print(U_combined_)
-
     plt.show()
-    
