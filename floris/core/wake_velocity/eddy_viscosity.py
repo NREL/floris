@@ -156,4 +156,3 @@ if __name__ == "__main__":
     ax[1,1].grid()
 
     plt.show()
-
