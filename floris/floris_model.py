@@ -36,6 +36,7 @@ from floris.utilities import (
     print_nested_dict,
 )
 from floris.wind_data import (
+    TimeSeries,
     WindDataBase,
     WindRose,
     WindTIRose,
@@ -685,6 +686,16 @@ class FlorisModel(LoggingManager):
                 The Annual Energy Production (AEP) for the wind farm in
                 watt-hours.
         """
+        if (
+            freq is None
+            and not isinstance(self.wind_data, WindRose)
+            and not isinstance(self.wind_data, WindTIRose)
+        ):
+            self.logger.warning(
+                "Computing AEP with uniform frequencies. Results results may not reflect annual "
+                "operation."
+            )
+
         return self.get_expected_farm_power(
             freq=freq,
             turbine_weights=turbine_weights

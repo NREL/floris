@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import numpy as np
@@ -341,7 +342,7 @@ def test_disable_turbines():
     fmodel.run()
     assert (fmodel.core.farm.yaw_angles == np.array([[1.0, 0.0, 1.0], [1.0, 0.0, 1.0]])).all()
 
-def test_get_farm_aep():
+def test_get_farm_aep(caplog):
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
     wind_speeds = np.array([8.0, 8.0, 8.0])
@@ -368,6 +369,15 @@ def test_get_farm_aep():
     # Start with uniform frequency
     freq = np.ones(n_findex)
     freq = freq / np.sum(freq)
+
+    # Check warning raised if freq not passed; no warning if freq passed
+    with caplog.at_level(logging.WARNING):
+        fmodel.get_farm_AEP()
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.get_farm_AEP(freq=freq)
+    assert caplog.text == "" # Checking empty
 
     farm_aep = fmodel.get_farm_AEP(freq=freq)
 

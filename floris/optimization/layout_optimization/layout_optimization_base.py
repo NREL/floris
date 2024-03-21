@@ -51,9 +51,11 @@ class LayoutOptimization(LoggingManager):
         if (not isinstance(self.fmodel.wind_data, WindDataBase)):
             # NOTE: it is no longer strictly necessary that fmodel use
             # a WindData object, but it is still recommended.
-            raise ValueError(
-                "wind_data entry is not an object of WindDataBase"
-                " (eg TimeSeries, WindRose, WindTIRose)"
+            self.logger.warning(
+                "Running layout optimization without a WindData object (e.g. TimeSeries, WindRose, "
+                "WindTIRose). We suggest that the user set the wind conditions on the FlorisModel "
+                " using the wind_data keyword argument for layout optimizations to capture "
+                "frequencies accurately."
             )
 
         # Establish geometric yaw class
