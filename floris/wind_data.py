@@ -511,14 +511,18 @@ class WindRose(WindDataBase):
 
         Args:
             ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
-                on which the wind rose is plotted. Defaults to None.
-            plot_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.plot().
+                on which the turbulence intensity is plotted. Defaults to None.
+            marker (str, optional): Scatter plot marker style. Defaults to ".".
+            ls (str, optional): Scatter plot line style. Defaults to "None".
+            color (str, optional): Scatter plot color. Defaults to "k".
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
-            the plotted wind rose.
+            the plotted turbulence intensities as a function of wind speed.
         """
+
+        # TODO: Plot mean and std. devs. of TI in each ws bin in addition to
+        # individual points
 
         # Set up figure
         if ax is None:
@@ -527,6 +531,110 @@ class WindRose(WindDataBase):
         ax.plot(self.ws_flat, self.ti_table_flat * 100, marker=marker, ls=ls, color=color)
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Turbulence Intensity (%)")
+        ax.grid(True)
+
+    def assign_value_using_wd_ws_function(self, func, normalize=False):
+        """
+        Use the passed in function to assign new values to the value table.
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument and wind_speeds as second argument and returns
+                values.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+
+        """
+        self.value_table = func(self.wd_grid, self.ws_grid)
+
+        if normalize:
+            self.value_table /= np.sum(self.freq_table * self.value_table)
+
+        self._build_gridded_and_flattened_version()
+
+    def assign_value_piecewise_linear(
+        self,
+        value_zero_ws=1.425,
+        ws_knee=4.5,
+        slope_1=0.0,
+        slope_2=-0.135,
+        limit_to_zero=False,
+        normalize=False,
+    ):
+        """
+        Define value as a continuous piecewise linear function of wind speed
+        with two line segments. The default parameters yield a value function
+        that approximates the normalized mean electricity price vs. wind speed
+        curve for the SPP market in the U.S. for years 2018-2020 from figure 7
+        in Simley et al. "The value of wake steering wind farm flow control in
+        US energy markets," Wind Energy Science, 2024.
+        https://doi.org/10.5194/wes-9-219-2024. This default value function is
+        constant at low wind speeds, then linearly decreases above 4.5 m/s.
+
+        Args:
+            value_zero_ws (float, optional): The value when wind speed is zero.
+                Defaults to 1.425.
+            ws_knee (float, optional): The wind speed separating line segments
+                1 and 2. Default = 4.5 m/s.
+            slope_1 (float, optional): The slope of the first line segment
+                (unit of value per m/s). Defaults to zero.
+            slope_2 (float, optional): The slope of the second line segment
+            (unit of value per m/s). Defaults to -0.135.
+            limit_to_zero (bool, optional): If True, negative values will be
+                set to zero. Defaults to False.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+        """
+
+        def piecewise_linear_value_func(wind_directions, wind_speeds):
+            value = np.zeros_like(wind_speeds)
+            value[wind_speeds < ws_knee] = (
+                slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
+            )
+
+            offset_2 = (slope_1 - slope_2) * ws_knee + value_zero_ws
+
+            value[wind_speeds >= ws_knee] = slope_2 * wind_speeds[wind_speeds >= ws_knee] + offset_2
+
+            if limit_to_zero:
+                value[value < 0] = 0.0
+
+            return value
+
+        self.assign_value_using_wd_ws_function(piecewise_linear_value_func, normalize)
+
+    def plot_value_over_ws(
+        self,
+        ax=None,
+        marker=".",
+        ls="None",
+        color="k",
+    ):
+        """
+        Scatter plot the value of the energy generated against wind speed.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the value is plotted. Defaults to None.
+            marker (str, optional): Scatter plot marker style. Defaults to ".".
+            ls (str, optional): Scatter plot line style. Defaults to "None".
+            color (str, optional): Scatter plot color. Defaults to "k".
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted value as a function of wind speed.
+        """
+
+        # TODO: Plot mean and std. devs. of value in each ws bin in addition to
+        # individual points
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots()
+
+        ax.plot(self.ws_flat, self.value_table_flat, marker=marker, ls=ls, color=color)
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Value")
         ax.grid(True)
 
     @staticmethod
@@ -952,16 +1060,18 @@ class WindTIRose(WindDataBase):
 
         Args:
             ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
-                on which the wind rose is plotted. Defaults to None.
-            plot_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.plot().
+                on which the mean turbulence intensity is plotted. Defaults to None.
+            marker (str, optional): Scatter plot marker style. Defaults to ".".
+            ls (str, optional): Scatter plot line style. Defaults to "None".
+            color (str, optional): Scatter plot color. Defaults to "k".
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
-            the plotted wind rose.
+            the plotted mean turbulence intensities as a function of wind speed.
         """
 
-        # TODO: Plot std. devs. of TI in addition to mean values
+        # TODO: Plot individual points and std. devs. of TI in addition to mean
+        # values
 
         # Set up figure
         if ax is None:
@@ -974,6 +1084,111 @@ class WindTIRose(WindDataBase):
         ax.plot(self.wind_speeds, mean_ti_values * 100, marker=marker, ls=ls, color=color)
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Mean Turbulence Intensity (%)")
+        ax.grid(True)
+
+    def assign_value_using_wd_ws_ti_function(self, func, normalize=False):
+        """
+        Use the passed in function to assign new values to the value table.
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument, wind_speeds as its second argument, and
+                turbulence_intensities as its third argument and returns
+                values.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+
+        """
+        self.value_table = func(self.wd_grid, self.ws_grid, self.ti_grid)
+
+        if normalize:
+            self.value_table /= np.sum(self.freq_table * self.value_table)
+
+        self._build_gridded_and_flattened_version()
+
+    def assign_value_piecewise_linear(
+        self,
+        value_zero_ws=1.425,
+        ws_knee=4.5,
+        slope_1=0.0,
+        slope_2=-0.135,
+        limit_to_zero=False,
+        normalize=False,
+    ):
+        """
+        Define value as a continuous piecewise linear function of wind speed
+        with two line segments. The default parameters yield a value function
+        that approximates the normalized mean electricity price vs. wind speed
+        curve for the SPP market in the U.S. for years 2018-2020 from figure 7
+        in Simley et al. "The value of wake steering wind farm flow control in
+        US energy markets," Wind Energy Science, 2024.
+        https://doi.org/10.5194/wes-9-219-2024. This default value function is
+        constant at low wind speeds, then linearly decreases above 4.5 m/s.
+
+        Args:
+            value_zero_ws (float, optional): The value when wind speed is zero.
+                Defaults to 1.425.
+            ws_knee (float, optional): The wind speed separating line segments
+                1 and 2. Default = 4.5 m/s.
+            slope_1 (float, optional): The slope of the first line segment
+                (unit of value per m/s). Defaults to zero.
+            slope_2 (float, optional): The slope of the second line segment
+            (unit of value per m/s). Defaults to -0.135.
+            limit_to_zero (bool, optional): If True, negative values will be
+                set to zero. Defaults to False.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+        """
+
+        def piecewise_linear_value_func(wind_directions, wind_speeds, turbulence_intensities):
+            value = np.zeros_like(wind_speeds)
+            value[wind_speeds < ws_knee] = (
+                slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
+            )
+
+            offset_2 = (slope_1 - slope_2) * ws_knee + value_zero_ws
+
+            value[wind_speeds >= ws_knee] = slope_2 * wind_speeds[wind_speeds >= ws_knee] + offset_2
+
+            if limit_to_zero:
+                value[value < 0] = 0.0
+
+            return value
+
+        self.assign_value_using_wd_ws_ti_function(piecewise_linear_value_func, normalize)
+
+    def plot_value_over_ws(
+        self,
+        ax=None,
+        marker=".",
+        ls="None",
+        color="k",
+    ):
+        """
+        Scatter plot the value of the energy generated against wind speed.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the value is plotted. Defaults to None.
+            marker (str, optional): Scatter plot marker style. Defaults to ".".
+            ls (str, optional): Scatter plot line style. Defaults to "None".
+            color (str, optional): Scatter plot color. Defaults to "k".
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted value as a function of wind speed.
+        """
+
+        # TODO: Plot mean and std. devs. of value in each ws bin in addition to
+        # individual points
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots()
+
+        ax.plot(self.ws_flat, self.value_table_flat, marker=marker, ls=ls, color=color)
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Value")
         ax.grid(True)
 
     @staticmethod
@@ -1118,9 +1333,8 @@ class TimeSeries(WindDataBase):
                     "wind_directions and wind_speeds must be the same length if provided as arrays"
                 )
 
-        if (
-            isinstance(wind_directions, np.ndarray)
-            and isinstance(turbulence_intensities, np.ndarray)
+        if isinstance(wind_directions, np.ndarray) and isinstance(
+            turbulence_intensities, np.ndarray
         ):
             if len(wind_directions) != len(turbulence_intensities):
                 raise ValueError(
@@ -1275,6 +1489,74 @@ class TimeSeries(WindDataBase):
             return sigma_1 / wind_speeds
 
         self.assign_ti_using_wd_ws_function(iref_func)
+
+    def assign_value_using_wd_ws_function(self, func, normalize=False):
+        """
+        Use the passed in function to assign new values to the value table.
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument and wind_speeds as second argument and returns
+                values.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+
+        """
+        self.values = func(self.wind_directions, self.wind_speeds)
+
+        if normalize:
+            self.values /= np.mean(self.values)
+
+    def assign_value_piecewise_linear(
+        self,
+        value_zero_ws=1.425,
+        ws_knee=4.5,
+        slope_1=0.0,
+        slope_2=-0.135,
+        limit_to_zero=False,
+        normalize=False,
+    ):
+        """
+        Define value as a continuous piecewise linear function of wind speed
+        with two line segments. The default parameters yield a value function
+        that approximates the normalized mean electricity price vs. wind speed
+        curve for the SPP market in the U.S. for years 2018-2020 from figure 7
+        in Simley et al. "The value of wake steering wind farm flow control in
+        US energy markets," Wind Energy Science, 2024.
+        https://doi.org/10.5194/wes-9-219-2024. This default value function is
+        constant at low wind speeds, then linearly decreases above 4.5 m/s.
+
+        Args:
+            value_zero_ws (float, optional): The value when wind speed is zero.
+                Defaults to 1.425.
+            ws_knee (float, optional): The wind speed separating line segments
+                1 and 2. Default = 4.5 m/s.
+            slope_1 (float, optional): The slope of the first line segment
+                (unit of value per m/s). Defaults to zero.
+            slope_2 (float, optional): The slope of the second line segment
+            (unit of value per m/s). Defaults to -0.135.
+            limit_to_zero (bool, optional): If True, negative values will be
+                set to zero. Defaults to False.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+        """
+
+        def piecewise_linear_value_func(wind_directions, wind_speeds):
+            value = np.zeros_like(wind_speeds)
+            value[wind_speeds < ws_knee] = (
+                slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
+            )
+
+            offset_2 = (slope_1 - slope_2) * ws_knee + value_zero_ws
+
+            value[wind_speeds >= ws_knee] = slope_2 * wind_speeds[wind_speeds >= ws_knee] + offset_2
+
+            if limit_to_zero:
+                value[value < 0] = 0.0
+
+            return value
+
+        self.assign_value_using_wd_ws_function(piecewise_linear_value_func, normalize)
 
     def to_WindRose(
         self, wd_step=2.0, ws_step=1.0, wd_edges=None, ws_edges=None, bin_weights=None
