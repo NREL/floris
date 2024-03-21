@@ -1,6 +1,7 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.integrate import solve_ivp
+
 
 def compute_centerline_velocities(x_, U_inf, ambient_ti, Ct, hh, D):
     """
@@ -37,7 +38,7 @@ def compute_off_center_velocities(U_c_, y_, z_, Ct):
     y_, z_ supposed to be defined from the center of the rotor.
     """
     U_c_ = U_c_[:, None]
-    
+
     w_sq = wake_width_squared(Ct, U_c_)
     U_r_ = 1 - (1 - U_c_) * np.exp(-(y_**2 + z_**2)/w_sq)
     return U_r_
@@ -60,7 +61,7 @@ def centerline_ode(x_, U_c_, U_inf, ambient_ti, Ct, hh, D):
     #hh = 90.0 # Will be passed in as an argument
     #Ct = 0.9 # Will be passed in as an argument
     von_Karman = 0.41
-    
+
     length_scale = von_Karman*hh
 
     K_l = k_l * np.sqrt(wake_width_squared(Ct, U_c_)) * D * (U_inf - U_c_*U_inf) # local component
@@ -85,7 +86,7 @@ def centerline_ode(x_, U_c_, U_inf, ambient_ti, Ct, hh, D):
     ev_ = eddy_viscosity/(U_inf*D)
 
     dU_c__dx_ = 16 * ev_ * (U_c_**3 - U_c_**2 - U_c_ + 1) / (U_c_ * Ct)
-        
+
     return [dU_c__dx_]
 
 def initial_U_c_(Ct, ambient_ti):
