@@ -20,7 +20,14 @@ class UncertainFlorisModel(LoggingManager):
     An interface for handling uncertainty in wind farm simulations.
 
     This class contains a FlorisModel object and adds functionality to handle
-    uncertainty in wind direction.
+    uncertainty in wind direction.  It is designed to be used similarly to FlorisModel.
+    In the model, the turbine powers are computed for a set of expanded wind conditions,
+    given by wd_sample_points, and then the powers are computed as a gaussian blend
+    of these expanded conditions.
+
+    To reduce computational costs, the wind directions, wind speeds, turbulence intensities,
+    yaw angles, and power setpoints are rounded to specified resolutions.  Only unique
+    conditions from within the expanded set of conditions are run.
 
     Args:
         configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.
@@ -43,10 +50,10 @@ class UncertainFlorisModel(LoggingManager):
         wd_sample_points (list[float], optional): The sample points for wind direction.
             If not provided, defaults to [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std].
         fix_yaw_to_nominal_direction (bool, optional): Fix the yaw angle to the nominal
-            direction?   When False,
-            the yaw angle is the same across the sampled wind directions.  When True, the yaw
-            angle is fixed to the nominal wind direction and so of offset by the negative of
-            wind direction offset. Defaults to False.
+            direction?   When False, the yaw misalignment is the same across the sampled wind
+            directions. When True, the turbine orientation is fixed to the nominal wind
+            direction such that the yaw misalignment changes depending on the sampled wind
+            direction.  Defaults to False.
         verbose (bool, optional): Verbosity flag for printing messages. Defaults to False.
     """
 
