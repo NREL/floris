@@ -16,7 +16,6 @@ from floris import (
 )
 
 
-# Initialize FLORIS with the given input file via FlorisModel
 fmodel = FlorisModel("inputs/gch.yaml")
 
 # Set to a 2 turbine layout
@@ -124,7 +123,6 @@ ax.set_ylabel("Power (kW)")
 ######################################################
 
 # Since we're changing control modes, need to reset the operation
-#TODO: Needed?
 fmodel.reset_operation()
 
 # To the de-rating need to change the power_thrust_mode to mixed or simple de-rating
