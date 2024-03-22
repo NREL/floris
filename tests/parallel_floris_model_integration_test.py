@@ -124,6 +124,7 @@ def test_parallel_uncertain_get_AEP(sample_inputs_fixture):
         wd_std=3
     )
     pfmodel_input = copy.deepcopy(ufmodel)
+    ufmodel.run()
     serial_farm_AEP = ufmodel.get_farm_AEP(freq=freq)
 
     pfmodel = ParallelFlorisModel(
