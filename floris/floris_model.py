@@ -455,23 +455,23 @@ class FlorisModel(LoggingManager):
 
         if self.wind_data is not None:
             if type(self.wind_data) is WindRose:
-                turbine_powers_expanded = np.full(
+                turbine_powers_rose = np.full(
                     (len(self.wind_data.wd_flat), self.core.farm.n_turbines),
                     np.nan
                 )
-                turbine_powers_expanded[self.wind_data.non_zero_freq_mask, :] = turbine_powers
-                turbine_powers = turbine_powers_expanded.reshape(
+                turbine_powers_rose[self.wind_data.non_zero_freq_mask, :] = turbine_powers
+                turbine_powers = turbine_powers_rose.reshape(
                     len(self.wind_data.wind_directions),
                     len(self.wind_data.wind_speeds),
                     self.core.farm.n_turbines
                 )
             elif type(self.wind_data) is WindTIRose:
-                turbine_powers_expanded = np.full(
+                turbine_powers_rose = np.full(
                     (len(self.wind_data.wd_flat), self.core.farm.n_turbines),
                     np.nan
                 )
-                turbine_powers_expanded[self.wind_data.non_zero_freq_mask, :] = turbine_powers
-                turbine_powers = turbine_powers_expanded.reshape(
+                turbine_powers_rose[self.wind_data.non_zero_freq_mask, :] = turbine_powers
+                turbine_powers = turbine_powers_rose.reshape(
                     len(self.wind_data.wind_directions),
                     len(self.wind_data.wind_speeds),
                     len(self.wind_data.turbulence_intensities),
@@ -589,16 +589,16 @@ class FlorisModel(LoggingManager):
 
         if self.wind_data is not None:
             if type(self.wind_data) is WindRose:
-                farm_power_expanded = np.full(len(self.wind_data.wd_flat), np.nan)
-                farm_power_expanded[self.wind_data.non_zero_freq_mask] = farm_power
-                farm_power = farm_power_expanded.reshape(
+                farm_power_rose = np.full(len(self.wind_data.wd_flat), np.nan)
+                farm_power_rose[self.wind_data.non_zero_freq_mask] = farm_power
+                farm_power = farm_power_rose.reshape(
                     len(self.wind_data.wind_directions),
                     len(self.wind_data.wind_speeds)
                 )
             elif type(self.wind_data) is WindTIRose:
-                farm_power_expanded = np.full(len(self.wind_data.wd_flat), np.nan)
-                farm_power_expanded[self.wind_data.non_zero_freq_mask] = farm_power
-                farm_power = farm_power_expanded.reshape(
+                farm_power_rose = np.full(len(self.wind_data.wd_flat), np.nan)
+                farm_power_rose[self.wind_data.non_zero_freq_mask] = farm_power
+                farm_power = farm_power_rose.reshape(
                     len(self.wind_data.wind_directions),
                     len(self.wind_data.wind_speeds),
                     len(self.wind_data.turbulence_intensities)
