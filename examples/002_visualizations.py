@@ -2,6 +2,12 @@
 
 This example demonstrates the use of the flow and layout visualizations in FLORIS.
 
+FLORIS includes two modules for visualization:
+  1) flow_visualization: for visualizing the flow field
+  2) layout_visualization: for visualizing the layout of the wind farm
+The two modules can be used together to visualize the flow field and the layout
+of the wind farm.
+
 """
 
 
@@ -12,15 +18,6 @@ from floris import FlorisModel
 from floris.flow_visualization import visualize_cut_plane
 
 
-# FLORIS includes two modules for visualization:
-#   1) flow_visualization: for visualizing the flow field
-#   2) layout_visualization: for visualizing the layout of the wind farm
-# The two modules can be used together to visualize the flow field and the layout
-# of the wind farm.
-
-# Initialize FLORIS with the given input file via FlorisModel.
-# For basic usage, FlorisModel provides a simplified and expressive
-# entry point to the simulation routines.
 fmodel = FlorisModel("inputs/gch.yaml")
 
 # Set the farm layout to have 8 turbines irregularly placed

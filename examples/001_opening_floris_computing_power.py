@@ -17,14 +17,14 @@ import numpy as np
 from floris import FlorisModel
 
 
-# Initialize FLORIS with the given input file.
-# The Floris class is the entry point for most usage.
+# The FlorisModel class is the entry point for most usage.
+# Initialize using an input yaml file
 fmodel = FlorisModel("inputs/gch.yaml")
 
 # Changing the wind farm layout uses FLORIS' set method to a two-turbine layout
 fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 
-# Changing wind speed, wind direction, and turbulence intensity using the set method
+# Changing wind speed, wind direction, and turbulence intensity uses the set method
 # as well. Note that the wind_speeds, wind_directions, and turbulence_intensities
 # are all specified as arrays of the same length.
 fmodel.set(
