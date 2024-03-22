@@ -610,7 +610,7 @@ class WindRose(WindDataBase):
         time_series = TimeSeries(wind_directions, wind_speeds, turbulence_intensities)
 
         # Now build a new wind rose using the new steps
-        return time_series.to_wind_rose(
+        return time_series.to_WindRose(
             wd_step=wd_step, ws_step=ws_step, bin_weights=freq_values
         )
 
@@ -1049,7 +1049,7 @@ class WindTIRose(WindDataBase):
         time_series = TimeSeries(wind_directions, wind_speeds, turbulence_intensities)
 
         # Now build a new wind rose using the new steps
-        return time_series.to_wind_ti_rose(
+        return time_series.to_WindTIRose(
             wd_step=wd_step, ws_step=ws_step, ti_step=ti_step,bin_weights=freq_values
         )
 
