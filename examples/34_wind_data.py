@@ -39,7 +39,7 @@ ax.set_ylabel("Turbulence Intensity")
 time_series = TimeSeries(wd_array, ws_array, turbulence_intensities=ti_array)
 
 # Now build the wind rose
-wind_rose = time_series.to_wind_rose()
+wind_rose = time_series.to_WindRose()
 
 # Plot the wind rose
 fig, ax = plt.subplots(subplot_kw={"polar": True})
@@ -47,7 +47,7 @@ wind_rose.plot_wind_rose(ax=ax,legend_kwargs={"title": "WS"})
 fig.suptitle("WindRose Plot")
 
 # Now build a wind rose with turbulence intensity
-wind_ti_rose = time_series.to_wind_ti_rose()
+wind_ti_rose = time_series.to_WindTIRose()
 
 # Plot the wind rose with TI
 fig, axs = plt.subplots(2, 1, figsize=(6,8), subplot_kw={"polar": True})
@@ -78,9 +78,9 @@ time_series_power = fmodel_time_series.get_farm_power()
 wind_rose_power = fmodel_wind_rose.get_farm_power()
 wind_ti_rose_power = fmodel_wind_ti_rose.get_farm_power()
 
-time_series_aep = fmodel_time_series.get_farm_AEP_with_wind_data(time_series)
-wind_rose_aep = fmodel_wind_rose.get_farm_AEP_with_wind_data(wind_rose)
-wind_ti_rose_aep = fmodel_wind_ti_rose.get_farm_AEP_with_wind_data(wind_ti_rose)
+time_series_aep = fmodel_time_series.get_farm_AEP()
+wind_rose_aep = fmodel_wind_rose.get_farm_AEP()
+wind_ti_rose_aep = fmodel_wind_ti_rose.get_farm_AEP()
 
 print(f"AEP from TimeSeries {time_series_aep / 1e9:.2f} GWh")
 print(f"AEP from WindRose {wind_rose_aep / 1e9:.2f} GWh")

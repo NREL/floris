@@ -49,16 +49,7 @@ class WindDataBase:
     def unpack_freq(self):
         """Unpack frequency weighting"""
 
-        (
-            _,
-            _,
-            _,
-            freq_table_unpack,
-            _,
-            _,
-        ) = self.unpack()
-
-        return freq_table_unpack
+        return self.unpack()[3]
 
     def check_heterogenous_inflow_config_by_wd(self, heterogenous_inflow_config_by_wd):
         """
@@ -398,7 +389,7 @@ class WindRose(WindDataBase):
         )
 
         # Now build a new wind rose using the new steps
-        return time_series.to_wind_rose(
+        return time_series.to_WindRose(
             wd_step=wd_step, ws_step=ws_step, bin_weights=self.freq_table_flat
         )
 
@@ -619,7 +610,7 @@ class WindRose(WindDataBase):
         time_series = TimeSeries(wind_directions, wind_speeds, turbulence_intensities)
 
         # Now build a new wind rose using the new steps
-        return time_series.to_wind_rose(
+        return time_series.to_WindRose(
             wd_step=wd_step, ws_step=ws_step, bin_weights=freq_values
         )
 
@@ -851,7 +842,7 @@ class WindTIRose(WindDataBase):
         )
 
         # Now build a new wind rose using the new steps
-        return time_series.to_wind_ti_rose(
+        return time_series.to_WindTIRose(
             wd_step=wd_step, ws_step=ws_step, ti_step=ti_step, bin_weights=self.freq_table_flat
         )
 
@@ -1058,7 +1049,7 @@ class WindTIRose(WindDataBase):
         time_series = TimeSeries(wind_directions, wind_speeds, turbulence_intensities)
 
         # Now build a new wind rose using the new steps
-        return time_series.to_wind_ti_rose(
+        return time_series.to_WindTIRose(
             wd_step=wd_step, ws_step=ws_step, ti_step=ti_step,bin_weights=freq_values
         )
 
@@ -1285,7 +1276,7 @@ class TimeSeries(WindDataBase):
 
         self.assign_ti_using_wd_ws_function(iref_func)
 
-    def to_wind_rose(
+    def to_WindRose(
         self, wd_step=2.0, ws_step=1.0, wd_edges=None, ws_edges=None, bin_weights=None
     ):
         """
@@ -1425,7 +1416,7 @@ class TimeSeries(WindDataBase):
             self.heterogenous_inflow_config_by_wd,
         )
 
-    def to_wind_ti_rose(
+    def to_WindTIRose(
         self,
         wd_step=2.0,
         ws_step=1.0,

@@ -124,6 +124,7 @@ for fmodel in [fmodel_fixed, fmodel_floating]:
         wind_speeds= ws_grid.flatten(),
         turbulence_intensities=0.06 * np.ones_like(wd_grid.flatten())
     )
+    fmodel.run()
 
 # Compute the AEP
 aep_fixed = fmodel_fixed.get_farm_AEP(freq=freq)

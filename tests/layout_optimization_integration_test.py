@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import numpy as np
@@ -21,7 +22,7 @@ TEST_DATA = Path(__file__).resolve().parent / "data"
 YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 
-def test_base_class():
+def test_base_class(caplog):
     # Get a test fi
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
@@ -32,24 +33,40 @@ def test_base_class():
     # (this should fail)
     freq = np.ones((5, 5))
     freq = freq / freq.sum()
-    with pytest.raises(ValueError):
-        LayoutOptimization(fmodel, boundaries, freq, 5)
 
-    # Passing as a keyword freq to wind_data should also fail
-    with pytest.raises(ValueError):
-        LayoutOptimization(fmodel=fmodel, boundaries=boundaries, wind_data=freq, min_dist=5,)
+    # Check that warning is raised if fmodel does not contain wind_data
+    with caplog.at_level(logging.WARNING):
+        LayoutOptimization(fmodel, boundaries, 5)
+    assert caplog.text != "" # Checking not empty
+
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5,)
+    assert caplog.text != "" # Checking not empty
 
     time_series = TimeSeries(
         wind_directions=fmodel.core.flow_field.wind_directions,
         wind_speeds=fmodel.core.flow_field.wind_speeds,
         turbulence_intensities=fmodel.core.flow_field.turbulence_intensities,
     )
-    wind_rose = time_series.to_wind_rose()
+    fmodel.set(wind_data=time_series)
 
-    # Passing wind_data objects in the 3rd position should not fail
-    LayoutOptimization(fmodel, boundaries, time_series, 5)
-    LayoutOptimization(fmodel, boundaries, wind_rose, 5)
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        LayoutOptimization(fmodel, boundaries, 5)
+    assert caplog.text != "" # Not empty, because get_farm_AEP called on TimeSeries
 
-    # Passing wind_data objects by keyword should not fail
-    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, wind_data=time_series, min_dist=5)
-    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, wind_data=wind_rose, min_dist=5)
+    # Passing without keyword arguments should work, or with keyword arguments
+    LayoutOptimization(fmodel, boundaries, 5)
+    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)
+
+    # Check with WindRose on fmodel
+    fmodel.set(wind_data=time_series.to_WindRose())
+
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        LayoutOptimization(fmodel, boundaries, 5)
+    assert caplog.text == "" # Empty
+
+    LayoutOptimization(fmodel, boundaries, 5)
+    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)

@@ -87,7 +87,6 @@ maxiter = 100
 layout_opt = LayoutOptimizationScipy(
     fmodel,
     boundaries,
-    wind_data=wind_rose,
     min_dist=2*D,
     optOptions={"maxiter":maxiter}
 )
@@ -100,10 +99,10 @@ sol = layout_opt.optimize()
 print('... calcuating improvement in AEP')
 
 fmodel.run()
-base_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+base_aep = fmodel.get_farm_AEP() / 1e6
 fmodel.set(layout_x=sol[0], layout_y=sol[1])
 fmodel.run()
-opt_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+opt_aep = fmodel.get_farm_AEP() / 1e6
 
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 
@@ -128,7 +127,6 @@ fmodel.set(layout_x=layout_x, layout_y=layout_y)
 layout_opt = LayoutOptimizationScipy(
     fmodel,
     boundaries,
-    wind_data=wind_rose,
     min_dist=2*D,
     enable_geometric_yaw=True,
     optOptions={"maxiter":maxiter}
@@ -142,12 +140,11 @@ sol = layout_opt.optimize()
 print('... calcuating improvement in AEP')
 
 fmodel.set(yaw_angles=np.zeros_like(layout_opt.yaw_angles))
-base_aep = fmodel.get_farm_AEP_with_wind_data(wind_data=wind_rose) / 1e6
+fmodel.run()
+base_aep = fmodel.get_farm_AEP() / 1e6
 fmodel.set(layout_x=sol[0], layout_y=sol[1], yaw_angles=layout_opt.yaw_angles)
 fmodel.run()
-opt_aep = fmodel.get_farm_AEP_with_wind_data(
-    wind_data=wind_rose
-) / 1e6
+opt_aep = fmodel.get_farm_AEP() / 1e6
 
 percent_gain = 100 * (opt_aep - base_aep) / base_aep
 

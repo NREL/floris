@@ -1,10 +1,11 @@
+import logging
 from pathlib import Path
 
 import numpy as np
 import pytest
 import yaml
 
-from floris import FlorisModel
+from floris import FlorisModel, WindRose
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 
 
@@ -341,7 +342,7 @@ def test_disable_turbines():
     fmodel.run()
     assert (fmodel.core.farm.yaw_angles == np.array([[1.0, 0.0, 1.0], [1.0, 0.0, 1.0]])).all()
 
-def test_get_farm_aep():
+def test_get_farm_aep(caplog):
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
     wind_speeds = np.array([8.0, 8.0, 8.0])
@@ -369,6 +370,15 @@ def test_get_farm_aep():
     freq = np.ones(n_findex)
     freq = freq / np.sum(freq)
 
+    # Check warning raised if freq not passed; no warning if freq passed
+    with caplog.at_level(logging.WARNING):
+        fmodel.get_farm_AEP()
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.get_farm_AEP(freq=freq)
+    assert caplog.text == "" # Checking empty
+
     farm_aep = fmodel.get_farm_AEP(freq=freq)
 
     aep = np.sum(np.multiply(freq, farm_powers) * 365 * 24)
@@ -376,49 +386,9 @@ def test_get_farm_aep():
     # In this case farm_aep should match farm powers
     np.testing.assert_allclose(farm_aep, aep)
 
-def test_get_farm_aep_with_conditions():
-    fmodel = FlorisModel(configuration=YAML_INPUT)
-
-    wind_speeds = np.array([5.0, 8.0, 8.0, 8.0, 20.0])
-    wind_directions = np.array([270.0, 270.0, 270.0, 270.0, 270.0])
-    turbulence_intensities = np.array([0.06, 0.06, 0.06, 0.06, 0.06])
-    n_findex = len(wind_directions)
-
-    layout_x = np.array([0, 0])
-    layout_y = np.array([0, 1000])
-    # n_turbines = len(layout_x)
-
-    fmodel.set(
-        wind_speeds=wind_speeds,
-        wind_directions=wind_directions,
-        turbulence_intensities=turbulence_intensities,
-        layout_x=layout_x,
-        layout_y=layout_y,
-    )
-
-    fmodel.run()
-
-    farm_powers = fmodel.get_farm_power()
-
-    # Start with uniform frequency
-    freq = np.ones(n_findex)
-    freq = freq / np.sum(freq)
-
-    # Get farm AEP with conditions on minimun and max wind speed
-    # which exclude the first and last findex
-    farm_aep = fmodel.get_farm_AEP(freq=freq, cut_in_wind_speed=6.0, cut_out_wind_speed=15.0)
-
-    # In this case the aep should be computed assuming 0 power
-    # for the 0th and last findex
-    farm_powers[0] = 0
-    farm_powers[-1] = 0
-    aep = np.sum(np.multiply(freq, farm_powers) * 365 * 24)
-
-    # In this case farm_aep should match farm powers
-    np.testing.assert_allclose(farm_aep, aep)
-
-    #Confirm n_findex reset after the operation
-    assert n_findex == fmodel.core.flow_field.n_findex
+    # Also check get_expected_farm_power
+    expected_farm_power = fmodel.get_expected_farm_power(freq=freq)
+    np.testing.assert_allclose(expected_farm_power, aep / (365 * 24))
 
 def test_set_ti():
     fmodel = FlorisModel(configuration=YAML_INPUT)
@@ -493,6 +463,102 @@ def test_calculate_planes():
         fmodel.calculate_y_plane(0.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
     with pytest.raises(ValueError):
         fmodel.calculate_cross_plane(500.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
+
+def test_get_turbine_powers_with_WindRose():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 10.0, 12.0, 8.0, 10.0, 12.0])
+    wind_directions = np.array([270.0, 270.0, 270.0, 280.0, 280.0, 280.0])
+    turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=[0, 1000, 2000, 3000],
+        layout_y=[0, 0, 0, 0]
+    )
+    fmodel.run()
+    turbine_powers_simple = fmodel.get_turbine_powers()
+
+    # Now declare a WindRose with 2 wind directions and 3 wind speeds
+    # uniform TI and frequency
+    wind_rose = WindRose(
+        wind_directions=np.unique(wind_directions),
+        wind_speeds=np.unique(wind_speeds),
+        ti_table=0.06
+    )
+
+    # Set this wind rose, run
+    fmodel.set(wind_data=wind_rose)
+    fmodel.run()
+
+    # Get the turbine powers in the wind rose
+    turbine_powers_windrose = fmodel.get_turbine_powers()
+
+    # Turbine power should have shape (n_wind_directions, n_wind_speeds, n_turbines)
+    assert turbine_powers_windrose.shape == (2, 3, 4)
+    assert np.allclose(turbine_powers_simple.reshape(2, 3, 4), turbine_powers_windrose)
+    assert np.allclose(turbine_powers_simple, turbine_powers_windrose.reshape(2*3, 4))
+
+    # Test that if certain combinations in the wind rose have 0 frequency, the power in
+    # those locations is nan
+    wind_rose = WindRose(
+        wind_directions = np.array([270.0, 280.0]),
+        wind_speeds = np.array([8.0, 10.0, 12.0]),
+        ti_table=0.06,
+        freq_table=np.array([[0.25, 0.25, 0.0], [0.0, 0.0, 0.5]])
+    )
+    fmodel.set(wind_data=wind_rose)
+    fmodel.run()
+    turbine_powers = fmodel.get_turbine_powers()
+    assert np.isnan(turbine_powers[0, 2, 0])
+
+def test_get_powers_with_wind_data():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 10.0, 12.0, 8.0, 10.0, 12.0])
+    wind_directions = np.array([270.0, 270.0, 270.0, 280.0, 280.0, 280.0])
+    turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=[0, 1000, 2000, 3000],
+        layout_y=[0, 0, 0, 0]
+    )
+    fmodel.run()
+    farm_power_simple = fmodel.get_farm_power()
+
+    # Now declare a WindRose with 2 wind directions and 3 wind speeds
+    # uniform TI and frequency
+    wind_rose = WindRose(
+        wind_directions=np.unique(wind_directions),
+        wind_speeds=np.unique(wind_speeds),
+        ti_table=0.06
+    )
+
+    # Set this wind rose, run
+    fmodel.set(wind_data=wind_rose)
+    fmodel.run()
+
+    farm_power_windrose = fmodel.get_farm_power()
+
+    # Check dimensions and that the farm power is the sum of the turbine powers
+    assert farm_power_windrose.shape == (2, 3)
+    assert np.allclose(farm_power_windrose, fmodel.get_turbine_powers().sum(axis=2))
+
+    # Check that simple and windrose powers are consistent
+    assert np.allclose(farm_power_simple.reshape(2, 3), farm_power_windrose)
+    assert np.allclose(farm_power_simple, farm_power_windrose.flatten())
+
+    # Test that if the last turbine's weight is set to 0, the farm power is the same as the
+    # sum of the first 3 turbines
+    turbine_weights = np.array([1.0, 1.0, 1.0, 0.0])
+    farm_power_weighted = fmodel.get_farm_power(turbine_weights=turbine_weights)
+
+    assert np.allclose(farm_power_weighted, fmodel.get_turbine_powers()[:,:,:-1].sum(axis=2))
 
 def test_get_and_set_param():
     fmodel = FlorisModel(configuration=YAML_INPUT)
