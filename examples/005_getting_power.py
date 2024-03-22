@@ -1,7 +1,16 @@
 """Example 5: Getting Turbine and Farm Power
 
 After setting the FlorisModel and running, the next step is typically to get the power output
-of the turbines.
+of the turbines.  FLORIS has several methods for getting power:
+
+1. `get_turbine_powers()`: Returns the power output of each turbine in the farm for each findex
+    (n_findex, n_turbines)
+2. `get_farm_power()`: Returns the total power output of the farm for each findex (n_findex)
+3. `get_expected_farm_power()`: Returns the combination of the farm power over each findex
+    with the frequency of each findex to get the expected farm power
+4. `get_farm_AEP()`: Multiplies the expected farm power by the number of hours in a year to get
+    the expected annual energy production (AEP) of the farm
+
 
 """
 
@@ -11,14 +20,14 @@ import numpy as np
 from floris import (
     FlorisModel,
     TimeSeries,
+    WindRose,
 )
 
 
-# Initialize FLORIS with the given input file via FlorisModel
 fmodel = FlorisModel("inputs/gch.yaml")
 
 # Set to a 3-turbine layout
-fmodel.set(layout_x=[0, 126*5, 126*10], layout_y=[0, 0, 0])
+fmodel.set(layout_x=[0, 126 * 5, 126 * 10], layout_y=[0, 0, 0])
 
 ######################################################
 # Using TimeSeries
@@ -68,8 +77,8 @@ ax.set_title("Turbine Powers")
 
 # Plot the farm power
 ax = axarr[1]
-ax.plot(wind_directions, farm_power / 1e3, label='Farm Power With Wakes', color='k')
-ax.plot(wind_directions, farm_power_no_wake / 1e3, label='Farm Power No Wakes', color='r')
+ax.plot(wind_directions, farm_power / 1e3, label="Farm Power With Wakes", color="k")
+ax.plot(wind_directions, farm_power_no_wake / 1e3, label="Farm Power No Wakes", color="r")
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Power (kW)")
 ax.grid(True)
@@ -79,7 +88,7 @@ ax.set_title("Farm Power")
 # Plot the percent wake losses
 ax = axarr[2]
 percent_wake_losses = 100 * (farm_power_no_wake - farm_power) / farm_power_no_wake
-ax.plot(wind_directions, percent_wake_losses, label='Percent Wake Losses', color='k')
+ax.plot(wind_directions, percent_wake_losses, label="Percent Wake Losses", color="k")
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Percent Wake Losses")
 ax.grid(True)
@@ -91,15 +100,45 @@ ax.set_title("Percent Wake Losses")
 # Using WindRose
 ######################################################
 
-# When running FLORIS using a wind rose, the wind data is held in a
-# wind_directions x wind_speeds table
-# form, which is unpacked into a 1D array within the FlorisModel.
-#  Additionally wind direction and
-# wind speed combinations which have 0 frequency are not computed, unless the user specifies
-# the `compute_zero_freq_occurrence=True` option in the WindRose constructor.
+# When running FLORIS using a wind rose, that is when a WindRose or WindTIRose object is
+# passed into the set function.  The functions get_expected_farm_power and get_farm_AEP
+# will operate the same as above, however the functions get_turbine_powers and get_farm_power
+# will be reshaped from (n_findex, n_turbines) and
+# (n_findex) to (n_wind_dir, n_wind_speed, n_turbines)
+# and (n_wind_dir, n_wind_speed) respectively.  This is make the powers align more easily with the
+# provided wind rose.
 
-# When calculating AEP, the bins can be combined automatically
+# Declare a WindRose object of 2 wind directions and 3 wind speeds and constant turbulence intensity
+wind_rose = WindRose(
+    wind_directions=np.array([270.0, 280.0]), wind_speeds=np.array([8.0, 9.0, 10.0]), ti_table=0.06
+)
 
-#TODO: Revist this section after https://github.com/NREL/floris/pull/844 is merged
+fmodel.set(wind_data=wind_rose)
+
+print("==========Wind Rose==========")
+print(f"Number of conditions to simulate (2 x 3): {fmodel.core.flow_field.n_findex}")
+
+fmodel.run()
+
+turbine_powers = fmodel.get_turbine_powers()
+
+print(f"Shape of turbine powers: {turbine_powers.shape}")
+
+farm_power = fmodel.get_farm_power()
+
+print(f"Shape of farm power: {farm_power.shape}")
+
+
+# Plot the farm power
+fig, ax = plt.subplots()
+
+for w_idx, wd in enumerate(wind_rose.wind_directions):
+    ax.plot(wind_rose.wind_speeds, farm_power[w_idx, :] / 1e3, label=f"WD: {wd}")
+
+ax.set_xlabel("Wind Speed (m/s)")
+ax.set_ylabel("Power (kW)")
+ax.grid(True)
+ax.legend()
+ax.set_title("Farm Power (from Wind Rose)")
 
 plt.show()
