@@ -16,7 +16,6 @@ from floris import (
 )
 
 
-# Initialize FLORIS with the given input file via FlorisModel
 fmodel = FlorisModel("inputs/gch.yaml")
 
 ######################################################
@@ -65,9 +64,6 @@ fmodel.set(reference_wind_height=92.0)
 # Changing the wind farm layout uses FLORIS' set method to a two-turbine layout
 fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
 
-# Change the turbine type for the 0th turbine
-# TODO: Going to write this one when the param functions are available
-
 ######################################################
 # Controls Settings
 ######################################################
@@ -86,7 +82,8 @@ fmodel.set(yaw_angles=yaw_angles)
 #  which provides the same cosine loss model, and
 # additionally methods for specifying derating levels for power and disabling turbines.
 
-#TODO: RESET OPERATION HERE?
+# Use the reset operation method to clear out control signals
+fmodel.reset_operation()
 
 # Change to the mixed model turbine
 fmodel.set_power_thrust_model("mixed")
