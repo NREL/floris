@@ -1,7 +1,14 @@
-"""Example 6: Getting AEP
+"""Example 6: Getting Expected Power and AEP
 
-AEP is annual energy production and can is typically a weighted sum over farm power.  This
-example demonstrates how to calculate the AEP
+The expected power of a farm is computed by multiplying the power output of the farm by the
+frequency of each findex.  This is done by the `get_expected_farm_power` method.  The expected
+AEP is annual energy production is computed by multiplying the expected power by the number of
+hours in a year.
+
+If a wind_data object is provided to the model, the expected power and AEP
+ can be computed directly by the`get_farm_AEP_with_wind_data` using the frequency table
+ of the wind data object.  If not, a frequency table must be passed into these functions
+
 
 """
 
@@ -15,7 +22,6 @@ from floris import (
 )
 
 
-# Initialize FLORIS with the given input file via FlorisModel
 fmodel = FlorisModel("inputs/gch.yaml")
 
 
@@ -25,9 +31,6 @@ fmodel.set(layout_x=[0.0, 5 * D, 10 * D],
             layout_y=[0.0, 0.0, 0.0])
 
 # Using TimeSeries
-
-# In the case of time series data, although not required, the typical assumption is
-# that each time step is equally likely.
 
 # Randomly generated a time series with time steps = 365 * 24
 N = 365 * 24
@@ -39,105 +42,50 @@ time_series = TimeSeries(
     wind_directions=wind_directions, wind_speeds=wind_speeds, turbulence_intensities=0.06
 )
 
-# Note that the AEP functions run the model
-# So it is not necessary to call run()
+# Set the wind data
 fmodel.set(wind_data=time_series)
 
-aep = fmodel.get_farm_AEP_with_wind_data(time_series)
+# Run the model
+fmodel.run()
+
+expected_farm_power = fmodel.get_expected_farm_power()
+aep = fmodel.get_farm_AEP()
 
 # Note this is equivalent to the following
-aep_b = fmodel.get_farm_AEP(time_series.unpack_freq())
+aep_b = fmodel.get_farm_AEP(freq=time_series.unpack_freq())
 
 print(f"AEP from time series: {aep}, and re-computed AEP: {aep_b}")
 
-# Using WindRose
+# Using WindRose==============================================
 
-# Assume a provided wind rose of frequency by wind direction and wind speed
-df_wr = pd.read_csv("inputs/wind_rose.csv")
-
-# Get the wind directions, wind speeds, and frequency table
-wind_direction_values = df_wr["wd"].values
-wind_speed_values = df_wr["ws"].values
-wind_directions = df_wr["wd"].unique()
-wind_speeds = df_wr["ws"].unique()
-freq_vals = df_wr["freq_val"].values / df_wr["freq_val"].sum()
-
-n_row = df_wr.shape[0]
-n_wd = len(wind_directions)
-n_ws = len(wind_speeds)
-
-wd_step = wind_directions[1] - wind_directions[0]
-ws_step = wind_speeds[1] - wind_speeds[0]
-
-print("The wind rose dataframe looks as follows:")
-print(df_wr.head())
-print(f"There are {n_row} rows, {n_wd} unique wind directions, and {n_ws} unique wind speeds")
-print(f"The wind direction has a step of {wd_step} and the wind speed has a step of {ws_step}")
-
-# Declare a frequency table of size (n_wd, n_ws)
-freq_table = np.zeros((n_wd, n_ws))
-
-# Populate the frequency table using the values of wind_direction_values,
-# wind_speed_values, and freq_vals
-for i in range(n_row):
-    wd = wind_direction_values[i]
-    ws = wind_speed_values[i]
-    freq = freq_vals[i]
-
-    # Find the index of the wind direction and wind speed
-    wd_idx = np.where(wind_directions == wd)[0][0]
-    ws_idx = np.where(wind_speeds == ws)[0][0]
-
-    # Populate the frequency table
-    freq_table[wd_idx, ws_idx] = freq
-
-# Normalize the frequency table
-freq_table = freq_table / freq_table.sum()
-
-print(f"The frequency table has shape {freq_table.shape}")
-
-# Set up a wind rose
-wind_rose = WindRose(
-    wind_directions=wind_directions,
-    wind_speeds=wind_speeds,
-    freq_table=freq_table,
-    ti_table=0.06,  # Assume contant TI
-)
-
-# Note that the wind rose could have been computed directly
-# by first building a TimeSeries and applying
-# the provided frequencies as bin weights in resampling
-time_series = TimeSeries(
-    wind_directions=wind_direction_values,
-    wind_speeds=wind_speed_values,
-    turbulence_intensities=0.06,
-)
-
-# Convert time series to wind rose using the frequencies as bin weights
-wind_rose_from_time_series = time_series.to_WindRose(
-    wd_step=wd_step, ws_step=ws_step, bin_weights=freq_vals
+# Load the wind rose from csv as in example 003
+wind_rose = WindRose.read_csv_long(
+    "inputs/wind_rose.csv", wd_col="wd", ws_col="ws", freq_col="freq_val", ti_col_or_value=0.06
 )
 
 
-print("Wind rose from wind_rose and wind_rose_from_time_series are equivalent:")
-print(
-    " -- Directions: "
-    f"{np.allclose(wind_rose.wind_directions, wind_rose_from_time_series.wind_directions)}"
-)
-print(f" -- Speeds: {np.allclose(wind_rose.wind_speeds, wind_rose_from_time_series.wind_speeds)}")
-print(f" -- Freq: {np.allclose(wind_rose.freq_table, wind_rose_from_time_series.freq_table)}")
+# Store some values
+n_wd = len(wind_rose.wind_directions)
+n_ws = len(wind_rose.wind_speeds)
+
+# Store the number of elements of the freq_table which are 0
+n_zeros = np.sum(wind_rose.freq_table == 0)
 
 # Set the wind rose
 fmodel.set(wind_data=wind_rose)
 
+# Run the model
+fmodel.run()
+
 # Note that the frequency table contains 0 frequency for some wind directions and wind speeds
 # and we've not selected to compute 0 frequency bins, therefore the n_findex will be less than
 # the total number of wind directions and wind speed combinations
-print(f"Total number of rows in input wind rose: {n_row}")
+print(f"Total number of wind direction and wind speed combination: {n_wd * n_ws}")
+print(f"Number of 0 frequency bins: {n_zeros}")
 print(f"n_findex: {fmodel.core.flow_field.n_findex}")
 
 # Get the AEP
-aep = fmodel.get_farm_AEP_with_wind_data(wind_rose)
+aep = fmodel.get_farm_AEP()
 
 # Print the AEP
 print(f"AEP from wind rose: {aep/1E9:.3f} (GW-h)")
