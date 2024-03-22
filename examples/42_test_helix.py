@@ -24,11 +24,9 @@ from floris import FlorisModel
 Example to test out using helix wake mixing of upstream turbines.
 Helix wake mixing is turned on at turbine 1, off at turbines 2 to 4;
 Turbine 2 is in wake turbine 1, turbine 4 in wake of turbine 3.
-Will be refined before release.
-TODO: merge the three examples into one.
 """
 
-# Grab model of FLORIS and update to deratable turbines
+# Grab model of FLORIS and update to helix-enabled turbines
 fmodel = FlorisModel("inputs/emgauss_iea_15mw.yaml")
 with open(str(
     fmodel.core.as_dict()["farm"]["turbine_library_path"] /
