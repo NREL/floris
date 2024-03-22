@@ -994,17 +994,13 @@ class WindTIRose(WindDataBase):
                        sep: str = ",",
                        ) -> WindTIRose:
         """
-        Read a long-formatted CSV file into the wind rose object. By long, what is meant
-        is that the wind speed, wind direction combination is given for each row in the
-        CSV file. The wind speed, wind direction, are
+        Read a long-formatted CSV file into the WindTIRose object. By long, what is meant
+        is that the wind speed, wind direction  and turbulence intensities
+        combination is given for each row in the
+        CSV file. The wind speed, wind direction, and turbulence intensity are
         given in separate columns, and the frequency of occurrence of each combination
         is given in a separate column. The frequency column is optional, and if not
         provided, uniform frequency of all bins is assumed.
-
-        The value of ti_col_or_value can be either a string or a float. If it is a string,
-        it is assumed to be the name of the column in the CSV file that contains the
-        turbulence intensity values. If it is a float, it is assumed to be a constant
-        turbulence intensity value for all wind speed and direction combinations.
 
         Args:
             file_path (str): Path to the CSV file.
