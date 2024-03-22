@@ -593,3 +593,32 @@ def test_read_csv_long():
         wind_rose.ti_table[~np.isnan(wind_rose.ti_table)],
         expected_result[~np.isnan(expected_result)],
     )
+
+
+def test_read_csv_long_ti():
+    # Read in the wind rose data from the csv file
+
+
+
+    # Now read in with correct columns
+    wind_ti_rose = WindTIRose.read_csv_long(
+        TEST_DATA / "wind_ti_rose.csv",
+        wd_col="wd",
+        ws_col="ws",
+        ti_col="ti",
+        freq_col="freq_val",
+
+    )
+
+    # Confirm the shape of the frequency table
+    assert wind_ti_rose.freq_table.shape == (2, 2, 2)
+
+    # Confirm expected wind direction and wind speed values
+    expected_result = np.array([270, 280])
+    np.testing.assert_allclose(wind_ti_rose.wind_directions, expected_result)
+
+    expected_result = np.array([8, 9])
+    np.testing.assert_allclose(wind_ti_rose.wind_speeds, expected_result)
+
+    expected_result = np.array([0.06, 0.07])
+    np.testing.assert_allclose(wind_ti_rose.turbulence_intensities, expected_result)
