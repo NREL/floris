@@ -518,7 +518,7 @@ class HelixTurbine(BaseOperationModel):
             return base_powers
         else:
             if np.any(np.isclose(
-                base_powers/1000, 
+                base_powers/1000,
                 np.max(power_thrust_table['power'])
                 )):
                 raise UserWarning(

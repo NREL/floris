@@ -16,8 +16,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
-from floris import FlorisModel
 import floris.flow_visualization as flowviz
+from floris import FlorisModel
+
 
 """
 Example to test out using helix wake mixing of upstream turbines.

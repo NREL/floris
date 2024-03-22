@@ -37,6 +37,7 @@ from floris.utilities import (
 )
 from floris.wind_data import WindDataBase
 
+
 class FlorisModel(LoggingManager):
     """
     FlorisModel provides a high-level user interface to many of the
