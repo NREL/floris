@@ -67,6 +67,39 @@ def test_expand_wind_directions():
     np.testing.assert_almost_equal(output_array[-1, 0], 14.0)
 
 
+def test_expand_wind_directions_with_yaw_nom():
+    ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
+
+    # Assume 2 turbine
+    n_turbines = 2
+
+    # Assume n_findex = 2
+    input_array = np.array(
+        [[270.0, 8.0, 0.6, 0.0, 0.0, 0.0, 0.0], [270.0, 8.0, 0.6, 0.0, 2.0, 0.0, 0.0]]
+    )
+
+    # 3 sample points
+    wd_sample_points = [-3, 0, 3]
+
+    # Test correction operations
+    output_array = ufmodel._expand_wind_directions(input_array, wd_sample_points, True, n_turbines)
+
+    # Check the first direction
+    np.testing.assert_almost_equal(output_array[0, 0], 267)
+
+    # Check the first yaw
+    np.testing.assert_almost_equal(output_array[0, 4], -3)
+
+    # Rerun with fix_yaw_to_nominal_direction = False, and now the yaw should be 0
+    output_array = ufmodel._expand_wind_directions(input_array, wd_sample_points, False, n_turbines)
+
+    # Check the first direction
+    np.testing.assert_almost_equal(output_array[0, 0], 267)
+
+    # Check the first yaw
+    np.testing.assert_almost_equal(output_array[0, 4], 0)
+
+
 def test_get_unique_inputs():
     ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
 
@@ -131,8 +164,8 @@ def test_uncertain_floris_model():
 
     np.testing.assert_allclose(np.sum(nom_powers * weights), unc_powers)
 
-def test_uncertain_floris_model_setpoints():
 
+def test_uncertain_floris_model_setpoints():
     fmodel = FlorisModel(configuration=YAML_INPUT)
     ufmodel = UncertainFlorisModel(configuration=YAML_INPUT, wd_sample_points=[-3, 0, 3], wd_std=3)
 
