@@ -12,7 +12,6 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         self,
         fmodel,
         boundaries,
-        wind_data,
         min_dist=None,
         solver=None,
         optOptions=None,
@@ -20,7 +19,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         storeHistory='hist.hist',
         hotStart=None
     ):
-        super().__init__(fmodel, boundaries,  wind_data=wind_data, min_dist=min_dist)
+        super().__init__(fmodel, boundaries, min_dist=min_dist)
         self._reinitialize(solver=solver, optOptions=optOptions)
 
         self.storeHistory = storeHistory
