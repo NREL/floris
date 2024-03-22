@@ -8,7 +8,7 @@ import floris.core.wake_velocity.eddy_viscosity as evwv
 Based on https://dx.doi.org/10.1088/1742-6596/1222/1/012003
 """
 
-def wake_width_correction(ai_j, y_ij_): # Or, just pass in delta (y_i_ already 0, sort of)
+def wake_width_streamtube_correction_term(ai_j, y_ij_): # Or, just pass in delta (y_i_ already 0, sort of)
     c_0 = 2.0
     c_1 = 1.5
 
@@ -25,6 +25,9 @@ def expanded_wake_width_squared(w_sq, e_ij_):
 def expanded_wake_centerline_velocity(Ct, w_sq):
 
     return np.sqrt(1-Ct/(4*w_sq))
+
+### Possibly the above three will just go into the wake velocity model.
+# not quite clear yet.
 
 def combine_wake_velocities(U_v_):
     N = len(U_v_)
@@ -65,7 +68,7 @@ if __name__ == "__main__":
 
 
     # Correct first turbine wake for second turbine
-    e_ij_ = wake_width_correction(ai_j, y_ij_)
+    e_ij_ = wake_width_streamtube_correction_term(ai_j, y_ij_)
     w_sq_2 = w_sq.copy()
     w_sq_2[x_test >= x_ij_] = expanded_wake_width_squared(w_sq, e_ij_)[x_test >= x_ij_]
     U_c__out_2 = U_c__out.copy()

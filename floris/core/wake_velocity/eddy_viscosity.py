@@ -43,11 +43,11 @@ def compute_off_center_velocities(U_c_, y_, z_, Ct):
     U_r_ = 1 - (1 - U_c_) * np.exp(-(y_**2 + z_**2)/w_sq)
     return U_r_
 
-def wake_width_squared(Ct, U_c):
+def wake_width_squared(Ct, U_c_):
     """
     Compute the wake width squared using the eddy viscosity model
     """
-    return Ct / (4*(1-U_c)*(1+U_c))
+    return Ct / (4*(1-U_c_)*(1+U_c_))
 
 def centerline_ode(x_, U_c_, U_inf, ambient_ti, Ct, hh, D):
     """
@@ -101,6 +101,16 @@ def initial_U_c_(Ct, ambient_ti):
     U_c0_ = 1 - initial_vel_def
 
     return U_c0_
+
+def wake_meandering_centerline_correction(U_c_, w_sq_, x_):
+    wd_std = 3.0
+    wd_std_rad = np.deg2rad(wd_std)
+    
+    m = np.sqrt(1 + 2*wd_std_rad**2 * x_**2/w_sq_)
+    
+    U_c_corrected_ = 1/m * U_c_ + (m-1)/m
+    
+    return U_c_corrected_
 
 
 if __name__ == "__main__":
