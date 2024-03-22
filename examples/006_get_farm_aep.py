@@ -89,3 +89,15 @@ aep = fmodel.get_farm_AEP()
 
 # Print the AEP
 print(f"AEP from wind rose: {aep/1E9:.3f} (GW-h)")
+
+# Run the model again, without wakes, and use the result to compute the wake losses
+fmodel.run_no_wake()
+
+# Get the AEP without wake
+aep_no_wake = fmodel.get_farm_AEP()
+
+# Compute the wake losses
+wake_losses = 100 * (aep_no_wake - aep) / aep_no_wake
+
+# Print the wake losses
+print(f"Wake losses: {wake_losses:.2f}%")
