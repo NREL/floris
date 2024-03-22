@@ -460,7 +460,7 @@ def test_wind_ti_rose_resample():
     )
 
 
-def test_time_series_to_wind_ti_rose():
+def test_time_series_to_WindTIRose():
     wind_directions = np.array([259.8, 260.2, 260.3, 260.1])
     wind_speeds = np.array([5.0, 5.0, 5.1, 7.2])
     turbulence_intensities = np.array([0.05, 0.1, 0.15, 0.2])
@@ -469,7 +469,7 @@ def test_time_series_to_wind_ti_rose():
         wind_speeds,
         turbulence_intensities=turbulence_intensities,
     )
-    wind_rose = time_series.to_wind_ti_rose(wd_step=2.0, ws_step=1.0, ti_step=0.1)
+    wind_rose = time_series.to_WindTIRose(wd_step=2.0, ws_step=1.0, ti_step=0.1)
 
     # The binning should result in turbulence intensity bins of 0.1 and 0.2
     tis_windrose = wind_rose.turbulence_intensities
