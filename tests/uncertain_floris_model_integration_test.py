@@ -6,7 +6,7 @@ import yaml
 
 from floris import FlorisModel
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
-from floris.uncertain_floris_model import UncertainFlorisModel
+from floris.uncertain_floris_model import UncertainFlorisModel, WindRose
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
@@ -215,3 +215,50 @@ def test_uncertain_floris_model_setpoints():
     unc_powers = ufmodel.get_turbine_powers()[:, 1].flatten()
 
     np.testing.assert_allclose(np.sum(nom_powers * weights), unc_powers)
+
+
+def test_get_powers_with_wind_data():
+    ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 10.0, 12.0, 8.0, 10.0, 12.0])
+    wind_directions = np.array([270.0, 270.0, 270.0, 280.0, 280.0, 280.0])
+    turbulence_intensities = 0.06 * np.ones_like(wind_speeds)
+
+    ufmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=[0, 1000, 2000, 3000],
+        layout_y=[0, 0, 0, 0]
+    )
+    ufmodel.run()
+    farm_power_simple = ufmodel.get_farm_power()
+
+    # Now declare a WindRose with 2 wind directions and 3 wind speeds
+    # uniform TI and frequency
+    wind_rose = WindRose(
+        wind_directions=np.unique(wind_directions),
+        wind_speeds=np.unique(wind_speeds),
+        ti_table=0.06
+    )
+
+    # Set this wind rose, run
+    ufmodel.set(wind_data=wind_rose)
+    ufmodel.run()
+
+    farm_power_windrose = ufmodel.get_farm_power()
+
+    # Check dimensions and that the farm power is the sum of the turbine powers
+    assert farm_power_windrose.shape == (2, 3)
+    assert np.allclose(farm_power_windrose, ufmodel.get_turbine_powers().sum(axis=2))
+
+    # Check that simple and windrose powers are consistent
+    assert np.allclose(farm_power_simple.reshape(2, 3), farm_power_windrose)
+    assert np.allclose(farm_power_simple, farm_power_windrose.flatten())
+
+    # Test that if the last turbine's weight is set to 0, the farm power is the same as the
+    # sum of the first 3 turbines
+    turbine_weights = np.array([1.0, 1.0, 1.0, 0.0])
+    farm_power_weighted = ufmodel.get_farm_power(turbine_weights=turbine_weights)
+
+    assert np.allclose(farm_power_weighted, ufmodel.get_turbine_powers()[:,:,:-1].sum(axis=2))
