@@ -202,6 +202,7 @@ if __name__ == "__main__":
     print(" ")
     print("===========================================================")
     print("Calculating baseline annual energy production (AEP)...")
+    fmodel_aep.run()
     aep_bl_subset = 1.0e-9 * fmodel_aep.get_farm_AEP(
         freq=freq_windrose,
         turbine_weights=turbine_weights
@@ -247,11 +248,13 @@ if __name__ == "__main__":
     print("===========================================================")
     print("Calculating annual energy production with wake steering (AEP)...")
     fmodel_aep.set(yaw_angles=yaw_angles_opt_nonb_AEP)
+    fmodel_aep.run()
     aep_opt_subset_nonb = 1.0e-9 * fmodel_aep.get_farm_AEP(
         freq=freq_windrose,
         turbine_weights=turbine_weights,
     )
     fmodel_aep.set(yaw_angles=yaw_angles_opt_AEP)
+    fmodel_aep.run()
     aep_opt_subset = 1.0e-9 * fmodel_aep.get_farm_AEP(
         freq=freq_windrose,
         turbine_weights=turbine_weights,
