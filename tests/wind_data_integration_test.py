@@ -218,12 +218,12 @@ def test_wrap_wind_directions_near_360():
     assert np.allclose(wd_wrapped, expected_result)
 
 
-def test_time_series_to_wind_rose():
+def test_time_series_to_WindRose():
     # Test just 1 wind speed
     wind_directions = np.array([259.8, 260.2, 264.3])
     wind_speeds = np.array([5.0, 5.0, 5.1])
     time_series = TimeSeries(wind_directions, wind_speeds, 0.06)
-    wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
+    wind_rose = time_series.to_WindRose(wd_step=2.0, ws_step=1.0)
 
     # The wind directions should be 260, 262 and 264 because they're binned
     # to the nearest 2 deg increment
@@ -243,7 +243,7 @@ def test_time_series_to_wind_rose():
     wind_directions = np.array([259.8, 260.2, 264.3])
     wind_speeds = np.array([5.0, 5.0, 6.1])
     time_series = TimeSeries(wind_directions, wind_speeds, 0.06)
-    wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
+    wind_rose = time_series.to_WindRose(wd_step=2.0, ws_step=1.0)
 
     # The wind directions should be 260, 262 and 264
     assert np.allclose(wind_rose.wind_directions, [260, 262, 264])
@@ -267,11 +267,11 @@ def test_time_series_to_wind_rose():
     assert np.allclose(ti_table[~np.isnan(ti_table)], 0.06)
 
 
-def test_time_series_to_wind_rose_wrapping():
+def test_time_series_to_WindRose_wrapping():
     wind_directions = np.arange(0.0, 360.0, 0.25)
     wind_speeds = 8.0 * np.ones_like(wind_directions)
     time_series = TimeSeries(wind_directions, wind_speeds, 0.06)
-    wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
+    wind_rose = time_series.to_WindRose(wd_step=2.0, ws_step=1.0)
 
     # Expert for the first bin in this case to be 0, and the final to be 358
     # and both to have equal numbers of points
@@ -280,7 +280,7 @@ def test_time_series_to_wind_rose_wrapping():
     np.testing.assert_almost_equal(wind_rose.freq_table[0, 0], wind_rose.freq_table[-1, 0])
 
 
-def test_time_series_to_wind_rose_with_ti():
+def test_time_series_to_WindRose_with_ti():
     wind_directions = np.array([259.8, 260.2, 260.3, 260.1])
     wind_speeds = np.array([5.0, 5.0, 5.1, 7.2])
     turbulence_intensities = np.array([0.5, 1.0, 1.5, 2.0])
@@ -289,7 +289,7 @@ def test_time_series_to_wind_rose_with_ti():
         wind_speeds,
         turbulence_intensities=turbulence_intensities,
     )
-    wind_rose = time_series.to_wind_rose(wd_step=2.0, ws_step=1.0)
+    wind_rose = time_series.to_WindRose(wd_step=2.0, ws_step=1.0)
 
     # Turbulence intensity should average to 1 in the 5 m/s bin and 2 in the 7 m/s bin
     ti_table = wind_rose.ti_table

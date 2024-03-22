@@ -114,7 +114,7 @@ time_series = TimeSeries(
 )
 
 # Convert time series to wind rose using the frequencies as bin weights
-wind_rose_from_time_series = time_series.to_wind_rose(
+wind_rose_from_time_series = time_series.to_WindRose(
     wd_step=wd_step, ws_step=ws_step, bin_weights=freq_vals
 )
 

@@ -109,7 +109,7 @@ wind_rose = WindRose(wind_directions=wind_directions, wind_speeds=wind_speeds, t
 ##################################################
 
 # The TimeSeries class has a method to generate a wind rose from a time series based on binning
-wind_rose = time_series.to_wind_rose(
+wind_rose = time_series.to_WindRose(
     wd_edges=np.arange(0, 360, 3.0), ws_edges=np.arange(4, 20, 2.0)
 )
 
