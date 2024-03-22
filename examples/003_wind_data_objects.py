@@ -109,15 +109,21 @@ wind_rose = WindRose(wind_directions=wind_directions, wind_speeds=wind_speeds, t
 ##################################################
 
 # The TimeSeries class has a method to generate a wind rose from a time series based on binning
-wind_rose = time_series.to_WindRose(
-    wd_edges=np.arange(0, 360, 3.0), ws_edges=np.arange(4, 20, 2.0)
-)
+wind_rose = time_series.to_WindRose(wd_edges=np.arange(0, 360, 3.0), ws_edges=np.arange(4, 20, 2.0))
 
 ##################################################
 # Wind Rose from long CSV FILE
 ##################################################
 
-#TODO
+# The WindRose class can also be initialized from a long CSV file.  By long what is meant is
+# that the file has a column for each wind direction, wind speed combination.  The file can
+# also specify the mean TI per bin and the frequency of each bin as seperate columns.
+
+# If the TI is not provided, can specify a fixed TI for all bins using the ti_col_or_value
+# input
+wind_rose_from_csv = WindRose.read_csv_long(
+    "inputs/wind_rose.csv", wd_col="wd", ws_col="ws", freq_col="freq_val", ti_col_or_value=0.06
+)
 
 ##################################################
 # Setting turbulence intensity
@@ -164,7 +170,8 @@ time_series = TimeSeries(
 # Each of the wind data objects can be used to set the FLORIS model by passing
 # them in as is to the set method.  The FLORIS model will then use the member functions
 # of the wind data to extract the wind conditions for the simulation.  Frequency tables
-# are also extracted for AEP calculations.
+# are also extracted for expected power and AEP-like calculations.
+# Similarly the value data is extracted and maintained.
 
 fmodel = FlorisModel("inputs/gch.yaml")
 
