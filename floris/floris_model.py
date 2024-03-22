@@ -188,7 +188,7 @@ class FlorisModel(LoggingManager):
                     wind_directions,
                     wind_speeds,
                     turbulence_intensities,
-                    heterogenous_inflow_config,
+                    heterogeneous_inflow_config,
                 ) = wind_data.unpack_for_reinitialize()
                 self._wind_data = wind_data
 
