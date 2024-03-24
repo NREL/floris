@@ -27,6 +27,8 @@ from floris.simulation import (
     Grid,
 )
 from floris.type_dec import (
+    array_5D_field,
+    array_mixed_dim_field,
     floris_array_converter,
     NDArrayFloat,
 )
@@ -47,26 +49,24 @@ class FlowField(BaseClass):
 
     n_wind_speeds: int = field(init=False)
     n_wind_directions: int = field(init=False)
+    n_turbines: int = field(init=False, default=0)
+    grid_shape: tuple[int, int, int, int, int] = field(init=False, default=(0, 0, 0, 0, 0))
 
-    u_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    v_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    w_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    u_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    v_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    w_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    u: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    v: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    w: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    u_initial_sorted: NDArrayFloat = array_5D_field
+    v_initial_sorted: NDArrayFloat = array_5D_field
+    w_initial_sorted: NDArrayFloat = array_5D_field
+    u_sorted: NDArrayFloat = array_5D_field
+    v_sorted: NDArrayFloat = array_5D_field
+    w_sorted: NDArrayFloat = array_5D_field
+    u: NDArrayFloat = array_5D_field
+    v: NDArrayFloat = array_5D_field
+    w: NDArrayFloat = array_5D_field
     het_map: list = field(init=False, default=None)
-    dudz_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    dudz_initial_sorted: NDArrayFloat = array_5D_field
 
-    turbulence_intensity_field: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    turbulence_intensity_field_sorted: NDArrayFloat = field(
-        init=False, factory=lambda: np.array([])
-    )
-    turbulence_intensity_field_sorted_avg: NDArrayFloat = field(
-        init=False, factory=lambda: np.array([])
-    )
+    turbulence_intensity_field: NDArrayFloat = array_mixed_dim_field
+    turbulence_intensity_field_sorted: NDArrayFloat = array_5D_field
+    turbulence_intensity_field_sorted_avg: NDArrayFloat = array_mixed_dim_field
 
     @wind_speeds.validator
     def wind_speeds_validator(self, instance: attrs.Attribute, value: NDArrayFloat) -> None:
@@ -113,6 +113,18 @@ class FlowField(BaseClass):
                 "The het_map's wind direction dimension not equal to number of wind directions."
             )
 
+    @grid_shape.validator
+    def grid_shape_validator(self, attribute: attrs.Attribute, value: tuple) -> None:
+        """Validates that ``grid_shape`` is length-5 tuple of integers.
+
+        Args:
+            attribute (attrs.Attribute): The attrs Attribute data.
+            value (tuple): A length-5 tuple of integers.
+        """
+        if len(value) != 5:
+            raise ValueError("`grid_shape` must be a tuple of 5 integer values.")
+        if not all(isinstance(v, int) for v in value):
+            raise TypeError("`grid_shape` must be a tuple of 5 integer values.")
 
     def __attrs_post_init__(self) -> None:
         if self.heterogenous_inflow_config is not None:
@@ -131,6 +143,9 @@ class FlowField(BaseClass):
         # determined by this line. Since the right-most dimension on grid.z is storing the values
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
+        self.n_turbines = grid.n_turbines
+        self.grid_shape = grid.grid_shape
+
         wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
         dwind_profile_plane = (
             self.wind_shear

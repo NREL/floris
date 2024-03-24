@@ -12,6 +12,7 @@
 # See https://floris.readthedocs.io for documentation
 
 
+from copy import deepcopy
 from pathlib import Path
 
 import yaml
@@ -49,7 +50,11 @@ def test_init():
 
 def test_asdict(turbine_grid_fixture: TurbineGrid):
 
-    floris = Floris.from_dict(DICT_INPUT)
+    grid_dict = deepcopy(DICT_INPUT)
+    grid_dict["flow_field"]["wind_speeds"] = turbine_grid_fixture.wind_speeds
+    grid_dict["flow_field"]["wind_directions"] = turbine_grid_fixture.wind_directions
+
+    floris = Floris.from_dict(grid_dict)
     floris.flow_field.initialize_velocity_field(turbine_grid_fixture)
     dict1 = floris.as_dict()
 

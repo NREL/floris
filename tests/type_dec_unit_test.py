@@ -12,28 +12,38 @@
 
 # See https://floris.readthedocs.io for documentation
 
+from __future__ import annotations
+
 from pathlib import Path
 from typing import List
 
+import attrs
 import numpy as np
 import pytest
 from attrs import define, field
 
 from floris.type_dec import (
+    array_3D_field,
+    array_5D_field,
+    array_mixed_dim_field,
     convert_to_path,
     floris_array_converter,
     FromDictMixin,
     iter_validator,
+    NDArrayFloat,
+    validate_3DArray_shape,
+    validate_5DArray_shape,
+    ValidateMixin,
 )
 
 
 @define
-class AttrsDemoClass(FromDictMixin):
-    w: int
+class AttrsDemoClass(FromDictMixin, ValidateMixin):
+    w: int = field(validator=attrs.validators.instance_of(int))
     x: int = field(converter=int)
     y: float = field(converter=float, default=2.1)
     z: str = field(converter=str, default="z")
-    non_initd: float = field(init=False)
+    non_initd: float = field(init=False, validator=attrs.validators.instance_of(float))
 
     def __attrs_post_init__(self):
         self.non_initd = 1.1
@@ -47,6 +57,29 @@ class AttrsDemoClass(FromDictMixin):
         converter=floris_array_converter,
         # validator=iter_validator(np.ndarray, floris_float_type)
     )
+
+
+@define
+class ArrayValidatorDemoClass(ValidateMixin):
+    n_wind_directions: int = field(default=3)
+    n_wind_speeds: int = field(default=4)
+    n_turbines: int = field(default=10)
+    grid_shape: tuple[int, int, int, int, int] = field(init=False)
+    three_dim_starts_as_one: NDArrayFloat = field(
+        factory=lambda: np.array([]), validator=validate_3DArray_shape
+    )
+    five_dimensions_provided: NDArrayFloat = array_5D_field
+    three_dimensions_provided: NDArrayFloat = array_3D_field
+    mixed_dimensions_provided: NDArrayFloat = array_mixed_dim_field
+
+    def set_grid(self, grid_resolution: int):
+        self.grid_shape = (
+            self.n_wind_directions,
+            self.n_wind_speeds,
+            self.n_turbines,
+            grid_resolution,
+            grid_resolution
+        )
 
 
 def test_as_dict():
@@ -96,6 +129,75 @@ def test_FromDictMixin_custom():
     inputs = {}
     with pytest.raises(AttributeError):
         AttrsDemoClass.from_dict(inputs)
+
+
+def test_ValidateMixin():
+    inputs = {
+        "w": 0,
+        "x": 1,
+        "y": 2.3,
+        "z": "asdf",
+    }
+    demo = AttrsDemoClass.from_dict(inputs)
+
+    # Disable the validators to set attributes with a failing value, then
+    # manually validate with the mixin functionality to check it's working
+    with attrs.validators.disabled():
+        demo.w = "string"
+
+    with pytest.raises(TypeError):
+        demo.validate()
+
+    with attrs.validators.disabled():
+        demo.non_initd = "2.2"
+
+    with pytest.raises(TypeError):
+        demo.validate()
+
+    with attrs.validators.disabled():
+        demo.liststr = (3, 2)
+
+    with pytest.raises(TypeError):
+        demo.validate()
+
+def test_array_validators():
+    # NOTE: demo.validate() is called in case attrs.on_setattrs is ever disabled, but is unnecessary
+
+    # Check initialization works
+    demo = ArrayValidatorDemoClass()
+    demo.set_grid(3)
+    demo.validate()
+
+    # Check assignment with correct shape: 3 x 4 x 10 (x 3 x 3)
+    demo.five_dimensions_provided = np.random.random((3, 4, 10, 3, 3))
+    demo.three_dimensions_provided = np.random.random((3, 4, 10))
+    demo.mixed_dimensions_provided = np.random.random((3, 4, 10, 3, 3))
+    demo.validate()
+
+    # Check assignment with correct broadcatable shape: 3 x 4 x 10 x 1 x 1 or 3 x 1 x 10
+    demo.five_dimensions_provided = np.random.random((3, 4, 10, 1, 1))
+    demo.three_dimensions_provided = np.random.random((3, 1, 10))
+    demo.mixed_dimensions_provided = np.random.random((3, 1, 10))
+    demo.validate()
+
+    # Check for correct number of dimensions, but wrong shape
+    with pytest.raises(ValueError):
+        demo.five_dimensions_provided = np.random.random((3, 3, 3, 3, 3))
+
+    with pytest.raises(ValueError):
+        demo.mixed_dimensions_provided = np.random.random((4, 3, 10, 1, 1))
+
+    with pytest.raises(ValueError):
+        demo.mixed_dimensions_provided = np.random.random((4, 3, 10))
+
+    with pytest.raises(ValueError):
+        demo.three_dimensions_provided = np.random.random((3, 5, 10))
+
+    # Check that the 3D that starts as a 1-D shape is working
+    demo.three_dim_starts_as_one = np.ones(demo.n_turbines)
+    demo.validate()
+    demo.three_dim_starts_as_one = np.ones((3, 4, demo.n_turbines))
+    demo.validate()
 
 
 def test_iter_validator():
