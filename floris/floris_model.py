@@ -109,6 +109,9 @@ class FlorisModel(LoggingManager):
                 )
                 raise ValueError("turbine_grid_points must be less than or equal to 3.")
 
+        # Initialize stored wind_data object to None
+        self._wind_data = None
+
     ### Methods for setting and running the FlorisModel
 
     def _reinitialize(
