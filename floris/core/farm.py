@@ -410,7 +410,11 @@ class Farm(BaseClass):
     @property
     def coordinates(self):
         return np.array([
-            np.array([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)
+            np.array([x, y, z]) for x, y, z in zip(
+                self.layout_x,
+                self.layout_y,
+                self.hub_heights if len(self.hub_heights.shape) == 1 else self.hub_heights[0,0]
+            )
         ])
 
     @property
