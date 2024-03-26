@@ -16,9 +16,6 @@ floris.tools.parallel\_computing\_interface
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       ParallelComputingInterface
    

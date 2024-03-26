@@ -21,9 +21,10 @@ floris.simulation.wake\_combination
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.simulation.wake_combination.fls

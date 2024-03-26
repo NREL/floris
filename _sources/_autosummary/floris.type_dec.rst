@@ -12,8 +12,6 @@
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       convert_to_path
       floris_array_converter
@@ -27,9 +25,6 @@
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       FromDictMixin
    

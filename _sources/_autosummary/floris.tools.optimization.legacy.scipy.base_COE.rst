@@ -16,9 +16,6 @@ floris.tools.optimization.legacy.scipy.base\_COE
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       BaseCOE
    

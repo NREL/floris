@@ -12,8 +12,6 @@ floris.tools.optimization.legacy.scipy.cluster\_turbines
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       cluster_turbines
    

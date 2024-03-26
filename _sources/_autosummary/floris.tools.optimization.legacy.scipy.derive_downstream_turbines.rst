@@ -12,8 +12,6 @@ floris.tools.optimization.legacy.scipy.derive\_downstream\_turbines
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       derive_downstream_turbines
    

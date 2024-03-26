@@ -12,8 +12,6 @@ floris.simulation.solver
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       calculate_area_overlap
       cc_solver

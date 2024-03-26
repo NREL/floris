@@ -12,8 +12,6 @@ floris.tools.optimization.yaw\_optimization.yaw\_optimizer\_geometric
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       geometric_yaw
    
@@ -24,9 +22,6 @@ floris.tools.optimization.yaw\_optimization.yaw\_optimizer\_geometric
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       YawOptimizationGeometric
    

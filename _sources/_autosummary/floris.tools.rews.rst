@@ -12,8 +12,6 @@ floris.tools.rews
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       compute_rews
       determine_rews_weights

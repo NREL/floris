@@ -26,7 +26,7 @@ fi.reinitialize(wind_directions=[i for i in range(10)])
 fi.calculate_wake()
 ```
 
-Finally, results can be analyzed via post-processing functions avilable within
+Finally, results can be analyzed via post-processing functions available within
 {py:class}`.FlorisInterface` such as
 {py:meth}`.FlorisInterface.get_turbine_layout`,
 {py:meth}`.FlorisInterface.get_turbine_powers` and

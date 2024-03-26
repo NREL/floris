@@ -16,9 +16,6 @@ floris.simulation.wake\_combination.max
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       MAX
    

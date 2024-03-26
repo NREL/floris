@@ -12,8 +12,6 @@
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       cosd
       load_yaml
@@ -35,9 +33,6 @@
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       Loader
    

@@ -12,8 +12,6 @@ floris.simulation.turbine\_multi\_dim
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       Ct_multidim
       axial_induction_multidim
@@ -28,9 +26,6 @@ floris.simulation.turbine\_multi\_dim
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       MultiDimensionalPowerThrustTable
       TurbineMultiDimensional

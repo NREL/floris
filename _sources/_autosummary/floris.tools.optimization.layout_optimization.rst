@@ -21,9 +21,10 @@ floris.tools.optimization.layout\_optimization
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.tools.optimization.layout_optimization.layout_optimization_base

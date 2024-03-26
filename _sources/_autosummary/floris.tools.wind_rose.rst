@@ -16,9 +16,6 @@ floris.tools.wind\_rose
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       WindRose
    

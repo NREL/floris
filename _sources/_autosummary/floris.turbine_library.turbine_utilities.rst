@@ -12,8 +12,6 @@ floris.turbine\_library.turbine\_utilities
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       build_turbine_dict
    

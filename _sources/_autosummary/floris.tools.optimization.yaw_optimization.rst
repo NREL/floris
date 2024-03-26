@@ -21,9 +21,10 @@ floris.tools.optimization.yaw\_optimization
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.tools.optimization.yaw_optimization.yaw_optimization_base

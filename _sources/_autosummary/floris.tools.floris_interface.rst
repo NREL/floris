@@ -16,9 +16,6 @@ floris.tools.floris\_interface
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       FlorisInterface
    

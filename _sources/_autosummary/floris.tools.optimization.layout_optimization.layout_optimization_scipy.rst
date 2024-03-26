@@ -16,9 +16,6 @@ floris.tools.optimization.layout\_optimization.layout\_optimization\_scipy
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       LayoutOptimizationScipy
    

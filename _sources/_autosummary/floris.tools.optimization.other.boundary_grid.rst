@@ -12,8 +12,6 @@ floris.tools.optimization.other.boundary\_grid
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       boundary_grid
       discontinuous_grid
@@ -26,9 +24,6 @@ floris.tools.optimization.other.boundary\_grid
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       BoundaryGrid
    

@@ -12,8 +12,6 @@ floris.simulation.turbine
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       Ct
       average_velocity
@@ -33,9 +31,6 @@ floris.simulation.turbine
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       Turbine
    

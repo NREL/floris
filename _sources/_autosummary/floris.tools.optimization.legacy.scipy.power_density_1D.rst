@@ -16,9 +16,6 @@ floris.tools.optimization.legacy.scipy.power\_density\_1D
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       PowerDensityOptimization1D
    

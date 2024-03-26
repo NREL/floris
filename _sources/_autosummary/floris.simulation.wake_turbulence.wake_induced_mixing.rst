@@ -16,9 +16,6 @@ floris.simulation.wake\_turbulence.wake\_induced\_mixing
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       WakeInducedMixing
    

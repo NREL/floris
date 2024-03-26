@@ -12,8 +12,6 @@ floris.simulation.wake\_deflection.empirical\_gauss
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       yaw_added_wake_mixing
    
@@ -24,9 +22,6 @@ floris.simulation.wake\_deflection.empirical\_gauss
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       EmpiricalGaussVelocityDeflection
    

@@ -21,9 +21,10 @@
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.turbine_library.turbine_previewer

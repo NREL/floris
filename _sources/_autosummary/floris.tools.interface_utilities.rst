@@ -12,8 +12,6 @@ floris.tools.interface\_utilities
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       get_params
       get_prop_values

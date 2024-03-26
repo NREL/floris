@@ -16,9 +16,6 @@ floris.tools.power\_rose
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       PowerRose
    

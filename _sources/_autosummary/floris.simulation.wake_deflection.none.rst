@@ -16,9 +16,6 @@ floris.simulation.wake\_deflection.none
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       NoneVelocityDeflection
    

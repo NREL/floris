@@ -12,8 +12,6 @@ floris.tools.optimization.legacy.pyoptsparse.yaw
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       calc_unc_pmfs
    
@@ -24,9 +22,6 @@ floris.tools.optimization.legacy.pyoptsparse.yaw
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       Yaw
    

@@ -16,9 +16,6 @@ floris.simulation.wake\_velocity.none
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       NoneVelocityDeficit
    

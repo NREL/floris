@@ -16,9 +16,6 @@ floris.simulation.wake\_velocity.jensen
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       JensenVelocityDeficit
    

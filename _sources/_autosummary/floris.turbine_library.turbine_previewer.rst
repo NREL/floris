@@ -16,9 +16,6 @@ floris.turbine\_library.turbine\_previewer
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       TurbineInterface
       TurbineLibrary

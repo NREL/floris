@@ -21,9 +21,10 @@ floris.tools.optimization.legacy
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.tools.optimization.legacy.pyoptsparse

@@ -12,8 +12,6 @@ floris.tools.cut\_plane
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       calculate_power
       calculate_wind_speed
@@ -34,9 +32,6 @@ floris.tools.cut\_plane
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       CutPlane
    

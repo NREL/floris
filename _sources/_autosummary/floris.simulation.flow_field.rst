@@ -16,9 +16,6 @@ floris.simulation.flow\_field
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       FlowField
    

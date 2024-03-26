@@ -16,9 +16,6 @@ floris.tools.optimization.legacy.scipy.yaw\_clustered
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       YawOptimizationClustered
    

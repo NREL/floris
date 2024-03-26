@@ -16,9 +16,6 @@ floris.tools.floris\_interface\_legacy\_reader
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       FlorisInterfaceLegacyV2
    

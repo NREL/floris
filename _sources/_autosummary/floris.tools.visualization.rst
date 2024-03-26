@@ -12,8 +12,6 @@ floris.tools.visualization
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       add_turbine_id_labels
       calculate_horizontal_plane_with_turbines
@@ -34,9 +32,6 @@ floris.tools.visualization
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       VelocityProfilesFigure
    

@@ -12,8 +12,6 @@ floris.tools.layout\_functions
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       label_line
       set_direction

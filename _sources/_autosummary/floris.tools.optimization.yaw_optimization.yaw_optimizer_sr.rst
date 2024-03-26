@@ -16,9 +16,6 @@ floris.tools.optimization.yaw\_optimization.yaw\_optimizer\_sr
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       YawOptimizationSR
    

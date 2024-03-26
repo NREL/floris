@@ -12,8 +12,6 @@ floris.simulation.wake\_velocity.cumulative\_gauss\_curl
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       wake_expansion
    
@@ -24,9 +22,6 @@ floris.simulation.wake\_velocity.cumulative\_gauss\_curl
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       CumulativeGaussCurlVelocityDeficit
    

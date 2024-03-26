@@ -16,9 +16,6 @@ floris.simulation.wake\_turbulence.none
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       NoneWakeTurbulence
    

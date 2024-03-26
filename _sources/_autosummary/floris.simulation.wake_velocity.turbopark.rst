@@ -12,8 +12,6 @@ floris.simulation.wake\_velocity.turbopark
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       characteristic_wake_width
       precalculate_overlap
@@ -25,9 +23,6 @@ floris.simulation.wake\_velocity.turbopark
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       TurbOParkVelocityDeficit
    

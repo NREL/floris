@@ -21,9 +21,10 @@ floris.tools.optimization.other
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.tools.optimization.other.boundary_grid

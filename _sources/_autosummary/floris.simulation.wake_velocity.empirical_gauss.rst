@@ -12,8 +12,6 @@ floris.simulation.wake\_velocity.empirical\_gauss
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       empirical_gauss_model_wake_width
       rCalt
@@ -26,9 +24,6 @@ floris.simulation.wake\_velocity.empirical\_gauss
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       EmpiricalGaussVelocityDeficit
    

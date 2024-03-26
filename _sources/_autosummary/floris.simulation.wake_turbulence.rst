@@ -21,9 +21,10 @@ floris.simulation.wake\_turbulence
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.simulation.wake_turbulence.crespo_hernandez

@@ -21,9 +21,10 @@ floris.simulation.wake\_deflection
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.simulation.wake_deflection.empirical_gauss

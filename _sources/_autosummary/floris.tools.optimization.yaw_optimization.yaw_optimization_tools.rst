@@ -12,8 +12,6 @@ floris.tools.optimization.yaw\_optimization.yaw\_optimization\_tools
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       derive_downstream_turbines
       find_layout_symmetry

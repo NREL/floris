@@ -12,8 +12,6 @@ floris.simulation.wake\_velocity.gauss
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       gaussian_function
       mask_upstream_wake
@@ -26,9 +24,6 @@ floris.simulation.wake\_velocity.gauss
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       GaussVelocityDeficit
    

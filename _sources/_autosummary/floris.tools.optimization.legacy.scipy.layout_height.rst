@@ -16,9 +16,6 @@ floris.tools.optimization.legacy.scipy.layout\_height
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       LayoutHeightOptimization
    

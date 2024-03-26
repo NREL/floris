@@ -21,9 +21,10 @@ floris.simulation.wake\_velocity
 
 
 
+.. rubric:: Modules
+
 .. autosummary::
    :toctree:
-   :template: custom-module-template.rst
    :recursive:
 
    floris.simulation.wake_velocity.cumulative_gauss_curl

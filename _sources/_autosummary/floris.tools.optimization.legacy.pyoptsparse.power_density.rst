@@ -16,9 +16,6 @@ floris.tools.optimization.legacy.pyoptsparse.power\_density
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       PowerDensity
    

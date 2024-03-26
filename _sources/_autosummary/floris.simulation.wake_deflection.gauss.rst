@@ -12,8 +12,6 @@ floris.simulation.wake\_deflection.gauss
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:
-      :nosignatures:
    
       calculate_transverse_velocity
       gamma
@@ -27,9 +25,6 @@ floris.simulation.wake\_deflection.gauss
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:
-      :template: custom-class-template.rst
-      :nosignatures:
    
       GaussVelocityDeflection
    
