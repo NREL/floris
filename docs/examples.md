@@ -7,7 +7,7 @@ intended to describe most features as well as provide a starting point
 for various analysis methods. These are generally ordered from simplest
 to most complex. The examples and their content are described below.
 Prior to exploring the examples, it is highly recommended to review
-[](background_concepts).
+[](concepts_intro).
 
 
 ## Basic setup and pre and post processing

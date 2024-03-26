@@ -10,7 +10,8 @@ parts:
 
   - caption: User Reference
     chapters:
-    - file: floris_101
+    - file: intro_concepts
+    - file: advanced_concepts
     - file: floating_wind_turbine
     - file: turbine_interaction
     - file: input_reference_main
