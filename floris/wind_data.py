@@ -352,7 +352,7 @@ class WindRose(WindDataBase):
             heterogenous_inflow_config,
         )
 
-    def resample_wind_rose(self, wd_step=None, ws_step=None, inplace=True):
+    def resample_wind_rose(self, wd_step=None, ws_step=None, inplace=False):
         """
         Resamples the wind rose by by wd_step and/or ws_step
 
@@ -394,14 +394,13 @@ class WindRose(WindDataBase):
         )
         if inplace:
             self.__init__(
-                wind_directions=resampled_wind_rose.wind_directions,
-                wind_speeds=resampled_wind_rose.wind_speeds,
-                ti_table=resampled_wind_rose.ti_table,
-                freq_table=resampled_wind_rose.freq_table,
-                value_table=resampled_wind_rose.value_table,
-                compute_zero_freq_occurrence=resampled_wind_rose.compute_zero_freq_occurrence,
-                heterogenous_inflow_config_by_wd=
-                    resampled_wind_rose.heterogenous_inflow_config_by_wd,
+                resampled_wind_rose.wind_directions,
+                resampled_wind_rose.wind_speeds,
+                resampled_wind_rose.ti_table,
+                resampled_wind_rose.freq_table,
+                resampled_wind_rose.value_table,
+                resampled_wind_rose.compute_zero_freq_occurrence,
+                resampled_wind_rose.heterogenous_inflow_config_by_wd,
             )
         else:
             return resampled_wind_rose

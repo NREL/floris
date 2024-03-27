@@ -209,12 +209,12 @@ def test_wind_rose_resample():
 
     # Test that the default inplace behavior is to modifies the original object as expected
     wind_rose_2 = copy.deepcopy(wind_rose)
-    wind_rose_2.resample_wind_rose()
+    wind_rose_2.resample_wind_rose(inplace=True)
     np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_2.wind_directions)
     np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_2.wind_speeds)
     np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_2.freq_table_flat)
 
-    wind_rose_2.resample_wind_rose(wd_step=5.0)
+    wind_rose_2.resample_wind_rose(wd_step=5.0, inplace=True)
     np.testing.assert_allclose(wind_rose_resample.wind_directions, wind_rose_2.wind_directions)
     np.testing.assert_allclose(wind_rose_resample.wind_speeds, wind_rose_2.wind_speeds)
     np.testing.assert_allclose(wind_rose_resample.freq_table_flat, wind_rose_2.freq_table_flat)
