@@ -352,7 +352,7 @@ class WindRose(WindDataBase):
             heterogenous_inflow_config,
         )
 
-    def resample_wind_rose(self, wd_step=None, ws_step=None, inplace=False):
+    def resample(self, wd_step=None, ws_step=None, inplace=False):
         """
         Resamples the wind rose by by wd_step and/or ws_step
 
@@ -405,7 +405,7 @@ class WindRose(WindDataBase):
         else:
             return resampled_wind_rose
 
-    def plot_wind_rose(
+    def plot(
         self,
         ax=None,
         color_map="viridis_r",
@@ -813,7 +813,7 @@ class WindTIRose(WindDataBase):
             heterogenous_inflow_config,
         )
 
-    def resample_wind_rose(self, wd_step=None, ws_step=None, ti_step=None):
+    def resample(self, wd_step=None, ws_step=None, ti_step=None):
         """
         Resamples the wind rose by by wd_step, ws_step, and/or ti_step
 
@@ -862,7 +862,7 @@ class WindTIRose(WindDataBase):
             wd_step=wd_step, ws_step=ws_step, ti_step=ti_step, bin_weights=self.freq_table_flat
         )
 
-    def plot_wind_rose(
+    def plot(
         self,
         ax=None,
         wind_rose_var="ws",

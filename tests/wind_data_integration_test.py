@@ -196,25 +196,25 @@ def test_wind_rose_resample():
     wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
 
     # Test that resampling without specifying new steps returns the same
-    wind_rose_resample = wind_rose.resample_wind_rose(inplace=False)
+    wind_rose_resample = wind_rose.resample(inplace=False)
 
     np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_resample.wind_directions)
     np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_resample.wind_speeds)
     np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_resample.freq_table_flat)
 
     # Now test resampling the wind direction to 5 deg bins
-    wind_rose_resample = wind_rose.resample_wind_rose(wd_step=5.0, inplace=False)
+    wind_rose_resample = wind_rose.resample(wd_step=5.0, inplace=False)
     np.testing.assert_allclose(wind_rose_resample.wind_directions, [0, 5, 10])
     np.testing.assert_allclose(wind_rose_resample.freq_table_flat, [2 / 6, 2 / 6, 2 / 6])
 
     # Test that the default inplace behavior is to modifies the original object as expected
     wind_rose_2 = copy.deepcopy(wind_rose)
-    wind_rose_2.resample_wind_rose(inplace=True)
+    wind_rose_2.resample(inplace=True)
     np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_2.wind_directions)
     np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_2.wind_speeds)
     np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_2.freq_table_flat)
 
-    wind_rose_2.resample_wind_rose(wd_step=5.0, inplace=True)
+    wind_rose_2.resample(wd_step=5.0, inplace=True)
     np.testing.assert_allclose(wind_rose_resample.wind_directions, wind_rose_2.wind_directions)
     np.testing.assert_allclose(wind_rose_resample.wind_speeds, wind_rose_2.wind_speeds)
     np.testing.assert_allclose(wind_rose_resample.freq_table_flat, wind_rose_2.freq_table_flat)
@@ -456,7 +456,7 @@ def test_wind_ti_rose_resample():
     wind_rose = WindTIRose(wind_directions, wind_speeds, turbulence_intensities, freq_table)
 
     # Test that resampling with a new step size returns the same
-    wind_rose_resample = wind_rose.resample_wind_rose()
+    wind_rose_resample = wind_rose.resample()
 
     np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_resample.wind_directions)
     np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_resample.wind_speeds)
@@ -466,7 +466,7 @@ def test_wind_ti_rose_resample():
     np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_resample.freq_table_flat)
 
     # Now test resampling the turbulence intensities to 4% bins
-    wind_rose_resample = wind_rose.resample_wind_rose(ti_step=0.04)
+    wind_rose_resample = wind_rose.resample(ti_step=0.04)
     np.testing.assert_allclose(wind_rose_resample.turbulence_intensities, [0.04, 0.08, 0.12])
     np.testing.assert_allclose(
         wind_rose_resample.freq_table_flat, (1 / 60) * np.array(12 * [2, 2, 1])
