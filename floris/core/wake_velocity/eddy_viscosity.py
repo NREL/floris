@@ -40,7 +40,7 @@ class EddyViscosityVelocityDeficit(BaseModel):
     filter_const_4: float = field(default=1/3)
     filter_cutoff_x_: float = field(default=0.0)
 
-    wd_std: float = field(default=3.0)
+    wd_std: float = field(default=3.0) # Also try with 0.0 for no meandering
 
     def prepare_function(
         self,
@@ -169,7 +169,7 @@ def centerline_ode(x_tilde, U_tilde_c, ambient_ti, Ct, hh, D, k_a, k_l, von_Karm
     # Define constants (will later define these as class attribtues)
 
     # Local component, nondimensionalized by U_inf*D (compared to Gunn 2019's K_l)
-    K_l_tilde = k_l * np.sqrt(wake_width_squared(Ct, U_tilde_c)) * D * (1 - U_tilde_c)
+    K_l_tilde = k_l * np.sqrt(wake_width_squared(Ct, U_tilde_c)) * (1 - U_tilde_c)
 
     # Ambient component, nondimensionalized by U_inf*D (compared to Gunn 2019's K_a, eq. (9))
     K_a_tilde = k_a * ambient_ti * von_Karman_constant * (hh/D)
@@ -212,10 +212,10 @@ def initial_centerline_velocity(Ct, ambient_ti, i_const_1, i_const_2, i_const_3,
 
     return U_c0_
 
-def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_, wd_std):
+def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_tilde, wd_std):
     wd_std_rad = np.deg2rad(wd_std)
 
-    m = np.sqrt(1 + 2*wd_std_rad**2 * x_**2/w_tilde_sq)
+    m = np.sqrt(1 + 2*wd_std_rad**2 * x_tilde**2/w_tilde_sq)
 
     U_tilde_c_meandering = 1/m * U_tilde_c + (m-1)/m
 
