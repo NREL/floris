@@ -409,9 +409,9 @@ class WindRose(WindDataBase):
         self,
         ax=None,
         color_map="viridis_r",
-        wd_step=15.0,
-        ws_step=5.0,
-        legend_kwargs={},
+        wd_step=None,
+        ws_step=None,
+        legend_kwargs={"title": "Wind speed [m/s]"},
     ):
         """
         This method creates a wind rose plot showing the frequency of occurrence
@@ -428,7 +428,7 @@ class WindRose(WindDataBase):
             wd_step: Step size for wind direction  (float, optional).
             ws_step: Step size for wind speed  (float, optional).
             legend_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.legend().
+                ax.legend(). Defaults to {"title": "Wind speed [m/s]"}.
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
@@ -436,7 +436,7 @@ class WindRose(WindDataBase):
         """
 
         # Get a resampled wind_rose
-        wind_rose_resample = self.resample_wind_rose(wd_step, ws_step)
+        wind_rose_resample = self.resample_wind_rose(wd_step, ws_step, inplace=False)
         wd_bins = wind_rose_resample.wind_directions
         ws_bins = wind_rose_resample.wind_speeds
         freq_table = wind_rose_resample.freq_table
@@ -444,6 +444,10 @@ class WindRose(WindDataBase):
         # Set up figure
         if ax is None:
             _, ax = plt.subplots(subplot_kw={"polar": True})
+
+        # Get the wd_step
+        if wd_step is None:
+            wd_step = wd_bins[1] - wd_bins[0]
 
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ws_bins))
