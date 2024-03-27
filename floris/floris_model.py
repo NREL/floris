@@ -233,6 +233,8 @@ class FlorisModel(LoggingManager):
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        helix_amplitudes: NDArrayFloat | list[float] | list[float, None] | None = None,
+        helix_frequencies: NDArrayFloat | list[float] | list[float, None] | None = None,
         disable_turbines: NDArrayBool | list[bool] | None = None,
     ):
         """
@@ -260,6 +262,24 @@ class FlorisModel(LoggingManager):
             power_setpoints = floris_array_converter(power_setpoints)
 
             self.core.farm.set_power_setpoints(power_setpoints)
+
+        if helix_amplitudes is None:
+            helix_amplitudes = np.zeros(
+                (
+                    self.core.flow_field.n_findex,
+                    self.core.farm.n_turbines,
+                )
+            )
+        self.core.farm.helix_amplitudes = helix_amplitudes
+
+        if helix_frequencies is None:
+            helix_frequencies = np.zeros(
+                (
+                    self.core.flow_field.n_findex,
+                    self.core.farm.n_turbines,
+                )
+            )
+        self.core.farm.helix_frequencies = helix_frequencies
 
         # Check for turbines to disable
         if disable_turbines is not None:
@@ -306,6 +326,8 @@ class FlorisModel(LoggingManager):
         wind_data: type[WindDataBase] | None = None,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        helix_amplitudes: NDArrayFloat | list[float] | list[float, None] | None = None,
+        helix_frequencies: NDArrayFloat | list[float] | list[float, None] | None = None,
         disable_turbines: NDArrayBool | list[bool] | None = None,
     ):
         """
@@ -344,6 +366,8 @@ class FlorisModel(LoggingManager):
         # Initialize a new Floris object after saving the setpoints
         _yaw_angles = self.core.farm.yaw_angles
         _power_setpoints = self.core.farm.power_setpoints
+        _helix_amplitudes = self.core.farm.helix_amplitudes
+        _helix_frequencies = self.core.farm.helix_frequencies
         self._reinitialize(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
@@ -370,11 +394,17 @@ class FlorisModel(LoggingManager):
             | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
             self.core.farm.set_power_setpoints(_power_setpoints)
+        if not (_helix_amplitudes == 0).all():
+            self.core.farm.set_helix_amplitudes(_helix_amplitudes)
+        if not (_helix_frequencies == 0).all():
+            self.core.farm.set_helix_frequencies(_helix_frequencies)
 
         # Set the operation
         self._set_operation(
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            helix_amplitudes=helix_amplitudes,
+            helix_frequencies=helix_frequencies,
             disable_turbines=disable_turbines,
         )
 
@@ -435,6 +465,7 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            helix_amplitudes=self.core.farm.helix_amplitudes,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             turbine_type_map=self.core.farm.turbine_type_map,
             turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
@@ -708,6 +739,7 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            helix_amplitudes=self.core.farm.helix_amplitudes,
             axial_induction_functions=self.core.farm.turbine_axial_induction_functions,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
@@ -726,6 +758,7 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            helix_amplitudes=self.core.farm.helix_amplitudes,
             thrust_coefficient_functions=self.core.farm.turbine_thrust_coefficient_functions,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
@@ -755,6 +788,7 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        helix_amplitudes=None,
         disable_turbines=None,
     ):
         """
@@ -804,6 +838,7 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            helix_amplitudes=helix_amplitudes,
             disable_turbines=disable_turbines,
         )
 
@@ -812,7 +847,7 @@ class FlorisModel(LoggingManager):
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="x",
             planar_coordinate=downstream_dist,
@@ -841,6 +876,7 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        helix_amplitudes=None,
         disable_turbines=None,
     ):
         """
@@ -898,6 +934,7 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            helix_amplitudes=helix_amplitudes,
             disable_turbines=disable_turbines,
         )
 
@@ -940,6 +977,7 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        helix_amplitudes=None,
         disable_turbines=None,
     ):
         """
@@ -1002,6 +1040,7 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            helix_amplitudes=helix_amplitudes,
             disable_turbines=disable_turbines,
         )
 

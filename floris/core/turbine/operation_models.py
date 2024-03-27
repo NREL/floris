@@ -483,3 +483,95 @@ class MixedOperationTurbine(BaseOperationModel):
         )[neither_mask]
 
         return axial_inductions
+
+@define
+class HelixTurbine(BaseOperationModel):
+    """
+    power_thrust_table is a dictionary (normally defined on the turbine input yaml)
+    that contains the parameters necessary to evaluate power(), thrust(), and axial_induction().
+
+    Feel free to put any Helix tuning parameters into here (they can be added to the turbine yaml).
+    Also, feel free to add any commanded inputs to power(), thrust_coefficient(), or
+    axial_induction(). For this operation model to receive those arguments, they'll need to be
+    added to the kwargs dictionaries in the respective functions on turbine.py. They won't affect
+    the other operation models.
+    """
+
+    def power(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        helix_amplitudes: NDArrayFloat | None,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        base_powers = SimpleTurbine.power(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            air_density=air_density,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+
+        if helix_amplitudes is None:
+            return base_powers
+        else:
+            if np.any(np.isclose(
+                base_powers/1000,
+                np.max(power_thrust_table['power'])
+                )):
+                raise UserWarning(
+                    'The selected wind speed is above or near rated wind speed. '
+                    '`HelixTurbine` operation model is not designed '
+                    'or verified for above-rated conditions.'
+                    )
+            return base_powers * (1 - (
+                power_thrust_table['helix_power_b']
+                + power_thrust_table['helix_power_c']*base_powers
+                )
+                *helix_amplitudes**power_thrust_table['helix_a']
+
+            ) ## TODO: Should probably add max function here
+
+    def thrust_coefficient(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        helix_amplitudes: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        base_thrust_coefficients = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+        if helix_amplitudes is None:
+            return base_thrust_coefficients
+        else:
+            return base_thrust_coefficients * (1 - (
+                power_thrust_table['helix_thrust_b']
+                + power_thrust_table['helix_thrust_c']*base_thrust_coefficients
+                )
+                *helix_amplitudes**power_thrust_table['helix_a']
+            )
+
+    def axial_induction(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        helix_amplitudes: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        thrust_coefficient = HelixTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            helix_amplitudes=helix_amplitudes,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        return (1 - np.sqrt(1 - thrust_coefficient))/2

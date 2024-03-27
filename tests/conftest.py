@@ -214,6 +214,11 @@ class SampleInputs:
                 "cosine_loss_exponent_tilt": 1.88,
                 "ref_air_density": 1.225,
                 "ref_tilt": 5.0,
+                "helix_a": 1.809,
+                "helix_power_b": 4.828e-3,
+                "helix_power_c": 4.017e-11,
+                "helix_thrust_b": 1.390e-3,
+                "helix_thrust_c": 5.084e-4,
                 "power": [
                     0.0,
                     0.0,
@@ -507,6 +512,7 @@ class SampleInputs:
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,
+            "enable_helix_added_recovery": False,
             "enable_transverse_velocities": False,
         }
 
