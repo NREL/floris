@@ -2,7 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import floris.core.wake_combination.streamtube_expansion as se
-import floris.core.wake_velocity.eddy_viscosity as ev
+from floris.core.wake_velocity.eddy_viscosity import (
+    EddyViscosityVelocityDeficit,
+    wake_width_squared
+)
 
 
 plot_offcenter_velocities = True
@@ -13,93 +16,103 @@ hh = 90.0
 D = 126.0
 ambient_ti = 0.06
 U_inf = 8.0
-wd_std = 3.0
 
-x_test = np.linspace(2, 20, 100)
-U_c__out, x__out = ev.compute_centerline_velocities(x_test, U_inf, ambient_ti, Ct, hh, D)
-y_test = np.tile(np.linspace(-2, 2, 9), (100,1))
-z_test = np.zeros_like(y_test)
-U_r__out = ev.compute_off_center_velocities(U_c__out, y_test, z_test, Ct)
-w_sq_ = ev.wake_width_squared(Ct, U_c__out)
+EVDM = EddyViscosityVelocityDeficit()
 
+x_test = np.linspace(0*D, 20*D, 100)
+y_test = np.linspace(-2*D, 2*D, 9)
+x_test_m, y_test_m = np.meshgrid(x_test, y_test)
+x_test_m = x_test_m.flatten()
+y_test_m = y_test_m.flatten()
+vel_def = EVDM.function(
+    x_i=0,
+    y_i=0,
+    z_i=hh,
+    axial_induction_i=None,
+    deflection_field_i=None,
+    yaw_angle_i=None,
+    turbulence_intensity_i=ambient_ti,
+    ct_i=Ct,
+    hub_height_i=hh,
+    rotor_diameter_i=D,
+    x=x_test_m,
+    y=y_test_m,
+    z=hh*np.ones_like(x_test_m),
+    u_initial=None,
+    wind_veer=None,
+)
+U_tilde = 1 - vel_def
+
+U_tilde_shaped = U_tilde.reshape((9, 100))
 
 fig, ax = plt.subplots(2,2)
-fig.suptitle('Single turbine wake, no meandering', fontsize=16)
 for i in range(9):
-    alpha = (3-abs(y_test[0,i]))/3
-    ax[0,0].plot(x__out, U_r__out[:,i], color="lightgray", alpha=alpha)
-ax[0,0].plot(x__out, U_c__out, color="C0")
-ax[0,0].set_xlabel("x_ [D]")
-ax[0,0].set_ylabel("U_c_ [-]")
+    alpha = (3*D-abs(y_test[i]))/(3*D)
+    ax[0,0].plot(x_test/D, U_tilde_shaped[i,:], color="lightgray", alpha=alpha)
+ax[0,0].plot(x_test/D, U_tilde_shaped[4,:], color="C0", label="With meandering")
+ax[0,0].set_xlabel(r"$\tilde{x}$")
+ax[0,0].set_ylabel(r"$\tilde{U}_c$")
 ax[0,0].set_xlim([0, 20])
 ax[0,0].grid()
 
+
 for i in range(9):
-    alpha = (3-abs(y_test[0,i]))/3
-    ax[0,1].plot(x__out*D, U_r__out[:,i]*U_inf, color="lightgray", alpha=alpha)
-ax[0,1].plot(x__out*D, U_c__out*U_inf)
+    alpha = (3*D-abs(y_test[i]))/(3*D)
+    ax[0,1].plot(x_test, U_tilde_shaped[i,:]*U_inf, color="lightgray", alpha=alpha)
+ax[0,1].plot(x_test, U_tilde_shaped[4,:]*U_inf, color="C0")
 ax[0,1].plot([0, 20*D], [U_inf, U_inf], linestyle="dotted", color="black")
-ax[0,1].set_xlabel("x [m]")
-ax[0,1].set_ylabel("U_c [m/s]")
+ax[0,1].set_xlabel(r"$x$ [m]")
+ax[0,1].set_ylabel(r"$U_c$ [m/s]")
 ax[0,1].set_xlim([0, 20*D])
 ax[0,1].grid()
 
-ax[1,0].plot(x__out, np.sqrt(w_sq_), color="C1")
-ax[1,0].set_xlabel("x_ [D]")
-ax[1,0].set_ylabel("w_ [-]")
+ax[1,0].plot(x_test/D, np.sqrt(wake_width_squared(Ct, U_tilde_shaped[4,:])), color="C1")
+ax[1,0].set_xlabel(r"$\tilde{x}$")
+ax[1,0].set_ylabel(r"$\tilde{w}$")
 ax[1,0].set_xlim([0, 20])
 ax[1,0].grid()
 
-ax[1,1].plot(x__out*D, np.sqrt(w_sq_)*D, color="C1")
-ax[1,1].set_xlabel("x [m]")
-ax[1,1].set_ylabel("w [m]")
+ax[1,1].plot(x_test, np.sqrt(wake_width_squared(Ct, U_tilde_shaped[4,:]))*D, color="C1")
+ax[1,1].set_xlabel(r"$x$ [m]")
+ax[1,1].set_ylabel(r"$w$ [m]")
 ax[1,1].set_xlim([0, 20*D])
 ax[1,1].grid()
 
+# Compute the equivalent centerline velocities without wake meandering
+EVDM.wd_std = 0.0
+vel_def = EVDM.function(
+    x_i=0,
+    y_i=0,
+    z_i=hh,
+    axial_induction_i=None,
+    deflection_field_i=None,
+    yaw_angle_i=None,
+    turbulence_intensity_i=ambient_ti,
+    ct_i=Ct,
+    hub_height_i=hh,
+    rotor_diameter_i=D,
+    x=x_test_m,
+    y=y_test_m,
+    z=hh*np.ones_like(x_test_m),
+    u_initial=None,
+    wind_veer=None,
+)
+U_tilde = 1 - vel_def
 
-U_c__out_mc = ev.wake_meandering_centerline_correction(U_c__out, w_sq_, x__out)
-w_sq_mc = ev.wake_width_squared(Ct, U_c__out_mc)
-
-fig, ax = plt.subplots(2,2)
-fig.suptitle('Single turbine wake, meandering correction', fontsize=12)
-for i in range(9):
-    alpha = (3-abs(y_test[0,i]))/3
-    ax[0,0].plot(x__out, U_r__out[:,i], color="lightgray", alpha=alpha, linestyle="dashed")
-ax[0,0].plot(x__out, U_c__out, color="C0", linestyle="dashed", label="Without meandering")
-ax[0,0].plot(x__out, U_c__out_mc, color="C0", linestyle="solid", label="With meandering")
-ax[0,0].set_xlabel("x_ [D]")
-ax[0,0].set_ylabel("U_c_ [-]")
-ax[0,0].set_xlim([0, 20])
-ax[0,0].grid()
+U_tilde_shaped = U_tilde.reshape((9, 100))
+ax[0,0].plot(x_test/D, U_tilde_shaped[4,:], color="C0", linestyle="dashed",
+             label="Without meandering")
+ax[0,1].plot(x_test, U_tilde_shaped[4,:]*U_inf, color="C0", linestyle="dashed")
+ax[1,0].plot(x_test/D, np.sqrt(wake_width_squared(Ct, U_tilde_shaped[4,:])), color="C1",
+             linestyle="dashed")
+ax[1,1].plot(x_test, np.sqrt(wake_width_squared(Ct, U_tilde_shaped[4,:]))*D, color="C1",
+             linestyle="dashed")
 ax[0,0].legend()
 
-for i in range(9):
-    alpha = (3-abs(y_test[0,i]))/3
-    ax[0,1].plot(x__out*D, U_r__out[:,i]*U_inf, color="lightgray", alpha=alpha, linestyle="dashed")
-ax[0,1].plot(x__out*D, U_c__out*U_inf, color="C0", linestyle="dashed")
-ax[0,1].plot(x__out*D, U_c__out_mc*U_inf, color="C0", linestyle="solid")
-ax[0,1].plot([0, 20*D], [U_inf, U_inf], linestyle="dotted", color="black")
-ax[0,1].set_xlabel("x [m]")
-ax[0,1].set_ylabel("U_c [m/s]")
-ax[0,1].set_xlim([0, 20*D])
-ax[0,1].grid()
 
-ax[1,0].plot(x__out, np.sqrt(w_sq_), color="C1", linestyle="dashed")
-ax[1,0].plot(x__out, np.sqrt(w_sq_mc), color="C1", linestyle="solid")
-ax[1,0].set_xlabel("x_ [D]")
-ax[1,0].set_ylabel("w_ [-]")
-ax[1,0].set_xlim([0, 20])
-ax[1,0].grid()
+plt.show()
 
-ax[1,1].plot(x__out*D, np.sqrt(w_sq_)*D, color="C1", linestyle="dashed")
-ax[1,1].plot(x__out*D, np.sqrt(w_sq_mc)*D, color="C1", linestyle="solid")
-ax[1,1].set_xlabel("x [m]")
-ax[1,1].set_ylabel("w [m]")
-ax[1,1].set_xlim([0, 20*D])
-ax[1,1].grid()
-
-
-## Look at mutliple turbines
+## Look at multiple turbines
 
 # Second turbine's effect on first
 Ct_j = 0.8

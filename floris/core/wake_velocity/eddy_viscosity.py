@@ -275,8 +275,8 @@ if __name__ == "__main__":
     if plot_offcenter_velocities:
         for i in range(9):
             alpha = (3*D-abs(y_test[i]))/(3*D)
-            ax[0,1].plot(x_test, U_tilde_shaped[i,:]*D, color="lightgray", alpha=alpha)
-    ax[0,1].plot(x_test, U_tilde_shaped[4,:]*D, color="C0")
+            ax[0,1].plot(x_test, U_tilde_shaped[i,:]*U_inf, color="lightgray", alpha=alpha)
+    ax[0,1].plot(x_test, U_tilde_shaped[4,:]*U_inf, color="C0")
     ax[0,1].plot([0, 20*D], [U_inf, U_inf], linestyle="dotted", color="black")
     ax[0,1].set_xlabel("x [m]")
     ax[0,1].set_ylabel("U_c [m/s]")
