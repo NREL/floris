@@ -1,73 +1,180 @@
-import matplotlib.pyplot as plt
+from typing import Any, Dict
+
+import numexpr as ne
 import numpy as np
+from attrs import define, field
+
+from floris.core import (
+    BaseModel,
+    Farm,
+    FlowField,
+    Grid,
+    Turbine,
+)
+from floris.utilities import (
+    cosd,
+    sind,
+    tand,
+)
+
+import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
 
-def compute_centerline_velocities(x_, U_inf, ambient_ti, Ct, hh, D):
-    """
-    Compute the centerline velocities using the eddy viscosity model
-    x_ supposed to be defined from the center of the rotor
-    (0 at the rotor location).
-    """
+@define
+class EddyViscosityVelocityDeficit(BaseModel):
 
-    U_c0_ = initial_U_c_(Ct, ambient_ti)
+    k_l: float = field(default=0.015*np.sqrt(3.56))
+    k_a: float = field(default=0.5)
+    von_Karman_constant: float = field(default=0.41)
 
-    # Set span
-    x__span = [2, x_[-1]]
+    i_const_1 = 0.05
+    i_const_2 = 16
+    i_const_3 = 0.5
+    i_const_4 = 10
 
-    # Solve the ODE
-    sol = solve_ivp(
-        fun=centerline_ode,
-        t_span=x__span,
-        y0=[U_c0_],
-        method='RK45',
-        t_eval=x_,
-        args=(U_inf, ambient_ti, Ct, hh, D)
-    )
+    # Below are likely not needed [or, I'll need to think more about it]
+    filter_const_1: float = field(default=0.65)
+    filter_const_2: float = field(default=4.5)
+    filter_const_3: float = field(default=23.32)
+    filter_const_4: float = field(default=1/3)
+    filter_cutoff_x_: float = field(default=0.0)
 
-    # Extract the solution
-    x__out = sol.t
-    U_c__out = sol.y.flatten()
+    wd_std: float = field(default=3.0)
 
-    return U_c__out, x__out
+    def prepare_function(
+        self,
+        grid: Grid,
+        flow_field: FlowField,
+    ) -> Dict[str, Any]:
+
+        kwargs = {
+            "x": grid.x_sorted,
+            "y": grid.y_sorted,
+            "z": grid.z_sorted,
+            "u_initial": flow_field.u_initial_sorted,
+            "wind_veer": flow_field.wind_veer
+        }
+        return kwargs
+
+    # @profile
+    def function(
+        self,
+        x_i: np.ndarray,
+        y_i: np.ndarray,
+        z_i: np.ndarray,
+        axial_induction_i: np.ndarray,
+        deflection_field_i: np.ndarray,
+        yaw_angle_i: np.ndarray,
+        turbulence_intensity_i: np.ndarray,
+        ct_i: np.ndarray,
+        hub_height_i: float,
+        rotor_diameter_i: np.ndarray,
+        # enforces the use of the below as keyword arguments and adherence to the
+        # unpacking of the results from prepare_function()
+        *,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+        u_initial: np.ndarray,
+        wind_veer: np.ndarray,
+    ) -> np.ndarray:
+
+        # Non-dimensionalize and center distances
+        x_tilde = (x - x_i) / rotor_diameter_i
+        y_tilde = (y - y_i) / rotor_diameter_i
+        z_tilde = (z - z_i) / rotor_diameter_i
+
+        # Compute centerline velocities
+        # TODO: This is using an "updated" TI. Is that appropriate?
+        U_tilde_c_initial = initial_centerline_velocity(
+            ct_i,
+            turbulence_intensity_i,
+            self.i_const_1,
+            self.i_const_2,
+            self.i_const_3,
+            self.i_const_4
+        )
+
+        # Solve ODE to find centerline velocities at each x
+        x_tilde_unique, unique_ind = np.unique(x_tilde, return_inverse=True)
+        sorting_indices = np.argsort(x_tilde_unique)
+        x_tilde_sorted = x_tilde_unique[sorting_indices]
+        valid_indices = x_tilde_sorted >= 2
+        x_tilde_eval = x_tilde_sorted[valid_indices]
+        sol = solve_ivp(
+            fun=centerline_ode,
+            t_span=[2, x_tilde_eval[-1]],
+            y0=[U_tilde_c_initial],
+            method='RK45',
+            t_eval=x_tilde_eval,
+            args=(
+                turbulence_intensity_i,
+                ct_i,
+                hub_height_i,
+                rotor_diameter_i,
+                self.k_a,
+                self.k_l,
+                self.von_Karman_constant
+            )
+        )
+
+        # Extract the solution
+        if (sol.t != x_tilde_eval).any():
+            raise ValueError("ODE solver did not return requested values")
+        U_tilde_c_eval = sol.y.flatten()
+        
+        U_tilde_c_fill = np.full_like(x_tilde_sorted[x_tilde_sorted < 2], U_tilde_c_initial)
+        # TODO: I think concatenation will be along axis=1 finally
+        U_tilde_c_sorted = np.concatenate((U_tilde_c_fill, U_tilde_c_eval))
+
+        # "Unsort", and broadcast back to shape of x_tilde
+        U_tilde_c_unique = U_tilde_c_sorted[np.argsort(sorting_indices)]
+        U_tilde_c = U_tilde_c_unique[unique_ind]
+
+        # Compute wake width
+        w_tilde_sq = wake_width_squared(ct_i, U_tilde_c)
+
+        # Correct for wake meandering
+        U_tilde_c_meandering = wake_meandering_centerline_correction(
+            U_tilde_c, w_tilde_sq, x_tilde, self.wd_std
+        )
+
+        # Compute off-center velocities
+        U_tilde = compute_off_center_velocities(U_tilde_c_meandering, ct_i, y_tilde, z_tilde)
+
+        # Convert to a velocity deficit and return
+        return 1 - U_tilde
 
 
-def compute_off_center_velocities(U_c_, y_, z_, Ct):
+def compute_off_center_velocities(U_tilde_c, Ct, y_tilde, z_tilde):
     """
     Compute the off-centerline velocities using the eddy viscosity model
     y_, z_ supposed to be defined from the center of the rotor.
     """
-    U_c_ = U_c_[:, None]
+    w_tilde_sq = wake_width_squared(Ct, U_tilde_c)
+    U_tilde = 1 - (1 - U_tilde_c) * np.exp(-(y_tilde**2 + z_tilde**2)/w_tilde_sq)
+    return U_tilde
 
-    w_sq = wake_width_squared(Ct, U_c_)
-    U_r_ = 1 - (1 - U_c_) * np.exp(-(y_**2 + z_**2)/w_sq)
-    return U_r_
-
-def wake_width_squared(Ct, U_c_):
+def wake_width_squared(Ct, U_tilde_c):
     """
     Compute the wake width squared using the eddy viscosity model
     """
-    return Ct / (4*(1-U_c_)*(1+U_c_))
+    return Ct / (4*(1-U_tilde_c)*(1+U_tilde_c))
 
-def centerline_ode(x_, U_c_, U_inf, ambient_ti, Ct, hh, D):
+def centerline_ode(x_tilde, U_tilde_c, ambient_ti, Ct, hh, D, k_a, k_l, von_Karman_constant):
     """
     Define the ODE for the centerline velocities
     """
     # Define constants (will later define these as class attribtues)
-    k_l = 0.015*np.sqrt(3.56)
-    k_a = 0.5
-    # ambient_ti = 0.06
-    #U_inf = 8.0 # Will be passed in as an argument
-    #hh = 90.0 # Will be passed in as an argument
-    #Ct = 0.9 # Will be passed in as an argument
-    von_Karman = 0.41
 
-    length_scale = von_Karman*hh
+    # Local component, nondimensionalized by U_inf*D (compared to Gunn 2019's K_l)
+    K_l_tilde = k_l * np.sqrt(wake_width_squared(Ct, U_tilde_c)) * D * (1 - U_tilde_c)
 
-    K_l = k_l * np.sqrt(wake_width_squared(Ct, U_c_)) * D * (U_inf - U_c_*U_inf) # local component
-    K_a = k_a * ambient_ti * U_inf * length_scale # ambient component (9)
+    # Ambient component, nondimensionalized by U_inf*D (compared to Gunn 2019's K_a, eq. (9))
+    K_a_tilde = k_a * ambient_ti * von_Karman_constant * (hh/D)
 
-    def filter_function(x_):
+    def filter_function(x_tilde):
         """ Identity mapping (assumed by 'F=1') """
 
         # Wait, is this just a multiplier? Seems to be?
@@ -76,41 +183,43 @@ def centerline_ode(x_, U_c_, U_inf, ambient_ti, Ct, hh, D):
         filter_const_3 = 23.32
         filter_const_4 = 1/3
         filter_cutoff_x_ = 0.0 # 5.5 doesn't seem to work; F negative, not good for EV model
-        if x_ < filter_cutoff_x_: # How should this work? Is this smooth??
-            return filter_const_1 * ((x_ - filter_const_2) / filter_const_3)**filter_const_4
+        if x_tilde < filter_cutoff_x_: # How should this work? Is this smooth??
+            return filter_const_1 * ((x_tilde - filter_const_2) / filter_const_3)**filter_const_4
         else:
             return 1
 
     #eddy_viscosity = filter_function(K_l + K_a)
-    eddy_viscosity = filter_function(x_)*(K_l + K_a)
-    ev_ = eddy_viscosity/(U_inf*D)
+    eddy_viscosity_tilde = filter_function(x_tilde)*(K_l_tilde + K_a_tilde)
 
-    dU_c__dx_ = 16 * ev_ * (U_c_**3 - U_c_**2 - U_c_ + 1) / (U_c_ * Ct)
+    dU_tilde_c_dx_tilde = (
+        16 * eddy_viscosity_tilde
+        * (U_tilde_c**3 - U_tilde_c**2 - U_tilde_c + 1)
+        / (U_tilde_c * Ct)
+    )
 
-    return [dU_c__dx_]
+    return [dU_tilde_c_dx_tilde]
 
-def initial_U_c_(Ct, ambient_ti):
-
-    i_const_1 = 0.05
-    i_const_2 = 16
-    i_const_3 = 0.5
+def initial_centerline_velocity(Ct, ambient_ti, i_const_1, i_const_2, i_const_3, i_const_4):
 
     # The below are from Ainslie (1988)
-    initial_vel_def = Ct - i_const_1 - (i_const_2 * Ct - i_const_3) * ambient_ti / 1000
+    initial_velocity_deficit = (
+        Ct
+        - i_const_1
+        - (i_const_2 * Ct - i_const_3) * ambient_ti / i_const_4
+    )
 
-    U_c0_ = 1 - initial_vel_def
+    U_c0_ = 1 - initial_velocity_deficit
 
     return U_c0_
 
-def wake_meandering_centerline_correction(U_c_, w_sq_, x_):
-    wd_std = 3.0
+def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_, wd_std):
     wd_std_rad = np.deg2rad(wd_std)
-    
-    m = np.sqrt(1 + 2*wd_std_rad**2 * x_**2/w_sq_)
-    
-    U_c_corrected_ = 1/m * U_c_ + (m-1)/m
-    
-    return U_c_corrected_
+
+    m = np.sqrt(1 + 2*wd_std_rad**2 * x_**2/w_tilde_sq)
+
+    U_tilde_c_meandering = 1/m * U_tilde_c + (m-1)/m
+
+    return U_tilde_c_meandering
 
 
 if __name__ == "__main__":
@@ -124,42 +233,63 @@ if __name__ == "__main__":
     ambient_ti = 0.06
     U_inf = 8.0
 
-    x_test = np.linspace(2, 20, 100)
-    U_c__out, x__out = compute_centerline_velocities(x_test, U_inf, ambient_ti, Ct, hh, D)
-    y_test = np.tile(np.linspace(-2, 2, 9), (100,1))
-    z_test = np.zeros_like(y_test)
-    U_r__out = compute_off_center_velocities(U_c__out, y_test, z_test, Ct)
+    EVDM = EddyViscosityVelocityDeficit()
 
+    x_test = np.linspace(0*D, 20*D, 100)
+    y_test = np.linspace(-2*D, 2*D, 9)
+    x_test_m, y_test_m = np.meshgrid(x_test, y_test)
+    x_test_m = x_test_m.flatten()
+    y_test_m = y_test_m.flatten()
+    vel_def = EVDM.function(
+        x_i=0,
+        y_i=0,
+        z_i=hh,
+        axial_induction_i=None,
+        deflection_field_i=None,
+        yaw_angle_i=None,
+        turbulence_intensity_i=ambient_ti,
+        ct_i=Ct,
+        hub_height_i=hh,
+        rotor_diameter_i=D,
+        x=x_test_m,
+        y=y_test_m,
+        z=hh*np.ones_like(x_test_m),
+        u_initial=None,
+        wind_veer=None,
+    )
+    U_tilde = 1 - vel_def
+
+    U_tilde_shaped = U_tilde.reshape((9, 100))
 
     fig, ax = plt.subplots(2,2)
     if plot_offcenter_velocities:
         for i in range(9):
-            alpha = (3-abs(y_test[0,i]))/3
-            ax[0,0].plot(x__out, U_r__out[:,i], color="lightgray", alpha=alpha)
-    ax[0,0].plot(x__out, U_c__out, color="C0")
-    ax[0,0].set_xlabel("x_ [D]")
-    ax[0,0].set_ylabel("U_c_ [-]")
+            alpha = (3*D-abs(y_test[i]))/(3*D)
+            ax[0,0].plot(x_test/D, U_tilde_shaped[i,:], color="lightgray", alpha=alpha)
+    ax[0,0].plot(x_test/D, U_tilde_shaped[4,:], color="C0")
+    ax[0,0].set_xlabel("x_tilde")
+    ax[0,0].set_ylabel("U_c_tilde")
     ax[0,0].set_xlim([0, 20])
     ax[0,0].grid()
 
     if plot_offcenter_velocities:
         for i in range(9):
-            alpha = (3-abs(y_test[0,i]))/3
-            ax[0,1].plot(x__out*D, U_r__out[:,i]*U_inf, color="lightgray", alpha=alpha)
-    ax[0,1].plot(x__out*D, U_c__out*U_inf)
+            alpha = (3*D-abs(y_test[i]))/(3*D)
+            ax[0,1].plot(x_test, U_tilde_shaped[i,:]*D, color="lightgray", alpha=alpha)
+    ax[0,1].plot(x_test, U_tilde_shaped[4,:]*D, color="C0")
     ax[0,1].plot([0, 20*D], [U_inf, U_inf], linestyle="dotted", color="black")
     ax[0,1].set_xlabel("x [m]")
     ax[0,1].set_ylabel("U_c [m/s]")
     ax[0,1].set_xlim([0, 20*D])
     ax[0,1].grid()
 
-    ax[1,0].plot(x__out, np.sqrt(wake_width_squared(Ct, U_c__out)), color="C1")
-    ax[1,0].set_xlabel("x_ [D]")
-    ax[1,0].set_ylabel("w_ [-]")
+    ax[1,0].plot(x_test/D, np.sqrt(wake_width_squared(Ct, U_tilde_shaped[4,:])), color="C1")
+    ax[1,0].set_xlabel("x_tilde")
+    ax[1,0].set_ylabel("w_tilde")
     ax[1,0].set_xlim([0, 20])
     ax[1,0].grid()
 
-    ax[1,1].plot(x__out*D, np.sqrt(wake_width_squared(Ct, U_c__out))*D, color="C1")
+    ax[1,1].plot(x_test, np.sqrt(wake_width_squared(Ct, U_tilde_shaped[4,:]))*D, color="C1")
     ax[1,1].set_xlabel("x [m]")
     ax[1,1].set_ylabel("w [m]")
     ax[1,1].set_xlim([0, 20*D])

@@ -7,8 +7,8 @@ import floris.core.wake_velocity.eddy_viscosity as evwv
 """
 Based on https://dx.doi.org/10.1088/1742-6596/1222/1/012003
 """
-
-def wake_width_streamtube_correction_term(ai_j, y_ij_): # Or, just pass in delta (y_i_ already 0, sort of)
+# Or, just pass in delta (y_i_ already 0, sort of)
+def wake_width_streamtube_correction_term(ai_j, y_ij_):
     c_0 = 2.0
     c_1 = 1.5
 
