@@ -1,37 +1,36 @@
 
+"""Example: Optimize yaw for a single wind speed and multiple wind directions
+
+Use the serial-refine method to optimize the yaw angles for a 3-turbine wind farm
+
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris import FlorisModel
+from floris import FlorisModel, TimeSeries
 from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
-"""
-This example demonstrates how to perform a yaw optimization for multiple wind directions
-and 1 wind speed.
-
-First, we initialize our Floris Interface, and then generate a 3 turbine wind farm.
-Next, we create the yaw optimization object `yaw_opt` and perform the optimization using the
-SerialRefine method. Finally, we plot the results.
-"""
-
 # Load the default example floris object
-fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
-# fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
+fmodel = FlorisModel("../inputs/gch.yaml")
 
-# Reinitialize as a 3-turbine farm with range of WDs and 1 WS
-wd_array = np.arange(0.0, 360.0, 3.0)
-ws_array = 8.0 * np.ones_like(wd_array)
-turbulence_intensities = 0.06 * np.ones_like(wd_array)
+# Define an inflow that
+# keeps wind speed and TI constant while sweeping the wind directions
+wind_directions = np.arange(0.0, 360.0, 3.0)
+time_series = TimeSeries(
+    wind_directions=wind_directions,
+    wind_speeds=8.0,
+    turbulence_intensities=0.06,
+)
+
+# Reinitialize as a 3-turbine using the above inflow
 D = 126.0 # Rotor diameter for the NREL 5 MW
 fmodel.set(
     layout_x=[0.0, 5 * D, 10 * D],
     layout_y=[0.0, 0.0, 0.0],
-    wind_directions=wd_array,
-    wind_speeds=ws_array,
-    turbulence_intensities=turbulence_intensities,
+    wind_data=time_series,
 )
-print(fmodel.core.farm.rotor_diameters)
 
 # Initialize optimizer object and run optimization using the Serial-Refine method
 yaw_opt = YawOptimizationSR(fmodel)

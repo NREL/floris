@@ -128,7 +128,7 @@ class FlorisModel(LoggingManager):
         turbine_type: list | None = None,
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
-        heterogenous_inflow_config=None,
+        heterogeneous_inflow_config=None,
         wind_data: type[WindDataBase] | None = None,
     ):
         """
@@ -157,8 +157,8 @@ class FlorisModel(LoggingManager):
             turbine_library_path (str | Path | None, optional): Path to the turbine library.
                 Defaults to None.
             solver_settings (dict | None, optional): Solver settings. Defaults to None.
-            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
-                to None.
+            heterogeneous_inflow_config (None, optional): heterogeneous inflow configuration.
+                Defaults to None.
             wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
         """
         # Export the floris object recursively as a dictionary
@@ -171,13 +171,13 @@ class FlorisModel(LoggingManager):
             (wind_directions is not None)
             or (wind_speeds is not None)
             or (turbulence_intensities is not None)
-            or (heterogenous_inflow_config is not None)
+            or (heterogeneous_inflow_config is not None)
         ):
             if wind_data is not None:
                 raise ValueError(
                     "If wind_data is passed to reinitialize, then do not pass wind_directions, "
                     "wind_speeds, turbulence_intensities or "
-                    "heterogenous_inflow_config as this is redundant"
+                    "heterogeneous_inflow_config as this is redundant"
                 )
             elif self.wind_data is not None:
                 self.logger.warning("Deleting stored wind_data information.")
@@ -188,7 +188,7 @@ class FlorisModel(LoggingManager):
                     wind_directions,
                     wind_speeds,
                     turbulence_intensities,
-                    heterogenous_inflow_config,
+                    heterogeneous_inflow_config,
                 ) = wind_data.unpack_for_reinitialize()
                 self._wind_data = wind_data
 
@@ -207,8 +207,8 @@ class FlorisModel(LoggingManager):
             flow_field_dict["turbulence_intensities"] = turbulence_intensities
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
-        if heterogenous_inflow_config is not None:
-            flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
+        if heterogeneous_inflow_config is not None:
+            flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
         ## Farm
         if layout_x is not None:
@@ -302,7 +302,7 @@ class FlorisModel(LoggingManager):
         turbine_type: list | None = None,
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
-        heterogenous_inflow_config=None,
+        heterogeneous_inflow_config=None,
         wind_data: type[WindDataBase] | None = None,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
@@ -330,8 +330,8 @@ class FlorisModel(LoggingManager):
             turbine_library_path (str | Path | None, optional): Path to the turbine library.
                 Defaults to None.
             solver_settings (dict | None, optional): Solver settings. Defaults to None.
-            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
-                to None.
+            heterogeneous_inflow_config (None, optional): heterogeneous inflow configuration.
+                Defaults to None.
             wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
@@ -357,7 +357,7 @@ class FlorisModel(LoggingManager):
             turbine_type=turbine_type,
             turbine_library_path=turbine_library_path,
             solver_settings=solver_settings,
-            heterogenous_inflow_config=heterogenous_inflow_config,
+            heterogeneous_inflow_config=heterogeneous_inflow_config,
             wind_data=wind_data,
         )
 

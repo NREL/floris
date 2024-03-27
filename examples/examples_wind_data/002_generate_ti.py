@@ -1,19 +1,18 @@
+"""Example: Generate TI
+
+Demonstrate usage of TI generating and plotting functionality in the WindRose
+and TimeSeries classes
+
+"""
+
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from floris import (
-    FlorisModel,
     TimeSeries,
     WindRose,
 )
-from floris.utilities import wrap_360
-
-
-"""
-Demonstrate usage of TI generating and plotting functionality in the WindRose
-and TimeSeries classes
-"""
 
 
 # Generate a random time series of wind speeds, wind directions and turbulence intensities

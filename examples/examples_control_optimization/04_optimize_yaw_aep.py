@@ -1,15 +1,6 @@
 
-from time import perf_counter as timerpc
+"""Example: Optimize yaw and compare AEP
 
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-
-from floris import FlorisModel
-from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
-
-
-"""
 This example demonstrates how to perform a yaw optimization and evaluate the performance
 over a full wind rose.
 
@@ -24,9 +15,19 @@ the wind rose. Lastly, the final AEP is calculated and analysis of the results a
 shown in several plots.
 """
 
+from time import perf_counter as timerpc
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from floris import FlorisModel
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
+
+
 def load_floris():
     # Load the default example floris object
-    fmodel = FlorisModel("inputs/gch.yaml") # GCH model matched to the default "legacy_gauss" of V2
+    fmodel = FlorisModel("../inputs/gch.yaml") # GCH model
     # fmodel = FlorisModel("inputs/cc.yaml") # New CumulativeCurl model
 
     # Specify wind farm layout and update in the floris object
@@ -41,7 +42,7 @@ def load_floris():
 
 
 def load_windrose():
-    fn = "inputs/wind_rose.csv"
+    fn = "../inputs/wind_rose.csv"
     df = pd.read_csv(fn)
     df = df[(df["ws"] < 22)].reset_index(drop=True)  # Reduce size
     df["freq_val"] = df["freq_val"] / df["freq_val"].sum() # Normalize wind rose frequencies

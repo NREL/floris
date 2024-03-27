@@ -1,4 +1,15 @@
 
+"""Example: Optimize Layout
+This example shows a simple layout optimization using the python module Scipy.
+
+A 4 turbine array is optimized such that the layout of the turbine produces the
+highest annual energy production (AEP) based on the given wind resource. The turbines
+are constrained to a square boundary and a random wind resource is supplied. The results
+of the optimization show that the turbines are pushed to the outer corners of the boundary,
+which makes sense in order to maximize the energy production by minimizing wake interactions.
+"""
+
+
 import os
 
 import matplotlib.pyplot as plt
@@ -10,19 +21,9 @@ from floris.optimization.layout_optimization.layout_optimization_scipy import (
 )
 
 
-"""
-This example shows a simple layout optimization using the python module Scipy.
-
-A 4 turbine array is optimized such that the layout of the turbine produces the
-highest annual energy production (AEP) based on the given wind resource. The turbines
-are constrained to a square boundary and a random wind resource is supplied. The results
-of the optimization show that the turbines are pushed to the outer corners of the boundary,
-which makes sense in order to maximize the energy production by minimizing wake interactions.
-"""
-
 # Initialize the FLORIS interface fi
 file_dir = os.path.dirname(os.path.abspath(__file__))
-fmodel = FlorisModel('inputs/gch.yaml')
+fmodel = FlorisModel('../inputs/gch.yaml')
 
 # Setup 72 wind directions with a 1 wind speed and frequency distribution
 wind_directions = np.arange(0, 360.0, 5.0)
