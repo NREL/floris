@@ -1,3 +1,4 @@
+import copy
 from pathlib import Path
 
 import numpy as np
@@ -194,17 +195,29 @@ def test_wind_rose_resample():
 
     wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
 
-    # Test that resampling with a new step size returns the same
-    wind_rose_resample = wind_rose.resample_wind_rose()
+    # Test that resampling without specifying new steps returns the same
+    wind_rose_resample = wind_rose.resample_wind_rose(inplace=False)
 
     np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_resample.wind_directions)
     np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_resample.wind_speeds)
     np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_resample.freq_table_flat)
 
     # Now test resampling the wind direction to 5 deg bins
-    wind_rose_resample = wind_rose.resample_wind_rose(wd_step=5.0)
+    wind_rose_resample = wind_rose.resample_wind_rose(wd_step=5.0, inplace=False)
     np.testing.assert_allclose(wind_rose_resample.wind_directions, [0, 5, 10])
     np.testing.assert_allclose(wind_rose_resample.freq_table_flat, [2 / 6, 2 / 6, 2 / 6])
+
+    # Test that the default inplace behavior is to modifies the original object as expected
+    wind_rose_2 = copy.deepcopy(wind_rose)
+    wind_rose_2.resample_wind_rose()
+    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_2.wind_directions)
+    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_2.wind_speeds)
+    np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_2.freq_table_flat)
+
+    wind_rose_2.resample_wind_rose(wd_step=5.0)
+    np.testing.assert_allclose(wind_rose_resample.wind_directions, wind_rose_2.wind_directions)
+    np.testing.assert_allclose(wind_rose_resample.wind_speeds, wind_rose_2.wind_speeds)
+    np.testing.assert_allclose(wind_rose_resample.freq_table_flat, wind_rose_2.freq_table_flat)
 
 
 def test_wrap_wind_directions_near_360():
