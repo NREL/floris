@@ -352,7 +352,7 @@ class WindRose(WindDataBase):
             heterogenous_inflow_config,
         )
 
-    def resample_wind_rose(self, wd_step=None, ws_step=None):
+    def resample(self, wd_step=None, ws_step=None, inplace=False):
         """
         Resamples the wind rose by by wd_step and/or ws_step
 
@@ -389,17 +389,29 @@ class WindRose(WindDataBase):
         )
 
         # Now build a new wind rose using the new steps
-        return time_series.to_WindRose(
+        resampled_wind_rose = time_series.to_WindRose(
             wd_step=wd_step, ws_step=ws_step, bin_weights=self.freq_table_flat
         )
+        if inplace:
+            self.__init__(
+                resampled_wind_rose.wind_directions,
+                resampled_wind_rose.wind_speeds,
+                resampled_wind_rose.ti_table,
+                resampled_wind_rose.freq_table,
+                resampled_wind_rose.value_table,
+                resampled_wind_rose.compute_zero_freq_occurrence,
+                resampled_wind_rose.heterogenous_inflow_config_by_wd,
+            )
+        else:
+            return resampled_wind_rose
 
-    def plot_wind_rose(
+    def plot(
         self,
         ax=None,
         color_map="viridis_r",
-        wd_step=15.0,
-        ws_step=5.0,
-        legend_kwargs={},
+        wd_step=None,
+        ws_step=None,
+        legend_kwargs={"title": "Wind speed [m/s]"},
     ):
         """
         This method creates a wind rose plot showing the frequency of occurrence
@@ -416,7 +428,7 @@ class WindRose(WindDataBase):
             wd_step: Step size for wind direction  (float, optional).
             ws_step: Step size for wind speed  (float, optional).
             legend_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.legend().
+                ax.legend(). Defaults to {"title": "Wind speed [m/s]"}.
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
@@ -424,7 +436,7 @@ class WindRose(WindDataBase):
         """
 
         # Get a resampled wind_rose
-        wind_rose_resample = self.resample_wind_rose(wd_step, ws_step)
+        wind_rose_resample = self.resample(wd_step, ws_step, inplace=False)
         wd_bins = wind_rose_resample.wind_directions
         ws_bins = wind_rose_resample.wind_speeds
         freq_table = wind_rose_resample.freq_table
@@ -432,6 +444,10 @@ class WindRose(WindDataBase):
         # Set up figure
         if ax is None:
             _, ax = plt.subplots(subplot_kw={"polar": True})
+
+        # Get the wd_step
+        if wd_step is None:
+            wd_step = wd_bins[1] - wd_bins[0]
 
         # Get a color array
         color_array = cm.get_cmap(color_map, len(ws_bins))
@@ -797,7 +813,7 @@ class WindTIRose(WindDataBase):
             heterogenous_inflow_config,
         )
 
-    def resample_wind_rose(self, wd_step=None, ws_step=None, ti_step=None):
+    def resample(self, wd_step=None, ws_step=None, ti_step=None):
         """
         Resamples the wind rose by by wd_step, ws_step, and/or ti_step
 
@@ -846,7 +862,7 @@ class WindTIRose(WindDataBase):
             wd_step=wd_step, ws_step=ws_step, ti_step=ti_step, bin_weights=self.freq_table_flat
         )
 
-    def plot_wind_rose(
+    def plot(
         self,
         ax=None,
         wind_rose_var="ws",
@@ -896,13 +912,13 @@ class WindTIRose(WindDataBase):
         if wind_rose_var == "ws":
             if wind_rose_var_step is None:
                 wind_rose_var_step = 5.0
-            wind_rose_resample = self.resample_wind_rose(wd_step, ws_step=wind_rose_var_step)
+            wind_rose_resample = self.resample(wd_step, ws_step=wind_rose_var_step)
             var_bins = wind_rose_resample.wind_speeds
             freq_table = wind_rose_resample.freq_table.sum(2)  # sum along TI dimension
         else:  # wind_rose_var == "ti"
             if wind_rose_var_step is None:
                 wind_rose_var_step = 0.04
-            wind_rose_resample = self.resample_wind_rose(wd_step, ti_step=wind_rose_var_step)
+            wind_rose_resample = self.resample(wd_step, ti_step=wind_rose_var_step)
             var_bins = wind_rose_resample.turbulence_intensities
             freq_table = wind_rose_resample.freq_table.sum(1)  # sum along wind speed dimension
 
@@ -1288,7 +1304,7 @@ class TimeSeries(WindDataBase):
             wd_edges (NDArrayFloat, optional): Custom wind direction edges. Defaults to None.
             ws_edges (NDArrayFloat, optional): Custom wind speed edges. Defaults to None.
             bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
-                are primarily used by the resample resample_wind_rose function.
+                are primarily used by the resample() method.
                 Defaults to None.
 
         Returns:
@@ -1438,7 +1454,7 @@ class TimeSeries(WindDataBase):
             ti_edges (NDArrayFloat, optional): Custom turbulence intensity
                 edges. Defaults to None.
             bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
-                are primarily used by the resample resample_wind_rose function.
+                are primarily used by the resample() method.
                 Defaults to None.
 
         Returns:
