@@ -436,7 +436,7 @@ class WindRose(WindDataBase):
         """
 
         # Get a resampled wind_rose
-        wind_rose_resample = self.resample_wind_rose(wd_step, ws_step, inplace=False)
+        wind_rose_resample = self.resample(wd_step, ws_step, inplace=False)
         wd_bins = wind_rose_resample.wind_directions
         ws_bins = wind_rose_resample.wind_speeds
         freq_table = wind_rose_resample.freq_table
@@ -912,13 +912,13 @@ class WindTIRose(WindDataBase):
         if wind_rose_var == "ws":
             if wind_rose_var_step is None:
                 wind_rose_var_step = 5.0
-            wind_rose_resample = self.resample_wind_rose(wd_step, ws_step=wind_rose_var_step)
+            wind_rose_resample = self.resample(wd_step, ws_step=wind_rose_var_step)
             var_bins = wind_rose_resample.wind_speeds
             freq_table = wind_rose_resample.freq_table.sum(2)  # sum along TI dimension
         else:  # wind_rose_var == "ti"
             if wind_rose_var_step is None:
                 wind_rose_var_step = 0.04
-            wind_rose_resample = self.resample_wind_rose(wd_step, ti_step=wind_rose_var_step)
+            wind_rose_resample = self.resample(wd_step, ti_step=wind_rose_var_step)
             var_bins = wind_rose_resample.turbulence_intensities
             freq_table = wind_rose_resample.freq_table.sum(1)  # sum along wind speed dimension
 
@@ -1304,7 +1304,7 @@ class TimeSeries(WindDataBase):
             wd_edges (NDArrayFloat, optional): Custom wind direction edges. Defaults to None.
             ws_edges (NDArrayFloat, optional): Custom wind speed edges. Defaults to None.
             bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
-                are primarily used by the resample resample_wind_rose function.
+                are primarily used by the resample() method.
                 Defaults to None.
 
         Returns:
@@ -1454,7 +1454,7 @@ class TimeSeries(WindDataBase):
             ti_edges (NDArrayFloat, optional): Custom turbulence intensity
                 edges. Defaults to None.
             bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
-                are primarily used by the resample resample_wind_rose function.
+                are primarily used by the resample() method.
                 Defaults to None.
 
         Returns:
