@@ -143,6 +143,9 @@ class EddyViscosityVelocityDeficit(BaseModel):
         # Compute off-center velocities
         U_tilde = compute_off_center_velocities(U_tilde_c_meandering, ct_i, y_tilde, z_tilde)
 
+        # Set all upstream values to one
+        U_tilde[x_tilde < 0] = 1 # Upstream
+
         # Convert to a velocity deficit and return
         return 1 - U_tilde
 
@@ -220,6 +223,25 @@ def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_tilde, wd_std
     U_tilde_c_meandering = 1/m * U_tilde_c + (m-1)/m
 
     return U_tilde_c_meandering
+
+
+def wake_width_streamtube_correction_term(ai_j, y_ij_):
+    c_0 = 2.0
+    c_1 = 1.5
+
+    e_j_ = np.sqrt(1-ai_j) * (1/np.sqrt(1-2*ai_j) - 1)
+
+    # TODO: consider effect of different z also
+    e_ij_ = c_0 * e_j_ * np.exp(-y_ij_**2 / c_1**2)
+
+    return e_ij_
+
+def expanded_wake_width_squared(w_sq, e_ij_):
+    return (np.sqrt(w_sq) + e_ij_)**2
+
+def expanded_wake_centerline_velocity(Ct, w_sq):
+
+    return np.sqrt(1-Ct/(4*w_sq))
 
 
 if __name__ == "__main__":
