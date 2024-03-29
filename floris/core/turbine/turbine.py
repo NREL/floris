@@ -103,7 +103,7 @@ def power(
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
         awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
-            turbine [W].
+            turbine [deg].
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
@@ -217,7 +217,7 @@ def thrust_coefficient(
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
         awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
-            turbine [W].
+            turbine [deg].
         thrust_coefficient_functions (dict): The thrust coefficient functions for each turbine. Keys
             are the turbine type string and values are the callable functions.
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each

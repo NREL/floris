@@ -407,7 +407,7 @@ class FlorisModel(LoggingManager):
             | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
             self.core.farm.set_power_setpoints(_power_setpoints)
-        if not (_awc_modes is None).all():
+        if not _awc_modes is None:
             self.core.farm.set_awc_modes(_awc_modes)
         if not (_awc_amplitudes == 0).all():
             self.core.farm.set_awc_amplitudes(_awc_amplitudes)
