@@ -7,6 +7,7 @@ from floris.core.wake_combination import (
     FLS,
     MAX,
     SOSFS,
+    SOED,
 )
 from floris.core.wake_deflection import (
     EmpiricalGaussVelocityDeflection,
@@ -21,6 +22,7 @@ from floris.core.wake_turbulence import (
 )
 from floris.core.wake_velocity import (
     CumulativeGaussCurlVelocityDeficit,
+    EddyViscosityVelocity,
     EmpiricalGaussVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
@@ -33,7 +35,8 @@ MODEL_MAP = {
     "combination_model": {
         "fls": FLS,
         "max": MAX,
-        "sosfs": SOSFS
+        "sosfs": SOSFS,
+        "soed": SOED,
     },
     "deflection_model": {
         "jimenez": JimenezVelocityDeflection,
@@ -53,6 +56,7 @@ MODEL_MAP = {
         "jensen": JensenVelocityDeficit,
         "turbopark": TurbOParkVelocityDeficit,
         "empirical_gauss": EmpiricalGaussVelocityDeficit,
+        "eddy_viscosity": EddyViscosityVelocity,
     },
 }
 

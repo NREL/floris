@@ -47,6 +47,7 @@ from .flow_field import FlowField
 from .wake import WakeModelManager
 from .solver import (
     cc_solver,
+    streamtube_expansion_solver,
     empirical_gauss_solver,
     full_flow_cc_solver,
     full_flow_empirical_gauss_solver,

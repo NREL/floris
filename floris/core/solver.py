@@ -1479,7 +1479,7 @@ def streamtube_expansion_solver(
     # <<interface>>
     deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field)
     deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field)
-    combination_model_args = model_manager.combination_model.prepare_function(grid, flow_field)
+    #combination_model_args = model_manager.combination_model.prepare_function(grid, flow_field)
 
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
@@ -1522,7 +1522,7 @@ def streamtube_expansion_solver(
             cubature_weights=grid.cubature_weights,
             multidim_condition=flow_field.multidim_conditions
         )
-        thrust_coefficients[:, tindex] = ct_i[:, 0, 0] # TODO: check works
+        thrust_coefficients[:, tindex] = ct_i[:, 0]
         # Since we are filtering for the i'th turbine in the thrust coefficient function,
         # get the first index here (0:1)
         axial_induction_i = axial_induction(
@@ -1543,6 +1543,8 @@ def streamtube_expansion_solver(
         )
         # Since we are filtering for the i'th turbine in the axial induction function,
         # get the first index here (0:1)
+
+        # Can all of this be avoided? Don't need these at all grid points anyway?
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction_i[:, 0:1, None, None]
         turbulence_intensity_i = turbine_turbulence_intensity[:, tindex:tindex+1]
@@ -1581,36 +1583,27 @@ def streamtube_expansion_solver(
         )
 
         centerline_velocity_i, wake_width_squared_i = model_manager.velocity_model.function(
-            x_i,
-            y_i,
-            z_i,
-            axial_induction_i,
-            deflection_field,
-            yaw_angle_i,
-            turbulence_intensity_i,
-            ct_i,
-            hub_height_i,
-            rotor_diameter_i,
+            x_i[:,:,0,0],
+            turbulence_intensity_i[:,:,0,0],
+            ct_i[:,:,0,0],
+            hub_height_i[:,:,0,0],
+            rotor_diameter_i[:,:,0,0],
             **deficit_model_args,
         )
 
         # Store the centerline velocities and wake widths for each turbine--turbine pair
-        # TODO: Check this works as expected
-        centerline_velocities[:, tindex, :] = centerline_velocity_i[:, 0, 0]
-        wake_widths_squared[:, tindex, :] = wake_width_squared_i[:, 0, 0]
+        centerline_velocities[:, tindex, :] = centerline_velocity_i
+        wake_widths_squared[:, tindex, :] = wake_width_squared_i
 
         # Now, apply the streamtube expansion.
-
         centerline_velocities, wake_widths_squared = model_manager.velocity_model.streamtube_expansion(
-            x_i,
-            y_i,
-            z_i,
-            axial_induction_i,
-            centerline_velocities,
-            wake_widths_squared,
+            x_i[:,:,0,0],
+            y_i[:,:,0,0],
+            z_i[:,:,0,0],
             thrust_coefficients,
-            tindex,
-            rotor_diameter_i,
+            axial_induction_i[:,:,0,0],
+            wake_widths_squared,
+            rotor_diameter_i[:,:,0,0],
             **deficit_model_args,
         )
 

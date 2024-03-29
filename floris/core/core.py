@@ -25,6 +25,7 @@ from floris.core import (
     PointsGrid,
     sequential_solver,
     State,
+    streamtube_expansion_solver,
     TurbineCubatureGrid,
     TurbineGrid,
     turbopark_solver,
@@ -179,6 +180,13 @@ class Core(BaseClass):
             )
         elif vel_model=="empirical_gauss":
             empirical_gauss_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
+        elif vel_model=="eddy_viscosity":
+            streamtube_expansion_solver(
                 self.farm,
                 self.flow_field,
                 self.grid,
