@@ -13,8 +13,8 @@ from scipy.interpolate import interp1d
 
 from floris.core import BaseClass
 from floris.core.turbine import (
-    CosineLossTurbine,
     AWCTurbine,
+    CosineLossTurbine,
     MixedOperationTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,

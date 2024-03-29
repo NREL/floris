@@ -2,8 +2,8 @@ import numpy as np
 import pytest
 
 from floris.core.turbine.operation_models import (
-    CosineLossTurbine,
     AWCTurbine,
+    CosineLossTurbine,
     MixedOperationTurbine,
     POWER_SETPOINT_DEFAULT,
     rotor_velocity_air_density_correction,
