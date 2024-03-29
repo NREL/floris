@@ -22,7 +22,7 @@ from scipy.integrate import solve_ivp
 
 
 @define
-class EddyViscosityVelocityDeficit(BaseModel):
+class EddyViscosityVelocity(BaseModel):
 
     k_l: float = field(default=0.015*np.sqrt(3.56))
     k_a: float = field(default=0.5)
@@ -39,6 +39,9 @@ class EddyViscosityVelocityDeficit(BaseModel):
     filter_const_3: float = field(default=23.32)
     filter_const_4: float = field(default=1/3)
     filter_cutoff_x_: float = field(default=0.0)
+
+    c_0: float = field(default=2.0)
+    c_1: float = field(default=1.5)
 
     wd_std: float = field(default=3.0) # Also try with 0.0 for no meandering
 
@@ -140,14 +143,47 @@ class EddyViscosityVelocityDeficit(BaseModel):
             U_tilde_c, w_tilde_sq, x_tilde, self.wd_std
         )
 
-        # Compute off-center velocities
-        U_tilde = compute_off_center_velocities(U_tilde_c_meandering, ct_i, y_tilde, z_tilde)
+        # Recompute wake width
+        w_tilde_sq_meandering = wake_width_squared(ct_i, U_tilde_c)
 
-        # Set all upstream values to one
-        U_tilde[x_tilde < 0] = 1 # Upstream
 
-        # Convert to a velocity deficit and return
-        return 1 - U_tilde
+        # # Compute off-center velocities
+        # U_tilde = compute_off_center_velocities(U_tilde_c_meandering, ct_i, y_tilde, z_tilde)
+
+        # # Set all upstream values to one
+        # U_tilde[x_tilde < 0] = 1 # Upstream
+
+        # # Return velocities NOT as deficits
+        return U_tilde_c_meandering, w_tilde_sq_meandering
+    
+    def streamtube_expansion(
+        self,
+        x_i,
+        y_i,
+        z_i,
+        axial_induction_i,
+        U_tilde_c_tt,
+        w_tilde_sq_tt,
+        ct_t,
+        rotor_diameter_i,
+        *,
+        x,
+        y,
+        z,
+        u_initial,
+        wind_veer,
+    ):
+        # Non-dimensionalize and center distances
+        y_tilde = (y - y_i) / rotor_diameter_i
+
+        # Compute wake width
+        e_tilde = wake_width_streamtube_correction_term(axial_induction_i, y_tilde, z_tilde)
+        w_tilde_sq_tt = expanded_wake_width_squared(w_tilde_sq_tt, e_tilde, self.c_0, self.c_1)
+        
+        # Wait we don't need U_tilde_c_tt as an input? w is enough? Interesting, but OK.
+        U_tilde_c_tt = expanded_wake_centerline_velocity(Ct, w_tilde_sq_tt)
+
+        return U_tilde_c_tt, w_tilde_sq_tt
 
 
 def compute_off_center_velocities(U_tilde_c, Ct, y_tilde, z_tilde):
@@ -225,10 +261,7 @@ def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_tilde, wd_std
     return U_tilde_c_meandering
 
 
-def wake_width_streamtube_correction_term(ai_j, y_ij_):
-    c_0 = 2.0
-    c_1 = 1.5
-
+def wake_width_streamtube_correction_term(ai_j, y_ij_, z_ij_, c_0, c_1):
     e_j_ = np.sqrt(1-ai_j) * (1/np.sqrt(1-2*ai_j) - 1)
 
     # TODO: consider effect of different z also
@@ -236,12 +269,12 @@ def wake_width_streamtube_correction_term(ai_j, y_ij_):
 
     return e_ij_
 
-def expanded_wake_width_squared(w_sq, e_ij_):
-    return (np.sqrt(w_sq) + e_ij_)**2
+def expanded_wake_width_squared(w_tilde_sq, e_ij_):
+    return (np.sqrt(w_tilde_sq) + e_ij_)**2
 
-def expanded_wake_centerline_velocity(Ct, w_sq):
+def expanded_wake_centerline_velocity(Ct, w_tilde_sq):
 
-    return np.sqrt(1-Ct/(4*w_sq))
+    return np.sqrt(1-Ct/(4*w_tilde_sq))
 
 
 if __name__ == "__main__":
@@ -255,7 +288,7 @@ if __name__ == "__main__":
     ambient_ti = 0.06
     U_inf = 8.0
 
-    EVDM = EddyViscosityVelocityDeficit()
+    EVDM = EddyViscosityVelocity()
 
     x_test = np.linspace(0*D, 20*D, 100)
     y_test = np.linspace(-2*D, 2*D, 9)

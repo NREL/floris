@@ -1463,3 +1463,177 @@ def full_flow_empirical_gauss_solver(
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
+
+
+# @profile
+def streamtube_expansion_solver(
+    farm: Farm,
+    flow_field: FlowField,
+    grid: TurbineGrid,
+    model_manager: WakeModelManager
+) -> None:
+    # Algorithm
+    # For each turbine, calculate its effect on every downstream turbine.
+    # Also calculates the expansion in the streamtube of upstream turbines.
+    
+    # <<interface>>
+    deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field)
+    deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field)
+    combination_model_args = model_manager.combination_model.prepare_function(grid, flow_field)
+
+
+    # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
+    # with dimensions expanded for (n_turbines, grid, grid)
+    ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()
+    ambient_turbulence_intensities = ambient_turbulence_intensities[:, None, None, None]
+    # TODO: should TI be updated at each turbine? Seems not?
+    turbine_turbulence_intensity = flow_field.turbulence_intensities[:, None, None, None]
+    turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
+
+    # Declare storage for centerline velocities, wake_widths, and thrust coefficients
+    centerline_velocities = np.zeros((flow_field.n_findex, farm.n_turbines, farm.n_turbines))
+    wake_widths_squared = np.zeros((flow_field.n_findex, farm.n_turbines, farm.n_turbines))
+    thrust_coefficients = np.zeros((flow_field.n_findex, farm.n_turbines))
+
+    # Calculate the velocity deficit sequentially from upstream to downstream turbines
+    for tindex in range(grid.n_turbines):
+
+        # Get the current turbine quantities
+        x_i = np.mean(grid.x_sorted[:, tindex:tindex+1], axis=(2, 3))
+        x_i = x_i[:, :, None, None]
+        y_i = np.mean(grid.y_sorted[:, tindex:tindex+1], axis=(2, 3))
+        y_i = y_i[:, :, None, None]
+        z_i = np.mean(grid.z_sorted[:, tindex:tindex+1], axis=(2, 3))
+        z_i = z_i[:, :, None, None]
+
+        ct_i = thrust_coefficient(
+            velocities=flow_field.u_sorted,
+            air_density=flow_field.air_density,
+            yaw_angles=farm.yaw_angles_sorted,
+            tilt_angles=farm.tilt_angles_sorted,
+            power_setpoints=farm.power_setpoints_sorted,
+            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
+            tilt_interps=farm.turbine_tilt_interps,
+            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
+            turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
+            ix_filter=[tindex],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions
+        )
+        thrust_coefficients[:, tindex] = ct_i[:, 0, 0] # TODO: check works
+        # Since we are filtering for the i'th turbine in the thrust coefficient function,
+        # get the first index here (0:1)
+        axial_induction_i = axial_induction(
+            velocities=flow_field.u_sorted,
+            air_density=flow_field.air_density,
+            yaw_angles=farm.yaw_angles_sorted,
+            tilt_angles=farm.tilt_angles_sorted,
+            power_setpoints=farm.power_setpoints_sorted,
+            axial_induction_functions=farm.turbine_axial_induction_functions,
+            tilt_interps=farm.turbine_tilt_interps,
+            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
+            turbine_type_map=farm.turbine_type_map_sorted,
+            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
+            ix_filter=[tindex],
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions
+        )
+        # Since we are filtering for the i'th turbine in the axial induction function,
+        # get the first index here (0:1)
+        ct_i = ct_i[:, 0:1, None, None]
+        axial_induction_i = axial_induction_i[:, 0:1, None, None]
+        turbulence_intensity_i = turbine_turbulence_intensity[:, tindex:tindex+1]
+        yaw_angle_i = farm.yaw_angles_sorted[:, tindex:tindex+1, None, None]
+        hub_height_i = farm.hub_heights_sorted[:, tindex:tindex+1, None, None]
+        rotor_diameter_i = farm.rotor_diameters_sorted[:, tindex:tindex+1, None, None]
+
+        effective_yaw_i = np.zeros_like(yaw_angle_i)
+        effective_yaw_i += yaw_angle_i
+
+        if (model_manager.enable_secondary_steering
+            or model_manager.enable_transverse_velocities
+            or model_manager.enable_yaw_added_recovery
+            ):
+            raise NotImplementedError(
+                "Secondary effects not available for this model."
+            )
+        
+        if np.any(farm.yaw_angles_sorted):
+            model_manager.deflection_model.logger.warning(
+                "WARNING: Deflection with the eddy viscosity model has not been validated. "
+                "This is an initial implementation, and we advise you use at your own risk "
+                "and perform a thorough examination of the results."
+            )
+
+        # Model calculations
+        # TODO: what happens with this?
+        deflection_field = model_manager.deflection_model.function(
+            x_i,
+            y_i,
+            effective_yaw_i,
+            turbulence_intensity_i,
+            ct_i,
+            rotor_diameter_i,
+            **deflection_model_args,
+        )
+
+        centerline_velocity_i, wake_width_squared_i = model_manager.velocity_model.function(
+            x_i,
+            y_i,
+            z_i,
+            axial_induction_i,
+            deflection_field,
+            yaw_angle_i,
+            turbulence_intensity_i,
+            ct_i,
+            hub_height_i,
+            rotor_diameter_i,
+            **deficit_model_args,
+        )
+
+        # Store the centerline velocities and wake widths for each turbine--turbine pair
+        # TODO: Check this works as expected
+        centerline_velocities[:, tindex, :] = centerline_velocity_i[:, 0, 0]
+        wake_widths_squared[:, tindex, :] = wake_width_squared_i[:, 0, 0]
+
+        # Now, apply the streamtube expansion.
+
+        centerline_velocities, wake_widths_squared = model_manager.velocity_model.streamtube_expansion(
+            x_i,
+            y_i,
+            z_i,
+            axial_induction_i,
+            centerline_velocities,
+            wake_widths_squared,
+            thrust_coefficients,
+            tindex,
+            rotor_diameter_i,
+            **deficit_model_args,
+        )
+
+        # Store the normalized velocities for each turbine--turbine pair
+        import ipdb; ipdb.set_trace()
+        velocity_field_tt[:, tindex, :] = velocities_i[:, 0, 0]
+
+        # Adjust velocity field of each (upstream) turbine for streamtube expansion
+        # TODO: 
+        velocity_field_tt = model_manager.velocity_model.streamtube_expansion(
+            x_i,
+            y_i,
+            z_i,
+            axial_induction_i,
+            velocity_field_tt,
+            tindex,
+            **deficit_model_args,
+        )
+
+        velocity_field = model_manager.combination_model.function(
+            velocity_field_tt,
+            **combination_model_args # Or just pass in u_initial_sorted. Or maybe don't need now?
+        )
+
+        # Compute absolute velocity field based on all turbines up to i
+        flow_field.u_sorted = velocity_field * flow_field.u_initial_sorted
