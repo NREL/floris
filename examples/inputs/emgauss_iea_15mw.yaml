@@ -1,6 +1,6 @@
 
 name: Emperical Gaussian
-description: Three turbines using emperical Gaussian model
+description: Three turbines using empirical Gaussian model
 floris_version: v3.x
 
 logging:
@@ -48,7 +48,7 @@ wake:
 
   enable_secondary_steering: false
   enable_yaw_added_recovery: false
-  enable_helix_added_recovery: true
+  enable_active_wake_mixing: true
   enable_transverse_velocities: false
 
   wake_deflection_parameters:
@@ -97,8 +97,8 @@ wake:
       sigma_0_D: 0.28
       smoothing_length_D: 2.0
       mixing_gain_velocity: 2.0
-      helix_wake_exp: 1.2
-      helix_wake_denominator: 400
+      awc_wake_exp: 1.2
+      awc_wake_denominator: 400
   wake_turbulence_parameters:
     crespo_hernandez:
       initial: 0.1

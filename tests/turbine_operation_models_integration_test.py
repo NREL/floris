@@ -3,7 +3,7 @@ import pytest
 
 from floris.core.turbine.operation_models import (
     CosineLossTurbine,
-    HelixTurbine,
+    AWCTurbine,
     MixedOperationTurbine,
     POWER_SETPOINT_DEFAULT,
     rotor_velocity_air_density_correction,
@@ -50,9 +50,9 @@ def test_submodel_attributes():
     assert hasattr(MixedOperationTurbine, "thrust_coefficient")
     assert hasattr(MixedOperationTurbine, "axial_induction")
 
-    assert hasattr(HelixTurbine, "power")
-    assert hasattr(HelixTurbine, "thrust_coefficient")
-    assert hasattr(HelixTurbine, "axial_induction")
+    assert hasattr(AWCTurbine, "power")
+    assert hasattr(AWCTurbine, "thrust_coefficient")
+    assert hasattr(AWCTurbine, "axial_induction")
 
 def test_SimpleTurbine():
 
@@ -506,7 +506,7 @@ def test_MixedOperationTurbine():
             tilt_interp=None
         )
 
-def test_HelixTurbine():
+def test_AWCTurbine():
 
     n_turbines = 1
     wind_speed = 10.0
@@ -528,50 +528,56 @@ def test_HelixTurbine():
     )
 
     # Test no change to Ct, power, or ai when helix amplitudes are 0
-    test_Ct = HelixTurbine.thrust_coefficient(
+    test_Ct = AWCTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        helix_amplitudes=np.zeros((1, n_turbines)),
+        awc_modes=np.array([["helix"]*n_turbines]*1),
+        awc_amplitudes=np.zeros((1, n_turbines)),
     )
     assert np.allclose(test_Ct, base_Ct)
 
-    test_power = HelixTurbine.power(
+    test_power = AWCTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=turbine_data["power_thrust_table"]["ref_air_density"],
-        helix_amplitudes=np.zeros((1, n_turbines)),
+        awc_modes=np.array([["helix"]*n_turbines]*1),
+        awc_amplitudes=np.zeros((1, n_turbines)),
     )
     assert np.allclose(test_power, base_power)
 
-    test_ai = HelixTurbine.axial_induction(
+    test_ai = AWCTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        helix_amplitudes=np.zeros((1, n_turbines)),
+        awc_modes=np.array([["helix"]*n_turbines]*1),
+        awc_amplitudes=np.zeros((1, n_turbines)),
     )
     assert np.allclose(test_ai, base_ai)
 
     # Test that Ct, power, and ai all decrease when helix amplitudes are non-zero
-    test_Ct = HelixTurbine.thrust_coefficient(
+    test_Ct = AWCTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        helix_amplitudes=2*np.ones((1, n_turbines)),
+        awc_modes=np.array([["helix"]*n_turbines]*1),
+        awc_amplitudes=2*np.ones((1, n_turbines)),
     )
     assert test_Ct < base_Ct
     assert test_Ct > 0
 
-    test_power = HelixTurbine.power(
+    test_power = AWCTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=turbine_data["power_thrust_table"]["ref_air_density"],
-        helix_amplitudes=2*np.ones((1, n_turbines)),
+        awc_modes=np.array([["helix"]*n_turbines]*1),
+        awc_amplitudes=2*np.ones((1, n_turbines)),
     )
     assert test_power < base_power
     assert test_power > 0
 
-    test_ai = HelixTurbine.axial_induction(
+    test_ai = AWCTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        helix_amplitudes=2*np.ones((1, n_turbines)),
+        awc_modes=np.array([["helix"]*n_turbines]*1),
+        awc_amplitudes=2*np.ones((1, n_turbines)),
     )
     assert test_ai < base_ai
     assert test_ai > 0

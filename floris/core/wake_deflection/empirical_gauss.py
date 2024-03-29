@@ -41,8 +41,8 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
             -   **yaw_added_mixing_gain** (*float*): Sets the
                 contribution of turbine yaw misalignment to the mixing
                 in that turbine's wake (similar to yaw-added recovery).
-            -   **helix_added_mixing_gain** (*float*): Sets the
-                contribution of turbine helix control to the mixing
+            -   **awc_added_mixing_gain** (*float*): Sets the
+                contribution of turbine active wake control to the mixing
                 in that turbine's wake.
 
     References:
@@ -55,7 +55,7 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
     deflection_rate: float = field(default=30)
     mixing_gain_deflection: float = field(default=0.0)
     yaw_added_mixing_gain: float = field(default=0.0)
-    helix_added_wake_mixing: float = field(default=0.0)
+    awc_added_wake_mixing: float = field(default=0.0)
 
     def prepare_function(
         self,

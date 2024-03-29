@@ -28,6 +28,7 @@ from floris.type_dec import (
     iter_validator,
     NDArrayFloat,
     NDArrayObject,
+    NDArrayStr,
 )
 from floris.utilities import load_yaml
 
@@ -85,11 +86,14 @@ class Farm(BaseClass):
     power_setpoints: NDArrayFloat = field(init=False)
     power_setpoints_sorted: NDArrayFloat = field(init=False)
 
-    helix_amplitudes: NDArrayFloat = field(init=False)
-    helix_amplitudes_sorted: NDArrayFloat = field(init=False)
+    awc_modes: NDArrayStr = field(init=False)
+    awc_modes_sorted: NDArrayStr = field(init=False)
 
-    helix_frequencies: NDArrayFloat = field(init=False)
-    helix_frequencies_sorted: NDArrayFloat = field(init=False)
+    awc_amplitudes: NDArrayFloat = field(init=False)
+    awc_amplitudes_sorted: NDArrayFloat = field(init=False)
+
+    awc_frequencies: NDArrayFloat = field(init=False)
+    awc_frequencies_sorted: NDArrayFloat = field(init=False)
 
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
@@ -241,13 +245,18 @@ class Farm(BaseClass):
             sorted_indices[:, :, 0, 0],
             axis=1,
         )
-        self.helix_amplitudes_sorted = np.take_along_axis(
-            self.helix_amplitudes,
+        self.awc_modes_sorted = np.take_along_axis(
+            self.awc_modes,
             sorted_indices[:, :, 0, 0],
             axis=1,
         )
-        self.helix_frequencies_sorted = np.take_along_axis(
-            self.helix_frequencies,
+        self.awc_amplitudes_sorted = np.take_along_axis(
+            self.awc_amplitudes,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
+        self.awc_frequencies_sorted = np.take_along_axis(
+            self.awc_frequencies,
             sorted_indices[:, :, 0, 0],
             axis=1,
         )
@@ -371,21 +380,31 @@ class Farm(BaseClass):
         self.set_power_setpoints(power_setpoints)
         self.power_setpoints_sorted = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
 
-    def set_helix_amplitudes(self, helix_amplitudes: NDArrayFloat):
-        self.helix_amplitudes = np.array(helix_amplitudes)
+    def set_awc_modes(self, awc_modes: NDArrayStr):
+        self.awc_modes = np.array(awc_modes)
 
-    def set_helix_amplitudes_to_ref_amp(self, n_findex: int):
-        helix_amplitudes = np.zeros((n_findex, self.n_turbines))
-        self.set_helix_amplitudes(helix_amplitudes)
-        self.helix_amplitudes_sorted = np.zeros((n_findex, self.n_turbines))
+    def set_awc_modes_to_ref_mode(self, n_findex: int):
+        # awc_modes = np.empty((n_findex, self.n_turbines))\
+        awc_modes = np.array([["baseline"]*self.n_turbines]*n_findex)
+        self.set_awc_modes(awc_modes)
+        # self.awc_modes_sorted = np.empty((n_findex, self.n_turbines))
+        self.awc_modes_sorted = np.array([["baseline"]*self.n_turbines]*n_findex)
 
-    def set_helix_frequencies(self, helix_frequencies: NDArrayFloat):
-        self.helix_frequencies = np.array(helix_frequencies)
+    def set_awc_amplitudes(self, awc_amplitudes: NDArrayFloat):
+        self.awc_amplitudes = np.array(awc_amplitudes)
 
-    def set_helix_frequencies_to_ref_freq(self, n_findex: int):
-        helix_frequencies = np.zeros((n_findex, self.n_turbines))
-        self.set_helix_frequencies(helix_frequencies)
-        self.helix_frequencies_sorted = np.zeros((n_findex, self.n_turbines))
+    def set_awc_amplitudes_to_ref_amp(self, n_findex: int):
+        awc_amplitudes = np.zeros((n_findex, self.n_turbines))
+        self.set_awc_amplitudes(awc_amplitudes)
+        self.awc_amplitudes_sorted = np.zeros((n_findex, self.n_turbines))
+
+    def set_awc_frequencies(self, awc_frequencies: NDArrayFloat):
+        self.awc_frequencies = np.array(awc_frequencies)
+
+    def set_awc_frequencies_to_ref_freq(self, n_findex: int):
+        awc_frequencies = np.zeros((n_findex, self.n_turbines))
+        self.set_awc_frequencies(awc_frequencies)
+        self.awc_frequencies_sorted = np.zeros((n_findex, self.n_turbines))
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
         tilt_angles = compute_tilt_angles_for_floating_turbines_map(

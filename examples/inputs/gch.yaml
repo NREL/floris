@@ -180,7 +180,7 @@ wake:
 
   ###
   # Can be "true" or "false".
-  enable_helix_added_recovery: false
+  enable_active_wake_mixing: false
 
   ###
   # Can be "true" or "false".

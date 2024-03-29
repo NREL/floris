@@ -1,7 +1,7 @@
 
 from floris.core.turbine.operation_models import (
     CosineLossTurbine,
-    HelixTurbine,
+    AWCTurbine,
     MixedOperationTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,

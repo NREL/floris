@@ -512,7 +512,7 @@ class SampleInputs:
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,
-            "enable_helix_added_recovery": False,
+            "enable_active_wake_mixing": False,
             "enable_transverse_velocities": False,
         }
 

@@ -485,7 +485,7 @@ class MixedOperationTurbine(BaseOperationModel):
         return axial_inductions
 
 @define
-class HelixTurbine(BaseOperationModel):
+class AWCTurbine(BaseOperationModel):
     """
     power_thrust_table is a dictionary (normally defined on the turbine input yaml)
     that contains the parameters necessary to evaluate power(), thrust(), and axial_induction().
@@ -501,7 +501,8 @@ class HelixTurbine(BaseOperationModel):
         power_thrust_table: dict,
         velocities: NDArrayFloat,
         air_density: float,
-        helix_amplitudes: NDArrayFloat | None,
+        awc_modes: str,
+        awc_amplitudes: NDArrayFloat | None,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
@@ -514,30 +515,36 @@ class HelixTurbine(BaseOperationModel):
             cubature_weights=cubature_weights
         )
 
-        if helix_amplitudes is None:
-            return base_powers
-        else:
+        if (awc_modes == 'helix').any():
             if np.any(np.isclose(
                 base_powers/1000,
                 np.max(power_thrust_table['power'])
                 )):
                 raise UserWarning(
                     'The selected wind speed is above or near rated wind speed. '
-                    '`HelixTurbine` operation model is not designed '
+                    '`AWCTurbine` operation model is not designed '
                     'or verified for above-rated conditions.'
                     )
             return base_powers * (1 - (
                 power_thrust_table['helix_power_b']
                 + power_thrust_table['helix_power_c']*base_powers
                 )
-                *helix_amplitudes**power_thrust_table['helix_a']
-
+                *awc_amplitudes**power_thrust_table['helix_a']
             ) ## TODO: Should probably add max function here
+        if (awc_modes == 'baseline').any():
+            return base_powers
+        else:
+            raise UserWarning(
+                'Active wake mixing strategies other than the `helix` strategy '
+                'have not yet been implemented in FLORIS. Returning baseline power.'
+                )
+
 
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
-        helix_amplitudes: NDArrayFloat,
+        awc_modes: str,
+        awc_amplitudes: NDArrayFloat | None,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
@@ -548,28 +555,35 @@ class HelixTurbine(BaseOperationModel):
             average_method=average_method,
             cubature_weights=cubature_weights
         )
-        if helix_amplitudes is None:
-            return base_thrust_coefficients
-        else:
+        if (awc_modes == 'helix').any():
             return base_thrust_coefficients * (1 - (
                 power_thrust_table['helix_thrust_b']
                 + power_thrust_table['helix_thrust_c']*base_thrust_coefficients
                 )
-                *helix_amplitudes**power_thrust_table['helix_a']
+                *awc_amplitudes**power_thrust_table['helix_a']
             )
+        if (awc_modes == 'baseline').any():
+            return base_thrust_coefficients
+        else:
+            raise UserWarning(
+                'Active wake mixing strategies other than the `helix` strategy '
+                'have not yet been implemented in FLORIS. Returning baseline power.'
+                )
 
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
-        helix_amplitudes: NDArrayFloat,
+        awc_modes: str,
+        awc_amplitudes: NDArrayFloat,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        thrust_coefficient = HelixTurbine.thrust_coefficient(
+        thrust_coefficient = AWCTurbine.thrust_coefficient(
             power_thrust_table=power_thrust_table,
             velocities=velocities,
-            helix_amplitudes=helix_amplitudes,
+            awc_modes=awc_modes,
+            awc_amplitudes=awc_amplitudes,
             average_method=average_method,
             cubature_weights=cubature_weights,
         )
