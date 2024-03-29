@@ -227,10 +227,39 @@ class EddyViscosityVelocity(BaseModel):
         w_tilde_sq_tt = expanded_wake_width_squared(w_tilde_sq_tt, e_tilde)
         
         # Wait we don't need U_tilde_c_tt as an input? w is enough? Interesting, but OK.
-        import ipdb; ipdb.set_trace()
-        U_tilde_c_tt = expanded_wake_centerline_velocity(Ct, w_tilde_sq_tt)
+        U_tilde_c_tt = expanded_wake_centerline_velocity(ct_all[:,:,None], w_tilde_sq_tt)
 
         return U_tilde_c_tt, w_tilde_sq_tt
+    
+    def evaluate_velocities(
+        self,
+        U_tilde_c_tt,
+        ct_all,
+        rotor_diameters,
+        hub_heights,
+        *,
+        x,
+        y,
+        z,
+        u_initial,
+        wind_veer,
+    ):
+        # Non-dimensionalize and center distances
+        y_D = y / rotor_diameters[:,:,None,None]
+        z_D = (z - hub_heights[:,:,None,None]) / rotor_diameters[:,:,None,None]
+        # TODO: Check working as expected with correct D, hh being applied
+        
+        y_D_rel = y_D[:,:,None,:,:] - np.transpose(y_D[:,:,None,:,:], axes=(0,2,1,3,4))
+        z_D_rel = z_D[:,:,None,:,:] - np.transpose(z_D[:,:,None,:,:], axes=(0,2,1,3,4))
+
+        U_tilde_r_tt = compute_off_center_velocities(
+            U_tilde_c_tt,
+            ct_all[:,:,None],
+            y_D_rel,
+            z_D_rel
+        )
+
+        return U_tilde_r_tt
 
 
 def compute_off_center_velocities(U_tilde_c, Ct, y_tilde, z_tilde):
@@ -239,7 +268,11 @@ def compute_off_center_velocities(U_tilde_c, Ct, y_tilde, z_tilde):
     y_, z_ supposed to be defined from the center of the rotor.
     """
     w_tilde_sq = wake_width_squared(Ct, U_tilde_c)
-    U_tilde = 1 - (1 - U_tilde_c) * np.exp(-(y_tilde**2 + z_tilde**2)/w_tilde_sq)
+    U_tilde = (
+        1
+        - (1 - U_tilde_c[:,:,:,None,None])
+        * np.exp(-(y_tilde**2 + z_tilde**2)/w_tilde_sq[:,:,:,None,None])
+    )
     return U_tilde
 
 def wake_width_squared(Ct, U_tilde_c):
@@ -326,8 +359,9 @@ def expanded_wake_width_squared(w_tilde_sq, e_tilde):
     return (np.sqrt(w_tilde_sq) + e_tilde)**2
 
 def expanded_wake_centerline_velocity(Ct, w_tilde_sq):
-
-    return np.sqrt(1-Ct/(4*w_tilde_sq))
+    # This annoyingly raises an error for the 0/0 cases, although they are not 
+    # selected.
+    return np.where(w_tilde_sq > 0, np.sqrt(1-Ct/(4*w_tilde_sq)), 1)
 
 
 if __name__ == "__main__":

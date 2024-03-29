@@ -1582,7 +1582,7 @@ def streamtube_expansion_solver(
             **deflection_model_args,
         )
 
-        centerline_velocity_i, wake_width_squared_i = model_manager.velocity_model.function(
+        _, wake_width_squared_i = model_manager.velocity_model.function(
             x_i[:,:,0,0],
             turbulence_intensity_i[:,:,0,0],
             ct_i[:,:,0,0],
@@ -1592,11 +1592,11 @@ def streamtube_expansion_solver(
         )
 
         # Store the centerline velocities and wake widths for each turbine--turbine pair
-        centerline_velocities[:, tindex, :] = centerline_velocity_i
+        # centerline_velocities[:, tindex, :] = centerline_velocity_i
         wake_widths_squared[:, tindex, :] = wake_width_squared_i
 
         # Now, apply the streamtube expansion.
-        centerline_velocities, wake_widths_squared = model_manager.velocity_model.streamtube_expansion(
+        centerline_velocities, _ = model_manager.velocity_model.streamtube_expansion(
             x_i[:,:,0,0],
             y_i[:,:,0,0],
             z_i[:,:,0,0],
@@ -1607,26 +1607,18 @@ def streamtube_expansion_solver(
             **deficit_model_args,
         )
 
-        # Store the normalized velocities for each turbine--turbine pair
-        import ipdb; ipdb.set_trace()
-        velocity_field_tt[:, tindex, :] = velocities_i[:, 0, 0]
-
-        # Adjust velocity field of each (upstream) turbine for streamtube expansion
-        # TODO: 
-        velocity_field_tt = model_manager.velocity_model.streamtube_expansion(
-            x_i,
-            y_i,
-            z_i,
-            axial_induction_i,
-            velocity_field_tt,
-            tindex,
+        # Now, can compute the actual velocities at each turbine location
+        velocities = model_manager.velocity_model.evaluate_velocities(
+            centerline_velocities,
+            thrust_coefficients,
+            farm.rotor_diameters_sorted,
+            farm.hub_heights_sorted,
             **deficit_model_args,
         )
 
-        velocity_field = model_manager.combination_model.function(
-            velocity_field_tt,
-            **combination_model_args # Or just pass in u_initial_sorted. Or maybe don't need now?
-        )
+
+        # Combine
+        velocity_field = model_manager.combination_model.function(velocities)
 
         # Compute absolute velocity field based on all turbines up to i
         flow_field.u_sorted = velocity_field * flow_field.u_initial_sorted
