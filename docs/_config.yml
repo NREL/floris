@@ -44,12 +44,8 @@ sphinx:
   - 'sphinx.ext.viewcode'
   - 'sphinx_autodoc_typehints'
   - 'sphinxcontrib.autoyaml'
-  - 'sphinx.ext.napoleon'               # Formats google and numpy docstring styles
   - 'sphinxcontrib.mermaid'
   config:
-    html_theme: sphinx_book_theme
-    templates_path:
-    - '_templates'
     language: 'python'
     nb_execution_show_tb: true          # Shows the stack trace in stdout; its suppressed otherwise.
     nb_execution_raise_on_error: true   # Stops the Sphinx build if there is an error in a notebook. See https://github.com/executablebooks/jupyter-book/issues/2011
@@ -74,3 +70,4 @@ sphinx:
       # class-doc-from
       # no-value
     autodoc_typehints: both
+    mermaid_version: "10.8"

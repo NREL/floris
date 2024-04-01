@@ -7,9 +7,10 @@ be violated, and ongoing work should strive to meet these ideas and expand on th
 as possible.
 
 - Modularity in wake model formulation:
-    - New mathematical formulation should be straightforward to incorporate.
-    - Requisite solver and grid data structures should not conflict with other existing
-        wake models.
+    - New mathematical formulation should be straightforward to incorporate by non-expert
+        software developers.
+    - Solver and grid data structures for one wake model should not conflict with the data
+        structures for other wake models.
 - Any new feature or work should not affect an existing feature:
     - Low level code should be reused as much as possible, but high level code should rarely
         be repurposed.
@@ -31,12 +32,12 @@ packages. The internal structure and hierarchy is described below.
 ```{mermaid}
 classDiagram
 
-    class tools {
-        +FlorisInterface
+    class simulation["floris.simulation"] {
+        +Floris
     }
 
-    class simulation {
-        +Floris
+    class tools["floris.tools"] {
+        +FlorisInterface
     }
 
     class logging_manager
@@ -45,9 +46,7 @@ classDiagram
 
     tools <-- logging_manager
     simulation <-- logging_manager
-    tools <-- type_dec
     simulation <-- type_dec
-    tools <-- utilities
     simulation <-- utilities
     tools <-- simulation
 ```
@@ -75,54 +74,61 @@ classDiagram
     class Farm
 
     class FlowField {
-        array u
-        array v
-        array w
+        u: NDArrayFloat
+        v: NDArrayFloat
+        w: NDArrayFloat
     }
 
     class Grid {
         <<interface>>
+        x: NDArrayFloat
+        y: NDArrayFloat
+        z: NDArrayFloat
     }
     class TurbineGrid
+    class TurbineCubatureGrid
     class FlowFieldPlanarGrid
+    class PointsGrid
 
     class WakeModelManager {
         <<interface>>
     }
     class WakeCombination {
-        dict parameters
+        parameters: dict
         function()
     }
     class WakeDeflection {
-        dict parameters
+        parameters: dict
         function()
     }
     class WakeTurbulence {
-        dict parameters
+        parameters: dict
         function()
     }
     class WakeVelocity {
-        dict parameters
+        parameters: dict
         function()
     }
 
     class Solver {
         <<interface>>
-        dict parameters
+        parameters: dict
     }
 
-    Floris o-- Farm
-    Floris o-- FlowField
-    Floris o-- Grid
-    Floris o-- WakeModelManager
-    Floris *-- Solver
-    WakeModelManager o-- WakeCombination
-    WakeModelManager o-- WakeDeflection
-    WakeModelManager o-- WakeTurbulence
-    WakeModelManager o-- WakeVelocity
+    Floris *-- Farm
+    Floris *-- FlowField
+    Floris *-- Grid
+    Floris *-- WakeModelManager
+    Floris --> Solver
+    WakeModelManager *-- WakeCombination
+    WakeModelManager *-- WakeDeflection
+    WakeModelManager *-- WakeTurbulence
+    WakeModelManager *-- WakeVelocity
 
     Grid <|-- TurbineGrid
+    Grid <|-- TurbineCubatureGrid
     Grid <|-- FlowFieldPlanarGrid
+    Grid <|-- PointsGrid
 
     Solver --> Farm
     Solver --> FlowField
