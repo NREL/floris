@@ -14,6 +14,7 @@ parts:
     - file: advanced_concepts
     - file: floating_wind_turbine
     - file: turbine_interaction
+    - file: operation_models_user
     - file: input_reference_main
     - file: input_reference_turbine
     - file: examples
