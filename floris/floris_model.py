@@ -1287,22 +1287,22 @@ class FlorisModel(LoggingManager):
 
         self.core.flow_field.reference_wind_height = unique_heights[0]
 
-    def get_power_thrust_model(self) -> str:
+    def get_operation_model(self) -> str:
         """Get the power thrust model of a FlorisModel.
 
         Returns:
-            str: The power_thrust_model.
+            str: The operation_model.
         """
-        return self.core.farm.turbine_definitions[0]["power_thrust_model"]
+        return self.core.farm.turbine_definitions[0]["operation_model"]
 
-    def set_power_thrust_model(self, power_thrust_model: str):
+    def set_operation_model(self, operation_model: str):
         """Set the power thrust model of a FlorisModel.
 
         Args:
-            power_thrust_model (str): The power thrust model to set.
+            operation_model (str): The power thrust model to set.
         """
         turbine_type = self.core.farm.turbine_definitions[0]
-        turbine_type["power_thrust_model"] = power_thrust_model
+        turbine_type["operation_model"] = operation_model
         self.set(turbine_type=[turbine_type])
 
     def copy(self):
