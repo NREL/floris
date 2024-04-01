@@ -1335,15 +1335,17 @@ def empirical_gauss_solver(
                 downstream_distance_D[:,:,i],
                 model_manager.deflection_model.yaw_added_mixing_gain
             )
-        if model_manager.enable_active_wake_mixing:
-            mixing_factor[:,:,i] += \
-                area_overlap * awc_added_wake_mixing(
-                awc_mode_i,
-                awc_amplitude_i,
-                awc_frequency_i,
-                model_manager.velocity_model.awc_wake_exp,
-                model_manager.velocity_model.awc_wake_denominator
-            )
+        # if model_manager.enable_active_wake_mixing:
+        #     # Influence of awc on downstream turbines' wakes. This has not been validated,
+        #     # so is commented out for now.
+        #     mixing_factor[:,:,i] += \
+        #         area_overlap * awc_added_wake_mixing(
+        #         awc_mode_i,
+        #         awc_amplitude_i,
+        #         awc_frequency_i,
+        #         model_manager.velocity_model.awc_wake_exp,
+        #         model_manager.velocity_model.awc_wake_denominator
+        #     )
 
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
