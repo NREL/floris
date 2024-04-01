@@ -27,7 +27,7 @@ Turbine 2 is in wake turbine 1, turbine 4 in wake of turbine 3.
 """
 
 # Grab model of FLORIS and update to awc-enabled turbines
-fmodel = FlorisModel("inputs/emgauss_iea_15mw.yaml")
+fmodel = FlorisModel("inputs/emgauss_helix.yaml")
 with open(str(
     fmodel.core.as_dict()["farm"]["turbine_library_path"] /
     (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
@@ -137,54 +137,30 @@ fmodel.run()
 turbine_powers = fmodel.get_turbine_powers()
 
 # Plot the power as a function of helix amplitude
-fig_power, ax_power = plt.subplots(1, 1)
-ax_power.plot(
+fig_power, ax_power = plt.subplots()
+ax_power.fill_between(
+    awc_amplitudes[:, 0], 
+    0, 
+    turbine_powers[:, 0]/1000, 
+    color='C0', 
+    label='Turbine 1'
+    )
+ax_power.fill_between(
     awc_amplitudes[:, 0],
     turbine_powers[:, 0]/1000,
-    color="C0",
-    label="Turbine 1"
-)
+    turbine_powers[:, :2].sum(axis=1)/1000,
+    color='C1',
+    label='Turbine 2'
+    )
 ax_power.plot(
-    awc_amplitudes[:, 0],
-    turbine_powers[:, 1]/1000,
-    color="C1",
-    label="Turbine 2"
-)
-ax_power.plot(
-    awc_amplitudes[:, 0],
-    np.sum(turbine_powers[:,0:2], axis=1)/1000,
-    color="C2",
-    label="Turbines 1+2"
-)
-ax_power.plot(
-    awc_amplitudes[:, 0],
-    turbine_powers[:, 2]/1000,
-    color="C0",
-    linestyle="dotted", label="Turbine 3"
-)
-ax_power.plot(
-    awc_amplitudes[:, 0],
-    turbine_powers[:, 3]/1000,
-    color="C1",
-    linestyle="dotted", label="Turbine 4"
-)
-ax_power.plot(
-    awc_amplitudes[:, 0],
-    np.sum(turbine_powers[:, 2:], axis=1)/1000,
-    color="C2",
-    linestyle="dotted", label="Turbines 3+4"
-)
-ax_power.plot(
-    awc_amplitudes[:, 0],
-    np.ones(N)*np.max(turbine_type["power_thrust_table"]["power"]),
-    color="k",
-    linestyle="dashed", label="Rated power"
-)
-ax_power.grid()
+    awc_amplitudes[:, 0], 
+    turbine_powers[:,:2].sum(axis=1)/1000, 
+    color='k', 
+    label='Farm'
+    )
+ 
+ax_power.set_xlabel("Upstream turbine helix amplitude [deg]")
+ax_power.set_ylabel("Power [kW]")
 ax_power.legend()
-ax_power.set_xlim([0, 5])
-ax_power.set_xlabel("Helix amplitude (deg)")
-ax_power.set_ylabel("Power produced (kW)")
-ax_power.set_title("Wind farm power production")
 
 flowviz.show()
