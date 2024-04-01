@@ -3,7 +3,7 @@ name: deploy-pages
 on:
   push:
     branches:
-    - vd-ms/docs
+    - v4-ms/docs
     paths:
     - docs/**
 
