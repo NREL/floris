@@ -1,6 +1,8 @@
 (installation)=
 # Installation
 
+TEMPORARY TESTING
+
 FLORIS can be installed by downloading the source code or via the PyPI package manager with `pip`.
 The following sections detail how download and install FLORIS for each use case.
 
