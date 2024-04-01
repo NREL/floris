@@ -34,7 +34,7 @@ wind_rose = WindRose.read_csv_long(
 fmodel = FlorisModel("../inputs/gch.yaml")
 
 # Specify wind farm layout and update in the floris object
-N = 2  # number of turbines per row and per column
+N = 4  # number of turbines per row and per column
 X, Y = np.meshgrid(
     5.0 * fmodel.core.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
     5.0 * fmodel.core.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
@@ -64,7 +64,6 @@ yaw_opt = YawOptimizationSR(
 df_opt = yaw_opt.optimize()
 end_time = timerpc()
 t_tot = end_time - start_time
-t_fmodel = yaw_opt.time_spent_in_floris
 print("Optimization finished in {:.2f} seconds.".format(t_tot))
 print(" ")
 print(df_opt)
