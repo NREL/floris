@@ -442,7 +442,7 @@ class ParallelFlorisModel(LoggingManager):
         )
 
         # Finally, calculate AEP in GWh
-        aep = np.sum(np.multiply(freq, farm_power) * 365 * 24)
+        aep = np.nansum(np.multiply(freq, farm_power) * 365 * 24)
 
         # Reset the FLORIS object to the full wind speed array
         self.fmodel.set(
