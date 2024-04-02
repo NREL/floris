@@ -4,10 +4,10 @@ This example demonstrates how to perform a yaw optimization and evaluate the per
 over a full wind rose.  The example repeats the steps in 04 except using parallel
 optimization and evaluation.
 
-The script performs the following steps:
-    1. Load a wind rose from a csv file
-    2. Calculates the optimal yaw angles for a wind speed of 8 m/s across the directions
-    3. Applies the optimal yaw angles to the wind rose and calculates the AEP
+Note that constraints on parallelized operations mean that some syntax is different and
+not all operations are possible.  Also, rather passing the ParallelFlorisModel
+object to a YawOptimizationSR object, the optimization is performed
+directly by member functions
 
 """
 
@@ -24,10 +24,10 @@ from floris import (
     TimeSeries,
     WindRose,
 )
-from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
-# THIS IS IMPORTANT
+# When using parallel optimization it is importat the "root" script include this
+# if __name__ == "__main__": block to avoid problems
 if __name__ == "__main__":
 
     # Load the wind rose from csv
@@ -99,82 +99,58 @@ if __name__ == "__main__":
     # Note the pfmodel does not use run() but instead uses the get_farm_power() and get_farm_AEP()
     # directly, this is necessary for the parallel interface
 
-    farm_power_baseline = pfmodel.get_farm_power()
-    aep_baseline = pfmodel.get_farm_AEP()
+    aep_baseline = pfmodel.get_farm_AEP(freq=wind_rose.unpack_freq())
     print("Baseline AEP: {:.2f} GWh.".format(aep_baseline))
 
-    # # Now need to apply the optimal yaw angles to the wind rose to get the optimized AEP
-    # # do this by applying a rule of thumb where the optimal yaw is applied between 6 and 12 m/s
-    # # and ramped down to 0 above and below this range
+    # Now need to apply the optimal yaw angles to the wind rose to get the optimized AEP
+    # do this by applying a rule of thumb where the optimal yaw is applied between 6 and 12 m/s
+    # and ramped down to 0 above and below this range
 
-    # # Grab wind speeds and wind directions from the fmodel.  Note that we do this because the
-    # # yaw angles will need to be n_findex long, and accounting for the fact that some wind
-    # # directions and wind speeds may not be present in the wind rose (0 frequency) and aren't
-    # # included in the fmodel
-    # wind_directions = fmodel.core.flow_field.wind_directions
-    # wind_speeds = fmodel.core.flow_field.wind_speeds
-    # n_findex = fmodel.core.flow_field.n_findex
-
-
-    # # Now define how the optimal yaw angles for 8 m/s are applied over the other wind speeds
-    # yaw_angles_opt = np.vstack(df_opt["yaw_angles_opt"])
-    # yaw_angles_wind_rose = np.zeros((n_findex, n_turbines))
-    # for i in range(n_findex):
-    #     wind_speed = wind_speeds[i]
-    #     wind_direction = wind_directions[i]
-
-    #     # Interpolate the optimal yaw angles for this wind direction from df_opt
-    #     id_opt = df_opt["wind_direction"] == wind_direction
-    #     yaw_opt_full = np.array(df_opt.loc[id_opt, "yaw_angles_opt"])[0]
-
-    #     # Now decide what to do for different wind speeds
-    #     if (wind_speed < 4.0) | (wind_speed > 14.0):
-    #         yaw_opt = np.zeros(n_turbines)  # do nothing for very low/high speeds
-    #     elif wind_speed < 6.0:
-    #         yaw_opt = yaw_opt_full * (6.0 - wind_speed) / 2.0  # Linear ramp up
-    #     elif wind_speed > 12.0:
-    #         yaw_opt = yaw_opt_full * (14.0 - wind_speed) / 2.0  # Linear ramp down
-    #     else:
-    #         yaw_opt = yaw_opt_full  # Apply full offsets between 6.0 and 12.0 m/s
-
-    #     # Save to collective array
-    #     yaw_angles_wind_rose[i, :] = yaw_opt
+    # Grab wind speeds and wind directions from the fmodel.  Note that we do this because the
+    # yaw angles will need to be n_findex long, and accounting for the fact that some wind
+    # directions and wind speeds may not be present in the wind rose (0 frequency) and aren't
+    # included in the fmodel
+    wind_directions = fmodel.core.flow_field.wind_directions
+    wind_speeds = fmodel.core.flow_field.wind_speeds
+    n_findex = fmodel.core.flow_field.n_findex
 
 
-    # # Now apply the optimal yaw angles and get the AEP
-    # fmodel.set(yaw_angles=yaw_angles_wind_rose)
-    # fmodel.run()
-    # aep_opt = fmodel.get_farm_AEP()
-    # aep_uplift = 100.0 * (aep_opt / aep_baseline - 1)
-    # farm_power_opt = fmodel.get_farm_power()
-    # print("Optimal AEP: {:.2f} GWh.".format(aep_opt))
-    # print("Relative AEP uplift by wake steering: {:.3f} %.".format(aep_uplift))
+    # Now define how the optimal yaw angles for 8 m/s are applied over the other wind speeds
+    yaw_angles_opt = np.vstack(df_opt["yaw_angles_opt"])
+    yaw_angles_wind_rose = np.zeros((n_findex, n_turbines))
+    for i in range(n_findex):
+        wind_speed = wind_speeds[i]
+        wind_direction = wind_directions[i]
 
-    # # Use farm_power_baseline, farm_power_opt and wind_data to make a heat map of uplift by
-    # # wind direction and wind speed
-    # wind_directions = wind_rose.wind_directions
-    # wind_speeds = wind_rose.wind_speeds
-    # relative_gain = farm_power_opt - farm_power_baseline
+        # Interpolate the optimal yaw angles for this wind direction from df_opt
+        id_opt = df_opt["wind_direction"] == wind_direction
+        yaw_opt_full = np.array(df_opt.loc[id_opt, "yaw_angles_opt"])[0]
 
-    # # Plt the heatmap with wind speeds on x, wind directions ony and relative gain as the color
-    # fig, ax = plt.subplots(figsize=(7, 12))
-    # sns.heatmap(relative_gain, cmap="viridis", cbar_kws={"label": "Relative gain (%)"}, ax=ax)
-    # ax.set_yticks(np.arange(len(wind_directions)) + 0.5)
-    # ax.set_yticklabels(wind_directions)
-    # ax.set_xticks(np.arange(len(wind_speeds)) + 0.5)
-    # ax.set_xticklabels(wind_speeds)
-    # ax.set_ylabel("Wind direction (deg)")
-    # ax.set_xlabel("Wind speed (m/s)")
-    # plt.tight_layout()
+        # Now decide what to do for different wind speeds
+        if (wind_speed < 4.0) | (wind_speed > 14.0):
+            yaw_opt = np.zeros(n_turbines)  # do nothing for very low/high speeds
+        elif wind_speed < 6.0:
+            yaw_opt = yaw_opt_full * (6.0 - wind_speed) / 2.0  # Linear ramp up
+        elif wind_speed > 12.0:
+            yaw_opt = yaw_opt_full * (14.0 - wind_speed) / 2.0  # Linear ramp down
+        else:
+            yaw_opt = yaw_opt_full  # Apply full offsets between 6.0 and 12.0 m/s
 
-    # # Reduce y tick font size
-    # for tick in ax.yaxis.get_major_ticks():
-    #     tick.label.set_fontsize(8)
+        # Save to collective array
+        yaw_angles_wind_rose[i, :] = yaw_opt
 
-    # # Set y ticks to be horizontal
-    # for tick in ax.get_yticklabels():
-    #     tick.set_rotation(0)
 
-    # ax.set_title("Uplift in farm power by wind direction and wind speed", fontsize=12)
+    # Now apply the optimal yaw angles and get the AEP
+    fmodel.set(yaw_angles=yaw_angles_wind_rose)
+    pfmodel = ParallelFlorisModel(
+        fmodel=fmodel,
+        max_workers=max_workers,
+        n_wind_condition_splits=max_workers,
+        interface=parallel_interface,
+        print_timings=True,
+    )
+    aep_opt = pfmodel.get_farm_AEP(freq=wind_rose.unpack_freq())
+    aep_uplift = 100.0 * (aep_opt / aep_baseline - 1)
 
-    # plt.show()
+    print("Optimal AEP: {:.2f} GWh.".format(aep_opt))
+    print("Relative AEP uplift by wake steering: {:.3f} %.".format(aep_uplift))

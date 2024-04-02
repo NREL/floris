@@ -34,7 +34,7 @@ wind_rose = WindRose.read_csv_long(
 fmodel = FlorisModel("../inputs/gch.yaml")
 
 # Specify wind farm layout and update in the floris object
-N = 4  # number of turbines per row and per column
+N = 2  # number of turbines per row and per column
 X, Y = np.meshgrid(
     5.0 * fmodel.core.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
     5.0 * fmodel.core.farm.rotor_diameters_sorted[0][0] * np.arange(0, N, 1),
