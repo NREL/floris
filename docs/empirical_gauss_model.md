@@ -152,7 +152,6 @@ $$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i (1 + g_\text{YA
 Note that the second term means that, unlike when `enable_yaw_added_recovery`
 is `false`, a turbine may affect the recovery of its own wake by yawing.
 
-
 ## Mirror wakes
 
 Mirror wakes are also enabled by default in the empirical model to model the
@@ -160,3 +159,19 @@ ground effect. Essentially, turbines are placed below the ground so that
 the vertical expansion of their (mirror) wakes appears in the above-ground
 flow some distance downstream, to model the reflection of the true turbine
 wakes as they bounce off of the ground/sea surface.
+
+## Added mixing by active wake control
+
+As the name suggests, active wake control (AWC) aims to enhance mixing to the 
+wake of the controlled turbine. This effect is activated by setting 
+`enable_active_wake_mixing` to `true`, and setting the amplitude of the AWC
+excitation using `awc_amplitudes` (see the section on operation models). The
+effect of AWC is represented by updating the wake-induced mixing term as 
+follows:
+
+$$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i} {(x_j - x_i)/D_i} + \frac{A_{awc,j}^{p_{awc}}}{d_{awc}}$$,
+
+where $A_{awc,j}$ is the AWC amplitude of turbine $j$, and $p_{awc}$ and 
+$d_{awc}$ are tuning parameters that can be set in the `emgauss.yaml` file. 
+Note that, similar to the yaw added mixing case, a turbine affects its own
+wake by applying AWC.
