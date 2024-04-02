@@ -1287,40 +1287,40 @@ class FlorisModel(LoggingManager):
 
         self.core.flow_field.reference_wind_height = unique_heights[0]
 
-    def get_power_thrust_model(self) -> str:
-        """Get the power thrust model of a FlorisModel.
+    def get_operation_model(self) -> str:
+        """Get the operation model of a FlorisModel.
 
         Returns:
-            str: The power_thrust_model.
+            str: The operation_model.
         """
-        power_thrust_models = [
-            self.core.farm.turbine_definitions[tindex]["power_thrust_model"]
+        operation_models = [
+            self.core.farm.turbine_definitions[tindex]["operation_model"]
             for tindex in range(self.core.farm.n_turbines)
         ]
-        if len(set(power_thrust_models)) == 1:
-            return power_thrust_models[0]
+        if len(set(operation_models)) == 1:
+            return operation_models[0]
         else:
-            return power_thrust_models
+            return operation_models
 
-    def set_power_thrust_model(self, power_thrust_model: str | List[str]):
-        """Set the turbine power thrust model(s).
+    def set_operation_model(self, operation_model: str | List[str]):
+        """Set the turbine operation model(s).
 
         Args:
-            power_thrust_model (str): The power thrust model to set.
+            operation_model (str): The operation model to set.
         """
-        if isinstance(power_thrust_model, str):
-            power_thrust_model = [power_thrust_model]*self.core.farm.n_turbines
-        elif len(power_thrust_model) != self.core.farm.n_turbines:
+        if isinstance(operation_model, str):
+            operation_model = [operation_model]*self.core.farm.n_turbines
+        elif len(operation_model) != self.core.farm.n_turbines:
             raise ValueError(
-                "The length of the power_thrust_model list must be equal to the number of turbines."
+                "The length of the operation_model list must be equal to the number of turbines."
             )
 
         turbine_type_list = self.core.farm.turbine_definitions
         for tindex in range(self.core.farm.n_turbines):
             turbine_type_list[tindex]["turbine_type"] = (
-                turbine_type_list[tindex]["turbine_type"]+"_"+power_thrust_model[tindex]
+                turbine_type_list[tindex]["turbine_type"]+"_"+operation_model[tindex]
             )
-            turbine_type_list[tindex]["power_thrust_model"] = power_thrust_model[tindex]
+            turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
 
         self.set(turbine_type=turbine_type_list)
 

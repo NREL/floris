@@ -31,7 +31,7 @@ from floris.utilities import cosd
 
 
 TURBINE_MODEL_MAP = {
-    "power_thrust_model": {
+    "operation_model": {
         "simple": SimpleTurbine,
         "cosine-loss": CosineLossTurbine,
         "simple-derating": SimpleDeratingTurbine,
@@ -427,7 +427,7 @@ class Turbine(BaseClass):
     hub_height: float = field()
     TSR: float = field()
     power_thrust_table: dict = field(default={}) # conversion to numpy in __post_init__
-    power_thrust_model: str = field(default="cosine-loss")
+    operation_model: str = field(default="cosine-loss")
 
     correct_cp_ct_for_tilt: bool = field(default=False)
     floating_tilt_table: dict[str, NDArrayFloat] | None = field(default=None)
@@ -469,7 +469,7 @@ class Turbine(BaseClass):
             self.power_thrust_table = floris_numeric_dict_converter(self.power_thrust_table)
 
     def _initialize_power_thrust_functions(self) -> None:
-        turbine_function_model = TURBINE_MODEL_MAP["power_thrust_model"][self.power_thrust_model]
+        turbine_function_model = TURBINE_MODEL_MAP["operation_model"][self.operation_model]
         self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
         self.axial_induction_function = turbine_function_model.axial_induction
         self.power_function = turbine_function_model.power
