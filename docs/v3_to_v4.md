@@ -58,7 +58,7 @@ from floris import FlorisModel
 
 fmodel = FlorisModel("input_file.yaml") # Input file with 3 turbines
 
-
+# Set up a base case and run
 fmodel.set(
     wind_directions=np.array([270., 270.]),
     wind_speeds=np.array([8.0, 8.0]),
@@ -150,8 +150,35 @@ slightly do reflect publicly available data. The x_20MW reference turbine has be
 was not readily available. See [Turbine Library Interface](input_reference_turbine).
 
 ## Wind data
-- Go into briefly here to explain the concept; then point to dedicated page.
+To aid users in setting the wind conditions they are interested in running, we provide "wind data" 
+classes, which can be passed directly to `FlorisModel.set()`'s `wind_data` keyword argument in place
+of `wind_directions`, `wind_speeds`, and `turbulence_intensities`. The wind data objects enable, 
+for example, gridding inputs (`WindRose` and `WindTIRose`) and broadcasting a scalar-valued 
+turbulence intensity (`TimeSeries`).
+```python
+import numpy as np
+from floris import FlorisModel
+from floris import TimeSeries
+
+fmodel = FlorisModel("input_file.yaml") # Input file with 3 turbines
+
+time_series = TimeSeries(
+    wind_directions=np.array([270.0, 270.0]),
+    wind_speeds=8.0,
+    turbulence_intensities=0.06
+)
+fmodel.set(wind_data=time_series)
+fmodel.set(wind_data=time_series)turbine_powers_base = fmodel.get_turbine_powers()
+turbine_powers = fmodel.get_turbine_powers()
+```
+
+More information about the various wind data classes can be found at 
+[Wind Data Objects](wind_data_user).
 
 ## Operation model
-- Again, brief overview and then point to main page.
-
+FLORIS v4 allows for significantly more flexible turbine operation via 
+[Turbine Operation Models](operation_models_user). These allow users to specify how a turbine loses
+power when yaw misaligned; how a turbine operates when derated; and how turbines produce power
+and thrust when operating with active wake mixing strategies. The default operation model is the 
+`"cosine-loss"` model, which models a turbine's power loss when in yaw misalignment using the same
+cosine model as was hardcoded in FLORIS v3.
