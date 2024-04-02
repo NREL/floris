@@ -265,7 +265,7 @@ def test_disable_turbines():
         )
     ) as t:
         turbine_type = yaml.safe_load(t)
-    turbine_type["power_thrust_model"] = "mixed"
+    turbine_type["operation_model"] = "mixed"
     fmodel.set(turbine_type=[turbine_type])
 
     # Init to n-findex = 2, n_turbines = 3
@@ -577,12 +577,12 @@ def test_get_and_set_param():
     alpha = fmodel.get_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'])
     assert alpha == 0.1
 
-def test_get_power_thrust_model():
+def test_get_operation_model():
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    assert fmodel.get_power_thrust_model() == "cosine-loss"
+    assert fmodel.get_operation_model() == "cosine-loss"
 
-def test_set_power_thrust_model():
+def test_set_operation_model():
 
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    fmodel.set_power_thrust_model("simple-derating")
-    assert fmodel.get_power_thrust_model() == "simple-derating"
+    fmodel.set_operation_model("simple-derating")
+    assert fmodel.get_operation_model() == "simple-derating"
