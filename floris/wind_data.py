@@ -51,6 +51,11 @@ class WindDataBase:
 
         return self.unpack()[3]
 
+    def unpack_value(self):
+        """Unpack values of power generated"""
+
+        return self.unpack()[4]
+
     def check_heterogenous_inflow_config_by_wd(self, heterogenous_inflow_config_by_wd):
         """
         Check that the heterogenous_inflow_config_by_wd dictionary is properly formatted
