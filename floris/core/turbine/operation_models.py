@@ -428,7 +428,7 @@ class MixedOperationTurbine(BaseOperationModel):
         power_setpoints: NDArrayFloat,
         **kwargs
     ):
-        yaw_angles_mask = yaw_angles > 0
+        yaw_angles_mask = yaw_angles != 0.0
         power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
         neither_mask = np.logical_not(yaw_angles_mask) & np.logical_not(power_setpoints_mask)
 
@@ -459,7 +459,7 @@ class MixedOperationTurbine(BaseOperationModel):
         power_setpoints: NDArrayFloat,
         **kwargs
     ):
-        yaw_angles_mask = yaw_angles > 0
+        yaw_angles_mask = yaw_angles != 0.0
         power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
         neither_mask = np.logical_not(yaw_angles_mask) & np.logical_not(power_setpoints_mask)
 
