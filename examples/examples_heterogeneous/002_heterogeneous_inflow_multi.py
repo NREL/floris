@@ -105,7 +105,7 @@ fmodel.run()
 turbine_powers_by_wd = fmodel.get_turbine_powers() / 1000.0
 
 # Plot the results
-wind_directions = fmodel.core.flow_field.wind_directions
+wind_directions = fmodel.wind_directions
 fig, axarr = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(10, 10))
 axarr = axarr.flatten()
 
