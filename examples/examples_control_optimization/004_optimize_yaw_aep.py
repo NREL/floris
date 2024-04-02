@@ -14,7 +14,6 @@ from time import perf_counter as timerpc
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import seaborn as sns
 
 from floris import (
@@ -65,9 +64,6 @@ df_opt = yaw_opt.optimize()
 end_time = timerpc()
 t_tot = end_time - start_time
 print("Optimization finished in {:.2f} seconds.".format(t_tot))
-print(" ")
-print(df_opt)
-print(" ")
 
 
 # Calculate the AEP in the baseline case
@@ -75,7 +71,7 @@ fmodel.set(wind_data=wind_rose)
 fmodel.run()
 farm_power_baseline = fmodel.get_farm_power()
 aep_baseline = fmodel.get_farm_AEP()
-print("Baseline AEP: {:.2f} GWh.".format(aep_baseline))
+
 
 # Now need to apply the optimal yaw angles to the wind rose to get the optimized AEP
 # do this by applying a rule of thumb where the optimal yaw is applied between 6 and 12 m/s
@@ -85,9 +81,9 @@ print("Baseline AEP: {:.2f} GWh.".format(aep_baseline))
 # yaw angles will need to be n_findex long, and accounting for the fact that some wind
 # directions and wind speeds may not be present in the wind rose (0 frequency) and aren't
 # included in the fmodel
-wind_directions = fmodel.core.flow_field.wind_directions
-wind_speeds = fmodel.core.flow_field.wind_speeds
-n_findex = fmodel.core.flow_field.n_findex
+wind_directions = fmodel.wind_directions
+wind_speeds = fmodel.wind_speeds
+n_findex = fmodel.n_findex
 
 
 # Now define how the optimal yaw angles for 8 m/s are applied over the other wind speeds
@@ -121,7 +117,9 @@ fmodel.run()
 aep_opt = fmodel.get_farm_AEP()
 aep_uplift = 100.0 * (aep_opt / aep_baseline - 1)
 farm_power_opt = fmodel.get_farm_power()
-print("Optimal AEP: {:.2f} GWh.".format(aep_opt))
+
+print("Baseline AEP: {:.2f} GWh.".format(aep_baseline/1E9))
+print("Optimal AEP: {:.2f} GWh.".format(aep_opt/1E9))
 print("Relative AEP uplift by wake steering: {:.3f} %.".format(aep_uplift))
 
 # Use farm_power_baseline, farm_power_opt and wind_data to make a heat map of uplift by
