@@ -139,10 +139,10 @@ turbine_powers = fmodel.get_turbine_powers()
 # Plot the power as a function of helix amplitude
 fig_power, ax_power = plt.subplots()
 ax_power.fill_between(
-    awc_amplitudes[:, 0], 
-    0, 
-    turbine_powers[:, 0]/1000, 
-    color='C0', 
+    awc_amplitudes[:, 0],
+    0,
+    turbine_powers[:, 0]/1000,
+    color='C0',
     label='Turbine 1'
     )
 ax_power.fill_between(
@@ -153,12 +153,12 @@ ax_power.fill_between(
     label='Turbine 2'
     )
 ax_power.plot(
-    awc_amplitudes[:, 0], 
-    turbine_powers[:,:2].sum(axis=1)/1000, 
-    color='k', 
+    awc_amplitudes[:, 0],
+    turbine_powers[:,:2].sum(axis=1)/1000,
+    color='k',
     label='Farm'
     )
- 
+
 ax_power.set_xlabel("Upstream turbine helix amplitude [deg]")
 ax_power.set_ylabel("Power [kW]")
 ax_power.legend()
