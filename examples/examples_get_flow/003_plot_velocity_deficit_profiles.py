@@ -39,7 +39,7 @@ def annotate_coordinate_system(x_origin, y_origin, quiver_length):
     x2 = np.array([0.0, quiver_length + 0.35 * D])
     x3 = np.array([90.0, 90.0])
     x, y, _ = reverse_rotate_coordinates_rel_west(
-        fmodel.core.flow_field.wind_directions,
+        fmodel.wind_directions,
         x1[None, :],
         x2[None, :],
         x3[None, :],
