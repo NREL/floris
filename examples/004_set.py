@@ -86,7 +86,7 @@ fmodel.set(yaw_angles=yaw_angles)
 fmodel.reset_operation()
 
 # Change to the mixed model turbine
-fmodel.set_power_thrust_model("mixed")
+fmodel.set_operation_model("mixed")
 
 # Shut down the front turbine for the first two findex
 disable_turbines = np.array([[True, False], [True, False], [False, False]])
