@@ -23,7 +23,7 @@ with open(
     )
 ) as t:
     turbine_type = yaml.safe_load(t)
-turbine_type["power_thrust_model"] = "mixed"
+turbine_type["operation_model"] = "mixed"
 fmodel.set(turbine_type=[turbine_type])
 
 # Consider a wind farm of 3 aligned wind turbines
