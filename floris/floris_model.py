@@ -1395,6 +1395,46 @@ class FlorisModel(LoggingManager):
         return self.core.farm.layout_y
 
     @property
+    def wind_directions(self):
+        """
+        Wind direction information.
+
+        Returns:
+            np.array: Wind direction.
+        """
+        return self.core.flow_field.wind_directions
+
+    @property
+    def wind_speeds(self):
+        """
+        Wind speed information.
+
+        Returns:
+            np.array: Wind speed.
+        """
+        return self.core.flow_field.wind_speeds
+
+    @property
+    def turbulence_intensities(self):
+        """
+        Turbulence intensity information.
+
+        Returns:
+            np.array: Turbulence intensity.
+        """
+        return self.core.flow_field.turbulence_intensities
+
+    @property
+    def n_findex(self):
+        """
+        Number of floris indices (findex).
+
+        Returns:
+            int: Number of flow indices.
+        """
+        return self.core.flow_field.n_findex
+
+    @property
     def turbine_average_velocities(self) -> NDArrayFloat:
         return average_velocity(
             velocities=self.core.flow_field.u,
