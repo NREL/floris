@@ -1,15 +1,5 @@
-
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from scipy.interpolate import NearestNDInterpolator
-
-import floris.flow_visualization as flowviz
-from floris import FlorisModel
-
-
-"""
-This example demonstrates the impact of floating on turbine power and thurst
+"""Example: Floating vs fixed-bottom farm
+This example demonstrates the impact of floating on turbine power and thrust
 and wake behavior. A floating turbine in FLORIS is defined by including a
 `floating_tilt_table` in the turbine input yaml which sets the steady tilt
 angle of the turbine based on wind speed.  This tilt angle is computed for each
@@ -31,9 +21,19 @@ fmodel_fixed: Fixed bottom turbine (no tilt variation with wind speed)
 fmodel_floating: Floating turbine (tilt varies with wind speed)
 """
 
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy.interpolate import NearestNDInterpolator
+
+import floris.flow_visualization as flowviz
+from floris import FlorisModel, WindRose
+
+
 # Declare the Floris Interface for fixed bottom, provide layout
-fmodel_fixed = FlorisModel("inputs_floating/emgauss_fixed.yaml")
-fmodel_floating = FlorisModel("inputs_floating/emgauss_floating.yaml")
+fmodel_fixed = FlorisModel("../inputs_floating/emgauss_fixed.yaml")
+fmodel_floating = FlorisModel("../inputs_floating/emgauss_floating.yaml")
 x, y = np.meshgrid(np.linspace(0, 4*630., 5), np.linspace(0, 3*630., 4))
 x = x.flatten()
 y = y.flatten()
@@ -107,28 +107,22 @@ flowviz.visualize_cut_plane(horizontal_planes[1], ax=ax_list[0], title="Horizont
 flowviz.visualize_cut_plane(y_planes[1], ax=ax_list[1], title="Streamwise profile")
 fig.suptitle("Floating farm")
 
-# Compute AEP (see 07_calc_aep_from_rose.py for details)
-df_wr = pd.read_csv("inputs/wind_rose.csv")
-wd_grid, ws_grid = np.meshgrid(
-    np.array(df_wr["wd"].unique(), dtype=float),
-    np.array(df_wr["ws"].unique(), dtype=float),
-    indexing="ij"
+# Compute AEP
+# Load the wind rose from csv as in example 003
+wind_rose = WindRose.read_csv_long(
+    "../inputs/wind_rose.csv", wd_col="wd", ws_col="ws", freq_col="freq_val", ti_col_or_value=0.06
 )
-freq_interp = NearestNDInterpolator(df_wr[["wd", "ws"]], df_wr["freq_val"])
-freq = freq_interp(wd_grid, ws_grid).flatten()
-freq = freq / np.sum(freq)
+
 
 for fmodel in [fmodel_fixed, fmodel_floating]:
     fmodel.set(
-        wind_directions=wd_grid.flatten(),
-        wind_speeds= ws_grid.flatten(),
-        turbulence_intensities=0.06 * np.ones_like(wd_grid.flatten())
+        wind_data=wind_rose,
     )
     fmodel.run()
 
 # Compute the AEP
-aep_fixed = fmodel_fixed.get_farm_AEP(freq=freq)
-aep_floating = fmodel_floating.get_farm_AEP(freq=freq)
+aep_fixed = fmodel_fixed.get_farm_AEP()
+aep_floating = fmodel_floating.get_farm_AEP()
 print("Farm AEP (fixed bottom): {:.3f} GWh".format(aep_fixed / 1.0e9))
 print("Farm AEP (floating): {:.3f} GWh".format(aep_floating / 1.0e9))
 print(
