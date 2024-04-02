@@ -13,10 +13,7 @@ directly by member functions
 
 from time import perf_counter as timerpc
 
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-import seaborn as sns
 
 from floris import (
     FlorisModel,
@@ -81,9 +78,6 @@ if __name__ == "__main__":
     end_time = timerpc()
     t_tot = end_time - start_time
     print("Optimization finished in {:.2f} seconds.".format(t_tot))
-    print(" ")
-    print(df_opt)
-    print(" ")
 
 
     # Calculate the AEP in the baseline case, using the parallel interface
@@ -98,9 +92,7 @@ if __name__ == "__main__":
 
     # Note the pfmodel does not use run() but instead uses the get_farm_power() and get_farm_AEP()
     # directly, this is necessary for the parallel interface
-
     aep_baseline = pfmodel.get_farm_AEP(freq=wind_rose.unpack_freq())
-    print("Baseline AEP: {:.2f} GWh.".format(aep_baseline))
 
     # Now need to apply the optimal yaw angles to the wind rose to get the optimized AEP
     # do this by applying a rule of thumb where the optimal yaw is applied between 6 and 12 m/s
@@ -110,9 +102,9 @@ if __name__ == "__main__":
     # yaw angles will need to be n_findex long, and accounting for the fact that some wind
     # directions and wind speeds may not be present in the wind rose (0 frequency) and aren't
     # included in the fmodel
-    wind_directions = fmodel.core.flow_field.wind_directions
-    wind_speeds = fmodel.core.flow_field.wind_speeds
-    n_findex = fmodel.core.flow_field.n_findex
+    wind_directions = fmodel.wind_directions
+    wind_speeds = fmodel.wind_speeds
+    n_findex = fmodel.n_findex
 
 
     # Now define how the optimal yaw angles for 8 m/s are applied over the other wind speeds
@@ -149,8 +141,9 @@ if __name__ == "__main__":
         interface=parallel_interface,
         print_timings=True,
     )
-    aep_opt = pfmodel.get_farm_AEP(freq=wind_rose.unpack_freq())
+    aep_opt = pfmodel.get_farm_AEP(freq=wind_rose.unpack_freq(), yaw_angles=yaw_angles_wind_rose)
     aep_uplift = 100.0 * (aep_opt / aep_baseline - 1)
 
-    print("Optimal AEP: {:.2f} GWh.".format(aep_opt))
+    print("Baseline AEP: {:.2f} GWh.".format(aep_baseline/1E9))
+    print("Optimal AEP: {:.2f} GWh.".format(aep_opt/1E9))
     print("Relative AEP uplift by wake steering: {:.3f} %.".format(aep_uplift))
