@@ -35,7 +35,7 @@ np.random.seed(1)
 freq_table[:,0] = (np.abs(np.sort(np.random.randn(len(wind_directions)))))
 freq_table = freq_table / freq_table.sum()
 
-# Establish a TimeSeries object
+# Establish a WindRose object
 wind_rose = WindRose(
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
@@ -61,7 +61,7 @@ layout_opt = LayoutOptimizationScipy(fmodel, boundaries)
 sol = layout_opt.optimize()
 
 # Get the resulting improvement in AEP
-print('... calcuating improvement in AEP')
+print('... calculating improvement in AEP')
 fmodel.run()
 base_aep = fmodel.get_farm_AEP() / 1e6
 fmodel.set(layout_x=sol[0], layout_y=sol[1])
