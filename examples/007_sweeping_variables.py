@@ -126,7 +126,7 @@ ax.set_ylabel("Power (kW)")
 fmodel.reset_operation()
 
 # To the de-rating need to change the power_thrust_mode to mixed or simple de-rating
-fmodel.set_power_thrust_model("simple-derating")
+fmodel.set_operation_model("simple-derating")
 
 # Sweep the de-rating levels
 RATED_POWER = 5e6  # For NREL 5MW
