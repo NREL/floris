@@ -1,14 +1,8 @@
-
-import numpy as np
-
-from floris import FlorisModel
-
-
-"""
-This example follows the same setup as example 01 to createa a FLORIS instance and:
+"""Example: Multi-dimensional Cp/Ct data
+This example creates a FLORIS instance and:
 1) Makes a two-turbine layout
 2) Demonstrates single ws/wd simulations
-3) Demonstrates mulitple ws/wd simulations
+3) Demonstrates multiple ws/wd simulations
 
 with the modification of using a turbine definition that has a multi-dimensional Cp/Ct table.
 
@@ -19,7 +13,7 @@ contains two additional conditions to define Cp/Ct values for: Tp for wave perio
 height. For every combination of Tp and Hs defined, a Cp/Ct/Wind speed table of values is also
 defined. It is required for this .csv file to have the last 3 columns be ws, Cp, and Ct. In order
 for this table to be used, the flag 'multi_dimensional_cp_ct' must be present and set to true in
-the turbine definition. With this flag enabled, the solver will downselect to use the
+the turbine definition. With this flag enabled, the solver will down-select to use the
 interpolant defined at the closest conditions. The user must supply these conditions in the
 main input file under the 'flow_field' section, e.g.:
 
@@ -40,20 +34,25 @@ using turbines with multi-dimensional Cp/Ct data under FlorisModel, called
 'get_turbine_powers_multidim'. The normal 'get_turbine_powers' method will not work.
 """
 
+import numpy as np
+
+from floris import FlorisModel
+
+
 # Initialize FLORIS with the given input file.
-fmodel = FlorisModel("inputs/gch_multi_dim_cp_ct.yaml")
+fmodel = FlorisModel("../inputs/gch_multi_dim_cp_ct.yaml")
 
 # Convert to a simple two turbine layout
-fmodel.set(layout_x=[0., 500.], layout_y=[0., 0.])
+fmodel.set(layout_x=[0.0, 500.0], layout_y=[0.0, 0.0])
 
 # Single wind speed and wind direction
-print('\n========================= Single Wind Direction and Wind Speed =========================')
+print("\n========================= Single Wind Direction and Wind Speed =========================")
 
 # Get the turbine powers assuming 1 wind speed and 1 wind direction
 fmodel.set(wind_directions=[270.0], wind_speeds=[8.0], turbulence_intensities=[0.06])
 
 # Set the yaw angles to 0
-yaw_angles = np.zeros([1, 2]) # 1 wind direction and wind speed, 2 turbines
+yaw_angles = np.zeros([1, 2])  # 1 wind direction and wind speed, 2 turbines
 fmodel.set(yaw_angles=yaw_angles)
 
 # Calculate
@@ -63,10 +62,10 @@ fmodel.run()
 turbine_powers = fmodel.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 1 findex X 2 Turbines")
 print(turbine_powers)
-print("Shape: ",turbine_powers.shape)
+print("Shape: ", turbine_powers.shape)
 
 # Single wind speed and multiple wind directions
-print('\n========================= Single Wind Direction and Multiple Wind Speeds ===============')
+print("\n========================= Single Wind Direction and Multiple Wind Speeds ===============")
 
 wind_speeds = np.array([8.0, 9.0, 10.0])
 wind_directions = np.array([270.0, 270.0, 270.0])
@@ -77,16 +76,16 @@ fmodel.set(
     wind_speeds=wind_speeds,
     wind_directions=wind_directions,
     turbulence_intensities=turbulence_intensities,
-    yaw_angles=yaw_angles
+    yaw_angles=yaw_angles,
 )
 fmodel.run()
 turbine_powers = fmodel.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 3 findex X 2 Turbines")
 print(turbine_powers)
-print("Shape: ",turbine_powers.shape)
+print("Shape: ", turbine_powers.shape)
 
 # Multiple wind speeds and multiple wind directions
-print('\n========================= Multiple Wind Directions and Multiple Wind Speeds ============')
+print("\n========================= Multiple Wind Directions and Multiple Wind Speeds ============")
 
 wind_speeds = np.tile([8.0, 9.0, 10.0], 3)
 wind_directions = np.repeat([260.0, 270.0, 280.0], 3)
@@ -97,10 +96,10 @@ fmodel.set(
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
     turbulence_intensities=turbulence_intensities,
-    yaw_angles=yaw_angles
+    yaw_angles=yaw_angles,
 )
 fmodel.run()
-turbine_powers = fmodel.get_turbine_powers()/1000.
+turbine_powers = fmodel.get_turbine_powers() / 1000.0
 print("The turbine power matrix should be of dimensions 9 WD/WS X 2 Turbines")
 print(turbine_powers)
-print("Shape: ",turbine_powers.shape)
+print("Shape: ", turbine_powers.shape)
