@@ -13,7 +13,7 @@ further in [Setting and Running](#setting-and-running).
 ## Setting and running
 
 In FLORIS v3, users interacted with FLORIS by instantiating a `FlorisInterface` object, nominally
-called `fi`. The notion here is that the users "interface" with the underlying FLORIS code using 
+called `fi`. The notion here is that the users "interface" with the underlying FLORIS code using
 `fi`. For FLORIS v4, we acknowledge that to most users, this main "interface" object, for all
 intents and purposes, _is FLORIS_. We therefore have renamed the `FlorisInterface` the
 `FlorisModel`, nominally instantiated as `fmodel`. To instantiate a `FlorisModel`, the code is
@@ -42,15 +42,17 @@ use those control setpoints.
 - To "forget" previously provided control setpoints, use the new method
 `FlorisModel.reset_operation()`.
 - When providing arguments to `set()`, all arguments much have the same length, as they will be
-"paired" (rather than gridded) for the computation. For instance, if the user provides `n`
-wind directions, they _must_ provide `n` wind speeds and `n` turbulence intensities; as well as
-`n`x`n_turbines` yaw angles, if yaw angles are being used.
+"paired" (rather than gridded) for the computation. For instance, if the user provides `n_findex`
+wind directions, they _must_ provide `n_findex` wind speeds and `n_findex` turbulence intensities;
+as well as `n_findex`x`n_turbines` yaw angles, if yaw angles are being used.
 - Providing varying `turbulence_intensities` is new for FLORIS v4.
 - To facilitate "easier" use of the `set()` method (for instance, to run all combinations of
 wind directions and wind speeds), we now provide `WindData` objects that can be passed directly to
 `set()`'s `wind_data` keyword argument. See [Wind data](#wind-data) as well as
 [Wind Data Objects](wind_data_user) for more information.
 - `calculate_no_wake()` has been replaced with `run_no_wake()`
+- `get_farm_AEP()` no longer calls `run()`; to compute the farm AEP, users should `run()` the
+`fmodel` themselves before calling `get_farm_AEP()`.
 
 An example workflow for using `set` and `run` is:
 ```python
