@@ -18,9 +18,10 @@ class LayoutOptimizationScipy(LayoutOptimization):
         solver='SLSQP',
         optOptions=None,
         enable_geometric_yaw=False,
+        use_value=False,
     ):
         """
-        _summary_
+        _summary_ TODO: write summary
 
         Args:
             fmodel (FlorisModel): A FlorisModel object.
@@ -35,12 +36,19 @@ class LayoutOptimizationScipy(LayoutOptimization):
             solver (str, optional): Sets the solver used by Scipy. Defaults to 'SLSQP'.
             optOptions (dict, optional): Dicitonary for setting the
                 optimization options. Defaults to None.
+            enable_geometric_yaw (bool, optional): If True, enables geometric yaw
+                optimization. Defaults to False.
+            use_value (bool, optional): If True, the layout optimization objective
+                is to maximize annual value production using the value array in the
+                FLORIS model's WindData object. If False, the optimization
+                objective is to maximize AEP. Defaults to False.
         """
         super().__init__(
             fmodel,
             boundaries,
             min_dist=min_dist,
-            enable_geometric_yaw=enable_geometric_yaw
+            enable_geometric_yaw=enable_geometric_yaw,
+            use_value=use_value
         )
 
         self.boundaries_norm = [
@@ -101,7 +109,10 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self.fmodel.set(yaw_angles=yaw_angles)
         self.fmodel.run()
 
-        return -1 * self.fmodel.get_farm_AEP() / self.initial_AEP
+        if self.use_value:
+            return -1 * self.fmodel.get_farm_AVP() / self.initial_AEP_or_AVP
+        else:
+            return -1 * self.fmodel.get_farm_AEP() / self.initial_AEP_or_AVP
 
 
     def _change_coordinates(self, locs):

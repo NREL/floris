@@ -19,9 +19,35 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         storeHistory='hist.hist',
         hotStart=None,
         enable_geometric_yaw=False,
+        use_value=False,
     ):
-        super().__init__(fmodel, boundaries, min_dist=min_dist,
-                         enable_geometric_yaw=enable_geometric_yaw)
+        """
+        _summary_ TODO: write summary and describe the remaining arguments
+
+        Args:
+            fmodel (FlorisModel): A FlorisModel object.
+            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+                that represent the boundary's vertices (m).
+            min_dist (float, optional): The minimum distance to be maintained
+                between turbines during the optimization (m). If not specified,
+                initializes to 2 rotor diameters. Defaults to None.
+            solver (str, optional): Sets the solver used by Scipy. Defaults to 'SLSQP'.
+            optOptions (dict, optional): Dictionary for setting the
+                optimization options. Defaults to None.
+            enable_geometric_yaw (bool, optional): If True, enables geometric yaw
+                optimization. Defaults to False.
+            use_value (bool, optional): If True, the layout optimization objective
+                is to maximize annual value production using the value array in the
+                FLORIS model's WindData object. If False, the optimization
+                objective is to maximize AEP. Defaults to False.
+        """
+        super().__init__(
+            fmodel,
+            boundaries,
+            min_dist=min_dist,
+            enable_geometric_yaw=enable_geometric_yaw,
+            use_value=use_value
+        )
 
         self.x0 = self._norm(self.fmodel.layout_x, self.xmin, self.xmax)
         self.y0 = self._norm(self.fmodel.layout_y, self.ymin, self.ymax)
@@ -42,7 +68,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
             self.logger.error(err_msg, stack_info=True)
             raise ImportError(err_msg)
 
-        # Insantiate ptOptSparse optimization object with name and objective function
+        # Instantiate ptOptSparse optimization object with name and objective function
         self.optProb = pyoptsparse.Optimization('layout', self._obj_func)
 
         self.optProb = self.add_var_group(self.optProb)
@@ -98,7 +124,10 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
 
         # Compute the objective function
         funcs = {}
-        funcs["obj"] = -1 * self.fmodel.get_farm_AEP() / self.initial_AEP
+        if self.use_value:
+            funcs["obj"] = -1 * self.fmodel.get_farm_AVP() / self.initial_AEP_or_AVP
+        else:
+            funcs["obj"] = -1 * self.fmodel.get_farm_AEP() / self.initial_AEP_or_AVP
 
         # Compute constraints, if any are defined for the optimization
         funcs = self.compute_cons(funcs, self.x, self.y)
