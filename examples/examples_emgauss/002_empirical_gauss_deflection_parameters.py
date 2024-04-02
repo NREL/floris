@@ -1,3 +1,9 @@
+"""Example: Empirical Gaussian deflection parameters
+
+This example illustrates the main parameters of the Empirical Gaussian
+deflection model and their effects on the wind turbine wake.
+"""
+
 
 import copy
 
@@ -7,11 +13,6 @@ import numpy as np
 from floris import FlorisModel
 from floris.flow_visualization import plot_rotor_values, visualize_cut_plane
 
-
-"""
-This example illustrates the main parameters of the Empirical Gaussian
-deflection model and their effects on the wind turbine wake.
-"""
 
 # Initialize FLORIS with the given input file.
 # For basic usage, FlorisModel provides a simplified and expressive
@@ -105,7 +106,7 @@ def generate_wake_visualization(fmodel, title=None):
 ## Main script
 
 # Load input yaml and define farm layout
-fmodel = FlorisModel("inputs/emgauss.yaml")
+fmodel = FlorisModel("../inputs/emgauss.yaml")
 D = fmodel.core.farm.rotor_diameters[0]
 fmodel.set(
     layout_x=[x*5.0*D for x in range(num_in_row)],
