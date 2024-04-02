@@ -245,8 +245,7 @@ class ParallelFlorisModel(LoggingManager):
         flowfield_subsets = [p[1] for p in output]
 
         # Retrieve and merge turbine power productions
-        i, j, k = np.shape(power_subsets)
-        turbine_powers = np.reshape(power_subsets, (i*j, k))
+        turbine_powers = np.concatenate(power_subsets, axis=0)
 
         # Optionally, also merge flow field dictionaries from individual floris solutions
         if self.propagate_flowfield_from_workers:
