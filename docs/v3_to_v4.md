@@ -1,4 +1,4 @@
-# Switching from FLORIS v3 to FLORIS v4
+# Switching from FLORIS v3 to v4
 
 There are several major changes introduced in FLORIS v4. The largest underlying change is that, 
 where FLORIS v3 had a "wind directions" and a "wind speeds" dimension to its internal data
@@ -9,15 +9,6 @@ largest implication of this change is that users must specify `wind_directions`,
 `turbulence_intensities` (new) as arrays of equal length; and these are "zipped" to create the 
 conditions for FLORIS to run, rather than creating a grid of all combinations. This is discussed 
 further in [Setting and Running](#setting-and-running).
-
-- FlorisInterface -> FlorisModel
-- reinitialize, calculate_wake -> set, run
-- arguments to each
-- setpoints STORED; can use reset_operation
-- Time series mode everywhere
-- Stricter about consistent inputs
-- wind data objects
-- operation models
 
 ## Setting and running
 
@@ -94,50 +85,73 @@ turbine_powers_base_nowake = fmodel.get_turbine_powers()
 ```
 
 ## Input files
-- main input yaml and turbine yaml, as before
-- changes to each (describe)
-- utilities for converting between them.
+As in FLORIS v3, there are two main input files to FLORIS v4:
+1. The "main" FLORIS input yaml, which contains wake model parameters and wind farm data
+2. The "turbine" input yaml, which contains data about the wind turbines
 
+Examples for main FLORIS input yamls are in examples/inputs/. Default turbine yamls, which many users 
+may use if they do not have their own turbine models to use, can be found in foris/turbine_library/.
+See also [Turbine Library Interface](input_reference_turbine) and 
+[Main Input File Reference](input_reference_main).
 
-## Quick Start
+Conceptually, both the main FLORIS input yaml and the turbine input yaml is much the same in v4 as
+in v3. However, there are a few changes to the fields on each that mean that existing yamls for v3 
+will not run in v4 as is.
 
-FLORIS is a Python package run on the command line typically by providing
-an input file with an initial configuration. It can be installed with
-```pip install floris``` (see {ref}`installation`). The typical entry point is
-{py:class}`.FlorisInterface` which accepts the path to the
-input file as an argument. From there, changes can be made to the initial
-configuration through the {py:meth}`.FlorisInterface.reinitialize`
-routine, and the simulation is executed with
-{py:meth}`.FlorisInterface.calculate_wake`.
+#### Main FLORIS input yaml
+The only change in fields on the main FLORIS input file is that the `turbulence_intensity` field,
+which was specified as a scalar in FLORIS v3, has been changed to `turbulence_intensities`, and
+should now contain a list of turbulence intensities that is of the same length as `wind_directions`
+and `wind_speeds`. Additionally, the length of the lists for `wind_directions` and `wind_speeds` 
+_must_ now be of equal length.
 
-```python
-from floris.tools import FlorisInterface
-fi = FlorisInterface("path/to/input.yaml")
-fi.reinitialize(wind_directions=[i for i in range(10)])
-fi.calculate_wake()
+#### Turbine input yaml
+To reflect the transition to more flexible [operation models](#operation-model), there are a 
+number of changes to the fields on the turbine yaml. The changes are mostly regrouping and 
+renaming of the existing fields.
+- The `power_thrust_table` field now has `wind_speed` and `power` fields, as before; however, 
+the `thrust` field has been renamed `thrust_coefficient` for clarity, and the `power` field now
+specifies the turbine _absolute_ power (in kW) rather than the _power coefficient_. 
+- Additionally, any extra parameters and data required by operation models to evaluate the power
+and thrust curves have been moved onto the `power_thrust_table` field. This includes
+`ref_density_cp_ct` (renamed `ref_air_density` and moved onto the `power_thrust_table`); 
+`ref_tilt_cp_ct` (renamed `ref_tilt` and moved onto the `power_thrust_table`); and `pP` and `pT`
+(renamed `cosine_loss_exponent_yaw` and `cosine_loss_exponent_tilt`, respectively, and moved onto
+the `power_thrust_table`).
+- The `generator_efficiency` field has been removed. The `power` field on `power_thrust_table` 
+should reflect the electrical power produced by the turbine, including any losses.
+- A new field `operation_model` has been added, whose value should be a string that selects the 
+operation model the user would like to evaluate. The default is `"cosine-loss"`, 
+which recovers FLORIS v3-type turbine operation. See [Operation model](#operation-model) and 
+[Turbine Operation Models](operation_models_user) for details. 
+
+### Converting v3 yamls to v4
+To aid users in converting their existing v3 main FLORIS input yamls and turbine input, we provide
+two utilities:
+- floris/tools/convert_floris_input_v3_to_v4.py
+- floris/tools/convert_turbine_v3_to_v4.py
+
+These can be executed from the command line and expect to be passed the exiting v3 yaml as an input;
+the will then write a new v4-compatible yaml of the same name but appended _v4.
+```bash
+python convert_floris_input_v3_to_v4.py your_v3_input_file.yaml
+python convert_floris_turbine_v3_to_v4.py your_v3_turbine_file.yaml
 ```
 
-Finally, results can be analyzed via post-processing functions available within
-{py:class}`.FlorisInterface` such as
-{py:meth}`.FlorisInterface.get_turbine_layout`,
-{py:meth}`.FlorisInterface.get_turbine_powers` and
-{py:meth}`.FlorisInterface.get_farm_AEP`, and
-a visualization package is available in {py:mod}`floris.tools.visualization`.
-A collection of examples are included in the [repository](https://github.com/NREL/floris/tree/main/examples)
-and described in detail in {ref}`examples`.
+Additionally, a function for building a turbine dictionary that can be passed directly to the 
+`turbine_type` argument of `FlorisModel.set()` is provided:
+```python
+from floris.turbine_library.turbine_utilities import build_cosine_loss_turbine_dict
+```
 
-## Engaging on GitHub
+### Reference turbine updates
+The power and thrust curves for the NREL 5MW, IEA 10MW, and IEA 15MW turbines have been updated 
+slightly do reflect publicly available data. The x_20MW reference turbine has been removed, as data
+was not readily available. See [Turbine Library Interface](input_reference_turbine).
 
-FLORIS leverages the following GitHub features to coordinate support and development efforts:
+## Wind data
+- Go into briefly here to explain the concept; then point to dedicated page.
 
-- [Discussions](https://github.com/NREL/floris/discussions): Collaborate to develop ideas for new use cases, features, and software designs, and get support for usage questions
-- [Issues](https://github.com/NREL/floris/issues): Report potential bugs and well-developed feature requests
-- [Projects](https://github.com/orgs/NREL/projects/18/): Include current and future work on a timeline and assign a person to "own" it
+## Operation model
+- Again, brief overview and then point to main page.
 
-Generally, the first entry point for the community will be within one of the
-categories in Discussions.
-[Ideas](https://github.com/NREL/floris/discussions/categories/ideas) is a great spot to develop the
-details for a feature request. [Q&A](https://github.com/NREL/floris/discussions/categories/q-a)
-is where to get usage support.
-[Show and tell](https://github.com/NREL/floris/discussions/categories/show-and-tell) is a free-form
-space to show off the things you are doing with FLORIS.
