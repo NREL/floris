@@ -94,7 +94,8 @@ As in FLORIS v3, there are two main input files to FLORIS v4:
 
 Examples for main FLORIS input yamls are in examples/inputs/. Default turbine yamls, which many
 users
-may use if they do not have their own turbine models to use, can be found in foris/turbine_library/.
+may use if they do not have their own turbine models to use, can be found in
+floris/turbine_library/.
 See also [Turbine Library Interface](input_reference_turbine) and
 [Main Input File Reference](input_reference_main).
 
@@ -151,7 +152,7 @@ from floris.turbine_library.turbine_utilities import build_cosine_loss_turbine_d
 ### Reference turbine updates
 The power and thrust curves for the NREL 5MW, IEA 10MW, and IEA 15MW turbines have been updated
 slightly do reflect publicly available data. The x_20MW reference turbine has been removed, as data
-was not readily available. See [Turbine Library Interface](input_reference_turbine).
+was not readily available. See [Turbine Library Interface](turbine_interaction).
 
 ## Wind data
 To aid users in setting the wind conditions they are interested in running, we provide "wind data"
