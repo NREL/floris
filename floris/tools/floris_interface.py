@@ -395,6 +395,8 @@ class FlorisInterface(LoggingManager):
         # TODO this has to be done here as it seems to be lost with reinitialize
         if yaw_angles is not None:
             self.floris.farm.yaw_angles = yaw_angles
+        else:
+            self.floris.farm.yaw_angles = current_yaw_angles
 
         # Calculate wake
         self.floris.solve_for_viz()
@@ -478,6 +480,8 @@ class FlorisInterface(LoggingManager):
         # TODO this has to be done here as it seems to be lost with reinitialize
         if yaw_angles is not None:
             self.floris.farm.yaw_angles = yaw_angles
+        else:
+            self.floris.farm.yaw_angles = current_yaw_angles
 
         # Calculate wake
         self.floris.solve_for_viz()
@@ -556,6 +560,8 @@ class FlorisInterface(LoggingManager):
         # TODO this has to be done here as it seems to be lost with reinitialize
         if yaw_angles is not None:
             self.floris.farm.yaw_angles = yaw_angles
+        else:
+            self.floris.farm.yaw_angles = current_yaw_angles
 
         # Calculate wake
         self.floris.solve_for_viz()
