@@ -50,7 +50,7 @@ jobs:
               error_found=1
             fi
           done
-          cd ..
+          cd temp1/temp2/temp3/examples/
         done
 
         if [[ $error_found ]]; then
