@@ -268,20 +268,31 @@ def compute_off_center_velocities(U_tilde_c, Ct, y_tilde, z_tilde):
     y_, z_ supposed to be defined from the center of the rotor.
     """
     w_tilde_sq = wake_width_squared(Ct, U_tilde_c)
+    U_tilde_c_mask = U_tilde_c == 1
+    # As long as U_tilde_c is 1, w_tilde_sq won't affect result, but this
+    # silences a division by zero warning
+    w_tilde_sq[U_tilde_c_mask] = 1 
     U_tilde = (
         1
         - (1 - U_tilde_c[:,:,:,None,None])
         * np.exp(-(y_tilde**2 + z_tilde**2)/w_tilde_sq[:,:,:,None,None])
     )
-    # Correct for values where U_tilde_c is 1
-    U_tilde[U_tilde_c == 1] = 1
+
     return U_tilde
 
 def wake_width_squared(Ct, U_tilde_c):
     """
     Compute the wake width squared using the eddy viscosity model
     """
-    return Ct / (4*(1-U_tilde_c)*(1+U_tilde_c))
+    U_tilde_c_mask = U_tilde_c < 1
+
+    w_tilde_sq = np.zeros_like(U_tilde_c)
+    Ct = _resize_Ct(Ct, U_tilde_c)
+    w_tilde_sq[U_tilde_c_mask] = (
+        Ct[U_tilde_c_mask] / (4 * (1 - U_tilde_c[U_tilde_c_mask]) * (1 + U_tilde_c[U_tilde_c_mask]))
+    )
+    w_tilde_sq.reshape(U_tilde_c.shape)
+    return w_tilde_sq
 
 def centerline_ode(x_tilde, U_tilde_c, ambient_ti, Ct, hh, D, k_a, k_l, von_Karman_constant):
     """
@@ -361,9 +372,22 @@ def expanded_wake_width_squared(w_tilde_sq, e_tilde):
     return (np.sqrt(w_tilde_sq) + e_tilde)**2
 
 def expanded_wake_centerline_velocity(Ct, w_tilde_sq):
-    # TODO: This annoyingly raises an error for the 0/0 cases, although they are not 
-    # selected.
-    return np.where(w_tilde_sq > 0, np.sqrt(1-Ct/(4*w_tilde_sq)), 1)
+    w_tilde_sq_mask = w_tilde_sq > 0
+    expanded_U_tilde_c = np.ones_like(w_tilde_sq)
+    Ct = _resize_Ct(Ct, w_tilde_sq)
+    expanded_U_tilde_c[w_tilde_sq_mask] = np.sqrt(
+        1 - Ct[w_tilde_sq_mask]/(4*w_tilde_sq[w_tilde_sq_mask])
+    )
+    expanded_U_tilde_c.reshape(w_tilde_sq.shape)
+    #return np.where(w_tilde_sq > 0, np.sqrt(1-Ct/(4*w_tilde_sq)), 1)
+    return expanded_U_tilde_c
+
+def _resize_Ct(Ct, resize_like):
+    if type(Ct) == np.ndarray:
+        Ct = np.repeat(Ct, resize_like.shape[-1], axis=-1)
+    else:
+        Ct = Ct * np.ones_like(resize_like)
+    return Ct
 
 
 if __name__ == "__main__":
