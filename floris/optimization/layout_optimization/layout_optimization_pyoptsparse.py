@@ -71,7 +71,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
             self.logger.error(err_msg, stack_info=True)
             raise ImportError(err_msg)
 
-        # Instantiate ptOptSparse optimization object with name and objective function
+        # Instantiate pyOptSparse optimization object with name and objective function
         self.optProb = pyoptsparse.Optimization('layout', self._obj_func)
 
         self.optProb = self.add_var_group(self.optProb)
