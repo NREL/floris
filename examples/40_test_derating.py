@@ -19,7 +19,7 @@ with open(str(
     (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
 )) as t:
     turbine_type = yaml.safe_load(t)
-turbine_type["power_thrust_model"] = "simple-derating"
+turbine_type["operation_model"] = "simple-derating"
 
 # Convert to a simple two turbine layout with derating turbines
 fmodel.set(layout_x=[0, 1000.0], layout_y=[0.0, 0.0], turbine_type=[turbine_type])
@@ -82,7 +82,7 @@ ax.set_xlabel("Power setpoint (kW)")
 ax.set_ylabel("Power produced (kW)")
 
 # Second example showing mixed model use.
-turbine_type["power_thrust_model"] = "mixed"
+turbine_type["operation_model"] = "mixed"
 yaw_angles = np.array([
     [0.0, 0.0],
     [0.0, 0.0],
