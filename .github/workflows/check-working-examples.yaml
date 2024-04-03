@@ -36,30 +36,13 @@ jobs:
         error_found=0  # 0 is false
         error_results="Error in example:"
 
-        # Run all the examples in the root directory and subdirectories
-        echo "Running examples in the background"
+        # Now run the examples in root and  subdirectories
+        echo "Running examples"
         for d in . $(find . -type d -name "*examples*"); do
           cd $d
-          echo "Running examples in $d"
+          echo "========================= Example directory- $d"
           for i in *.py; do
-            # Run the script in the background and redirect its output to a log file
-            python $i > "${i}.log" 2>&1 &
-          done
-          if [ "$d" != "." ]; then
-            cd ..
-          fi
-        done
-
-        # Wait for all background processes to finish
-        wait
-        echo "All jobs completed. Checking for errors."
-
-        # Check the log files for errors
-        for d in . $(find . -type d -name "*examples*"); do
-          cd $d
-          for i in *.py; do
-            # If the log file contains an error, print the name of the script and the error
-            if grep -q "Error" "${i}.log"; then
+            if ! python $i; then
               error_results="${error_results}"$'\n'" - ${i}"
               error_found=1
             fi
@@ -67,6 +50,12 @@ jobs:
           if [ "$d" != "." ]; then
             cd ..
           fi
+
+          # if error found break the loop
+          if [[ $error_found ]]; then
+            break
+          fi
+
         done
 
         if [[ $error_found ]]; then
