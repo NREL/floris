@@ -8,6 +8,28 @@ from .layout_optimization_base import LayoutOptimization
 
 
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
+    """
+    This class provides an interface for optimizing the layout of wind turbines
+    using the pyOptSparse optimization library.  The optimization objective is to
+    maximize annual energy production (AEP) or annual value production (AVP).
+
+    Args:
+        fmodel (FlorisModel): A FlorisModel object.
+        boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+            that represent the boundary's vertices (m).
+        min_dist (float, optional): The minimum distance to be maintained
+            between turbines during the optimization (m). If not specified,
+            initializes to 2 rotor diameters. Defaults to None.
+        solver (str, optional): Sets the solver used by Scipy. Defaults to 'SLSQP'.
+        optOptions (dict, optional): Dictionary for setting the
+            optimization options. Defaults to None.
+        enable_geometric_yaw (bool, optional): If True, enables geometric yaw
+            optimization. Defaults to False.
+        use_value (bool, optional): If True, the layout optimization objective
+            is to maximize annual value production using the value array in the
+            FLORIS model's WindData object. If False, the optimization
+            objective is to maximize AEP. Defaults to False.
+    """
     def __init__(
         self,
         fmodel,
@@ -21,26 +43,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         enable_geometric_yaw=False,
         use_value=False,
     ):
-        """
-        _summary_ TODO: write summary and describe the remaining arguments
 
-        Args:
-            fmodel (FlorisModel): A FlorisModel object.
-            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
-                that represent the boundary's vertices (m).
-            min_dist (float, optional): The minimum distance to be maintained
-                between turbines during the optimization (m). If not specified,
-                initializes to 2 rotor diameters. Defaults to None.
-            solver (str, optional): Sets the solver used by Scipy. Defaults to 'SLSQP'.
-            optOptions (dict, optional): Dictionary for setting the
-                optimization options. Defaults to None.
-            enable_geometric_yaw (bool, optional): If True, enables geometric yaw
-                optimization. Defaults to False.
-            use_value (bool, optional): If True, the layout optimization objective
-                is to maximize annual value production using the value array in the
-                FLORIS model's WindData object. If False, the optimization
-                objective is to maximize AEP. Defaults to False.
-        """
         super().__init__(
             fmodel,
             boundaries,
