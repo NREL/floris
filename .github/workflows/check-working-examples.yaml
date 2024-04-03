@@ -38,7 +38,7 @@ jobs:
 
         # Now run the examples in root and  subdirectories
         echo "Running examples"
-        for d in $(find . -type d); do
+        for d in . $(find . -type d -name "*examples*"); do
           echo "Current directory- $(pwd)"
           cd $d
           echo "New directory- $(pwd)"
