@@ -55,10 +55,9 @@ class SOED(BaseModel):
         self,
         U_tilde_field: np.ndarray,
     ):
-        import ipdb; ipdb.set_trace()
-        N = U_tilde_field.shape[1]
+        n_turbines = U_tilde_field.shape[1]
 
-        U_tilde_combined = np.sqrt(1 - N + np.sum(U_tilde_field**2, axis=1))
+        U_tilde_combined = np.sqrt(1 - n_turbines + np.sum(U_tilde_field**2, axis=1))
 
         if (U_tilde_combined < 0).any() or np.isnan(U_tilde_combined).any():
             print("uh oh")

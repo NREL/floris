@@ -137,6 +137,9 @@ class EddyViscosityVelocity(BaseModel):
             x_tilde_sorted = x_tilde_unique[sorting_indices]
             valid_indices = x_tilde_sorted >= 2
             x_tilde_eval = x_tilde_sorted[valid_indices]
+            if len(x_tilde_eval) == 0: # No downstream locations to fill
+                U_tilde_c[findex, :] = U_tilde_c_initial[findex]
+                continue
             sol = solve_ivp(
                 fun=centerline_ode,
                 t_span=[2, x_tilde_eval[-1]],
@@ -183,12 +186,9 @@ class EddyViscosityVelocity(BaseModel):
         # Recompute wake width
         w_tilde_sq_meandering = wake_width_squared(ct_i, U_tilde_c)
 
-
-        # # Compute off-center velocities
-        # U_tilde = compute_off_center_velocities(U_tilde_c_meandering, ct_i, y_tilde, z_tilde)
-
-        # # Set all upstream values to one
-        # U_tilde[x_tilde < 0] = 1 # Upstream
+        # # Set all upstream values (including current turbine's position) to no wake
+        U_tilde_c_meandering[x_tilde < 0.1] = 1
+        w_tilde_sq_meandering[x_tilde < 0.1] = 0
 
         # # Return velocities NOT as deficits
         return U_tilde_c_meandering, w_tilde_sq_meandering
@@ -273,6 +273,8 @@ def compute_off_center_velocities(U_tilde_c, Ct, y_tilde, z_tilde):
         - (1 - U_tilde_c[:,:,:,None,None])
         * np.exp(-(y_tilde**2 + z_tilde**2)/w_tilde_sq[:,:,:,None,None])
     )
+    # Correct for values where U_tilde_c is 1
+    U_tilde[U_tilde_c == 1] = 1
     return U_tilde
 
 def wake_width_squared(Ct, U_tilde_c):
@@ -359,7 +361,7 @@ def expanded_wake_width_squared(w_tilde_sq, e_tilde):
     return (np.sqrt(w_tilde_sq) + e_tilde)**2
 
 def expanded_wake_centerline_velocity(Ct, w_tilde_sq):
-    # This annoyingly raises an error for the 0/0 cases, although they are not 
+    # TODO: This annoyingly raises an error for the 0/0 cases, although they are not 
     # selected.
     return np.where(w_tilde_sq > 0, np.sqrt(1-Ct/(4*w_tilde_sq)), 1)
 
