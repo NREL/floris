@@ -167,12 +167,15 @@ wake of the controlled turbine. This effect is activated by setting
 `enable_active_wake_mixing` to `true`, and `awc_modes` to `"helix"` (other AWC
 strategies are yet to be implemented). The wake can then be controlled by
 setting the amplitude of the AWC excitation using `awc_amplitudes` (see the
-section on operation models). The effect of AWC is represented by updating the
+[AWC operation model](operation_models_user.ipynb#awc-model)).
+The effect of AWC is represented by updating the
 wake-induced mixing term as follows:
 
-$$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i} {(x_j - x_i)/D_i} + \frac{A_{awc,j}^{p_{awc}}}{d_{awc}}$$,
+$$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i} {(x_j - x_i)/D_i} + 
+\frac{A_{\text{AWC},j}^{p_\text{AWC}}}{d_\text{AWC}}$$
 
-where $A_{awc,j}$ is the AWC amplitude of turbine $j$, and $p_{awc}$ and
-$d_{awc}$ are tuning parameters that can be set in the `emgauss.yaml` file.
-Note that, similar to the yaw added mixing case, a turbine affects its own
+where $A_{\text{AWC},j}$ is the AWC amplitude of turbine $j$, and the exponent $p_\text{AWC}$ and
+denominator $d_\text{AWC}$ are tuning parameters that can be set in the `emgauss.yaml` file with
+the fields `awc_wake_exp` and `awc_wake_denominator`, respectively.
+Note that, in contrast to the yaw added mixing case, a turbine currently affects _only_ its own
 wake by applying AWC.
