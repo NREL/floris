@@ -36,19 +36,13 @@ jobs:
         error_found=0  # 0 is false
         error_results="Error in example:"
 
-        # Run all the examples in the root directory
-        echo "Running examples in the root directory"
-        for i in *.py; do
-          if ! python $i; then
-            error_results="${error_results}"$'\n'" - ${i}"
-            error_found=1
-          fi
-        done
-
-        # Now run the examples in the subdirectories
-        echo "Running examples in the subdirectories"
+        # Now run the examples in root and  subdirectories
+        echo "Running examples"
         for d in $(find . -type d); do
+          echo "Current directory- $(pwd)"
+          echo "Trying to change to- $d"
           cd $d
+          echo "New directory- $(pwd)"
           echo "Running examples in $d"
           for i in *.py; do
             if ! python $i; then
