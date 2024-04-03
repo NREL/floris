@@ -141,10 +141,10 @@ ax.set_xlabel("Wind speed (m/s)")
 
 # Reduce x and y tick font size
 for tick in ax.yaxis.get_major_ticks():
-    tick.label.set_fontsize(8)
+    tick.label1.set_fontsize(8)
 
 for tick in ax.xaxis.get_major_ticks():
-    tick.label.set_fontsize(8)
+    tick.label1.set_fontsize(8)
 
 # Set y ticks to be horizontal
 for tick in ax.get_yticklabels():
