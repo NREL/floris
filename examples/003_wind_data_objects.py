@@ -194,7 +194,7 @@ fmodel.set(wind_data=wind_rose)
 
 print(
     f"Number of conditions to simulate with compute_zero_freq_occurrence"
-    f"False: {fmodel.core.flow_field.n_findex}"
+    f"False: {fmodel.n_findex}"
 )
 
 wind_rose = WindRose(
@@ -208,7 +208,7 @@ fmodel.set(wind_data=wind_rose)
 
 print(
     f"Number of conditions to simulate with compute_zero_freq_occurrence"
-    f"True: {fmodel.core.flow_field.n_findex}"
+    f"True: {fmodel.n_findex}"
 )
 
 # Set the wind conditions using the WindTIRose object

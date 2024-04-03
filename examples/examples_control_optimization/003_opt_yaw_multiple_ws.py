@@ -66,7 +66,7 @@ fig, axarr = plt.subplots(
     figsize=(10, 8)
 )
 jj = 0
-for ii, ws in enumerate(np.unique(fmodel.core.flow_field.wind_speeds)):
+for ii, ws in enumerate(np.unique(fmodel.wind_speeds)):
     xi = np.remainder(ii, 4)
     if ((ii > 0) & (xi == 0)):
         jj += 1
@@ -96,7 +96,7 @@ fig, axarr = plt.subplots(
     figsize=(10, 8)
 )
 jj = 0
-for ii, ws in enumerate(np.unique(fmodel.core.flow_field.wind_speeds)):
+for ii, ws in enumerate(np.unique(fmodel.wind_speeds)):
     xi = np.remainder(ii, 4)
     if ((ii > 0) & (xi == 0)):
         jj += 1

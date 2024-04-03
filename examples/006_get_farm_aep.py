@@ -82,7 +82,7 @@ fmodel.run()
 # the total number of wind directions and wind speed combinations
 print(f"Total number of wind direction and wind speed combination: {n_wd * n_ws}")
 print(f"Number of 0 frequency bins: {n_zeros}")
-print(f"n_findex: {fmodel.core.flow_field.n_findex}")
+print(f"n_findex: {fmodel.n_findex}")
 
 # Get the AEP
 aep = fmodel.get_farm_AEP()

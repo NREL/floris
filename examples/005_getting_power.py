@@ -116,7 +116,7 @@ wind_rose = WindRose(
 fmodel.set(wind_data=wind_rose)
 
 print("==========Wind Rose==========")
-print(f"Number of conditions to simulate (2 x 3): {fmodel.core.flow_field.n_findex}")
+print(f"Number of conditions to simulate (2 x 3): {fmodel.n_findex}")
 
 fmodel.run()
 
