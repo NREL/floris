@@ -42,6 +42,7 @@ jobs:
           cd $d
           echo "========================= Example directory- $d"
           for i in *.py; do
+            echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Running example- $i"
             if ! python $i; then
               error_results="${error_results}"$'\n'" - ${i}"
               error_found=1
@@ -49,11 +50,6 @@ jobs:
           done
           if [ "$d" != "." ]; then
             cd ..
-          fi
-
-          # if error found break the loop
-          if [[ $error_found ]]; then
-            break
           fi
 
         done
