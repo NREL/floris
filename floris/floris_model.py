@@ -1435,6 +1435,16 @@ class FlorisModel(LoggingManager):
         return self.core.flow_field.n_findex
 
     @property
+    def n_turbines(self):
+        """
+        Number of turbines.
+
+        Returns:
+            int: Number of turbines.
+        """
+        return self.core.farm.n_turbines
+
+    @property
     def turbine_average_velocities(self) -> NDArrayFloat:
         return average_velocity(
             velocities=self.core.flow_field.u,
