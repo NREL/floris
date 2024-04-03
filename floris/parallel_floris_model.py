@@ -531,6 +531,27 @@ class ParallelFlorisModel(LoggingManager):
     def layout_y(self):
         return self.fmodel.layout_y
 
+    @property
+    def wind_speeds(self):
+        return self.fmodel.wind_speeds
+
+    @property
+    def wind_directions(self):
+        return self.fmodel.wind_directions
+
+    @property
+    def turbulence_intensities(self):
+        return self.fmodel.turbulence_intensities
+
+    @property
+    def n_findex(self):
+        return self.fmodel.n_findex
+
+    @property
+    def n_turbines(self):
+        return self.fmodel.n_turbines
+
+
     # @property
     # def floris(self):
     #     return self.fmodel.core
