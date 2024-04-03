@@ -14,7 +14,6 @@ from time import perf_counter as timerpc
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 
 from floris import (
     FlorisModel,
@@ -128,19 +127,23 @@ wind_directions = wind_rose.wind_directions
 wind_speeds = wind_rose.wind_speeds
 relative_gain = farm_power_opt - farm_power_baseline
 
-# Plt the heatmap with wind speeds on x, wind directions ony and relative gain as the color
-fig, ax = plt.subplots(figsize=(7, 12))
-sns.heatmap(relative_gain, cmap="viridis", cbar_kws={"label": "Relative gain (%)"}, ax=ax)
-ax.set_yticks(np.arange(len(wind_directions)) + 0.5)
+# Plot the heatmap with wind speeds on x, wind directions on y and relative gain as the color
+fig, ax = plt.subplots(figsize=(10, 12))
+cax = ax.imshow(relative_gain, cmap='viridis', aspect='auto')
+fig.colorbar(cax, ax=ax, label="Relative gain (%)")
+
+ax.set_yticks(np.arange(len(wind_directions)))
 ax.set_yticklabels(wind_directions)
-ax.set_xticks(np.arange(len(wind_speeds)) + 0.5)
+ax.set_xticks(np.arange(len(wind_speeds)))
 ax.set_xticklabels(wind_speeds)
 ax.set_ylabel("Wind direction (deg)")
 ax.set_xlabel("Wind speed (m/s)")
-plt.tight_layout()
 
-# Reduce y tick font size
+# Reduce x and y tick font size
 for tick in ax.yaxis.get_major_ticks():
+    tick.label.set_fontsize(8)
+
+for tick in ax.xaxis.get_major_ticks():
     tick.label.set_fontsize(8)
 
 # Set y ticks to be horizontal
@@ -149,4 +152,5 @@ for tick in ax.get_yticklabels():
 
 ax.set_title("Uplift in farm power by wind direction and wind speed", fontsize=12)
 
+plt.tight_layout()
 plt.show()
