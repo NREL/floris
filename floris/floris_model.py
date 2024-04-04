@@ -266,11 +266,10 @@ class FlorisModel(LoggingManager):
             self.core.farm.set_power_setpoints(power_setpoints)
 
         if awc_modes is None:
-            awc_modes = np.empty(
-                (
-                    self.core.flow_field.n_findex,
-                    self.core.farm.n_turbines,
-                )
+            awc_modes = np.array(
+                [["baseline"]
+                *self.core.farm.n_turbines]
+                *self.core.flow_field.n_findex
             )
         self.core.farm.awc_modes = awc_modes
 
