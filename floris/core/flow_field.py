@@ -28,7 +28,6 @@ class FlowField(BaseClass):
     air_density: float = field(converter=float)
     turbulence_intensities: NDArrayFloat = field(converter=floris_array_converter)
     reference_wind_height: float = field(converter=float)
-    time_series: bool = field(default=False)
     heterogeneous_inflow_config: dict = field(default=None)
     multidim_conditions: dict = field(default=None)
 
