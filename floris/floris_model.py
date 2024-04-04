@@ -1288,22 +1288,41 @@ class FlorisModel(LoggingManager):
         self.core.flow_field.reference_wind_height = unique_heights[0]
 
     def get_operation_model(self) -> str:
-        """Get the power thrust model of a FlorisModel.
+        """Get the operation model of a FlorisModel.
 
         Returns:
             str: The operation_model.
         """
-        return self.core.farm.turbine_definitions[0]["operation_model"]
+        operation_models = [
+            self.core.farm.turbine_definitions[tindex]["operation_model"]
+            for tindex in range(self.core.farm.n_turbines)
+        ]
+        if len(set(operation_models)) == 1:
+            return operation_models[0]
+        else:
+            return operation_models
 
-    def set_operation_model(self, operation_model: str):
-        """Set the power thrust model of a FlorisModel.
+    def set_operation_model(self, operation_model: str | List[str]):
+        """Set the turbine operation model(s).
 
         Args:
-            operation_model (str): The power thrust model to set.
+            operation_model (str): The operation model to set.
         """
-        turbine_type = self.core.farm.turbine_definitions[0]
-        turbine_type["operation_model"] = operation_model
-        self.set(turbine_type=[turbine_type])
+        if isinstance(operation_model, str):
+            operation_model = [operation_model]*self.core.farm.n_turbines
+        elif len(operation_model) != self.core.farm.n_turbines:
+            raise ValueError(
+                "The length of the operation_model list must be equal to the number of turbines."
+            )
+
+        turbine_type_list = self.core.farm.turbine_definitions
+        for tindex in range(self.core.farm.n_turbines):
+            turbine_type_list[tindex]["turbine_type"] = (
+                turbine_type_list[tindex]["turbine_type"]+"_"+operation_model[tindex]
+            )
+            turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
+
+        self.set(turbine_type=turbine_type_list)
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object"""
