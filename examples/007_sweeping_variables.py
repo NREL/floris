@@ -1,9 +1,17 @@
 """Example 7: Sweeping Variables
 
 Demonstrate methods for sweeping across variables.  Wind directions, wind speeds,
-turbulence intensities,
-as well as control inputs are passed to set() as arrays and so can be swept
-and run in one call to run().
+turbulence intensities, as well as control inputs are passed to set() as arrays
+and so can be swept and run in one call to run().
+
+The example includes demonstrations of sweeping:
+
+    1) Wind speeds
+    2) Wind directions
+    3) Turbulence intensities
+    4) Yaw angles
+    5) Power setpoints
+    6) Disabling turbines
 
 """
 

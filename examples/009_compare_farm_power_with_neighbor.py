@@ -1,9 +1,8 @@
 """Example: Compare farm power with neighboring farm
+
 This example demonstrates how to use turbine_weights to define a set of turbines belonging
-to a neighboring farm which
-impacts the power production of the farm under consideration via wake losses, but whose own
-power production is not
-considered in farm power / aep production
+to a neighboring farm which impacts the power production of the farm under consideration
+via wake losses, but whose own power production is not considered in farm power / aep production
 
 """
 

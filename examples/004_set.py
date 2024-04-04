@@ -4,6 +4,11 @@ This example illustrates the use of the set method.  The set method is used to
 change the wind conditions, the wind farm layout, the turbine type,
 and the controls settings.
 
+This example demonstrates setting each of the following:
+    1) Wind conditions
+    2) Wind farm layout
+    3) Controls settings
+
 """
 
 

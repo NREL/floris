@@ -1,12 +1,17 @@
 """Example 3: Wind Data Objects
 
 This example demonstrates the use of wind data objects in FLORIS:
- TimeSeries,
- WindRose, and WindTIRose.
+ TimeSeries, WindRose, and WindTIRose.
 
+ For each of the WindData objects, examples are shown of:
 
-Main concept is introduce FLORIS and illustrate essential structure
-of most-used FLORIS calls
+    1) Initializing the object
+    2) Broadcasting values
+    3) Converting between objects
+    3) Plotting
+    4) Assigning value
+    5) Setting the FLORIS model using the object
+
 """
 
 
