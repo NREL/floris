@@ -193,8 +193,8 @@ wind_rose = WindRose(
 fmodel.set(wind_data=wind_rose)
 
 print(
-    f"Number of conditions to simulate with compute_zero_freq_occurrence"
-    f"False: {fmodel.n_findex}"
+    f"Number of conditions to simulate with compute_zero_freq_occurrence = False"
+    f"{fmodel.n_findex}"
 )
 
 wind_rose = WindRose(
