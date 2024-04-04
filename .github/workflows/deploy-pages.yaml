@@ -28,13 +28,22 @@ jobs:
     - name: Copy examples to docs
       working-directory: ${{runner.workspace}}/floris/
       run: |
-        mkdir -p docs/examples
-        cp -r examples/ docs/examples/.
+        rsync -av examples/ docs/examples
+        ls docs/examples
+
+
+
 
     # Run the script examples/_convert_examples_to_notebooks.py
     - name: Convert examples to notebooks
       working-directory: ${{runner.workspace}}/floris/docs/examples/
       run: |
+        # Print the working directory
+        pwd
+
+        # Show the contents
+        ls
+
         python _convert_examples_to_notebooks.py
 
     # Build the book
