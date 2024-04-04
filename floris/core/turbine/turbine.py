@@ -102,6 +102,10 @@ def power(
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
+        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
+            and "helix" are implemented).
+        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
+            and "helix" are implemented).
         awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
             turbine [deg].
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
@@ -216,6 +220,8 @@ def thrust_coefficient(
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
+        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
+            and "helix" are implemented).
         awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
             turbine [deg].
         thrust_coefficient_functions (dict): The thrust coefficient functions for each turbine. Keys
@@ -325,8 +331,8 @@ def axial_induction(
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
-        awc_setpoints: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
-            turbine [W].
+        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
+            turbine [deg].
         axial_induction_functions (dict): The axial induction functions for each turbine. Keys are
             the turbine type string and values are the callable functions.
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
