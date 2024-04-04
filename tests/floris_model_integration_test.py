@@ -642,3 +642,8 @@ def test_set_operation_model():
     fmodel = FlorisModel(configuration=YAML_INPUT)
     fmodel.set_operation_model("simple-derating")
     assert fmodel.get_operation_model() == "simple-derating"
+
+    # Check multiple turbine types works
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set_operation_model(["simple-derating", "cosine-loss"])
+    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
