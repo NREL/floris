@@ -1,6 +1,9 @@
 """Example 2: Visualizations
 
 This example demonstrates the use of the flow and layout visualizations in FLORIS.
+First, an example wind farm layout is plotted, with the turbine names and the directions
+and distances between turbines shown in different configurations by subplot.
+Next, the horizontal flow field at hub height is plotted for a single wind condition.
 
 FLORIS includes two modules for visualization:
   1) flow_visualization: for visualizing the flow field
