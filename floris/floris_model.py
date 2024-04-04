@@ -1309,13 +1309,23 @@ class FlorisModel(LoggingManager):
             operation_model (str): The operation model to set.
         """
         if isinstance(operation_model, str):
-            operation_model = [operation_model]*self.core.farm.n_turbines
-        elif len(operation_model) != self.core.farm.n_turbines:
+            if len(self.core.farm.turbine_type) == 1:
+                # Set a single one here, then, and return
+                turbine_type = self.core.farm.turbine_definitions[0]
+                turbine_type["operation_model"] = operation_model
+                self.set(turbine_type=[turbine_type])
+                return
+            else:
+                operation_model = [operation_model]*self.core.farm.n_turbines
+        
+        if len(operation_model) != self.core.farm.n_turbines:
             raise ValueError(
-                "The length of the operation_model list must be equal to the number of turbines."
-            )
+                    "The length of the operation_model list must be "
+                    "equal to the number of turbines."
+                )
 
         turbine_type_list = self.core.farm.turbine_definitions
+
         for tindex in range(self.core.farm.n_turbines):
             turbine_type_list[tindex]["turbine_type"] = (
                 turbine_type_list[tindex]["turbine_type"]+"_"+operation_model[tindex]
