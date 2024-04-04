@@ -1317,7 +1317,7 @@ class FlorisModel(LoggingManager):
                 return
             else:
                 operation_model = [operation_model]*self.core.farm.n_turbines
-        
+
         if len(operation_model) != self.core.farm.n_turbines:
             raise ValueError(
                     "The length of the operation_model list must be "
