@@ -12,6 +12,7 @@ yaw angles (accounting for and not accounting for the neighboring farm) and comp
 to the baseline AEP.
 """
 
+
 import matplotlib.pyplot as plt
 import numpy as np
 
