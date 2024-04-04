@@ -8,9 +8,9 @@ This example demonstrates the use of wind data objects in FLORIS:
     1) Initializing the object
     2) Broadcasting values
     3) Converting between objects
-    3) Plotting
-    4) Assigning value
-    5) Setting the FLORIS model using the object
+    4) Setting TI and value
+    5) Plotting
+    6) Setting the FLORIS model using the object
 
 """
 
