@@ -1,7 +1,7 @@
 
 name: Emperical Gaussian floating
 description: Single turbine using emperical Gaussian model for floating
-floris_version: v3.x
+floris_version: v4.x
 
 logging:
   console:

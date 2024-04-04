@@ -1,7 +1,7 @@
 
 name: Emperical Gaussian
 description: Example of single fixed-bottom turbine
-floris_version: v3.x
+floris_version: v4.x
 
 logging:
   console:
