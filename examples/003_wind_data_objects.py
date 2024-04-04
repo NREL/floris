@@ -37,25 +37,35 @@ from floris import (
 # The TimeSeries class is used to hold time series data, such as wind speed, wind direction,
 # and turbulence intensity.
 
-# Generate wind speeds, directions, and turbulence intensities via random signals
+# There is also a "value" wind data variable, which represents the value of the power
+# generated at each time step or wind condition (e.g., the price of electricity). This can
+# then be used in later optimization methods to optimize for quantities besides AEP.
+
+# Generate wind speeds, directions, turbulence intensities, and values via random signals
 N = 100
 wind_speeds = 8 + 2 * np.random.randn(N)
 wind_directions = 270 + 30 * np.random.randn(N)
 turbulence_intensities = 0.06 + 0.02 * np.random.randn(N)
+values = 25 + 10 * np.random.randn(N)
 
 time_series = TimeSeries(
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
     turbulence_intensities=turbulence_intensities,
+    values=values,
 )
 
 # The WindRose class is used to hold wind rose data, such as wind speed, wind direction,
-# and frequency.  TI is represented as a bin average per wind direction and speed bin.
+# and frequency.  TI and value are represented as bin averages per wind direction and
+# speed bin.
 wind_directions = np.arange(0, 360, 3.0)
 wind_speeds = np.arange(4, 20, 2.0)
 
 # Make TI table 6% TI for all wind directions and speeds
 ti_table = 0.06 * np.ones((len(wind_directions), len(wind_speeds)))
+
+# Make value table 25 for all wind directions and speeds
+value_table =25 * np.ones((len(wind_directions), len(wind_speeds)))
 
 # Uniform frequency
 freq_table = np.ones((len(wind_directions), len(wind_speeds)))
@@ -66,6 +76,7 @@ wind_rose = WindRose(
     wind_speeds=wind_speeds,
     ti_table=ti_table,
     freq_table=freq_table,
+    value_table=value_table,
 )
 
 # The WindTIRose class is similar to the WindRose table except that TI is also binned
@@ -75,11 +86,15 @@ turbulence_intensities = np.arange(0.05, 0.15, 0.01)
 # Uniform frequency
 freq_table = np.ones((len(wind_directions), len(wind_speeds), len(turbulence_intensities)))
 
+# Uniform value
+value_table = 25* np.ones((len(wind_directions), len(wind_speeds), len(turbulence_intensities)))
+
 wind_ti_rose = WindTIRose(
     wind_directions=wind_directions,
     wind_speeds=wind_speeds,
     turbulence_intensities=turbulence_intensities,
     freq_table=freq_table,
+    value_table=value_table,
 )
 
 ##################################################
@@ -114,7 +129,7 @@ wind_rose = WindRose(wind_directions=wind_directions, wind_speeds=wind_speeds, t
 ##################################################
 
 # The TimeSeries class has a method to generate a wind rose from a time series based on binning
-wind_rose = time_series.to_WindRose(wd_edges=np.arange(0, 360, 3.0), ws_edges=np.arange(4, 20, 2.0))
+wind_rose = time_series.to_WindRose(wd_edges=np.arange(0, 360, 3.0), ws_edges=np.arange(2, 20, 2.0))
 
 ##################################################
 # Wind Rose from long CSV FILE
@@ -135,11 +150,26 @@ wind_rose_from_csv = WindRose.read_csv_long(
 ##################################################
 
 # Each of the wind data objects also has the ability to set the turbulence intensity
-# according to a function of wind speed and direction.  This can be done using
-# a custom function by using the function assign_ti_using_IEC_method which assigns
-# TI based on the IEC 61400-1 standard
+# according to a function of wind speed and direction.  This can be done using a custom
+# function by using the assign_ti_using_wd_ws_function method. There is also a method
+# called assign_ti_using_IEC_method which assigns TI based on the IEC 61400-1 standard.
 wind_rose.assign_ti_using_IEC_method()  # Assign using default settings for Iref and offset
 
+##################################################
+# Setting value
+##################################################
+
+# Similarly, each of the wind data objects also has the ability to set the value according to
+# a function of wind speed and direction.  This can be done using a custom function by using
+# the assign_value_using_wd_ws_function method. There is also a method called
+# assign_value_piecewise_linear which assigns value based on a linear piecewise function of
+# wind speed.
+
+# Assign value using default settings. This produces a value vs. wind speed that approximates
+# the normalized mean electricity price vs. wind speed curve for the SPP market in the U.S.
+# for years 2018-2020 from figure 7 in "The value of wake steering wind farm flow control in
+# US energy markets," Wind Energy Science, 2024. https://doi.org/10.5194/wes-9-219-2024.
+wind_rose.assign_value_piecewise_linear()
 
 ##################################################
 # Plotting Wind Data Objects
@@ -152,21 +182,8 @@ wind_rose.plot_wind_rose()
 # Showing TI over wind speed for a WindRose
 wind_rose.plot_ti_over_ws()
 
-##################################################
-# Assigning value to wind data objects
-##################################################
-
-# Wind data objects can also hold value information, such as the price of electricity for different
-# time periods or wind conditions.  These can then be used in later optimization methods to optimize
-# for quantities besides AEP.
-
-N = 100
-wind_speeds = 8 + 2 * np.random.randn(N)
-values = 1 / wind_speeds  # Assume Value is inversely proportional to wind speed
-
-time_series = TimeSeries(
-    wind_directions=270.0, wind_speeds=wind_speeds, turbulence_intensities=0.06, values=values
-)
+# Showing value over wind speed for a WindRose
+wind_rose.plot_value_over_ws()
 
 ##################################################
 # Setting the FLORIS model via wind data
@@ -198,7 +215,7 @@ wind_rose = WindRose(
 fmodel.set(wind_data=wind_rose)
 
 print(
-    f"Number of conditions to simulate with compute_zero_freq_occurrence = False"
+    f"Number of conditions to simulate with compute_zero_freq_occurrence = False: "
     f"{fmodel.n_findex}"
 )
 
@@ -212,7 +229,7 @@ wind_rose = WindRose(
 fmodel.set(wind_data=wind_rose)
 
 print(
-    f"Number of conditions to simulate with compute_zero_freq_occurrence"
+    f"Number of conditions to simulate with compute_zero_freq_occurrence = "
     f"True: {fmodel.n_findex}"
 )
 
