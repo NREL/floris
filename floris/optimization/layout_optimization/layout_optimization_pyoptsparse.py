@@ -20,9 +20,20 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         min_dist (float, optional): The minimum distance to be maintained
             between turbines during the optimization (m). If not specified,
             initializes to 2 rotor diameters. Defaults to None.
-        solver (str, optional): Sets the solver used by Scipy. Defaults to 'SLSQP'.
+        solver (str, optional): Sets the solver used by pyOptSparse. Defaults
+            to 'SLSQP'.
         optOptions (dict, optional): Dictionary for setting the
             optimization options. Defaults to None.
+        timeLimit (float, optional): Variable passed to pyOptSparse optimizer.
+            The maximum amount of time for optimizer to run (seconds). If None,
+            no time limit is imposed. Defaults to None.
+        storeHistory (str, optional): Variable passed to pyOptSparse optimizer.
+            File name of the history file into which the history of the
+            pyOptSparse optimization will be stored. Defaults to "hist.hist".
+        hotStart (str, optional): Variable passed to pyOptSparse optimizer.
+            File name of the history file to “replay” for the optimization.
+            If None, pyOptSparse initializes the optimization from scratch.
+            Defaults to None.
         enable_geometric_yaw (bool, optional): If True, enables geometric yaw
             optimization. Defaults to False.
         use_value (bool, optional): If True, the layout optimization objective
