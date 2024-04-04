@@ -618,3 +618,11 @@ def test_set_operation_model():
     assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
     with pytest.raises(ValueError):
         fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+
+    # Check one more variation
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set_operation_model("simple-derating")
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    with pytest.raises(ValueError):
+        fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
