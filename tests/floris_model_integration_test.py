@@ -390,6 +390,62 @@ def test_get_farm_aep(caplog):
     expected_farm_power = fmodel.get_expected_farm_power(freq=freq)
     np.testing.assert_allclose(expected_farm_power, aep / (365 * 24))
 
+def test_get_farm_avp(caplog):
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([7.0, 8.0, 9.0])
+    wind_directions = np.array([260.0, 270.0, 280.0])
+    turbulence_intensities = np.array([0.07, 0.06, 0.05])
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+    # n_turbines = len(layout_x)
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=layout_x,
+        layout_y=layout_y,
+    )
+
+    fmodel.run()
+
+    farm_powers = fmodel.get_farm_power()
+
+    # Define frequencies
+    freq = np.array([0.25, 0.5, 0.25])
+
+    # Define values of energy produced (e.g., price per MWh)
+    values = np.array([30.0, 20.0, 10.0])
+
+    # Check warning raised if values not passed; no warning if values passed
+    with caplog.at_level(logging.WARNING):
+        fmodel.get_farm_AVP(freq=freq)
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.get_farm_AVP(freq=freq, values=values)
+    assert caplog.text == "" # Checking empty
+
+    # Check that AVP is equivalent to AEP when values not passed
+    farm_aep = fmodel.get_farm_AEP(freq=freq)
+    farm_avp = fmodel.get_farm_AVP(freq=freq)
+
+    np.testing.assert_allclose(farm_avp, farm_aep)
+
+    # Now check that AVP is what we expect when values passed
+    farm_avp = fmodel.get_farm_AVP(freq=freq,values=values)
+
+    farm_values = np.multiply(values, farm_powers)
+    avp = np.sum(np.multiply(freq, farm_values) * 365 * 24)
+
+    np.testing.assert_allclose(farm_avp, avp)
+
+    # Also check get_expected_farm_value
+    expected_farm_power = fmodel.get_expected_farm_value(freq=freq, values=values)
+    np.testing.assert_allclose(expected_farm_power, avp / (365 * 24))
+
 def test_set_ti():
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
