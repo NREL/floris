@@ -37,24 +37,22 @@ fmodel = FlorisModel("inputs/gch.yaml")
 # to what existed previously at the end of the function
 
 # Using the FlorisModel functions, get 2D slices.
+fmodel.set(yaw_angles=np.array([[25.,0.,0.]]))
 horizontal_plane = fmodel.calculate_horizontal_plane(
     x_resolution=200,
     y_resolution=100,
     height=90.0,
-    yaw_angles=np.array([[25.,0.,0.]]),
 )
 
 y_plane = fmodel.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
     crossstream_dist=0.0,
-    yaw_angles=np.array([[25.,0.,0.]]),
 )
 cross_plane = fmodel.calculate_cross_plane(
     y_resolution=100,
     z_resolution=100,
     downstream_dist=630.0,
-    yaw_angles=np.array([[25.,0.,0.]]),
 )
 
 # Create the plots
@@ -85,7 +83,7 @@ horizontal_plane_scan_turbine = flowviz.calculate_horizontal_plane_with_turbines
     fmodel,
     x_resolution=20,
     y_resolution=10,
-    yaw_angles=np.array([[25.,0.,0.]]),
+    #yaw_angles=np.array([[0.,0.,0.]]),
 )
 
 fig, ax = plt.subplots()
