@@ -23,6 +23,7 @@ from floris.core.wake_deflection.gauss import (
     wake_added_yaw,
     yaw_added_turbulence_mixing,
 )
+from floris.core.wake_velocity.empirical_gauss import awc_added_wake_mixing
 from floris.type_dec import NDArrayFloat
 from floris.utilities import cosd
 
@@ -94,6 +95,8 @@ def sequential_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -113,6 +116,8 @@ def sequential_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -326,6 +331,8 @@ def full_flow_sequential_solver(
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
+            awc_modes=turbine_grid_farm.awc_modes_sorted,
+            awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -345,6 +352,8 @@ def full_flow_sequential_solver(
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
+            awc_modes=turbine_grid_farm.awc_modes_sorted,
+            awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
             axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -501,6 +510,8 @@ def cc_solver(
             farm.yaw_angles_sorted,
             farm.tilt_angles_sorted,
             farm.power_setpoints_sorted,
+            farm.awc_modes_sorted,
+            farm.awc_amplitudes_sorted,
             farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -517,6 +528,8 @@ def cc_solver(
             farm.yaw_angles_sorted,
             farm.tilt_angles_sorted,
             farm.power_setpoints_sorted,
+            farm.awc_modes_sorted,
+            farm.awc_amplitudes_sorted,
             farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -538,6 +551,8 @@ def cc_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -751,6 +766,8 @@ def full_flow_cc_solver(
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
+            awc_modes=turbine_grid_farm.awc_modes,
+            awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -768,6 +785,8 @@ def full_flow_cc_solver(
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
+            awc_modes=turbine_grid_farm.awc_modes,
+            awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
             axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -908,6 +927,8 @@ def turbopark_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -924,6 +945,8 @@ def turbopark_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -943,6 +966,8 @@ def turbopark_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -989,6 +1014,8 @@ def turbopark_solver(
                     yaw_angles=farm.yaw_angles_sorted,
                     tilt_angles=farm.tilt_angles_sorted,
                     power_setpoints=farm.power_setpoints_sorted,
+                    awc_modes=farm.awc_modes,
+                    awc_amplitudes=farm.awc_amplitudes_sorted,
                     thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
                     tilt_interps=farm.turbine_tilt_interps,
                     correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -1164,6 +1191,8 @@ def empirical_gauss_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -1183,6 +1212,8 @@ def empirical_gauss_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
@@ -1197,6 +1228,9 @@ def empirical_gauss_solver(
         # get the first index here (0:1)
         axial_induction_i = axial_induction_i[:, 0:1, None, None]
         yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
+        awc_mode_i = farm.awc_modes_sorted[:, i:i+1, None, None]
+        awc_amplitude_i = farm.awc_amplitudes_sorted[:, i:i+1, None, None]
+        awc_frequency_i = farm.awc_frequencies_sorted[:, i:i+1, None, None]
         hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
         rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
 
@@ -1228,6 +1262,17 @@ def empirical_gauss_solver(
                     yaw_angle_i,
                     1,
                     model_manager.deflection_model.yaw_added_mixing_gain
+                )
+
+        if model_manager.enable_active_wake_mixing:
+            # Influence of awc on turbine's own wake
+            mixing_factor[:, i:i+1, i] += \
+                awc_added_wake_mixing(
+                    awc_mode_i,
+                    awc_amplitude_i,
+                    awc_frequency_i,
+                    model_manager.velocity_model.awc_wake_exp,
+                    model_manager.velocity_model.awc_wake_denominator
                 )
 
         # Extract total wake induced mixing for turbine i
@@ -1367,6 +1412,8 @@ def full_flow_empirical_gauss_solver(
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
+            awc_modes=turbine_grid_farm.awc_modes_sorted,
+            awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
@@ -1386,6 +1433,8 @@ def full_flow_empirical_gauss_solver(
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
+            awc_modes=turbine_grid_farm.awc_modes_sorted,
+            awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
             axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,

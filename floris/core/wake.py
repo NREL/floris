@@ -73,6 +73,7 @@ class WakeModelManager(BaseClass):
     model_strings: dict = field(converter=dict)
     enable_secondary_steering: bool = field(converter=bool)
     enable_yaw_added_recovery: bool = field(converter=bool)
+    enable_active_wake_mixing: bool = field(converter=bool)
     enable_transverse_velocities: bool = field(converter=bool)
 
     wake_deflection_parameters: dict = field(converter=dict)
