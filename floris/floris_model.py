@@ -1075,7 +1075,7 @@ class FlorisModel(LoggingManager):
             of x, y, u, v, w
         """
         # TODO update docstring
-        # TODO: can get from properties once #843 is merged. Do the same on 
+        # TODO: can get from properties once #843 is merged. Do the same on
         # other calculate_xx_plane methods
         if self.core.flow_field.n_findex > 1 and findex_for_viz is None:
             self.logger.warning(

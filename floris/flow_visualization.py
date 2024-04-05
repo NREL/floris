@@ -554,7 +554,11 @@ def calculate_horizontal_plane_with_turbines(
             turbine_types_test = [turbine_types[0] for i in range(len(layout_x))] + ['nrel_5MW']
         else:
             turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
-        yaw_angles = np.append(yaw_angles, np.zeros([fmodel_viz.core.flow_field.n_findex, 1]), axis=1)
+        yaw_angles = np.append(
+            yaw_angles,
+            np.zeros([fmodel_viz.core.flow_field.n_findex, 1]),
+            axis=1
+        )
         power_setpoints = np.append(
             power_setpoints,
             POWER_SETPOINT_DEFAULT * np.ones([fmodel_viz.core.flow_field.n_findex, 1]),
