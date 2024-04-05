@@ -14,6 +14,9 @@ def script_to_notebook(script_path, notebook_path):
     with open(script_path, "r") as f:
         python_code = f.read()
 
+    # Clear out leading whitespace
+    python_code = python_code.strip()
+
     # Append to the bottom of the code suppression of warnings
     python_code += """
 import warnings
