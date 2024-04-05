@@ -96,14 +96,12 @@ class Core(BaseClass):
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 grid_resolution=self.solver["turbine_grid_points"],
-                time_series=self.flow_field.time_series,
             )
         elif self.solver["type"] == "turbine_cubature_grid":
             self.grid = TurbineCubatureGrid(
                 turbine_coordinates=self.farm.coordinates,
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
-                time_series=self.flow_field.time_series,
                 grid_resolution=self.solver["turbine_grid_points"],
             )
         elif self.solver["type"] == "flow_field_grid":
@@ -112,7 +110,6 @@ class Core(BaseClass):
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 grid_resolution=self.solver["flow_field_grid_points"],
-                time_series=self.flow_field.time_series,
             )
         elif self.solver["type"] == "flow_field_planar_grid":
             self.grid = FlowFieldPlanarGrid(
@@ -122,7 +119,6 @@ class Core(BaseClass):
                 normal_vector=self.solver["normal_vector"],
                 planar_coordinate=self.solver["planar_coordinate"],
                 grid_resolution=self.solver["flow_field_grid_points"],
-                time_series=self.flow_field.time_series,
                 x1_bounds=self.solver["flow_field_bounds"][0],
                 x2_bounds=self.solver["flow_field_bounds"][1],
             )
@@ -233,7 +229,6 @@ class Core(BaseClass):
             turbine_diameters=self.farm.rotor_diameters,
             wind_directions=self.flow_field.wind_directions,
             grid_resolution=1,
-            time_series=self.flow_field.time_series,
             x_center_of_rotation=self.grid.x_center_of_rotation,
             y_center_of_rotation=self.grid.y_center_of_rotation
         )
