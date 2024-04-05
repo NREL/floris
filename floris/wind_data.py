@@ -457,7 +457,7 @@ class WindRose(WindDataBase):
         elif method == "nearest":
             interpolator = NearestNDInterpolator
         else:
-            UserWarning(
+            raise ValueError(
                 f"Unknown interpolation method: '{method}'. "
                 "Available methods are 'linear' and 'nearest'"
             )
