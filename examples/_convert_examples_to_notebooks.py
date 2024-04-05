@@ -1,6 +1,6 @@
 """
 Utility script to convert all Python scripts in the current directory to
- Jupyter notebooks and then to HTML files.
+ Jupyter notebooks.
 
 """
 
@@ -49,11 +49,11 @@ scripts = sorted(
 )
 
 
-# For each Python script, convert it to a Jupyter notebook, run it, and then convert it to HTML
+# For each Python script, convert it to a Jupyter notebook
 notebook_directories = []
 notebook_filenames = []
 for script_path in scripts:
-    print(f"Converting {script_path} to HTML...")
+    print(f"Converting {script_path} to Notebook...")
 
     notebook_path = script_path.replace(".py", ".ipynb")
     notebook_directories.append(os.path.dirname(notebook_path))
@@ -84,16 +84,21 @@ toc += "\n  - caption: Examples\n    chapters:\n"
 
 # For each entry in the '.' directory, add it to the toc as a file
 for nb in notebooks["."]:
-    toc += f"      - file: examples/{nb}\n"
+    toc += f"    - file: examples/{nb}\n"
 
 # For the remaining keys in the notebooks dictionary, first add a section for the directory
 # and then add the notebooks in that directory as a file
 for directory in notebooks:
     if directory == ".":
         continue
-    toc += "      sections:"
+    toc += "      sections:\n"
     for nb in notebooks[directory]:
-        toc += f"      - file: examples/{directory}/{nb}\n"
+        dir_without_dot_slash = directory[2:]
+        toc += f"      - file: examples/{dir_without_dot_slash}/{nb}\n"
+
+# Print the toc
+print("\n\nTOC: FILE:\n")
+print(toc)
 
 # Save the toc
 with open(toc_path, "w") as f:

@@ -31,9 +31,6 @@ jobs:
         rsync -av examples/ docs/examples
         ls docs/examples
 
-
-
-
     # Run the script examples/_convert_examples_to_notebooks.py
     - name: Convert examples to notebooks
       working-directory: ${{runner.workspace}}/floris/docs/examples/
