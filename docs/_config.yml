@@ -11,6 +11,7 @@ only_build_toc_files: false
 # See https://jupyterbook.org/content/execute.html
 execute:
   execute_notebooks: auto
+  timeout: 180 # Give each notebook cell 3 minutes to execute
 
 # Define the name of the latex output file for PDF builds
 latex:
