@@ -1,16 +1,9 @@
-# Copyright 2024 NREL
+"""Example: Helix active wake mixing
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
+Example to test out using helix wake mixing of upstream turbines.
+Helix wake mixing is turned on at turbine 1, off at turbines 2 to 4;
+Turbine 2 is in wake turbine 1, turbine 4 in wake of turbine 3.
+"""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,12 +12,6 @@ import yaml
 import floris.flow_visualization as flowviz
 from floris import FlorisModel
 
-
-"""
-Example to test out using helix wake mixing of upstream turbines.
-Helix wake mixing is turned on at turbine 1, off at turbines 2 to 4;
-Turbine 2 is in wake turbine 1, turbine 4 in wake of turbine 3.
-"""
 
 # Grab model of FLORIS and update to awc-enabled turbines
 fmodel = FlorisModel("../inputs/emgauss_helix.yaml")
