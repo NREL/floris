@@ -521,7 +521,7 @@ class SampleInputs:
             },
             "name": "conftest",
             "description": "Inputs used for testing",
-            "floris_version": "v3.0.0",
+            "floris_version": "v4",
         }
 
         self.v3type_turbine = {
