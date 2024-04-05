@@ -111,7 +111,7 @@ for directory in notebooks:
     dir_without_dot_slash = directory[2:]
     dir_without_examples_ = dir_without_dot_slash.replace("examples_", "")
     dir_without_examples_ = dir_without_examples_.replace("_", " ").capitalize()
-    toc += f"\n  - caption: Examples: {dir_without_examples_}\n    chapters:\n"
+    toc += f"\n  - caption: Examples - {dir_without_examples_}\n    chapters:\n"
     for nb in notebooks[directory]:
         toc += f"    - file: examples/{dir_without_dot_slash}/{nb}\n"
 
