@@ -1030,7 +1030,7 @@ class WindTIRose(WindDataBase):
                 to 15 degrees.
             wind_rose_var_step (float, optional): Step size for other wind rose
                 variable. Defaults to None. If unspecified, a value of 5 m/s
-                will beused if wind_rose_var = "ws", and a value of 4% will be
+                will be used if wind_rose_var = "ws", and a value of 4% will be
                 used if wind_rose_var = "ti".
             legend_kwargs (dict, optional): Keyword arguments to be passed to
                 ax.legend().
