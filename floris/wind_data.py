@@ -592,7 +592,7 @@ class WindRose(WindDataBase):
         """
 
         def piecewise_linear_value_func(wind_directions, wind_speeds):
-            value = np.zeros_like(wind_speeds)
+            value = np.zeros_like(wind_speeds, dtype=float)
             value[wind_speeds < ws_knee] = (
                 slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
             )
@@ -1146,7 +1146,7 @@ class WindTIRose(WindDataBase):
         """
 
         def piecewise_linear_value_func(wind_directions, wind_speeds, turbulence_intensities):
-            value = np.zeros_like(wind_speeds)
+            value = np.zeros_like(wind_speeds, dtype=float)
             value[wind_speeds < ws_knee] = (
                 slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
             )
@@ -1550,7 +1550,7 @@ class TimeSeries(WindDataBase):
         """
 
         def piecewise_linear_value_func(wind_directions, wind_speeds):
-            value = np.zeros_like(wind_speeds)
+            value = np.zeros_like(wind_speeds, dtype=float)
             value[wind_speeds < ws_knee] = (
                 slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
             )

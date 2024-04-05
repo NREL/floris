@@ -843,11 +843,7 @@ class FlorisModel(LoggingManager):
                 "operation."
             )
 
-        if (
-            values is None
-            and not isinstance(self.wind_data, WindRose)
-            and not isinstance(self.wind_data, WindTIRose)
-        ):
+        if values is None and self.wind_data is None:
             self.logger.warning(
                 "Computing AVP with uniform value equal to 1. Results will be equivalent to "
                 "annual energy production."
