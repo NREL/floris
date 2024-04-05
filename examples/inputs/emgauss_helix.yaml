@@ -1,7 +1,7 @@
 
 name: Emperical Gaussian
 description: Three turbines using empirical Gaussian model
-floris_version: v3.x
+floris_version: v4.0
 
 logging:
   console:
