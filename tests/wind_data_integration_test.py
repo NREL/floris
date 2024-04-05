@@ -130,7 +130,7 @@ def test_wind_rose_unpack():
         ti_table_unpack,
         freq_table_unpack,
         value_table_unpack,
-        heterogenous_inflow_config,
+        heterogeneous_inflow_config,
     ) = wind_rose.unpack()
 
     # Given the above frequency table with zeros for a few elements,
@@ -155,7 +155,7 @@ def test_wind_rose_unpack():
         ti_table_unpack,
         freq_table_unpack,
         value_table_unpack,
-        heterogenous_inflow_config,
+        heterogeneous_inflow_config,
     ) = wind_rose.unpack()
 
     # Expect now to compute all combinations
@@ -177,7 +177,7 @@ def test_unpack_for_reinitialize():
         wind_directions_unpack,
         wind_speeds_unpack,
         ti_table_unpack,
-        heterogenous_inflow_config,
+        heterogeneous_inflow_config,
     ) = wind_rose.unpack_for_reinitialize()
 
     # Given the above frequency table, would only expect the
@@ -361,7 +361,7 @@ def test_wind_ti_rose_unpack():
         turbulence_intensities_unpack,
         freq_table_unpack,
         value_table_unpack,
-        heterogenous_inflow_config,
+        heterogeneous_inflow_config,
     ) = wind_rose.unpack()
 
     # Given the above frequency table with zeros for a few elements,
@@ -391,7 +391,7 @@ def test_wind_ti_rose_unpack():
         turbulence_intensities_unpack,
         freq_table_unpack,
         value_table_unpack,
-        heterogenous_inflow_config,
+        heterogeneous_inflow_config,
     ) = wind_rose.unpack()
 
     # Expect now to compute all combinations
@@ -423,7 +423,7 @@ def test_wind_ti_rose_unpack_for_reinitialize():
         wind_directions_unpack,
         wind_speeds_unpack,
         turbulence_intensities_unpack,
-        heterogenous_inflow_config,
+        heterogeneous_inflow_config,
     ) = wind_rose.unpack_for_reinitialize()
 
     # Given the above frequency table with zeros for a few elements,
@@ -481,7 +481,7 @@ def test_time_series_to_WindTIRose():
 
 
 def test_get_speed_multipliers_by_wd():
-    heterogenous_inflow_config_by_wd = {
+    heterogeneous_inflow_config_by_wd = {
         "speed_multipliers": np.array(
             [
                 [1.0, 1.1, 1.2],
@@ -497,7 +497,7 @@ def test_get_speed_multipliers_by_wd():
     expected_output = np.array([[1.3, 1.4, 1.5], [1.1, 1.1, 1.1], [1.0, 1.1, 1.2]])
     wind_data = WindDataBase()
     result = wind_data.get_speed_multipliers_by_wd(
-        heterogenous_inflow_config_by_wd, wind_directions
+        heterogeneous_inflow_config_by_wd, wind_directions
     )
     assert np.allclose(result, expected_output)
 
@@ -505,7 +505,7 @@ def test_get_speed_multipliers_by_wd():
     wind_directions = np.array([350, 10])
     expected_output = np.array([[1.0, 1.1, 1.2], [1.0, 1.1, 1.2]])
     result = wind_data.get_speed_multipliers_by_wd(
-        heterogenous_inflow_config_by_wd, wind_directions
+        heterogeneous_inflow_config_by_wd, wind_directions
     )
     assert np.allclose(result, expected_output)
 
@@ -513,17 +513,17 @@ def test_get_speed_multipliers_by_wd():
     wind_directions = np.arange(0.0, 360.0, 10.0)
     num_wd = len(wind_directions)
     result = wind_data.get_speed_multipliers_by_wd(
-        heterogenous_inflow_config_by_wd, wind_directions
+        heterogeneous_inflow_config_by_wd, wind_directions
     )
     assert result.shape[0] == num_wd
 
 
-def test_gen_heterogenous_inflow_config():
+def test_gen_heterogeneous_inflow_config():
     wind_directions = np.array([259.8, 260.2, 260.3, 260.1, 270.0])
     wind_speeds = 8
     turbulence_intensities = 0.06
 
-    heterogenous_inflow_config_by_wd = {
+    heterogeneous_inflow_config_by_wd = {
         "speed_multipliers": np.array(
             [
                 [0.9, 0.9],
@@ -540,15 +540,15 @@ def test_gen_heterogenous_inflow_config():
         wind_directions,
         wind_speeds,
         turbulence_intensities=turbulence_intensities,
-        heterogenous_inflow_config_by_wd=heterogenous_inflow_config_by_wd,
+        heterogeneous_inflow_config_by_wd=heterogeneous_inflow_config_by_wd,
     )
 
-    (_, _, _, _, _, heterogenous_inflow_config) = time_series.unpack()
+    (_, _, _, _, _, heterogeneous_inflow_config) = time_series.unpack()
 
     expected_result = np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.1, 1.2]])
-    np.testing.assert_allclose(heterogenous_inflow_config["speed_multipliers"], expected_result)
+    np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
     np.testing.assert_allclose(
-        heterogenous_inflow_config["x"], heterogenous_inflow_config_by_wd["x"]
+        heterogeneous_inflow_config["x"], heterogeneous_inflow_config_by_wd["x"]
     )
 
 

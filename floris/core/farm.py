@@ -38,7 +38,7 @@ default_turbine_library_path = Path(__file__).parents[1] / "turbine_library"
 @define
 class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
-    file. The Farm will create a heterogenous set of turbines that compose a wind farm,
+    file. The Farm will create a heterogeneous set of turbines that compose a wind farm,
     validate the inputs, and then create a vectorized representation of the the turbine
     data.
 
