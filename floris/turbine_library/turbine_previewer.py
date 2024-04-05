@@ -109,6 +109,8 @@ class TurbineInterface:
                     yaw_angles=np.zeros(shape),
                     tilt_angles=np.full(shape, v["ref_tilt"]),
                     power_setpoints=np.full(shape, POWER_SETPOINT_DEFAULT),
+                    awc_modes=np.full(shape, ["baseline"]),
+                    awc_amplitudes=np.zeros(shape),
                     tilt_interps={self.turbine.turbine_type: self.turbine.tilt_interp},
                     turbine_type_map=np.full(shape, self.turbine.turbine_type),
                     turbine_power_thrust_tables={self.turbine.turbine_type: v},
@@ -123,6 +125,8 @@ class TurbineInterface:
                 yaw_angles=np.zeros(shape),
                 tilt_angles=np.full(shape, self.turbine.power_thrust_table["ref_tilt"]),
                 power_setpoints=np.full(shape, POWER_SETPOINT_DEFAULT),
+                awc_modes=np.full(shape, ["baseline"]),
+                awc_amplitudes=np.zeros(shape),
                 tilt_interps={self.turbine.turbine_type: self.turbine.tilt_interp},
                 turbine_type_map=np.full(shape, self.turbine.turbine_type),
                 turbine_power_thrust_tables={
@@ -155,6 +159,8 @@ class TurbineInterface:
                     yaw_angles=np.zeros(shape),
                     tilt_angles=np.full(shape, v["ref_tilt"]),
                     power_setpoints=np.full(shape, POWER_SETPOINT_DEFAULT),
+                    awc_modes=np.full(shape, ["baseline"]),
+                    awc_amplitudes=np.zeros(shape),
                     thrust_coefficient_functions={
                         self.turbine.turbine_type: self.turbine.thrust_coefficient_function
                     },
@@ -172,6 +178,8 @@ class TurbineInterface:
                 yaw_angles=np.zeros(shape),
                 tilt_angles=np.full(shape, self.turbine.power_thrust_table["ref_tilt"]),
                 power_setpoints=np.full(shape, POWER_SETPOINT_DEFAULT),
+                awc_modes=np.full(shape, ["baseline"]),
+                awc_amplitudes=np.zeros(shape),
                 thrust_coefficient_functions={
                     self.turbine.turbine_type: self.turbine.thrust_coefficient_function
                 },
