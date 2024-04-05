@@ -1113,7 +1113,7 @@ class FlorisModel(LoggingManager):
 
         return y_plane
 
-    def check_wind_condition_for_viz(self, wd=None, ws=None, ti=None):
+    def check_wind_condition_for_viz(self, wd, ws, ti):
         if len(wd) > 1 or len(wd) < 1:
             raise ValueError(
                 "Wind direction input must be of length 1 for visualization. "
