@@ -1,13 +1,14 @@
 """Example: Wind Data Comparisons
 
-In this example, a random time series of wind speeds, wind directions
- and turbulence intensities is generated.
-This time series is then used to instantiate a TimeSeries object.
- The TimeSeries object is then used to
-instantiate a WindRose object and WindTIRose object based on the same data.
- The three objects are then each used
-to drive a FLORIS model of a simple two-turbine wind farm.  The AEP output is
- then compared and printed to the console.
+In this example, a random time series of wind speeds, wind directions, turbulence
+intensities, and values is generated. Value represents the value of the power
+generated at each time step or wind condition (e.g., the price of electricity). This
+can then be used in later optimization methods to optimize for total value instead of
+energy. This time series is then used to instantiate a TimeSeries object. The TimeSeries
+object is then used to instantiate a WindRose object and WindTIRose object based on the
+same data. The three objects are then each used to drive a FLORIS model of a simple
+two-turbine wind farm. The annual energy production (AEP) and annual value production
+(AVP) outputs are then compared and printed to the console.
 
 """
 
@@ -24,13 +25,15 @@ from floris import (
 from floris.utilities import wrap_360
 
 
-# Generate a random time series of wind speeds, wind directions and turbulence intensities
+# Generate a random time series of wind speeds, wind directions, turbulence
+# intensities, and values. In this case let's treat value as the dollars per MWh.
 N = 500
 wd_array = wrap_360(270 * np.ones(N) + np.random.randn(N) * 20)
 ws_array = np.clip(8 * np.ones(N) + np.random.randn(N) * 8, 3, 50)
 ti_array = np.clip(0.1 * np.ones(N) + np.random.randn(N) * 0.05, 0, 0.25)
+value_array = np.clip(25 * np.ones(N) + np.random.randn(N) * 10, 0, 100)
 
-fig, axarr = plt.subplots(3, 1, sharex=True, figsize=(7, 4))
+fig, axarr = plt.subplots(4, 1, sharex=True, figsize=(7, 6))
 ax = axarr[0]
 ax.plot(wd_array, marker=".", ls="None")
 ax.set_ylabel("Wind Direction")
@@ -40,10 +43,13 @@ ax.set_ylabel("Wind Speed")
 ax = axarr[2]
 ax.plot(ti_array, marker=".", ls="None")
 ax.set_ylabel("Turbulence Intensity")
+ax = axarr[3]
+ax.plot(value_array, marker=".", ls="None")
+ax.set_ylabel("Value")
 
 
 # Build the time series
-time_series = TimeSeries(wd_array, ws_array, turbulence_intensities=ti_array)
+time_series = TimeSeries(wd_array, ws_array, turbulence_intensities=ti_array, values=value_array)
 
 # Now build the wind rose
 wind_rose = time_series.to_WindRose()
@@ -81,9 +87,9 @@ fmodel_time_series.run()
 fmodel_wind_rose.run()
 fmodel_wind_ti_rose.run()
 
-time_series_power = fmodel_time_series.get_farm_power()
-wind_rose_power = fmodel_wind_rose.get_farm_power()
-wind_ti_rose_power = fmodel_wind_ti_rose.get_farm_power()
+# Now, compute AEP using the FLORIS models initialized with the three types of
+# WindData objects. The AEP values are very similar but not exactly the same
+# because of the effects of binning in the wind roses.
 
 time_series_aep = fmodel_time_series.get_farm_AEP()
 wind_rose_aep = fmodel_wind_rose.get_farm_AEP()
@@ -92,5 +98,17 @@ wind_ti_rose_aep = fmodel_wind_ti_rose.get_farm_AEP()
 print(f"AEP from TimeSeries {time_series_aep / 1e9:.2f} GWh")
 print(f"AEP from WindRose {wind_rose_aep / 1e9:.2f} GWh")
 print(f"AEP from WindTIRose {wind_ti_rose_aep / 1e9:.2f} GWh")
+
+# Now, compute annual value production (AVP) using the FLORIS models initialized
+# with the three types of WindData objects. The AVP values are very similar but
+# not exactly the same because of the effects of binning in the wind roses.
+
+time_series_avp = fmodel_time_series.get_farm_AVP()
+wind_rose_avp = fmodel_wind_rose.get_farm_AVP()
+wind_ti_rose_avp = fmodel_wind_ti_rose.get_farm_AVP()
+
+print(f"Annual Value Production (AVP) from TimeSeries {time_series_avp / 1e6:.2f} dollars")
+print(f"AVP from WindRose {wind_rose_avp / 1e6:.2f} dollars")
+print(f"AVP from WindTIRose {wind_ti_rose_avp / 1e6:.2f} dollars")
 
 plt.show()
