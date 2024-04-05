@@ -27,6 +27,7 @@ NDArrayInt = npt.NDArray[np.int_]
 NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 NDArrayBool = npt.NDArray[np.bool_]
+NDArrayStr = npt.NDArray[np.str_]
 
 
 ### Custom callables for attrs objects and functions

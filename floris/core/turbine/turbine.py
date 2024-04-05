@@ -13,6 +13,7 @@ from scipy.interpolate import interp1d
 
 from floris.core import BaseClass
 from floris.core.turbine import (
+    AWCTurbine,
     CosineLossTurbine,
     MixedOperationTurbine,
     SimpleDeratingTurbine,
@@ -26,6 +27,7 @@ from floris.type_dec import (
     NDArrayFloat,
     NDArrayInt,
     NDArrayObject,
+    NDArrayStr,
 )
 from floris.utilities import cosd
 
@@ -36,6 +38,7 @@ TURBINE_MODEL_MAP = {
         "cosine-loss": CosineLossTurbine,
         "simple-derating": SimpleDeratingTurbine,
         "mixed": MixedOperationTurbine,
+        "awc": AWCTurbine,
     },
 }
 
@@ -75,6 +78,8 @@ def power(
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
     power_setpoints: NDArrayFloat,
+    awc_modes: NDArrayStr,
+    awc_amplitudes: NDArrayFloat,
     tilt_interps: dict[str, interp1d],
     turbine_type_map: NDArrayObject,
     turbine_power_thrust_tables: dict,
@@ -97,6 +102,12 @@ def power(
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
+        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
+            and "helix" are implemented).
+        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
+            and "helix" are implemented).
+        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
+            turbine [deg].
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
             turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
@@ -131,6 +142,8 @@ def power(
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
         power_setpoints = power_setpoints[:, ix_filter]
+        awc_modes = awc_modes[:, ix_filter]
+        awc_amplitudes = awc_amplitudes[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         if type(correct_cp_ct_for_tilt) is bool:
             pass
@@ -161,6 +174,8 @@ def power(
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
             "power_setpoints": power_setpoints,
+            "awc_modes": awc_modes,
+            "awc_amplitudes": awc_amplitudes,
             "tilt_interp": tilt_interps[turb_type],
             "average_method": average_method,
             "cubature_weights": cubature_weights,
@@ -180,6 +195,8 @@ def thrust_coefficient(
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
     power_setpoints: NDArrayFloat,
+    awc_modes: NDArrayStr,
+    awc_amplitudes: NDArrayFloat,
     thrust_coefficient_functions: dict[str, Callable],
     tilt_interps: dict[str, interp1d],
     correct_cp_ct_for_tilt: NDArrayBool,
@@ -203,6 +220,10 @@ def thrust_coefficient(
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
+        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
+            and "helix" are implemented).
+        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
+            turbine [deg].
         thrust_coefficient_functions (dict): The thrust coefficient functions for each turbine. Keys
             are the turbine type string and values are the callable functions.
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
@@ -232,6 +253,8 @@ def thrust_coefficient(
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
         power_setpoints = power_setpoints[:, ix_filter]
+        awc_modes = awc_modes[:, ix_filter]
+        awc_amplitudes = awc_amplitudes[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         if type(correct_cp_ct_for_tilt) is bool:
             pass
@@ -262,6 +285,8 @@ def thrust_coefficient(
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
             "power_setpoints": power_setpoints,
+            "awc_modes": awc_modes,
+            "awc_amplitudes": awc_amplitudes,
             "tilt_interp": tilt_interps[turb_type],
             "average_method": average_method,
             "cubature_weights": cubature_weights,
@@ -284,6 +309,8 @@ def axial_induction(
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
     power_setpoints: NDArrayFloat,
+    awc_modes: NDArrayStr,
+    awc_amplitudes: NDArrayFloat,
     axial_induction_functions: dict,
     tilt_interps: NDArrayObject,
     correct_cp_ct_for_tilt: NDArrayBool,
@@ -304,6 +331,8 @@ def axial_induction(
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
+        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
+            turbine [deg].
         axial_induction_functions (dict): The axial induction functions for each turbine. Keys are
             the turbine type string and values are the callable functions.
         tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
@@ -333,6 +362,8 @@ def axial_induction(
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
         power_setpoints = power_setpoints[:, ix_filter]
+        awc_modes = awc_modes[:, ix_filter]
+        awc_amplitudes = awc_amplitudes[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
         if type(correct_cp_ct_for_tilt) is bool:
             pass
@@ -363,6 +394,8 @@ def axial_induction(
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
             "power_setpoints": power_setpoints,
+            "awc_modes": awc_modes,
+            "awc_amplitudes": awc_amplitudes,
             "tilt_interp": tilt_interps[turb_type],
             "average_method": average_method,
             "cubature_weights": cubature_weights,
