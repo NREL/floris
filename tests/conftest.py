@@ -208,7 +208,7 @@ class SampleInputs:
             "turbine_type": "nrel_5mw",
             "rotor_diameter": 125.88,
             "hub_height": 90.0,
-            "power_thrust_model": "cosine-loss",
+            "operation_model": "cosine-loss",
             "power_thrust_table": {
                 "cosine_loss_exponent_yaw": 1.88,
                 "cosine_loss_exponent_tilt": 1.88,
@@ -540,7 +540,7 @@ class SampleInputs:
             "rotor_diameter": 125.88,
             "hub_height": 90.0,
             "generator_efficiency": 0.944,
-            "power_thrust_model": "cosine-loss",
+            "operation_model": "cosine-loss",
             "pP": 1.88,
             "pT": 1.88,
             "ref_density_cp_ct": 1.225,

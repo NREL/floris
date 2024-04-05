@@ -26,12 +26,24 @@ class LayoutOptimization(LoggingManager):
             initializes to 2 rotor diameters. Defaults to None.
         enable_geometric_yaw (bool, optional): If True, enables geometric yaw
             optimization. Defaults to False.
+        use_value (bool, optional): If True, the layout optimization objective
+            is to maximize annual value production using the value array in the
+            FLORIS model's WindData object. If False, the optimization
+            objective is to maximize AEP. Defaults to False.
     """
-    def __init__(self, fmodel, boundaries, min_dist=None, enable_geometric_yaw=False):
+    def __init__(
+        self,
+        fmodel,
+        boundaries,
+        min_dist=None,
+        enable_geometric_yaw=False,
+        use_value=False,
+    ):
         self.fmodel = fmodel.copy() # Does not copy over the wind_data object
         self.fmodel.set(wind_data=fmodel.wind_data)
         self.boundaries = boundaries
         self.enable_geometric_yaw = enable_geometric_yaw
+        self.use_value = use_value
 
         self._boundary_polygon = Polygon(self.boundaries)
         self._boundary_line = LineString(self.boundaries)
@@ -41,7 +53,7 @@ class LayoutOptimization(LoggingManager):
         self.ymin = np.min([tup[1] for tup in boundaries])
         self.ymax = np.max([tup[1] for tup in boundaries])
 
-        # If no minimum distance is provided, assume a value of 2 rotor diamters
+        # If no minimum distance is provided, assume a value of 2 rotor diameters
         if min_dist is None:
             self.min_dist = 2 * self.rotor_diameter
         else:
@@ -53,9 +65,13 @@ class LayoutOptimization(LoggingManager):
             # a WindData object, but it is still recommended.
             self.logger.warning(
                 "Running layout optimization without a WindData object (e.g. TimeSeries, WindRose, "
-                "WindTIRose). We suggest that the user set the wind conditions on the FlorisModel "
-                " using the wind_data keyword argument for layout optimizations to capture "
-                "frequencies accurately."
+                "WindTIRose). We suggest that the user set the wind conditions (and if applicable, "
+                "frequencies and values) on the FlorisModel using the wind_data keyword argument "
+                "for layout optimizations to capture frequencies and the value of the energy "
+                "production accurately. If a WindData object is not defined, uniform frequencies "
+                "will be assumed. If use_value is True and a WindData object is not defined, a "
+                "value of 1 will be used for each wind condition and layout optimization will "
+                "simply be performed to maximize AEP."
             )
 
         # Establish geometric yaw class
@@ -67,7 +83,11 @@ class LayoutOptimization(LoggingManager):
             )
             # TODO: is this being used?
         fmodel.run()
-        self.initial_AEP = fmodel.get_farm_AEP()
+
+        if self.use_value:
+            self.initial_AEP_or_AVP = fmodel.get_farm_AVP()
+        else:
+            self.initial_AEP_or_AVP = fmodel.get_farm_AEP()
 
     def __str__(self):
         return "layout"

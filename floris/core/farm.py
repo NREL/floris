@@ -219,7 +219,8 @@ class Farm(BaseClass):
         if len(value) != 1 and len(value) != self.n_turbines:
             raise ValueError(
                 "turbine_type must have the same number of entries as layout_x/layout_y or have "
-                "a single turbine_type value."
+                "a single turbine_type value. This error can arise if you set the turbine_type or "
+                "alter the operation model before setting the layout."
             )
 
     @turbine_library_path.validator
@@ -461,7 +462,11 @@ class Farm(BaseClass):
     @property
     def coordinates(self):
         return np.array([
-            np.array([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)
+            np.array([x, y, z]) for x, y, z in zip(
+                self.layout_x,
+                self.layout_y,
+                self.hub_heights if len(self.hub_heights.shape) == 1 else self.hub_heights[0,0]
+            )
         ])
 
     @property
