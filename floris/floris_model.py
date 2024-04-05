@@ -229,7 +229,7 @@ class FlorisModel(LoggingManager):
         # Create a new instance of floris and attach to self
         self.core = Core.from_dict(floris_dict)
 
-    def _set_operation(
+    def set_operation(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
@@ -237,6 +237,9 @@ class FlorisModel(LoggingManager):
     ):
         """
         Apply operating setpoints to the floris object.
+
+        This function is not meant to be called directly by most users---users should instead call
+        the set() method.
 
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles. Defaults
@@ -372,7 +375,7 @@ class FlorisModel(LoggingManager):
             self.core.farm.set_power_setpoints(_power_setpoints)
 
         # Set the operation
-        self._set_operation(
+        self.set_operation(
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
             disable_turbines=disable_turbines,
