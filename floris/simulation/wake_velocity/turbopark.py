@@ -104,7 +104,7 @@ class TurbOParkVelocityDeficit(BaseModel):
         downstream_mask = (x_i - x >= self.NUM_EPS)
         x_dist = (x_i - x) * downstream_mask / rotor_diameters
 
-        # Radial distance between turbine i and the centerlines of wakes from all
+        # Radial distance between turbine i and the center lines of wakes from all
         # real/image turbines
         r_dist = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - z) ** 2)
         r_dist_image = np.sqrt((y_i - (y + deflection_field)) ** 2 + (z_i - (-z)) ** 2)

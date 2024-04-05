@@ -91,7 +91,7 @@ class WakeModelManager(BaseClass):
 
     wake_deflection_parameters: dict = field(converter=dict)
     wake_turbulence_parameters: dict = field(converter=dict)
-    wake_velocity_parameters: dict = field(converter=dict, default={})
+    wake_velocity_parameters: dict = field(converter=dict, factory=dict)
 
     combination_model: BaseModel = field(init=False)
     deflection_model: BaseModel = field(init=False)

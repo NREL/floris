@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.9", "3.10", "3.11"]
         os: [ubuntu-latest] #, macos-latest, windows-latest]
       fail-fast: False
 
@@ -25,9 +25,14 @@ jobs:
         pip install nbconvert  # For converting Jupyter notebook to python script in the next step
     - name: Run examples
       # Run all examples and test that they finish successfully. Do not evaluate the results.
+      # Copy the examples to a new directory outside of the repo to ensure that there is no
+      # reliance on the repo directory structure.
       run: |
 
-        cd examples/
+        mkdir -p temp1/temp2/temp3
+        cp -r examples/ temp1/temp2/temp3/.
+        cd temp1/temp2/temp3/examples/
+
         error_found=0  # 0 is false
         error_results="Error in example:"
 
@@ -46,27 +51,6 @@ jobs:
             error_results="${error_results}"$'\n'" - ${i}"
             error_found=1
           fi
-        done
-
-        # Run all Jupyter notebooks
-        for i in *.ipynb; do
-
-          # Convert this notebook to a Python script
-          if ! jupyter nbconvert --to script $i; then
-            # On conversion error, report and go to the next notebook
-            error_results="${error_results}"$'\n'" - Error converting ${i} to Python script"
-            continue
-          fi
-
-          # Get the basename of the notebook since the converted script will have the same basename
-          script_name=`basename $i .ipynb`
-
-          # Run the converted script
-          if ! python "${script_name}.py"; then
-            error_results="${error_results}"$'\n'" - ${i}"
-            error_found=1
-          fi
-
         done
 
         if [[ $error_found ]]; then

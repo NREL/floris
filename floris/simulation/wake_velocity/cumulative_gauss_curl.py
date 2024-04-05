@@ -34,14 +34,14 @@ from floris.utilities import (
 class CumulativeGaussCurlVelocityDeficit(BaseModel):
     """
     The cumulative curl model is an implementation of the model described in
-    :cite:`gdm-bay_2022`, which itself is based on the cumulative model of
-    :cite:`bastankhah_2021`
+    :cite:`cc-bay_2022`, which itself is based on the cumulative model of
+    :cite:`cc-bastankhah_2021`.
 
     References:
-    .. bibliography:: /references.bib
-        :style: unsrt
-        :filter: docname in docnames
-        :keyprefix: gdm-
+        .. bibliography:: /references.bib
+            :style: unsrt
+            :filter: docname in docnames
+            :keyprefix: cc-
     """
 
     a_s: float = field(default=0.179367259)
@@ -135,8 +135,8 @@ class CumulativeGaussCurlVelocityDeficit(BaseModel):
             y_coord_m = y_coord[:, :, m:m+1]
             z_coord_m = z_coord[:, :, m:m+1]
 
-            # For computing crossplanes, we don't need to compute downstream
-            # turbines from out crossplane position.
+            # For computing cross planes, we don't need to compute downstream
+            # turbines from out cross plane position.
             if x_coord[:, :, m:m+1].size == 0:
                 break
 

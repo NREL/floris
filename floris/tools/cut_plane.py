@@ -354,9 +354,9 @@ def calculate_wind_speed(cross_plane, x1_loc, x2_loc, R):
     Args:
         cross_plane (:py:class:`floris.tools.cut_plane.CrossPlane`):
             plane of data.
-        x1_loc (float): x1-coordinate of point of interst.
-        x2_loc (float): x2-coordinate of point of interst.
-        R (float): radius from point of interst to consider
+        x1_loc (float): x1-coordinate of point of interest.
+        x2_loc (float): x2-coordinate of point of interest.
+        R (float): radius from point of interest to consider
 
     Returns:
         (float): effective wind speed
@@ -393,8 +393,8 @@ def calculate_power(
     Args:
         cross_plane (:py:class:`floris.tools.cut_plane.CrossPlane`):
             plane of data.
-        x1_loc (float): x1-coordinate of point of interst.
-        x2_loc (float): x2-coordinate of point of interst.
+        x1_loc (float): x1-coordinate of point of interest.
+        x2_loc (float): x2-coordinate of point of interest.
         R (float): Radius of wind turbine rotor.
         ws_array (np.array): reference wind speed for cp curve.
         cp_array (np.array): cp curve at reference wind speeds.

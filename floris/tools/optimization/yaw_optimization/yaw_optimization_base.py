@@ -19,12 +19,12 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 
 from .yaw_optimization_tools import derive_downstream_turbines, find_layout_symmetry
 
 
-class YawOptimization(LoggerBase):
+class YawOptimization(LoggingManager):
     """
     YawOptimization is a subclass of :py:class:`floris.tools.optimization.scipy.
     Optimization` that is used to optimize the yaw angles of all turbines in a Floris

@@ -8,7 +8,7 @@ TSR: 8.0
 ref_density_cp_ct: 1.225
 ref_tilt_cp_ct: 6.0
 multi_dimensional_cp_ct: True
-power_thrust_data_file: '../floris/turbine_library/iea_15MW_multi_dim_Tp_Hs.csv'
+power_thrust_data_file: 'iea_15MW_multi_dim_Tp_Hs.csv'
 floating_tilt_table:
   tilt:
     - 5.747296314800103
@@ -18,7 +18,7 @@ floating_tilt_table:
     - 8.795649572299896
     - 8.089078308325314
     - 7.7229584934943614
-  wind_speeds:
+  wind_speed:
     - 4.0
     - 6.0
     - 8.0
@@ -26,4 +26,4 @@ floating_tilt_table:
     - 12.0
     - 14.0
     - 16.0
-floating_correct_cp_ct_for_tilt: True
+correct_cp_ct_for_tilt: True

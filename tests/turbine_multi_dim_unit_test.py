@@ -18,7 +18,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-from scipy.interpolate import interp1d
 
 from floris.simulation import (
     Turbine,
@@ -111,7 +110,6 @@ def test_turbine_init():
     assert turbine.generator_efficiency == turbine_data["generator_efficiency"]
 
     assert isinstance(turbine.power_thrust_data, dict)
-    assert isinstance(turbine.fCp_interp, interp1d)
     assert isinstance(turbine.fCt_interp, dict)
     assert isinstance(turbine.power_interp, dict)
     assert turbine.rotor_radius == turbine_data["rotor_diameter"] / 2.0
@@ -135,12 +133,11 @@ def test_ct():
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
         fCt=np.array([[[turbine.fCt_interp[(2, 1)]]]]),
-        tilt_interp=np.array([(turbine.turbine_type, None)]),
+        tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[[False]]]),
         turbine_type_map=turbine_type_map[:,:,0]
     )
 
-    print(thrust)
     np.testing.assert_allclose(thrust, np.array([[[0.77853469]]]))
 
     # Multiple turbines with index filter
@@ -158,14 +155,12 @@ def test_ct():
                 N_TURBINES,
             )
         ),
-        tilt_interp=np.array([(turbine.turbine_type, None)]),
+        tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[[False] * N_TURBINES]]),
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,
     )
     assert len(thrusts[0, 0]) == len(INDEX_FILTER)
-
-    print(thrusts)
 
     thrusts_truth = [
         [
@@ -275,7 +270,7 @@ def test_axial_induction():
         tilt_angle=np.ones((1, 1, 1)) * 5.0,
         ref_tilt_cp_ct=np.ones((1, 1, 1)) * 5.0,
         fCt=np.array([[[turbine.fCt_interp[(2, 1)]]]]),
-        tilt_interp=np.array([(turbine.turbine_type, None)]),
+        tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[[False]]]),
         turbine_type_map=turbine_type_map[0,0,0],
     )
@@ -295,7 +290,7 @@ def test_axial_induction():
                 N_TURBINES,
             )
         ),
-        tilt_interp=np.array([(turbine.turbine_type, None)] * N_TURBINES),
+        tilt_interp={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[[False] * N_TURBINES]]),
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,

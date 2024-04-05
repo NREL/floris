@@ -16,22 +16,22 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable
+from pathlib import Path
 
+import attrs
 import numpy as np
 import pandas as pd
 from attrs import define, field
 from flatten_dict import flatten
 from scipy.interpolate import interp1d
 
-# import floris.simulation.turbine as turbine
 from floris.simulation import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
-    TiltTable,
     Turbine,
 )
-from floris.simulation.turbine import _filter_convert
 from floris.type_dec import (
+    convert_to_path,
     NDArrayBool,
     NDArrayFilter,
     NDArrayFloat,
@@ -77,7 +77,6 @@ def power_multidim(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, rotor_effective_velocities)
         power_interp = power_interp[:, :, ix_filter]
         rotor_effective_velocities = rotor_effective_velocities[:, :, ix_filter]
     # Loop over each turbine to get power for all turbines
@@ -139,7 +138,6 @@ def Ct_multidim(
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
-        ix_filter = _filter_convert(ix_filter, yaw_angle)
         velocities = velocities[:, :, ix_filter]
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
@@ -207,7 +205,7 @@ def axial_induction_multidim(
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
-            integer indices (as an aray or iterable) to filter out before calculation.
+            integer indices (as an array or iterable) to filter out before calculation.
             Defaults to None.
 
     Returns:
@@ -238,7 +236,6 @@ def axial_induction_multidim(
     )
 
     # Then, process the input arguments as needed for this function
-    ix_filter = _filter_convert(ix_filter, yaw_angle)
     if ix_filter is not None:
         yaw_angle = yaw_angle[:, :, ix_filter]
         tilt_angle = tilt_angle[:, :, ix_filter]
@@ -270,7 +267,7 @@ def multidim_Ct_down_select(
         conditions (dict): The conditions at which to determine which Ct interpolant to use.
 
     Returns:
-        NDArray: The downselected Ct interpolants for the selected conditions.
+        NDArray: The down selected Ct interpolants for the selected conditions.
     """
     downselect_turbine_fCts = np.empty_like(turbine_fCts)
     # Loop over the wind directions, wind speeds, and turbines, finding the Ct interpolant
@@ -307,7 +304,7 @@ def multidim_power_down_select(
         conditions (dict): The conditions at which to determine which Ct interpolant to use.
 
     Returns:
-        NDArray: The downselected power interpolants for the selected conditions.
+        NDArray: The down selected power interpolants for the selected conditions.
     """
     downselect_power_interps = np.empty_like(power_interps)
     # Loop over the wind directions, wind speeds, and turbines, finding the power interpolant
@@ -422,31 +419,36 @@ class TurbineMultiDimensional(Turbine):
             the width/height of the grid of points on the rotor as a ratio of
             the rotor radius.
             Defaults to 0.5.
+        power_thrust_data_file (:py:obj:`str`): The path and name of the file containing the
+            multidimensional power thrust curve. The path may be an absolute location or a relative
+            path to where FLORIS is being run.
+        multi_dimensional_cp_ct (:py:obj:`bool`, optional): Indicates if the turbine definition is
+            single dimensional (False) or multidimensional (True).
+        turbine_library_path (:py:obj:`pathlib.Path`, optional): The
+            :py:attr:`Farm.turbine_library_path` or :py:attr:`Farm.internal_turbine_library_path`,
+            whichever is being used to load turbine definitions.
+            Defaults to the internal turbine library.
     """
-
-    power_thrust_data_file: str = field(default=None)
     multi_dimensional_cp_ct: bool = field(default=False)
+    power_thrust_table: dict = field(default={})
+    # TODO power_thrust_data_file is actually required and should not default to None.
+    # However, the super class has optional attributes so a required attribute here breaks
+    power_thrust_data_file: str = field(default=None)
+    power_thrust_data: MultiDimensionalPowerThrustTable = field(default=None)
+    turbine_library_path: Path = field(
+        default=Path(__file__).parents[1] / "turbine_library",
+        converter=convert_to_path,
+        validator=attrs.validators.instance_of(Path)
+    )
 
-    # rloc: float = float_attrib()  # TODO: goes here or on the Grid?
-    # use_points_on_perimeter: bool = bool_attrib()
-
-    # Initialized in the post_init function
-    # rotor_radius: float = field(init=False)
-    # rotor_area: float = field(init=False)
-    # fCp_interp: interp1d = field(init=False)
-    # fCt_interp: interp1d = field(init=False)
-    # power_interp: interp1d = field(init=False)
-    # tilt_interp: interp1d = field(init=False)
-
-
-    # For the following parameters, use default values if not user-specified
-    # self.rloc = float(input_dictionary["rloc"]) if "rloc" in input_dictionary else 0.5
-    # if "use_points_on_perimeter" in input_dictionary:
-    #     self.use_points_on_perimeter = bool(input_dictionary["use_points_on_perimeter"])
-    # else:
-    #     self.use_points_on_perimeter = False
+    # Not to be provided by the user
+    condition_keys: list[str] = field(init=False, factory=list)
 
     def __attrs_post_init__(self) -> None:
+        super().__post_init__()
+
+        # Solidify the data file path and name
+        self.power_thrust_data_file = self.turbine_library_path / self.power_thrust_data_file
 
         # Read in the multi-dimensional data supplied by the user.
         df = pd.read_csv(self.power_thrust_data_file)
@@ -460,6 +462,7 @@ class TurbineMultiDimensional(Turbine):
 
         # Down-select the DataFrame to have just the ws, Cp, and Ct values
         index_col = df.columns.values[:-3]
+        self.condition_keys = index_col.tolist()
         df2 = df.set_index(index_col.tolist())
 
         # Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make
@@ -470,22 +473,21 @@ class TurbineMultiDimensional(Turbine):
 
             # Build the interpolants
             wind_speeds = data['ws'].values
-            self.fCp_interp = interp1d(
+            cp_interp = interp1d(
                 wind_speeds,
                 data['Cp'].values,
                 fill_value=(0.0, 1.0),
                 bounds_error=False,
             )
-            inner_power = (
-                0.5 * self.rotor_area
-                * self.fCp_interp(wind_speeds)
-                * self.generator_efficiency
-                * wind_speeds ** 3
-            )
             self.power_interp.update({
                 key: interp1d(
                     wind_speeds,
-                    inner_power,
+                    (
+                        0.5 * self.rotor_area
+                        * cp_interp(wind_speeds)
+                        * self.generator_efficiency
+                        * wind_speeds ** 3
+                    ),
                     bounds_error=False,
                     fill_value=0
                 )
@@ -498,21 +500,3 @@ class TurbineMultiDimensional(Turbine):
                     bounds_error=False,
                 )
             })
-
-        # If defined, create a tilt interpolation function for floating turbines.
-        # fill_value currently set to apply the min or max tilt angles if outside
-        # of the interpolation range.
-        if self.floating_tilt_table is not None:
-            self.floating_tilt_table = TiltTable.from_dict(self.floating_tilt_table)
-            self.fTilt_interp = interp1d(
-                self.floating_tilt_table.wind_speeds,
-                self.floating_tilt_table.tilt,
-                fill_value=(0.0, self.floating_tilt_table.tilt[-1]),
-                bounds_error=False,
-            )
-            self.tilt_interp = self.fTilt_interp
-            self.correct_cp_ct_for_tilt = self.floating_correct_cp_ct_for_tilt
-        else:
-            self.fTilt_interp = None
-            self.tilt_interp = None
-            self.correct_cp_ct_for_tilt = False

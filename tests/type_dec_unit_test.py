@@ -39,11 +39,11 @@ class AttrsDemoClass(FromDictMixin):
         self.non_initd = 1.1
 
     liststr: List[str] = field(
-        default=["qwerty", "asdf"],
+        factory=lambda:["qwerty", "asdf"],
         validator=iter_validator(list, str)
     )
     array: np.ndarray = field(
-        default=[1.0, 2.0],
+        factory=lambda:[1.0, 2.0],
         converter=floris_array_converter,
         # validator=iter_validator(np.ndarray, floris_float_type)
     )
@@ -63,8 +63,8 @@ def test_FromDictMixin_defaults():
     defaults = {a.name: a.default for a in AttrsDemoClass.__attrs_attrs__ if a.default}
     assert cls.y == defaults["y"]
     assert cls.z == defaults["z"]
-    np.testing.assert_array_equal(cls.liststr, defaults["liststr"])
-    np.testing.assert_array_equal(cls.array, defaults["array"])
+    np.testing.assert_array_equal(cls.liststr, defaults["liststr"].factory())
+    np.testing.assert_array_equal(cls.array, defaults["array"].factory())
 
     # Test that defaults can be overwritten
     inputs = {"w": 0, "x": 1, "y": 4.5}
@@ -130,23 +130,36 @@ def test_attrs_array_converter():
 
 
 def test_convert_to_path():
-    # Test that a string works
     str_input = "../tests"
+    expected_path = (Path(__file__).parent / str_input).resolve()
+
+    # Test that a string works
     test_str_input = convert_to_path(str_input)
-    assert isinstance(test_str_input, Path)
+    assert test_str_input == expected_path
 
     # Test that a pathlib.Path works
-    path_input = Path("../tests")
+    path_input = Path(str_input)
     test_path_input = convert_to_path(path_input)
-    assert isinstance(test_path_input, Path)
+    assert test_path_input == expected_path
 
     # Test that both of those inputs are the same
+    # NOTE These first three asserts tests the relative path search
     assert test_str_input == test_path_input
 
-    # Test that a non-existent folder also works even though it's a valid data type
-    str_input = "tests"
-    test_str_input = convert_to_path(str_input)
-    assert isinstance(test_str_input, Path)
+    # Test absolute path
+    abs_path = expected_path
+    test_abs_path = convert_to_path(abs_path)
+    assert test_abs_path == expected_path
+
+    # Test a file
+    file_input = Path(__file__)
+    test_file = convert_to_path(file_input)
+    assert test_file == file_input
+
+    # Test that a non-existent folder fails, now that the conversion has a multi-pronged search
+    str_input = str(Path(__file__).parent / "bad_path")
+    with pytest.raises(FileExistsError):
+        convert_to_path(str_input)
 
     # Test that invalid data types fail
     with pytest.raises(TypeError):

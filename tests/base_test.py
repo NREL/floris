@@ -15,6 +15,7 @@
 
 import pytest
 from attr import define, field
+from attrs.exceptions import FrozenAttributeError
 
 from floris.simulation import BaseClass, BaseModel
 
@@ -31,16 +32,22 @@ class ClassTest(BaseModel):
         return None
 
 
-def test_get_model_defaults():
-    defaults = ClassTest.get_model_defaults()
-    assert len(defaults) == 2
-    assert defaults["x"] == 1
-    assert defaults["a_string"] == "abc"
-
-
 def test_get_model_values():
+    """
+    BaseClass and therefore BaseModel previously had a method `get_model_values` that
+    returned the values of the model parameters. This was removed because it was redundant
+    but this test was refactored to test the as_dict method from FromDictMixin.
+    This tests that the parameters are changed when set by the user.
+    """
     cls = ClassTest(x=4, a_string="xyz")
-    values = cls._get_model_dict()
+    values = cls.as_dict()
     assert len(values) == 2
     assert values["x"] == 4
     assert values["a_string"] == "xyz"
+
+def test_NUM_EPS():
+    cls = ClassTest(x=4, a_string="xyz")
+    assert cls.NUM_EPS == 0.001
+
+    with pytest.raises(FrozenAttributeError):
+        cls.NUM_EPS = 2

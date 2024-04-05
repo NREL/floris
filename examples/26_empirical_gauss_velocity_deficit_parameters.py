@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# See https://nrel.github.io/floris/intro.html for documentation
+# See https://nrel.github.io/floris for documentation
 
 
 import copy

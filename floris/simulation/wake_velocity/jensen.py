@@ -14,7 +14,11 @@ from typing import Any, Dict
 
 import numexpr as ne
 import numpy as np
-from attrs import define, field
+from attrs import (
+    define,
+    field,
+    fields,
+)
 
 from floris.simulation import (
     BaseModel,
@@ -24,6 +28,8 @@ from floris.simulation import (
     Turbine,
 )
 
+
+NUM_EPS = fields(BaseModel).NUM_EPS.default
 
 @define
 class JensenVelocityDeficit(BaseModel):
@@ -107,7 +113,6 @@ class JensenVelocityDeficit(BaseModel):
         dz = ne.evaluate("z - z_i")
 
         we = self.we
-        NUM_EPS = JensenVelocityDeficit.NUM_EPS
 
         # Construct a boolean mask to include all points downstream of the turbine
         downstream_mask = ne.evaluate("dx > 0 + NUM_EPS")

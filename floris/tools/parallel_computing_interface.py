@@ -6,7 +6,7 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 from floris.tools.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 from floris.tools.uncertainty_interface import FlorisInterface, UncertaintyInterface
 
@@ -66,7 +66,7 @@ def _optimize_yaw_angles_serial(
     return df_opt
 
 
-class ParallelComputingInterface(LoggerBase):
+class ParallelComputingInterface(LoggingManager):
     def __init__(
         self,
         fi,

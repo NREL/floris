@@ -29,7 +29,7 @@ from floris.utilities import cosd, sind
 class EmpiricalGaussVelocityDeflection(BaseModel):
     """
     The Empirical Gauss deflection model is based on the form of previous the
-    Guass deflection model (see :cite:`bastankhah2016experimental` and
+    Gauss deflection model (see :cite:`bastankhah2016experimental` and
     :cite:`King2019Controls`) but simplifies the formulation for simpler
     tuning and more independence from the velocity deficit model.
 
@@ -38,10 +38,10 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
         in `parameter_dictionary`. Possible key-value pairs include:
 
             -   **horizontal_deflection_gain_D** (*float*): Gain for the
-                maximum (y-direction) deflection acheived far downstream
+                maximum (y-direction) deflection achieved far downstream
                 of a yawed turbine.
             -   **vertical_deflection_gain_D** (*float*): Gain for the
-                maximum vertical (z-direction) deflection acheived at a
+                maximum vertical (z-direction) deflection achieved at a
                 far downstream location due to rotor tilt. Specifying as
                 -1 will mean that vertical deflections due to tilt match
                 horizontal deflections due to yaw.
@@ -101,7 +101,7 @@ class EmpiricalGaussVelocityDeflection(BaseModel):
             mixing_i (np.array): The wake-induced mixing term for the
                 ith turbine.
             ct_i (np.array): Thrust coefficient for the ith turbine (-).
-            rotor_diameter_i (np.array): Rotor diamter for the ith
+            rotor_diameter_i (np.array): Rotor diameter for the ith
                 turbine (m).
 
             x (np.array): Streamwise direction grid coordinates of the

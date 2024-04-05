@@ -28,7 +28,7 @@ class SOSFS(BaseModel):
 
     def function(self, wake_field: np.ndarray, velocity_field: np.ndarray):
         """
-        Combines the base flow field with the velocity defecits
+        Combines the base flow field with the velocity deficits
         using sum of squares.
 
         Args:

@@ -29,101 +29,6 @@ def pshape(array: np.ndarray, label: str = ""):
     print(label, np.shape(array))
 
 
-@define
-class Vec3:
-    """
-    Contains 3-component vector information. All arithmetic operators are
-    set so that Vec3 objects can operate on and with each other directly.
-
-    Args:
-        components (list(numeric, numeric, numeric), numeric): All three vector
-            components.
-        string_format (str, optional): Format to use in the
-            overloaded __str__ function. Defaults to None.
-    """
-    components: NDArrayFloat = field(converter=floris_array_converter)
-    # NOTE: this does not convert elements to float if they are given as int. Is this ok?
-
-    @components.validator
-    def _check_components(self, attribute, value) -> None:
-        if np.ndim(value) > 1:
-            raise ValueError(
-                f"Vec3 must contain exactly 1 dimension, {np.ndim(value)} were given."
-            )
-        if np.size(value) != 3:
-            raise ValueError(
-                f"Vec3 must contain exactly 3 components, {np.size(value)} were given."
-            )
-
-    def __add__(self, arg):
-        if type(arg) is Vec3:
-            return Vec3(self.components + arg.components)
-        elif type(arg) is int or type(arg) is float:
-            return Vec3(self.components + arg)
-        else:
-            raise ValueError
-
-    def __sub__(self, arg):
-        if type(arg) is Vec3:
-            return Vec3(self.components - arg.components)
-        elif type(arg) is int or type(arg) is float:
-            return Vec3(self.components - arg)
-        else:
-            raise ValueError
-
-    def __mul__(self, arg):
-        if type(arg) is Vec3:
-            return Vec3(self.components * arg.components)
-        elif type(arg) is int or type(arg) is float:
-            return Vec3(self.components * arg)
-        else:
-            raise ValueError
-
-    def __truediv__(self, arg):
-        if type(arg) is Vec3:
-            return Vec3(self.components / arg.components)
-        elif type(arg) is int or type(arg) is float:
-            return Vec3(self.components / arg)
-        else:
-            raise ValueError
-
-    def __eq__(self, arg):
-        return False not in np.isclose([self.x1, self.x2, self.x3], [arg.x1, arg.x2, arg.x3])
-
-    def __hash__(self):
-        return hash((self.x1, self.x2, self.x3))
-
-    @property
-    def x1(self):
-        return self.components[0]
-
-    @x1.setter
-    def x1(self, value):
-        self.components[0] = float(value)
-
-    @property
-    def x2(self):
-        return self.components[1]
-
-    @x2.setter
-    def x2(self, value):
-        self.components[1] = float(value)
-
-    @property
-    def x3(self):
-        return self.components[2]
-
-    @x3.setter
-    def x3(self, value):
-        self.components[2] = float(value)
-
-    @property
-    def elements(self) -> Tuple[float, float, float]:
-        # TODO: replace references to elements with components
-        # and remove this @property
-        return self.components
-
-
 def cosd(angle):
     """
     Cosine of an angle with the angle given in degrees.
@@ -303,9 +208,9 @@ def reverse_rotate_coordinates_rel_west(
     grid_y_reversed = np.zeros_like(grid_x)
     grid_z_reversed = np.zeros_like(grid_x)
     for wii, angle_rotation in enumerate(wind_deviation_from_west):
-        x_rot = grid_x[wii, :, :, :, :]
-        y_rot = grid_y[wii, :, :, :, :]
-        z_rot = grid_z[wii, :, :, :, :]
+        x_rot = grid_x[wii]
+        y_rot = grid_y[wii]
+        z_rot = grid_z[wii]
 
         # Rotate turbine coordinates about the center
         x_rot_offset = x_rot - x_center_of_rotation
@@ -322,9 +227,9 @@ def reverse_rotate_coordinates_rel_west(
         )
         z = z_rot  # Nothing changed in this rotation
 
-        grid_x_reversed[wii, :, :, :, :] = x
-        grid_y_reversed[wii, :, :, :, :] = y
-        grid_z_reversed[wii, :, :, :, :] = z
+        grid_x_reversed[wii] = x
+        grid_y_reversed[wii] = y
+        grid_z_reversed[wii] = z
 
     return grid_x_reversed, grid_y_reversed, grid_z_reversed
 

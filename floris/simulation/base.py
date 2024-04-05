@@ -17,7 +17,7 @@
 Defines the BaseClass parent class for all models to be based upon.
 """
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from enum import Enum
 from typing import (
     Any,
@@ -25,9 +25,15 @@ from typing import (
     Final,
 )
 
-import attrs
+from attrs import (
+    Attribute,
+    define,
+    field,
+    fields,
+    setters,
+)
 
-from floris.logging_manager import LoggerBase
+from floris.logging_manager import LoggingManager
 from floris.type_dec import FromDictMixin
 
 
@@ -37,44 +43,31 @@ class State(Enum):
     USED = 2
 
 
-class BaseClass(LoggerBase, FromDictMixin):
+@define
+class BaseClass(FromDictMixin):
     """
     BaseClass object class. This class does the logging and MixIn class inheritance.
     """
 
-    state = State.UNINITIALIZED
+    # Initialize `state` and ensure it is treated as an attribute rather than a constant parameter.
+    # See https://www.attrs.org/en/stable/api-attr.html#attr.ib
+    state = field(init=False, default=State.UNINITIALIZED)
+    _logging_manager: LoggingManager = field(init=False, default=LoggingManager())
 
+    @property
+    def logger(self):
+        """Returns the logger manager object."""
+        return self._logging_manager.logger
 
-    @classmethod
-    def get_model_defaults(cls) -> Dict[str, Any]:
-        """Produces a dictionary of the keyword arguments and their defaults.
-
-        Returns
-        -------
-        Dict[str, Any]
-            Dictionary of keyword argument: default.
-        """
-        return {el.name: el.default for el in attrs.fields(cls)}
-
-    def _get_model_dict(self) -> dict:
-        """Convenience method that wraps the `attrs.asdict` method. Returns the object's
-        parameters as a dictionary.
-
-        Returns
-        -------
-        dict
-            The provided or default, if no input provided, model settings as a dictionary.
-        """
-        return attrs.asdict(self)
-
-
-class BaseModel(BaseClass, ABC):
+@define
+class BaseModel(BaseClass):
     """
     BaseModel is the generic class for any wake models. It defines the API required to
     create a valid model.
     """
 
-    NUM_EPS: Final[float] = 0.001  # This is a numerical epsilon to prevent divide by zeros
+    # This is a numerical epsilon to prevent divide by zeros
+    NUM_EPS: Final[float] = field(init=False, default=0.001, on_setattr=setters.frozen)
 
     @abstractmethod
     def prepare_function() -> dict:

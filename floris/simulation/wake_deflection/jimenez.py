@@ -29,7 +29,7 @@ from floris.utilities import cosd, sind
 @define
 class JimenezVelocityDeflection(BaseModel):
     """
-    Jiménez wake deflection model, dervied from
+    Jiménez wake deflection model, derived from
     :cite:`jdm-jimenez2010application`.
 
     References:
@@ -67,7 +67,7 @@ class JimenezVelocityDeflection(BaseModel):
         x: np.ndarray,
     ):
         """
-        Calcualtes the deflection field of the wake in relation to the yaw of
+        Calculates the deflection field of the wake in relation to the yaw of
         the turbine. This is coded as defined in [1].
 
         Args:

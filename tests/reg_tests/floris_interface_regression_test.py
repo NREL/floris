@@ -106,7 +106,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         ref_tilt_cp_cts,
         fi.floris.farm.pPs,
         fi.floris.farm.pTs,
-        fi.floris.farm.turbine_fTilts,
+        fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
     )
@@ -116,7 +116,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         tilt_angles,
         ref_tilt_cp_cts,
         fi.floris.farm.turbine_fCts,
-        fi.floris.farm.turbine_fTilts,
+        fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
     )
@@ -132,7 +132,7 @@ def test_calculate_no_wake(sample_inputs_fixture):
         tilt_angles,
         ref_tilt_cp_cts,
         fi.floris.farm.turbine_fCts,
-        fi.floris.farm.turbine_fTilts,
+        fi.floris.farm.turbine_tilt_interps,
         fi.floris.farm.correct_cp_ct_for_tilt,
         fi.floris.farm.turbine_type_map,
     )

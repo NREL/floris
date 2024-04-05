@@ -119,7 +119,7 @@ class GaussVelocityDeficit(BaseModel):
 
         # Compute the velocity deficit in the NEAR WAKE region
         # ONLY If there are points within the near wake boundary
-        # TODO: for the turbinegrid, do we need to do this near wake calculation at all?
+        # TODO: for the TurbineGrid, do we need to do this near wake calculation at all?
         #       same question for any grid with a resolution larger than the near wake region
         if np.sum(near_wake_mask):
 
