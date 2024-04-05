@@ -682,3 +682,26 @@ def test_set_operation_model():
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     with pytest.raises(ValueError):
         fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+
+def test_set_operation():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+
+    # Check that not allowed to run(), then set_operation, then collect powers
+    fmodel.run()
+    fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0]]))
+    with pytest.raises(RuntimeError):
+        fmodel.get_turbine_powers()
+
+    # Check that no issue if run is called first
+    fmodel.run()
+    fmodel.get_turbine_powers()
+
+    # Check that if arguments do not match number of turbines, raises error
+    with pytest.raises(ValueError):
+        fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0, 20.0]]))
+
+    # Check that if arguments do not match n_findex, raises error
+    with pytest.raises(ValueError):
+        fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0], [25.0, 0.0]]))
+        fmodel.run()

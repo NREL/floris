@@ -110,7 +110,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self._change_coordinates(locs_unnorm)
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
-        self.fmodel.set(yaw_angles=yaw_angles)
+        self.fmodel.set_operation(yaw_angles=yaw_angles)
         self.fmodel.run()
 
         if self.use_value:
