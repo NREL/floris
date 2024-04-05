@@ -87,6 +87,10 @@ fmodel.run_no_wake()
 turbine_powers_base_nowake = fmodel.get_turbine_powers()
 ```
 
+For more advanced users, it is best to group many conditions into single calls of `set` and `run`
+than to step through various conditions individually, as this will make the best use of FLORIS's
+vectorization capabilities.
+
 ## Input files
 As in FLORIS v3, there are two main input files to FLORIS v4:
 1. The "main" FLORIS input yaml, which contains wake model parameters and wind farm data

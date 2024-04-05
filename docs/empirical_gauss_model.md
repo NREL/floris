@@ -171,7 +171,7 @@ setting the amplitude of the AWC excitation using `awc_amplitudes` (see the
 The effect of AWC is represented by updating the
 wake-induced mixing term as follows:
 
-$$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i} {(x_j - x_i)/D_i} + 
+$$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i} {(x_j - x_i)/D_i} +
 \frac{A_{\text{AWC},j}^{p_\text{AWC}}}{d_\text{AWC}}$$
 
 where $A_{\text{AWC},j}$ is the AWC amplitude of turbine $j$, and the exponent $p_\text{AWC}$ and
