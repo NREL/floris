@@ -647,3 +647,38 @@ def test_set_operation_model():
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
     assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+
+    # Check that setting a single turbine type, and then altering the operation model works
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set_operation_model("simple-derating")
+    assert fmodel.get_operation_model() == "simple-derating"
+
+    # Check that setting over mutliple turbine types works
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set_operation_model("simple-derating")
+    assert fmodel.get_operation_model() == "simple-derating"
+    fmodel.set_operation_model(["simple-derating", "cosine-loss"])
+    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+
+    # Check setting over single turbine type; then updating layout works
+    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set_operation_model("simple-derating")
+    fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+    assert fmodel.get_operation_model() == "simple-derating"
+
+    # Check that setting for multiple turbine types and then updating layout breaks
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set_operation_model(["simple-derating", "cosine-loss"])
+    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+    with pytest.raises(ValueError):
+        fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+
+    # Check one more variation
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set_operation_model("simple-derating")
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    with pytest.raises(ValueError):
+        fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
