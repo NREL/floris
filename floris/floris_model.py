@@ -886,6 +886,25 @@ class FlorisModel(LoggingManager):
 
     ### Methods for sampling and visualization
 
+    def set_for_viz(self, findex: int, solver_settings: dict) -> None:
+        """
+        Set the floris object to a single findex for visualization.
+
+        Args:
+            findex (int): The findex to set the floris object to.
+            solver_settings (dict): The solver settings to use for visualization.
+        """
+        # TODO: can get from properties once #843 is merged
+        self.set(
+            wind_speeds=self.core.flow_field.wind_speeds[findex:findex+1],
+            wind_directions=self.core.flow_field.wind_directions[findex:findex+1],
+            turbulence_intensities=self.core.flow_field.turbulence_intensities[findex:findex+1],
+            yaw_angles=self.core.farm.yaw_angles[findex:findex+1,:],
+            power_setpoints=self.core.farm.power_setpoints[findex:findex+1,:],
+            # TODO: add Helix here.
+            solver_settings=solver_settings,
+        )
+
     def calculate_cross_plane(
         self,
         downstream_dist,
@@ -893,9 +912,7 @@ class FlorisModel(LoggingManager):
         z_resolution=200,
         y_bounds=None,
         z_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
+        findex_for_viz=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -912,21 +929,18 @@ class FlorisModel(LoggingManager):
                 Defaults to None.
             z_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            wd (float, optional): Wind direction. Defaults to None.
-            ws (float, optional): Wind speed. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
+            finder_for_viz (int, optional): Index of the condition to visualize.
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
         # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+        if self.core.flow_field.n_findex > 1 and findex_for_viz is None:
+            self.logger.warning(
+                "Multiple findices detected. Using first findex for visualization."
+            )
+        if findex_for_viz is None:
+            findex_for_viz = 0
 
         # Store the current state for reinitialization
         fmodel_viz = copy.deepcopy(self)
@@ -939,12 +953,7 @@ class FlorisModel(LoggingManager):
             "flow_field_grid_points": [y_resolution, z_resolution],
             "flow_field_bounds": [y_bounds, z_bounds],
         }
-        fmodel_viz.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-        )
+        fmodel_viz.set_for_viz(findex_for_viz, solver_settings)
 
         # Calculate wake
         fmodel_viz.core.solve_for_viz()
@@ -969,9 +978,7 @@ class FlorisModel(LoggingManager):
         y_resolution=200,
         x_bounds=None,
         y_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
+        findex_for_viz=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -988,22 +995,19 @@ class FlorisModel(LoggingManager):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            wd (float, optional): Wind direction. Defaults to None.
-            ws (float, optional): Wind speed. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
+            finder_for_viz (int, optional): Index of the condition to visualize.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
         # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+        if self.core.flow_field.n_findex > 1 and findex_for_viz is None:
+            self.logger.warning(
+                "Multiple findices detected. Using first findex for visualization."
+            )
+        if findex_for_viz is None:
+            findex_for_viz = 0
 
         # Store the current state for reinitialization
         fmodel_viz = copy.deepcopy(self)
@@ -1016,12 +1020,7 @@ class FlorisModel(LoggingManager):
             "flow_field_grid_points": [x_resolution, y_resolution],
             "flow_field_bounds": [x_bounds, y_bounds],
         }
-        fmodel_viz.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-        )
+        fmodel_viz.set_for_viz(findex_for_viz, solver_settings)
 
         # Calculate wake
         fmodel_viz.core.solve_for_viz()
@@ -1051,9 +1050,7 @@ class FlorisModel(LoggingManager):
         z_resolution=200,
         x_bounds=None,
         z_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
+        findex_for_viz=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -1070,23 +1067,22 @@ class FlorisModel(LoggingManager):
                 Defaults to None.
             z_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            wd (float, optional): Wind direction. Defaults to None.
-            ws (float, optional): Wind speed. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
-
+            findex_for_viz (int, optional): Index of the condition to visualize.
+                Defaults to 0.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
         # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+        # TODO: can get from properties once #843 is merged. Do the same on 
+        # other calculate_xx_plane methods
+        if self.core.flow_field.n_findex > 1 and findex_for_viz is None:
+            self.logger.warning(
+                "Multiple findices detected. Using first findex for visualization."
+            )
+        if findex_for_viz is None:
+            findex_for_viz = 0
 
         # Store the current state for reinitialization
         fmodel_viz = copy.deepcopy(self)
@@ -1099,12 +1095,7 @@ class FlorisModel(LoggingManager):
             "flow_field_grid_points": [x_resolution, z_resolution],
             "flow_field_bounds": [x_bounds, z_bounds],
         }
-        fmodel_viz.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-        )
+        fmodel_viz.set_for_viz(findex_for_viz, solver_settings)
 
         # Calculate wake
         fmodel_viz.core.solve_for_viz()
