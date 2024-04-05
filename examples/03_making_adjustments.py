@@ -35,7 +35,8 @@ flowviz.visualize_cut_plane(
 )
 
 # Change the wind speed
-horizontal_plane = fmodel.calculate_horizontal_plane(ws=[7.0], height=90.0)
+fmodel.set(wind_speeds=[7.0])
+horizontal_plane = fmodel.calculate_horizontal_plane(height=90.0)
 flowviz.visualize_cut_plane(
     horizontal_plane,
     ax=axarr[1],
@@ -59,8 +60,8 @@ flowviz.visualize_cut_plane(
 # # Change the farm layout
 N = 3  # Number of turbines per row and per column
 X, Y = np.meshgrid(
-    5.0 * fmodel.core.farm.rotor_diameters[0,0] * np.arange(0, N, 1),
-    5.0 * fmodel.core.farm.rotor_diameters[0,0] * np.arange(0, N, 1),
+    5.0 * fmodel.core.farm.rotor_diameters[0] * np.arange(0, N, 1),
+    5.0 * fmodel.core.farm.rotor_diameters[0] * np.arange(0, N, 1),
 )
 fmodel.set(layout_x=X.flatten(), layout_y=Y.flatten(), wind_directions=[270.0])
 horizontal_plane = fmodel.calculate_horizontal_plane(height=90.0)
@@ -87,7 +88,8 @@ yaw_angles[:,1] = -30.0
 yaw_angles[:,4] = 30.0
 yaw_angles[:,7] = -30.0
 
-horizontal_plane = fmodel.calculate_horizontal_plane(yaw_angles=yaw_angles, height=90.0)
+fmodel.set(yaw_angles=yaw_angles)
+horizontal_plane = fmodel.calculate_horizontal_plane(height=90.0)
 flowviz.visualize_cut_plane(
     horizontal_plane,
     ax=axarr[4],
@@ -97,10 +99,10 @@ flowviz.visualize_cut_plane(
     max_speed=MAX_WS
 )
 
-layoutviz.plot_turbine_rotors(fmodel, axarr[4], yaw_angles=yaw_angles, color="c")
+layoutviz.plot_turbine_rotors(fmodel, axarr[4], color="c")
 
 # Plot the cross-plane of the 3x3 configuration
-cross_plane = fmodel.calculate_cross_plane(yaw_angles=yaw_angles, downstream_dist=610.0)
+cross_plane = fmodel.calculate_cross_plane(downstream_dist=610.0)
 flowviz.visualize_cut_plane(
     cross_plane,
     ax=axarr[5],

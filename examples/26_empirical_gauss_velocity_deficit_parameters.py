@@ -17,8 +17,6 @@ velocity deficit model and their effects on the wind turbine wake.
 show_flow_cuts = True
 num_in_row = 5
 
-yaw_angles = np.zeros((1, num_in_row))
-
 # Define function for visualizing wakes
 def generate_wake_visualization(fmodel: FlorisModel, title=None):
     # Using the FlorisModel functions, get 2D slices.
@@ -38,7 +36,6 @@ def generate_wake_visualization(fmodel: FlorisModel, title=None):
         height=horizontal_plane_location,
         x_bounds=x_bounds,
         y_bounds=y_bounds,
-        yaw_angles=yaw_angles
     )
     y_plane = fmodel.calculate_y_plane(
         x_resolution=200,
@@ -46,7 +43,6 @@ def generate_wake_visualization(fmodel: FlorisModel, title=None):
         crossstream_dist=streamwise_plane_location,
         x_bounds=x_bounds,
         z_bounds=z_bounds,
-        yaw_angles=yaw_angles
     )
     cross_planes = []
     for cpl in cross_plane_locations:

@@ -54,15 +54,15 @@ ax.set_title("Show turbine names with a red bounding box")
 
 # Plot 2: Show turbine rotors on flow
 ax = axarr[2]
-horizontal_plane = fmodel.calculate_horizontal_plane(height=90.0,
-                                                 yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
+fmodel.set(yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
+horizontal_plane = fmodel.calculate_horizontal_plane(height=90.0)
 visualize_cut_plane(
     horizontal_plane,
     ax=ax,
     min_speed=MIN_WS,
     max_speed=MAX_WS
 )
-layoutviz.plot_turbine_rotors(fmodel,ax=ax,yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
+layoutviz.plot_turbine_rotors(fmodel, ax=ax, yaw_angles=np.array([[0., 30., 0., 0., 0.]]))
 ax.set_title("Flow visualization with yawed turbine")
 
 # Plot 3: Show the layout, including wake directions

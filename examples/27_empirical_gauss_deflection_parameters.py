@@ -45,7 +45,6 @@ def generate_wake_visualization(fmodel, title=None):
         height=horizontal_plane_location,
         x_bounds=x_bounds,
         y_bounds=y_bounds,
-        yaw_angles=yaw_angles
     )
     y_plane = fmodel.calculate_y_plane(
         x_resolution=200,
@@ -53,7 +52,6 @@ def generate_wake_visualization(fmodel, title=None):
         crossstream_dist=streamwise_plane_location,
         x_bounds=x_bounds,
         z_bounds=z_bounds,
-        yaw_angles=yaw_angles
     )
     cross_planes = []
     for cpl in cross_plane_locations:
