@@ -701,6 +701,148 @@ class FlorisModel(LoggingManager):
             turbine_weights=turbine_weights
         ) * hours_per_year
 
+    def get_expected_farm_value(
+            self,
+            freq=None,
+            values=None,
+            turbine_weights=None,
+    ) -> float:
+        """
+        Compute the expected (mean) value produced by the wind farm. This is
+        computed by multiplying the wind farm power for each wind condition by
+        the corresponding value of the power generated (e.g., electricity
+        market price per unit of energy), then weighting by frequency and
+        summing over all conditions.
+
+        Args:
+            freq (NDArrayFloat): NumPy array with shape (n_findex)
+                with the frequencies of each wind condition combination.
+                These frequencies should typically sum up to 1.0 and are used
+                to weigh the wind farm value for every condition in calculating
+                the wind farm's expected value. Defaults to None. If None and a
+                WindData object is supplied, the WindData object's frequencies
+                will be used. Otherwise, uniform frequencies are assumed (i.e.,
+                a simple mean over the findices is computed).
+            values (NDArrayFloat): NumPy array with shape (n_findex)
+                with the values corresponding to the power generated for each
+                wind condition combination. The wind farm power is multiplied
+                by the value for every condition in calculating the wind farm's
+                expected value. Defaults to None. If None and a WindData object
+                is supplied, the WindData object's values will be used.
+                Otherwise, a value of 1 for all conditions is assumed (i.e.,
+                the expected farm value will be equivalent to the expected farm
+                power).
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the value production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                expected value. If None, this is an array with all values 1.0
+                and with shape equal to (n_findex, n_turbines). Defaults to None.
+
+        Returns:
+            float:
+                The expected value produced by the wind farm in units of value.
+        """
+
+        farm_power = self._get_farm_power(turbine_weights=turbine_weights)
+
+        if freq is None:
+            if self.wind_data is None:
+                freq = np.array([1.0/self.core.flow_field.n_findex])
+            else:
+                freq = self.wind_data.unpack_freq()
+
+        if values is None:
+            if self.wind_data is None:
+                values = np.array([1.0])
+            else:
+                values = self.wind_data.unpack_value()
+
+        farm_value = np.multiply(values, farm_power)
+
+        return np.nansum(np.multiply(freq, farm_value))
+
+    def get_farm_AVP(
+        self,
+        freq=None,
+        values=None,
+        turbine_weights=None,
+        hours_per_year=8760,
+    ) -> float:
+        """
+        Estimate annual value production (AVP) for distribution of wind
+        conditions, frequencies of occurrence, and corresponding values of
+        power generated (e.g., electricity price per unit of energy).
+
+        Args:
+            freq (NDArrayFloat): NumPy array with shape (n_findex)
+                with the frequencies of each wind condition combination.
+                These frequencies should typically sum up to 1.0 and are used
+                to weigh the wind farm value for every condition in calculating
+                the wind farm's AVP. Defaults to None. If None and a
+                WindData object is supplied, the WindData object's frequencies
+                will be used. Otherwise, uniform frequencies are assumed (i.e.,
+                a simple mean over the findices is computed).
+            values (NDArrayFloat): NumPy array with shape (n_findex)
+                with the values corresponding to the power generated for each
+                wind condition combination. The wind farm power is multiplied
+                by the value for every condition in calculating the wind farm's
+                AVP. Defaults to None. If None and a WindData object is
+                supplied, the WindData object's values will be used. Otherwise,
+                a value of 1 for all conditions is assumed (i.e., the AVP will
+                be equivalent to the AEP).
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the value production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris is
+                multiplied with this array in the calculation of the AVP. If
+                None, this is an array with all values 1.0 and with shape equal
+                to (n_findex, n_turbines). Defaults to None.
+            hours_per_year (float, optional): Number of hours in a year.
+                Defaults to 365 * 24.
+
+        Returns:
+            float:
+                The Annual Value Production (AVP) for the wind farm in units
+                of value.
+        """
+        if (
+            freq is None
+            and not isinstance(self.wind_data, WindRose)
+            and not isinstance(self.wind_data, WindTIRose)
+        ):
+            self.logger.warning(
+                "Computing AVP with uniform frequencies. Results results may not reflect annual "
+                "operation."
+            )
+
+        if (
+            values is None
+            and not isinstance(self.wind_data, WindRose)
+            and not isinstance(self.wind_data, WindTIRose)
+        ):
+            self.logger.warning(
+                "Computing AVP with uniform value equal to 1. Results will be equivalent to "
+                "annual energy production."
+            )
+
+        return self.get_expected_farm_value(
+            freq=freq,
+            values=values,
+            turbine_weights=turbine_weights
+        ) * hours_per_year
+
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.core.flow_field.u,
@@ -1309,13 +1451,23 @@ class FlorisModel(LoggingManager):
             operation_model (str): The operation model to set.
         """
         if isinstance(operation_model, str):
-            operation_model = [operation_model]*self.core.farm.n_turbines
-        elif len(operation_model) != self.core.farm.n_turbines:
+            if len(self.core.farm.turbine_type) == 1:
+                # Set a single one here, then, and return
+                turbine_type = self.core.farm.turbine_definitions[0]
+                turbine_type["operation_model"] = operation_model
+                self.set(turbine_type=[turbine_type])
+                return
+            else:
+                operation_model = [operation_model]*self.core.farm.n_turbines
+
+        if len(operation_model) != self.core.farm.n_turbines:
             raise ValueError(
-                "The length of the operation_model list must be equal to the number of turbines."
-            )
+                    "The length of the operation_model list must be "
+                    "equal to the number of turbines."
+                )
 
         turbine_type_list = self.core.farm.turbine_definitions
+
         for tindex in range(self.core.farm.n_turbines):
             turbine_type_list[tindex]["turbine_type"] = (
                 turbine_type_list[tindex]["turbine_type"]+"_"+operation_model[tindex]

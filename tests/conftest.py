@@ -137,7 +137,6 @@ Z_COORDS = [
 N_TURBINES = len(X_COORDS)
 ROTOR_DIAMETER = 126.0
 TURBINE_GRID_RESOLUTION = 2
-TIME_SERIES = False
 
 
 ## Unit test fixtures
@@ -156,7 +155,6 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         grid_resolution=TURBINE_GRID_RESOLUTION,
-        time_series=TIME_SERIES
     )
 
 @pytest.fixture
@@ -182,7 +180,6 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         grid_resolution=None,
-        time_series=False,
         points_x=points_x,
         points_y=points_y,
         points_z=points_z,
@@ -524,7 +521,7 @@ class SampleInputs:
             },
             "name": "conftest",
             "description": "Inputs used for testing",
-            "floris_version": "v3.0.0",
+            "floris_version": "v4",
         }
 
         self.v3type_turbine = {
