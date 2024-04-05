@@ -28,12 +28,7 @@ Turbine 2 is in wake turbine 1, turbine 4 in wake of turbine 3.
 
 # Grab model of FLORIS and update to awc-enabled turbines
 fmodel = FlorisModel("inputs/emgauss_helix.yaml")
-with open(str(
-    fmodel.core.as_dict()["farm"]["turbine_library_path"] /
-    (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
-)) as t:
-    turbine_type = yaml.safe_load(t)
-turbine_type["power_thrust_model"] = "awc"
+fmodel.set_operation_model("awc")
 
 # Set the wind directions and speeds to be constant over N different helix amplitudes
 N = 1
@@ -45,7 +40,6 @@ D = 240
 fmodel.set(
     layout_x=[0.0, 4*D, 0.0, 4*D],
     layout_y=[0.0, 0.0, -3*D, -3*D],
-    turbine_type=[turbine_type],
     wind_directions=270 * np.ones(N),
     wind_speeds=8.0 * np.ones(N),
     turbulence_intensities=0.06*np.ones(N),
