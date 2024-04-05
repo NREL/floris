@@ -28,7 +28,24 @@ warnings.filterwarnings('ignore')
     title = python_code.split("\n")[0].strip().strip("#").strip().strip('"').strip().strip("'")
     nb["cells"].append(nbf.v4.new_markdown_cell(f"# {title}"))
 
+    # Every code block starts with a comment block surrounded by """ and ends with """
+    # Find that block and place it in markdown cell
+    code_comments = python_code.split('"""')[1]
+
+    # Remove the top line
+    code_comments = code_comments.split("\n")[1:]
+
+    # Add the code comments
+    nb["cells"].append(nbf.v4.new_markdown_cell(code_comments))
+
     # Add Python code to the notebook
+
+    # Remove the top commented block ("""...""") but keep everything after it
+    python_code = python_code.split('"""')[2]
+
+    # Strip any leading white space
+    python_code = python_code.strip()
+
     nb["cells"].append(nbf.v4.new_code_cell(python_code))
 
     # Write the notebook to a file
@@ -91,10 +108,12 @@ for nb in notebooks["."]:
 for directory in notebooks:
     if directory == ".":
         continue
-    toc += "      sections:\n"
+    dir_without_dot_slash = directory[2:]
+    dir_without_examples_ = dir_without_dot_slash.replace("examples_", "")
+    dir_without_examples_ = dir_without_examples_.replace("_", " ").capitalize()
+    toc += f"\n  - caption: Examples: {dir_without_examples_}\n    chapters:\n"
     for nb in notebooks[directory]:
-        dir_without_dot_slash = directory[2:]
-        toc += f"      - file: examples/{dir_without_dot_slash}/{nb}\n"
+        toc += f"    - file: examples/{dir_without_dot_slash}/{nb}\n"
 
 # Print the toc
 print("\n\nTOC: FILE:\n")
