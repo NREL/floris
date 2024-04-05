@@ -163,10 +163,10 @@ class Core(BaseClass):
             )
 
         operation_model_awc = False
-        for tindex in range(len(self.farm.turbine_type)):
-            if self.farm.turbine_type[tindex]["operation_model"] == "awc":
+        for td in self.farm.turbine_definitions:
+            if td["operation_model"] == "awc":
                 operation_model_awc = True
-        if vel_model in ["gauss", "cc", "turbopark", "jensen"] and operation_model_awc:
+        if vel_model != "empirical_gauss" and operation_model_awc:
             self.logger.warning(
                 f"The current model `{vel_model}` does not account for additional wake mixing " +
                 "due to active wake control. Corrections to power and thrust coefficient can " +
