@@ -36,19 +36,22 @@ jobs:
         error_found=0  # 0 is false
         error_results="Error in example:"
 
-        # Run each Python script example
-        for i in *.py; do
-
-          # Skip these examples until the wind rose, optimization package, and
-          # uncertainty interface are update to v4
-          if [[ $i == *20* ]]; then
-            continue
+        # Now run the examples in root and  subdirectories
+        echo "Running examples"
+        for d in . $(find . -type d -name "*examples*"); do
+          cd $d
+          echo "========================= Example directory- $d"
+          for i in *.py; do
+            echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Running example- $i"
+            if ! python $i; then
+              error_results="${error_results}"$'\n'" - ${i}"
+              error_found=1
+            fi
+          done
+          if [ "$d" != "." ]; then
+            cd ..
           fi
 
-          if ! python $i; then
-            error_results="${error_results}"$'\n'" - ${i}"
-            error_found=1
-          fi
         done
 
         if [[ $error_found ]]; then

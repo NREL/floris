@@ -28,8 +28,7 @@ class FlowField(BaseClass):
     air_density: float = field(converter=float)
     turbulence_intensities: NDArrayFloat = field(converter=floris_array_converter)
     reference_wind_height: float = field(converter=float)
-    time_series: bool = field(default=False)
-    heterogenous_inflow_config: dict = field(default=None)
+    heterogeneous_inflow_config: dict = field(default=None)
     multidim_conditions: dict = field(default=None)
 
     n_findex: int = field(init=False)
@@ -97,19 +96,19 @@ class FlowField(BaseClass):
                 f"wind_speeds (length = {len(self.wind_speeds)}) must have the same length"
             )
 
-    @heterogenous_inflow_config.validator
-    def heterogenous_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
-        """Using the validator method to check that the heterogenous_inflow_config dictionary has
+    @heterogeneous_inflow_config.validator
+    def heterogeneous_config_validator(self, instance: attrs.Attribute, value: dict | None) -> None:
+        """Using the validator method to check that the heterogeneous_inflow_config dictionary has
         the correct key-value pairs.
         """
         if value is None:
             return
 
-        # Check that the correct keys are supplied for the heterogenous_inflow_config dict
+        # Check that the correct keys are supplied for the heterogeneous_inflow_config dict
         for k in ["speed_multipliers", "x", "y"]:
             if k not in value.keys():
                 raise ValueError(
-                    "heterogenous_inflow_config must contain entries for 'speed_multipliers',"
+                    "heterogeneous_inflow_config must contain entries for 'speed_multipliers',"
                     f"'x', and 'y', with 'z' optional. Missing '{k}'."
                 )
         if "z" not in value:
@@ -131,7 +130,7 @@ class FlowField(BaseClass):
 
 
     def __attrs_post_init__(self) -> None:
-        if self.heterogenous_inflow_config is not None:
+        if self.heterogeneous_inflow_config is not None:
             self.generate_heterogeneous_wind_map()
 
 
@@ -165,8 +164,8 @@ class FlowField(BaseClass):
         # grid locations are determined in either 2 or 3 dimensions.
         else:
             bounds = np.array(list(zip(
-                self.heterogenous_inflow_config['x'],
-                self.heterogenous_inflow_config['y']
+                self.heterogeneous_inflow_config['x'],
+                self.heterogeneous_inflow_config['y']
             )))
             hull = ConvexHull(bounds)
             polygon = Polygon(bounds[hull.vertices])
@@ -273,7 +272,7 @@ class FlowField(BaseClass):
         map bounds.
 
         Args:
-            heterogenous_inflow_config (dict): The heterogeneous inflow configuration dictionary.
+            heterogeneous_inflow_config (dict): The heterogeneous inflow configuration dictionary.
             The configuration should have the following inputs specified.
                 - **speed_multipliers** (list): A list of speed up factors that will multiply
                     the specified freestream wind speed. This 2-dimensional array should have an
@@ -282,10 +281,10 @@ class FlowField(BaseClass):
                 - **y**: A list of y locations at which the speed up factors are defined.
                 - **z** (optional): A list of z locations at which the speed up factors are defined.
         """
-        speed_multipliers = self.heterogenous_inflow_config['speed_multipliers']
-        x = self.heterogenous_inflow_config['x']
-        y = self.heterogenous_inflow_config['y']
-        z = self.heterogenous_inflow_config['z']
+        speed_multipliers = self.heterogeneous_inflow_config['speed_multipliers']
+        x = self.heterogeneous_inflow_config['x']
+        y = self.heterogeneous_inflow_config['y']
+        z = self.heterogeneous_inflow_config['z']
 
         if z is not None:
             # Compute the 3-dimensional interpolants for each wind direction

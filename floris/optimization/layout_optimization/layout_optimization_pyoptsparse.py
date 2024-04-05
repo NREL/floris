@@ -8,6 +8,39 @@ from .layout_optimization_base import LayoutOptimization
 
 
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
+    """
+    This class provides an interface for optimizing the layout of wind turbines
+    using the pyOptSparse optimization library.  The optimization objective is to
+    maximize annual energy production (AEP) or annual value production (AVP).
+
+    Args:
+        fmodel (FlorisModel): A FlorisModel object.
+        boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+            that represent the boundary's vertices (m).
+        min_dist (float, optional): The minimum distance to be maintained
+            between turbines during the optimization (m). If not specified,
+            initializes to 2 rotor diameters. Defaults to None.
+        solver (str, optional): Sets the solver used by pyOptSparse. Defaults
+            to 'SLSQP'.
+        optOptions (dict, optional): Dictionary for setting the
+            optimization options. Defaults to None.
+        timeLimit (float, optional): Variable passed to pyOptSparse optimizer.
+            The maximum amount of time for optimizer to run (seconds). If None,
+            no time limit is imposed. Defaults to None.
+        storeHistory (str, optional): Variable passed to pyOptSparse optimizer.
+            File name of the history file into which the history of the
+            pyOptSparse optimization will be stored. Defaults to "hist.hist".
+        hotStart (str, optional): Variable passed to pyOptSparse optimizer.
+            File name of the history file to “replay” for the optimization.
+            If None, pyOptSparse initializes the optimization from scratch.
+            Defaults to None.
+        enable_geometric_yaw (bool, optional): If True, enables geometric yaw
+            optimization. Defaults to False.
+        use_value (bool, optional): If True, the layout optimization objective
+            is to maximize annual value production using the value array in the
+            FLORIS model's WindData object. If False, the optimization
+            objective is to maximize AEP. Defaults to False.
+    """
     def __init__(
         self,
         fmodel,
@@ -19,9 +52,16 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         storeHistory='hist.hist',
         hotStart=None,
         enable_geometric_yaw=False,
+        use_value=False,
     ):
-        super().__init__(fmodel, boundaries, min_dist=min_dist,
-                         enable_geometric_yaw=enable_geometric_yaw)
+
+        super().__init__(
+            fmodel,
+            boundaries,
+            min_dist=min_dist,
+            enable_geometric_yaw=enable_geometric_yaw,
+            use_value=use_value
+        )
 
         self.x0 = self._norm(self.fmodel.layout_x, self.xmin, self.xmax)
         self.y0 = self._norm(self.fmodel.layout_y, self.ymin, self.ymax)
@@ -42,7 +82,7 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
             self.logger.error(err_msg, stack_info=True)
             raise ImportError(err_msg)
 
-        # Insantiate ptOptSparse optimization object with name and objective function
+        # Instantiate pyOptSparse optimization object with name and objective function
         self.optProb = pyoptsparse.Optimization('layout', self._obj_func)
 
         self.optProb = self.add_var_group(self.optProb)
@@ -98,7 +138,10 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
 
         # Compute the objective function
         funcs = {}
-        funcs["obj"] = -1 * self.fmodel.get_farm_AEP() / self.initial_AEP
+        if self.use_value:
+            funcs["obj"] = -1 * self.fmodel.get_farm_AVP() / self.initial_AEP_or_AVP
+        else:
+            funcs["obj"] = -1 * self.fmodel.get_farm_AEP() / self.initial_AEP_or_AVP
 
         # Compute constraints, if any are defined for the optimization
         funcs = self.compute_cons(funcs, self.x, self.y)

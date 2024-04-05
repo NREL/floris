@@ -38,7 +38,7 @@ default_turbine_library_path = Path(__file__).parents[1] / "turbine_library"
 @define
 class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
-    file. The Farm will create a heterogenous set of turbines that compose a wind farm,
+    file. The Farm will create a heterogeneous set of turbines that compose a wind farm,
     validate the inputs, and then create a vectorized representation of the the turbine
     data.
 
@@ -209,7 +209,8 @@ class Farm(BaseClass):
         if len(value) != 1 and len(value) != self.n_turbines:
             raise ValueError(
                 "turbine_type must have the same number of entries as layout_x/layout_y or have "
-                "a single turbine_type value."
+                "a single turbine_type value. This error can arise if you set the turbine_type or "
+                "alter the operation model before setting the layout."
             )
 
     @turbine_library_path.validator
