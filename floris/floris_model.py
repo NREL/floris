@@ -251,9 +251,19 @@ class FlorisModel(LoggingManager):
         """
         # Add operating conditions to the floris object
         if yaw_angles is not None:
+            if np.array(yaw_angles).shape[1] != self.core.farm.n_turbines:
+                raise ValueError(
+                    f"yaw_angles has a size of {np.array(yaw_angles).shape[1]} in the 1st "
+                    f"dimension, must be equal to n_turbines={self.core.farm.n_turbines}"
+                )
             self.core.farm.set_yaw_angles(yaw_angles)
 
         if power_setpoints is not None:
+            if np.array(power_setpoints).shape[1] != self.core.farm.n_turbines:
+                raise ValueError(
+                    f"power_setpoints has a size of {np.array(power_setpoints).shape[1]} in the 1st"
+                    f" dimension, must be equal to n_turbines={self.core.farm.n_turbines}"
+                )
             power_setpoints = np.array(power_setpoints)
 
             # Convert any None values to the default power setpoint
@@ -290,6 +300,9 @@ class FlorisModel(LoggingManager):
             # yaw_angles to 0 in all locations where disable_turbines is True
             self.core.farm.yaw_angles[disable_turbines] = 0.0
             self.core.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
+
+        if any([yaw_angles is not None, power_setpoints is not None, disable_turbines is not None]):
+            self.core.state = State.UNINITIALIZED
 
     def set(
         self,
