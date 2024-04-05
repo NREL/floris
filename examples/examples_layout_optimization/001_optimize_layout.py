@@ -43,7 +43,6 @@ opt_options = {
 }
 
 # Initialize the FLORIS interface fi
-file_dir = os.path.dirname(os.path.abspath(__file__))
 fmodel = FlorisModel('../inputs/gch.yaml')
 
 # Setup 72 wind directions with a 1 wind speed and frequency distribution
