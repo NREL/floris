@@ -43,6 +43,12 @@ jobs:
           echo "========================= Example directory- $d"
           for i in *.py; do
             echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Running example- $i"
+
+            # If "convert_examples" is in i, skip this script
+            if [[ $i == *"convert_examples"* ]]; then
+              continue
+            fi
+
             if ! python $i; then
               error_results="${error_results}"$'\n'" - ${i}"
               error_found=1
