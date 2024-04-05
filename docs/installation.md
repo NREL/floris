@@ -18,7 +18,7 @@ with FLORIS, it is recommended to install that package first before installing F
 
 
 ```{note}
-If upgrading from v2, it is highly recommended to install FLORIS V3 into a new virtual environment.
+If upgrading, it is highly recommended to install FLORIS V4 into a new virtual environment.
 ```
 
 (pip)=
