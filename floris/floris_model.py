@@ -229,7 +229,7 @@ class FlorisModel(LoggingManager):
         # Create a new instance of floris and attach to self
         self.core = Core.from_dict(floris_dict)
 
-    def _set_operation(
+    def set_operation(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
@@ -237,6 +237,9 @@ class FlorisModel(LoggingManager):
     ):
         """
         Apply operating setpoints to the floris object.
+
+        This function is not meant to be called directly by most users---users should instead call
+        the set() method.
 
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles. Defaults
@@ -248,9 +251,19 @@ class FlorisModel(LoggingManager):
         """
         # Add operating conditions to the floris object
         if yaw_angles is not None:
+            if np.array(yaw_angles).shape[1] != self.core.farm.n_turbines:
+                raise ValueError(
+                    f"yaw_angles has a size of {np.array(yaw_angles).shape[1]} in the 1st "
+                    f"dimension, must be equal to n_turbines={self.core.farm.n_turbines}"
+                )
             self.core.farm.set_yaw_angles(yaw_angles)
 
         if power_setpoints is not None:
+            if np.array(power_setpoints).shape[1] != self.core.farm.n_turbines:
+                raise ValueError(
+                    f"power_setpoints has a size of {np.array(power_setpoints).shape[1]} in the 1st"
+                    f" dimension, must be equal to n_turbines={self.core.farm.n_turbines}"
+                )
             power_setpoints = np.array(power_setpoints)
 
             # Convert any None values to the default power setpoint
@@ -287,6 +300,9 @@ class FlorisModel(LoggingManager):
             # yaw_angles to 0 in all locations where disable_turbines is True
             self.core.farm.yaw_angles[disable_turbines] = 0.0
             self.core.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
+
+        if any([yaw_angles is not None, power_setpoints is not None, disable_turbines is not None]):
+            self.core.state = State.UNINITIALIZED
 
     def set(
         self,
@@ -372,7 +388,7 @@ class FlorisModel(LoggingManager):
             self.core.farm.set_power_setpoints(_power_setpoints)
 
         # Set the operation
-        self._set_operation(
+        self.set_operation(
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
             disable_turbines=disable_turbines,
