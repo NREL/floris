@@ -29,6 +29,7 @@ from floris.type_dec import (
     floris_array_converter,
     NDArrayBool,
     NDArrayFloat,
+    NDArrayStr,
 )
 from floris.utilities import (
     nested_get,
@@ -128,7 +129,7 @@ class FlorisModel(LoggingManager):
         turbine_type: list | None = None,
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
-        heterogenous_inflow_config=None,
+        heterogeneous_inflow_config=None,
         wind_data: type[WindDataBase] | None = None,
     ):
         """
@@ -157,8 +158,8 @@ class FlorisModel(LoggingManager):
             turbine_library_path (str | Path | None, optional): Path to the turbine library.
                 Defaults to None.
             solver_settings (dict | None, optional): Solver settings. Defaults to None.
-            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
-                to None.
+            heterogeneous_inflow_config (None, optional): heterogeneous inflow configuration.
+                Defaults to None.
             wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
         """
         # Export the floris object recursively as a dictionary
@@ -171,13 +172,13 @@ class FlorisModel(LoggingManager):
             (wind_directions is not None)
             or (wind_speeds is not None)
             or (turbulence_intensities is not None)
-            or (heterogenous_inflow_config is not None)
+            or (heterogeneous_inflow_config is not None)
         ):
             if wind_data is not None:
                 raise ValueError(
                     "If wind_data is passed to reinitialize, then do not pass wind_directions, "
                     "wind_speeds, turbulence_intensities or "
-                    "heterogenous_inflow_config as this is redundant"
+                    "heterogeneous_inflow_config as this is redundant"
                 )
             elif self.wind_data is not None:
                 self.logger.warning("Deleting stored wind_data information.")
@@ -188,7 +189,7 @@ class FlorisModel(LoggingManager):
                     wind_directions,
                     wind_speeds,
                     turbulence_intensities,
-                    heterogenous_inflow_config,
+                    heterogeneous_inflow_config,
                 ) = wind_data.unpack_for_reinitialize()
                 self._wind_data = wind_data
 
@@ -207,8 +208,8 @@ class FlorisModel(LoggingManager):
             flow_field_dict["turbulence_intensities"] = turbulence_intensities
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
-        if heterogenous_inflow_config is not None:
-            flow_field_dict["heterogenous_inflow_config"] = heterogenous_inflow_config
+        if heterogeneous_inflow_config is not None:
+            flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
         ## Farm
         if layout_x is not None:
@@ -229,14 +230,20 @@ class FlorisModel(LoggingManager):
         # Create a new instance of floris and attach to self
         self.core = Core.from_dict(floris_dict)
 
-    def _set_operation(
+    def set_operation(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        awc_modes: NDArrayStr | list[str] | list[str, None] | None = None,
+        awc_amplitudes: NDArrayFloat | list[float] | list[float, None] | None = None,
+        awc_frequencies: NDArrayFloat | list[float] | list[float, None] | None = None,
         disable_turbines: NDArrayBool | list[bool] | None = None,
     ):
         """
         Apply operating setpoints to the floris object.
+
+        This function is not meant to be called directly by most users---users should instead call
+        the set() method.
 
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles. Defaults
@@ -248,9 +255,19 @@ class FlorisModel(LoggingManager):
         """
         # Add operating conditions to the floris object
         if yaw_angles is not None:
+            if np.array(yaw_angles).shape[1] != self.core.farm.n_turbines:
+                raise ValueError(
+                    f"yaw_angles has a size of {np.array(yaw_angles).shape[1]} in the 1st "
+                    f"dimension, must be equal to n_turbines={self.core.farm.n_turbines}"
+                )
             self.core.farm.set_yaw_angles(yaw_angles)
 
         if power_setpoints is not None:
+            if np.array(power_setpoints).shape[1] != self.core.farm.n_turbines:
+                raise ValueError(
+                    f"power_setpoints has a size of {np.array(power_setpoints).shape[1]} in the 1st"
+                    f" dimension, must be equal to n_turbines={self.core.farm.n_turbines}"
+                )
             power_setpoints = np.array(power_setpoints)
 
             # Convert any None values to the default power setpoint
@@ -260,6 +277,32 @@ class FlorisModel(LoggingManager):
             power_setpoints = floris_array_converter(power_setpoints)
 
             self.core.farm.set_power_setpoints(power_setpoints)
+
+        if awc_modes is None:
+            awc_modes = np.array(
+                [["baseline"]
+                *self.core.farm.n_turbines]
+                *self.core.flow_field.n_findex
+            )
+        self.core.farm.awc_modes = awc_modes
+
+        if awc_amplitudes is None:
+            awc_amplitudes = np.zeros(
+                (
+                    self.core.flow_field.n_findex,
+                    self.core.farm.n_turbines,
+                )
+            )
+        self.core.farm.awc_amplitudes = awc_amplitudes
+
+        if awc_frequencies is None:
+            awc_frequencies = np.zeros(
+                (
+                    self.core.flow_field.n_findex,
+                    self.core.farm.n_turbines,
+                )
+            )
+        self.core.farm.awc_frequencies = awc_frequencies
 
         # Check for turbines to disable
         if disable_turbines is not None:
@@ -288,6 +331,9 @@ class FlorisModel(LoggingManager):
             self.core.farm.yaw_angles[disable_turbines] = 0.0
             self.core.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
 
+        if any([yaw_angles is not None, power_setpoints is not None, disable_turbines is not None]):
+            self.core.state = State.UNINITIALIZED
+
     def set(
         self,
         wind_speeds: list[float] | NDArrayFloat | None = None,
@@ -302,10 +348,13 @@ class FlorisModel(LoggingManager):
         turbine_type: list | None = None,
         turbine_library_path: str | Path | None = None,
         solver_settings: dict | None = None,
-        heterogenous_inflow_config=None,
+        heterogeneous_inflow_config=None,
         wind_data: type[WindDataBase] | None = None,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        awc_modes: NDArrayStr | list[str] | list[str, None] | None = None,
+        awc_amplitudes: NDArrayFloat | list[float] | list[float, None] | None = None,
+        awc_frequencies: NDArrayFloat | list[float] | list[float, None] | None = None,
         disable_turbines: NDArrayBool | list[bool] | None = None,
     ):
         """
@@ -330,8 +379,8 @@ class FlorisModel(LoggingManager):
             turbine_library_path (str | Path | None, optional): Path to the turbine library.
                 Defaults to None.
             solver_settings (dict | None, optional): Solver settings. Defaults to None.
-            heterogenous_inflow_config (None, optional): Heterogenous inflow configuration. Defaults
-                to None.
+            heterogeneous_inflow_config (None, optional): heterogeneous inflow configuration.
+                Defaults to None.
             wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
                 Defaults to None.
@@ -344,6 +393,9 @@ class FlorisModel(LoggingManager):
         # Initialize a new Floris object after saving the setpoints
         _yaw_angles = self.core.farm.yaw_angles
         _power_setpoints = self.core.farm.power_setpoints
+        _awc_modes = self.core.farm.awc_modes
+        _awc_amplitudes = self.core.farm.awc_amplitudes
+        _awc_frequencies = self.core.farm.awc_frequencies
         self._reinitialize(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
@@ -357,7 +409,7 @@ class FlorisModel(LoggingManager):
             turbine_type=turbine_type,
             turbine_library_path=turbine_library_path,
             solver_settings=solver_settings,
-            heterogenous_inflow_config=heterogenous_inflow_config,
+            heterogeneous_inflow_config=heterogeneous_inflow_config,
             wind_data=wind_data,
         )
 
@@ -370,11 +422,20 @@ class FlorisModel(LoggingManager):
             | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
             self.core.farm.set_power_setpoints(_power_setpoints)
+        if _awc_modes is not None:
+            self.core.farm.set_awc_modes(_awc_modes)
+        if not (_awc_amplitudes == 0).all():
+            self.core.farm.set_awc_amplitudes(_awc_amplitudes)
+        if not (_awc_frequencies == 0).all():
+            self.core.farm.set_awc_frequencies(_awc_frequencies)
 
         # Set the operation
-        self._set_operation(
+        self.set_operation(
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            awc_modes=awc_modes,
+            awc_amplitudes=awc_amplitudes,
+            awc_frequencies=awc_frequencies,
             disable_turbines=disable_turbines,
         )
 
@@ -435,6 +496,8 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            awc_modes = self.core.farm.awc_modes,
+            awc_amplitudes=self.core.farm.awc_amplitudes,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             turbine_type_map=self.core.farm.turbine_type_map,
             turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
@@ -701,6 +764,144 @@ class FlorisModel(LoggingManager):
             turbine_weights=turbine_weights
         ) * hours_per_year
 
+    def get_expected_farm_value(
+            self,
+            freq=None,
+            values=None,
+            turbine_weights=None,
+    ) -> float:
+        """
+        Compute the expected (mean) value produced by the wind farm. This is
+        computed by multiplying the wind farm power for each wind condition by
+        the corresponding value of the power generated (e.g., electricity
+        market price per unit of energy), then weighting by frequency and
+        summing over all conditions.
+
+        Args:
+            freq (NDArrayFloat): NumPy array with shape (n_findex)
+                with the frequencies of each wind condition combination.
+                These frequencies should typically sum up to 1.0 and are used
+                to weigh the wind farm value for every condition in calculating
+                the wind farm's expected value. Defaults to None. If None and a
+                WindData object is supplied, the WindData object's frequencies
+                will be used. Otherwise, uniform frequencies are assumed (i.e.,
+                a simple mean over the findices is computed).
+            values (NDArrayFloat): NumPy array with shape (n_findex)
+                with the values corresponding to the power generated for each
+                wind condition combination. The wind farm power is multiplied
+                by the value for every condition in calculating the wind farm's
+                expected value. Defaults to None. If None and a WindData object
+                is supplied, the WindData object's values will be used.
+                Otherwise, a value of 1 for all conditions is assumed (i.e.,
+                the expected farm value will be equivalent to the expected farm
+                power).
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the value production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                expected value. If None, this is an array with all values 1.0
+                and with shape equal to (n_findex, n_turbines). Defaults to None.
+
+        Returns:
+            float:
+                The expected value produced by the wind farm in units of value.
+        """
+
+        farm_power = self._get_farm_power(turbine_weights=turbine_weights)
+
+        if freq is None:
+            if self.wind_data is None:
+                freq = np.array([1.0/self.core.flow_field.n_findex])
+            else:
+                freq = self.wind_data.unpack_freq()
+
+        if values is None:
+            if self.wind_data is None:
+                values = np.array([1.0])
+            else:
+                values = self.wind_data.unpack_value()
+
+        farm_value = np.multiply(values, farm_power)
+
+        return np.nansum(np.multiply(freq, farm_value))
+
+    def get_farm_AVP(
+        self,
+        freq=None,
+        values=None,
+        turbine_weights=None,
+        hours_per_year=8760,
+    ) -> float:
+        """
+        Estimate annual value production (AVP) for distribution of wind
+        conditions, frequencies of occurrence, and corresponding values of
+        power generated (e.g., electricity price per unit of energy).
+
+        Args:
+            freq (NDArrayFloat): NumPy array with shape (n_findex)
+                with the frequencies of each wind condition combination.
+                These frequencies should typically sum up to 1.0 and are used
+                to weigh the wind farm value for every condition in calculating
+                the wind farm's AVP. Defaults to None. If None and a
+                WindData object is supplied, the WindData object's frequencies
+                will be used. Otherwise, uniform frequencies are assumed (i.e.,
+                a simple mean over the findices is computed).
+            values (NDArrayFloat): NumPy array with shape (n_findex)
+                with the values corresponding to the power generated for each
+                wind condition combination. The wind farm power is multiplied
+                by the value for every condition in calculating the wind farm's
+                AVP. Defaults to None. If None and a WindData object is
+                supplied, the WindData object's values will be used. Otherwise,
+                a value of 1 for all conditions is assumed (i.e., the AVP will
+                be equivalent to the AEP).
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the value production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris is
+                multiplied with this array in the calculation of the AVP. If
+                None, this is an array with all values 1.0 and with shape equal
+                to (n_findex, n_turbines). Defaults to None.
+            hours_per_year (float, optional): Number of hours in a year.
+                Defaults to 365 * 24.
+
+        Returns:
+            float:
+                The Annual Value Production (AVP) for the wind farm in units
+                of value.
+        """
+        if (
+            freq is None
+            and not isinstance(self.wind_data, WindRose)
+            and not isinstance(self.wind_data, WindTIRose)
+        ):
+            self.logger.warning(
+                "Computing AVP with uniform frequencies. Results results may not reflect annual "
+                "operation."
+            )
+
+        if values is None and self.wind_data is None:
+            self.logger.warning(
+                "Computing AVP with uniform value equal to 1. Results will be equivalent to "
+                "annual energy production."
+            )
+
+        return self.get_expected_farm_value(
+            freq=freq,
+            values=values,
+            turbine_weights=turbine_weights
+        ) * hours_per_year
+
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.core.flow_field.u,
@@ -708,6 +909,8 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            awc_modes = self.core.farm.awc_modes,
+            awc_amplitudes=self.core.farm.awc_amplitudes,
             axial_induction_functions=self.core.farm.turbine_axial_induction_functions,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
@@ -726,6 +929,8 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            awc_modes = self.core.farm.awc_modes,
+            awc_amplitudes=self.core.farm.awc_amplitudes,
             thrust_coefficient_functions=self.core.farm.turbine_thrust_coefficient_functions,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
@@ -755,6 +960,9 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        awc_modes=None,
+        awc_amplitudes=None,
+        awc_frequencies=None,
         disable_turbines=None,
     ):
         """
@@ -804,6 +1012,9 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            awc_modes=awc_modes,
+            awc_amplitudes=awc_amplitudes,
+            awc_frequencies=awc_frequencies,
             disable_turbines=disable_turbines,
         )
 
@@ -812,7 +1023,7 @@ class FlorisModel(LoggingManager):
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
         df = self.get_plane_of_points(
             normal_vector="x",
             planar_coordinate=downstream_dist,
@@ -841,6 +1052,9 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        awc_modes=None,
+        awc_amplitudes=None,
+        awc_frequencies=None,
         disable_turbines=None,
     ):
         """
@@ -898,6 +1112,9 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            awc_modes=awc_modes,
+            awc_amplitudes=awc_amplitudes,
+            awc_frequencies=awc_frequencies,
             disable_turbines=disable_turbines,
         )
 
@@ -940,6 +1157,9 @@ class FlorisModel(LoggingManager):
         ti=None,
         yaw_angles=None,
         power_setpoints=None,
+        awc_modes=None,
+        awc_amplitudes=None,
+        awc_frequencies=None,
         disable_turbines=None,
     ):
         """
@@ -1002,6 +1222,9 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            awc_modes=awc_modes,
+            awc_amplitudes=awc_amplitudes,
+            awc_frequencies=awc_frequencies,
             disable_turbines=disable_turbines,
         )
 
@@ -1287,23 +1510,52 @@ class FlorisModel(LoggingManager):
 
         self.core.flow_field.reference_wind_height = unique_heights[0]
 
-    def get_power_thrust_model(self) -> str:
-        """Get the power thrust model of a FlorisModel.
+    def get_operation_model(self) -> str:
+        """Get the operation model of a FlorisModel.
 
         Returns:
-            str: The power_thrust_model.
+            str: The operation_model.
         """
-        return self.core.farm.turbine_definitions[0]["power_thrust_model"]
+        operation_models = [
+            self.core.farm.turbine_definitions[tindex]["operation_model"]
+            for tindex in range(self.core.farm.n_turbines)
+        ]
+        if len(set(operation_models)) == 1:
+            return operation_models[0]
+        else:
+            return operation_models
 
-    def set_power_thrust_model(self, power_thrust_model: str):
-        """Set the power thrust model of a FlorisModel.
+    def set_operation_model(self, operation_model: str | List[str]):
+        """Set the turbine operation model(s).
 
         Args:
-            power_thrust_model (str): The power thrust model to set.
+            operation_model (str): The operation model to set.
         """
-        turbine_type = self.core.farm.turbine_definitions[0]
-        turbine_type["power_thrust_model"] = power_thrust_model
-        self.set(turbine_type=[turbine_type])
+        if isinstance(operation_model, str):
+            if len(self.core.farm.turbine_type) == 1:
+                # Set a single one here, then, and return
+                turbine_type = self.core.farm.turbine_definitions[0]
+                turbine_type["operation_model"] = operation_model
+                self.set(turbine_type=[turbine_type])
+                return
+            else:
+                operation_model = [operation_model]*self.core.farm.n_turbines
+
+        if len(operation_model) != self.core.farm.n_turbines:
+            raise ValueError(
+                    "The length of the operation_model list must be "
+                    "equal to the number of turbines."
+                )
+
+        turbine_type_list = self.core.farm.turbine_definitions
+
+        for tindex in range(self.core.farm.n_turbines):
+            turbine_type_list[tindex]["turbine_type"] = (
+                turbine_type_list[tindex]["turbine_type"]+"_"+operation_model[tindex]
+            )
+            turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
+
+        self.set(turbine_type=turbine_type_list)
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object"""
@@ -1393,6 +1645,56 @@ class FlorisModel(LoggingManager):
             np.array: Wind turbine y-coordinate.
         """
         return self.core.farm.layout_y
+
+    @property
+    def wind_directions(self):
+        """
+        Wind direction information.
+
+        Returns:
+            np.array: Wind direction.
+        """
+        return self.core.flow_field.wind_directions
+
+    @property
+    def wind_speeds(self):
+        """
+        Wind speed information.
+
+        Returns:
+            np.array: Wind speed.
+        """
+        return self.core.flow_field.wind_speeds
+
+    @property
+    def turbulence_intensities(self):
+        """
+        Turbulence intensity information.
+
+        Returns:
+            np.array: Turbulence intensity.
+        """
+        return self.core.flow_field.turbulence_intensities
+
+    @property
+    def n_findex(self):
+        """
+        Number of floris indices (findex).
+
+        Returns:
+            int: Number of flow indices.
+        """
+        return self.core.flow_field.n_findex
+
+    @property
+    def n_turbines(self):
+        """
+        Number of turbines.
+
+        Returns:
+            int: Number of turbines.
+        """
+        return self.core.farm.n_turbines
 
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:

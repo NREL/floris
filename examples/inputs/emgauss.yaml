@@ -1,7 +1,7 @@
 
 name: Emperical Gaussian
 description: Three turbines using emperical Gaussian model
-floris_version: v3.x
+floris_version: v4
 
 logging:
   console:
@@ -48,6 +48,7 @@ wake:
 
   enable_secondary_steering: false
   enable_yaw_added_recovery: true
+  enable_active_wake_mixing: false
   enable_transverse_velocities: false
 
   wake_deflection_parameters:

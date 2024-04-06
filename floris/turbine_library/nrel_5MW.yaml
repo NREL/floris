@@ -24,7 +24,7 @@ TSR: 8.0
 
 ###
 # Model for power and thrust curve interpretation.
-power_thrust_model: 'cosine-loss'
+operation_model: 'cosine-loss'
 
 ###
 # Cp and Ct as a function of wind speed for the turbine's full range of operating conditions.
@@ -39,6 +39,12 @@ power_thrust_table:
   cosine_loss_exponent_tilt: 1.88
   # Cosine exponent for power loss due to yaw misalignment.
   cosine_loss_exponent_yaw: 1.88
+  # Helix parameters
+  helix_a: 1.802
+  helix_power_b: 4.568e-03
+  helix_power_c: 1.629e-10
+  helix_thrust_b: 1.027e-03
+  helix_thrust_c: 1.378e-06
   ### Power thrust table data
   wind_speed:
     - 0.0

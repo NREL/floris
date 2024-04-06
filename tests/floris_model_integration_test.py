@@ -265,7 +265,7 @@ def test_disable_turbines():
         )
     ) as t:
         turbine_type = yaml.safe_load(t)
-    turbine_type["power_thrust_model"] = "mixed"
+    turbine_type["operation_model"] = "mixed"
     fmodel.set(turbine_type=[turbine_type])
 
     # Init to n-findex = 2, n_turbines = 3
@@ -389,6 +389,62 @@ def test_get_farm_aep(caplog):
     # Also check get_expected_farm_power
     expected_farm_power = fmodel.get_expected_farm_power(freq=freq)
     np.testing.assert_allclose(expected_farm_power, aep / (365 * 24))
+
+def test_get_farm_avp(caplog):
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([7.0, 8.0, 9.0])
+    wind_directions = np.array([260.0, 270.0, 280.0])
+    turbulence_intensities = np.array([0.07, 0.06, 0.05])
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+    # n_turbines = len(layout_x)
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=layout_x,
+        layout_y=layout_y,
+    )
+
+    fmodel.run()
+
+    farm_powers = fmodel.get_farm_power()
+
+    # Define frequencies
+    freq = np.array([0.25, 0.5, 0.25])
+
+    # Define values of energy produced (e.g., price per MWh)
+    values = np.array([30.0, 20.0, 10.0])
+
+    # Check warning raised if values not passed; no warning if values passed
+    with caplog.at_level(logging.WARNING):
+        fmodel.get_farm_AVP(freq=freq)
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.get_farm_AVP(freq=freq, values=values)
+    assert caplog.text == "" # Checking empty
+
+    # Check that AVP is equivalent to AEP when values not passed
+    farm_aep = fmodel.get_farm_AEP(freq=freq)
+    farm_avp = fmodel.get_farm_AVP(freq=freq)
+
+    np.testing.assert_allclose(farm_avp, farm_aep)
+
+    # Now check that AVP is what we expect when values passed
+    farm_avp = fmodel.get_farm_AVP(freq=freq,values=values)
+
+    farm_values = np.multiply(values, farm_powers)
+    avp = np.sum(np.multiply(freq, farm_values) * 365 * 24)
+
+    np.testing.assert_allclose(farm_avp, avp)
+
+    # Also check get_expected_farm_value
+    expected_farm_power = fmodel.get_expected_farm_value(freq=freq, values=values)
+    np.testing.assert_allclose(expected_farm_power, avp / (365 * 24))
 
 def test_set_ti():
     fmodel = FlorisModel(configuration=YAML_INPUT)
@@ -577,12 +633,75 @@ def test_get_and_set_param():
     alpha = fmodel.get_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'])
     assert alpha == 0.1
 
-def test_get_power_thrust_model():
+def test_get_operation_model():
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    assert fmodel.get_power_thrust_model() == "cosine-loss"
+    assert fmodel.get_operation_model() == "cosine-loss"
 
-def test_set_power_thrust_model():
+def test_set_operation_model():
 
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    fmodel.set_power_thrust_model("simple-derating")
-    assert fmodel.get_power_thrust_model() == "simple-derating"
+    fmodel.set_operation_model("simple-derating")
+    assert fmodel.get_operation_model() == "simple-derating"
+
+    # Check multiple turbine types works
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set_operation_model(["simple-derating", "cosine-loss"])
+    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+
+    # Check that setting a single turbine type, and then altering the operation model works
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set_operation_model("simple-derating")
+    assert fmodel.get_operation_model() == "simple-derating"
+
+    # Check that setting over mutliple turbine types works
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set_operation_model("simple-derating")
+    assert fmodel.get_operation_model() == "simple-derating"
+    fmodel.set_operation_model(["simple-derating", "cosine-loss"])
+    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+
+    # Check setting over single turbine type; then updating layout works
+    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set_operation_model("simple-derating")
+    fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+    assert fmodel.get_operation_model() == "simple-derating"
+
+    # Check that setting for multiple turbine types and then updating layout breaks
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set_operation_model(["simple-derating", "cosine-loss"])
+    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+    with pytest.raises(ValueError):
+        fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+
+    # Check one more variation
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set_operation_model("simple-derating")
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+    with pytest.raises(ValueError):
+        fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+
+def test_set_operation():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
+
+    # Check that not allowed to run(), then set_operation, then collect powers
+    fmodel.run()
+    fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0]]))
+    with pytest.raises(RuntimeError):
+        fmodel.get_turbine_powers()
+
+    # Check that no issue if run is called first
+    fmodel.run()
+    fmodel.get_turbine_powers()
+
+    # Check that if arguments do not match number of turbines, raises error
+    with pytest.raises(ValueError):
+        fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0, 20.0]]))
+
+    # Check that if arguments do not match n_findex, raises error
+    with pytest.raises(ValueError):
+        fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0], [25.0, 0.0]]))
+        fmodel.run()

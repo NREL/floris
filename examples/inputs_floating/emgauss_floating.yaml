@@ -1,7 +1,7 @@
 
 name: Emperical Gaussian
 description: Example of single floating turbine
-floris_version: v3.x
+floris_version: v4
 
 logging:
   console:
@@ -49,6 +49,7 @@ wake:
   enable_secondary_steering: false
   enable_yaw_added_recovery: true
   enable_transverse_velocities: false
+  enable_active_wake_mixing: false
 
   wake_deflection_parameters:
     gauss:

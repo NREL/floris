@@ -28,6 +28,7 @@ from floris.type_dec import (
     iter_validator,
     NDArrayFloat,
     NDArrayObject,
+    NDArrayStr,
 )
 from floris.utilities import load_yaml
 
@@ -38,7 +39,7 @@ default_turbine_library_path = Path(__file__).parents[1] / "turbine_library"
 @define
 class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
-    file. The Farm will create a heterogenous set of turbines that compose a wind farm,
+    file. The Farm will create a heterogeneous set of turbines that compose a wind farm,
     validate the inputs, and then create a vectorized representation of the the turbine
     data.
 
@@ -84,6 +85,15 @@ class Farm(BaseClass):
 
     power_setpoints: NDArrayFloat = field(init=False)
     power_setpoints_sorted: NDArrayFloat = field(init=False)
+
+    awc_modes: NDArrayStr = field(init=False)
+    awc_modes_sorted: NDArrayStr = field(init=False)
+
+    awc_amplitudes: NDArrayFloat = field(init=False)
+    awc_amplitudes_sorted: NDArrayFloat = field(init=False)
+
+    awc_frequencies: NDArrayFloat = field(init=False)
+    awc_frequencies_sorted: NDArrayFloat = field(init=False)
 
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
@@ -209,7 +219,8 @@ class Farm(BaseClass):
         if len(value) != 1 and len(value) != self.n_turbines:
             raise ValueError(
                 "turbine_type must have the same number of entries as layout_x/layout_y or have "
-                "a single turbine_type value."
+                "a single turbine_type value. This error can arise if you set the turbine_type or "
+                "alter the operation model before setting the layout."
             )
 
     @turbine_library_path.validator
@@ -232,6 +243,21 @@ class Farm(BaseClass):
         )
         self.power_setpoints_sorted = np.take_along_axis(
             self.power_setpoints,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
+        self.awc_modes_sorted = np.take_along_axis(
+            self.awc_modes,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
+        self.awc_amplitudes_sorted = np.take_along_axis(
+            self.awc_amplitudes,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
+        self.awc_frequencies_sorted = np.take_along_axis(
+            self.awc_frequencies,
             sorted_indices[:, :, 0, 0],
             axis=1,
         )
@@ -354,6 +380,32 @@ class Farm(BaseClass):
         power_setpoints = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
         self.set_power_setpoints(power_setpoints)
         self.power_setpoints_sorted = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
+
+    def set_awc_modes(self, awc_modes: NDArrayStr):
+        self.awc_modes = np.array(awc_modes)
+
+    def set_awc_modes_to_ref_mode(self, n_findex: int):
+        # awc_modes = np.empty((n_findex, self.n_turbines))\
+        awc_modes = np.array([["baseline"]*self.n_turbines]*n_findex)
+        self.set_awc_modes(awc_modes)
+        # self.awc_modes_sorted = np.empty((n_findex, self.n_turbines))
+        self.awc_modes_sorted = np.array([["baseline"]*self.n_turbines]*n_findex)
+
+    def set_awc_amplitudes(self, awc_amplitudes: NDArrayFloat):
+        self.awc_amplitudes = np.array(awc_amplitudes)
+
+    def set_awc_amplitudes_to_ref_amp(self, n_findex: int):
+        awc_amplitudes = np.zeros((n_findex, self.n_turbines))
+        self.set_awc_amplitudes(awc_amplitudes)
+        self.awc_amplitudes_sorted = np.zeros((n_findex, self.n_turbines))
+
+    def set_awc_frequencies(self, awc_frequencies: NDArrayFloat):
+        self.awc_frequencies = np.array(awc_frequencies)
+
+    def set_awc_frequencies_to_ref_freq(self, n_findex: int):
+        awc_frequencies = np.zeros((n_findex, self.n_turbines))
+        self.set_awc_frequencies(awc_frequencies)
+        self.awc_frequencies_sorted = np.zeros((n_findex, self.n_turbines))
 
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
         tilt_angles = compute_tilt_angles_for_floating_turbines_map(

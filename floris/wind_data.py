@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import inspect
 from abc import abstractmethod
+from pathlib import Path
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -36,14 +38,14 @@ class WindDataBase:
             ti_table_unpack,
             _,
             _,
-            heterogenous_inflow_config,
+            heterogeneous_inflow_config,
         ) = self.unpack()
 
         return (
             wind_directions_unpack,
             wind_speeds_unpack,
             ti_table_unpack,
-            heterogenous_inflow_config,
+            heterogeneous_inflow_config,
         )
 
     def unpack_freq(self):
@@ -51,63 +53,68 @@ class WindDataBase:
 
         return self.unpack()[3]
 
-    def check_heterogenous_inflow_config_by_wd(self, heterogenous_inflow_config_by_wd):
+    def unpack_value(self):
+        """Unpack values of power generated"""
+
+        return self.unpack()[4]
+
+    def check_heterogeneous_inflow_config_by_wd(self, heterogeneous_inflow_config_by_wd):
         """
-        Check that the heterogenous_inflow_config_by_wd dictionary is properly formatted
+        Check that the heterogeneous_inflow_config_by_wd dictionary is properly formatted
 
         Args:
-            heterogenous_inflow_config_by_wd (dict): A dictionary containing the following keys:
+            heterogeneous_inflow_config_by_wd (dict): A dictionary containing the following keys:
                 * 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)
                      of speed multipliers.
                 * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
                 * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
                 * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
         """
-        if heterogenous_inflow_config_by_wd is not None:
-            if not isinstance(heterogenous_inflow_config_by_wd, dict):
-                raise TypeError("heterogenous_inflow_config_by_wd must be a dictionary")
-            if "speed_multipliers" not in heterogenous_inflow_config_by_wd:
+        if heterogeneous_inflow_config_by_wd is not None:
+            if not isinstance(heterogeneous_inflow_config_by_wd, dict):
+                raise TypeError("heterogeneous_inflow_config_by_wd must be a dictionary")
+            if "speed_multipliers" not in heterogeneous_inflow_config_by_wd:
                 raise ValueError(
-                    "heterogenous_inflow_config_by_wd must contain a key 'speed_multipliers'"
+                    "heterogeneous_inflow_config_by_wd must contain a key 'speed_multipliers'"
                 )
-            if "wind_directions" not in heterogenous_inflow_config_by_wd:
+            if "wind_directions" not in heterogeneous_inflow_config_by_wd:
                 raise ValueError(
-                    "heterogenous_inflow_config_by_wd must contain a key 'wind_directions'"
+                    "heterogeneous_inflow_config_by_wd must contain a key 'wind_directions'"
                 )
-            if "x" not in heterogenous_inflow_config_by_wd:
-                raise ValueError("heterogenous_inflow_config_by_wd must contain a key 'x'")
-            if "y" not in heterogenous_inflow_config_by_wd:
-                raise ValueError("heterogenous_inflow_config_by_wd must contain a key 'y'")
+            if "x" not in heterogeneous_inflow_config_by_wd:
+                raise ValueError("heterogeneous_inflow_config_by_wd must contain a key 'x'")
+            if "y" not in heterogeneous_inflow_config_by_wd:
+                raise ValueError("heterogeneous_inflow_config_by_wd must contain a key 'y'")
 
-    def check_heterogenous_inflow_config(self, heterogenous_inflow_config):
+    def check_heterogeneous_inflow_config(self, heterogeneous_inflow_config):
         """
-        Check that the heterogenous_inflow_config dictionary is properly formatted
+        Check that the heterogeneous_inflow_config dictionary is properly formatted
 
         Args:
-            heterogenous_inflow_config (dict): A dictionary containing the following keys:
+            heterogeneous_inflow_config (dict): A dictionary containing the following keys:
                 * 'speed_multipliers': A 2D NumPy array (size n_findex x num_points)
                       of speed multipliers.
                 * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
                 * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
         """
-        if heterogenous_inflow_config is not None:
-            if not isinstance(heterogenous_inflow_config, dict):
-                raise TypeError("heterogenous_inflow_config_by_wd must be a dictionary")
-            if "speed_multipliers" not in heterogenous_inflow_config:
+        if heterogeneous_inflow_config is not None:
+            if not isinstance(heterogeneous_inflow_config, dict):
+                raise TypeError("heterogeneous_inflow_config_by_wd must be a dictionary")
+            if "speed_multipliers" not in heterogeneous_inflow_config:
                 raise ValueError(
-                    "heterogenous_inflow_config must contain a key 'speed_multipliers'"
+                    "heterogeneous_inflow_config must contain a key 'speed_multipliers'"
                 )
-            if "x" not in heterogenous_inflow_config:
-                raise ValueError("heterogenous_inflow_config must contain a key 'x'")
-            if "y" not in heterogenous_inflow_config:
-                raise ValueError("heterogenous_inflow_config must contain a key 'y'")
+            if "x" not in heterogeneous_inflow_config:
+                raise ValueError("heterogeneous_inflow_config must contain a key 'x'")
+            if "y" not in heterogeneous_inflow_config:
+                raise ValueError("heterogeneous_inflow_config must contain a key 'y'")
 
-    def get_speed_multipliers_by_wd(self, heterogenous_inflow_config_by_wd, wind_directions):
+    def get_speed_multipliers_by_wd(self, heterogeneous_inflow_config_by_wd, wind_directions):
         """
-        Processes heterogenous inflow configuration data to generate a speed multiplier array
+        Processes heterogeneous inflow configuration data to generate a speed multiplier array
         aligned with the wind directions. Accounts for the cyclical nature of wind directions.
         Args:
-            heterogenous_inflow_config_by_wd (dict): A dictionary containing the following keys:
+            heterogeneous_inflow_config_by_wd (dict): A dictionary containing the following keys:
                 * 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)
                      of speed multipliers.
                 * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
@@ -123,14 +130,14 @@ class WindDataBase:
         """
 
         # Extract data from the configuration dictionary
-        speed_multipliers = np.array(heterogenous_inflow_config_by_wd["speed_multipliers"])
-        het_wd = np.array(heterogenous_inflow_config_by_wd["wind_directions"])
+        speed_multipliers = np.array(heterogeneous_inflow_config_by_wd["speed_multipliers"])
+        het_wd = np.array(heterogeneous_inflow_config_by_wd["wind_directions"])
 
         # Confirm 0th dimension of speed_multipliers == len(het_wd)
         if len(het_wd) != speed_multipliers.shape[0]:
             raise ValueError(
                 "The legnth of het_wd must equal the number of rows speed_multipliers"
-                "Within the heterogenous_inflow_config_by_wd dictionary"
+                "Within the heterogeneous_inflow_config_by_wd dictionary"
             )
 
         # Calculate closest wind direction indices (accounting for angles)
@@ -141,21 +148,21 @@ class WindDataBase:
         # Construct the output array using the calculated indices
         return speed_multipliers[closest_wd_indices]
 
-    def get_heterogenous_inflow_config(self, heterogenous_inflow_config_by_wd, wind_directions):
-        # If heterogenous_inflow_config_by_wd is None, return None
-        if heterogenous_inflow_config_by_wd is None:
+    def get_heterogeneous_inflow_config(self, heterogeneous_inflow_config_by_wd, wind_directions):
+        # If heterogeneous_inflow_config_by_wd is None, return None
+        if heterogeneous_inflow_config_by_wd is None:
             return None
 
-        # If heterogenous_inflow_config_by_wd is not None, then process it
+        # If heterogeneous_inflow_config_by_wd is not None, then process it
         # Build the n-findex version of the het map
         speed_multipliers = self.get_speed_multipliers_by_wd(
-            heterogenous_inflow_config_by_wd, wind_directions
+            heterogeneous_inflow_config_by_wd, wind_directions
         )
-        # Return heterogenous_inflow_config
+        # Return heterogeneous_inflow_config
         return {
             "speed_multipliers": speed_multipliers,
-            "x": heterogenous_inflow_config_by_wd["x"],
-            "y": heterogenous_inflow_config_by_wd["y"],
+            "x": heterogeneous_inflow_config_by_wd["x"],
+            "y": heterogeneous_inflow_config_by_wd["y"],
         }
 
 
@@ -185,7 +192,7 @@ class WindRose(WindDataBase):
             each bin to compute the total value of the energy produced
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
-        heterogenous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following
             keys. Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)
                     of speed multipliers.
@@ -203,7 +210,7 @@ class WindRose(WindDataBase):
         freq_table: NDArrayFloat | None = None,
         value_table: NDArrayFloat | None = None,
         compute_zero_freq_occurrence: bool = False,
-        heterogenous_inflow_config_by_wd: dict | None = None,
+        heterogeneous_inflow_config_by_wd: dict | None = None,
     ):
         if not isinstance(wind_directions, np.ndarray):
             raise TypeError("wind_directions must be a NumPy array")
@@ -263,12 +270,12 @@ class WindRose(WindDataBase):
                 )
         self.compute_zero_freq_occurrence = compute_zero_freq_occurrence
 
-        # Check that heterogenous_inflow_config_by_wd is a dictionary with keys:
+        # Check that heterogeneous_inflow_config_by_wd is a dictionary with keys:
         # speed_multipliers, wind_directions, x and y
-        self.check_heterogenous_inflow_config_by_wd(heterogenous_inflow_config_by_wd)
+        self.check_heterogeneous_inflow_config_by_wd(heterogeneous_inflow_config_by_wd)
 
         # Then save
-        self.heterogenous_inflow_config_by_wd = heterogenous_inflow_config_by_wd
+        self.heterogeneous_inflow_config_by_wd = heterogeneous_inflow_config_by_wd
 
         # Build the gridded and flatten versions
         self._build_gridded_and_flattened_version()
@@ -334,14 +341,14 @@ class WindRose(WindDataBase):
         else:
             value_table_unpack = None
 
-        # If heterogenous_inflow_config_by_wd is not None, then update
-        # heterogenous_inflow_config to match wind_directions_unpack
-        if self.heterogenous_inflow_config_by_wd is not None:
-            heterogenous_inflow_config = self.get_heterogenous_inflow_config(
-                self.heterogenous_inflow_config_by_wd, wind_directions_unpack
+        # If heterogeneous_inflow_config_by_wd is not None, then update
+        # heterogeneous_inflow_config to match wind_directions_unpack
+        if self.heterogeneous_inflow_config_by_wd is not None:
+            heterogeneous_inflow_config = self.get_heterogeneous_inflow_config(
+                self.heterogeneous_inflow_config_by_wd, wind_directions_unpack
             )
         else:
-            heterogenous_inflow_config = None
+            heterogeneous_inflow_config = None
 
         return (
             wind_directions_unpack,
@@ -349,7 +356,7 @@ class WindRose(WindDataBase):
             ti_table_unpack,
             freq_table_unpack,
             value_table_unpack,
-            heterogenous_inflow_config,
+            heterogeneous_inflow_config,
         )
 
     def resample_wind_rose(self, wd_step=None, ws_step=None):
@@ -385,7 +392,7 @@ class WindRose(WindDataBase):
             self.ws_flat,
             self.ti_table_flat,
             self.value_table_flat,
-            self.heterogenous_inflow_config_by_wd,
+            self.heterogeneous_inflow_config_by_wd,
         )
 
         # Now build a new wind rose using the new steps
@@ -511,14 +518,18 @@ class WindRose(WindDataBase):
 
         Args:
             ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
-                on which the wind rose is plotted. Defaults to None.
-            plot_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.plot().
+                on which the turbulence intensity is plotted. Defaults to None.
+            marker (str, optional): Scatter plot marker style. Defaults to ".".
+            ls (str, optional): Scatter plot line style. Defaults to "None".
+            color (str, optional): Scatter plot color. Defaults to "k".
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
-            the plotted wind rose.
+            the plotted turbulence intensities as a function of wind speed.
         """
+
+        # TODO: Plot mean and std. devs. of TI in each ws bin in addition to
+        # individual points
 
         # Set up figure
         if ax is None:
@@ -527,6 +538,110 @@ class WindRose(WindDataBase):
         ax.plot(self.ws_flat, self.ti_table_flat * 100, marker=marker, ls=ls, color=color)
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Turbulence Intensity (%)")
+        ax.grid(True)
+
+    def assign_value_using_wd_ws_function(self, func, normalize=False):
+        """
+        Use the passed in function to assign new values to the value table.
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument and wind_speeds as second argument and returns
+                values.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+
+        """
+        self.value_table = func(self.wd_grid, self.ws_grid)
+
+        if normalize:
+            self.value_table /= np.sum(self.freq_table * self.value_table)
+
+        self._build_gridded_and_flattened_version()
+
+    def assign_value_piecewise_linear(
+        self,
+        value_zero_ws=1.425,
+        ws_knee=4.5,
+        slope_1=0.0,
+        slope_2=-0.135,
+        limit_to_zero=False,
+        normalize=False,
+    ):
+        """
+        Define value as a continuous piecewise linear function of wind speed
+        with two line segments. The default parameters yield a value function
+        that approximates the normalized mean electricity price vs. wind speed
+        curve for the SPP market in the U.S. for years 2018-2020 from figure 7
+        in Simley et al. "The value of wake steering wind farm flow control in
+        US energy markets," Wind Energy Science, 2024.
+        https://doi.org/10.5194/wes-9-219-2024. This default value function is
+        constant at low wind speeds, then linearly decreases above 4.5 m/s.
+
+        Args:
+            value_zero_ws (float, optional): The value when wind speed is zero.
+                Defaults to 1.425.
+            ws_knee (float, optional): The wind speed separating line segments
+                1 and 2. Default = 4.5 m/s.
+            slope_1 (float, optional): The slope of the first line segment
+                (unit of value per m/s). Defaults to zero.
+            slope_2 (float, optional): The slope of the second line segment
+            (unit of value per m/s). Defaults to -0.135.
+            limit_to_zero (bool, optional): If True, negative values will be
+                set to zero. Defaults to False.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+        """
+
+        def piecewise_linear_value_func(wind_directions, wind_speeds):
+            value = np.zeros_like(wind_speeds, dtype=float)
+            value[wind_speeds < ws_knee] = (
+                slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
+            )
+
+            offset_2 = (slope_1 - slope_2) * ws_knee + value_zero_ws
+
+            value[wind_speeds >= ws_knee] = slope_2 * wind_speeds[wind_speeds >= ws_knee] + offset_2
+
+            if limit_to_zero:
+                value[value < 0] = 0.0
+
+            return value
+
+        self.assign_value_using_wd_ws_function(piecewise_linear_value_func, normalize)
+
+    def plot_value_over_ws(
+        self,
+        ax=None,
+        marker=".",
+        ls="None",
+        color="k",
+    ):
+        """
+        Scatter plot the value of the energy generated against wind speed.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the value is plotted. Defaults to None.
+            marker (str, optional): Scatter plot marker style. Defaults to ".".
+            ls (str, optional): Scatter plot line style. Defaults to "None".
+            color (str, optional): Scatter plot color. Defaults to "k".
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted value as a function of wind speed.
+        """
+
+        # TODO: Plot mean and std. devs. of value in each ws bin in addition to
+        # individual points
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots()
+
+        ax.plot(self.ws_flat, self.value_table_flat, marker=marker, ls=ls, color=color)
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Value")
         ax.grid(True)
 
     @staticmethod
@@ -567,7 +682,13 @@ class WindRose(WindDataBase):
         """
 
         # Read in the CSV file
-        df = pd.read_csv(file_path, sep=sep)
+        try:
+            df = pd.read_csv(file_path, sep=sep)
+        except FileNotFoundError:
+            # If the file cannot be found, then attempt the level above
+            base_fn = Path(inspect.stack()[-1].filename).resolve().parent
+            file_path = base_fn / file_path
+            df = pd.read_csv(file_path, sep=sep)
 
         # Check that ti_col_or_value is a string or a float
         if not isinstance(ti_col_or_value, (str, float)):
@@ -640,7 +761,7 @@ class WindTIRose(WindDataBase):
             to compute the total value of the energy produced.
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
-        heterogenous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following
             keys. Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)
                     of speed multipliers.
@@ -658,7 +779,7 @@ class WindTIRose(WindDataBase):
         freq_table: NDArrayFloat | None = None,
         value_table: NDArrayFloat | None = None,
         compute_zero_freq_occurrence: bool = False,
-        heterogenous_inflow_config_by_wd: dict | None = None,
+        heterogeneous_inflow_config_by_wd: dict | None = None,
     ):
         if not isinstance(wind_directions, np.ndarray):
             raise TypeError("wind_directions must be a NumPy array")
@@ -707,12 +828,12 @@ class WindTIRose(WindDataBase):
                 )
         self.value_table = value_table
 
-        # Check that heterogenous_inflow_config_by_wd is a dictionary with keys:
+        # Check that heterogeneous_inflow_config_by_wd is a dictionary with keys:
         # speed_multipliers, wind_directions, x and y
-        self.check_heterogenous_inflow_config_by_wd(heterogenous_inflow_config_by_wd)
+        self.check_heterogeneous_inflow_config_by_wd(heterogeneous_inflow_config_by_wd)
 
         # Then save
-        self.heterogenous_inflow_config_by_wd = heterogenous_inflow_config_by_wd
+        self.heterogeneous_inflow_config_by_wd = heterogeneous_inflow_config_by_wd
 
         # Save whether zero occurrence cases should be computed
         self.compute_zero_freq_occurrence = compute_zero_freq_occurrence
@@ -779,14 +900,14 @@ class WindTIRose(WindDataBase):
         else:
             value_table_unpack = None
 
-        # If heterogenous_inflow_config_by_wd is not None, then update
-        # heterogenous_inflow_config to match wind_directions_unpack
-        if self.heterogenous_inflow_config_by_wd is not None:
-            heterogenous_inflow_config = self.get_heterogenous_inflow_config(
-                self.heterogenous_inflow_config_by_wd, wind_directions_unpack
+        # If heterogeneous_inflow_config_by_wd is not None, then update
+        # heterogeneous_inflow_config to match wind_directions_unpack
+        if self.heterogeneous_inflow_config_by_wd is not None:
+            heterogeneous_inflow_config = self.get_heterogeneous_inflow_config(
+                self.heterogeneous_inflow_config_by_wd, wind_directions_unpack
             )
         else:
-            heterogenous_inflow_config = None
+            heterogeneous_inflow_config = None
 
         return (
             wind_directions_unpack,
@@ -794,7 +915,7 @@ class WindTIRose(WindDataBase):
             turbulence_intensities_unpack,
             freq_table_unpack,
             value_table_unpack,
-            heterogenous_inflow_config,
+            heterogeneous_inflow_config,
         )
 
     def resample_wind_rose(self, wd_step=None, ws_step=None, ti_step=None):
@@ -838,7 +959,7 @@ class WindTIRose(WindDataBase):
             self.ws_flat,
             self.ti_flat,
             self.value_table_flat,
-            self.heterogenous_inflow_config_by_wd,
+            self.heterogeneous_inflow_config_by_wd,
         )
 
         # Now build a new wind rose using the new steps
@@ -952,16 +1073,18 @@ class WindTIRose(WindDataBase):
 
         Args:
             ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
-                on which the wind rose is plotted. Defaults to None.
-            plot_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.plot().
+                on which the mean turbulence intensity is plotted. Defaults to None.
+            marker (str, optional): Scatter plot marker style. Defaults to ".".
+            ls (str, optional): Scatter plot line style. Defaults to "None".
+            color (str, optional): Scatter plot color. Defaults to "k".
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
-            the plotted wind rose.
+            the plotted mean turbulence intensities as a function of wind speed.
         """
 
-        # TODO: Plot std. devs. of TI in addition to mean values
+        # TODO: Plot individual points and std. devs. of TI in addition to mean
+        # values
 
         # Set up figure
         if ax is None:
@@ -974,6 +1097,111 @@ class WindTIRose(WindDataBase):
         ax.plot(self.wind_speeds, mean_ti_values * 100, marker=marker, ls=ls, color=color)
         ax.set_xlabel("Wind Speed (m/s)")
         ax.set_ylabel("Mean Turbulence Intensity (%)")
+        ax.grid(True)
+
+    def assign_value_using_wd_ws_ti_function(self, func, normalize=False):
+        """
+        Use the passed in function to assign new values to the value table.
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument, wind_speeds as its second argument, and
+                turbulence_intensities as its third argument and returns
+                values.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+
+        """
+        self.value_table = func(self.wd_grid, self.ws_grid, self.ti_grid)
+
+        if normalize:
+            self.value_table /= np.sum(self.freq_table * self.value_table)
+
+        self._build_gridded_and_flattened_version()
+
+    def assign_value_piecewise_linear(
+        self,
+        value_zero_ws=1.425,
+        ws_knee=4.5,
+        slope_1=0.0,
+        slope_2=-0.135,
+        limit_to_zero=False,
+        normalize=False,
+    ):
+        """
+        Define value as a continuous piecewise linear function of wind speed
+        with two line segments. The default parameters yield a value function
+        that approximates the normalized mean electricity price vs. wind speed
+        curve for the SPP market in the U.S. for years 2018-2020 from figure 7
+        in Simley et al. "The value of wake steering wind farm flow control in
+        US energy markets," Wind Energy Science, 2024.
+        https://doi.org/10.5194/wes-9-219-2024. This default value function is
+        constant at low wind speeds, then linearly decreases above 4.5 m/s.
+
+        Args:
+            value_zero_ws (float, optional): The value when wind speed is zero.
+                Defaults to 1.425.
+            ws_knee (float, optional): The wind speed separating line segments
+                1 and 2. Default = 4.5 m/s.
+            slope_1 (float, optional): The slope of the first line segment
+                (unit of value per m/s). Defaults to zero.
+            slope_2 (float, optional): The slope of the second line segment
+            (unit of value per m/s). Defaults to -0.135.
+            limit_to_zero (bool, optional): If True, negative values will be
+                set to zero. Defaults to False.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+        """
+
+        def piecewise_linear_value_func(wind_directions, wind_speeds, turbulence_intensities):
+            value = np.zeros_like(wind_speeds, dtype=float)
+            value[wind_speeds < ws_knee] = (
+                slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
+            )
+
+            offset_2 = (slope_1 - slope_2) * ws_knee + value_zero_ws
+
+            value[wind_speeds >= ws_knee] = slope_2 * wind_speeds[wind_speeds >= ws_knee] + offset_2
+
+            if limit_to_zero:
+                value[value < 0] = 0.0
+
+            return value
+
+        self.assign_value_using_wd_ws_ti_function(piecewise_linear_value_func, normalize)
+
+    def plot_value_over_ws(
+        self,
+        ax=None,
+        marker=".",
+        ls="None",
+        color="k",
+    ):
+        """
+        Scatter plot the value of the energy generated against wind speed.
+
+        Args:
+            ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
+                on which the value is plotted. Defaults to None.
+            marker (str, optional): Scatter plot marker style. Defaults to ".".
+            ls (str, optional): Scatter plot line style. Defaults to "None".
+            color (str, optional): Scatter plot color. Defaults to "k".
+
+        Returns:
+            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
+            the plotted value as a function of wind speed.
+        """
+
+        # TODO: Plot mean and std. devs. of value in each ws bin in addition to
+        # individual points
+
+        # Set up figure
+        if ax is None:
+            _, ax = plt.subplots()
+
+        ax.plot(self.ws_flat, self.value_table_flat, marker=marker, ls=ls, color=color)
+        ax.set_xlabel("Wind Speed (m/s)")
+        ax.set_ylabel("Value")
         ax.grid(True)
 
     @staticmethod
@@ -1075,14 +1303,14 @@ class TimeSeries(WindDataBase):
             a single value or an array of values.
         values (NDArrayFloat, optional): Values associated with each wind
             direction, wind speed, and turbulence intensity. Defaults to None.
-        heterogenous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following
             keys. Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)
                     of speed multipliers.
             * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
             * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
             * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
-        heterogenous_inflow_config (dict, optional): A dictionary containing the following keys.
+        heterogeneous_inflow_config (dict, optional): A dictionary containing the following keys.
             Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size n_findex x num_points)
                     of speed multipliers.
@@ -1096,8 +1324,8 @@ class TimeSeries(WindDataBase):
         wind_speeds: float | NDArrayFloat,
         turbulence_intensities: float | NDArrayFloat,
         values: NDArrayFloat | None = None,
-        heterogenous_inflow_config_by_wd: dict | None = None,
-        heterogenous_inflow_config: dict | None = None,
+        heterogeneous_inflow_config_by_wd: dict | None = None,
+        heterogeneous_inflow_config: dict | None = None,
     ):
         # At least one of wind_directions, wind_speeds, or turbulence_intensities must be an array
         if (
@@ -1118,9 +1346,8 @@ class TimeSeries(WindDataBase):
                     "wind_directions and wind_speeds must be the same length if provided as arrays"
                 )
 
-        if (
-            isinstance(wind_directions, np.ndarray)
-            and isinstance(turbulence_intensities, np.ndarray)
+        if isinstance(wind_directions, np.ndarray) and isinstance(
+            turbulence_intensities, np.ndarray
         ):
             if len(wind_directions) != len(turbulence_intensities):
                 raise ValueError(
@@ -1166,29 +1393,32 @@ class TimeSeries(WindDataBase):
         self.turbulence_intensities = turbulence_intensities
         self.values = values
 
-        # Only one of heterogenous_inflow_config_by_wd and
-        # heterogenous_inflow_config can be not None
-        if heterogenous_inflow_config_by_wd is not None and heterogenous_inflow_config is not None:
+        # Only one of heterogeneous_inflow_config_by_wd and
+        # heterogeneous_inflow_config can be not None
+        if (
+            heterogeneous_inflow_config_by_wd is not None
+            and heterogeneous_inflow_config is not None
+        ):
             raise ValueError(
-                "Only one of heterogenous_inflow_config_by_wd and heterogenous_inflow_config "
+                "Only one of heterogeneous_inflow_config_by_wd and heterogeneous_inflow_config "
                 "can be not None"
             )
 
-        # if heterogenous_inflow_config is not None, then the speed_multipliers
+        # if heterogeneous_inflow_config is not None, then the speed_multipliers
         # must be the same length as wind_directions
         # in the 0th dimension
-        if heterogenous_inflow_config is not None:
-            if len(heterogenous_inflow_config["speed_multipliers"]) != len(wind_directions):
+        if heterogeneous_inflow_config is not None:
+            if len(heterogeneous_inflow_config["speed_multipliers"]) != len(wind_directions):
                 raise ValueError("speed_multipliers must be the same length as wind_directions")
 
-        # Check that heterogenous_inflow_config_by_wd is a dictionary with keys:
+        # Check that heterogeneous_inflow_config_by_wd is a dictionary with keys:
         # speed_multipliers, wind_directions, x and y
-        self.check_heterogenous_inflow_config_by_wd(heterogenous_inflow_config_by_wd)
-        self.check_heterogenous_inflow_config(heterogenous_inflow_config)
+        self.check_heterogeneous_inflow_config_by_wd(heterogeneous_inflow_config_by_wd)
+        self.check_heterogeneous_inflow_config(heterogeneous_inflow_config)
 
         # Then save
-        self.heterogenous_inflow_config_by_wd = heterogenous_inflow_config_by_wd
-        self.heterogenous_inflow_config = heterogenous_inflow_config
+        self.heterogeneous_inflow_config_by_wd = heterogeneous_inflow_config_by_wd
+        self.heterogeneous_inflow_config = heterogeneous_inflow_config
 
         # Record findex
         self.n_findex = len(self.wind_directions)
@@ -1202,14 +1432,14 @@ class TimeSeries(WindDataBase):
         uniform_frequency = np.ones_like(self.wind_directions)
         uniform_frequency = uniform_frequency / uniform_frequency.sum()
 
-        # If heterogenous_inflow_config_by_wd is not None, then update
-        # heterogenous_inflow_config to match wind_directions_unpack
-        if self.heterogenous_inflow_config_by_wd is not None:
-            heterogenous_inflow_config = self.get_heterogenous_inflow_config(
-                self.heterogenous_inflow_config_by_wd, self.wind_directions
+        # If heterogeneous_inflow_config_by_wd is not None, then update
+        # heterogeneous_inflow_config to match wind_directions_unpack
+        if self.heterogeneous_inflow_config_by_wd is not None:
+            heterogeneous_inflow_config = self.get_heterogeneous_inflow_config(
+                self.heterogeneous_inflow_config_by_wd, self.wind_directions
             )
         else:
-            heterogenous_inflow_config = self.heterogenous_inflow_config
+            heterogeneous_inflow_config = self.heterogeneous_inflow_config
 
         return (
             self.wind_directions,
@@ -1217,7 +1447,7 @@ class TimeSeries(WindDataBase):
             self.turbulence_intensities,
             uniform_frequency,
             self.values,
-            heterogenous_inflow_config,
+            heterogeneous_inflow_config,
         )
 
     def _wrap_wind_directions_near_360(self, wind_directions, wd_step):
@@ -1275,6 +1505,74 @@ class TimeSeries(WindDataBase):
             return sigma_1 / wind_speeds
 
         self.assign_ti_using_wd_ws_function(iref_func)
+
+    def assign_value_using_wd_ws_function(self, func, normalize=False):
+        """
+        Use the passed in function to assign new values to the value table.
+
+        Args:
+            func (function): Function which accepts wind_directions as its
+                first argument and wind_speeds as second argument and returns
+                values.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+
+        """
+        self.values = func(self.wind_directions, self.wind_speeds)
+
+        if normalize:
+            self.values /= np.mean(self.values)
+
+    def assign_value_piecewise_linear(
+        self,
+        value_zero_ws=1.425,
+        ws_knee=4.5,
+        slope_1=0.0,
+        slope_2=-0.135,
+        limit_to_zero=False,
+        normalize=False,
+    ):
+        """
+        Define value as a continuous piecewise linear function of wind speed
+        with two line segments. The default parameters yield a value function
+        that approximates the normalized mean electricity price vs. wind speed
+        curve for the SPP market in the U.S. for years 2018-2020 from figure 7
+        in Simley et al. "The value of wake steering wind farm flow control in
+        US energy markets," Wind Energy Science, 2024.
+        https://doi.org/10.5194/wes-9-219-2024. This default value function is
+        constant at low wind speeds, then linearly decreases above 4.5 m/s.
+
+        Args:
+            value_zero_ws (float, optional): The value when wind speed is zero.
+                Defaults to 1.425.
+            ws_knee (float, optional): The wind speed separating line segments
+                1 and 2. Default = 4.5 m/s.
+            slope_1 (float, optional): The slope of the first line segment
+                (unit of value per m/s). Defaults to zero.
+            slope_2 (float, optional): The slope of the second line segment
+            (unit of value per m/s). Defaults to -0.135.
+            limit_to_zero (bool, optional): If True, negative values will be
+                set to zero. Defaults to False.
+            normalize (bool, optional): If True, the value array will be
+                normalized by the mean value. Defaults to False.
+        """
+
+        def piecewise_linear_value_func(wind_directions, wind_speeds):
+            value = np.zeros_like(wind_speeds, dtype=float)
+            value[wind_speeds < ws_knee] = (
+                slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
+            )
+
+            offset_2 = (slope_1 - slope_2) * ws_knee + value_zero_ws
+
+            value[wind_speeds >= ws_knee] = slope_2 * wind_speeds[wind_speeds >= ws_knee] + offset_2
+
+            if limit_to_zero:
+                value[value < 0] = 0.0
+
+            return value
+
+        self.assign_value_using_wd_ws_function(piecewise_linear_value_func, normalize)
 
     def to_WindRose(
         self, wd_step=2.0, ws_step=1.0, wd_edges=None, ws_edges=None, bin_weights=None
@@ -1413,7 +1711,7 @@ class TimeSeries(WindDataBase):
             ti_table,
             freq_table,
             value_table,
-            self.heterogenous_inflow_config_by_wd,
+            self.heterogeneous_inflow_config_by_wd,
         )
 
     def to_WindTIRose(
@@ -1580,5 +1878,5 @@ class TimeSeries(WindDataBase):
             ti_centers,
             freq_table,
             value_table,
-            self.heterogenous_inflow_config_by_wd,
+            self.heterogeneous_inflow_config_by_wd,
         )

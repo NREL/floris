@@ -137,7 +137,6 @@ Z_COORDS = [
 N_TURBINES = len(X_COORDS)
 ROTOR_DIAMETER = 126.0
 TURBINE_GRID_RESOLUTION = 2
-TIME_SERIES = False
 
 
 ## Unit test fixtures
@@ -156,7 +155,6 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         grid_resolution=TURBINE_GRID_RESOLUTION,
-        time_series=TIME_SERIES
     )
 
 @pytest.fixture
@@ -182,7 +180,6 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         grid_resolution=None,
-        time_series=False,
         points_x=points_x,
         points_y=points_y,
         points_z=points_z,
@@ -208,12 +205,17 @@ class SampleInputs:
             "turbine_type": "nrel_5mw",
             "rotor_diameter": 125.88,
             "hub_height": 90.0,
-            "power_thrust_model": "cosine-loss",
+            "operation_model": "cosine-loss",
             "power_thrust_table": {
                 "cosine_loss_exponent_yaw": 1.88,
                 "cosine_loss_exponent_tilt": 1.88,
                 "ref_air_density": 1.225,
                 "ref_tilt": 5.0,
+                "helix_a": 1.802,
+                "helix_power_b": 4.568e-03,
+                "helix_power_c": 1.629e-10,
+                "helix_thrust_b": 1.027e-03,
+                "helix_thrust_c": 1.378e-06,
                 "power": [
                     0.0,
                     0.0,
@@ -491,7 +493,9 @@ class SampleInputs:
                     "breakpoints_D": [10],
                     "sigma_0_D": 0.28,
                     "smoothing_length_D": 2.0,
-                    "mixing_gain_velocity": 2.0
+                    "mixing_gain_velocity": 2.0,
+                    "awc_wake_exp": 1.2,
+                    "awc_wake_denominator": 400
                 },
             },
             "wake_turbulence_parameters": {
@@ -507,6 +511,7 @@ class SampleInputs:
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,
+            "enable_active_wake_mixing": False,
             "enable_transverse_velocities": False,
         }
 
@@ -524,7 +529,7 @@ class SampleInputs:
             },
             "name": "conftest",
             "description": "Inputs used for testing",
-            "floris_version": "v3.0.0",
+            "floris_version": "v4",
         }
 
         self.v3type_turbine = {
@@ -532,7 +537,7 @@ class SampleInputs:
             "rotor_diameter": 125.88,
             "hub_height": 90.0,
             "generator_efficiency": 0.944,
-            "power_thrust_model": "cosine-loss",
+            "operation_model": "cosine-loss",
             "pP": 1.88,
             "pT": 1.88,
             "ref_density_cp_ct": 1.225,
