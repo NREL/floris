@@ -1762,14 +1762,14 @@ class FlorisModel(LoggingManager):
             x_list.extend(fmodel.layout_x)
             y_list.extend(fmodel.layout_y)
 
-            fi_turbine_type = fmodel.floris.farm.turbine_type
+            fi_turbine_type = fmodel.core.farm.turbine_type
             if len(fi_turbine_type) == 1:
                 fi_turbine_type = fi_turbine_type * len(fmodel.layout_x)
             elif not len(fi_turbine_type) == len(fmodel.layout_x):
                 raise UserWarning("Incompatible format of turbine_type in fmodel.")
 
             turbine_type_list.extend(fi_turbine_type)
-            reference_wind_heights.append(fmodel.floris.flow_field.reference_wind_height)
+            reference_wind_heights.append(fmodel.core.flow_field.reference_wind_height)
 
         # Derive reference wind height, if unspecified by the user
         if reference_wind_height is None:
