@@ -86,6 +86,9 @@ class Core(BaseClass):
         self.farm.set_yaw_angles_to_ref_yaw(self.flow_field.n_findex)
         self.farm.set_tilt_to_ref_tilt(self.flow_field.n_findex)
         self.farm.set_power_setpoints_to_ref_power(self.flow_field.n_findex)
+        self.farm.set_awc_modes_to_ref_mode(self.flow_field.n_findex)
+        self.farm.set_awc_amplitudes_to_ref_amp(self.flow_field.n_findex)
+        self.farm.set_awc_frequencies_to_ref_freq(self.flow_field.n_findex)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
@@ -157,6 +160,17 @@ class Core(BaseClass):
                 "The current model does not account for vertical wake deflection due to " +
                 "tilt. Corrections to power and thrust coefficient can be included, but no " +
                 "vertical wake deflection will occur."
+            )
+
+        operation_model_awc = False
+        for td in self.farm.turbine_definitions:
+            if "operation_model" in td and td["operation_model"] == "awc":
+                operation_model_awc = True
+        if vel_model != "empirical_gauss" and operation_model_awc:
+            self.logger.warning(
+                f"The current model `{vel_model}` does not account for additional wake mixing " +
+                "due to active wake control. Corrections to power and thrust coefficient can " +
+                "be included, but no enhanced wake recovery will occur."
             )
 
         if vel_model=="cc":

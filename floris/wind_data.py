@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import inspect
 from abc import abstractmethod
+from pathlib import Path
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -592,7 +594,7 @@ class WindRose(WindDataBase):
         """
 
         def piecewise_linear_value_func(wind_directions, wind_speeds):
-            value = np.zeros_like(wind_speeds)
+            value = np.zeros_like(wind_speeds, dtype=float)
             value[wind_speeds < ws_knee] = (
                 slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
             )
@@ -680,7 +682,13 @@ class WindRose(WindDataBase):
         """
 
         # Read in the CSV file
-        df = pd.read_csv(file_path, sep=sep)
+        try:
+            df = pd.read_csv(file_path, sep=sep)
+        except FileNotFoundError:
+            # If the file cannot be found, then attempt the level above
+            base_fn = Path(inspect.stack()[-1].filename).resolve().parent
+            file_path = base_fn / file_path
+            df = pd.read_csv(file_path, sep=sep)
 
         # Check that ti_col_or_value is a string or a float
         if not isinstance(ti_col_or_value, (str, float)):
@@ -1146,7 +1154,7 @@ class WindTIRose(WindDataBase):
         """
 
         def piecewise_linear_value_func(wind_directions, wind_speeds, turbulence_intensities):
-            value = np.zeros_like(wind_speeds)
+            value = np.zeros_like(wind_speeds, dtype=float)
             value[wind_speeds < ws_knee] = (
                 slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
             )
@@ -1550,7 +1558,7 @@ class TimeSeries(WindDataBase):
         """
 
         def piecewise_linear_value_func(wind_directions, wind_speeds):
-            value = np.zeros_like(wind_speeds)
+            value = np.zeros_like(wind_speeds, dtype=float)
             value[wind_speeds < ws_knee] = (
                 slope_1 * wind_speeds[wind_speeds < ws_knee] + value_zero_ws
             )

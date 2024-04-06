@@ -211,6 +211,11 @@ class SampleInputs:
                 "cosine_loss_exponent_tilt": 1.88,
                 "ref_air_density": 1.225,
                 "ref_tilt": 5.0,
+                "helix_a": 1.802,
+                "helix_power_b": 4.568e-03,
+                "helix_power_c": 1.629e-10,
+                "helix_thrust_b": 1.027e-03,
+                "helix_thrust_c": 1.378e-06,
                 "power": [
                     0.0,
                     0.0,
@@ -488,7 +493,9 @@ class SampleInputs:
                     "breakpoints_D": [10],
                     "sigma_0_D": 0.28,
                     "smoothing_length_D": 2.0,
-                    "mixing_gain_velocity": 2.0
+                    "mixing_gain_velocity": 2.0,
+                    "awc_wake_exp": 1.2,
+                    "awc_wake_denominator": 400
                 },
             },
             "wake_turbulence_parameters": {
@@ -504,6 +511,7 @@ class SampleInputs:
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,
+            "enable_active_wake_mixing": False,
             "enable_transverse_velocities": False,
         }
 
