@@ -958,7 +958,8 @@ class FlorisModel(LoggingManager):
             turbulence_intensities=self.core.flow_field.turbulence_intensities[findex:findex+1],
             yaw_angles=self.core.farm.yaw_angles[findex:findex+1,:],
             power_setpoints=self.core.farm.power_setpoints[findex:findex+1,:],
-            # TODO: add Helix here.
+            awc_modes=self.core.farm.awc_modes[findex:findex+1,:],
+            awc_amplitudes=self.core.farm.awc_amplitudes[findex:findex+1,:],
             solver_settings=solver_settings,
         )
 
@@ -1058,7 +1059,6 @@ class FlorisModel(LoggingManager):
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        # TODO update docstring
         if self.core.flow_field.n_findex > 1 and findex_for_viz is None:
             self.logger.warning(
                 "Multiple findices detected. Using first findex for visualization."
