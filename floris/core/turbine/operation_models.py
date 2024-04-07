@@ -17,8 +17,9 @@ from floris.core import BaseClass
 from floris.core.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
-    rotor_velocity_tilt_correction,
-    rotor_velocity_yaw_correction,
+    rotor_velocity_air_density_correction,
+    rotor_velocity_tilt_cosine_correction,
+    rotor_velocity_yaw_cosine_correction,
 )
 from floris.type_dec import (
     NDArrayFloat,
@@ -29,15 +30,6 @@ from floris.utilities import cosd
 
 POWER_SETPOINT_DEFAULT = 1e12
 POWER_SETPOINT_DISABLED = 0.001
-
-def rotor_velocity_air_density_correction(
-    velocities: NDArrayFloat,
-    air_density: float,
-    ref_air_density: float,
-) -> NDArrayFloat:
-    # Produce equivalent velocities at the reference air density
-    # TODO: This could go on BaseTurbineModel
-    return (air_density/ref_air_density)**(1/3) * velocities
 
 
 @define
@@ -67,6 +59,9 @@ class BaseOperationModel(BaseClass):
     @staticmethod
     @abstractmethod
     def axial_induction() -> None:
+        # TODO: Consider whether we can make a generic axial_induction method
+        # based purely on thrust_coefficient so that we don't need to implement
+        # axial_induciton() in individual operation models.
         raise NotImplementedError("BaseOperationModel.axial_induction")
 
 @define
@@ -78,8 +73,6 @@ class SimpleTurbine(BaseOperationModel):
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively. This class is
     not intended to be instantiated; it simply defines a library of static methods.
-
-    TODO: Should the turbine submodels each implement axial_induction()?
     """
 
     def power(
@@ -174,8 +167,6 @@ class CosineLossTurbine(BaseOperationModel):
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively. This class is
     not intended to be instantiated; it simply defines a library of static methods.
-
-    TODO: Should the turbine submodels each implement axial_induction()?
     """
 
     def power(
@@ -211,13 +202,13 @@ class CosineLossTurbine(BaseOperationModel):
             ref_air_density=power_thrust_table["ref_air_density"]
         )
 
-        rotor_effective_velocities = rotor_velocity_yaw_correction(
+        rotor_effective_velocities = rotor_velocity_yaw_cosine_correction(
             cosine_loss_exponent_yaw=power_thrust_table["cosine_loss_exponent_yaw"],
             yaw_angles=yaw_angles,
             rotor_effective_velocities=rotor_effective_velocities,
         )
 
-        rotor_effective_velocities = rotor_velocity_tilt_correction(
+        rotor_effective_velocities = rotor_velocity_tilt_cosine_correction(
             tilt_angles=tilt_angles,
             ref_tilt=power_thrust_table["ref_tilt"],
             cosine_loss_exponent_tilt=power_thrust_table["cosine_loss_exponent_tilt"],
@@ -531,7 +522,7 @@ class AWCTurbine(BaseOperationModel):
                 + power_thrust_table['helix_power_c']*base_powers
                 )
                 *awc_amplitudes**power_thrust_table['helix_a']
-            ) ## TODO: Should probably add max function here
+            ) # TODO: Should probably add max function here
         if (awc_modes == 'baseline').any():
             return base_powers
         else:

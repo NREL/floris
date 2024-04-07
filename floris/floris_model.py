@@ -576,12 +576,6 @@ class FlorisModel(LoggingManager):
         Returns:
             float: Sum of wind turbine powers in W.
         """
-        # TODO: Turbulence correction used in the power calculation, but may not be in
-        # the model yet
-        # TODO: Turbines need a switch for using turbulence correction
-        # TODO: Uncomment out the following two lines once the above are resolved
-        # for turbine in self.core.farm.turbines:
-        #     turbine.use_turbulence_correction = use_turbulence_correction
         if use_turbulence_correction:
             raise NotImplementedError(
                 "Turbulence correction is not yet implemented in the power calculation."
