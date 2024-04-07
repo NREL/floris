@@ -30,6 +30,7 @@ from floris.type_dec import (
     floris_array_converter,
     NDArrayBool,
     NDArrayFloat,
+    NDArrayStr,
 )
 from floris.utilities import (
     nested_get,
@@ -230,14 +231,20 @@ class FlorisModel(LoggingManager):
         # Create a new instance of floris and attach to self
         self.core = Core.from_dict(floris_dict)
 
-    def _set_operation(
+    def set_operation(
         self,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        awc_modes: NDArrayStr | list[str] | list[str, None] | None = None,
+        awc_amplitudes: NDArrayFloat | list[float] | list[float, None] | None = None,
+        awc_frequencies: NDArrayFloat | list[float] | list[float, None] | None = None,
         disable_turbines: NDArrayBool | list[bool] | None = None,
     ):
         """
         Apply operating setpoints to the floris object.
+
+        This function is not meant to be called directly by most users---users should instead call
+        the set() method.
 
         Args:
             yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles. Defaults
@@ -249,9 +256,19 @@ class FlorisModel(LoggingManager):
         """
         # Add operating conditions to the floris object
         if yaw_angles is not None:
+            if np.array(yaw_angles).shape[1] != self.core.farm.n_turbines:
+                raise ValueError(
+                    f"yaw_angles has a size of {np.array(yaw_angles).shape[1]} in the 1st "
+                    f"dimension, must be equal to n_turbines={self.core.farm.n_turbines}"
+                )
             self.core.farm.set_yaw_angles(yaw_angles)
 
         if power_setpoints is not None:
+            if np.array(power_setpoints).shape[1] != self.core.farm.n_turbines:
+                raise ValueError(
+                    f"power_setpoints has a size of {np.array(power_setpoints).shape[1]} in the 1st"
+                    f" dimension, must be equal to n_turbines={self.core.farm.n_turbines}"
+                )
             power_setpoints = np.array(power_setpoints)
 
             # Convert any None values to the default power setpoint
@@ -261,6 +278,32 @@ class FlorisModel(LoggingManager):
             power_setpoints = floris_array_converter(power_setpoints)
 
             self.core.farm.set_power_setpoints(power_setpoints)
+
+        if awc_modes is None:
+            awc_modes = np.array(
+                [["baseline"]
+                *self.core.farm.n_turbines]
+                *self.core.flow_field.n_findex
+            )
+        self.core.farm.awc_modes = awc_modes
+
+        if awc_amplitudes is None:
+            awc_amplitudes = np.zeros(
+                (
+                    self.core.flow_field.n_findex,
+                    self.core.farm.n_turbines,
+                )
+            )
+        self.core.farm.awc_amplitudes = awc_amplitudes
+
+        if awc_frequencies is None:
+            awc_frequencies = np.zeros(
+                (
+                    self.core.flow_field.n_findex,
+                    self.core.farm.n_turbines,
+                )
+            )
+        self.core.farm.awc_frequencies = awc_frequencies
 
         # Check for turbines to disable
         if disable_turbines is not None:
@@ -289,6 +332,9 @@ class FlorisModel(LoggingManager):
             self.core.farm.yaw_angles[disable_turbines] = 0.0
             self.core.farm.power_setpoints[disable_turbines] = POWER_SETPOINT_DISABLED
 
+        if any([yaw_angles is not None, power_setpoints is not None, disable_turbines is not None]):
+            self.core.state = State.UNINITIALIZED
+
     def set(
         self,
         wind_speeds: list[float] | NDArrayFloat | None = None,
@@ -307,6 +353,9 @@ class FlorisModel(LoggingManager):
         wind_data: type[WindDataBase] | None = None,
         yaw_angles: NDArrayFloat | list[float] | None = None,
         power_setpoints: NDArrayFloat | list[float] | list[float, None] | None = None,
+        awc_modes: NDArrayStr | list[str] | list[str, None] | None = None,
+        awc_amplitudes: NDArrayFloat | list[float] | list[float, None] | None = None,
+        awc_frequencies: NDArrayFloat | list[float] | list[float, None] | None = None,
         disable_turbines: NDArrayBool | list[bool] | None = None,
     ):
         """
@@ -345,6 +394,9 @@ class FlorisModel(LoggingManager):
         # Initialize a new Floris object after saving the setpoints
         _yaw_angles = self.core.farm.yaw_angles
         _power_setpoints = self.core.farm.power_setpoints
+        _awc_modes = self.core.farm.awc_modes
+        _awc_amplitudes = self.core.farm.awc_amplitudes
+        _awc_frequencies = self.core.farm.awc_frequencies
         self._reinitialize(
             wind_speeds=wind_speeds,
             wind_directions=wind_directions,
@@ -371,11 +423,20 @@ class FlorisModel(LoggingManager):
             | (_power_setpoints == POWER_SETPOINT_DISABLED)
         ).all():
             self.core.farm.set_power_setpoints(_power_setpoints)
+        if _awc_modes is not None:
+            self.core.farm.set_awc_modes(_awc_modes)
+        if not (_awc_amplitudes == 0).all():
+            self.core.farm.set_awc_amplitudes(_awc_amplitudes)
+        if not (_awc_frequencies == 0).all():
+            self.core.farm.set_awc_frequencies(_awc_frequencies)
 
         # Set the operation
-        self._set_operation(
+        self.set_operation(
             yaw_angles=yaw_angles,
             power_setpoints=power_setpoints,
+            awc_modes=awc_modes,
+            awc_amplitudes=awc_amplitudes,
+            awc_frequencies=awc_frequencies,
             disable_turbines=disable_turbines,
         )
 
@@ -436,6 +497,8 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            awc_modes = self.core.farm.awc_modes,
+            awc_amplitudes=self.core.farm.awc_amplitudes,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             turbine_type_map=self.core.farm.turbine_type_map,
             turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
@@ -514,12 +577,6 @@ class FlorisModel(LoggingManager):
         Returns:
             float: Sum of wind turbine powers in W.
         """
-        # TODO: Turbulence correction used in the power calculation, but may not be in
-        # the model yet
-        # TODO: Turbines need a switch for using turbulence correction
-        # TODO: Uncomment out the following two lines once the above are resolved
-        # for turbine in self.core.farm.turbines:
-        #     turbine.use_turbulence_correction = use_turbulence_correction
         if use_turbulence_correction:
             raise NotImplementedError(
                 "Turbulence correction is not yet implemented in the power calculation."
@@ -828,11 +885,7 @@ class FlorisModel(LoggingManager):
                 "operation."
             )
 
-        if (
-            values is None
-            and not isinstance(self.wind_data, WindRose)
-            and not isinstance(self.wind_data, WindTIRose)
-        ):
+        if values is None and self.wind_data is None:
             self.logger.warning(
                 "Computing AVP with uniform value equal to 1. Results will be equivalent to "
                 "annual energy production."
@@ -851,6 +904,8 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            awc_modes = self.core.farm.awc_modes,
+            awc_amplitudes=self.core.farm.awc_amplitudes,
             axial_induction_functions=self.core.farm.turbine_axial_induction_functions,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
@@ -869,6 +924,8 @@ class FlorisModel(LoggingManager):
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
+            awc_modes = self.core.farm.awc_modes,
+            awc_amplitudes=self.core.farm.awc_amplitudes,
             thrust_coefficient_functions=self.core.farm.turbine_thrust_coefficient_functions,
             tilt_interps=self.core.farm.turbine_tilt_interps,
             correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
@@ -960,7 +1017,7 @@ class FlorisModel(LoggingManager):
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
-        # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
+        # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
         df = fmodel_viz.get_plane_of_points(
             normal_vector="x",
             planar_coordinate=downstream_dist,

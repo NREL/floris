@@ -13,6 +13,11 @@ power_thrust_table:
   ref_tilt: 6.0
   cosine_loss_exponent_yaw: 1.88
   cosine_loss_exponent_tilt: 1.88
+  helix_a: 1.809
+  helix_power_b: 4.828e-03
+  helix_power_c: 4.017e-11
+  helix_thrust_b: 1.390e-03
+  helix_thrust_c: 5.084e-04
   power:
     - 0.000000
     - 0.000000

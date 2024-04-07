@@ -111,7 +111,7 @@ flow_field:
   reference_wind_height: -1
 
   ###
-  # The level of turbulence intensity level in the wind.
+  # The turbulence intensities to include in the simulation, specified as a decimal.
   turbulence_intensities:
   - 0.06
 
@@ -177,6 +177,10 @@ wake:
   ###
   # Can be "true" or "false".
   enable_yaw_added_recovery: true
+
+  ###
+  # Can be "true" or "false".
+  enable_active_wake_mixing: false
 
   ###
   # Can be "true" or "false".

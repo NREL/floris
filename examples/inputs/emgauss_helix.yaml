@@ -1,7 +1,7 @@
 
-name: Emperical Gaussian floating
-description: Single turbine using emperical Gaussian model for floating
-floris_version: v4
+name: Emperical Gaussian
+description: Three turbines using empirical Gaussian model
+floris_version: v4.0
 
 logging:
   console:
@@ -18,10 +18,14 @@ solver:
 farm:
   layout_x:
   - 0.0
+  - 630.0
+  - 1260.0
   layout_y:
   - 0.0
+  - 0.0
+  - 0.0
   turbine_type:
-  - !include turbine_files/nrel_5MW_floating_fixedtilt15.yaml
+  - iea_15MW
 
 flow_field:
   air_density: 1.225
@@ -43,9 +47,9 @@ wake:
     velocity_model: empirical_gauss
 
   enable_secondary_steering: false
-  enable_yaw_added_recovery: true
+  enable_yaw_added_recovery: false
+  enable_active_wake_mixing: true
   enable_transverse_velocities: false
-  enable_active_wake_mixing: false
 
   wake_deflection_parameters:
     gauss:
@@ -93,6 +97,8 @@ wake:
       sigma_0_D: 0.28
       smoothing_length_D: 2.0
       mixing_gain_velocity: 2.0
+      awc_wake_exp: 1.2
+      awc_wake_denominator: 400
   wake_turbulence_parameters:
     crespo_hernandez:
       initial: 0.1

@@ -22,7 +22,6 @@ from floris.optimization.layout_optimization.layout_optimization_scipy import (
 
 
 # Initialize FLORIS
-file_dir = os.path.dirname(os.path.abspath(__file__))
 fmodel = FlorisModel("../inputs/gch.yaml")
 
 # Setup 2 wind directions (due east and due west)
