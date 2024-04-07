@@ -257,7 +257,7 @@ def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta_y, delta_z, z, HH, Ct,
 
 def sigmoid_integral(x, center=0, width=1):
     y = np.zeros_like(x)
-    #TODO: Can this be made faster?
+    # TODO: Can this be made faster?
     above_smoothing_zone = (x-center) > width/2
     y[above_smoothing_zone] = (x-center)[above_smoothing_zone]
     in_smoothing_zone = ((x-center) >= -width/2) & ((x-center) <= width/2)
@@ -293,7 +293,7 @@ def awc_added_wake_mixing(
     awc_wake_denominator
 ):
 
-    ## TODO: Add TI in the mix, finetune amplitude/freq effect
+    # TODO: Add TI in the mix, finetune amplitude/freq effect
     if (awc_mode_i == "helix").any():
         return awc_amplitude_i[:,:,0,0]**awc_wake_exp/awc_wake_denominator
     elif (awc_mode_i == "baseline").any():

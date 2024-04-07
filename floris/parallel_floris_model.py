@@ -263,7 +263,7 @@ class ParallelFlorisModel(LoggingManager):
 
         return turbine_powers
 
-    def run(self): # TODO: Remove or update this function?
+    def run(self):
         raise UserWarning(
             "'run' not supported on ParallelFlorisModel. Please use "
             "'get_turbine_powers' or 'get_farm_power' directly."

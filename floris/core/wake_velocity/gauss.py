@@ -120,7 +120,7 @@ class GaussVelocityDeficit(BaseModel):
             # Another linear ramp, but positive upstream of the far wake and negative in the
             # far wake; 0 at the start of the far wake
             near_wake_ramp_down = (x0 - x) / (x0 - xR)
-            # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # TODO: this is equivalent, right?
+            # near_wake_ramp_down = -1 * (near_wake_ramp_up - 1)  # : this is equivalent, right?
 
             sigma_y = near_wake_ramp_down * 0.501 * rotor_diameter_i * np.sqrt(ct_i / 2.0)
             sigma_y += near_wake_ramp_up * sigma_y0

@@ -60,12 +60,6 @@ def test_turbine_init():
     assert turbine.rotor_radius == turbine.rotor_diameter / 2.0
     assert turbine.rotor_area == np.pi * turbine.rotor_radius ** 2.0
 
-    # TODO: test these explicitly.
-    # Test create a simpler interpolator and test that you get the values you expect
-    # fCt_interp: interp1d = field(init=False)
-    # power_function: interp1d = field(init=False)
-    # tilt_interp: interp1d = field(init=False, default=None)
-
     assert callable(turbine.thrust_coefficient_function)
     assert callable(turbine.power_function)
 
