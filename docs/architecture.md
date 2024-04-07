@@ -32,12 +32,12 @@ packages. The internal structure and hierarchy is described below.
 ```{mermaid}
 classDiagram
 
-    class simulation["floris.simulation"] {
-        +Floris
+    class core["floris.core"] {
+        +Core
     }
 
-    class tools["floris.tools"] {
-        +FlorisInterface
+    class floris["floris"] {
+        +FlorisModel
     }
 
     class logging_manager
@@ -51,25 +51,25 @@ classDiagram
     tools <-- simulation
 ```
 
-## floris.tools
+## floris
 
-This is the user interface. Most operations at the user level will happen through `floris.tools`.
+This is the user interface. Most operations at the user level will happen through `floris`.
 This package contains a wide variety of functionality including but not limited to:
 
-- Initializing and driving a simulation with `tools.floris_interface`
-- Wake field visualization through `tools.visualization`
-- Yaw and layout optimization in `tools.optimization`
-- Parallelizing work load with `tools.parallel_floris_model`
+- Initializing and driving a simulation with `floris_model`
+- Wake field visualization through `flow_visualization`
+- Yaw and layout optimization in `optimization`
+- Wind data handling in `wind_data`
 
-## floris.simulation
+## floris.core
 
-This is the core simulation package. This should primarily be used within `floris.simulation` and
-`floris.tools`, and user scripts generally won't interact directly with this package.
+This is the core simulation package. This should primarily be used within `floris.core` and
+`floris`, and user scripts generally won't interact directly with this package.
 
 ```{mermaid}
 classDiagram
 
-    class Floris
+    class Core
 
     class Farm
 
@@ -115,11 +115,11 @@ classDiagram
         parameters: dict
     }
 
-    Floris *-- Farm
-    Floris *-- FlowField
-    Floris *-- Grid
-    Floris *-- WakeModelManager
-    Floris --> Solver
+    Core *-- Farm
+    Core *-- FlowField
+    Core *-- Grid
+    Core *-- WakeModelManager
+    Core --> Solver
     WakeModelManager *-- WakeCombination
     WakeModelManager *-- WakeDeflection
     WakeModelManager *-- WakeTurbulence
