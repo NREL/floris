@@ -81,7 +81,6 @@ class LayoutOptimization(LoggingManager):
                 minimum_yaw_angle=-30.0,
                 maximum_yaw_angle=30.0,
             )
-            # TODO: is this being used?
         fmodel.run()
 
         if self.use_value:
