@@ -67,6 +67,9 @@ class BaseOperationModel(BaseClass):
     @staticmethod
     @abstractmethod
     def axial_induction() -> None:
+        # TODO: Consider whether we can make a generic axial_induction method
+        # based purely on thrust_coefficient so that we don't need to implement
+        # axial_induciton() in individual operation models.
         raise NotImplementedError("BaseOperationModel.axial_induction")
 
 @define
@@ -78,8 +81,6 @@ class SimpleTurbine(BaseOperationModel):
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively. This class is
     not intended to be instantiated; it simply defines a library of static methods.
-
-    TODO: Should the turbine submodels each implement axial_induction()?
     """
 
     def power(
@@ -174,8 +175,6 @@ class CosineLossTurbine(BaseOperationModel):
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively. This class is
     not intended to be instantiated; it simply defines a library of static methods.
-
-    TODO: Should the turbine submodels each implement axial_induction()?
     """
 
     def power(
@@ -531,7 +530,7 @@ class AWCTurbine(BaseOperationModel):
                 + power_thrust_table['helix_power_c']*base_powers
                 )
                 *awc_amplitudes**power_thrust_table['helix_a']
-            ) ## TODO: Should probably add max function here
+            ) # TODO: Should probably add max function here
         if (awc_modes == 'baseline').any():
             return base_powers
         else:
