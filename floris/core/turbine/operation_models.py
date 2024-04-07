@@ -18,8 +18,8 @@ from floris.core.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
     rotor_velocity_air_density_correction,
-    rotor_velocity_tilt_correction,
-    rotor_velocity_yaw_correction,
+    rotor_velocity_tilt_cosine_correction,
+    rotor_velocity_yaw_cosine_correction,
 )
 from floris.type_dec import (
     NDArrayFloat,
@@ -202,13 +202,13 @@ class CosineLossTurbine(BaseOperationModel):
             ref_air_density=power_thrust_table["ref_air_density"]
         )
 
-        rotor_effective_velocities = rotor_velocity_yaw_correction(
+        rotor_effective_velocities = rotor_velocity_yaw_cosine_correction(
             cosine_loss_exponent_yaw=power_thrust_table["cosine_loss_exponent_yaw"],
             yaw_angles=yaw_angles,
             rotor_effective_velocities=rotor_effective_velocities,
         )
 
-        rotor_effective_velocities = rotor_velocity_tilt_correction(
+        rotor_effective_velocities = rotor_velocity_tilt_cosine_correction(
             tilt_angles=tilt_angles,
             ref_tilt=power_thrust_table["ref_tilt"],
             cosine_loss_exponent_tilt=power_thrust_table["cosine_loss_exponent_tilt"],
