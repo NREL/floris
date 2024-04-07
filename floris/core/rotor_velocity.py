@@ -232,3 +232,12 @@ def rotor_effective_velocity(
     )
 
     return rotor_effective_velocities
+
+def rotor_velocity_air_density_correction(
+    velocities: NDArrayFloat,
+    air_density: float,
+    ref_air_density: float,
+) -> NDArrayFloat:
+    # Produce equivalent velocities at the reference air density
+
+    return (air_density/ref_air_density)**(1/3) * velocities

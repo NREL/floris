@@ -17,6 +17,7 @@ from floris.core import BaseClass
 from floris.core.rotor_velocity import (
     average_velocity,
     compute_tilt_angles_for_floating_turbines,
+    rotor_velocity_air_density_correction,
     rotor_velocity_tilt_correction,
     rotor_velocity_yaw_correction,
 )
@@ -29,15 +30,6 @@ from floris.utilities import cosd
 
 POWER_SETPOINT_DEFAULT = 1e12
 POWER_SETPOINT_DISABLED = 0.001
-
-def rotor_velocity_air_density_correction(
-    velocities: NDArrayFloat,
-    air_density: float,
-    ref_air_density: float,
-) -> NDArrayFloat:
-    # Produce equivalent velocities at the reference air density
-    # TODO: This could go on BaseTurbineModel
-    return (air_density/ref_air_density)**(1/3) * velocities
 
 
 @define
