@@ -1170,25 +1170,6 @@ class FlorisModel(LoggingManager):
 
         return y_plane
 
-    def check_wind_condition_for_viz(self, wd, ws, ti):
-        if len(wd) > 1 or len(wd) < 1:
-            raise ValueError(
-                "Wind direction input must be of length 1 for visualization. "
-                f"Current length is {len(wd)}."
-            )
-
-        if len(ws) > 1 or len(ws) < 1:
-            raise ValueError(
-                "Wind speed input must be of length 1 for visualization. "
-                f"Current length is {len(ws)}."
-            )
-
-        if len(ti) != 1:
-            raise ValueError(
-                "Turbulence intensity input must be of length 1 for visualization. "
-                f"Current length is {len(ti)}."
-            )
-
     def get_plane_of_points(
         self,
         normal_vector="z",
