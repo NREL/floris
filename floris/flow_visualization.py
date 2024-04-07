@@ -477,12 +477,7 @@ def calculate_horizontal_plane_with_turbines(
     y_resolution=200,
     x_bounds=None,
     y_bounds=None,
-    wd=None,
-    ws=None,
-    ti=None,
-    yaw_angles=None,
-    power_setpoints=None,
-    disable_turbines=None,
+    findex_for_viz=None,
 ) -> CutPlane:
         """
         This function creates a :py:class:`~.tools.cut_plane.CutPlane` by
@@ -504,39 +499,29 @@ def calculate_horizontal_plane_with_turbines(
             y_resolution (float, optional): Output array resolution. Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
-            wd (float, optional): Wind direction setting. Defaults to None.
-            ws (float, optional): Wind speed setting. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
-            yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.
-            power_setpoints (np.ndarray, optional): Power setpoints settings. Defaults to None.
-            disable_turbines (np.ndarray, optional): Disable turbines settings. Defaults to None.
+            finder_for_viz (int, optional): Index of the condition to visualize.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w
         """
+        if fmodel.core.flow_field.n_findex > 1 and findex_for_viz is None:
+            print(
+                "Multiple findices detected. Using first findex for visualization."
+            )
+        if findex_for_viz is None:
+            findex_for_viz = 0
 
         # Make a local copy of fmodel to avoid editing passed in fmodel
         fmodel_viz = copy.deepcopy(fmodel)
 
-        # If wd/ws not provided, use what is set in fmodel
-        if wd is None:
-            wd = fmodel_viz.core.flow_field.wind_directions
-        if ws is None:
-            ws = fmodel_viz.core.flow_field.wind_speeds
-        if ti is None:
-            ti = fmodel_viz.core.flow_field.turbulence_intensities
-        fmodel_viz.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
-
         # Set the ws and wd
-        fmodel_viz.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            disable_turbines=disable_turbines
-        )
+        fmodel_viz.set_for_viz(findex_for_viz, None)
+
         yaw_angles = fmodel_viz.core.farm.yaw_angles
         power_setpoints = fmodel_viz.core.farm.power_setpoints
+        awc_modes = fmodel_viz.core.farm.awc_modes
+        awc_amplitudes = fmodel_viz.core.farm.awc_amplitudes
+        awc_frequencies = fmodel_viz.core.farm.awc_frequencies
 
         # Grab the turbine layout
         layout_x = copy.deepcopy(fmodel_viz.layout_x)
@@ -562,6 +547,21 @@ def calculate_horizontal_plane_with_turbines(
         power_setpoints = np.append(
             power_setpoints,
             POWER_SETPOINT_DEFAULT * np.ones([fmodel_viz.core.flow_field.n_findex, 1]),
+            axis=1
+        )
+        awc_modes = np.append(
+            awc_modes,
+            np.full((fmodel_viz.core.flow_field.n_findex, 1), "baseline"),
+            axis=1
+        )
+        awc_amplitudes = np.append(
+            awc_amplitudes,
+            np.zeros([fmodel_viz.core.flow_field.n_findex, 1]),
+            axis=1
+        )
+        awc_frequencies = np.append(
+            awc_frequencies,
+            np.zeros([fmodel_viz.core.flow_field.n_findex, 1]),
             axis=1
         )
 
@@ -600,7 +600,9 @@ def calculate_horizontal_plane_with_turbines(
                     layout_y=layout_y_test,
                     yaw_angles=yaw_angles,
                     power_setpoints=power_setpoints,
-                    disable_turbines=disable_turbines,
+                    awc_modes=awc_modes,
+                    awc_amplitudes=awc_amplitudes,
+                    awc_frequencies=awc_frequencies,
                     turbine_type=turbine_types_test
                 )
                 fmodel_viz.run()
