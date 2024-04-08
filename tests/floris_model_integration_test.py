@@ -475,7 +475,7 @@ def test_set_ti():
     with pytest.raises(TypeError):
         fmodel.set(turbulence_intensities=0.12)
 
-def test_calculate_planes():
+def test_calculate_planes(caplog):
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
     # The calculate_plane functions should run directly with the inputs as given
@@ -483,42 +483,37 @@ def test_calculate_planes():
     fmodel.calculate_y_plane(0.0)
     fmodel.calculate_cross_plane(500.0)
 
-    # They should also support setting new wind conditions, but they all have to set at once
-    wind_speeds = [8.0, 8.0, 8.0]
-    wind_directions = [270.0, 270.0, 270.0]
-    turbulence_intensities = [0.1, 0.1, 0.1]
+    # No longer support setting new wind conditions, must be done with set()
+    fmodel.set(
+        wind_speeds = [8.0, 8.0, 8.0],
+        wind_directions = [270.0, 270.0, 270.0],
+        turbulence_intensities = [0.1, 0.1, 0.1],
+    )
     fmodel.calculate_horizontal_plane(
         90.0,
-        ws=[wind_speeds[0]],
-        wd=[wind_directions[0]],
-        ti=[turbulence_intensities[0]]
+        findex_for_viz=1
     )
     fmodel.calculate_y_plane(
         0.0,
-        ws=[wind_speeds[0]],
-        wd=[wind_directions[0]],
-        ti=[turbulence_intensities[0]]
+        findex_for_viz=1
     )
     fmodel.calculate_cross_plane(
         500.0,
-        ws=[wind_speeds[0]],
-        wd=[wind_directions[0]],
-        ti=[turbulence_intensities[0]]
+        findex_for_viz=1
     )
 
-    # If Floris is configured with multiple wind conditions prior to this, then all of the
-    # components must be changed together.
-    fmodel.set(
-        wind_speeds=wind_speeds,
-        wind_directions=wind_directions,
-        turbulence_intensities=turbulence_intensities
-    )
-    with pytest.raises(ValueError):
-        fmodel.calculate_horizontal_plane(90.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
-    with pytest.raises(ValueError):
-        fmodel.calculate_y_plane(0.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
-    with pytest.raises(ValueError):
-        fmodel.calculate_cross_plane(500.0, ws=[wind_speeds[0]], wd=[wind_directions[0]])
+    # Without specifying findex_for_viz should raise a logger warning.
+    with caplog.at_level(logging.WARNING):
+        fmodel.calculate_horizontal_plane(90.0)
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.calculate_y_plane(0.0)
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.calculate_cross_plane(500.0)
+    assert caplog.text != "" # Checking not empty
 
 def test_get_turbine_powers_with_WindRose():
     fmodel = FlorisModel(configuration=YAML_INPUT)

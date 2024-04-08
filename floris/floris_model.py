@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 
+import copy
 import inspect
 from pathlib import Path
 from typing import (
@@ -942,6 +943,25 @@ class FlorisModel(LoggingManager):
 
     ### Methods for sampling and visualization
 
+    def set_for_viz(self, findex: int, solver_settings: dict) -> None:
+        """
+        Set the floris object to a single findex for visualization.
+
+        Args:
+            findex (int): The findex to set the floris object to.
+            solver_settings (dict): The solver settings to use for visualization.
+        """
+        self.set(
+            wind_speeds=self.wind_speeds[findex:findex+1],
+            wind_directions=self.wind_directions[findex:findex+1],
+            turbulence_intensities=self.turbulence_intensities[findex:findex+1],
+            yaw_angles=self.core.farm.yaw_angles[findex:findex+1,:],
+            power_setpoints=self.core.farm.power_setpoints[findex:findex+1,:],
+            awc_modes=self.core.farm.awc_modes[findex:findex+1,:],
+            awc_amplitudes=self.core.farm.awc_amplitudes[findex:findex+1,:],
+            solver_settings=solver_settings,
+        )
+
     def calculate_cross_plane(
         self,
         downstream_dist,
@@ -949,15 +969,7 @@ class FlorisModel(LoggingManager):
         z_resolution=200,
         y_bounds=None,
         z_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
-        yaw_angles=None,
-        power_setpoints=None,
-        awc_modes=None,
-        awc_amplitudes=None,
-        awc_frequencies=None,
-        disable_turbines=None,
+        findex_for_viz=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -965,31 +977,29 @@ class FlorisModel(LoggingManager):
         the simulation domain at a specific height.
 
         Args:
-            height (float): Height of cut plane. Defaults to Hub-height.
-            x_resolution (float, optional): Output array resolution.
-                Defaults to 200 points.
+            downstream_dist (float): Distance downstream of turbines to compute.
             y_resolution (float, optional): Output array resolution.
                 Defaults to 200 points.
-            x_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
+            z_resolution (float, optional): Output array resolution.
+                Defaults to 200 points.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-
+            z_bounds (tuple, optional): Limits of output array (in m).
+                Defaults to None.
+            finder_for_viz (int, optional): Index of the condition to visualize.
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+        if self.n_findex > 1 and findex_for_viz is None:
+            self.logger.warning(
+                "Multiple findices detected. Using first findex for visualization."
+            )
+        if findex_for_viz is None:
+            findex_for_viz = 0
 
         # Store the current state for reinitialization
-        floris_dict = self.core.as_dict()
+        fmodel_viz = copy.deepcopy(self)
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -999,38 +1009,21 @@ class FlorisModel(LoggingManager):
             "flow_field_grid_points": [y_resolution, z_resolution],
             "flow_field_bounds": [y_bounds, z_bounds],
         }
-        self.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            awc_modes=awc_modes,
-            awc_amplitudes=awc_amplitudes,
-            awc_frequencies=awc_frequencies,
-            disable_turbines=disable_turbines,
-        )
+        fmodel_viz.set_for_viz(findex_for_viz, solver_settings)
 
         # Calculate wake
-        self.core.solve_for_viz()
+        fmodel_viz.core.solve_for_viz()
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
         # It seems the biggest dependency is on CutPlane and the subsequent visualization tools.
-        df = self.get_plane_of_points(
+        df = fmodel_viz.get_plane_of_points(
             normal_vector="x",
             planar_coordinate=downstream_dist,
         )
 
         # Compute the cutplane
         cross_plane = CutPlane(df, y_resolution, z_resolution, "x")
-
-        # Reset the fmodel object back to the turbine grid configuration
-        self.core = Core.from_dict(floris_dict)
-
-        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.run()
 
         return cross_plane
 
@@ -1041,15 +1034,7 @@ class FlorisModel(LoggingManager):
         y_resolution=200,
         x_bounds=None,
         y_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
-        yaw_angles=None,
-        power_setpoints=None,
-        awc_modes=None,
-        awc_amplitudes=None,
-        awc_frequencies=None,
-        disable_turbines=None,
+        findex_for_viz=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -1066,31 +1051,22 @@ class FlorisModel(LoggingManager):
                 Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            wd (float, optional): Wind direction. Defaults to None.
-            ws (float, optional): Wind speed. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
-            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
-                to None.
-            power_setpoints (NDArrayFloat, optional):
-                Turbine power setpoints. Defaults to None.
-            disable_turbines (NDArrayBool, optional): Boolean array on whether
-                to disable turbines. Defaults to None.
+            finder_for_viz (int, optional): Index of the condition to visualize.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+        if self.n_findex > 1 and findex_for_viz is None:
+            self.logger.warning(
+                "Multiple findices detected. Using first findex for visualization."
+            )
+        if findex_for_viz is None:
+            findex_for_viz = 0
 
         # Store the current state for reinitialization
-        floris_dict = self.core.as_dict()
+        fmodel_viz = copy.deepcopy(self)
+
         # Set the solver to a flow field planar grid
         solver_settings = {
             "type": "flow_field_planar_grid",
@@ -1099,26 +1075,15 @@ class FlorisModel(LoggingManager):
             "flow_field_grid_points": [x_resolution, y_resolution],
             "flow_field_bounds": [x_bounds, y_bounds],
         }
-        self.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            awc_modes=awc_modes,
-            awc_amplitudes=awc_amplitudes,
-            awc_frequencies=awc_frequencies,
-            disable_turbines=disable_turbines,
-        )
+        fmodel_viz.set_for_viz(findex_for_viz, solver_settings)
 
         # Calculate wake
-        self.core.solve_for_viz()
+        fmodel_viz.core.solve_for_viz()
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
         # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
-        df = self.get_plane_of_points(
+        df = fmodel_viz.get_plane_of_points(
             normal_vector="z",
             planar_coordinate=height,
         )
@@ -1126,16 +1091,10 @@ class FlorisModel(LoggingManager):
         # Compute the cutplane
         horizontal_plane = CutPlane(
             df,
-            self.core.grid.grid_resolution[0],
-            self.core.grid.grid_resolution[1],
+            fmodel_viz.core.grid.grid_resolution[0],
+            fmodel_viz.core.grid.grid_resolution[1],
             "z",
         )
-
-        # Reset the fmodel object back to the turbine grid configuration
-        self.core = Core.from_dict(floris_dict)
-
-        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.run()
 
         return horizontal_plane
 
@@ -1146,15 +1105,7 @@ class FlorisModel(LoggingManager):
         z_resolution=200,
         x_bounds=None,
         z_bounds=None,
-        wd=None,
-        ws=None,
-        ti=None,
-        yaw_angles=None,
-        power_setpoints=None,
-        awc_modes=None,
-        awc_amplitudes=None,
-        awc_frequencies=None,
-        disable_turbines=None,
+        findex_for_viz=None,
     ):
         """
         Shortcut method to instantiate a :py:class:`~.tools.cut_plane.CutPlane`
@@ -1165,41 +1116,28 @@ class FlorisModel(LoggingManager):
             height (float): Height of cut plane. Defaults to Hub-height.
             x_resolution (float, optional): Output array resolution.
                 Defaults to 200 points.
-            y_resolution (float, optional): Output array resolution.
+            z_resolution (float, optional): Output array resolution.
                 Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            y_bounds (tuple, optional): Limits of output array (in m).
-                Defaults to None.
             z_bounds (tuple, optional): Limits of output array (in m).
                 Defaults to None.
-            wd (float, optional): Wind direction. Defaults to None.
-            ws (float, optional): Wind speed. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
-            yaw_angles (NDArrayFloat, optional): Turbine yaw angles. Defaults
-                to None.
-            power_setpoints (NDArrayFloat, optional):
-                Turbine power setpoints. Defaults to None.
-            disable_turbines (NDArrayBool, optional): Boolean array on whether
-                to disable turbines. Defaults to None.
-
-
+            findex_for_viz (int, optional): Index of the condition to visualize.
+                Defaults to 0.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        # TODO update docstring
-        if wd is None:
-            wd = self.core.flow_field.wind_directions
-        if ws is None:
-            ws = self.core.flow_field.wind_speeds
-        if ti is None:
-            ti = self.core.flow_field.turbulence_intensities
-        self.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+        if self.n_findex > 1 and findex_for_viz is None:
+            self.logger.warning(
+                "Multiple findices detected. Using first findex for visualization."
+            )
+        if findex_for_viz is None:
+            findex_for_viz = 0
 
         # Store the current state for reinitialization
-        floris_dict = self.core.as_dict()
+        fmodel_viz = copy.deepcopy(self)
 
         # Set the solver to a flow field planar grid
         solver_settings = {
@@ -1209,26 +1147,15 @@ class FlorisModel(LoggingManager):
             "flow_field_grid_points": [x_resolution, z_resolution],
             "flow_field_bounds": [x_bounds, z_bounds],
         }
-        self.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            turbulence_intensities=ti,
-            solver_settings=solver_settings,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            awc_modes=awc_modes,
-            awc_amplitudes=awc_amplitudes,
-            awc_frequencies=awc_frequencies,
-            disable_turbines=disable_turbines,
-        )
+        fmodel_viz.set_for_viz(findex_for_viz, solver_settings)
 
         # Calculate wake
-        self.core.solve_for_viz()
+        fmodel_viz.core.solve_for_viz()
 
         # Get the points of data in a dataframe
         # TODO this just seems to be flattening and storing the data in a df; is this necessary?
         # It seems the biggest depenedcy is on CutPlane and the subsequent visualization tools.
-        df = self.get_plane_of_points(
+        df = fmodel_viz.get_plane_of_points(
             normal_vector="y",
             planar_coordinate=crossstream_dist,
         )
@@ -1236,32 +1163,7 @@ class FlorisModel(LoggingManager):
         # Compute the cutplane
         y_plane = CutPlane(df, x_resolution, z_resolution, "y")
 
-        # Reset the fmodel object back to the turbine grid configuration
-        self.core = Core.from_dict(floris_dict)
-
-        # Run the simulation again for futher postprocessing (i.e. now we can get farm power)
-        self.run()
-
         return y_plane
-
-    def check_wind_condition_for_viz(self, wd=None, ws=None, ti=None):
-        if len(wd) > 1 or len(wd) < 1:
-            raise ValueError(
-                "Wind direction input must be of length 1 for visualization. "
-                f"Current length is {len(wd)}."
-            )
-
-        if len(ws) > 1 or len(ws) < 1:
-            raise ValueError(
-                "Wind speed input must be of length 1 for visualization. "
-                f"Current length is {len(ws)}."
-            )
-
-        if len(ti) != 1:
-            raise ValueError(
-                "Turbulence intensity input must be of length 1 for visualization. "
-                f"Current length is {len(ti)}."
-            )
 
     def get_plane_of_points(
         self,

@@ -41,31 +41,23 @@ horizontal_plane = fmodel.calculate_horizontal_plane(
     x_resolution=200,
     y_resolution=100,
     height=150.0,
-    awc_modes=awc_modes,
-    awc_amplitudes=awc_amplitudes
 )
 
 y_plane_baseline = fmodel.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
     crossstream_dist=0.0,
-    awc_modes=awc_modes,
-    awc_amplitudes=awc_amplitudes
 )
 y_plane_helix = fmodel.calculate_y_plane(
     x_resolution=200,
     z_resolution=100,
     crossstream_dist=-3*D,
-    awc_modes=awc_modes,
-    awc_amplitudes=awc_amplitudes
 )
 
 cross_plane = fmodel.calculate_cross_plane(
     y_resolution=100,
     z_resolution=100,
     downstream_dist=720.0,
-    awc_modes=awc_modes,
-    awc_amplitudes=awc_amplitudes
 )
 
 # Create the plots
