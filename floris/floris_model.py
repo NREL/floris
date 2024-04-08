@@ -951,11 +951,10 @@ class FlorisModel(LoggingManager):
             findex (int): The findex to set the floris object to.
             solver_settings (dict): The solver settings to use for visualization.
         """
-        # TODO: can get from properties once #843 is merged
         self.set(
-            wind_speeds=self.core.flow_field.wind_speeds[findex:findex+1],
-            wind_directions=self.core.flow_field.wind_directions[findex:findex+1],
-            turbulence_intensities=self.core.flow_field.turbulence_intensities[findex:findex+1],
+            wind_speeds=self.wind_speeds[findex:findex+1],
+            wind_directions=self.wind_directions[findex:findex+1],
+            turbulence_intensities=self.turbulence_intensities[findex:findex+1],
             yaw_angles=self.core.farm.yaw_angles[findex:findex+1,:],
             power_setpoints=self.core.farm.power_setpoints[findex:findex+1,:],
             awc_modes=self.core.farm.awc_modes[findex:findex+1,:],
@@ -992,8 +991,7 @@ class FlorisModel(LoggingManager):
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        # TODO update docstring
-        if self.core.flow_field.n_findex > 1 and findex_for_viz is None:
+        if self.n_findex > 1 and findex_for_viz is None:
             self.logger.warning(
                 "Multiple findices detected. Using first findex for visualization."
             )
@@ -1059,7 +1057,7 @@ class FlorisModel(LoggingManager):
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        if self.core.flow_field.n_findex > 1 and findex_for_viz is None:
+        if self.n_findex > 1 and findex_for_viz is None:
             self.logger.warning(
                 "Multiple findices detected. Using first findex for visualization."
             )
@@ -1131,10 +1129,7 @@ class FlorisModel(LoggingManager):
             :py:class:`~.tools.cut_plane.CutPlane`: containing values
             of x, y, u, v, w
         """
-        # TODO update docstring
-        # TODO: can get from properties once #843 is merged. Do the same on
-        # other calculate_xx_plane methods
-        if self.core.flow_field.n_findex > 1 and findex_for_viz is None:
+        if self.n_findex > 1 and findex_for_viz is None:
             self.logger.warning(
                 "Multiple findices detected. Using first findex for visualization."
             )

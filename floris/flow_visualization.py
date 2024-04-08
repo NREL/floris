@@ -499,7 +499,7 @@ def calculate_horizontal_plane_with_turbines(
             y_resolution (float, optional): Output array resolution. Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
-            finder_for_viz (int, optional): Index of the condition to visualize.
+            findex_for_viz (int, optional): Index of the condition to visualize.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w
