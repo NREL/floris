@@ -366,10 +366,16 @@ class WindRose(WindDataBase):
 
         Args:
             wd_step: Step size for wind direction resampling (float, optional).
-            ws_step: Step size for wind speed resampling (float, optional).
+                If None, the current step size will be used. Defaults to None.
+            ws_step: Step size for wind speed resampling (float, optional). If
+                None, the current step size will be used. Defaults to None.
+            inplace: Flag indicating whether to update the current WindRose
+                object when True or return a new WindRose object when False
+                (bool, optional). Defaults to False.
 
         Returns:
-            WindRose: Resampled wind rose based on the provided or default step sizes.
+            WindRose: Resampled wind rose based on the provided or default step
+                sizes. Only returned if inplace = False.
 
         Notes:
             - Returns a resampled version of the wind rose using new `ws_step` and `wd_step`.
@@ -436,12 +442,18 @@ class WindRose(WindDataBase):
 
         Args:
             wd_step: Step size for wind direction resampling (float, optional).
+                If None, the current step size will be used. Defaults to None.
             ws_step: Step size for wind speed resampling (float, optional).
-            method: Interpolation method to use.  Can be either 'linear' or 'nearest'.
-            inplace: Flag indicating whether to update the current WindRose object.
+                If None, the current step size will be used. Defaults to None.
+            method: Interpolation method to use (str, optional).  Can be either
+                'linear' or 'nearest'. Defaults to "linear".
+            inplace: Flag indicating whether to update the current WindRose
+                object when True or return a new WindRose object when False
+                (bool, optional). Defaults to False.
 
         Returns:
-            WindRose: Resampled wind rose based on the provided or default step sizes.
+            WindRose: Resampled wind rose based on the provided or default step
+                sizes. Only returned if inplace = False.
 
         """
         if method == "linear":
@@ -551,8 +563,10 @@ class WindRose(WindDataBase):
             ax (:py:class:`matplotlib.pyplot.axes`, optional): The figure axes
                 on which the wind rose is plotted. Defaults to None.
             color_map (str, optional): Colormap to use. Defaults to 'viridis_r'.
-            wd_step: Step size for wind direction  (float, optional).
-            ws_step: Step size for wind speed  (float, optional).
+            wd_step: Step size for wind direction (float, optional). If None,
+                the current step size will be used. Defaults to None.
+            ws_step: Step size for wind speed (float, optional).
+                the current step size will be used. Defaults to None.
             legend_kwargs (dict, optional): Keyword arguments to be passed to
                 ax.legend(). Defaults to {"title": "Wind speed [m/s]"}.
 
