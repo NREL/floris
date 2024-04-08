@@ -1716,3 +1716,72 @@ class FlorisModel(LoggingManager):
             "The reinitialize method has been removed. Please use the set method. "
             "See https://nrel.github.io/floris/v3_to_v4.html for more information."
         )
+
+
+    @staticmethod
+    def merge_floris_models(fmodel_list, reference_wind_height=None):
+        """Merge a list of FlorisModel objects into a single FlorisModel object. Note that it uses
+        the very first object specified in fmodel_list to build upon,
+        so it uses those wake model parameters, air density, and so on.
+
+        Args:
+            fmodel_list (list): Array-like of FlorisModel objects.
+            reference_wind_height (float, optional): Height in meters
+                at which the reference wind speed is assigned. If None, will assume
+                this value is equal to the reference wind height specified in the FlorisModel
+                objects. This only works if all objects have the same value
+                for their reference_wind_height.
+
+        Returns:
+            fmodel_merged (FlorisModel): The merged FlorisModel object,
+                merged in the same order as fmodel_list. The objects are merged
+                on the turbine locations and turbine types, but not on the wake parameters
+                or general solver settings.
+        """
+
+        if not isinstance(fmodel_list[0], FlorisModel):
+            raise ValueError(
+                "Incompatible input specified. fmodel_list must be a list of FlorisModel objects."
+            )
+
+        # Get the turbine locations and specifications for each subset and save as a list
+        x_list = []
+        y_list = []
+        turbine_type_list = []
+        reference_wind_heights = []
+        for fmodel in fmodel_list:
+            # Remove any control setpoints that might be specified for the turbines on one fmodel
+            fmodel.reset_operation()
+
+            x_list.extend(fmodel.layout_x)
+            y_list.extend(fmodel.layout_y)
+
+            fmodel_turbine_type = fmodel.core.farm.turbine_type
+            if len(fmodel_turbine_type) == 1:
+                fmodel_turbine_type = fmodel_turbine_type * len(fmodel.layout_x)
+            elif not len(fmodel_turbine_type) == len(fmodel.layout_x):
+                raise ValueError("Incompatible format of turbine_type in fmodel.")
+
+            turbine_type_list.extend(fmodel_turbine_type)
+            reference_wind_heights.append(fmodel.core.flow_field.reference_wind_height)
+
+        # Derive reference wind height, if unspecified by the user
+        if reference_wind_height is None:
+            reference_wind_height = np.mean(reference_wind_heights)
+            if np.any(np.abs(np.array(reference_wind_heights) - reference_wind_height) > 1.0e-3):
+                raise ValueError(
+                    "Cannot automatically derive a fitting reference_wind_height since they "
+                    "substantially differ between FlorisModel objects. "
+                    "Please specify 'reference_wind_height' manually."
+                )
+
+        # Construct the merged FLORIS model based on the first entry in fmodel_list
+        fmodel_merged = fmodel_list[0].copy()
+        fmodel_merged.set(
+            layout_x=x_list,
+            layout_y=y_list,
+            turbine_type=turbine_type_list,
+            reference_wind_height=reference_wind_height,
+        )
+
+        return fmodel_merged
