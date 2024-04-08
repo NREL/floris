@@ -386,14 +386,22 @@ class WindRose(WindDataBase):
         # If ws_step is passed in, confirm is it at least as large as the current step
         if ws_step is not None:
             if len(self.wind_speeds) >= 2:
-                if ws_step < self.wind_speeds[1] - self.wind_speeds[0]:
-                    raise ValueError("ws_step must be at least as large as the current step")
+                current_ws_step = self.wind_speeds[1] - self.wind_speeds[0]
+                if ws_step < current_ws_step:
+                    raise ValueError(
+                        "ws_step provided must be at least as large as the current ws_step "
+                        f"({current_ws_step} m/s)"
+                    )
 
         # If wd_step is passed in, confirm is it at least as large as the current step
         if wd_step is not None:
             if len(self.wind_directions) >= 2:
-                if wd_step < self.wind_directions[1] - self.wind_directions[0]:
-                    raise ValueError("wd_step must be at least as large as the current step")
+                current_wd_step = self.wind_directions[1] - self.wind_directions[0]
+                if wd_step < current_wd_step:
+                    raise ValueError(
+                        "wd_step provided must be at least as large as the current wd_step "
+                        f"({current_wd_step} degrees)"
+                    )
 
         # If either ws_step or wd_step is None, set it to the current step
         if ws_step is None:
@@ -461,7 +469,10 @@ class WindRose(WindDataBase):
         elif method == "nearest":
             interpolator = NearestNDInterpolator
         else:
-            UserWarning("Unknown interpolation method: '{:s}'".format(method))
+            raise ValueError(
+                f"Unknown interpolation method: '{method}'. "
+                "Available methods are 'linear' and 'nearest'"
+            )
 
         # If either ws_step or wd_step is None, set it to the current step
         if ws_step is None:
@@ -1033,7 +1044,7 @@ class WindTIRose(WindDataBase):
                 to 15 degrees.
             wind_rose_var_step (float, optional): Step size for other wind rose
                 variable. Defaults to None. If unspecified, a value of 5 m/s
-                will beused if wind_rose_var = "ws", and a value of 4% will be
+                will be used if wind_rose_var = "ws", and a value of 4% will be
                 used if wind_rose_var = "ti".
             legend_kwargs (dict, optional): Keyword arguments to be passed to
                 ax.legend().
