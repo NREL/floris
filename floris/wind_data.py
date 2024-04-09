@@ -639,11 +639,11 @@ class WindRose(WindDataBase):
             the plotted wind rose.
         """
 
-        # Get a resampled wind_rose
-        wind_rose_resample = self.resample(wd_step, ws_step, inplace=False)
-        wd_bins = wind_rose_resample.wind_directions
-        ws_bins = wind_rose_resample.wind_speeds
-        freq_table = wind_rose_resample.freq_table
+        # Get a aggregated wind_rose
+        wind_rose_aggregate = self.aggregate(wd_step, ws_step, inplace=False)
+        wd_bins = wind_rose_aggregate.wind_directions
+        ws_bins = wind_rose_aggregate.wind_speeds
+        freq_table = wind_rose_aggregate.freq_table
 
         # Set up figure
         if ax is None:
