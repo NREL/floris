@@ -177,7 +177,10 @@ wind_rose.assign_value_piecewise_linear()
 
 # Certain plotting methods are included to enable visualization of the wind data objects
 # Plotting a wind rose
-wind_rose.plot_wind_rose()
+wind_rose.plot()
+
+# Plot a wind rose with the wind directions aggregated into 10-deg bins
+wind_rose.plot(wd_step=10)
 
 # Showing TI over wind speed for a WindRose
 wind_rose.plot_ti_over_ws()
