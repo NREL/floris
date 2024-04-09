@@ -12,10 +12,19 @@ more users will interface with the software.
    :toctree: _autosummary
    :recursive:
 
-   floris.logging_manager
-   floris.simulation
-   floris.tools
-   floris.type_dec
+   floris.flow_visualization
+   floris.floris_model
+   floris.wind_data
+   floris.uncertain_floris_model
    floris.turbine_library
+   floris.parallel_floris_model
+   floris.optimization
+   floris.layout_visualization
+   floris.cut_plane
+   floris.core
+   floris.convert_turbine_v3_to_v4
+   floris.convert_floris_input_v3_to_v4
    floris.utilities
+   floris.type_dec
+   floris.logging_manager
 ```

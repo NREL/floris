@@ -1,19 +1,5 @@
-# Copyright 2021 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
-
-
+from pathlib import Path
 
 import attr
 import numpy as np
@@ -21,6 +7,9 @@ import pytest
 
 from floris.utilities import (
     cosd,
+    nested_get,
+    nested_set,
+    reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
     sind,
     tand,
@@ -33,6 +22,10 @@ from tests.conftest import (
     Y_COORDS,
     Z_COORDS,
 )
+
+
+TEST_DATA = Path(__file__).resolve().parent / "data"
+YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 
 def test_cosd():
@@ -86,8 +79,7 @@ def test_wind_delta():
 
 
 def test_rotate_coordinates_rel_west():
-
-    coordinates = np.array([ [x,y,z] for x,y,z in zip(X_COORDS, Y_COORDS, Z_COORDS)])
+    coordinates = np.array(list(zip(X_COORDS, Y_COORDS, Z_COORDS)))
 
     # For 270, the coordinates should not change.
     wind_directions = np.array([270.0])
@@ -96,9 +88,13 @@ def test_rotate_coordinates_rel_west():
         coordinates
     )
 
-    np.testing.assert_array_equal( X_COORDS, x_rotated[0,0] )
-    np.testing.assert_array_equal( Y_COORDS, y_rotated[0,0] )
-    np.testing.assert_array_equal( Z_COORDS, z_rotated[0,0] )
+    # Test that x_rotated has 2 dimensions
+    np.testing.assert_equal(np.ndim(x_rotated), 2)
+
+    # Assert the rotating to 270 doesn't change coordinates
+    np.testing.assert_array_equal(X_COORDS, x_rotated[0])
+    np.testing.assert_array_equal(Y_COORDS, y_rotated[0])
+    np.testing.assert_array_equal(Z_COORDS, z_rotated[0])
 
     # For 360, the coordinates should be rotated 90 degrees counter clockwise
     # from looking fown at the wind farm from above. The series of turbines
@@ -114,18 +110,80 @@ def test_rotate_coordinates_rel_west():
         wind_directions,
         coordinates
     )
-    np.testing.assert_almost_equal( Y_COORDS, x_rotated[0,0] - np.min(x_rotated[0,0]))
-    np.testing.assert_almost_equal( X_COORDS, y_rotated[0,0] - np.min(y_rotated[0,0]))
+    np.testing.assert_almost_equal(Y_COORDS, x_rotated[0] - np.min(x_rotated[0]))
+    np.testing.assert_almost_equal(X_COORDS, y_rotated[0] - np.min(y_rotated[0]))
     np.testing.assert_almost_equal(
         Z_COORDS + np.min(Z_COORDS),
-        z_rotated[0,0] + np.min(z_rotated[0,0])
+        z_rotated[0] + np.min(z_rotated[0])
     )
 
     wind_directions = np.array([90.0])
     x_rotated, y_rotated, z_rotated, _, _ = rotate_coordinates_rel_west(
-        wind_directions,
-        coordinates
+        wind_directions, coordinates
     )
-    np.testing.assert_almost_equal( X_COORDS[-1:-4:-1], x_rotated[0,0] )
-    np.testing.assert_almost_equal( Y_COORDS, y_rotated[0,0] )
-    np.testing.assert_almost_equal( Z_COORDS, z_rotated[0,0] )
+    np.testing.assert_almost_equal(X_COORDS[-1:-4:-1], x_rotated[0])
+    np.testing.assert_almost_equal(Y_COORDS, y_rotated[0])
+    np.testing.assert_almost_equal(Z_COORDS, z_rotated[0])
+
+
+def test_reverse_rotate_coordinates_rel_west():
+    # Test that appplying the rotation, and then the reverse produces the original coordinates
+
+    # Test the reverse rotation
+    coordinates = np.array([[x, y, z] for x, y, z in zip(X_COORDS, Y_COORDS, Z_COORDS)])
+
+    # Rotate to 360 (as in above function)
+    wind_directions = np.array([360.0])
+
+    # Get the rotated coordinates
+    (
+        x_rotated,
+        y_rotated,
+        z_rotated,
+        x_center_of_rotation,
+        y_center_of_rotation,
+    ) = rotate_coordinates_rel_west(wind_directions, coordinates)
+
+    # Go up to 4 dimensions (reverse function is expecting grid)
+    grid_x = x_rotated[:, :,  None, None]
+    grid_y = y_rotated[:, :,  None, None]
+    grid_z = z_rotated[:, :,  None, None]
+
+    # Perform reverse rotation
+    grid_x_reversed, grid_y_reversed, grid_z_reversed = reverse_rotate_coordinates_rel_west(
+        wind_directions,
+        grid_x,
+        grid_y,
+        grid_z,
+        x_center_of_rotation,
+        y_center_of_rotation,
+    )
+
+    np.testing.assert_almost_equal(grid_x_reversed.squeeze(), coordinates[:,0].squeeze())
+    np.testing.assert_almost_equal(grid_y_reversed.squeeze(), coordinates[:,1].squeeze())
+    np.testing.assert_almost_equal(grid_z_reversed.squeeze(), coordinates[:,2].squeeze())
+
+
+def test_nested_get():
+    example_dict = {
+        'a': {
+            'b': {
+                'c': 10
+            }
+        }
+    }
+
+    assert nested_get(example_dict, ['a', 'b', 'c']) == 10
+
+
+def test_nested_set():
+    example_dict = {
+        'a': {
+            'b': {
+                'c': 10
+            }
+        }
+    }
+
+    nested_set(example_dict, ['a', 'b', 'c'], 20)
+    assert nested_get(example_dict, ['a', 'b', 'c']) == 20

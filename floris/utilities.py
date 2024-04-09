@@ -1,22 +1,15 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
 
 import os
 from math import ceil
-from typing import Tuple
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+)
 
 import numpy as np
 import yaml
@@ -146,7 +139,7 @@ def rotate_coordinates_rel_west(
 
     # Calculate the difference in given wind direction from 270 / West
     wind_deviation_from_west = wind_delta(wind_directions)
-    wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1, 1))
+    wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1))
 
     # Construct the arrays storing the turbine locations
     x_coordinates, y_coordinates, z_coordinates = coordinates.T
@@ -189,8 +182,6 @@ def reverse_rotate_coordinates_rel_west(
 
     Args:
         wind_directions (NDArrayFloat): Series of wind directions to base the rotation.
-        coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)
-            so that each element of the array coordinates[i] yields a three-component coordinate.
         grid_x (NDArrayFloat): X-coordinates to be rotated.
         grid_y (NDArrayFloat): Y-coordinates to be rotated.
         grid_z (NDArrayFloat): Z-coordinates to be rotated.
@@ -281,3 +272,69 @@ def round_nearest(x: int | float, base: int = 5) -> int:
         int: The rounded number.
     """
     return base * ceil((x + 0.5) / base)
+
+
+def nested_get(
+    d: Dict[str, Any],
+    keys: List[str]
+) -> Any:
+    """Get a value from a nested dictionary using a list of keys.
+    Based on:
+    https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
+
+    Args:
+        d (Dict[str, Any]): The dictionary to get the value from.
+        keys (List[str]): A list of keys to traverse the dictionary.
+
+    Returns:
+        Any: The value at the end of the key traversal.
+    """
+    for key in keys:
+        d = d[key]
+    return d
+
+def nested_set(
+    d: Dict[str, Any],
+    keys: List[str],
+    value: Any,
+    idx: Optional[int] = None
+) -> None:
+    """Set a value in a nested dictionary using a list of keys.
+    Based on:
+    https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
+
+    Args:
+        dic (Dict[str, Any]): The dictionary to set the value in.
+        keys (List[str]): A list of keys to traverse the dictionary.
+        value (Any): The value to set.
+        idx (Optional[int], optional): If the value is an list, the index to change.
+            Defaults to None.
+    """
+    d_in = d.copy()
+
+    for key in keys[:-1]:
+        d = d.setdefault(key, {})
+    if idx is None:
+        # Parameter is a scalar, set directly
+        d[keys[-1]] = value
+    else:
+        # Parameter is a list, need to first get the list, change the values at idx
+
+        # # Get the underlying list
+        par_list = nested_get(d_in, keys)
+        par_list[idx] = value
+        d[keys[-1]] = par_list
+
+def print_nested_dict(dictionary: Dict[str, Any], indent: int = 0) -> None:
+    """Print a nested dictionary with indentation.
+
+    Args:
+        dictionary (Dict[str, Any]): The dictionary to print.
+        indent (int, optional): The number of spaces to indent. Defaults to 0.
+    """
+    for key, value in dictionary.items():
+        print(" " * indent + str(key))
+        if isinstance(value, dict):
+            print_nested_dict(value, indent + 4)
+        else:
+            print(" " * (indent + 4) + str(value))
