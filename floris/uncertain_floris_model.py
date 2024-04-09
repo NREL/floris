@@ -70,6 +70,7 @@ class UncertainFlorisModel(LoggingManager):
         ti_resolution=0.01,
         yaw_resolution=1.0,  # Degree
         power_setpoint_resolution=100,  # kW
+        awc_amplitude_resolution=0.1,  # Deg
         wd_std=3.0,
         wd_sample_points=None,
         fix_yaw_to_nominal_direction=False,
@@ -81,6 +82,7 @@ class UncertainFlorisModel(LoggingManager):
         self.ti_resolution = ti_resolution
         self.yaw_resolution = yaw_resolution
         self.power_setpoint_resolution = power_setpoint_resolution
+        self.awc_amplitude_resolution = awc_amplitude_resolution
         self.wd_std = wd_std
         self.fix_yaw_to_nominal_direction = fix_yaw_to_nominal_direction
         self.verbose = verbose
@@ -139,6 +141,7 @@ class UncertainFlorisModel(LoggingManager):
         )
         self.yaw_angles_unexpanded = self.fmodel_unexpanded.core.farm.yaw_angles
         self.power_setpoints_unexpanded = self.fmodel_unexpanded.core.farm.power_setpoints
+        self.awc_amplitudes_unexpanded = self.fmodel_unexpanded.core.farm.awc_amplitudes
         self.n_unexpanded = len(self.wind_directions_unexpanded)
 
         # Combine into the complete unexpanded_inputs
@@ -149,6 +152,7 @@ class UncertainFlorisModel(LoggingManager):
                 self.turbulence_intensities_unexpanded[:, np.newaxis],
                 self.yaw_angles_unexpanded,
                 self.power_setpoints_unexpanded,
+                self.awc_amplitudes_unexpanded,
             )
         )
 
@@ -160,6 +164,7 @@ class UncertainFlorisModel(LoggingManager):
             self.ti_resolution,
             self.yaw_resolution,
             self.power_setpoint_resolution,
+            self.awc_amplitude_resolution,
         )
 
         # Get the expanded inputs
@@ -193,7 +198,14 @@ class UncertainFlorisModel(LoggingManager):
             turbulence_intensities=self.unique_inputs[:, 2],
             yaw_angles=self.unique_inputs[:, 3 : 3 + self.fmodel_unexpanded.core.farm.n_turbines],
             power_setpoints=self.unique_inputs[
-                :, 3 + self.fmodel_unexpanded.core.farm.n_turbines :
+                :,
+                3 + self.fmodel_unexpanded.core.farm.n_turbines : 3
+                + 2 * self.fmodel_unexpanded.core.farm.n_turbines,
+            ],
+            awc_amplitudes=self.unique_inputs[
+                :,
+                3 + 2 * self.fmodel_unexpanded.core.farm.n_turbines : 3
+                + 3 * self.fmodel_unexpanded.core.farm.n_turbines,
             ],
         )
 
@@ -389,18 +401,14 @@ class UncertainFlorisModel(LoggingManager):
         if self.fmodel_unexpanded.wind_data is not None:
             if type(self.fmodel_unexpanded.wind_data) is WindRose:
                 farm_power_rose = np.full(len(self.fmodel_unexpanded.wind_data.wd_flat), np.nan)
-                farm_power_rose[
-                    self.fmodel_unexpanded.wind_data.non_zero_freq_mask
-                ] = farm_power
+                farm_power_rose[self.fmodel_unexpanded.wind_data.non_zero_freq_mask] = farm_power
                 farm_power = farm_power_rose.reshape(
                     len(self.fmodel_unexpanded.wind_data.wind_directions),
                     len(self.fmodel_unexpanded.wind_data.wind_speeds),
                 )
             elif type(self.fmodel_unexpanded.wind_data) is WindTIRose:
                 farm_power_rose = np.full(len(self.fmodel_unexpanded.wind_data.wd_flat), np.nan)
-                farm_power_rose[
-                    self.fmodel_unexpanded.wind_data.non_zero_freq_mask
-                ] = farm_power
+                farm_power_rose[self.fmodel_unexpanded.wind_data.non_zero_freq_mask] = farm_power
                 farm_power = farm_power_rose.reshape(
                     len(self.fmodel_unexpanded.wind_data.wind_directions),
                     len(self.fmodel_unexpanded.wind_data.wind_speeds),
@@ -512,6 +520,7 @@ class UncertainFlorisModel(LoggingManager):
         ti_resolution=0.025,
         yaw_resolution=1.0,  # Degree
         power_setpoint_resolution=100,  # kW
+        awc_amplitude_resolution=0.1,  # Deg
     ):
         """
         Round the input array  specified resolutions.
@@ -529,6 +538,7 @@ class UncertainFlorisModel(LoggingManager):
                 Default is 1.0 degree.
             power_setpoint_resolution (int): Resolution for rounding power setpoint in kW.
                 Default is 100 kW.
+            awc_amplitude_resolution (float): Resolution for rounding amplitude of awc_amplitude
 
         Returns:
             numpy.ndarray: A rounded array of wind turbine parameters with
@@ -555,12 +565,36 @@ class UncertainFlorisModel(LoggingManager):
             )
             * yaw_resolution
         )
-        rounded_input_array[:, 3 + self.fmodel_unexpanded.core.farm.n_turbines :] = (
+        rounded_input_array[
+            :,
+            3 + self.fmodel_unexpanded.core.farm.n_turbines : 3
+            + 2 * self.fmodel_unexpanded.core.farm.n_turbines,
+        ] = (
             np.round(
-                rounded_input_array[:, 3 + self.fmodel_unexpanded.core.farm.n_turbines :]
+                rounded_input_array[
+                    :,
+                    3 + self.fmodel_unexpanded.core.farm.n_turbines : 3
+                    + 2 * self.fmodel_unexpanded.core.farm.n_turbines,
+                ]
                 / power_setpoint_resolution
             )
             * power_setpoint_resolution
+        )
+
+        rounded_input_array[
+            :,
+            3 + 2 * self.fmodel_unexpanded.core.farm.n_turbines : 3
+            + 3 * self.fmodel_unexpanded.core.farm.n_turbines,
+        ] = (
+            np.round(
+                rounded_input_array[
+                    :,
+                    3 + 2 * self.fmodel_unexpanded.core.farm.n_turbines : 3
+                    + 3 * self.fmodel_unexpanded.core.farm.n_turbines,
+                ]
+                / awc_amplitude_resolution
+            )
+            * awc_amplitude_resolution
         )
 
         return rounded_input_array
@@ -693,6 +727,7 @@ class UncertainFlorisModel(LoggingManager):
             ti_resolution=self.ti_resolution,
             yaw_resolution=self.yaw_resolution,
             power_setpoint_resolution=self.power_setpoint_resolution,
+            awc_amplitude_resolution=self.awc_amplitude_resolution,
             wd_std=self.wd_std,
             wd_sample_points=self.wd_sample_points,
             fix_yaw_to_nominal_direction=self.fix_yaw_to_nominal_direction,
@@ -828,3 +863,45 @@ def map_turbine_powers_uncertain(
     result = np.sum(weighted_blocks, axis=1)
 
     return result
+
+
+class ApproxFlorisModel(UncertainFlorisModel):
+    """
+    The ApproxFlorisModel overloads the UncertainFlorisModel with the special case that
+    the wd_sample_points = [0].  This is a special case where no uncertainty is added
+    but the resolution of the values wind direction, wind speed etc are still reduced
+    by the specified resolution.  This allows for cases to be reused and a faster approximate
+    result computed
+    """
+
+    def __init__(
+        self,
+        configuration: dict | str | Path,
+        wd_resolution=1.0,  # Degree
+        ws_resolution=1.0,  # m/s
+        ti_resolution=0.01,
+        yaw_resolution=1.0,  # Degree
+        power_setpoint_resolution=100,  # kW
+        awc_amplitude_resolution=0.1,  # Deg
+        verbose=False,
+    ):
+        super().__init__(
+            configuration,
+            wd_resolution,
+            ws_resolution,
+            ti_resolution,
+            yaw_resolution,
+            power_setpoint_resolution,
+            awc_amplitude_resolution,
+            wd_std=1.0,
+            wd_sample_points=[0],
+            fix_yaw_to_nominal_direction=False,
+            verbose=verbose,
+        )
+
+        self.wd_resolution = wd_resolution
+        self.ws_resolution = ws_resolution
+        self.ti_resolution = ti_resolution
+        self.yaw_resolution = yaw_resolution
+        self.power_setpoint_resolution = power_setpoint_resolution
+        self.awc_amplitude_resolution = awc_amplitude_resolution

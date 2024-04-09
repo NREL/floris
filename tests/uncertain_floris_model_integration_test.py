@@ -5,9 +5,12 @@ import pytest
 import yaml
 
 from floris import FlorisModel, TimeSeries
-from floris.approx_floris_model import ApproxFlorisModel
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
-from floris.uncertain_floris_model import UncertainFlorisModel, WindRose
+from floris.uncertain_floris_model import (
+    ApproxFlorisModel,
+    UncertainFlorisModel,
+    WindRose,
+)
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"

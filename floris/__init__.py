@@ -6,7 +6,6 @@ with open(Path(__file__).parent / "version.py") as _version_file:
     __version__ = _version_file.read().strip()
 
 
-from .approx_floris_model import ApproxFlorisModel
 from .floris_model import FlorisModel
 from .flow_visualization import (
     plot_rotor_values,
@@ -14,7 +13,7 @@ from .flow_visualization import (
     visualize_quiver,
 )
 from .parallel_floris_model import ParallelFlorisModel
-from .uncertain_floris_model import UncertainFlorisModel
+from .uncertain_floris_model import ApproxFlorisModel, UncertainFlorisModel
 from .wind_data import (
     TimeSeries,
     WindRose,
