@@ -146,6 +146,20 @@ wind_rose_from_csv = WindRose.read_csv_long(
 )
 
 ##################################################
+# Aggregating and Resampling the Wind Rose
+##################################################
+
+# The aggregate function allows for aggregation of the wind rose data into
+# fewer wind direction and wind speed bins.
+# Note it will throw an error if the step sizes passed in are smaller than the
+# step sizes of the original data.
+wind_rose_aggregate = wind_rose.aggregate(wd_step=10, ws_step=2)
+
+# For upsampling, the resample_by_interpolation function can be used to interpolate
+# the wind rose data to a finer grid.  It can use either linear or nearest neighbor
+wind_rose_resample = wind_rose.resample_by_interpolation(wd_step=0.5, ws_step=0.25)
+
+##################################################
 # Setting turbulence intensity
 ##################################################
 
@@ -177,7 +191,10 @@ wind_rose.assign_value_piecewise_linear()
 
 # Certain plotting methods are included to enable visualization of the wind data objects
 # Plotting a wind rose
-wind_rose.plot_wind_rose()
+wind_rose.plot()
+
+# Plot a wind rose with the wind directions aggregated into 10-deg bins
+wind_rose.plot(wd_step=10)
 
 # Showing TI over wind speed for a WindRose
 wind_rose.plot_ti_over_ws()

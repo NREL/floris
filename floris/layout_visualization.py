@@ -471,8 +471,8 @@ def plot_waking_directions(
                 # and j in layout_plotting_dict["turbine_indices"]
             ):
                 (h,) = ax.plot(
-                    fmodel.layout_x[[i, j]],
-                    fmodel.layout_y[[i, j]],
+                    layout_x[[i, j]],
+                    layout_y[[i, j]],
                     **wake_plotting_dict
                 )
 
