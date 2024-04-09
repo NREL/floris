@@ -306,6 +306,77 @@ def test_resample_by_interpolation():
     np.testing.assert_allclose(wind_rose_resample.ti_table, np.array([[0.06, 0.065, 0.07]]))
 
 
+def test_resample_by_interpolation_ti_rose():
+    wind_directions = np.array([0, 2, 4, 6, 8, 10])
+    wind_speeds = np.array([8, 10])
+    turbulence_intensities = np.array([0.05, 0.1])
+    freq_table = np.ones((6, 2, 2))
+    freq_table = freq_table / np.sum(freq_table)
+
+    wind_ti_rose = WindTIRose(
+        wind_directions, wind_speeds, turbulence_intensities, freq_table=freq_table
+    )
+
+    # Test that interpolating without specifying new steps returns the same
+    wind_ti_rose_resample = wind_ti_rose.resample_by_interpolation(inplace=False)
+
+    np.testing.assert_allclose(wind_ti_rose.wind_directions, wind_ti_rose_resample.wind_directions)
+    np.testing.assert_allclose(wind_ti_rose.wind_speeds, wind_ti_rose_resample.wind_speeds)
+    np.testing.assert_allclose(
+        wind_ti_rose.turbulence_intensities, wind_ti_rose_resample.turbulence_intensities
+    )
+    np.testing.assert_allclose(wind_ti_rose.freq_table_flat, wind_ti_rose_resample.freq_table_flat)
+
+    # Test interpolating frequency along the wind speed axis
+    wind_directions = np.array([270, 280])
+    wind_speeds = np.array([6, 7])
+    turbulence_intensities = np.array([0.05, 0.1])
+    freq_table = np.ones((2, 2, 2))
+    freq_table[:, 1, :] = 2.0
+    freq_table = freq_table / np.sum(freq_table)
+    wind_ti_rose = WindTIRose(
+        wind_directions, wind_speeds, turbulence_intensities, freq_table=freq_table
+    )
+
+    wind_ti_rose_resample = wind_ti_rose.resample_by_interpolation(
+        wd_step=10.0, ws_step=0.5, ti_step=0.05, inplace=False
+    )
+
+    freq_table_expected = np.ones((2, 3, 2))
+    freq_table_expected[:, 2, :] = 2.0
+    freq_table_expected[:, 1, :] = 1.5
+    freq_table_expected = freq_table_expected / np.sum(freq_table_expected)
+
+    # Check that the resample freq_table is correct
+    np.testing.assert_allclose(wind_ti_rose_resample.wind_directions, [270, 280])
+    np.testing.assert_allclose(wind_ti_rose_resample.wind_speeds, [6, 6.5, 7])
+    np.testing.assert_allclose(wind_ti_rose_resample.turbulence_intensities, [0.05, 0.1])
+    np.testing.assert_allclose(wind_ti_rose_resample.freq_table, freq_table_expected)
+
+    # # Test resampling wind directions when wind speeds and TI are 1D
+    wind_directions = np.array([270, 280])
+    wind_speeds = np.array([6])
+    turbulence_intensities = np.array([0.05])
+    freq_table = np.ones((2, 1, 1))
+    freq_table[1, :, :] = 2.0
+    freq_table = freq_table / np.sum(freq_table)
+    wind_ti_rose = WindTIRose(
+        wind_directions, wind_speeds, turbulence_intensities, freq_table=freq_table
+    )
+    wind_ti_rose_resample = wind_ti_rose.resample_by_interpolation(wd_step=5.0, inplace=False)
+
+    excepted_freq_table = np.ones((3, 1, 1))
+    excepted_freq_table[1, :, :] = 1.5
+    excepted_freq_table[2, :, :] = 2.0
+    excepted_freq_table = excepted_freq_table / np.sum(excepted_freq_table)
+
+    # Check that the resample ti_table is correct
+    np.testing.assert_allclose(wind_ti_rose_resample.wind_directions, [270, 275, 280])
+    np.testing.assert_allclose(wind_ti_rose_resample.wind_speeds, [6])
+    np.testing.assert_allclose(wind_ti_rose_resample.turbulence_intensities, [0.05])
+    np.testing.assert_allclose(wind_ti_rose_resample.freq_table, excepted_freq_table)
+
+
 def test_wrap_wind_directions_near_360():
     wd_step = 5.0
     wd_values = np.array([0, 180, 357, 357.5, 358])
