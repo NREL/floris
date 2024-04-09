@@ -1,5 +1,7 @@
-"""Example 8: Uncertain Model Parameters
+"""Example: Uncertain Model Parameters
 
+This example demonstrates how to use the UncertainFlorisModel class to
+analyze the impact of uncertain wind direction on power results.
 """
 
 import matplotlib.pyplot as plt
