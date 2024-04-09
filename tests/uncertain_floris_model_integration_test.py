@@ -4,7 +4,8 @@ import numpy as np
 import pytest
 import yaml
 
-from floris import FlorisModel
+from floris import FlorisModel, TimeSeries
+from floris.approx_floris_model import ApproxFlorisModel
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.uncertain_floris_model import UncertainFlorisModel, WindRose
 
@@ -262,3 +263,35 @@ def test_get_powers_with_wind_data():
     farm_power_weighted = ufmodel.get_farm_power(turbine_weights=turbine_weights)
 
     assert np.allclose(farm_power_weighted, ufmodel.get_turbine_powers()[:,:,:-1].sum(axis=2))
+
+def test_approx_floris_model():
+
+    afmodel = ApproxFlorisModel(configuration=YAML_INPUT, wd_resolution=1.0)
+
+    time_series = TimeSeries(
+        wind_directions = np.array([270.0, 270.1,271.0, 271.1]),
+        wind_speeds=8.0,
+        turbulence_intensities=0.06)
+
+    afmodel.set(layout_x = np.array([0, 500]), layout_y = np.array([0, 0]), wind_data = time_series)
+
+    # Test that 0th and 1th values are the same, as are the 2nd and 3rd
+    afmodel.run()
+    power = afmodel.get_farm_power()
+    np.testing.assert_almost_equal(power[0], power[1])
+    np.testing.assert_almost_equal(power[2], power[3])
+
+    # Test with wind direction and wind speed varying
+    afmodel = ApproxFlorisModel(configuration=YAML_INPUT, wd_resolution=1.0, ws_resolution=1.0)
+    time_series = TimeSeries(
+        wind_directions = np.array([270.0, 270.1,271.0, 271.1]),
+        wind_speeds=np.array([8.0, 8.1, 8.0, 9.0]),
+        turbulence_intensities=0.06)
+
+    afmodel.set(layout_x = np.array([0, 500]), layout_y = np.array([0, 0]), wind_data = time_series)
+    afmodel.run()
+
+    # In this case the 0th and 1st should be the same, but not the 2nd and 3rd
+    power = afmodel.get_farm_power()
+    np.testing.assert_almost_equal(power[0], power[1])
+    assert not np.allclose(power[2], power[3])
