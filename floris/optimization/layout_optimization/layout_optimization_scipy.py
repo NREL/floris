@@ -9,6 +9,32 @@ from .layout_optimization_base import LayoutOptimization
 
 
 class LayoutOptimizationScipy(LayoutOptimization):
+    """
+    This class provides an interface for optimizing the layout of wind turbines
+    using the Scipy optimization library.  The optimization objective is to
+    maximize annual energy production (AEP) or annual value production (AVP).
+
+
+    Args:
+        fmodel (FlorisModel): A FlorisModel object.
+        boundaries (iterable(float, float)): Pairs of x- and y-coordinates
+            that represent the boundary's vertices (m).
+        bnds (iterable, optional): Bounds for the optimization
+            variables (pairs of min/max values for each variable (m)). If
+            none are specified, they are set to 0 and 1. Defaults to None.
+        min_dist (float, optional): The minimum distance to be maintained
+            between turbines during the optimization (m). If not specified,
+            initializes to 2 rotor diameters. Defaults to None.
+        solver (str, optional): Sets the solver used by Scipy. Defaults to 'SLSQP'.
+        optOptions (dict, optional): Dictionary for setting the
+            optimization options. Defaults to None.
+        enable_geometric_yaw (bool, optional): If True, enables geometric yaw
+            optimization. Defaults to False.
+        use_value (bool, optional): If True, the layout optimization objective
+            is to maximize annual value production using the value array in the
+            FLORIS model's WindData object. If False, the optimization
+            objective is to maximize AEP. Defaults to False.
+    """
     def __init__(
         self,
         fmodel,
@@ -18,29 +44,15 @@ class LayoutOptimizationScipy(LayoutOptimization):
         solver='SLSQP',
         optOptions=None,
         enable_geometric_yaw=False,
+        use_value=False,
     ):
-        """
-        _summary_
 
-        Args:
-            fmodel (FlorisModel): A FlorisModel object.
-            boundaries (iterable(float, float)): Pairs of x- and y-coordinates
-                that represent the boundary's vertices (m).
-            bnds (iterable, optional): Bounds for the optimization
-                variables (pairs of min/max values for each variable (m)). If
-                none are specified, they are set to 0 and 1. Defaults to None.
-            min_dist (float, optional): The minimum distance to be maintained
-                between turbines during the optimization (m). If not specified,
-                initializes to 2 rotor diameters. Defaults to None.
-            solver (str, optional): Sets the solver used by Scipy. Defaults to 'SLSQP'.
-            optOptions (dict, optional): Dicitonary for setting the
-                optimization options. Defaults to None.
-        """
         super().__init__(
             fmodel,
             boundaries,
             min_dist=min_dist,
-            enable_geometric_yaw=enable_geometric_yaw
+            enable_geometric_yaw=enable_geometric_yaw,
+            use_value=use_value
         )
 
         self.boundaries_norm = [
@@ -98,10 +110,13 @@ class LayoutOptimizationScipy(LayoutOptimization):
         self._change_coordinates(locs_unnorm)
         # Compute turbine yaw angles using PJ's geometric code (if enabled)
         yaw_angles = self._get_geoyaw_angles()
-        self.fmodel.set(yaw_angles=yaw_angles)
+        self.fmodel.set_operation(yaw_angles=yaw_angles)
         self.fmodel.run()
 
-        return -1 * self.fmodel.get_farm_AEP() / self.initial_AEP
+        if self.use_value:
+            return -1 * self.fmodel.get_farm_AVP() / self.initial_AEP_or_AVP
+        else:
+            return -1 * self.fmodel.get_farm_AEP() / self.initial_AEP_or_AVP
 
 
     def _change_coordinates(self, locs):
@@ -205,7 +220,7 @@ class LayoutOptimizationScipy(LayoutOptimization):
     def optimize(self):
         """
         This method finds the optimized layout of wind turbines for power
-        production given the provided frequencies of occurance of wind
+        production given the provided frequencies of occurrence of wind
         conditions (wind speed, direction).
 
         Returns:

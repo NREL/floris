@@ -146,6 +146,8 @@ def test_regression_tandem(sample_inputs_fixture):
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
+    awc_modes = floris.farm.awc_modes
+    awc_amplitudes = floris.farm.awc_amplitudes
     test_results = np.zeros((n_findex, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
@@ -157,6 +159,8 @@ def test_regression_tandem(sample_inputs_fixture):
         yaw_angles,
         tilt_angles,
         power_setpoints,
+        awc_modes,
+        awc_amplitudes,
         floris.farm.turbine_thrust_coefficient_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
@@ -170,6 +174,8 @@ def test_regression_tandem(sample_inputs_fixture):
         yaw_angles,
         tilt_angles,
         power_setpoints,
+        awc_modes,
+        awc_amplitudes,
         floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
         floris.farm.turbine_power_thrust_tables,
@@ -180,6 +186,8 @@ def test_regression_tandem(sample_inputs_fixture):
         yaw_angles,
         tilt_angles,
         power_setpoints,
+        awc_modes,
+        awc_amplitudes,
         floris.farm.turbine_axial_induction_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
@@ -308,6 +316,8 @@ def test_regression_yaw(sample_inputs_fixture):
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
+    awc_modes = floris.farm.awc_modes
+    awc_amplitudes = floris.farm.awc_amplitudes
     test_results = np.zeros((n_findex, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
@@ -319,6 +329,8 @@ def test_regression_yaw(sample_inputs_fixture):
         yaw_angles,
         tilt_angles,
         power_setpoints,
+        awc_modes,
+        awc_amplitudes,
         floris.farm.turbine_thrust_coefficient_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
@@ -332,6 +344,8 @@ def test_regression_yaw(sample_inputs_fixture):
         yaw_angles,
         tilt_angles,
         power_setpoints,
+        awc_modes,
+        awc_amplitudes,
         floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
         floris.farm.turbine_power_thrust_tables,
@@ -342,6 +356,8 @@ def test_regression_yaw(sample_inputs_fixture):
         yaw_angles,
         tilt_angles,
         power_setpoints,
+        awc_modes,
+        awc_amplitudes,
         floris.farm.turbine_axial_induction_functions,
         floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
@@ -410,6 +426,8 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
+    awc_modes = floris.farm.awc_modes
+    awc_amplitudes = floris.farm.awc_amplitudes
 
     # farm_eff_velocities = rotor_effective_velocity(
     #     floris.flow_field.air_density,
@@ -431,6 +449,8 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
         yaw_angles,
         tilt_angles,
         power_setpoints,
+        awc_modes,
+        awc_amplitudes,
         floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
         floris.farm.turbine_power_thrust_tables,
