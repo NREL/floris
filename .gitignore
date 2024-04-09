@@ -21,6 +21,12 @@ pip-wheel-metadata
 .idea
 .vscode
 
+# Documentation notebooks
+!docs/*.ipynb
+
+# The examples folder within docs
+docs/examples
+
 # Documentation output
 _site/
 .jekyll-cache/

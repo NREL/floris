@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from copy import deepcopy
 from pathlib import Path
@@ -18,12 +5,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from floris.simulation import Farm
+from floris.core import Farm
 from floris.utilities import load_yaml
 from tests.conftest import (
+    N_FINDEX,
     N_TURBINES,
-    N_WIND_DIRECTIONS,
-    N_WIND_SPEEDS,
     SampleInputs,
 )
 
@@ -49,7 +35,7 @@ def test_farm_init_homogenous_turbines():
     # turbine_type=[turbine_data["turbine_type"]]
 
     farm.construct_hub_heights()
-    farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
+    farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
 
     # Check initial values
     np.testing.assert_array_equal(farm.coordinates, coordinates)
@@ -60,16 +46,24 @@ def test_farm_init_homogenous_turbines():
 def test_asdict(sample_inputs_fixture: SampleInputs):
     farm = Farm.from_dict(sample_inputs_fixture.farm)
     farm.construct_hub_heights()
-    farm.construct_turbine_ref_tilt_cp_cts()
-    farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
-    farm.set_tilt_to_ref_tilt(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
+    farm.construct_turbine_ref_tilts()
+    farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
+    farm.set_tilt_to_ref_tilt(N_FINDEX)
+    farm.set_power_setpoints_to_ref_power(N_FINDEX)
+    farm.set_awc_modes_to_ref_mode(N_FINDEX)
+    farm.set_awc_amplitudes_to_ref_amp(N_FINDEX)
+    farm.set_awc_frequencies_to_ref_freq(N_FINDEX)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
     new_farm.construct_hub_heights()
-    new_farm.construct_turbine_ref_tilt_cp_cts()
-    new_farm.set_yaw_angles(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
-    new_farm.set_tilt_to_ref_tilt(N_WIND_DIRECTIONS, N_WIND_SPEEDS)
+    new_farm.construct_turbine_ref_tilts()
+    new_farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
+    new_farm.set_tilt_to_ref_tilt(N_FINDEX)
+    new_farm.set_power_setpoints_to_ref_power(N_FINDEX)
+    new_farm.set_awc_modes_to_ref_mode(N_FINDEX)
+    new_farm.set_awc_amplitudes_to_ref_amp(N_FINDEX)
+    new_farm.set_awc_frequencies_to_ref_freq(N_FINDEX)
     dict2 = new_farm.as_dict()
 
     assert dict1 == dict2
@@ -95,7 +89,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
 
     # All list of strings from internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
-    farm_data["turbine_type"] = ["nrel_5MW", "iea_10MW", "iea_15MW", "x_20MW", "nrel_5MW"]
+    farm_data["turbine_type"] = ["nrel_5MW", "iea_10MW", "iea_15MW", "nrel_5MW", "nrel_5MW"]
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
     farm = Farm.from_dict(farm_data)

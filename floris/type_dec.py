@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
 
@@ -40,22 +27,62 @@ NDArrayInt = npt.NDArray[np.int_]
 NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 NDArrayBool = npt.NDArray[np.bool_]
+NDArrayStr = npt.NDArray[np.str_]
 
 
 ### Custom callables for attrs objects and functions
 
 def floris_array_converter(data: Iterable) -> np.ndarray:
+    """
+    For a given iterable, convert the data to a numpy array and cast to `floris_float_type`.
+    If the input is a scalar, np.array() creates a 0-dimensional array, and this is not supported
+    in FLORIS so this function raises an error.
+
+    Args:
+        data (Iterable): The input data to be converted to a Numpy array.
+
+    Raises:
+        TypeError: Raises if the input data is not iterable.
+        TypeError: Raises if the input data cannot be converted to a Numpy array.
+
+    Returns:
+        np.ndarray: data converted to a Numpy array and cast to `floris_float_type`.
+    """
+    try:
+        iter(data)
+    except TypeError as e:
+        raise TypeError(e.args[0] + f". Data given: {data}")
+
     try:
         a = np.array(data, dtype=floris_float_type)
-    except TypeError as e:
+    except (TypeError, ValueError) as e:
         raise TypeError(e.args[0] + f". Data given: {data}")
     return a
 
 def floris_numeric_dict_converter(data: dict) -> dict:
-    try:
-        return {k: floris_array_converter(v) for k, v in data.items()}
-    except TypeError as e:
-        raise TypeError(e.args[0] + f". Data given: {data}")
+    """
+    For the given dictionary, convert all the values to a numeric type. If a value is a scalar, it
+    will be converted to a float. If a value is an iterable, it will be converted to a Numpy
+    array and cast to `floris_float_type`. If a value is not a numeric type, a TypeError will be
+    raised.
+
+    Args:
+        data (dict): Dictionary of data to be converted to a numeric type.
+
+    Returns:
+        dict: Dictionary with the same keys and all values converted to a numeric type.
+    """
+    converted_dict = copy.deepcopy(data)  # deepcopy -> data is a container and passed by reference
+    for k, v in data.items():
+        try:
+            iter(v)
+        except TypeError:
+            # Not iterable so try to cast to float
+            converted_dict[k] = float(v)
+        else:
+            # Iterable so convert to Numpy array
+            converted_dict[k] = floris_array_converter(v)
+    return converted_dict
 
 # def array_field(**kwargs) -> Callable:
 #     """
