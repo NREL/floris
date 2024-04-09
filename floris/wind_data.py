@@ -1321,7 +1321,7 @@ class WindTIRose(WindDataBase):
                     (freq_matrix, freq_matrix[0, :, :][None, :, :]), axis=0
                 )
                 if self.value_table is not None:
-                    value_matrix = np.vstack((value_matrix, value_matrix[0, :, :]))
+                    value_matrix = np.concatenate((value_matrix, value_matrix[0, :, :][None, :, :]))
 
         # If the wind_direction columns has length 1, then pad the wind_direction column with
         # that value + and - 1 and expand the matrices accordingly
