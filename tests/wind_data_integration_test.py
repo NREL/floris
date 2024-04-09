@@ -188,36 +188,122 @@ def test_unpack_for_reinitialize():
     np.testing.assert_allclose(ti_table_unpack, [0.06, 0.06])
 
 
-def test_wind_rose_resample():
+def test_wind_rose_aggregate():
     wind_directions = np.array([0, 2, 4, 6, 8, 10])
     wind_speeds = np.array([8])
     freq_table = np.array([[1.0], [1.0], [1.0], [1.0], [1.0], [1.0]])
 
-    wind_rose = WindRose(wind_directions, wind_speeds, freq_table)
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
 
-    # Test that resampling without specifying new steps returns the same
-    wind_rose_resample = wind_rose.resample(inplace=False)
+    # Test that aggregating without specifying new steps returns the same
+    wind_rose_aggregate = wind_rose.aggregate(inplace=False)
+
+    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_aggregate.wind_directions)
+    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_aggregate.wind_speeds)
+    np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_aggregate.freq_table_flat)
+
+    # Now test aggregating the wind direction to 5 deg bins
+    wind_rose_aggregate = wind_rose.aggregate(wd_step=5.0, inplace=False)
+    np.testing.assert_allclose(wind_rose_aggregate.wind_directions, [0, 5, 10])
+    np.testing.assert_allclose(wind_rose_aggregate.freq_table_flat, [2 / 6, 2 / 6, 2 / 6])
+
+    # Test that the default inplace behavior is to modifies the original object as expected
+    wind_rose_2 = copy.deepcopy(wind_rose)
+    wind_rose_2.aggregate(inplace=True)
+    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_2.wind_directions)
+    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_2.wind_speeds)
+    np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_2.freq_table_flat)
+
+    wind_rose_2.aggregate(wd_step=5.0, inplace=True)
+    np.testing.assert_allclose(wind_rose_aggregate.wind_directions, wind_rose_2.wind_directions)
+    np.testing.assert_allclose(wind_rose_aggregate.wind_speeds, wind_rose_2.wind_speeds)
+    np.testing.assert_allclose(wind_rose_aggregate.freq_table_flat, wind_rose_2.freq_table_flat)
+
+
+def test_resample_by_interpolation():
+    wind_directions = np.array([0, 2, 4, 6, 8, 10])
+    wind_speeds = np.array([8, 10])
+    freq_table = np.ones((6, 2))
+    freq_table = freq_table / np.sum(freq_table)
+
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
+
+    # Test that interpolating without specifying new steps returns the same
+    wind_rose_resample = wind_rose.resample_by_interpolation(inplace=False)
 
     np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_resample.wind_directions)
     np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_resample.wind_speeds)
     np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_resample.freq_table_flat)
 
-    # Now test resampling the wind direction to 5 deg bins
-    wind_rose_resample = wind_rose.resample(wd_step=5.0, inplace=False)
-    np.testing.assert_allclose(wind_rose_resample.wind_directions, [0, 5, 10])
-    np.testing.assert_allclose(wind_rose_resample.freq_table_flat, [2 / 6, 2 / 6, 2 / 6])
+    # Test interpolating TI along the wind direction axis
+    wind_directions = np.array([270, 280])
+    wind_speeds = np.array([6, 7])
+    ti_table = np.array([[0.06, 0.06], [0.07, 0.07]])
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=ti_table)
 
-    # Test that the default inplace behavior is to modifies the original object as expected
-    wind_rose_2 = copy.deepcopy(wind_rose)
-    wind_rose_2.resample(inplace=True)
-    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_2.wind_directions)
-    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_2.wind_speeds)
-    np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_2.freq_table_flat)
+    wind_rose_resample = wind_rose.resample_by_interpolation(
+        wd_step=5.0, ws_step=1.0, inplace=False
+    )
 
-    wind_rose_2.resample(wd_step=5.0, inplace=True)
-    np.testing.assert_allclose(wind_rose_resample.wind_directions, wind_rose_2.wind_directions)
-    np.testing.assert_allclose(wind_rose_resample.wind_speeds, wind_rose_2.wind_speeds)
-    np.testing.assert_allclose(wind_rose_resample.freq_table_flat, wind_rose_2.freq_table_flat)
+    # Check that the resample ti_table is correct
+    np.testing.assert_allclose(wind_rose_resample.wind_directions, [270, 275, 280])
+    np.testing.assert_allclose(wind_rose_resample.wind_speeds, [6, 7])
+    np.testing.assert_allclose(
+        wind_rose_resample.ti_table, np.array([[0.06, 0.06], [0.065, 0.065], [0.07, 0.07]])
+    )
+
+    # Test interpolating frequency along the wind speed axis
+    freq_table = np.array([[1 / 6, 2 / 6], [1 / 6, 2 / 6]])
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
+
+    wind_rose_resample = wind_rose.resample_by_interpolation(
+        wd_step=10.0, ws_step=0.5, inplace=False
+    )
+
+    freq_table_expected = np.array([[1 / 6, 1.5 / 6, 2 / 6], [1 / 6, 1.5 / 6, 2 / 6]])
+    freq_table_expected = freq_table_expected / np.sum(freq_table_expected)
+
+    # Check that the resample freq_table is correct
+    np.testing.assert_allclose(wind_rose_resample.wind_directions, [270, 280])
+    np.testing.assert_allclose(wind_rose_resample.wind_speeds, [6, 6.5, 7])
+    np.testing.assert_allclose(wind_rose_resample.freq_table, freq_table_expected)
+
+    # Test resampling both wind speed and wind directions
+    ti_table = np.array([[0.01, 0.02], [0.03, 0.04]])
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=ti_table)
+    wind_rose_resample = wind_rose.resample_by_interpolation(
+        wd_step=5.0, ws_step=0.5, inplace=False
+    )
+
+    # Check that the resample ti_table is correct
+    ti_table_expected = np.array([[0.01, 0.015, 0.02], [0.02, 0.025, 0.03], [0.03, 0.035, 0.04]])
+    np.testing.assert_allclose(wind_rose_resample.wind_directions, [270, 275, 280])
+    np.testing.assert_allclose(wind_rose_resample.wind_speeds, [6, 6.5, 7])
+    np.testing.assert_allclose(wind_rose_resample.ti_table, ti_table_expected)
+
+    # Test resampling wind directions when wind speeds is 1D
+    wind_directions = np.array([270, 280])
+    wind_speeds = np.array([6])
+    ti_table = np.array([[0.06], [0.07]])
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=ti_table)
+    wind_rose_resample = wind_rose.resample_by_interpolation(wd_step=5.0, inplace=False)
+
+    # Check that the resample ti_table is correct
+    np.testing.assert_allclose(wind_rose_resample.wind_directions, [270, 275, 280])
+    np.testing.assert_allclose(wind_rose_resample.wind_speeds, [6])
+    np.testing.assert_allclose(wind_rose_resample.ti_table, np.array([[0.06], [0.065], [0.07]]))
+
+    # Test resampling wind speeds when wind directions is 1D
+    wind_directions = np.array([270])
+    wind_speeds = np.array([6, 7])
+    ti_table = np.array([[0.06, 0.07]])
+    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=ti_table)
+    wind_rose_resample = wind_rose.resample_by_interpolation(ws_step=0.5, inplace=False)
+
+    # Check that the resample ti_table is correct
+    np.testing.assert_allclose(wind_rose_resample.wind_directions, [270])
+    np.testing.assert_allclose(wind_rose_resample.wind_speeds, [6, 6.5, 7])
+    np.testing.assert_allclose(wind_rose_resample.ti_table, np.array([[0.06, 0.065, 0.07]]))
 
 
 def test_wrap_wind_directions_near_360():
@@ -447,7 +533,7 @@ def test_wind_ti_rose_unpack_for_reinitialize():
     np.testing.assert_allclose(turbulence_intensities_unpack, [0.05, 0.05, 0.05, 0.05])
 
 
-def test_wind_ti_rose_resample():
+def test_wind_ti_rose_aggregate():
     wind_directions = np.array([0, 2, 4, 6, 8, 10])
     wind_speeds = np.array([7, 8])
     turbulence_intensities = np.array([0.02, 0.04, 0.06, 0.08, 0.1])
@@ -456,21 +542,34 @@ def test_wind_ti_rose_resample():
     wind_rose = WindTIRose(wind_directions, wind_speeds, turbulence_intensities, freq_table)
 
     # Test that resampling with a new step size returns the same
-    wind_rose_resample = wind_rose.resample()
+    wind_rose_aggregate = wind_rose.aggregate()
 
-    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_resample.wind_directions)
-    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_resample.wind_speeds)
+    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_aggregate.wind_directions)
+    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_aggregate.wind_speeds)
     np.testing.assert_allclose(
-        wind_rose.turbulence_intensities, wind_rose_resample.turbulence_intensities
+        wind_rose.turbulence_intensities, wind_rose_aggregate.turbulence_intensities
     )
-    np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_resample.freq_table_flat)
+    np.testing.assert_allclose(wind_rose.freq_table_flat, wind_rose_aggregate.freq_table_flat)
 
     # Now test resampling the turbulence intensities to 4% bins
-    wind_rose_resample = wind_rose.resample(ti_step=0.04)
-    np.testing.assert_allclose(wind_rose_resample.turbulence_intensities, [0.04, 0.08, 0.12])
+    wind_rose_aggregate = wind_rose.aggregate(ti_step=0.04)
+    np.testing.assert_allclose(wind_rose_aggregate.turbulence_intensities, [0.04, 0.08, 0.12])
     np.testing.assert_allclose(
-        wind_rose_resample.freq_table_flat, (1 / 60) * np.array(12 * [2, 2, 1])
+        wind_rose_aggregate.freq_table_flat, (1 / 60) * np.array(12 * [2, 2, 1])
     )
+
+    # Test tha that inplace behavior is to modify the original object as expected
+    wind_rose_2 = copy.deepcopy(wind_rose)
+    wind_rose_2.aggregate(inplace=True)
+    np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_2.wind_directions)
+    np.testing.assert_allclose(wind_rose.wind_speeds, wind_rose_2.wind_speeds)
+    np.testing.assert_allclose(wind_rose.turbulence_intensities, wind_rose_2.turbulence_intensities)
+
+    wind_rose_2.aggregate(ti_step=0.04, inplace=True)
+    np.testing.assert_allclose(
+        wind_rose_aggregate.turbulence_intensities, wind_rose_2.turbulence_intensities
+    )
+    np.testing.assert_allclose(wind_rose_aggregate.freq_table_flat, wind_rose_2.freq_table_flat)
 
 
 def test_time_series_to_WindTIRose():
@@ -611,8 +710,6 @@ def test_read_csv_long():
 def test_read_csv_long_ti():
     # Read in the wind rose data from the csv file
 
-
-
     # Now read in with correct columns
     wind_ti_rose = WindTIRose.read_csv_long(
         TEST_DATA / "wind_ti_rose.csv",
@@ -620,7 +717,6 @@ def test_read_csv_long_ti():
         ws_col="ws",
         ti_col="ti",
         freq_col="freq_val",
-
     )
 
     # Confirm the shape of the frequency table

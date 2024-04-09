@@ -497,38 +497,84 @@ class WindRose(WindDataBase):
         wind_speed_column = self.wind_speeds.copy()
         ti_matrix = self.ti_table.copy()
         freq_matrix = self.freq_table.copy()
-        value_matrix = self.value_table.copy()
+        if self.value_table is not None:
+            value_matrix = self.value_table.copy()
+        else:
+            value_matrix = None
 
         # If the first entry of wind_direction column is 0, and the last entry is not 360, then
         # pad 360 to the end of the wind direction column and the last row of the ti_matrix and
         # freq_matrix by copying the 0 entry
-        if wind_direction_column[0] == 0 and wind_direction_column[-1] != 360:
-            wind_direction_column = np.append(wind_direction_column, 360)
-            ti_matrix = np.vstack((ti_matrix, ti_matrix[0, :]))
-            freq_matrix = np.vstack((freq_matrix, freq_matrix[0, :]))
-            value_matrix = np.vstack((value_matrix, value_matrix[0, :]))
+        if len(wind_direction_column) > 1:
+            if wind_direction_column[0] == 0 and wind_direction_column[-1] != 360:
+                wind_direction_column = np.append(wind_direction_column, 360)
+                ti_matrix = np.vstack((ti_matrix, ti_matrix[0, :]))
+                freq_matrix = np.vstack((freq_matrix, freq_matrix[0, :]))
+                if self.value_table is not None:
+                    value_matrix = np.vstack((value_matrix, value_matrix[0, :]))
 
-        # Interpolate the ti_matrix and freq_matrix
-        ti_interpolator = interpolator(
-            (wind_direction_column, wind_speed_column), ti_matrix.flatten()
-        )
-        freq_interpolator = interpolator(
-            (wind_direction_column, wind_speed_column), freq_matrix.flatten()
-        )
-        value_interpolator = interpolator(
-            (wind_direction_column, wind_speed_column), value_matrix.flatten()
-        )
+        # If the wind_direction columns has length 1, then pad the wind_direction column with
+        # that value + and - 1 and expand the matrices accordingly
+        # (this avoids interpolation errors)
+        if len(wind_direction_column) == 1:
+            wind_direction_column = np.array(
+                [
+                    wind_direction_column[0] - 1,
+                    wind_direction_column[0],
+                    wind_direction_column[0] + 1,
+                ]
+            )
+            ti_matrix = np.vstack((ti_matrix, ti_matrix[0, :], ti_matrix[0, :]))
+            freq_matrix = np.vstack((freq_matrix, freq_matrix[0, :], freq_matrix[0, :]))
+            if self.value_table is not None:
+                value_matrix = np.vstack((value_matrix, value_matrix[0, :], value_matrix[0, :]))
+
+        # If the wind_speed column has length 1, then pad the wind_speed column with
+        # that value + and - 1
+        # and expand the matrices accordingly (this avoids interpolation errors)
+        if len(wind_speed_column) == 1:
+            wind_speed_column = np.array(
+                [wind_speed_column[0] - 1, wind_speed_column[0], wind_speed_column[0] + 1]
+            )
+            ti_matrix = np.hstack((ti_matrix, ti_matrix[:, 0][:, None], ti_matrix[:, 0][:, None]))
+            freq_matrix = np.hstack(
+                (freq_matrix, freq_matrix[:, 0][:, None], freq_matrix[:, 0][:, None])
+            )
+            if self.value_table is not None:
+                value_matrix = np.hstack(
+                    (value_matrix, value_matrix[:, 0][:, None], value_matrix[:, 0][:, None])
+                )
+
+        # Grid wind directions and wind speeds to match the ti_matrix and freq_matrix when flattened
+        wd_grid, ws_grid = np.meshgrid(wind_direction_column, wind_speed_column, indexing="ij")
+
+        # Form wd_grid and ws_grid to a 2-column matrix
+        wd_ws_mat = np.array([wd_grid.flatten(), ws_grid.flatten()]).T
+
+        # Build the interpolator from wd_grid, ws_grid, to ti_matrix, freq_matrix and value_matrix
+        ti_interpolator = interpolator(wd_ws_mat, ti_matrix.flatten())
+        freq_interpolator = interpolator(wd_ws_mat, freq_matrix.flatten())
+        if self.value_table is not None:
+            value_interpolator = interpolator(wd_ws_mat, value_matrix.flatten())
+
+        # Grid the new wind directions and wind speeds
+        new_wd_grid, new_ws_grid = np.meshgrid(new_wind_directions, new_wind_speeds, indexing="ij")
+        new_wd_ws_mat = np.array([new_wd_grid.flatten(), new_ws_grid.flatten()]).T
 
         # Create the new ti_matrix and freq_matrix
-        new_ti_matrix = ti_interpolator((new_wind_directions, new_wind_speeds)).reshape(
+        new_ti_matrix = ti_interpolator(new_wd_ws_mat).reshape(
             (len(new_wind_directions), len(new_wind_speeds))
         )
-        new_freq_matrix = freq_interpolator((new_wind_directions, new_wind_speeds)).reshape(
+        new_freq_matrix = freq_interpolator(new_wd_ws_mat).reshape(
             (len(new_wind_directions), len(new_wind_speeds))
         )
-        new_value_matrix = value_interpolator((new_wind_directions, new_wind_speeds)).reshape(
-            (len(new_wind_directions), len(new_wind_speeds))
-        )
+
+        if self.value_table is not None:
+            new_value_matrix = value_interpolator(new_wd_ws_mat).reshape(
+                (len(new_wind_directions), len(new_wind_speeds))
+            )
+        else:
+            new_value_matrix = None
 
         # Create the resampled wind rose
         resampled_wind_rose = WindRose(
@@ -964,25 +1010,66 @@ class WindTIRose(WindDataBase):
             heterogenous_inflow_config,
         )
 
-    def resample(self, wd_step=None, ws_step=None, ti_step=None):
+    def aggregate(self, wd_step=None, ws_step=None, ti_step=None, inplace=False):
         """
-        Resamples the wind rose by by wd_step, ws_step, and/or ti_step
+        Aggregates the wind TI rose into fewer wind direction, wind speed and TI bins.
+        It is necessary the wd_step and ws_step ti_step passed in are at least as
+        large as the current wind direction and wind speed steps.  If they are
+        not, the function will raise an error.
+
+        The function will return a new WindTIRose object with the aggregated
+        wind direction, wind speed and TI bins.  If inplace is set to True, the
+        current WindTIRose object will be updated with the aggregated bins.
 
         Args:
             wd_step: Step size for wind direction resampling (float, optional).
             ws_step: Step size for wind speed resampling (float, optional).
             ti_step: Step size for turbulence intensity resampling (float, optional).
+            inplace: Flag indicating whether to update the current WindTIRose.
+                Defaults to False.
 
         Returns:
-            WindRose: Resampled wind rose based on the provided or default step sizes.
+            WindTIRose: Aggregated wind TI rose based on the provided or default step sizes.
 
         Notes:
-            - Returns a resampled version of the wind rose using new `ws_step`,
+            - Returns a resampled version of the wind TI rose using new `ws_step`,
                 `wd_step`, and `ti_step`.
             - Uses the bin weights feature in TimeSeries to resample the wind rose.
             - If `ws_step`, `wd_step`, or `ti_step` are not specified, it uses
                 the current values.
         """
+
+        # If ws_step is passed in, confirm is it at least as large as the current step
+        if ws_step is not None:
+            if len(self.wind_speeds) >= 2:
+                current_ws_step = self.wind_speeds[1] - self.wind_speeds[0]
+                if ws_step < current_ws_step:
+                    raise ValueError(
+                        "ws_step provided must be at least as large as the current ws_step "
+                        f"({current_ws_step} m/s)"
+                    )
+
+        # If wd_step is passed in, confirm is it at least as large as the current step
+        if wd_step is not None:
+            if len(self.wind_directions) >= 2:
+                current_wd_step = self.wind_directions[1] - self.wind_directions[0]
+                if wd_step < current_wd_step:
+                    raise ValueError(
+                        "wd_step provided must be at least as large as the current wd_step "
+                        f"({current_wd_step} degrees)"
+                    )
+
+        # If ti_step is passed in, confirm is it at least as large as the current step
+        if ti_step is not None:
+            if len(self.turbulence_intensities) >= 2:
+                current_ti_step = self.turbulence_intensities[1] - self.turbulence_intensities[0]
+                if ti_step < current_ti_step:
+                    raise ValueError(
+                        "ti_step provided must be at least as large as the current ti_step "
+                        f"({current_ti_step})"
+                    )
+
+        # If ws_step, wd_step or ti_step is none, set it to the current step
         if ws_step is None:
             if len(self.wind_speeds) >= 2:
                 ws_step = self.wind_speeds[1] - self.wind_speeds[0]
@@ -1009,9 +1096,22 @@ class WindTIRose(WindDataBase):
         )
 
         # Now build a new wind rose using the new steps
-        return time_series.to_WindTIRose(
+        resampled_wind_rose = time_series.to_WindTIRose(
             wd_step=wd_step, ws_step=ws_step, ti_step=ti_step, bin_weights=self.freq_table_flat
         )
+
+        if inplace:
+            self.__init__(
+                resampled_wind_rose.wind_directions,
+                resampled_wind_rose.wind_speeds,
+                resampled_wind_rose.turbulence_intensities,
+                resampled_wind_rose.freq_table,
+                resampled_wind_rose.value_table,
+                resampled_wind_rose.compute_zero_freq_occurrence,
+                resampled_wind_rose.heterogenous_inflow_config_by_wd,
+            )
+        else:
+            return resampled_wind_rose
 
     def plot(
         self,
