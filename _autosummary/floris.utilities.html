@@ -73,7 +73,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/floris.utilities';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="floris.turbine_library.turbine_utilities" href="floris.turbine_library.turbine_utilities.html" />
+    <link rel="next" title="floris.type_dec" href="floris.type_dec.html" />
+    <link rel="prev" title="floris.convert_floris_input_v3_to_v4" href="floris.convert_floris_input_v3_to_v4.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   </head>
@@ -191,16 +192,18 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../v3_to_v4.html">Switching from FLORIS v3 to v4</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operation_models_user.html">Turbine Operation Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../input_reference_turbine.html">Turbine Input File Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples Index</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory and Background</span></p>
 <ul class="nav bd-sidenav">
@@ -216,77 +219,136 @@
 <li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../code_quality.html">Code Quality</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api_docs.html">API Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="floris.logging_manager.html">floris.logging_manager</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="floris.simulation.html">floris.simulation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.base.html">floris.simulation.base</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.farm.html">floris.simulation.farm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.floris.html">floris.simulation.floris</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.flow_field.html">floris.simulation.flow_field</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.grid.html">floris.simulation.grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.solver.html">floris.simulation.solver</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.turbine.html">floris.simulation.turbine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.turbine_multi_dim.html">floris.simulation.turbine_multi_dim</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.wake.html">floris.simulation.wake</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.simulation.wake_combination.html">floris.simulation.wake_combination</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_combination.fls.html">floris.simulation.wake_combination.fls</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_combination.max.html">floris.simulation.wake_combination.max</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_combination.sosfs.html">floris.simulation.wake_combination.sosfs</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.simulation.wake_deflection.html">floris.simulation.wake_deflection</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_deflection.empirical_gauss.html">floris.simulation.wake_deflection.empirical_gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_deflection.gauss.html">floris.simulation.wake_deflection.gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_deflection.jimenez.html">floris.simulation.wake_deflection.jimenez</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_deflection.none.html">floris.simulation.wake_deflection.none</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.simulation.wake_turbulence.html">floris.simulation.wake_turbulence</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_turbulence.crespo_hernandez.html">floris.simulation.wake_turbulence.crespo_hernandez</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_turbulence.none.html">floris.simulation.wake_turbulence.none</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_turbulence.wake_induced_mixing.html">floris.simulation.wake_turbulence.wake_induced_mixing</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.simulation.wake_velocity.html">floris.simulation.wake_velocity</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.cumulative_gauss_curl.html">floris.simulation.wake_velocity.cumulative_gauss_curl</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.empirical_gauss.html">floris.simulation.wake_velocity.empirical_gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.gauss.html">floris.simulation.wake_velocity.gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.jensen.html">floris.simulation.wake_velocity.jensen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.none.html">floris.simulation.wake_velocity.none</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.turbopark.html">floris.simulation.wake_velocity.turbopark</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="floris.tools.html">floris.tools</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.cut_plane.html">floris.tools.cut_plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.floris_interface.html">floris.tools.floris_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.floris_interface_legacy_reader.html">floris.tools.floris_interface_legacy_reader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.interface_utilities.html">floris.tools.interface_utilities</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.layout_functions.html">floris.tools.layout_functions</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.tools.optimization.html">floris.tools.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.tools.optimization.layout_optimization.html">floris.tools.optimization.layout_optimization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.tools.optimization.legacy.html">floris.tools.optimization.legacy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.tools.optimization.other.html">floris.tools.optimization.other</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.tools.optimization.yaw_optimization.html">floris.tools.optimization.yaw_optimization</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.parallel_computing_interface.html">floris.tools.parallel_computing_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.power_rose.html">floris.tools.power_rose</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.rews.html">floris.tools.rews</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.uncertainty_interface.html">floris.tools.uncertainty_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.visualization.html">floris.tools.visualization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.wind_rose.html">floris.tools.wind_rose</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="floris.turbine_library.html">floris.turbine_library</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="floris.flow_visualization.html">floris.flow_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.floris_model.html">floris.floris_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.wind_data.html">floris.wind_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.uncertain_floris_model.html">floris.uncertain_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.turbine_library.html">floris.turbine_library</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="floris.turbine_library.turbine_previewer.html">floris.turbine_library.turbine_previewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.parallel_floris_model.html">floris.parallel_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.optimization.html">floris.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.other.html">floris.optimization.other</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimization_base.html">floris.optimization.yaw_optimization.yaw_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimization_tools.html">floris.optimization.yaw_optimization.yaw_optimization_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_geometric.html">floris.optimization.yaw_optimization.yaw_optimizer_geometric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_scipy.html">floris.optimization.yaw_optimization.yaw_optimizer_scipy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_sr.html">floris.optimization.yaw_optimization.yaw_optimizer_sr</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="floris.layout_visualization.html">floris.layout_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.cut_plane.html">floris.cut_plane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.core.html">floris.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.convert_turbine_v3_to_v4.html">floris.convert_turbine_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.convert_floris_input_v3_to_v4.html">floris.convert_floris_input_v3_to_v4</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.logging_manager.html">floris.logging_manager</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/001_opening_floris_computing_power.html">Example 1: Opening FLORIS and Computing Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/002_visualizations.html">Example 2: Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/003_wind_data_objects.html">Example 3: Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/004_set.html">Example 4: Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/005_getting_power.html">Example 5: Getting Turbine and Farm Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/001_opt_yaw_single_ws.html">Example: Optimize yaw for a single wind speed and multiple wind directions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/002_opt_yaw_single_ws_uncertain.html">Example: Optimize yaw for a single wind speed and multiple wind directions.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/003_opt_yaw_multiple_ws.html">Example: Optimize yaw for multiple wind directions and multiple wind speeds.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/004_optimize_yaw_aep.html">Example: Optimize yaw and compare AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/005_optimize_yaw_aep_parallel.html">Example: Optimize yaw and compare AEP in parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/006_compare_yaw_optimizers.html">Example: Compare yaw optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/007_optimize_yaw_with_neighbor_farms.html">Example: Optimize yaw with neighbor farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control types</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/001_derating_control.html">Example of using the simple-derating control model in FLORIS.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/002_disable_turbines.html">Example 001: Disable turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_emgauss/001_empirical_gauss_velocity_deficit_parameters.html">Example: Empirical Gaussian velocity deficit parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_emgauss/002_empirical_gauss_deflection_parameters.html">Example: Empirical Gaussian deflection parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Floating</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/001_floating_turbine_models.html">Example: Floating turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/002_floating_vs_fixedbottom_farm.html">Example: Floating vs fixed-bottom farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/003_tilt_driven_vertical_wake_deflection.html">Example: Tilt-driven vertical wake deflection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Get flow</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/001_extract_wind_speed_at_turbines.html">Example: Extract wind speed at turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/002_extract_wind_speed_at_points.html">Example: Extract wind speed at points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/003_plot_velocity_deficit_profiles.html">Example: Plot velocity deficit profiles</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/001_check_turbine.html">Example: Check turbine power curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/002_multiple_turbine_types.html">Example: Multiple turbine types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/003_specify_turbine_power_curve.html">Example: Specify turbine power curve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Uncertain</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/001_layout_visualizations.html">Example: Layout Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/002_visualize_y_cut_plane.html">Example: Visualize y cut plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/003_visualize_cross_plane.html">Example: Visualize cross plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/004_visualize_rotor_values.html">Example: Visualize rotor velocities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/005_visualize_flow_by_sweeping_turbines.html">Example: Visualize flow by sweeping turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
 </ul>
 
     </div>
@@ -516,6 +578,9 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.load_yaml"><code class="docutils literal notranslate"><span class="pre">load_yaml()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.round_nearest_2_or_5"><code class="docutils literal notranslate"><span class="pre">round_nearest_2_or_5()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.round_nearest"><code class="docutils literal notranslate"><span class="pre">round_nearest()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.nested_get"><code class="docutils literal notranslate"><span class="pre">nested_get()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.nested_set"><code class="docutils literal notranslate"><span class="pre">nested_set()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.print_nested_dict"><code class="docutils literal notranslate"><span class="pre">print_nested_dict()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -538,34 +603,43 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.load_yaml" title="floris.utilities.load_yaml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_yaml</span></code></a>(filename[, loader])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.pshape" title="floris.utilities.pshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pshape</span></code></a>(array[, label])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.nested_get" title="floris.utilities.nested_get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nested_get</span></code></a>(d, keys)</p></td>
+<td><p>Get a value from a nested dictionary using a list of keys.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.nested_set" title="floris.utilities.nested_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nested_set</span></code></a>(d, keys, value[, idx])</p></td>
+<td><p>Set a value in a nested dictionary using a list of keys.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.print_nested_dict" title="floris.utilities.print_nested_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_nested_dict</span></code></a>(dictionary[, indent])</p></td>
+<td><p>Print a nested dictionary with indentation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.pshape" title="floris.utilities.pshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pshape</span></code></a>(array[, label])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.reverse_rotate_coordinates_rel_west" title="floris.utilities.reverse_rotate_coordinates_rel_west"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse_rotate_coordinates_rel_west</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.reverse_rotate_coordinates_rel_west" title="floris.utilities.reverse_rotate_coordinates_rel_west"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse_rotate_coordinates_rel_west</span></code></a>(...)</p></td>
 <td><p>This function reverses the rotation of the given grid so that the coordinates are aligned with the original wind direction.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.rotate_coordinates_rel_west" title="floris.utilities.rotate_coordinates_rel_west"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_coordinates_rel_west</span></code></a>(wind_directions, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.rotate_coordinates_rel_west" title="floris.utilities.rotate_coordinates_rel_west"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_coordinates_rel_west</span></code></a>(wind_directions, ...)</p></td>
 <td><p>This function rotates the given coordinates so that they are aligned with West (270) rather than North (0).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.round_nearest" title="floris.utilities.round_nearest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_nearest</span></code></a>(x[, base])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.round_nearest" title="floris.utilities.round_nearest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_nearest</span></code></a>(x[, base])</p></td>
 <td><p>Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 5.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.round_nearest_2_or_5" title="floris.utilities.round_nearest_2_or_5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_nearest_2_or_5</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.round_nearest_2_or_5" title="floris.utilities.round_nearest_2_or_5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_nearest_2_or_5</span></code></a>(x)</p></td>
 <td><p>Rounds a number (with a 0.5 buffer) up to the nearest integer divisible by 2 or 5.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.sind" title="floris.utilities.sind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sind</span></code></a>(angle)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.sind" title="floris.utilities.sind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sind</span></code></a>(angle)</p></td>
 <td><p>Sine of an angle with the angle given in degrees.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.tand" title="floris.utilities.tand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tand</span></code></a>(angle)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.tand" title="floris.utilities.tand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tand</span></code></a>(angle)</p></td>
 <td><p>Tangent of an angle with the angle given in degrees.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.wind_delta" title="floris.utilities.wind_delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_delta</span></code></a>(wind_directions)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.wind_delta" title="floris.utilities.wind_delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_delta</span></code></a>(wind_directions)</p></td>
 <td><p>This function calculates the deviation from West (270) for a given wind direction or series of wind directions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.wrap_180" title="floris.utilities.wrap_180"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_180</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.wrap_180" title="floris.utilities.wrap_180"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_180</span></code></a>(x)</p></td>
 <td><p>Shift the given values to within the range (-180, 180].</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.utilities.wrap_360" title="floris.utilities.wrap_360"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_360</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.utilities.wrap_360" title="floris.utilities.wrap_360"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wrap_360</span></code></a>(x)</p></td>
 <td><p>Shift the given values to within the range (0, 360].</p></td>
 </tr>
 </tbody>
@@ -711,11 +785,7 @@ coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordi
 the original wind direction. The rotation happens about the centroid of the coordinates.</p>
 <dl>
 <dt>Args:</dt><dd><p>wind_directions (NDArrayFloat): Series of wind directions to base the rotation.
-coordinates (NDArrayFloat): Series of coordinates to rotate with shape (N coordinates, 3)</p>
-<blockquote>
-<div><p>so that each element of the array coordinates[i] yields a three-component coordinate.</p>
-</div></blockquote>
-<p>grid_x (NDArrayFloat): X-coordinates to be rotated.
+grid_x (NDArrayFloat): X-coordinates to be rotated.
 grid_y (NDArrayFloat): Y-coordinates to be rotated.
 grid_z (NDArrayFloat): Z-coordinates to be rotated.
 x_center_of_rotation (float): The x-coordinate for the rotation center of the</p>
@@ -805,6 +875,85 @@ x_center_of_rotation (float): The x-coordinate for the rotation center of the</p
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.utilities.nested_get">
+<span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">nested_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#nested_get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.nested_get" title="Link to this definition">#</a></dt>
+<dd><p>Get a value from a nested dictionary using a list of keys.
+Based on:
+<a class="reference external" href="https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys">https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>d</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) -- </p></li>
+<li><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><p>d (Dict[str, Any]): The dictionary to get the value from.
+keys (List[str]): A list of keys to traverse the dictionary.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Any: The value at the end of the key traversal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.utilities.nested_set">
+<span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">nested_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#nested_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.nested_set" title="Link to this definition">#</a></dt>
+<dd><p>Set a value in a nested dictionary using a list of keys.
+Based on:
+<a class="reference external" href="https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys">https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>d</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) -- </p></li>
+<li><p><strong>keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) -- </p></li>
+<li><p><strong>value</strong> (<em>Any</em>) -- </p></li>
+<li><p><strong>idx</strong> (<em>int</em><em> | </em><em>None</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Args:</dt><dd><p>dic (Dict[str, Any]): The dictionary to set the value in.
+keys (List[str]): A list of keys to traverse the dictionary.
+value (Any): The value to set.
+idx (Optional[int], optional): If the value is an list, the index to change.</p>
+<blockquote>
+<div><p>Defaults to None.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.utilities.print_nested_dict">
+<span class="sig-prename descclassname"><span class="pre">floris.utilities.</span></span><span class="sig-name descname"><span class="pre">print_nested_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/utilities.html#print_nested_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.utilities.print_nested_dict" title="Link to this definition">#</a></dt>
+<dd><p>Print a nested dictionary with indentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dictionary</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) -- </p></li>
+<li><p><strong>indent</strong> (<em>int</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dictionary (Dict[str, Any]): The dictionary to print.
+indent (int, optional): The number of spaces to indent. Defaults to 0.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
     <script type="text/x-thebe-config">
@@ -838,13 +987,22 @@ x_center_of_rotation (float): The x-coordinate for the rotation center of the</p
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="floris.turbine_library.turbine_utilities.html"
+       href="floris.convert_floris_input_v3_to_v4.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">floris.turbine_library.turbine_utilities</p>
+        <p class="prev-next-title">floris.convert_floris_input_v3_to_v4</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="floris.type_dec.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">floris.type_dec</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -879,6 +1037,9 @@ x_center_of_rotation (float): The x-coordinate for the rotation center of the</p
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.load_yaml"><code class="docutils literal notranslate"><span class="pre">load_yaml()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.round_nearest_2_or_5"><code class="docutils literal notranslate"><span class="pre">round_nearest_2_or_5()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.round_nearest"><code class="docutils literal notranslate"><span class="pre">round_nearest()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.nested_get"><code class="docutils literal notranslate"><span class="pre">nested_get()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.nested_set"><code class="docutils literal notranslate"><span class="pre">nested_set()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.utilities.print_nested_dict"><code class="docutils literal notranslate"><span class="pre">print_nested_dict()</span></code></a></li>
 </ul>
   </nav></div>
 

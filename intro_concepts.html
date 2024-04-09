@@ -74,7 +74,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Advanced Concepts" href="advanced_concepts.html" />
-    <link rel="prev" title="Installation" href="installation.html" />
+    <link rel="prev" title="Switching from FLORIS v3 to v4" href="v3_to_v4.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   </head>
@@ -192,16 +192,18 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="v3_to_v4.html">Switching from FLORIS v3 to v4</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wind_data_user.html">Wind Data Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation_models_user.html">Turbine Operation Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_turbine.html">Turbine Input File Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples Index</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory and Background</span></p>
 <ul class="nav bd-sidenav">
@@ -217,77 +219,136 @@
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="code_quality.html">Code Quality</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api_docs.html">API Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.logging_manager.html">floris.logging_manager</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.simulation.html">floris.simulation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.base.html">floris.simulation.base</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.farm.html">floris.simulation.farm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.floris.html">floris.simulation.floris</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.flow_field.html">floris.simulation.flow_field</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.grid.html">floris.simulation.grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.solver.html">floris.simulation.solver</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.turbine.html">floris.simulation.turbine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.turbine_multi_dim.html">floris.simulation.turbine_multi_dim</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.simulation.wake.html">floris.simulation.wake</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.simulation.wake_combination.html">floris.simulation.wake_combination</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_combination.fls.html">floris.simulation.wake_combination.fls</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_combination.max.html">floris.simulation.wake_combination.max</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_combination.sosfs.html">floris.simulation.wake_combination.sosfs</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.html">floris.simulation.wake_deflection</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.empirical_gauss.html">floris.simulation.wake_deflection.empirical_gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.gauss.html">floris.simulation.wake_deflection.gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.jimenez.html">floris.simulation.wake_deflection.jimenez</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_deflection.none.html">floris.simulation.wake_deflection.none</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.html">floris.simulation.wake_turbulence</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.crespo_hernandez.html">floris.simulation.wake_turbulence.crespo_hernandez</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.none.html">floris.simulation.wake_turbulence.none</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_turbulence.wake_induced_mixing.html">floris.simulation.wake_turbulence.wake_induced_mixing</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.html">floris.simulation.wake_velocity</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">floris.simulation.wake_velocity.cumulative_gauss_curl</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.empirical_gauss.html">floris.simulation.wake_velocity.empirical_gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.gauss.html">floris.simulation.wake_velocity.gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.jensen.html">floris.simulation.wake_velocity.jensen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.none.html">floris.simulation.wake_velocity.none</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.simulation.wake_velocity.turbopark.html">floris.simulation.wake_velocity.turbopark</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.tools.html">floris.tools</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.cut_plane.html">floris.tools.cut_plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.floris_interface.html">floris.tools.floris_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.floris_interface_legacy_reader.html">floris.tools.floris_interface_legacy_reader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.interface_utilities.html">floris.tools.interface_utilities</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.layout_functions.html">floris.tools.layout_functions</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.tools.optimization.html">floris.tools.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.tools.optimization.layout_optimization.html">floris.tools.optimization.layout_optimization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.tools.optimization.legacy.html">floris.tools.optimization.legacy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.tools.optimization.other.html">floris.tools.optimization.other</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.tools.optimization.yaw_optimization.html">floris.tools.optimization.yaw_optimization</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.parallel_computing_interface.html">floris.tools.parallel_computing_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.power_rose.html">floris.tools.power_rose</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.rews.html">floris.tools.rews</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.uncertainty_interface.html">floris.tools.uncertainty_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.visualization.html">floris.tools.visualization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.type_dec.html">floris.type_dec</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.turbine_library.html">floris.turbine_library</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.flow_visualization.html">floris.flow_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.floris_model.html">floris.floris_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.wind_data.html">floris.wind_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.uncertain_floris_model.html">floris.uncertain_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.turbine_library.html">floris.turbine_library</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.html">floris.turbine_library.turbine_previewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.parallel_floris_model.html">floris.parallel_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.optimization.html">floris.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.other.html">floris.optimization.other</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimization_base.html">floris.optimization.yaw_optimization.yaw_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimization_tools.html">floris.optimization.yaw_optimization.yaw_optimization_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_geometric.html">floris.optimization.yaw_optimization.yaw_optimizer_geometric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_scipy.html">floris.optimization.yaw_optimization.yaw_optimizer_scipy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_sr.html">floris.optimization.yaw_optimization.yaw_optimizer_sr</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.layout_visualization.html">floris.layout_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.cut_plane.html">floris.cut_plane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.core.html">floris.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.convert_turbine_v3_to_v4.html">floris.convert_turbine_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.convert_floris_input_v3_to_v4.html">floris.convert_floris_input_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.type_dec.html">floris.type_dec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.logging_manager.html">floris.logging_manager</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/001_opening_floris_computing_power.html">Example 1: Opening FLORIS and Computing Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/002_visualizations.html">Example 2: Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/003_wind_data_objects.html">Example 3: Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/004_set.html">Example 4: Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/005_getting_power.html">Example 5: Getting Turbine and Farm Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_optimization/001_opt_yaw_single_ws.html">Example: Optimize yaw for a single wind speed and multiple wind directions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_optimization/002_opt_yaw_single_ws_uncertain.html">Example: Optimize yaw for a single wind speed and multiple wind directions.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_optimization/003_opt_yaw_multiple_ws.html">Example: Optimize yaw for multiple wind directions and multiple wind speeds.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_optimization/004_optimize_yaw_aep.html">Example: Optimize yaw and compare AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_optimization/005_optimize_yaw_aep_parallel.html">Example: Optimize yaw and compare AEP in parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_optimization/006_compare_yaw_optimizers.html">Example: Compare yaw optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_optimization/007_optimize_yaw_with_neighbor_farms.html">Example: Optimize yaw with neighbor farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control types</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/001_derating_control.html">Example of using the simple-derating control model in FLORIS.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/002_disable_turbines.html">Example 001: Disable turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_emgauss/001_empirical_gauss_velocity_deficit_parameters.html">Example: Empirical Gaussian velocity deficit parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_emgauss/002_empirical_gauss_deflection_parameters.html">Example: Empirical Gaussian deflection parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Floating</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_floating/001_floating_turbine_models.html">Example: Floating turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_floating/002_floating_vs_fixedbottom_farm.html">Example: Floating vs fixed-bottom farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_floating/003_tilt_driven_vertical_wake_deflection.html">Example: Tilt-driven vertical wake deflection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Get flow</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_get_flow/001_extract_wind_speed_at_turbines.html">Example: Extract wind speed at turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_get_flow/002_extract_wind_speed_at_points.html">Example: Extract wind speed at points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_get_flow/003_plot_velocity_deficit_profiles.html">Example: Plot velocity deficit profiles</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_turbine/001_check_turbine.html">Example: Check turbine power curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_turbine/002_multiple_turbine_types.html">Example: Multiple turbine types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_turbine/003_specify_turbine_power_curve.html">Example: Specify turbine power curve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Uncertain</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_visualizations/001_layout_visualizations.html">Example: Layout Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_visualizations/002_visualize_y_cut_plane.html">Example: Visualize y cut plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_visualizations/003_visualize_cross_plane.html">Example: Visualize cross plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_visualizations/004_visualize_rotor_values.html">Example: Visualize rotor velocities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_visualizations/005_visualize_flow_by_sweeping_turbines.html">Example: Visualize flow by sweeping turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
 </ul>
 
     </div>
@@ -500,9 +561,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-florisinterface">Initialize FlorisInterface</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-floris">Initialize Floris</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-model">Build the model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execute-wake-calculation">Execute wake calculation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-floris-wake-calculation">Run the Floris wake calculation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-turbine-power">Get turbine power</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-yaw-angles">Applying yaw angles</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#start-to-finish">Start to finish</a></li>
@@ -523,26 +584,32 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="introductory-concepts">
 <span id="concepts-intro"></span><h1>Introductory Concepts<a class="headerlink" href="#introductory-concepts" title="Link to this heading">#</a></h1>
-<p>FLORIS is a command-line program written in Python. There are two primary packages that make up the software:</p>
+<p>FLORIS is a Python-based software library for calculating wind farm performance considering
+the effect of turbine-turbine interactions through their wakes.
+There are two primary packages to understand when using FLORIS:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">floris.simulation</span></code>: simulation framework including wake model definitions</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">floris.tools</span></code>: utilities for pre and post processing as well as driving the simulation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">floris.core</span></code>: This package contains the core functionality for calculating the wind farm wake
+and turbine-turbine interactions. This package is the computational engine of FLORIS.
+All of the mathematical models and algorithms are implemented here.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">floris</span></code>: This is the top-level package that provides most of the functionality that the
+majority of users will need. The main entry point is <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> which is a high-level
+interface to the computational engine.</p></li>
 </ul>
 <!-- TODO add chart  -->
 <p>Users of FLORIS will develop a Python script with the following sequence of steps:</p>
 <ol class="arabic simple">
 <li><p>Load inputs and preprocess data</p></li>
-<li><p>Run the wind farm wake simulation</p></li>
+<li><p>Run the wind farm wake calculation</p></li>
 <li><p>Extract data and postprocess results</p></li>
 </ol>
-<p>Generally, users will only interact with <code class="docutils literal notranslate"><span class="pre">floris.tools</span></code> and most often through
-the <code class="docutils literal notranslate"><span class="pre">FlorisInterface</span></code> class. Additionally, <code class="docutils literal notranslate"><span class="pre">floris.tools</span></code> contains functionality
-for comparing results, creating visualizations, and developing optimization cases.</p>
+<p>Generally, users will only interact with <code class="docutils literal notranslate"><span class="pre">floris</span></code> and most often through the <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> class.
+Additionally, <code class="docutils literal notranslate"><span class="pre">floris</span></code> contains functionality for comparing results, creating visualizations,
+and developing optimization cases.</p>
 <p>This notebook steps through the basic ideas and operations of FLORIS while showing
 realistic uses and expected behavior.</p>
-<section id="initialize-florisinterface">
-<h2>Initialize FlorisInterface<a class="headerlink" href="#initialize-florisinterface" title="Link to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">FlorisInterface</span></code> provides functionality to build a wind farm representation and drive
+<section id="initialize-floris">
+<h2>Initialize Floris<a class="headerlink" href="#initialize-floris" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> class provides functionality to build a wind farm representation and drive
 the simulation. This object is created (instantiated) by passing the path to a FLORIS input
 file as the only argument. After this object is created, it can immediately be used to
 inspect the data.</p>
@@ -551,10 +618,10 @@ inspect the data.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<span class="kn">from</span> <span class="nn">floris.tools</span> <span class="kn">import</span> <span class="n">FlorisInterface</span>
+<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
 
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
-<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     x       y&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -575,10 +642,10 @@ inspect the data.</p>
 <section id="build-the-model">
 <h2>Build the model<a class="headerlink" href="#build-the-model" title="Link to this heading">#</a></h2>
 <p>At this point, FLORIS has been initialized with the data defined in the input file.
-However, it is often simpler to define a basic configuration in the input file as
+However, it is often simplest to define a basic configuration in the input file as
 a starting point and then make modifications in the Python script. This allows for
 generating data algorithmically or loading data from a data file. Modifications to
-the wind farm representation are handled through the <code class="docutils literal notranslate"><span class="pre">FlorisInterface.reinitialize()</span></code>
+the wind farm representation are handled through the <code class="docutils literal notranslate"><span class="pre">FlorisModel.set()</span></code>
 function with keyword arguments. Another way to think of this function is that it
 changes the value of inputs specified in the input file.</p>
 <p>Let's change the location of turbines in the wind farm. The code below changes the
@@ -587,9 +654,9 @@ initial 3x1 layout to a 2x2 rectangular layout.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_2x2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">]</span>
 <span class="n">y_2x2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">]</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">x_2x2</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">y_2x2</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">x_2x2</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">y_2x2</span><span class="p">)</span>
 
-<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_layout</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     x       y&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -607,33 +674,38 @@ initial 3x1 layout to a 2x2 rectangular layout.</p>
 </div>
 </div>
 </div>
-<p>Additionally, we can change the wind speeds and wind directions.
-These are lists of wind speeds and wind directions that will be
-combined so that a wake calculation will happen for every wind
-direction with each speed.</p>
-<p>Notice that we can give <code class="docutils literal notranslate"><span class="pre">FlorisInterface.reinitialize()</span></code> multiple keyword arguments at once.</p>
+<p>Additionally, we can change the wind speeds, wind directions, and turbulence intensity.
+The set of wind conditions is given as arrays of wind speeds, wind directions, and turbulence
+intensity combinations that describe the atmospheric conditions to compute.
+This requires that all arrays be the same length.</p>
+<p>Notice that we can give <code class="docutils literal notranslate"><span class="pre">FlorisModel.set()</span></code> multiple keyword arguments at once.
+There is no expected output from the <code class="docutils literal notranslate"><span class="pre">FlorisModel.set()</span></code> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># One wind direction and one speed -&gt; one atmospheric condition</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">],</span> <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">])</span>
 
-<span class="c1"># Two wind directions and one speed -&gt; two atmospheric conditions</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">])</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">],</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="p">)</span>
 
-<span class="c1"># Two wind directions and two speeds -&gt; four atmospheric conditions</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">])</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">],</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">FlorisInterface.reinitialize()</span></code> creates all of the basic data structures required
+<p><code class="docutils literal notranslate"><span class="pre">FlorisModel.set()</span></code> creates all of the basic data structures required
 for the simulation but it does not do any aerodynamic calculations. The low level
 data structures have a complex shape that enables faster computations. Specifically,
-most data is structured as a many-dimensional Numpy array with the following dimensions:</p>
+most data is structured as a 4-dimensional Numpy array with the following dimensions:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
     <span class="p">(</span>
-        <span class="n">wind</span> <span class="n">directions</span><span class="p">,</span>
-        <span class="n">wind</span> <span class="n">speeds</span><span class="p">,</span>
+        <span class="n">findex</span><span class="p">,</span>
         <span class="n">turbines</span><span class="p">,</span>
         <span class="n">grid</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">grid</span><span class="o">-</span><span class="mi">2</span>
@@ -641,22 +713,25 @@ most data is structured as a many-dimensional Numpy array with the following dim
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>The <code class="docutils literal notranslate"><span class="pre">findex</span></code> dimension contains the index to a particular calculation in the overall data
+domain. This typically represents a unique combination of wind direction and wind speed
+making up a wind condition, but it can also be used to represent any other varying quantity.</p>
 <p>For example, we can see the shape of the data structure for the grid point x-coordinates
 for the all turbines and get the x-coordinates of grid points for the third turbine in
-the first wind direction and first wind speed. We can also plot all the grid points in
+the first wind condition. We can also plot all the grid points in
 space to get an idea of the overall form of our grid.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimensions of grid x-components&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">))</span>
 
 <span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine 3 grid x-components for first wind direction and first wind speed&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;3rd turbine x-components for first wind condition (at findex=0)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-<span class="n">z</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
@@ -668,27 +743,27 @@ space to get an idea of the overall form of our grid.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dimensions of grid x-components
-(2, 2, 4, 3, 3)
+(4, 4, 3, 3)
 
-Turbine 3 grid x-components for first wind direction and first wind speed
+3rd turbine x-components for first wind condition (at findex=0)
 [[800. 800. 800.]
  [800. 800. 800.]
  [800. 800. 800.]]
 </pre></div>
 </div>
-<img alt="_images/9d967d5e932f7a176a9f0fa8077ddf98475705864537b3eb267b46b37af9fa2a.png" src="_images/9d967d5e932f7a176a9f0fa8077ddf98475705864537b3eb267b46b37af9fa2a.png" />
+<img alt="_images/c31e16b3a973e6d840d2eaa32c542ef906951660aea840ecdc72fd86255d564b.png" src="_images/c31e16b3a973e6d840d2eaa32c542ef906951660aea840ecdc72fd86255d564b.png" />
 </div>
 </div>
 </section>
-<section id="execute-wake-calculation">
-<h2>Execute wake calculation<a class="headerlink" href="#execute-wake-calculation" title="Link to this heading">#</a></h2>
+<section id="run-the-floris-wake-calculation">
+<h2>Run the Floris wake calculation<a class="headerlink" href="#run-the-floris-wake-calculation" title="Link to this heading">#</a></h2>
 <p>Running the wake calculation is a one-liner. This will calculate the velocities
 at each turbine given the wake of other turbines for every wind speed and wind
-direction combination. Since we have not explicitly specified yaw control settings,
-all turbines are aligned with the inflow.</p>
+direction combination. Since we have not explicitly specified yaw control settings
+when creating the <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> settings, all turbines are aligned with the inflow.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -696,25 +771,24 @@ all turbines are aligned with the inflow.</p>
 </section>
 <section id="get-turbine-power">
 <h2>Get turbine power<a class="headerlink" href="#get-turbine-power" title="Link to this heading">#</a></h2>
-<p>At this point, the simulation has completed and we can use the <code class="docutils literal notranslate"><span class="pre">FlorisInterface</span></code> to
+<p>At this point, the simulation has completed and we can use <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> to
 extract useful information such as the power produced at each turbine. Remember that
-we have configured the simulation with two wind directions, two wind speeds, and four
-turbines.</p>
+we have configured the simulation with four wind conditions and four turbines.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">powers</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># calculated in Watts, so convert to kW</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">powers</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># calculated in Watts, so convert to kW</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimensions of `powers`&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">powers</span><span class="p">)</span> <span class="p">)</span>
 
-<span class="n">N_TURBINES</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span>
+<span class="n">N_TURBINES</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span>
 
 <span class="nb">print</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine powers for 8 m/s&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wind direction </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wind condition </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_TURBINES</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Turbine </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">powers</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">7,.2f</span><span class="si">}</span><span class="s2"> kW&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Turbine </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">powers</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">7,.2f</span><span class="si">}</span><span class="s2"> kW&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Turbine powers for all turbines at all wind conditions&quot;</span><span class="p">)</span>
@@ -724,27 +798,26 @@ turbines.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dimensions of `powers`
-(2, 2, 4)
+(4, 4)
 
 Turbine powers for 8 m/s
-Wind direction 0
-  Turbine 0 - 1,691.33 kW
-  Turbine 1 - 1,691.33 kW
-  Turbine 2 -  592.65 kW
-  Turbine 3 -  592.98 kW
+Wind condition 0
+  Turbine 0 - 1,753.95 kW
+  Turbine 1 - 1,753.95 kW
+  Turbine 2 -  904.68 kW
+  Turbine 3 -  904.85 kW
 
-Wind direction 1
-  Turbine 0 - 1,691.33 kW
-  Turbine 1 - 1,691.33 kW
-  Turbine 2 - 1,631.07 kW
-  Turbine 3 - 1,629.76 kW
+Wind condition 1
+  Turbine 0 - 1,753.95 kW
+  Turbine 1 - 1,753.95 kW
+  Turbine 2 - 1,644.86 kW
+  Turbine 3 - 1,643.39 kW
 
 Turbine powers for all turbines at all wind conditions
-[[[1691.32664838 1691.32664838  592.6531181   592.97842923]
-  [2407.84167188 2407.84167188  861.30649817  861.73255027]]
-
- [[1691.32664838 1691.32664838 1631.06554071 1629.75543674]
-  [2407.84167188 2407.84167188 2321.40975418 2319.53218301]]]
+[[1753.95445918 1753.95445918  904.68478734  904.84672946]
+ [1753.95445918 1753.95445918 1644.85720431 1643.39012544]
+ [2496.42786184 2496.42786184 1276.4580679  1276.67310219]
+ [2496.42786184 2496.42786184 2354.40522998 2352.47398836]]
 </pre></div>
 </div>
 </div>
@@ -752,46 +825,42 @@ Turbine powers for all turbines at all wind conditions
 </section>
 <section id="applying-yaw-angles">
 <h2>Applying yaw angles<a class="headerlink" href="#applying-yaw-angles" title="Link to this heading">#</a></h2>
-<p>Yaw angles are applied to turbines through the <code class="docutils literal notranslate"><span class="pre">FlorisInterface.calculate_wake</span></code> function.
+<p>Yaw angles are another configuration option through <code class="docutils literal notranslate"><span class="pre">FlorisModel.set</span></code>.
 In order to fit into the vectorized framework, the yaw settings must be represented as
 a <code class="docutils literal notranslate"><span class="pre">Numpy.array</span></code> with  dimensions equal to:</p>
 <ul class="simple">
-<li><p>0: number of wind directions</p></li>
-<li><p>1: number of wind speeds</p></li>
-<li><p>2: number of turbines</p></li>
+<li><p>0: findex</p></li>
+<li><p>1: number of turbines</p></li>
 </ul>
-<p><strong>Unlike the data configured in <code class="docutils literal notranslate"><span class="pre">FlorisInterface.reinitialize()</span></code>, yaw angles are not retained</strong>
-<strong>in memory and must be provided each time <code class="docutils literal notranslate"><span class="pre">FlorisInterface.calculate_wake</span></code> is used.</strong>
-<strong>If no yaw angles are given, all turbines will be aligned with the inflow.</strong></p>
 <p>It is typically easiest to start with an array of 0's and modify individual
 turbine yaw settings, as shown below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Recall that the previous `fmodel.set()` command set up four atmospheric conditions</span>
+<span class="c1"># and there are 4 turbines in the farm.  So, the yaw angles array must be 4x4.</span>
+<span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Yaw angle array initialized with 0&#39;s&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First turbine yawed 25 degrees for every atmospheric condition&quot;</span><span class="p">)</span>
-<span class="n">yaw_angles</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">yaw_angles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
 
-<span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Yaw angle array initialized with 0&#39;s
-[[[0. 0. 0. 0.]
-  [0. 0. 0. 0.]]
-
- [[0. 0. 0. 0.]
-  [0. 0. 0. 0.]]]
+[[0. 0. 0. 0.]
+ [0. 0. 0. 0.]
+ [0. 0. 0. 0.]
+ [0. 0. 0. 0.]]
 First turbine yawed 25 degrees for every atmospheric condition
-[[[25.  0.  0.  0.]
-  [25.  0.  0.  0.]]
-
- [[25.  0.  0.  0.]
-  [25.  0.  0.  0.]]]
+[[25.  0.  0.  0.]
+ [25.  0.  0.  0.]
+ [25.  0.  0.  0.]
+ [25.  0.  0.  0.]]
 </pre></div>
 </div>
 </div>
@@ -813,59 +882,60 @@ First turbine yawed 25 degrees for every atmospheric condition
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Load an input file</span>
-<span class="n">fi</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
-
-<span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">solver</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
 
 <span class="c1"># 2. Modify the inputs with a more complex wind turbine layout</span>
 <span class="n">D</span> <span class="o">=</span> <span class="mf">126.0</span>  <span class="c1"># Design the layout based on turbine diameter</span>
 <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">6</span> <span class="o">*</span> <span class="n">D</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">D</span><span class="p">]</span>
 <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">D</span><span class="p">]</span>
 <span class="n">wind_directions</span> <span class="o">=</span> <span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">]</span>
-<span class="n">wind_speeds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">]</span>
+<span class="n">wind_speeds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]</span>
+<span class="n">turbulence_intensities</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
 
 <span class="c1"># Pass the new data to FlorisInterface</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
     <span class="n">layout_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
     <span class="n">layout_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
     <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
-    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># 3. Calculate the velocities at each turbine for all atmospheric conditions</span>
 <span class="c1"># All turbines have 0 degrees yaw</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">()</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
 <span class="c1"># 4. Get the total farm power</span>
-<span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Given in W, so convert to kW</span>
-<span class="n">farm_power_baseline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_powers</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Sum over the third dimension</span>
+<span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Given in W, so convert to kW</span>
+<span class="n">farm_power_baseline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_powers</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Sum over the second dimension</span>
 
 <span class="c1"># 5. Develop the yaw control settings</span>
-<span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span>  <span class="c1"># Construct the yaw array with dimensions for two wind directions, one wind speed, and four turbines</span>
-<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>            <span class="c1"># At 270 degrees, yaw the first turbine 25 degrees</span>
-<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>            <span class="c1"># At 270 degrees, yaw the second turbine 25 degrees</span>
-<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1"># At 265 degrees, yaw the first turbine -25 degrees</span>
-<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1"># At 265 degrees, yaw the second turbine -25 degrees</span>
+<span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span>    <span class="c1"># Construct the yaw array with dimensions for two wind directions, one wind speed, and four turbines</span>
+<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span>           <span class="c1"># At 270 degrees, yaw the first turbine 25 degrees</span>
+<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span>           <span class="c1"># At 270 degrees, yaw the second turbine 15 degrees</span>
+<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1"># At 280 degrees, yaw the first turbine 10 degrees</span>
+<span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>            <span class="c1"># At 280 degrees, yaw the second turbine 0 degrees</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
 
 <span class="c1"># 6. Calculate the velocities at each turbine for all atmospheric conditions with the new yaw settings</span>
-<span class="n">fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
 <span class="c1"># 7. Get the total farm power</span>
-<span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>
-<span class="n">farm_power_yaw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_powers</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>
+<span class="n">farm_power_yaw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_powers</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># 8. Compare farm power with and without wake steering</span>
 <span class="n">difference</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">farm_power_yaw</span> <span class="o">-</span> <span class="n">farm_power_baseline</span><span class="p">)</span> <span class="o">/</span> <span class="n">farm_power_baseline</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Power </span><span class="si">% d</span><span class="s2">ifference with yaw&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    270 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    280 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    270 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    280 degrees: </span><span class="si">{</span><span class="n">difference</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">4.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Power % difference with yaw
-    270 degrees: 7.39%
-    280 degrees: 0.13%
+    270 degrees: 0.16%
+    280 degrees: 0.17%
 </pre></div>
 </div>
 </div>
@@ -874,40 +944,59 @@ First turbine yawed 25 degrees for every atmospheric condition
 <section id="visualization">
 <h2>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h2>
 <p>While comparing turbine and farm powers is meaningful, a picture is worth at least
-1000 Watts, and the <code class="docutils literal notranslate"><span class="pre">FlorisInterface</span></code> provides powerful routines for visualization.</p>
+1000 Watts, and <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> provides powerful routines for visualization.</p>
 <p>The visualization functions require that the user select a single atmospheric condition
 to plot. The internal data structures still have the same shape but the wind speed and
 wind direction dimensions have a size of 1. This means that the yaw angle array used
 for plotting must have the same shape as above but a single atmospheric condition must
 be selected.</p>
 <p>Let's create a horizontal slice of each atmospheric condition from above with and without
-yaw settings included. Notice that although we are plotting the conditions for two
-different wind directions, the farm is rotated so that the wind is coming from the
-left (West) in both cases.</p>
+yaw settings included.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.tools.visualization</span> <span class="kn">import</span> <span class="n">visualize_cut_plane</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.flow_visualization</span> <span class="kn">import</span> <span class="n">visualize_cut_plane</span>
+<span class="kn">from</span> <span class="nn">floris.layout_visualization</span> <span class="kn">import</span> <span class="n">plot_turbine_labels</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
 
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
+<span class="c1"># Plot the first wind condition</span>
+<span class="n">wd</span> <span class="o">=</span> <span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">wind_speeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ti</span> <span class="o">=</span> <span class="n">turbulence_intensities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="n">ws</span><span class="p">],</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="n">wd</span><span class="p">],</span> <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="n">ti</span><span class="p">])</span>
+<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
 <span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;270 - Aligned&quot;</span><span class="p">)</span>
+<span class="n">plot_turbine_labels</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
 <span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;270 - Yawed&quot;</span><span class="p">)</span>
+<span class="n">plot_turbine_labels</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
+<span class="c1"># Plot the second wind condition</span>
+<span class="n">wd</span> <span class="o">=</span> <span class="n">wind_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">wind_speeds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ti</span> <span class="o">=</span> <span class="n">turbulence_intensities</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="n">ws</span><span class="p">],</span> <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="n">wd</span><span class="p">],</span> <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="n">ti</span><span class="p">])</span>
+<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
 <span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;280 - Aligned&quot;</span><span class="p">)</span>
+<span class="n">plot_turbine_labels</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 
-<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">wd</span><span class="o">=</span><span class="p">[</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">)</span>
 <span class="n">visualize_cut_plane</span><span class="p">(</span><span class="n">horizontal_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;280 - Yawed&quot;</span><span class="p">)</span>
+<span class="n">plot_turbine_labels</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/597f6fb9c6634b92da7539e35d0e17b550cce09f5054db781d2fb7e2858ec628.png" src="_images/597f6fb9c6634b92da7539e35d0e17b550cce09f5054db781d2fb7e2858ec628.png" />
+<img alt="_images/35440ad19c91abb2a7bd9c3d4a7ea3d3640ce2586f931f4cd32d39d2b8613f10.png" src="_images/35440ad19c91abb2a7bd9c3d4a7ea3d3640ce2586f931f4cd32d39d2b8613f10.png" />
 </div>
 </div>
 <p>We can also plot the streamwise inflow velocities on the turbine rotor
@@ -916,12 +1005,28 @@ simply plots any data given as the first argument, so in this case
 <code class="docutils literal notranslate"><span class="pre">fi.floris.flow_field.u</span></code> contains the yawed calculation from above.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.tools.visualization</span> <span class="kn">import</span> <span class="n">plot_rotor_values</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the FlorisModel as it was before visualizing the cut planes</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">layout_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+    <span class="n">layout_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.flow_visualization</span> <span class="kn">import</span> <span class="n">plot_rotor_values</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">wd_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ws_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">findex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wind direction 270&quot;</span><span class="p">)</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">wd_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ws_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_rotor_values</span><span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">findex</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">return_fig_objects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Wind direction 280&quot;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -929,8 +1034,8 @@ simply plots any data given as the first argument, so in this case
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ea79fb3dc03c0b25e397e8434d46bc38d7a9476a0b9d56161792cfb4282a1cd5.png" src="_images/ea79fb3dc03c0b25e397e8434d46bc38d7a9476a0b9d56161792cfb4282a1cd5.png" />
-<img alt="_images/9cdcee38cec393b7960b12ca4430422620433ad18aa7734d8ed04159bf7a62e6.png" src="_images/9cdcee38cec393b7960b12ca4430422620433ad18aa7734d8ed04159bf7a62e6.png" />
+<img alt="_images/0d3c9371983b973353dc53f438e32c42445402750d7c2ace800cb760e3290eb3.png" src="_images/0d3c9371983b973353dc53f438e32c42445402750d7c2ace800cb760e3290eb3.png" />
+<img alt="_images/24fd829003b35b19ff42e5d6add41b58db47fe34fc0b654a6be412b6749b0419.png" src="_images/24fd829003b35b19ff42e5d6add41b58db47fe34fc0b654a6be412b6749b0419.png" />
 </div>
 </div>
 </section>
@@ -947,18 +1052,18 @@ but retuning of some parameters might be required.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the grid points</span>
-<span class="n">xs</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span>
-<span class="n">ys</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span>
-<span class="n">zs</span> <span class="o">=</span> <span class="n">fi</span><span class="o">.</span><span class="n">floris</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">x_sorted</span>
+<span class="n">ys</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">y_sorted</span>
+<span class="n">zs</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">z_sorted</span>
 
 <span class="c1"># Consider the shape</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;shape of xs: </span><span class="si">{</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  2 wd x 2 ws x 4 turbines x 3 x 3 grid points&quot;</span><span class="p">)</span>
 
 <span class="c1"># Lets plot just one wd/ws conditions</span>
-<span class="n">xs</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-<span class="n">ys</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
-<span class="n">zs</span> <span class="o">=</span> <span class="n">zs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="n">ys</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="n">zs</span> <span class="o">=</span> <span class="n">zs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
@@ -970,18 +1075,19 @@ but retuning of some parameters might be required.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>shape of xs: (2, 1, 4, 3, 3)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>shape of xs: (2, 4, 3, 3)
   2 wd x 2 ws x 4 turbines x 3 x 3 grid points
 </pre></div>
 </div>
-<img alt="_images/ba9473d97bf71726043cd844d7d40529b6e9fc561526f8a3c76e11bcb6dd8e36.png" src="_images/ba9473d97bf71726043cd844d7d40529b6e9fc561526f8a3c76e11bcb6dd8e36.png" />
+<img alt="_images/9df43537313bc333dad961c85a7be8f3b1e574d44472bd036596abd81e05b47f.png" src="_images/9df43537313bc333dad961c85a7be8f3b1e574d44472bd036596abd81e05b47f.png" />
 </div>
 </div>
 </section>
 <section id="basic-use-case-calculating-aep">
 <h2>Basic use case: calculating AEP<a class="headerlink" href="#basic-use-case-calculating-aep" title="Link to this heading">#</a></h2>
-<p>Calculating AEP in FLORIS v3 leverages the vectorized framework to
-substantially reduce the computation time with respect to v2.4.
+<p>FLORIS leverages vectorized operations on the CPU to reduce the computation
+time for bulk calculations, and this is especially meaningful for calculating
+annual energy production (AEP) on a wind rose.
 Here, we demonstrate a simple AEP calculation for a 25-turbine farm
 using several different modeling options. We make the assumption
 that every wind speed and direction is equally likely. We also
@@ -992,42 +1098,71 @@ report the time required for the computation using the Python
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
-<span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
-<span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="c1"># Using Numpy.meshgrid, we can combine 1D arrays of wind speeds and wind directions to produce</span>
+<span class="c1"># combinations of both. Though the input arrays are not the same size, the resulting arrays</span>
+<span class="c1"># will be the same size.</span>
+<span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>   <span class="c1"># wind directions 0 to 360 degrees (exclusive) in 5 degree increments</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span>  <span class="c1"># wind speeds from 8 to 12 m/s in 0.2 m/s increments</span>
+    <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span>
+<span class="p">)</span>
+<span class="c1"># meshgrid returns arrays with shape (len(wind_speeds), len(wind_directions)), so we &quot;flatten&quot; them</span>
+<span class="n">wind_directions</span> <span class="o">=</span> <span class="n">wind_directions</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">wind_speeds</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">turbulence_intensities</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
 
-<span class="n">num_bins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating AEP for </span><span class="si">{</span><span class="n">num_bins</span><span class="si">}</span><span class="s2"> wind direction and speed combinations...&quot;</span><span class="p">)</span>
+<span class="n">n_findex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating AEP for </span><span class="si">{</span><span class="n">n_findex</span><span class="si">}</span><span class="s2"> wind direction and speed combinations...&quot;</span><span class="p">)</span>
 
 <span class="c1"># Set up a square 25 turbine layout</span>
 <span class="n">N</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Number of turbines per row and per column</span>
 <span class="n">D</span> <span class="o">=</span> <span class="mf">126.0</span>
 
-<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+<span class="c1"># Create the turbine locations using the same method as above</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
     <span class="mf">7.0</span> <span class="o">*</span> <span class="n">D</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="mf">7.0</span> <span class="o">*</span> <span class="n">D</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="p">)</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of turbines = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of turbines = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># Define several models</span>
-<span class="n">fi_jensen</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;jensen.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi_gch</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
-<span class="n">fi_cc</span> <span class="o">=</span> <span class="n">FlorisInterface</span><span class="p">(</span><span class="s2">&quot;cc.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel_jensen</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;jensen.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel_gch</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel_cc</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;cc.yaml&quot;</span><span class="p">)</span>
 
 <span class="c1"># Assign the layouts, wind speeds and directions</span>
-<span class="n">fi_jensen</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">)</span>
-<span class="n">fi_gch</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">)</span>
-<span class="n">fi_cc</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">)</span>
+<span class="n">fmodel_jensen</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">layout_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+    <span class="n">layout_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span>
+<span class="p">)</span>
+<span class="n">fmodel_gch</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">layout_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+    <span class="n">layout_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">fmodel_cc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">layout_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+    <span class="n">layout_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">time_model_calculation</span><span class="p">(</span><span class="n">model_fi</span><span class="p">:</span> <span class="n">FlorisInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">time_model_calculation</span><span class="p">(</span><span class="n">model_fmodel</span><span class="p">:</span> <span class="n">FlorisModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function performs the wake calculation for a given</span>
-<span class="sd">    FlorisInterface object and computes the AEP while</span>
+<span class="sd">    FlorisModel object and computes the AEP while</span>
 <span class="sd">    tracking the amount of wall-time required for both steps.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model_fi (FlorisInterface): _description_</span>
+<span class="sd">        model_fmodel (FlorisModel): _description_</span>
 <span class="sd">        float (_type_): _description_</span>
 
 <span class="sd">    Returns:</span>
@@ -1036,14 +1171,14 @@ report the time required for the computation using the Python
 <span class="sd">            1: Wall-time for the computation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">model_fi</span><span class="o">.</span><span class="n">calculate_wake</span><span class="p">()</span>
-    <span class="n">aep</span> <span class="o">=</span> <span class="n">model_fi</span><span class="o">.</span><span class="n">get_farm_power</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">num_bins</span>  <span class="o">/</span> <span class="mf">1E9</span> <span class="o">*</span> <span class="mi">365</span> <span class="o">*</span> <span class="mi">24</span>
+    <span class="n">model_fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">aep</span> <span class="o">=</span> <span class="n">model_fmodel</span><span class="o">.</span><span class="n">get_farm_power</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_findex</span>  <span class="o">/</span> <span class="mf">1E9</span> <span class="o">*</span> <span class="mi">365</span> <span class="o">*</span> <span class="mi">24</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">aep</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
 
-<span class="n">jensen_aep</span><span class="p">,</span> <span class="n">jensen_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fi_jensen</span><span class="p">)</span>
-<span class="n">gch_aep</span><span class="p">,</span> <span class="n">gch_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fi_gch</span><span class="p">)</span>
-<span class="n">cc_aep</span><span class="p">,</span> <span class="n">cc_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fi_cc</span><span class="p">)</span>
+<span class="n">jensen_aep</span><span class="p">,</span> <span class="n">jensen_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fmodel_jensen</span><span class="p">)</span>
+<span class="n">gch_aep</span><span class="p">,</span> <span class="n">gch_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fmodel_gch</span><span class="p">)</span>
+<span class="n">cc_aep</span><span class="p">,</span> <span class="n">cc_compute_time</span> <span class="o">=</span> <span class="n">time_model_calculation</span><span class="p">(</span><span class="n">fmodel_cc</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model    AEP (GWh)  Compute Time (s)&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:8s}</span><span class="s1"> </span><span class="si">{:&lt;10.3f}</span><span class="s1"> </span><span class="si">{:&lt;6.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Jensen&quot;</span><span class="p">,</span> <span class="n">jensen_aep</span><span class="p">,</span> <span class="n">jensen_compute_time</span><span class="p">))</span>
@@ -1058,9 +1193,9 @@ Number of turbines = 25
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
-Jensen   843.620    0.695 
-GCH      843.905    2.928 
-CC       839.263    5.570 
+Jensen   661.838    0.697 
+GCH      683.869    2.966 
+CC       661.315    5.716 
 </pre></div>
 </div>
 </div>
@@ -1068,31 +1203,38 @@ CC       839.263    5.570
 </section>
 <section id="basic-use-case-wake-steering-design">
 <h2>Basic use case: wake steering design<a class="headerlink" href="#basic-use-case-wake-steering-design" title="Link to this heading">#</a></h2>
-<p>FLORIS V3 further includes new optimization routines for the design of wake steering controllers.  The SerialRefine is a new method for quickly identifying optimum yaw angles.</p>
+<p>FLORIS includes a set of optimization routines for the design of wake steering controllers.
+<code class="docutils literal notranslate"><span class="pre">SerialRefine</span></code> is a new method for quickly identifying optimum yaw angles.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Demonstrate on 7-turbine single row farm</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="o">*</span><span class="mi">7</span><span class="o">*</span><span class="n">D</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="n">wind_speeds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8.</span><span class="p">]</span>
-<span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">360.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">)</span>
-<span class="n">fi_gch</span><span class="o">.</span><span class="n">reinitialize</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="o">*</span><span class="mi">7</span><span class="o">*</span><span class="n">D</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<span class="n">wind_speeds</span> <span class="o">=</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">)</span>
+<span class="n">turbulence_intensities</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">)</span>
+<span class="n">fmodel_gch</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">layout_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+    <span class="n">layout_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.tools.optimization.yaw_optimization.yaw_optimizer_sr</span> <span class="kn">import</span> <span class="n">YawOptimizationSR</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.optimization.yaw_optimization.yaw_optimizer_sr</span> <span class="kn">import</span> <span class="n">YawOptimizationSR</span>
 
 <span class="c1"># Define the SerialRefine optimization</span>
 <span class="n">yaw_opt</span> <span class="o">=</span> <span class="n">YawOptimizationSR</span><span class="p">(</span>
-    <span class="n">fi</span><span class="o">=</span><span class="n">fi_gch</span><span class="p">,</span>
+    <span class="n">fmodel</span><span class="o">=</span><span class="n">fmodel_gch</span><span class="p">,</span>
     <span class="n">minimum_yaw_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># Allowable yaw angles lower bound</span>
     <span class="n">maximum_yaw_angle</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span>  <span class="c1"># Allowable yaw angles upper bound</span>
     <span class="n">Ny_passes</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
     <span class="n">exclude_downstream_turbines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">exploit_layout_symmetry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -1114,34 +1256,48 @@ CC       839.263    5.570
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=0 (0.0%)
-[Serial Refine] Processing pass=0, turbine_depth=1 (7.1%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=1 (7.1%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=2 (14.3%)
-[Serial Refine] Processing pass=0, turbine_depth=3 (21.4%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=3 (21.4%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=4 (28.6%)
-[Serial Refine] Processing pass=0, turbine_depth=5 (35.7%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=5 (35.7%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=6 (42.9%)
-[Serial Refine] Processing pass=1, turbine_depth=0 (50.0%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=0 (50.0%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=1 (57.1%)
-[Serial Refine] Processing pass=1, turbine_depth=2 (64.3%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=2 (64.3%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=3 (71.4%)
-[Serial Refine] Processing pass=1, turbine_depth=4 (78.6%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=4 (78.6%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=5 (85.7%)
-[Serial Refine] Processing pass=1, turbine_depth=6 (92.9%)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 1.955 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=6 (92.9%)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 4.632 s
 </pre></div>
 </div>
 </div>
@@ -1151,8 +1307,8 @@ CC       839.263    5.570
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show the results</span>
 <span class="n">yaw_angles_opt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">df_opt</span><span class="p">[</span><span class="s2">&quot;yaw_angles_opt&quot;</span><span class="p">])</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
     <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">yaw_angles_opt</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;T</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
     <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Yaw (Deg)&#39;</span><span class="p">)</span>
     <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -1164,7 +1320,7 @@ CC       839.263    5.570
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f58d928862fbefbf3fa5611c4768a4a65ab7890f9de92eb3bc011e75260c5717.png" src="_images/f58d928862fbefbf3fa5611c4768a4a65ab7890f9de92eb3bc011e75260c5717.png" />
+<img alt="_images/90ed0afbd678a04cfc9b759263bc7bd4f8f553447c2db7de9674ec29c746d75e.png" src="_images/90ed0afbd678a04cfc9b759263bc7bd4f8f553447c2db7de9674ec29c746d75e.png" />
 </div>
 </div>
 </section>
@@ -1201,12 +1357,12 @@ CC       839.263    5.570
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="installation.html"
+       href="v3_to_v4.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Installation</p>
+        <p class="prev-next-title">Switching from FLORIS v3 to v4</p>
       </div>
     </a>
     <a class="right-next"
@@ -1234,9 +1390,9 @@ CC       839.263    5.570
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-florisinterface">Initialize FlorisInterface</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-floris">Initialize Floris</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-model">Build the model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execute-wake-calculation">Execute wake calculation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-floris-wake-calculation">Run the Floris wake calculation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-turbine-power">Get turbine power</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-yaw-angles">Applying yaw angles</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#start-to-finish">Start to finish</a></li>

@@ -193,16 +193,18 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../v3_to_v4.html">Switching from FLORIS v3 to v4</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../advanced_concepts.html">Advanced Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../wind_data_user.html">Wind Data Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../turbine_interaction.html">Turbine Library Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_models_user.html">Turbine Operation Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../input_reference_turbine.html">Turbine Input File Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples Index</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory and Background</span></p>
 <ul class="nav bd-sidenav">
@@ -218,77 +220,136 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../architecture.html">Architecture and Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../code_quality.html">Code Quality</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api_docs.html">API Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.logging_manager.html">floris.logging_manager</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.simulation.html">floris.simulation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.base.html">floris.simulation.base</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.farm.html">floris.simulation.farm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.floris.html">floris.simulation.floris</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.flow_field.html">floris.simulation.flow_field</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.grid.html">floris.simulation.grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.solver.html">floris.simulation.solver</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine.html">floris.simulation.turbine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.turbine_multi_dim.html">floris.simulation.turbine_multi_dim</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake.html">floris.simulation.wake</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_combination.html">floris.simulation.wake_combination</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_combination.fls.html">floris.simulation.wake_combination.fls</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_combination.max.html">floris.simulation.wake_combination.max</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_combination.sosfs.html">floris.simulation.wake_combination.sosfs</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.html">floris.simulation.wake_deflection</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.empirical_gauss.html">floris.simulation.wake_deflection.empirical_gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.gauss.html">floris.simulation.wake_deflection.gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.jimenez.html">floris.simulation.wake_deflection.jimenez</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_deflection.none.html">floris.simulation.wake_deflection.none</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_turbulence.html">floris.simulation.wake_turbulence</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_turbulence.crespo_hernandez.html">floris.simulation.wake_turbulence.crespo_hernandez</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_turbulence.none.html">floris.simulation.wake_turbulence.none</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_turbulence.wake_induced_mixing.html">floris.simulation.wake_turbulence.wake_induced_mixing</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.html">floris.simulation.wake_velocity</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.cumulative_gauss_curl.html">floris.simulation.wake_velocity.cumulative_gauss_curl</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.empirical_gauss.html">floris.simulation.wake_velocity.empirical_gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.gauss.html">floris.simulation.wake_velocity.gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.jensen.html">floris.simulation.wake_velocity.jensen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.none.html">floris.simulation.wake_velocity.none</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.simulation.wake_velocity.turbopark.html">floris.simulation.wake_velocity.turbopark</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.tools.html">floris.tools</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.cut_plane.html">floris.tools.cut_plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface.html">floris.tools.floris_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.floris_interface_legacy_reader.html">floris.tools.floris_interface_legacy_reader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.interface_utilities.html">floris.tools.interface_utilities</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.layout_functions.html">floris.tools.layout_functions</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.tools.optimization.html">floris.tools.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.optimization.layout_optimization.html">floris.tools.optimization.layout_optimization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.optimization.legacy.html">floris.tools.optimization.legacy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.optimization.other.html">floris.tools.optimization.other</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.tools.optimization.yaw_optimization.html">floris.tools.optimization.yaw_optimization</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.parallel_computing_interface.html">floris.tools.parallel_computing_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.power_rose.html">floris.tools.power_rose</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.rews.html">floris.tools.rews</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.uncertainty_interface.html">floris.tools.uncertainty_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.visualization.html">floris.tools.visualization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.tools.wind_rose.html">floris.tools.wind_rose</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.type_dec.html">floris.type_dec</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.html">floris.turbine_library</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.flow_visualization.html">floris.flow_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.floris_model.html">floris.floris_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.wind_data.html">floris.wind_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.uncertain_floris_model.html">floris.uncertain_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.html">floris.turbine_library</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_previewer.html">floris.turbine_library.turbine_previewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.parallel_floris_model.html">floris.parallel_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/floris.optimization.html">floris.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.optimization.other.html">floris.optimization.other</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimization_base.html">floris.optimization.yaw_optimization.yaw_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimization_tools.html">floris.optimization.yaw_optimization.yaw_optimization_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_geometric.html">floris.optimization.yaw_optimization.yaw_optimizer_geometric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_scipy.html">floris.optimization.yaw_optimization.yaw_optimizer_scipy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_sr.html">floris.optimization.yaw_optimization.yaw_optimizer_sr</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.layout_visualization.html">floris.layout_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.cut_plane.html">floris.cut_plane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.core.html">floris.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.convert_turbine_v3_to_v4.html">floris.convert_turbine_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.convert_floris_input_v3_to_v4.html">floris.convert_floris_input_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.type_dec.html">floris.type_dec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/floris.logging_manager.html">floris.logging_manager</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/001_opening_floris_computing_power.html">Example 1: Opening FLORIS and Computing Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/002_visualizations.html">Example 2: Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/003_wind_data_objects.html">Example 3: Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/004_set.html">Example 4: Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/005_getting_power.html">Example 5: Getting Turbine and Farm Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_optimization/001_opt_yaw_single_ws.html">Example: Optimize yaw for a single wind speed and multiple wind directions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_optimization/002_opt_yaw_single_ws_uncertain.html">Example: Optimize yaw for a single wind speed and multiple wind directions.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_optimization/003_opt_yaw_multiple_ws.html">Example: Optimize yaw for multiple wind directions and multiple wind speeds.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_optimization/004_optimize_yaw_aep.html">Example: Optimize yaw and compare AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_optimization/005_optimize_yaw_aep_parallel.html">Example: Optimize yaw and compare AEP in parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_optimization/006_compare_yaw_optimizers.html">Example: Compare yaw optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_optimization/007_optimize_yaw_with_neighbor_farms.html">Example: Optimize yaw with neighbor farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control types</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_types/001_derating_control.html">Example of using the simple-derating control model in FLORIS.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_types/002_disable_turbines.html">Example 001: Disable turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_emgauss/001_empirical_gauss_velocity_deficit_parameters.html">Example: Empirical Gaussian velocity deficit parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_emgauss/002_empirical_gauss_deflection_parameters.html">Example: Empirical Gaussian deflection parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Floating</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_floating/001_floating_turbine_models.html">Example: Floating turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_floating/002_floating_vs_fixedbottom_farm.html">Example: Floating vs fixed-bottom farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_floating/003_tilt_driven_vertical_wake_deflection.html">Example: Tilt-driven vertical wake deflection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Get flow</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_get_flow/001_extract_wind_speed_at_turbines.html">Example: Extract wind speed at turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_get_flow/002_extract_wind_speed_at_points.html">Example: Extract wind speed at points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_get_flow/003_plot_velocity_deficit_profiles.html">Example: Plot velocity deficit profiles</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_turbine/001_check_turbine.html">Example: Check turbine power curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_turbine/002_multiple_turbine_types.html">Example: Multiple turbine types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_turbine/003_specify_turbine_power_curve.html">Example: Specify turbine power curve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Uncertain</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_visualizations/001_layout_visualizations.html">Example: Layout Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_visualizations/002_visualize_y_cut_plane.html">Example: Visualize y cut plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_visualizations/003_visualize_cross_plane.html">Example: Visualize cross plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_visualizations/004_visualize_rotor_values.html">Example: Visualize rotor velocities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_visualizations/005_visualize_flow_by_sweeping_turbines.html">Example: Visualize flow by sweeping turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
 </ul>
 
     </div>
@@ -439,26 +500,29 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for floris.turbine_library.turbine_utilities</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os.path</span>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
 
-<div class="viewcode-block" id="build_turbine_dict">
-<a class="viewcode-back" href="../../../_autosummary/floris.turbine_library.turbine_utilities.html#floris.turbine_library.turbine_utilities.build_turbine_dict">[docs]</a>
-<span class="k">def</span> <span class="nf">build_turbine_dict</span><span class="p">(</span>
+<div class="viewcode-block" id="build_cosine_loss_turbine_dict">
+<a class="viewcode-back" href="../../../_autosummary/floris.turbine_library.turbine_utilities.html#floris.turbine_library.turbine_utilities.build_cosine_loss_turbine_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">build_cosine_loss_turbine_dict</span><span class="p">(</span>
     <span class="n">turbine_data_dict</span><span class="p">,</span>
     <span class="n">turbine_name</span><span class="p">,</span>
-    <span class="n">file_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">generator_efficiency</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">generator_efficiency</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">hub_height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span>
-    <span class="n">pP</span><span class="o">=</span><span class="mf">1.88</span><span class="p">,</span>
-    <span class="n">pT</span><span class="o">=</span><span class="mf">1.88</span><span class="p">,</span>
-    <span class="n">rotor_diameter</span><span class="o">=</span><span class="mf">126.0</span><span class="p">,</span>
+    <span class="n">cosine_loss_exponent_yaw</span><span class="o">=</span><span class="mf">1.88</span><span class="p">,</span>
+    <span class="n">cosine_loss_exponent_tilt</span><span class="o">=</span><span class="mf">1.88</span><span class="p">,</span>
+    <span class="n">rotor_diameter</span><span class="o">=</span><span class="mf">125.88</span><span class="p">,</span>
     <span class="n">TSR</span><span class="o">=</span><span class="mf">8.0</span><span class="p">,</span>
-    <span class="n">air_density</span><span class="o">=</span><span class="mf">1.225</span><span class="p">,</span>
-    <span class="n">ref_tilt_cp_ct</span><span class="o">=</span><span class="mf">5.0</span>
+    <span class="n">ref_air_density</span><span class="o">=</span><span class="mf">1.225</span><span class="p">,</span>
+    <span class="n">ref_tilt</span><span class="o">=</span><span class="mf">5.0</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tool for formatting a full turbine dict from data formatted as a</span>
@@ -474,31 +538,36 @@ document.write(`
 <span class="sd">    turbine power and thrust as a function of wind speed. The following keys</span>
 <span class="sd">    are possible:</span>
 <span class="sd">    - wind_speed [m/s]</span>
-<span class="sd">    - power_absolute [kW]</span>
+<span class="sd">    - power [kW]</span>
 <span class="sd">    - power_coefficient [-]</span>
-<span class="sd">    - thrust_absolute [kN]</span>
+<span class="sd">    - thrust [kN]</span>
 <span class="sd">    - thrust_coefficient [-]</span>
-<span class="sd">    Of these, wind_speed is required. One of power_absolute and power_coefficient</span>
-<span class="sd">    must be specified; and one of thrust_absolute and thrust_coefficient must be</span>
-<span class="sd">    specified. If both _absolute and _coefficient versions are specified, the</span>
-<span class="sd">    _coefficient entry will be used and the _absolute entry ignored.</span>
+<span class="sd">    Of these, wind_speed is required. One of power and power_coefficient</span>
+<span class="sd">    must be specified; and one of thrust and thrust_coefficient must be</span>
+<span class="sd">    specified. If both (absolute) and _coefficient versions are specified, the</span>
+<span class="sd">    (absolute) power will be used along with the thrust_coefficient, with the</span>
+<span class="sd">    other entries ignored.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        turbine_data_dict (dict): Dictionary containing performance of the wind</span>
 <span class="sd">            turbine as a function of wind speed. Described in more detail above.</span>
 <span class="sd">        turbine_name (string): Name of the turbine, which will be used for the</span>
 <span class="sd">            turbine_type field as well as the filename.</span>
-<span class="sd">        file_path (): Path for placement of the produced yaml. Defaults to None,</span>
-<span class="sd">            in which case no yaml is written.</span>
-<span class="sd">        generator_efficiency (float): Generator efficiency [-]. Defaults to 1.0.</span>
+<span class="sd">        file_name (): Name for the produced yaml, including possibly path.</span>
+<span class="sd">            Defaults to None, in which case no yaml is written.</span>
+<span class="sd">        generator_efficiency (float): Generator efficiency [-]. Unused if power is specified</span>
+<span class="sd">            in absolute terms in the turbine_data_dict. Must be specified if</span>
+<span class="sd">            power not specified and power_coefficient specified instead. Defaults to None.</span>
 <span class="sd">        hub_height (float): Hub height [m]. Defaults to 90.0.</span>
-<span class="sd">        pP (float): Cosine exponent for power loss to yaw [-]. Defaults to 1.88.</span>
-<span class="sd">        pT (float): Cosine exponent for thrust loss to yaw [-]. Defaults to 1.88.</span>
+<span class="sd">        cosine_loss_exponent_yaw (float): Cosine exponent for power loss to yaw [-].</span>
+<span class="sd">            Defaults to 1.88.</span>
+<span class="sd">        cosine_loss_exponent_tilt (float): Cosine exponent for thrust loss to yaw [-].</span>
+<span class="sd">            Defaults to 1.88.</span>
 <span class="sd">        rotor_diameter (float). Rotor diameter [m]. Defaults to 126.0.</span>
 <span class="sd">        TSR (float). Turbine optimal tip-speed ratio [-]. Defaults to 8.0.</span>
-<span class="sd">        air_density (float). Air density used to specify power and thrust</span>
+<span class="sd">        ref_air_density (float). Air density used to specify power and thrust</span>
 <span class="sd">            curves [kg/m^3]. Defaults to 1.225.</span>
-<span class="sd">        ref_tilt_cp_ct (float). Rotor tilt (due to shaft tilt and/or platform</span>
+<span class="sd">        ref_tilt (float). Rotor tilt (due to shaft tilt and/or platform</span>
 <span class="sd">            tilt) used when defining the power and thrust curves [deg]. Defaults</span>
 <span class="sd">            to 5.0.</span>
 
@@ -513,49 +582,56 @@ document.write(`
     <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">rotor_diameter</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">4</span>
 
     <span class="c1"># Construct the Cp curve</span>
-    <span class="k">if</span> <span class="s2">&quot;power_coefficient&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;power_absolute&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;power&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;power_coefficient&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;Found both power_absolute and power_coefficient.&quot;</span>
-                <span class="s2">&quot;Ignoring power_absolute.&quot;</span>
+                <span class="s2">&quot;Found both power and power_coefficient. &quot;</span>
+                <span class="s2">&quot;Ignoring power_coefficient.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_data_dict</span><span class="p">[</span><span class="s2">&quot;power&quot;</span><span class="p">])</span>
+
+    <span class="k">elif</span> <span class="s2">&quot;power_coefficient&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">generator_efficiency</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="s2">&quot;generator_efficiency must be specified to convert power_coefficient to power.&quot;</span>
             <span class="p">)</span>
         <span class="n">Cp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_data_dict</span><span class="p">[</span><span class="s2">&quot;power_coefficient&quot;</span><span class="p">])</span>
-
-    <span class="k">elif</span> <span class="s2">&quot;power_absolute&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
-        <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_data_dict</span><span class="p">[</span><span class="s2">&quot;power_absolute&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">_find_nearest_value_for_wind_speed</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20000</span> <span class="ow">or</span> \
-           <span class="n">_find_nearest_value_for_wind_speed</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_find_nearest_value_for_wind_speed</span><span class="p">(</span><span class="n">Cp</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">16.0</span><span class="o">/</span><span class="mf">27.0</span> <span class="ow">or</span> \
+           <span class="n">_find_nearest_value_for_wind_speed</span><span class="p">(</span><span class="n">Cp</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
            <span class="nb">print</span><span class="p">(</span>
-               <span class="s2">&quot;Unusual power value detected. Please check that power_absolute&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;is specified in kW.&quot;</span>
+               <span class="s2">&quot;Unusual power coefficient detected. Check that power coefficients&quot;</span>
+               <span class="s2">&quot;are physical.&quot;</span>
            <span class="p">)</span>
 
-        <span class="n">validity_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">u</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">Cp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">validity_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">Cp</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">u</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Cp</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-        <span class="n">Cp</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span> <span class="o">/</span> \
-                            <span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">air_density</span><span class="o">*</span><span class="n">A</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Cp</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span>
+            <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">ref_air_density</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">generator_efficiency</span>
+            <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-            <span class="s2">&quot;Either power_absolute or power_coefficient must be specified.&quot;</span>
+            <span class="s2">&quot;Either power or power_coefficient must be specified.&quot;</span>
         <span class="p">)</span>
 
     <span class="c1"># Construct Ct curve</span>
     <span class="k">if</span> <span class="s2">&quot;thrust_coefficient&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;thrust_absolute&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;thrust&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;Found both thrust_absolute and thrust_coefficient.&quot;</span>
-                <span class="s2">&quot;Ignoring thrust_absolute.&quot;</span>
+                <span class="s2">&quot;Found both thrust and thrust_coefficient. &quot;</span>
+                <span class="s2">&quot;Ignoring thrust.&quot;</span>
             <span class="p">)</span>
         <span class="n">Ct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_data_dict</span><span class="p">[</span><span class="s2">&quot;thrust_coefficient&quot;</span><span class="p">])</span>
 
-    <span class="k">elif</span> <span class="s2">&quot;thrust_absolute&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_data_dict</span><span class="p">[</span><span class="s2">&quot;thrust_absolute&quot;</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="s2">&quot;thrust&quot;</span> <span class="ow">in</span> <span class="n">turbine_data_dict</span><span class="p">:</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">turbine_data_dict</span><span class="p">[</span><span class="s2">&quot;thrust&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">_find_nearest_value_for_wind_speed</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3000</span> <span class="ow">or</span> \
            <span class="n">_find_nearest_value_for_wind_speed</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
            <span class="nb">print</span><span class="p">(</span>
-               <span class="s2">&quot;Unusual thrust value detected. Please check that thrust_absolute&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;Unusual thrust value detected. Please check that thrust&quot;</span><span class="p">,</span>
                <span class="s2">&quot;is specified in kN.&quot;</span>
            <span class="p">)</span>
 
@@ -563,43 +639,42 @@ document.write(`
         <span class="n">Ct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
 
         <span class="n">Ct</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span><span class="o">/</span>\
-                            <span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">air_density</span><span class="o">*</span><span class="n">A</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                            <span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">ref_air_density</span><span class="o">*</span><span class="n">A</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="n">validity_mask</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-            <span class="s2">&quot;Either thrust_absolute or thrust_coefficient must be specified.&quot;</span>
+            <span class="s2">&quot;Either thrust or thrust_coefficient must be specified.&quot;</span>
         <span class="p">)</span>
 
     <span class="c1"># Build the turbine dict</span>
     <span class="n">power_thrust_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;ref_air_density&quot;</span><span class="p">:</span> <span class="n">ref_air_density</span><span class="p">,</span>
+        <span class="s2">&quot;ref_tilt&quot;</span><span class="p">:</span> <span class="n">ref_tilt</span><span class="p">,</span>
+        <span class="s2">&quot;cosine_loss_exponent_yaw&quot;</span><span class="p">:</span> <span class="n">cosine_loss_exponent_yaw</span><span class="p">,</span>
+        <span class="s2">&quot;cosine_loss_exponent_tilt&quot;</span><span class="p">:</span> <span class="n">cosine_loss_exponent_tilt</span><span class="p">,</span>
         <span class="s2">&quot;wind_speed&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-        <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="n">Cp</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-        <span class="s2">&quot;thrust&quot;</span><span class="p">:</span> <span class="n">Ct</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="s2">&quot;thrust_coefficient&quot;</span><span class="p">:</span> <span class="n">Ct</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="p">}</span>
 
     <span class="n">turbine_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;turbine_type&quot;</span><span class="p">:</span> <span class="n">turbine_name</span><span class="p">,</span>
-        <span class="s2">&quot;generator_efficiency&quot;</span><span class="p">:</span> <span class="n">generator_efficiency</span><span class="p">,</span>
         <span class="s2">&quot;hub_height&quot;</span><span class="p">:</span> <span class="n">hub_height</span><span class="p">,</span>
-        <span class="s2">&quot;pP&quot;</span><span class="p">:</span> <span class="n">pP</span><span class="p">,</span>
-        <span class="s2">&quot;pT&quot;</span><span class="p">:</span> <span class="n">pT</span><span class="p">,</span>
         <span class="s2">&quot;rotor_diameter&quot;</span><span class="p">:</span> <span class="n">rotor_diameter</span><span class="p">,</span>
         <span class="s2">&quot;TSR&quot;</span><span class="p">:</span> <span class="n">TSR</span><span class="p">,</span>
-        <span class="s2">&quot;ref_density_cp_ct&quot;</span><span class="p">:</span> <span class="n">air_density</span><span class="p">,</span>
-        <span class="s2">&quot;ref_tilt_cp_ct&quot;</span><span class="p">:</span> <span class="n">ref_tilt_cp_ct</span><span class="p">,</span>
+        <span class="s2">&quot;operation_model&quot;</span><span class="p">:</span> <span class="s2">&quot;cosine-loss&quot;</span><span class="p">,</span>
         <span class="s2">&quot;power_thrust_table&quot;</span><span class="p">:</span> <span class="n">power_thrust_dict</span>
     <span class="p">}</span>
 
     <span class="c1"># Create yaml file</span>
-    <span class="k">if</span> <span class="n">file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">full_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">turbine_name</span><span class="o">+</span><span class="s2">&quot;.yaml&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
             <span class="n">turbine_dict</span><span class="p">,</span>
-            <span class="nb">open</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">),</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">),</span>
             <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span> <span class="s2">&quot;created.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;created.&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">turbine_dict</span></div>
 
@@ -608,6 +683,29 @@ document.write(`
     <span class="n">errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">ws_vals</span><span class="o">-</span><span class="n">ws</span><span class="p">)</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="n">errs</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">test_vals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+<div class="viewcode-block" id="check_smooth_power_curve">
+<a class="viewcode-back" href="../../../_autosummary/floris.turbine_library.turbine_utilities.html#floris.turbine_library.turbine_utilities.check_smooth_power_curve">[docs]</a>
+<span class="k">def</span> <span class="nf">check_smooth_power_curve</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check whether there are &quot;wiggles&quot; in the power signal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">power</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.95</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="n">power</span><span class="p">):</span> <span class="c1"># Cut-out or shutdown included</span>
+        <span class="n">expected_changes</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># Shutdown appears not to be included</span>
+        <span class="n">expected_changes</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">dirs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">power</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">power</span><span class="p">)),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">power</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dir_changes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">dirs</span><span class="p">)))</span>
+    <span class="n">is_smooth</span> <span class="o">=</span> <span class="n">dir_changes</span> <span class="o">&lt;=</span> <span class="n">expected_changes</span>
+
+    <span class="k">return</span> <span class="n">is_smooth</span></div>
+
 </pre></div>
 
                 </article>

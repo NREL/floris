@@ -13,7 +13,8 @@ floris.turbine\_library.turbine\_utilities
 
    .. autosummary::
    
-      build_turbine_dict
+      build_cosine_loss_turbine_dict
+      check_smooth_power_curve
    
    
 

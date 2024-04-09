@@ -15,6 +15,9 @@
    
       cosd
       load_yaml
+      nested_get
+      nested_set
+      print_nested_dict
       pshape
       reverse_rotate_coordinates_rel_west
       rotate_coordinates_rel_west

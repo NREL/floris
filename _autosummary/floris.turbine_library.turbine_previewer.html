@@ -192,16 +192,18 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../v3_to_v4.html">Switching from FLORIS v3 to v4</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operation_models_user.html">Turbine Operation Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../input_reference_turbine.html">Turbine Input File Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples Index</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory and Background</span></p>
 <ul class="nav bd-sidenav">
@@ -217,77 +219,136 @@
 <li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../code_quality.html">Code Quality</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api_docs.html">API Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="floris.logging_manager.html">floris.logging_manager</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="floris.simulation.html">floris.simulation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.base.html">floris.simulation.base</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.farm.html">floris.simulation.farm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.floris.html">floris.simulation.floris</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.flow_field.html">floris.simulation.flow_field</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.grid.html">floris.simulation.grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.solver.html">floris.simulation.solver</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.turbine.html">floris.simulation.turbine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.turbine_multi_dim.html">floris.simulation.turbine_multi_dim</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.simulation.wake.html">floris.simulation.wake</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.simulation.wake_combination.html">floris.simulation.wake_combination</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_combination.fls.html">floris.simulation.wake_combination.fls</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_combination.max.html">floris.simulation.wake_combination.max</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_combination.sosfs.html">floris.simulation.wake_combination.sosfs</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.simulation.wake_deflection.html">floris.simulation.wake_deflection</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_deflection.empirical_gauss.html">floris.simulation.wake_deflection.empirical_gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_deflection.gauss.html">floris.simulation.wake_deflection.gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_deflection.jimenez.html">floris.simulation.wake_deflection.jimenez</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_deflection.none.html">floris.simulation.wake_deflection.none</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.simulation.wake_turbulence.html">floris.simulation.wake_turbulence</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_turbulence.crespo_hernandez.html">floris.simulation.wake_turbulence.crespo_hernandez</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_turbulence.none.html">floris.simulation.wake_turbulence.none</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_turbulence.wake_induced_mixing.html">floris.simulation.wake_turbulence.wake_induced_mixing</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.simulation.wake_velocity.html">floris.simulation.wake_velocity</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.cumulative_gauss_curl.html">floris.simulation.wake_velocity.cumulative_gauss_curl</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.empirical_gauss.html">floris.simulation.wake_velocity.empirical_gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.gauss.html">floris.simulation.wake_velocity.gauss</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.jensen.html">floris.simulation.wake_velocity.jensen</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.none.html">floris.simulation.wake_velocity.none</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.simulation.wake_velocity.turbopark.html">floris.simulation.wake_velocity.turbopark</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="floris.tools.html">floris.tools</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.cut_plane.html">floris.tools.cut_plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.floris_interface.html">floris.tools.floris_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.floris_interface_legacy_reader.html">floris.tools.floris_interface_legacy_reader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.interface_utilities.html">floris.tools.interface_utilities</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.layout_functions.html">floris.tools.layout_functions</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="floris.tools.optimization.html">floris.tools.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="floris.tools.optimization.layout_optimization.html">floris.tools.optimization.layout_optimization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.tools.optimization.legacy.html">floris.tools.optimization.legacy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.tools.optimization.other.html">floris.tools.optimization.other</a></li>
-<li class="toctree-l4"><a class="reference internal" href="floris.tools.optimization.yaw_optimization.html">floris.tools.optimization.yaw_optimization</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.parallel_computing_interface.html">floris.tools.parallel_computing_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.power_rose.html">floris.tools.power_rose</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.rews.html">floris.tools.rews</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.uncertainty_interface.html">floris.tools.uncertainty_interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.visualization.html">floris.tools.visualization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="floris.tools.wind_rose.html">floris.tools.wind_rose</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="floris.turbine_library.html">floris.turbine_library</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="floris.flow_visualization.html">floris.flow_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.floris_model.html">floris.floris_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.wind_data.html">floris.wind_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.uncertain_floris_model.html">floris.uncertain_floris_model</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="floris.turbine_library.html">floris.turbine_library</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">floris.turbine_library.turbine_previewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.parallel_floris_model.html">floris.parallel_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.optimization.html">floris.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.other.html">floris.optimization.other</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimization_base.html">floris.optimization.yaw_optimization.yaw_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimization_tools.html">floris.optimization.yaw_optimization.yaw_optimization_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_geometric.html">floris.optimization.yaw_optimization.yaw_optimizer_geometric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_scipy.html">floris.optimization.yaw_optimization.yaw_optimizer_scipy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_sr.html">floris.optimization.yaw_optimization.yaw_optimizer_sr</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="floris.layout_visualization.html">floris.layout_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.cut_plane.html">floris.cut_plane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.core.html">floris.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.convert_turbine_v3_to_v4.html">floris.convert_turbine_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.convert_floris_input_v3_to_v4.html">floris.convert_floris_input_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.logging_manager.html">floris.logging_manager</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/001_opening_floris_computing_power.html">Example 1: Opening FLORIS and Computing Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/002_visualizations.html">Example 2: Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/003_wind_data_objects.html">Example 3: Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/004_set.html">Example 4: Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/005_getting_power.html">Example 5: Getting Turbine and Farm Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/001_opt_yaw_single_ws.html">Example: Optimize yaw for a single wind speed and multiple wind directions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/002_opt_yaw_single_ws_uncertain.html">Example: Optimize yaw for a single wind speed and multiple wind directions.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/003_opt_yaw_multiple_ws.html">Example: Optimize yaw for multiple wind directions and multiple wind speeds.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/004_optimize_yaw_aep.html">Example: Optimize yaw and compare AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/005_optimize_yaw_aep_parallel.html">Example: Optimize yaw and compare AEP in parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/006_compare_yaw_optimizers.html">Example: Compare yaw optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/007_optimize_yaw_with_neighbor_farms.html">Example: Optimize yaw with neighbor farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control types</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/001_derating_control.html">Example of using the simple-derating control model in FLORIS.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/002_disable_turbines.html">Example 001: Disable turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_emgauss/001_empirical_gauss_velocity_deficit_parameters.html">Example: Empirical Gaussian velocity deficit parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_emgauss/002_empirical_gauss_deflection_parameters.html">Example: Empirical Gaussian deflection parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Floating</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/001_floating_turbine_models.html">Example: Floating turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/002_floating_vs_fixedbottom_farm.html">Example: Floating vs fixed-bottom farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/003_tilt_driven_vertical_wake_deflection.html">Example: Tilt-driven vertical wake deflection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Get flow</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/001_extract_wind_speed_at_turbines.html">Example: Extract wind speed at turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/002_extract_wind_speed_at_points.html">Example: Extract wind speed at points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/003_plot_velocity_deficit_profiles.html">Example: Plot velocity deficit profiles</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/001_check_turbine.html">Example: Check turbine power curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/002_multiple_turbine_types.html">Example: Multiple turbine types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/003_specify_turbine_power_curve.html">Example: Specify turbine power curve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Uncertain</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/001_layout_visualizations.html">Example: Layout Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/002_visualize_y_cut_plane.html">Example: Visualize y cut plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/003_visualize_cross_plane.html">Example: Visualize cross plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/004_visualize_rotor_values.html">Example: Visualize rotor velocities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/005_visualize_flow_by_sweeping_turbines.html">Example: Visualize flow by sweeping turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
 </ul>
 
     </div>
@@ -502,29 +563,28 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface"><code class="docutils literal notranslate"><span class="pre">TurbineInterface</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.turbine"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.turbine</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.Ct_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.Ct_curve()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.from_library"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.from_library()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.from_turbine_dict"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.from_turbine_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.from_yaml"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.from_yaml()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_Ct_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.plot_Ct_curve()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_power_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.plot_power_curve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_thrust_coefficient_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.plot_thrust_coefficient_curve()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.power_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.power_curve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.thrust_coefficient_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.thrust_coefficient_curve()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.turbine_map"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.turbine_map</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.power_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.power_curves</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.Cp_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.Cp_curves</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.Ct_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.Ct_curves</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_Ct_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.compute_Ct_curves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.thrust_coefficient_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.thrust_coefficient_curves</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_power_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.compute_power_curves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_thrust_coefficient_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.compute_thrust_coefficient_curves()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.load_external_library"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.load_external_library()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.load_internal_library"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.load_internal_library()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_Ct_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_Ct_curves()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_comparison"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_comparison()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_hub_heights"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_hub_heights()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_power_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_power_curves()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_rotor_diameters"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_rotor_diameters()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_thrust_coefficient_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_thrust_coefficient_curves()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -556,40 +616,13 @@ document.write(`
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.turbine_library.turbine_previewer.</span></span><span class="sig-name descname"><span class="pre">TurbineInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineInterface" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>turbine</strong> (<a class="reference internal" href="floris.simulation.turbine.html#floris.simulation.turbine.Turbine" title="floris.simulation.turbine.Turbine"><em>Turbine</em></a><em> | </em><a class="reference internal" href="floris.simulation.turbine_multi_dim.html#floris.simulation.turbine_multi_dim.TurbineMultiDimensional" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional"><em>TurbineMultiDimensional</em></a>) -- </p>
+<dd class="field-odd"><p><strong>turbine</strong> (<a class="reference internal" href="floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine" title="floris.core.turbine.turbine.Turbine"><em>Turbine</em></a>) -- </p>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineInterface.turbine">
-<span class="sig-name descname"><span class="pre">turbine</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.simulation.turbine.html#floris.simulation.turbine.Turbine" title="floris.simulation.turbine.Turbine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Turbine</span></code></a> <span class="pre">|</span> <a class="reference internal" href="floris.simulation.turbine_multi_dim.html#floris.simulation.turbine_multi_dim.TurbineMultiDimensional" title="floris.simulation.turbine_multi_dim.TurbineMultiDimensional"><code class="xref py py-class docutils literal notranslate"><span class="pre">TurbineMultiDimensional</span></code></a></em><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineInterface.turbine" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">turbine</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine" title="floris.core.turbine.turbine.Turbine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Turbine</span></code></a></em><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineInterface.turbine" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineInterface.Ct_curve">
-<span class="sig-name descname"><span class="pre">Ct_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineInterface.Ct_curve" title="Link to this definition">#</a></dt>
-<dd><p>Produces a plot-ready thrust curve for the turbine for wind speed vs thrust coefficient
-assuming no tilt or yaw effects.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]]</span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>wind_speeds</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to</dt><dd><p>0 m/s -&gt; 40 m/s, every 0.5 m/s.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>tuple[NDArrayFloat, NDArrayFloat]</dt><dd><p>Returns the wind speed array and the thrust coefficient array.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineInterface.from_library">
@@ -657,46 +690,6 @@ internal turbine library <code class="docutils literal notranslate"><span class=
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineInterface.plot_Ct_curve">
-<span class="sig-name descname"><span class="pre">plot_Ct_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_Ct_curve" title="Link to this definition">#</a></dt>
-<dd><p>Plots the thrust coefficient curve for a given set of wind speeds.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>wind_speeds</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>fig_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>plot_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>legend_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>return_fig</strong> (<em>bool</em>) -- </p></li>
-</ul>
-</dd>
-</dl>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to</dt><dd><p>0 m/s -&gt; 40 m/s, every 0.5 m/s.</p>
-</dd>
-<dt>fig_kwargs (dict, optional): Any keywords arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.Figure()</span></code>.</dt><dd><p>Defaults to None.</p>
-</dd>
-<dt>plot_kwargs (dict, optional): Any keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.plot()</span></code>.</dt><dd><p>Defaults to None.</p>
-</dd>
-<dt>legend_kwargs (dict, optional): Any keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.legend()</span></code>.</dt><dd><p>Defaults to None.</p>
-</dd>
-<dt>return_fig (bool, optional): Indicator if the <code class="docutils literal notranslate"><span class="pre">Figure</span></code> and <code class="docutils literal notranslate"><span class="pre">Axes</span></code> objects should be</dt><dd><p>returned. Defaults to False.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>None | tuple[plt.Figure, plt.Axes]: None, if <code class="xref py py-attr docutils literal notranslate"><span class="pre">return_fig</span></code> is False, otherwise</dt><dd><p>a tuple of the Figure and Axes objects are returned.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineInterface.plot_power_curve">
 <span class="sig-name descname"><span class="pre">plot_power_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_power_curve" title="Link to this definition">#</a></dt>
 <dd><p>Plots the power curve for a given set of wind speeds.</p>
@@ -717,6 +710,46 @@ internal turbine library <code class="docutils literal notranslate"><span class=
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
 <dt>wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s.</dt><dd><p>Defaults to 0 m/s -&gt; 40 m/s, every 0.5 m/s.</p>
+</dd>
+<dt>fig_kwargs (dict, optional): Any keywords arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.Figure()</span></code>.</dt><dd><p>Defaults to None.</p>
+</dd>
+<dt>plot_kwargs (dict, optional): Any keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.plot()</span></code>.</dt><dd><p>Defaults to None.</p>
+</dd>
+<dt>legend_kwargs (dict, optional): Any keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.legend()</span></code>.</dt><dd><p>Defaults to None.</p>
+</dd>
+<dt>return_fig (bool, optional): Indicator if the <code class="docutils literal notranslate"><span class="pre">Figure</span></code> and <code class="docutils literal notranslate"><span class="pre">Axes</span></code> objects should be</dt><dd><p>returned. Defaults to False.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>None | tuple[plt.Figure, plt.Axes]: None, if <code class="xref py py-attr docutils literal notranslate"><span class="pre">return_fig</span></code> is False, otherwise</dt><dd><p>a tuple of the Figure and Axes objects are returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineInterface.plot_thrust_coefficient_curve">
+<span class="sig-name descname"><span class="pre">plot_thrust_coefficient_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_thrust_coefficient_curve" title="Link to this definition">#</a></dt>
+<dd><p>Plots the thrust coefficient curve for a given set of wind speeds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>wind_speeds</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>fig_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>plot_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>legend_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>return_fig</strong> (<em>bool</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to</dt><dd><p>0 m/s -&gt; 40 m/s, every 0.5 m/s.</p>
 </dd>
 <dt>fig_kwargs (dict, optional): Any keywords arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.Figure()</span></code>.</dt><dd><p>Defaults to None.</p>
 </dd>
@@ -764,18 +797,44 @@ dictionary of the multidimensional parameters and their associated power arrays.
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineInterface.thrust_coefficient_curve">
+<span class="sig-name descname"><span class="pre">thrust_coefficient_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineInterface.thrust_coefficient_curve" title="Link to this definition">#</a></dt>
+<dd><p>Produces a plot-ready thrust curve for the turbine for wind speed vs thrust coefficient
+assuming no tilt or yaw effects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>wind_speeds</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to</dt><dd><p>0 m/s -&gt; 40 m/s, every 0.5 m/s.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple[NDArrayFloat, NDArrayFloat]</dt><dd><p>Returns the wind speed array and the thrust coefficient array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.turbine_library.turbine_previewer.</span></span><span class="sig-name descname"><span class="pre">TurbineLibrary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_curves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Cp_curves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ct_curves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.turbine_library.turbine_previewer.</span></span><span class="sig-name descname"><span class="pre">TurbineLibrary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_curves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thrust_coefficient_curves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_Nothing.NOTHING</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>turbine_map</strong> (<em>dict</em><em>[</em><em>slice</em><em>(</em><em>&lt;class 'str'&gt;</em><em>, </em><em>&lt;class 'floris.turbine_library.turbine_previewer.TurbineInterface'&gt;</em><em>, </em><em>None</em><em>)</em><em>]</em>) -- </p></li>
 <li><p><strong>power_curves</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tuple</em><em>[</em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>, </em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>Cp_curves</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tuple</em><em>[</em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>, </em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>Ct_curves</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tuple</em><em>[</em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>, </em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>thrust_coefficient_curves</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tuple</em><em>[</em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>, </em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em><em>]</em><em>]</em>) -- </p></li>
 </ul>
 </dd>
 </dl>
@@ -790,20 +849,15 @@ dictionary of the multidimensional parameters and their associated power arrays.
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.Cp_curves">
-<span class="sig-name descname"><span class="pre">Cp_curves</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]]]]</span></em><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.Cp_curves" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.Ct_curves">
-<span class="sig-name descname"><span class="pre">Ct_curves</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]]]]</span></em><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.Ct_curves" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.thrust_coefficient_curves">
+<span class="sig-name descname"><span class="pre">thrust_coefficient_curves</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]]]]</span></em><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.thrust_coefficient_curves" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.compute_Ct_curves">
-<span class="sig-name descname"><span class="pre">compute_Ct_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_Ct_curves" title="Link to this definition">#</a></dt>
-<dd><p>Computes the thrust curves for each turbine in <code class="docutils literal notranslate"><span class="pre">turbine_map</span></code> and sets the
-<code class="docutils literal notranslate"><span class="pre">Ct_curves</span></code> attribute.</p>
+<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.compute_power_curves">
+<span class="sig-name descname"><span class="pre">compute_power_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_power_curves" title="Link to this definition">#</a></dt>
+<dd><p>Computes the power curves for each turbine in <code class="docutils literal notranslate"><span class="pre">turbine_map</span></code> and sets the
+<code class="docutils literal notranslate"><span class="pre">power_curves</span></code> attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -822,10 +876,10 @@ dictionary of the multidimensional parameters and their associated power arrays.
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.compute_power_curves">
-<span class="sig-name descname"><span class="pre">compute_power_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_power_curves" title="Link to this definition">#</a></dt>
-<dd><p>Computes the power curves for each turbine in <code class="docutils literal notranslate"><span class="pre">turbine_map</span></code> and sets the
-<code class="docutils literal notranslate"><span class="pre">power_curves</span></code> attribute.</p>
+<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.compute_thrust_coefficient_curves">
+<span class="sig-name descname"><span class="pre">compute_thrust_coefficient_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_thrust_coefficient_curves" title="Link to this definition">#</a></dt>
+<dd><p>Computes the thrust curves for each turbine in <code class="docutils literal notranslate"><span class="pre">turbine_map</span></code> and sets the
+<code class="docutils literal notranslate"><span class="pre">thrust_coefficient_curves</span></code> attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -895,61 +949,6 @@ except any turbines defined in <code class="xref py py-attr docutils literal not
 <dt>which (list[str], optional): A list of which file names to include from loading.</dt><dd><p>Defaults to [].</p>
 </dd>
 <dt>exclude (list[str], optional): A list of file names to exclude from loading.</dt><dd><p>Defaults to [].</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.plot_Ct_curves">
-<span class="sig-name descname"><span class="pre">plot_Ct_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_Ct_curves" title="Link to this definition">#</a></dt>
-<dd><p>Plots each thrust coefficient curve in <code class="docutils literal notranslate"><span class="pre">turbine_map</span></code> in a single plot.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>fig</strong> (<em>Figure</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>ax</strong> (<em>Axes</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>which</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) -- </p></li>
-<li><p><strong>exclude</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) -- </p></li>
-<li><p><strong>wind_speeds</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>fig_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>plot_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>legend_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>return_fig</strong> (<em>bool</em>) -- </p></li>
-<li><p><strong>show</strong> (<em>bool</em>) -- </p></li>
-</ul>
-</dd>
-</dl>
-<dl>
-<dt>Args:</dt><dd><p>fig (plt.figure, optional): A pre-made figure where the plot should exist.
-ax (plt.Axes, optional): A pre-initialized axes object that should be used for the plot.
-which (list[str], optional): A list of which turbine types/names to include. Defaults to</p>
-<blockquote>
-<div><p>[].</p>
-</div></blockquote>
-<dl class="simple">
-<dt>exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults</dt><dd><p>to [].</p>
-</dd>
-<dt>wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to</dt><dd><p>0 m/s -&gt; 40 m/s, every 0.5 m/s.</p>
-</dd>
-<dt>fig_kwargs (dict, optional): Any keywords arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.Figure()</span></code>.</dt><dd><p>Defaults to None.</p>
-</dd>
-<dt>plot_kwargs (dict, optional): Any keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.plot()</span></code>.</dt><dd><p>Defaults to None.</p>
-</dd>
-<dt>plot_kwargs (dict, optional): Any keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.legend()</span></code>.</dt><dd><p>Defaults to None.</p>
-</dd>
-<dt>return_fig (bool, optional): Indicator if the <code class="docutils literal notranslate"><span class="pre">Figure</span></code> and <code class="docutils literal notranslate"><span class="pre">Axes</span></code> objects should be</dt><dd><p>returned. Defaults to False.</p>
-</dd>
-<dt>show (bool, optional): Indicator if the figure should be automatically displayed.</dt><dd><p>Defaults to False.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>None | tuple[plt.Figure, plt.Axes]: None, if <code class="xref py py-attr docutils literal notranslate"><span class="pre">return_fig</span></code> is False, otherwise</dt><dd><p>a tuple of the Figure and Axes objects are returned.</p>
 </dd>
 </dl>
 </dd>
@@ -1158,6 +1157,61 @@ which (list[str], optional): A list of which turbine types/names to include. Def
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.turbine_library.turbine_previewer.TurbineLibrary.plot_thrust_coefficient_curves">
+<span class="sig-name descname"><span class="pre">plot_thrust_coefficient_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.5,</span> <span class="pre">1.,</span> <span class="pre">1.5,</span> <span class="pre">2.,</span> <span class="pre">2.5,</span> <span class="pre">3.,</span> <span class="pre">3.5,</span> <span class="pre">4.,</span> <span class="pre">4.5,</span> <span class="pre">5.,</span> <span class="pre">5.5,</span> <span class="pre">6.,</span> <span class="pre">6.5,</span> <span class="pre">7.,</span> <span class="pre">7.5,</span> <span class="pre">8.,</span> <span class="pre">8.5,</span> <span class="pre">9.,</span> <span class="pre">9.5,</span> <span class="pre">10.,</span> <span class="pre">10.5,</span> <span class="pre">11.,</span> <span class="pre">11.5,</span> <span class="pre">12.,</span> <span class="pre">12.5,</span> <span class="pre">13.,</span> <span class="pre">13.5,</span> <span class="pre">14.,</span> <span class="pre">14.5,</span> <span class="pre">15.,</span> <span class="pre">15.5,</span> <span class="pre">16.,</span> <span class="pre">16.5,</span> <span class="pre">17.,</span> <span class="pre">17.5,</span> <span class="pre">18.,</span> <span class="pre">18.5,</span> <span class="pre">19.,</span> <span class="pre">19.5,</span> <span class="pre">20.,</span> <span class="pre">20.5,</span> <span class="pre">21.,</span> <span class="pre">21.5,</span> <span class="pre">22.,</span> <span class="pre">22.5,</span> <span class="pre">23.,</span> <span class="pre">23.5,</span> <span class="pre">24.,</span> <span class="pre">24.5,</span> <span class="pre">25.,</span> <span class="pre">25.5,</span> <span class="pre">26.,</span> <span class="pre">26.5,</span> <span class="pre">27.,</span> <span class="pre">27.5,</span> <span class="pre">28.,</span> <span class="pre">28.5,</span> <span class="pre">29.,</span> <span class="pre">29.5,</span> <span class="pre">30.,</span> <span class="pre">30.5,</span> <span class="pre">31.,</span> <span class="pre">31.5,</span> <span class="pre">32.,</span> <span class="pre">32.5,</span> <span class="pre">33.,</span> <span class="pre">33.5,</span> <span class="pre">34.,</span> <span class="pre">34.5,</span> <span class="pre">35.,</span> <span class="pre">35.5,</span> <span class="pre">36.,</span> <span class="pre">36.5,</span> <span class="pre">37.,</span> <span class="pre">37.5,</span> <span class="pre">38.,</span> <span class="pre">38.5,</span> <span class="pre">39.,</span> <span class="pre">39.5,</span> <span class="pre">40.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_thrust_coefficient_curves" title="Link to this definition">#</a></dt>
+<dd><p>Plots each thrust coefficient curve in <code class="docutils literal notranslate"><span class="pre">turbine_map</span></code> in a single plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>fig</strong> (<em>Figure</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>ax</strong> (<em>Axes</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>which</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) -- </p></li>
+<li><p><strong>exclude</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) -- </p></li>
+<li><p><strong>wind_speeds</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>fig_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>plot_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>legend_kwargs</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>return_fig</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>show</strong> (<em>bool</em>) -- </p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Args:</dt><dd><p>fig (plt.figure, optional): A pre-made figure where the plot should exist.
+ax (plt.Axes, optional): A pre-initialized axes object that should be used for the plot.
+which (list[str], optional): A list of which turbine types/names to include. Defaults to</p>
+<blockquote>
+<div><p>[].</p>
+</div></blockquote>
+<dl class="simple">
+<dt>exclude (list[str], optional): A list of turbine types/names names to exclude. Defaults</dt><dd><p>to [].</p>
+</dd>
+<dt>wind_speeds (NDArrayFloat, optional): A 1-D array of wind speeds, in m/s. Defaults to</dt><dd><p>0 m/s -&gt; 40 m/s, every 0.5 m/s.</p>
+</dd>
+<dt>fig_kwargs (dict, optional): Any keywords arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.Figure()</span></code>.</dt><dd><p>Defaults to None.</p>
+</dd>
+<dt>plot_kwargs (dict, optional): Any keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.plot()</span></code>.</dt><dd><p>Defaults to None.</p>
+</dd>
+<dt>plot_kwargs (dict, optional): Any keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plt.legend()</span></code>.</dt><dd><p>Defaults to None.</p>
+</dd>
+<dt>return_fig (bool, optional): Indicator if the <code class="docutils literal notranslate"><span class="pre">Figure</span></code> and <code class="docutils literal notranslate"><span class="pre">Axes</span></code> objects should be</dt><dd><p>returned. Defaults to False.</p>
+</dd>
+<dt>show (bool, optional): Indicator if the figure should be automatically displayed.</dt><dd><p>Defaults to False.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>None | tuple[plt.Figure, plt.Axes]: None, if <code class="xref py py-attr docutils literal notranslate"><span class="pre">return_fig</span></code> is False, otherwise</dt><dd><p>a tuple of the Figure and Axes objects are returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -1228,29 +1282,28 @@ which (list[str], optional): A list of which turbine types/names to include. Def
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface"><code class="docutils literal notranslate"><span class="pre">TurbineInterface</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.turbine"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.turbine</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.Ct_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.Ct_curve()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.from_library"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.from_library()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.from_turbine_dict"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.from_turbine_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.from_yaml"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.from_yaml()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_Ct_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.plot_Ct_curve()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_power_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.plot_power_curve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.plot_thrust_coefficient_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.plot_thrust_coefficient_curve()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.power_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.power_curve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineInterface.thrust_coefficient_curve"><code class="docutils literal notranslate"><span class="pre">TurbineInterface.thrust_coefficient_curve()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.turbine_map"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.turbine_map</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.power_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.power_curves</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.Cp_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.Cp_curves</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.Ct_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.Ct_curves</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_Ct_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.compute_Ct_curves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.thrust_coefficient_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.thrust_coefficient_curves</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_power_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.compute_power_curves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_thrust_coefficient_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.compute_thrust_coefficient_curves()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.load_external_library"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.load_external_library()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.load_internal_library"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.load_internal_library()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_Ct_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_Ct_curves()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_comparison"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_comparison()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_hub_heights"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_hub_heights()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_power_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_power_curves()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_rotor_diameters"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_rotor_diameters()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.turbine_library.turbine_previewer.TurbineLibrary.plot_thrust_coefficient_curves"><code class="docutils literal notranslate"><span class="pre">TurbineLibrary.plot_thrust_coefficient_curves()</span></code></a></li>
 </ul>
 </li>
 </ul>

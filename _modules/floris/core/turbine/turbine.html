@@ -1,0 +1,1261 @@
+
+<!DOCTYPE html>
+
+
+<html lang="python" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>floris.core.turbine.turbine &#8212; FLORIS</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=30a733bc"></script>
+    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-JV2SK7CNPR');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-JV2SK7CNPR');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script src="https://unpkg.com/mermaid@10.8/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/floris/core/turbine/turbine';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="python"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/gch.gif" class="logo__image only-light" alt="FLORIS - Home"/>
+    <script>document.write(`<img src="../../../../_static/gch.gif" class="logo__image only-dark" alt="FLORIS - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../index.html">
+                    FLORIS Wake Modeling & Wind Farm Controls
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../v3_to_v4.html">Switching from FLORIS v3 to v4</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro_concepts.html">Introductory Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../advanced_concepts.html">Advanced Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../turbine_interaction.html">Turbine Library Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../input_reference_main.html">Main Input File Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../input_reference_turbine.html">Turbine Input File Reference</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory and Background</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../wake_models.html">Wake Models</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../empirical_gauss_model.html">Empirical Gaussian model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../bibliography.html">Bibliography</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev_guide.html">Developer's Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../code_quality.html">Code Quality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api_docs.html">API Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.flow_visualization.html">floris.flow_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.floris_model.html">floris.floris_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.wind_data.html">floris.wind_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.uncertain_floris_model.html">floris.uncertain_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/floris.turbine_library.html">floris.turbine_library</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.turbine_library.turbine_previewer.html">floris.turbine_library.turbine_previewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.parallel_floris_model.html">floris.parallel_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/floris.optimization.html">floris.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/floris.optimization.other.html">floris.optimization.other</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimization_base.html">floris.optimization.yaw_optimization.yaw_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimization_tools.html">floris.optimization.yaw_optimization.yaw_optimization_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_geometric.html">floris.optimization.yaw_optimization.yaw_optimizer_geometric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_scipy.html">floris.optimization.yaw_optimization.yaw_optimizer_scipy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_sr.html">floris.optimization.yaw_optimization.yaw_optimizer_sr</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.layout_visualization.html">floris.layout_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.cut_plane.html">floris.cut_plane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.core.html">floris.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.convert_turbine_v3_to_v4.html">floris.convert_turbine_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.convert_floris_input_v3_to_v4.html">floris.convert_floris_input_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.type_dec.html">floris.type_dec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/floris.logging_manager.html">floris.logging_manager</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/001_opening_floris_computing_power.html">Example 1: Opening FLORIS and Computing Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/002_visualizations.html">Example 2: Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/003_wind_data_objects.html">Example 3: Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/004_set.html">Example 4: Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/005_getting_power.html">Example 5: Getting Turbine and Farm Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_optimization/001_opt_yaw_single_ws.html">Example: Optimize yaw for a single wind speed and multiple wind directions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_optimization/002_opt_yaw_single_ws_uncertain.html">Example: Optimize yaw for a single wind speed and multiple wind directions.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_optimization/003_opt_yaw_multiple_ws.html">Example: Optimize yaw for multiple wind directions and multiple wind speeds.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_optimization/004_optimize_yaw_aep.html">Example: Optimize yaw and compare AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_optimization/005_optimize_yaw_aep_parallel.html">Example: Optimize yaw and compare AEP in parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_optimization/006_compare_yaw_optimizers.html">Example: Compare yaw optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_optimization/007_optimize_yaw_with_neighbor_farms.html">Example: Optimize yaw with neighbor farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control types</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_types/001_derating_control.html">Example of using the simple-derating control model in FLORIS.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_types/002_disable_turbines.html">Example 001: Disable turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_emgauss/001_empirical_gauss_velocity_deficit_parameters.html">Example: Empirical Gaussian velocity deficit parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_emgauss/002_empirical_gauss_deflection_parameters.html">Example: Empirical Gaussian deflection parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Floating</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_floating/001_floating_turbine_models.html">Example: Floating turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_floating/002_floating_vs_fixedbottom_farm.html">Example: Floating vs fixed-bottom farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_floating/003_tilt_driven_vertical_wake_deflection.html">Example: Tilt-driven vertical wake deflection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Get flow</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_get_flow/001_extract_wind_speed_at_turbines.html">Example: Extract wind speed at turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_get_flow/002_extract_wind_speed_at_points.html">Example: Extract wind speed at points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_get_flow/003_plot_velocity_deficit_profiles.html">Example: Plot velocity deficit profiles</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_turbine/001_check_turbine.html">Example: Check turbine power curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_turbine/002_multiple_turbine_types.html">Example: Multiple turbine types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_turbine/003_specify_turbine_power_curve.html">Example: Specify turbine power curve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Uncertain</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_visualizations/001_layout_visualizations.html">Example: Layout Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_visualizations/002_visualize_y_cut_plane.html">Example: Visualize y cut plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_visualizations/003_visualize_cross_plane.html">Example: Visualize cross plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_visualizations/004_visualize_rotor_values.html">Example: Visualize rotor velocities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_visualizations/005_visualize_flow_by_sweeping_turbines.html">Example: Visualize flow by sweeping turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/floris" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_modules/floris/core/turbine/turbine.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for floris.core.turbine.turbine</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">attrs</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+
+<span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span> <span class="nn">floris.core.turbine</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AWCTurbine</span><span class="p">,</span>
+    <span class="n">CosineLossTurbine</span><span class="p">,</span>
+    <span class="n">MixedOperationTurbine</span><span class="p">,</span>
+    <span class="n">SimpleDeratingTurbine</span><span class="p">,</span>
+    <span class="n">SimpleTurbine</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">convert_to_path</span><span class="p">,</span>
+    <span class="n">floris_numeric_dict_converter</span><span class="p">,</span>
+    <span class="n">NDArrayBool</span><span class="p">,</span>
+    <span class="n">NDArrayFilter</span><span class="p">,</span>
+    <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">NDArrayInt</span><span class="p">,</span>
+    <span class="n">NDArrayObject</span><span class="p">,</span>
+    <span class="n">NDArrayStr</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">cosd</span>
+
+
+<span class="n">TURBINE_MODEL_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;operation_model&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;simple&quot;</span><span class="p">:</span> <span class="n">SimpleTurbine</span><span class="p">,</span>
+        <span class="s2">&quot;cosine-loss&quot;</span><span class="p">:</span> <span class="n">CosineLossTurbine</span><span class="p">,</span>
+        <span class="s2">&quot;simple-derating&quot;</span><span class="p">:</span> <span class="n">SimpleDeratingTurbine</span><span class="p">,</span>
+        <span class="s2">&quot;mixed&quot;</span><span class="p">:</span> <span class="n">MixedOperationTurbine</span><span class="p">,</span>
+        <span class="s2">&quot;awc&quot;</span><span class="p">:</span> <span class="n">AWCTurbine</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="select_multidim_condition">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.select_multidim_condition">[docs]</a>
+<span class="k">def</span> <span class="nf">select_multidim_condition</span><span class="p">(</span>
+    <span class="n">condition</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">,</span>
+    <span class="n">specified_conditions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert condition to the type expected by power_thrust_table and select</span>
+<span class="sd">    nearest specified condition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;condition should be of type dict or tuple.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Find the nearest key to the specified conditions.</span>
+    <span class="n">specified_conditions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">specified_conditions</span><span class="p">)</span>
+
+    <span class="c1"># Find the nearest key to the specified conditions.</span>
+    <span class="n">nearest_condition</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
+        <span class="n">nearest_condition</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">specified_conditions</span><span class="p">[:,</span> <span class="n">i</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">specified_conditions</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">nearest_condition</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="power">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.power">[docs]</a>
+<span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
+    <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">power_functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span>
+    <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">tilt_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">power_setpoints</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">awc_modes</span><span class="p">:</span> <span class="n">NDArrayStr</span><span class="p">,</span>
+    <span class="n">awc_amplitudes</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">tilt_interps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">interp1d</span><span class="p">],</span>
+    <span class="n">turbine_type_map</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
+    <span class="n">turbine_power_thrust_tables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayInt</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+    <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">multidim_condition</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># Assuming only one condition at a time?</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Power produced by a turbine adjusted for yaw and tilt. Value</span>
+<span class="sd">    given in Watts.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a</span>
+<span class="sd">            turbine.</span>
+<span class="sd">        air_density (float): air density for simulation [kg/m^3]</span>
+<span class="sd">        power_functions (dict[str, Callable]): A dictionary of power functions for</span>
+<span class="sd">            each turbine type. Keys are the turbine type and values are the callable functions.</span>
+<span class="sd">        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.</span>
+<span class="sd">        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.</span>
+<span class="sd">        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each</span>
+<span class="sd">            turbine [W].</span>
+<span class="sd">        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only &quot;baseline&quot;</span>
+<span class="sd">            and &quot;helix&quot; are implemented).</span>
+<span class="sd">        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only &quot;baseline&quot;</span>
+<span class="sd">            and &quot;helix&quot; are implemented).</span>
+<span class="sd">        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each</span>
+<span class="sd">            turbine [deg].</span>
+<span class="sd">        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each</span>
+<span class="sd">            turbine.</span>
+<span class="sd">        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for</span>
+<span class="sd">            each turbine.</span>
+<span class="sd">        turbine_power_thrust_tables: Reference data for the power and thrust representation</span>
+<span class="sd">        ix_filter (NDArrayInt, optional): The boolean array, or</span>
+<span class="sd">            integer indices to filter out before calculation. Defaults to None.</span>
+<span class="sd">        average_method (str, optional): The method for averaging over turbine rotor points</span>
+<span class="sd">            to determine a rotor-average wind speed. Defaults to &quot;cubic-mean&quot;.</span>
+<span class="sd">        cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to</span>
+<span class="sd">            None.</span>
+<span class="sd">        multidim_condition (tuple | None): The condition tuple used to select the appropriate</span>
+<span class="sd">            thrust coefficient relationship for multidimensional power/thrust tables. Defaults to</span>
+<span class="sd">            None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        NDArrayFloat: The power, in Watts, for each turbine after adjusting for yaw and tilt.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Down-select inputs if ix_filter is given</span>
+    <span class="k">if</span> <span class="n">ix_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">velocities</span> <span class="o">=</span> <span class="n">velocities</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">tilt_angles</span> <span class="o">=</span> <span class="n">tilt_angles</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">power_setpoints</span> <span class="o">=</span> <span class="n">power_setpoints</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">awc_modes</span> <span class="o">=</span> <span class="n">awc_modes</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">awc_amplitudes</span> <span class="o">=</span> <span class="n">awc_amplitudes</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">turbine_type_map</span> <span class="o">=</span> <span class="n">turbine_type_map</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">correct_cp_ct_for_tilt</span> <span class="o">=</span> <span class="n">correct_cp_ct_for_tilt</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+
+    <span class="c1"># Loop over each turbine type given to get power for all turbines</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">velocities</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">turb_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">turbine_type_map</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">turb_type</span> <span class="ow">in</span> <span class="n">turb_types</span><span class="p">:</span>
+        <span class="c1"># Handle possible multidimensional power thrust tables</span>
+        <span class="k">if</span> <span class="s2">&quot;power&quot;</span> <span class="ow">in</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]:</span> <span class="c1"># normal</span>
+            <span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># assumed multidimensional, use multidim lookup</span>
+            <span class="c1"># Currently, only works for single mutlidim condition. May need to</span>
+            <span class="c1"># loop in the case where there are multiple conditions.</span>
+            <span class="n">multidim_condition</span> <span class="o">=</span> <span class="n">select_multidim_condition</span><span class="p">(</span>
+                <span class="n">multidim_condition</span><span class="p">,</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="p">)</span>
+            <span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">][</span><span class="n">multidim_condition</span><span class="p">]</span>
+
+        <span class="c1"># Construct full set of possible keyword arguments for power()</span>
+        <span class="n">power_model_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;power_thrust_table&quot;</span><span class="p">:</span> <span class="n">power_thrust_table</span><span class="p">,</span>
+            <span class="s2">&quot;velocities&quot;</span><span class="p">:</span> <span class="n">velocities</span><span class="p">,</span>
+            <span class="s2">&quot;air_density&quot;</span><span class="p">:</span> <span class="n">air_density</span><span class="p">,</span>
+            <span class="s2">&quot;yaw_angles&quot;</span><span class="p">:</span> <span class="n">yaw_angles</span><span class="p">,</span>
+            <span class="s2">&quot;tilt_angles&quot;</span><span class="p">:</span> <span class="n">tilt_angles</span><span class="p">,</span>
+            <span class="s2">&quot;power_setpoints&quot;</span><span class="p">:</span> <span class="n">power_setpoints</span><span class="p">,</span>
+            <span class="s2">&quot;awc_modes&quot;</span><span class="p">:</span> <span class="n">awc_modes</span><span class="p">,</span>
+            <span class="s2">&quot;awc_amplitudes&quot;</span><span class="p">:</span> <span class="n">awc_amplitudes</span><span class="p">,</span>
+            <span class="s2">&quot;tilt_interp&quot;</span><span class="p">:</span> <span class="n">tilt_interps</span><span class="p">[</span><span class="n">turb_type</span><span class="p">],</span>
+            <span class="s2">&quot;average_method&quot;</span><span class="p">:</span> <span class="n">average_method</span><span class="p">,</span>
+            <span class="s2">&quot;cubature_weights&quot;</span><span class="p">:</span> <span class="n">cubature_weights</span><span class="p">,</span>
+            <span class="s2">&quot;correct_cp_ct_for_tilt&quot;</span><span class="p">:</span> <span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Using a masked array, apply the power for all turbines of the current</span>
+        <span class="c1"># type to the main power</span>
+        <span class="n">p</span> <span class="o">+=</span> <span class="n">power_functions</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="o">**</span><span class="n">power_model_kwargs</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="thrust_coefficient">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.thrust_coefficient">[docs]</a>
+<span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">(</span>
+    <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">tilt_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">power_setpoints</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">awc_modes</span><span class="p">:</span> <span class="n">NDArrayStr</span><span class="p">,</span>
+    <span class="n">awc_amplitudes</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">thrust_coefficient_functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span>
+    <span class="n">tilt_interps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">interp1d</span><span class="p">],</span>
+    <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="n">NDArrayBool</span><span class="p">,</span>
+    <span class="n">turbine_type_map</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
+    <span class="n">turbine_power_thrust_tables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayFilter</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+    <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">multidim_condition</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># Assuming only one condition at a time?</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thrust coefficient of a turbine.</span>
+<span class="sd">    The value is obtained from the coefficient of thrust specified by the callables specified</span>
+<span class="sd">    in the thrust_coefficient_functions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        velocities (NDArrayFloat[findex, turbines, grid1, grid2]): The velocity field at</span>
+<span class="sd">            a turbine.</span>
+<span class="sd">        air_density (float): air density for simulation [kg/m^3]</span>
+<span class="sd">        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.</span>
+<span class="sd">        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.</span>
+<span class="sd">        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each</span>
+<span class="sd">            turbine [W].</span>
+<span class="sd">        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only &quot;baseline&quot;</span>
+<span class="sd">            and &quot;helix&quot; are implemented).</span>
+<span class="sd">        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each</span>
+<span class="sd">            turbine [deg].</span>
+<span class="sd">        thrust_coefficient_functions (dict): The thrust coefficient functions for each turbine. Keys</span>
+<span class="sd">            are the turbine type string and values are the callable functions.</span>
+<span class="sd">        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each</span>
+<span class="sd">            turbine.</span>
+<span class="sd">        correct_cp_ct_for_tilt (NDArrayBool[findex, turbines]): Boolean for determining if the</span>
+<span class="sd">            turbines Cp and Ct should be corrected for tilt.</span>
+<span class="sd">        turbine_type_map: (NDArrayObject[findex, turbines]): The Turbine type definition</span>
+<span class="sd">            for each turbine.</span>
+<span class="sd">        ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or</span>
+<span class="sd">            integer indices as an iterable of array to filter out before calculation.</span>
+<span class="sd">            Defaults to None.</span>
+<span class="sd">        average_method (str, optional): The method for averaging over turbine rotor points</span>
+<span class="sd">            to determine a rotor-average wind speed. Defaults to &quot;cubic-mean&quot;.</span>
+<span class="sd">        cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to</span>
+<span class="sd">            None.</span>
+<span class="sd">        multidim_condition (tuple | None): The condition tuple used to select the appropriate</span>
+<span class="sd">            thrust coefficient relationship for multidimensional power/thrust tables. Defaults to</span>
+<span class="sd">            None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        NDArrayFloat: Coefficient of thrust for each requested turbine.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Down-select inputs if ix_filter is given</span>
+    <span class="k">if</span> <span class="n">ix_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">velocities</span> <span class="o">=</span> <span class="n">velocities</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">tilt_angles</span> <span class="o">=</span> <span class="n">tilt_angles</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">power_setpoints</span> <span class="o">=</span> <span class="n">power_setpoints</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">awc_modes</span> <span class="o">=</span> <span class="n">awc_modes</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">awc_amplitudes</span> <span class="o">=</span> <span class="n">awc_amplitudes</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">turbine_type_map</span> <span class="o">=</span> <span class="n">turbine_type_map</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">correct_cp_ct_for_tilt</span> <span class="o">=</span> <span class="n">correct_cp_ct_for_tilt</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+
+    <span class="c1"># Loop over each turbine type given to get thrust coefficient for all turbines</span>
+    <span class="n">thrust_coefficient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">velocities</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">turb_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">turbine_type_map</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">turb_type</span> <span class="ow">in</span> <span class="n">turb_types</span><span class="p">:</span>
+        <span class="c1"># Handle possible multidimensional power thrust tables</span>
+        <span class="k">if</span> <span class="s2">&quot;thrust_coefficient&quot;</span> <span class="ow">in</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]:</span> <span class="c1"># normal</span>
+            <span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># assumed multidimensional, use multidim lookup</span>
+            <span class="c1"># Currently, only works for single mutlidim condition. May need to</span>
+            <span class="c1"># loop in the case where there are multiple conditions.</span>
+            <span class="n">multidim_condition</span> <span class="o">=</span> <span class="n">select_multidim_condition</span><span class="p">(</span>
+                <span class="n">multidim_condition</span><span class="p">,</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="p">)</span>
+            <span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">][</span><span class="n">multidim_condition</span><span class="p">]</span>
+
+        <span class="c1"># Construct full set of possible keyword arguments for thrust_coefficient()</span>
+        <span class="n">thrust_model_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;power_thrust_table&quot;</span><span class="p">:</span> <span class="n">power_thrust_table</span><span class="p">,</span>
+            <span class="s2">&quot;velocities&quot;</span><span class="p">:</span> <span class="n">velocities</span><span class="p">,</span>
+            <span class="s2">&quot;air_density&quot;</span><span class="p">:</span> <span class="n">air_density</span><span class="p">,</span>
+            <span class="s2">&quot;yaw_angles&quot;</span><span class="p">:</span> <span class="n">yaw_angles</span><span class="p">,</span>
+            <span class="s2">&quot;tilt_angles&quot;</span><span class="p">:</span> <span class="n">tilt_angles</span><span class="p">,</span>
+            <span class="s2">&quot;power_setpoints&quot;</span><span class="p">:</span> <span class="n">power_setpoints</span><span class="p">,</span>
+            <span class="s2">&quot;awc_modes&quot;</span><span class="p">:</span> <span class="n">awc_modes</span><span class="p">,</span>
+            <span class="s2">&quot;awc_amplitudes&quot;</span><span class="p">:</span> <span class="n">awc_amplitudes</span><span class="p">,</span>
+            <span class="s2">&quot;tilt_interp&quot;</span><span class="p">:</span> <span class="n">tilt_interps</span><span class="p">[</span><span class="n">turb_type</span><span class="p">],</span>
+            <span class="s2">&quot;average_method&quot;</span><span class="p">:</span> <span class="n">average_method</span><span class="p">,</span>
+            <span class="s2">&quot;cubature_weights&quot;</span><span class="p">:</span> <span class="n">cubature_weights</span><span class="p">,</span>
+            <span class="s2">&quot;correct_cp_ct_for_tilt&quot;</span><span class="p">:</span> <span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Using a masked array, apply the thrust coefficient for all turbines of the current</span>
+        <span class="c1"># type to the main thrust coefficient array</span>
+        <span class="n">thrust_coefficient</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="n">thrust_coefficient_functions</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="o">**</span><span class="n">thrust_model_kwargs</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">thrust_coefficient</span></div>
+
+
+
+<div class="viewcode-block" id="axial_induction">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.axial_induction">[docs]</a>
+<span class="k">def</span> <span class="nf">axial_induction</span><span class="p">(</span>
+    <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">tilt_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">power_setpoints</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">awc_modes</span><span class="p">:</span> <span class="n">NDArrayStr</span><span class="p">,</span>
+    <span class="n">awc_amplitudes</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="n">axial_induction_functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">tilt_interps</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
+    <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="n">NDArrayBool</span><span class="p">,</span>
+    <span class="n">turbine_type_map</span><span class="p">:</span> <span class="n">NDArrayObject</span><span class="p">,</span>
+    <span class="n">turbine_power_thrust_tables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">ix_filter</span><span class="p">:</span> <span class="n">NDArrayFilter</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+    <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">multidim_condition</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># Assuming only one condition at a time?</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArrayFloat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Axial induction factor of the turbine incorporating</span>
+<span class="sd">    the thrust coefficient and yaw angle.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        velocities (NDArrayFloat): The velocity field at each turbine; should be shape:</span>
+<span class="sd">            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.</span>
+<span class="sd">        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.</span>
+<span class="sd">        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.</span>
+<span class="sd">        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each</span>
+<span class="sd">            turbine [W].</span>
+<span class="sd">        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each</span>
+<span class="sd">            turbine [deg].</span>
+<span class="sd">        axial_induction_functions (dict): The axial induction functions for each turbine. Keys are</span>
+<span class="sd">            the turbine type string and values are the callable functions.</span>
+<span class="sd">        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each</span>
+<span class="sd">            turbine.</span>
+<span class="sd">        correct_cp_ct_for_tilt (NDArrayBool[findex, turbines]): Boolean for determining if the</span>
+<span class="sd">            turbines Cp and Ct should be corrected for tilt.</span>
+<span class="sd">        turbine_type_map: (NDArrayObject[findex, turbines]): The Turbine type definition</span>
+<span class="sd">            for each turbine.</span>
+<span class="sd">        ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or</span>
+<span class="sd">            integer indices (as an array or iterable) to filter out before calculation.</span>
+<span class="sd">            Defaults to None.</span>
+<span class="sd">        average_method (str, optional): The method for averaging over turbine rotor points</span>
+<span class="sd">            to determine a rotor-average wind speed. Defaults to &quot;cubic-mean&quot;.</span>
+<span class="sd">        cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to</span>
+<span class="sd">            None.</span>
+<span class="sd">        multidim_condition (tuple | None): The condition tuple used to select the appropriate</span>
+<span class="sd">            thrust coefficient relationship for multidimensional power/thrust tables. Defaults to</span>
+<span class="sd">            None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Union[float, NDArrayFloat]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Down-select inputs if ix_filter is given</span>
+    <span class="k">if</span> <span class="n">ix_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">velocities</span> <span class="o">=</span> <span class="n">velocities</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">yaw_angles</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">tilt_angles</span> <span class="o">=</span> <span class="n">tilt_angles</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">power_setpoints</span> <span class="o">=</span> <span class="n">power_setpoints</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">awc_modes</span> <span class="o">=</span> <span class="n">awc_modes</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">awc_amplitudes</span> <span class="o">=</span> <span class="n">awc_amplitudes</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="n">turbine_type_map</span> <span class="o">=</span> <span class="n">turbine_type_map</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">correct_cp_ct_for_tilt</span> <span class="o">=</span> <span class="n">correct_cp_ct_for_tilt</span><span class="p">[:,</span> <span class="n">ix_filter</span><span class="p">]</span>
+
+    <span class="c1"># Loop over each turbine type given to get axial induction for all turbines</span>
+    <span class="n">axial_induction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">velocities</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">turb_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">turbine_type_map</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">turb_type</span> <span class="ow">in</span> <span class="n">turb_types</span><span class="p">:</span>
+        <span class="c1"># Handle possible multidimensional power thrust tables</span>
+        <span class="k">if</span> <span class="s2">&quot;thrust_coefficient&quot;</span> <span class="ow">in</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]:</span> <span class="c1"># normal</span>
+            <span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># assumed multidimensional, use multidim lookup</span>
+            <span class="c1"># Currently, only works for single mutlidim condition. May need to</span>
+            <span class="c1"># loop in the case where there are multiple conditions.</span>
+            <span class="n">multidim_condition</span> <span class="o">=</span> <span class="n">select_multidim_condition</span><span class="p">(</span>
+                <span class="n">multidim_condition</span><span class="p">,</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="p">)</span>
+            <span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">turbine_power_thrust_tables</span><span class="p">[</span><span class="n">turb_type</span><span class="p">][</span><span class="n">multidim_condition</span><span class="p">]</span>
+
+        <span class="c1"># Construct full set of possible keyword arguments for thrust_coefficient()</span>
+        <span class="n">axial_induction_model_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;power_thrust_table&quot;</span><span class="p">:</span> <span class="n">power_thrust_table</span><span class="p">,</span>
+            <span class="s2">&quot;velocities&quot;</span><span class="p">:</span> <span class="n">velocities</span><span class="p">,</span>
+            <span class="s2">&quot;air_density&quot;</span><span class="p">:</span> <span class="n">air_density</span><span class="p">,</span>
+            <span class="s2">&quot;yaw_angles&quot;</span><span class="p">:</span> <span class="n">yaw_angles</span><span class="p">,</span>
+            <span class="s2">&quot;tilt_angles&quot;</span><span class="p">:</span> <span class="n">tilt_angles</span><span class="p">,</span>
+            <span class="s2">&quot;power_setpoints&quot;</span><span class="p">:</span> <span class="n">power_setpoints</span><span class="p">,</span>
+            <span class="s2">&quot;awc_modes&quot;</span><span class="p">:</span> <span class="n">awc_modes</span><span class="p">,</span>
+            <span class="s2">&quot;awc_amplitudes&quot;</span><span class="p">:</span> <span class="n">awc_amplitudes</span><span class="p">,</span>
+            <span class="s2">&quot;tilt_interp&quot;</span><span class="p">:</span> <span class="n">tilt_interps</span><span class="p">[</span><span class="n">turb_type</span><span class="p">],</span>
+            <span class="s2">&quot;average_method&quot;</span><span class="p">:</span> <span class="n">average_method</span><span class="p">,</span>
+            <span class="s2">&quot;cubature_weights&quot;</span><span class="p">:</span> <span class="n">cubature_weights</span><span class="p">,</span>
+            <span class="s2">&quot;correct_cp_ct_for_tilt&quot;</span><span class="p">:</span> <span class="n">correct_cp_ct_for_tilt</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Using a masked array, apply the thrust coefficient for all turbines of the current</span>
+        <span class="c1"># type to the main thrust coefficient array</span>
+        <span class="n">axial_induction</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="n">axial_induction_functions</span><span class="p">[</span><span class="n">turb_type</span><span class="p">](</span><span class="o">**</span><span class="n">axial_induction_model_kwargs</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">turbine_type_map</span> <span class="o">==</span> <span class="n">turb_type</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axial_induction</span></div>
+
+
+
+<div class="viewcode-block" id="Turbine">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine">[docs]</a>
+<span class="nd">@define</span>
+<span class="k">class</span> <span class="nc">Turbine</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class containing the parameters and infrastructure to model a wind turbine&#39;s performance</span>
+<span class="sd">    for a particular atmospheric condition.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        turbine_type (str): An identifier for this type of turbine such as &quot;NREL_5MW&quot;.</span>
+<span class="sd">        rotor_diameter (float): The rotor diameter in meters.</span>
+<span class="sd">        hub_height (float): The hub height in meters.</span>
+<span class="sd">        TSR (float): The Tip Speed Ratio of the turbine.</span>
+<span class="sd">        power_thrust_table (dict[str, float]): Contains power coefficient and thrust coefficient</span>
+<span class="sd">            values at a series of wind speeds to define the turbine performance.</span>
+<span class="sd">            The dictionary must have the following three keys with equal length values:</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;wind_speeds&quot;: List[float],</span>
+<span class="sd">                    &quot;power&quot;: List[float],</span>
+<span class="sd">                    &quot;thrust&quot;: List[float],</span>
+<span class="sd">                }</span>
+<span class="sd">            or, contain a key &quot;power_thrust_data_file&quot; pointing to the power/thrust data.</span>
+<span class="sd">            Optionally, power_thrust_table may include parameters for use in the turbine submodel,</span>
+<span class="sd">            for example:</span>
+<span class="sd">                cosine_loss_exponent_yaw (float): The cosine exponent relating the yaw misalignment</span>
+<span class="sd">                    angle to turbine power.</span>
+<span class="sd">                cosine_loss_exponent_tilt (float): The cosine exponent relating the rotor tilt angle</span>
+<span class="sd">                    to turbine power.</span>
+<span class="sd">                ref_air_density (float): The density at which the provided Cp and Ct curves are</span>
+<span class="sd">                    defined.</span>
+<span class="sd">                ref_tilt (float): The implicit tilt of the turbine for which the Cp and Ct</span>
+<span class="sd">                    curves are defined. This is typically the nacelle tilt.</span>
+<span class="sd">        correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt</span>
+<span class="sd">            usually for a floating turbine.</span>
+<span class="sd">            Optional, defaults to False.</span>
+<span class="sd">        floating_tilt_table (dict[str, float]): Look up table of tilt angles at a series of</span>
+<span class="sd">            wind speeds. The dictionary must have the following keys with equal length values:</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;wind_speeds&quot;: List[float],</span>
+<span class="sd">                    &quot;tilt&quot;: List[float],</span>
+<span class="sd">                }</span>
+<span class="sd">            Required if `correct_cp_ct_for_tilt = True`. Defaults to None.</span>
+<span class="sd">        multi_dimensional_cp_ct (bool): Use a multidimensional power_thrust_table. Defaults to</span>
+<span class="sd">            False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">turbine_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">rotor_diameter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">hub_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">TSR</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">{})</span> <span class="c1"># conversion to numpy in __post_init__</span>
+    <span class="n">operation_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;cosine-loss&quot;</span><span class="p">)</span>
+
+    <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">floating_tilt_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NDArrayFloat</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Even though this Turbine class does not support the multidimensional features as they</span>
+    <span class="c1"># are implemented in TurbineMultiDim, providing the following two attributes here allows</span>
+    <span class="c1"># the turbine data inputs to keep the multidimensional Cp and Ct curve but switch them off</span>
+    <span class="c1"># with multi_dimensional_cp_ct = False</span>
+    <span class="n">multi_dimensional_cp_ct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Initialized in the post_init function</span>
+    <span class="n">rotor_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">rotor_area</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">thrust_coefficient_function</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">axial_induction_function</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">power_function</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">tilt_interp</span><span class="p">:</span> <span class="n">interp1d</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">power_thrust_data_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Only used by mutlidimensional turbines</span>
+    <span class="n">turbine_library_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;turbine_library&quot;</span><span class="p">,</span>
+        <span class="n">converter</span><span class="o">=</span><span class="n">convert_to_path</span><span class="p">,</span>
+        <span class="n">validator</span><span class="o">=</span><span class="n">attrs</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="n">Path</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Not to be provided by the user</span>
+    <span class="n">condition_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_power_thrust_functions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_tilt_interpolation</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_dimensional_cp_ct</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_multidim_power_thrust_table</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">floris_numeric_dict_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_power_thrust_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">turbine_function_model</span> <span class="o">=</span> <span class="n">TURBINE_MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;operation_model&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_model</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thrust_coefficient_function</span> <span class="o">=</span> <span class="n">turbine_function_model</span><span class="o">.</span><span class="n">thrust_coefficient</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axial_induction_function</span> <span class="o">=</span> <span class="n">turbine_function_model</span><span class="o">.</span><span class="n">axial_induction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power_function</span> <span class="o">=</span> <span class="n">turbine_function_model</span><span class="o">.</span><span class="n">power</span>
+
+
+    <span class="k">def</span> <span class="nf">_initialize_tilt_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># TODO:</span>
+        <span class="c1"># Remove any duplicate wind speed entries</span>
+        <span class="c1"># _, duplicate_filter = np.unique(self.wind_speeds, return_index=True)</span>
+        <span class="c1"># self.tilt = self.tilt[duplicate_filter]</span>
+        <span class="c1"># self.wind_speeds = self.wind_speeds[duplicate_filter]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="o">=</span> <span class="n">floris_numeric_dict_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">)</span>
+
+        <span class="c1"># If defined, create a tilt interpolation function for floating turbines.</span>
+        <span class="c1"># fill_value currently set to apply the min or max tilt angles if outside</span>
+        <span class="c1"># of the interpolation range.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tilt_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">],</span>
+                <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_multidim_power_thrust_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Collect reference information</span>
+        <span class="n">power_thrust_table_ref</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_data_file</span> <span class="o">=</span> <span class="n">power_thrust_table_ref</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;power_thrust_data_file&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Solidify the data file path and name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_data_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_library_path</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_data_file</span>
+
+        <span class="c1"># Read in the multi-dimensional data supplied by the user.</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_data_file</span><span class="p">)</span>
+
+        <span class="c1"># Down-select the DataFrame to have just the ws, Cp, and Ct values</span>
+        <span class="n">index_col</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condition_keys</span> <span class="o">=</span> <span class="n">index_col</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">index_col</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+        <span class="c1"># Loop over the multi-dimensional keys to get the correct ws/Cp/Ct data to make</span>
+        <span class="c1"># the thrust_coefficient and power interpolants.</span>
+        <span class="n">power_thrust_table_</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># Reset</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+            <span class="c1"># Select the correct ws/Cp/Ct data</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="c1"># Build the interpolants</span>
+            <span class="n">power_thrust_table_</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;wind_speed&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ws&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                        <span class="s2">&quot;power&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;power&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                        <span class="s2">&quot;thrust_coefficient&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;thrust_coefficient&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                        <span class="o">**</span><span class="n">power_thrust_table_ref</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="c1"># Add reference information at the lower level</span>
+
+        <span class="c1"># Set on-object version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">power_thrust_table_</span>
+
+<div class="viewcode-block" id="Turbine.check_power_thrust_table">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.check_power_thrust_table">[docs]</a>
+    <span class="nd">@power_thrust_table</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">check_power_thrust_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify that the power and thrust tables are given with arrays of equal length</span>
+<span class="sd">        to the wind speed array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_dimensional_cp_ct</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Check the first entry of multidim</span>
+            <span class="k">elif</span> <span class="s2">&quot;power_thrust_data_file&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;power_thrust_data_file must be defined if multi_dimensional_cp_ct is True.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">,</span> <span class="s2">&quot;power&quot;</span><span class="p">,</span> <span class="s2">&quot;thrust_coefficient&quot;</span><span class="p">}</span> <span class="o">&lt;=</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                power_thrust_table dictionary must contain:</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;wind_speed&quot;: List[float],</span>
+<span class="sd">                        &quot;power&quot;: List[float],</span>
+<span class="sd">                        &quot;thrust_coefficient&quot;: List[float],</span>
+<span class="sd">                    }</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Turbine.reset_rotor_diameter_dependencies">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_diameter_dependencies">[docs]</a>
+    <span class="nd">@rotor_diameter</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">reset_rotor_diameter_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the `rotor_radius` and `rotor_area` attributes.&quot;&quot;&quot;</span>
+        <span class="c1"># Temporarily turn off validators to avoid infinite recursion</span>
+        <span class="k">with</span> <span class="n">attrs</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">disabled</span><span class="p">():</span>
+            <span class="c1"># Reset the values</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rotor_radius</span> <span class="o">=</span> <span class="n">value</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rotor_area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotor_radius</span> <span class="o">**</span> <span class="mf">2.0</span></div>
+
+
+<div class="viewcode-block" id="Turbine.reset_rotor_radius">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_radius">[docs]</a>
+    <span class="nd">@rotor_radius</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">reset_rotor_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the `rotor_diameter` value to trigger the recalculation of</span>
+<span class="sd">        `rotor_diameter`, `rotor_radius` and `rotor_area`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotor_diameter</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="mf">2.0</span></div>
+
+
+<div class="viewcode-block" id="Turbine.reset_rotor_area">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_area">[docs]</a>
+    <span class="nd">@rotor_area</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">reset_rotor_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the `rotor_radius` value to trigger the recalculation of</span>
+<span class="sd">        `rotor_diameter`, `rotor_radius` and `rotor_area`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotor_radius</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span></div>
+
+
+<div class="viewcode-block" id="Turbine.check_floating_tilt_table">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.check_floating_tilt_table">[docs]</a>
+    <span class="nd">@floating_tilt_table</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">check_floating_tilt_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If the tilt / wind_speed table is defined, verify that the tilt and</span>
+<span class="sd">        wind_speed arrays are the same length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="p">{</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">,</span> <span class="s2">&quot;tilt&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                floating_tilt_table dictionary must have the form:</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;wind_speed&quot;: List[float],</span>
+<span class="sd">                        &quot;tilt&quot;: List[float],</span>
+<span class="sd">                    }</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">])):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tilt and wind_speed inputs must be 1-D.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span> <span class="p">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;tilt&quot;</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">])}</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tilt and wind_speed inputs must be the same size.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Turbine.check_for_cp_ct_correct_flag_if_floating">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.check_for_cp_ct_correct_flag_if_floating">[docs]</a>
+    <span class="nd">@correct_cp_ct_for_tilt</span><span class="o">.</span><span class="n">validator</span>
+    <span class="k">def</span> <span class="nf">check_for_cp_ct_correct_flag_if_floating</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check that the boolean flag exists for correcting Cp/Ct for tilt</span>
+<span class="sd">        if a tile/wind_speed table is also defined.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct_cp_ct_for_tilt</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;To enable the Cp and Ct tilt correction, a tilt table must be given.&quot;</span>
+            <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By National Renewable Energy Laboratory
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
