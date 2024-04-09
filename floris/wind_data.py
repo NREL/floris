@@ -381,12 +381,12 @@ class WindRose(WindDataBase):
                 (bool, optional). Defaults to False.
 
         Returns:
-            WindRose: Resampled wind rose based on the provided or default step
+            WindRose: Aggregated wind rose based on the provided or default step
                 sizes. Only returned if inplace = False.
 
         Notes:
-            - Returns a resampled version of the wind rose using new `ws_step` and `wd_step`.
-            - Uses the bin weights feature in TimeSeries to resample the wind rose.
+            - Returns a aggregated version of the wind rose using new `ws_step` and `wd_step`.
+            - Uses the bin weights feature in TimeSeries to aggregated the wind rose.
             - If `ws_step` or `wd_step` is not specified, it uses the current values.
         """
 
@@ -432,21 +432,21 @@ class WindRose(WindDataBase):
         )
 
         # Now build a new wind rose using the new steps
-        resampled_wind_rose = time_series.to_WindRose(
+        aggregated_wind_rose = time_series.to_WindRose(
             wd_step=wd_step, ws_step=ws_step, bin_weights=self.freq_table_flat
         )
         if inplace:
             self.__init__(
-                resampled_wind_rose.wind_directions,
-                resampled_wind_rose.wind_speeds,
-                resampled_wind_rose.ti_table,
-                resampled_wind_rose.freq_table,
-                resampled_wind_rose.value_table,
-                resampled_wind_rose.compute_zero_freq_occurrence,
-                resampled_wind_rose.heterogeneous_inflow_config_by_wd,
+                aggregated_wind_rose.wind_directions,
+                aggregated_wind_rose.wind_speeds,
+                aggregated_wind_rose.ti_table,
+                aggregated_wind_rose.freq_table,
+                aggregated_wind_rose.value_table,
+                aggregated_wind_rose.compute_zero_freq_occurrence,
+                aggregated_wind_rose.heterogeneous_inflow_config_by_wd,
             )
         else:
-            return resampled_wind_rose
+            return aggregated_wind_rose
 
     def resample_by_interpolation(self, wd_step=None, ws_step=None, method="linear", inplace=False):
         """
@@ -1153,9 +1153,9 @@ class WindTIRose(WindDataBase):
             WindTIRose: Aggregated wind TI rose based on the provided or default step sizes.
 
         Notes:
-            - Returns a resampled version of the wind TI rose using new `ws_step`,
+            - Returns an aggregated version of the wind TI rose using new `ws_step`,
                 `wd_step`, and `ti_step`.
-            - Uses the bin weights feature in TimeSeries to resample the wind rose.
+            - Uses the bin weights feature in TimeSeries to aggregate the wind rose.
             - If `ws_step`, `wd_step`, or `ti_step` are not specified, it uses
                 the current values.
         """
@@ -1217,22 +1217,22 @@ class WindTIRose(WindDataBase):
         )
 
         # Now build a new wind rose using the new steps
-        resampled_wind_rose = time_series.to_WindTIRose(
+        aggregated_wind_rose = time_series.to_WindTIRose(
             wd_step=wd_step, ws_step=ws_step, ti_step=ti_step, bin_weights=self.freq_table_flat
         )
 
         if inplace:
             self.__init__(
-                resampled_wind_rose.wind_directions,
-                resampled_wind_rose.wind_speeds,
-                resampled_wind_rose.turbulence_intensities,
-                resampled_wind_rose.freq_table,
-                resampled_wind_rose.value_table,
-                resampled_wind_rose.compute_zero_freq_occurrence,
-                resampled_wind_rose.heterogeneous_inflow_config_by_wd,
+                aggregated_wind_rose.wind_directions,
+                aggregated_wind_rose.wind_speeds,
+                aggregated_wind_rose.turbulence_intensities,
+                aggregated_wind_rose.freq_table,
+                aggregated_wind_rose.value_table,
+                aggregated_wind_rose.compute_zero_freq_occurrence,
+                aggregated_wind_rose.heterogeneous_inflow_config_by_wd,
             )
         else:
-            return resampled_wind_rose
+            return aggregated_wind_rose
 
     def plot(
         self,
@@ -1280,21 +1280,21 @@ class WindTIRose(WindDataBase):
                 'wind_rose_var must be either "ws" or "ti" for wind speed or turbulence intensity.'
             )
 
-        # Get a resampled wind_rose
+        # Get a aggregated wind_rose
         if wind_rose_var == "ws":
             if wind_rose_var_step is None:
                 wind_rose_var_step = 5.0
-            wind_rose_resample = self.resample(wd_step, ws_step=wind_rose_var_step)
-            var_bins = wind_rose_resample.wind_speeds
-            freq_table = wind_rose_resample.freq_table.sum(2)  # sum along TI dimension
+            wind_rose_aggregated = self.aggregate(wd_step, ws_step=wind_rose_var_step)
+            var_bins = wind_rose_aggregated.wind_speeds
+            freq_table = wind_rose_aggregated.freq_table.sum(2)  # sum along TI dimension
         else:  # wind_rose_var == "ti"
             if wind_rose_var_step is None:
                 wind_rose_var_step = 0.04
-            wind_rose_resample = self.resample(wd_step, ti_step=wind_rose_var_step)
-            var_bins = wind_rose_resample.turbulence_intensities
-            freq_table = wind_rose_resample.freq_table.sum(1)  # sum along wind speed dimension
+            wind_rose_aggregated = self.aggregate(wd_step, ti_step=wind_rose_var_step)
+            var_bins = wind_rose_aggregated.turbulence_intensities
+            freq_table = wind_rose_aggregated.freq_table.sum(1)  # sum along wind speed dimension
 
-        wd_bins = wind_rose_resample.wind_directions
+        wd_bins = wind_rose_aggregated.wind_directions
 
         # Set up figure
         if ax is None:
@@ -1785,7 +1785,7 @@ class TimeSeries(WindDataBase):
             wd_edges (NDArrayFloat, optional): Custom wind direction edges. Defaults to None.
             ws_edges (NDArrayFloat, optional): Custom wind speed edges. Defaults to None.
             bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
-                are primarily used by the resample() method.
+                are primarily used by the aggregate() method.
                 Defaults to None.
 
         Returns:
@@ -1935,7 +1935,7 @@ class TimeSeries(WindDataBase):
             ti_edges (NDArrayFloat, optional): Custom turbulence intensity
                 edges. Defaults to None.
             bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
-                are primarily used by the resample() method.
+                are primarily used by the aggregate() method.
                 Defaults to None.
 
         Returns:
