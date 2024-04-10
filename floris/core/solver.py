@@ -1672,3 +1672,11 @@ def streamtube_expansion_solver(
 
         # Compute absolute velocity field based on all turbines up to i
         flow_field.u_sorted = velocity_field * flow_field.u_initial_sorted
+
+def full_flow_streamtube_expansion_solver(
+    farm: Farm,
+    flow_field: FlowField,
+    flow_field_grid: FlowFieldGrid,
+    model_manager: WakeModelManager
+) -> None:
+    raise NotImplementedError("Plotting for the Streamtube Expansion model is not currently implemented.")

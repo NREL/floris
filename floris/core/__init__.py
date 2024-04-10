@@ -52,6 +52,7 @@ from .solver import (
     full_flow_cc_solver,
     full_flow_empirical_gauss_solver,
     full_flow_sequential_solver,
+    full_flow_streamtube_expansion_solver,
     full_flow_turbopark_solver,
     sequential_solver,
     turbopark_solver,
