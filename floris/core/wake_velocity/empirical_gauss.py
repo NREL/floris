@@ -59,6 +59,9 @@ class EmpiricalGaussVelocityDeficit(BaseModel):
     sigma_0_D: float = field(default=0.28)
     smoothing_length_D: float = field(default=2.0)
     mixing_gain_velocity: float = field(default=2.0)
+    awc_mode: str = field(default="baseline")
+    awc_wake_exp: float = field(default=1.2)
+    awc_wake_denominator: float = field(default=400)
 
     def prepare_function(
         self,
@@ -254,7 +257,7 @@ def rCalt(wind_veer, sigma_y, sigma_z, y, y_i, delta_y, delta_z, z, HH, Ct,
 
 def sigmoid_integral(x, center=0, width=1):
     y = np.zeros_like(x)
-    #TODO: Can this be made faster?
+    # TODO: Can this be made faster?
     above_smoothing_zone = (x-center) > width/2
     y[above_smoothing_zone] = (x-center)[above_smoothing_zone]
     in_smoothing_zone = ((x-center) >= -width/2) & ((x-center) <= width/2)
@@ -281,3 +284,22 @@ def empirical_gauss_model_wake_width(
             sigmoid_integral(x, center=b, width=smoothing_length)
 
     return sigma
+
+def awc_added_wake_mixing(
+    awc_mode_i,
+    awc_amplitude_i,
+    awc_frequency_i,
+    awc_wake_exp,
+    awc_wake_denominator
+):
+
+    # TODO: Add TI in the mix, finetune amplitude/freq effect
+    if (awc_mode_i == "helix").any():
+        return awc_amplitude_i[:,:,0,0]**awc_wake_exp/awc_wake_denominator
+    elif (awc_mode_i == "baseline").any():
+        return 0
+    else:
+        raise NotImplementedError(
+            'Active wake mixing strategies other than the `helix` mode '
+            'have not yet been implemented in FLORIS.'
+        )

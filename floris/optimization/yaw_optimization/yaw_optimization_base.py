@@ -318,7 +318,7 @@ class YawOptimization(LoggingManager):
             turbine_weights (iterable, optional): Array or list of weights to apply to the turbine
                 powers. Defaults to None.
             heterogeneous_speed_multipliers (iterable, optional): Array or list of speed up factors
-                for heterogenous inflow. Defaults to None.
+                for heterogeneous inflow. Defaults to None.
 
 
         Returns:
@@ -338,7 +338,7 @@ class YawOptimization(LoggingManager):
             turbine_weights = self._turbine_weights_subset
         if heterogeneous_speed_multipliers is not None:
             fmodel_subset.core.flow_field.\
-                heterogenous_inflow_config['speed_multipliers'] = heterogeneous_speed_multipliers
+                heterogeneous_inflow_config['speed_multipliers'] = heterogeneous_speed_multipliers
 
         # Ensure format [incompatible with _subset notation]
         yaw_angles = self._unpack_variable(yaw_angles, subset=True)

@@ -13,7 +13,7 @@ from .flow_visualization import (
     visualize_quiver,
 )
 from .parallel_floris_model import ParallelFlorisModel
-from .uncertain_floris_model import UncertainFlorisModel
+from .uncertain_floris_model import ApproxFlorisModel, UncertainFlorisModel
 from .wind_data import (
     TimeSeries,
     WindRose,
