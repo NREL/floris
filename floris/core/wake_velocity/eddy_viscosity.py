@@ -354,19 +354,16 @@ def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_tilde, wd_std
     return U_tilde_c_meandering
 
 
-def wake_width_streamtube_correction_term(ai_j, x_ij_, y_ij_, z_ij_, c_0, c_1):
-    e_j_ = np.sqrt(1-ai_j) * (1/np.sqrt(1-2*ai_j) - 1)
+def wake_width_streamtube_correction_term(ai_i, x_ji_, y_ji_, z_ji_, c_0, c_1):
+    e_i_ = np.sqrt(1-ai_i) * (1/np.sqrt(1-2*ai_i) - 1)
 
-    # TODO: consider effect of different z also
-    if (z_ij_ != 0).any():
-        raise NotImplementedError("Only 2D for now")
-    e_ij_ = c_0 * e_j_ * np.exp(-y_ij_**2 / c_1**2)
+    e_ji_ = c_0 * e_i_ * np.exp(-(y_ji_**2 + z_ji_**2) / c_1**2)
 
     # Expand and mask to only downstream locations for upstream turbines' wakes
-    e_ij_ = np.repeat(e_ij_[:,:,None], e_ij_.shape[1], axis=2)
-    e_ij_ = e_ij_ * np.triu(np.ones_like(e_ij_), k=2)
+    e_ji_ = np.repeat(e_ji_[:,:,None], e_ji_.shape[1], axis=2)
+    e_ji_ = e_ji_ * np.triu(np.ones_like(e_ji_), k=2)
 
-    return e_ij_
+    return e_ji_
 
 def expanded_wake_width_squared(w_tilde_sq, e_tilde):
     return (np.sqrt(w_tilde_sq) + e_tilde)**2
