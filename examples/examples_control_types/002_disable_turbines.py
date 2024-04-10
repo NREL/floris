@@ -1,4 +1,4 @@
-"""Example 001: Disable turbines
+"""Example: Disabling turbines
 
 This example is adapted from https://github.com/NREL/floris/pull/693
 contributed by Elie Kadoche.
