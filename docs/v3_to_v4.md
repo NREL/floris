@@ -108,15 +108,15 @@ in v3. However, there are a few changes to the fields on each that mean that exi
 will not run in v4 as is.
 
 #### Main FLORIS input yaml
-On the main FLORIS input file, the `turbulence_intensity` field,
+On the main FLORIS input file, the `turbulence_intensity` field (on `flow_field`),
 which was specified as a scalar in FLORIS v3, has been changed to `turbulence_intensities`, and
 should now contain a list of turbulence intensities that is of the same length as `wind_directions`
 and `wind_speeds`. Additionally, the length of the lists for `wind_directions` and `wind_speeds`
 _must_ now be of equal length.
 
-In addition, a new field `enable_active_wake_mixing` has been added, which users may set to
-`false` unless they would like to use active wake mixing strategies such as
-[Helix](empirical_gauss_model.md#Added-mixing-by-active-wake-control).
+In addition, a new field `enable_active_wake_mixing` has been added to the `wake` field,
+which users may set to `false` unless they would like to use active wake mixing strategies such 
+as [Helix](empirical_gauss_model.md#Added-mixing-by-active-wake-control).
 
 #### Turbine input yaml
 To reflect the transition to more flexible [operation models](#operation-model), there are a

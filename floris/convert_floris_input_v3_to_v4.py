@@ -61,6 +61,9 @@ if __name__ == "__main__":
         )
         v4_floris_input_dict["wake"]["model_strings"]["velocity_model"] = "gauss"
 
+    # Add enable_active_wake_mixing field
+    v4_floris_input_dict["wake"]["enable_active_wake_mixing"] = False
+
     yaml.dump(
             v4_floris_input_dict,
             open(output_path, "w"),
