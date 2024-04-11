@@ -1661,8 +1661,8 @@ def streamtube_expansion_solver(
             centerline_velocities,
             thrust_coefficients,
             farm.rotor_diameters_sorted,
-            farm.hub_heights_sorted,
             grid.y_sorted.mean(axis=(2,3)),
+            farm.hub_heights_sorted,
             **deficit_model_args,
         )
 
@@ -1860,8 +1860,8 @@ def full_flow_streamtube_expansion_solver(
             centerline_velocities,
             thrust_coefficients,
             turbine_grid_farm.rotor_diameters_sorted,
-            turbine_grid_farm.hub_heights_sorted,
             turbine_grid.y_sorted.mean(axis=(2,3)),
+            turbine_grid_farm.hub_heights_sorted,
             **deficit_model_args,
         )
 
