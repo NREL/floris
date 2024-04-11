@@ -196,8 +196,9 @@ class EddyViscosityVelocity(BaseModel):
     def streamtube_expansion(
         self,
         x_i,
-        y_i,
-        z_i,
+        x_from_i,
+        y_from_i,
+        z_from_i,
         ct_all,
         axial_induction_i,
         w_tilde_sq_tt,
@@ -210,13 +211,15 @@ class EddyViscosityVelocity(BaseModel):
         wind_veer,
     ):
         # Non-dimensionalize and center distances
-        x_tilde = (x.mean(axis=(2,3)) - x_i) / rotor_diameter_i
-        y_tilde = (y.mean(axis=(2,3)) - y_i) / rotor_diameter_i
-        z_tilde = (z.mean(axis=(2,3)) - z_i) / rotor_diameter_i
+        x_tilde_points = (x.mean(axis=(2,3)) - x_i) / rotor_diameter_i
+        x_tilde = x_from_i / rotor_diameter_i
+        y_tilde = y_from_i / rotor_diameter_i
+        z_tilde = z_from_i / rotor_diameter_i
 
         # Compute wake width
         e_tilde = wake_width_streamtube_correction_term(
             axial_induction_i,
+            x_tilde_points,
             x_tilde,
             y_tilde,
             z_tilde,
@@ -236,7 +239,8 @@ class EddyViscosityVelocity(BaseModel):
         U_tilde_c_tt,
         ct_all,
         rotor_diameters,
-        hub_heights,
+        y_turbines,
+        z_turbines,
         *,
         x,
         y,
@@ -245,24 +249,32 @@ class EddyViscosityVelocity(BaseModel):
         wind_veer,
     ):
         # Non-dimensionalize and center distances
-        y_D = y / rotor_diameters[:,:,None,None]
-        z_D = (z - hub_heights[:,:,None,None]) / rotor_diameters[:,:,None,None]
+        y_tilde_rel = (
+            (y[:,None,:,:,:] - y_turbines[:,:,None,None,None])
+            / rotor_diameters[:,:,None,None,None]
+        )
+        z_tilde_rel = (
+            (z[:,None,:,:,:] - z_turbines[:,:,None,None,None])
+            / rotor_diameters[:,:,None,None,None]
+        )
         # TODO: Check working as expected with correct D, hh being applied
         
-        y_D_rel = y_D[:,:,None,:,:] - np.transpose(y_D[:,:,None,:,:], axes=(0,2,1,3,4))
-        z_D_rel = z_D[:,:,None,:,:] - np.transpose(z_D[:,:,None,:,:], axes=(0,2,1,3,4))
+        # y_D_rel = y_D[:,:,None,:,:] - np.transpose(y_D[:,:,None,:,:], axes=(0,2,1,3,4))
+        # z_D_rel = z_D[:,:,None,:,:] - np.transpose(z_D[:,:,None,:,:], axes=(0,2,1,3,4))
+
+        # Compute radial positions
+        r_tilde_sq = y_tilde_rel**2 + z_tilde_rel**2
 
         U_tilde_r_tt = compute_off_center_velocities(
             U_tilde_c_tt,
             ct_all[:,:,None],
-            y_D_rel,
-            z_D_rel
+            r_tilde_sq
         )
 
         return U_tilde_r_tt
 
 
-def compute_off_center_velocities(U_tilde_c, Ct, y_tilde, z_tilde):
+def compute_off_center_velocities(U_tilde_c, Ct, r_tilde_sq):
     """
     Compute the off-centerline velocities using the eddy viscosity model
     y_, z_ supposed to be defined from the center of the rotor.
@@ -275,7 +287,7 @@ def compute_off_center_velocities(U_tilde_c, Ct, y_tilde, z_tilde):
     U_tilde = (
         1
         - (1 - U_tilde_c[:,:,:,None,None])
-        * np.exp(-(y_tilde**2 + z_tilde**2)/w_tilde_sq[:,:,:,None,None])
+        * np.exp(-r_tilde_sq/w_tilde_sq[:,:,:,None,None])
     )
 
     return U_tilde
@@ -354,14 +366,24 @@ def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_tilde, wd_std
     return U_tilde_c_meandering
 
 
-def wake_width_streamtube_correction_term(ai_i, x_ji_, y_ji_, z_ji_, c_0, c_1):
+def wake_width_streamtube_correction_term(ai_i, x_pts, x_ji_, y_ji_, z_ji_, c_0, c_1):
     e_i_ = np.sqrt(1-ai_i) * (1/np.sqrt(1-2*ai_i) - 1)
 
     e_ji_ = c_0 * e_i_ * np.exp(-(y_ji_**2 + z_ji_**2) / c_1**2)
+    e_ji_[x_ji_ >= 0] = 0 # Does not affect wakes of self or downstream turbines
+    downstream_mask = (x_pts > 0).astype(int)
+    e_ji_ = e_ji_[:,:,None] * downstream_mask[:,None,:] # Affects only downstream locations
+    #e_ji_ = 
 
-    # Expand and mask to only downstream locations for upstream turbines' wakes
-    e_ji_ = np.repeat(e_ji_[:,:,None], e_ji_.shape[1], axis=2)
-    e_ji_ = e_ji_ * np.triu(np.ones_like(e_ji_), k=2)
+    # # Expand and mask to only downstream locations for upstream turbines' wakes
+    # import ipdb; ipdb.set_trace()
+    # # TODO: STUCK HERE! What does this mask look like??
+    
+    # e_ji_ = np.repeat(e_ji_[:,:,None], x_pts.shape[1], axis=2)
+    # e_ji_[:, i:, :] = 0 # Does not affect wakes of downstream turbines
+    # import ipdb; ipdb.set_trace()
+    # e_ji_[x_ji_ < 0, x_ji_ <= 0] = 0 # Does not apply to upstream locations
+    # #e_ji_ = e_ji_ * np.triu(np.ones_like(e_ji_), k=2)
 
     return e_ji_
 
