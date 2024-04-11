@@ -2,11 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import floris.core.wake_combination.streamtube_expansion as se
+import floris.core.wake_velocity.eddy_viscosity as ev
 from floris.core.wake_velocity.eddy_viscosity import (
     EddyViscosityVelocityDeficit,
-    wake_width_squared
+    wake_width_squared,
 )
-import floris.core.wake_velocity.eddy_viscosity as ev
 
 
 plot_offcenter_velocities = True
