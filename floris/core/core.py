@@ -262,10 +262,12 @@ class Core(BaseClass):
         if vel_model == "cc" or vel_model == "turbopark":
             raise NotImplementedError(
                 "solve_for_points is currently only available with the "+\
-                "gauss, jensen, and empirical_guass models."
+                "gauss, jensen, empirical_guass, and eddy_viscosity models."
             )
         elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
+        elif vel_model=="eddy_viscosity":
+            full_flow_streamtube_expansion_solver(self.farm, self.flow_field, field_grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
