@@ -8,6 +8,7 @@ from floris.core.wake_velocity.eddy_viscosity import (
     wake_width_squared,
 )
 
+
 if False:
 
     plot_offcenter_velocities = True
