@@ -20,7 +20,7 @@ from floris import FlorisModel
 
 # Initialize FLORIS with the given input file.
 # The Floris class is the entry point for most usage.
-fmodel = FlorisModel("inputs/ev.yaml")
+fmodel = FlorisModel("../inputs/ev.yaml")
 
 # Changing the wind farm layout uses FLORIS' set method to a two-turbine layout
 fmodel.set(layout_x=[0, 500.0, 1000.0, 1500.0, 2000.0], layout_y=[0.0, 0.0, 0.0, 0.0, 0.0])

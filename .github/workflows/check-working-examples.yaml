@@ -39,9 +39,6 @@ jobs:
         # Now run the examples in root and  subdirectories
         echo "Running examples"
         for d in . $(find . -type d -name "*examples*"); do
-          if [[ $d == "examples_ev" ]]; then
-            continue
-          fi
           cd $d
           echo "========================= Example directory- $d"
           for i in *.py; do

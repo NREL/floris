@@ -24,7 +24,7 @@ from floris import FlorisModel
 floris_model = "ev"  # Try "gch", "jensen", "emgauss"
 
 # Instantiate FLORIS model
-fmodel = FlorisModel("inputs/" + floris_model + ".yaml")
+fmodel = FlorisModel("../inputs/" + floris_model + ".yaml")
 
 # Set up a two-turbine farm
 D = 126

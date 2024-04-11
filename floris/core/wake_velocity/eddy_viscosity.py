@@ -27,10 +27,10 @@ class EddyViscosityVelocity(BaseModel):
     k_a: float = field(default=0.5)
     von_Karman_constant: float = field(default=0.41)
 
-    i_const_1 = 0.05
-    i_const_2 = 16
-    i_const_3 = 0.5
-    i_const_4 = 10
+    i_const_1: float = field(default=0.05)
+    i_const_2: float = field(default=16)
+    i_const_3: float = field(default=0.5)
+    i_const_4: float = field(default=10)
 
     # Below are likely not needed [or, I'll need to think more about it]
     filter_const_1: float = field(default=0.65)

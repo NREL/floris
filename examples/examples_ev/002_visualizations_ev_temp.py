@@ -21,7 +21,7 @@ from floris import FlorisModel
 from floris.flow_visualization import visualize_cut_plane
 
 
-fmodel = FlorisModel("inputs/ev.yaml")
+fmodel = FlorisModel("../inputs/ev.yaml")
 
 # Set the farm layout to have 8 turbines irregularly placed
 layout_x = [0, 500, 0, 128, 1000, 900, 1500, 1250]
