@@ -127,9 +127,13 @@ if False:
     # Correct first turbine wake for second turbine
     e_ij_ = se.wake_width_streamtube_correction_term(ai_j, y_ij_)
     w_tilde_sq_2 = w_tilde_sq.copy()
-    w_tilde_sq_2[x_test >= x_ij] = se.expanded_wake_width_squared(w_tilde_sq, e_ij_)[x_test >= x_ij]
+    w_tilde_sq_2[x_test >= x_ij] = (
+        se.expanded_wake_width_squared(w_tilde_sq, e_ij_)[x_test >= x_ij]
+    )
     U_tilde_c2 = U_tilde_c.copy()
-    U_tilde_c2[x_test >= x_ij] = se.expanded_wake_centerline_velocity(Ct, w_tilde_sq_2)[x_test >= x_ij]
+    U_tilde_c2[x_test >= x_ij] = (
+        se.expanded_wake_centerline_velocity(Ct, w_tilde_sq_2)[x_test >= x_ij]
+    )
 
     # Compute the centerline velocity of the second wake
     vel_def = EVDM.function(
