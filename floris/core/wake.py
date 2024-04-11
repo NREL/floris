@@ -6,8 +6,8 @@ from floris.core import BaseClass, BaseModel
 from floris.core.wake_combination import (
     FLS,
     MAX,
-    SOSFS,
     SOED,
+    SOSFS,
 )
 from floris.core.wake_deflection import (
     EmpiricalGaussVelocityDeflection,

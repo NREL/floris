@@ -1,8 +1,10 @@
 from typing import Any, Dict
 
+import matplotlib.pyplot as plt
 import numexpr as ne
 import numpy as np
 from attrs import define, field
+from scipy.integrate import solve_ivp
 
 from floris.core import (
     BaseModel,
@@ -16,9 +18,6 @@ from floris.utilities import (
     sind,
     tand,
 )
-
-import matplotlib.pyplot as plt
-from scipy.integrate import solve_ivp
 
 
 @define
@@ -120,7 +119,7 @@ class EddyViscosityVelocity(BaseModel):
         # if (sol.t != x_tilde_eval).any():
         #     raise ValueError("ODE solver did not return requested values")
         # U_tilde_c_eval = sol.y.flatten()
-        
+
         # U_tilde_c_fill = np.full_like(x_tilde_sorted[x_tilde_sorted < 2], U_tilde_c_initial)
         # # TODO: I think concatenation will be along axis=1 finally
         # U_tilde_c_sorted = np.concatenate((U_tilde_c_fill, U_tilde_c_eval))
@@ -161,7 +160,7 @@ class EddyViscosityVelocity(BaseModel):
             if (sol.t != x_tilde_eval).any():
                 raise ValueError("ODE solver did not return requested values")
             U_tilde_c_eval = sol.y.flatten()
-            
+
             U_tilde_c_fill = np.full_like(
                 x_tilde_sorted[x_tilde_sorted < 2],
                 U_tilde_c_initial[findex,:]
@@ -173,7 +172,7 @@ class EddyViscosityVelocity(BaseModel):
             U_tilde_c_unique = U_tilde_c_sorted[np.argsort(sorting_indices)]
             U_tilde_c_findex = U_tilde_c_unique[unique_ind]
             U_tilde_c[findex, :] = U_tilde_c_findex
-        
+
 
         # Compute wake width
         w_tilde_sq = wake_width_squared(ct_i, U_tilde_c)
@@ -192,7 +191,7 @@ class EddyViscosityVelocity(BaseModel):
 
         # # Return velocities NOT as deficits
         return U_tilde_c_meandering, w_tilde_sq_meandering
-    
+
     def streamtube_expansion(
         self,
         x_i,
@@ -228,12 +227,12 @@ class EddyViscosityVelocity(BaseModel):
         )
 
         w_tilde_sq_tt = expanded_wake_width_squared(w_tilde_sq_tt, e_tilde)
-        
+
         # Wait we don't need U_tilde_c_tt as an input? w is enough? Interesting, but OK.
         U_tilde_c_tt = expanded_wake_centerline_velocity(ct_all[:,:,None], w_tilde_sq_tt)
 
         return U_tilde_c_tt, w_tilde_sq_tt
-    
+
     def evaluate_velocities(
         self,
         U_tilde_c_tt,
@@ -258,7 +257,7 @@ class EddyViscosityVelocity(BaseModel):
             / rotor_diameters[:,:,None,None,None]
         )
         # TODO: Check working as expected with correct D, hh being applied
-        
+
         # y_D_rel = y_D[:,:,None,:,:] - np.transpose(y_D[:,:,None,:,:], axes=(0,2,1,3,4))
         # z_D_rel = z_D[:,:,None,:,:] - np.transpose(z_D[:,:,None,:,:], axes=(0,2,1,3,4))
 
@@ -283,7 +282,7 @@ def compute_off_center_velocities(U_tilde_c, Ct, r_tilde_sq):
     U_tilde_c_mask = U_tilde_c == 1
     # As long as U_tilde_c is 1, w_tilde_sq won't affect result, but this
     # silences a division by zero warning
-    w_tilde_sq[U_tilde_c_mask] = 1 
+    w_tilde_sq[U_tilde_c_mask] = 1
     U_tilde = (
         1
         - (1 - U_tilde_c[:,:,:,None,None])
@@ -373,12 +372,12 @@ def wake_width_streamtube_correction_term(ai_i, x_pts, x_ji_, y_ji_, z_ji_, c_0,
     e_ji_[x_ji_ >= 0] = 0 # Does not affect wakes of self or downstream turbines
     downstream_mask = (x_pts > 0).astype(int)
     e_ji_ = e_ji_[:,:,None] * downstream_mask[:,None,:] # Affects only downstream locations
-    #e_ji_ = 
+    #e_ji_ =
 
     # # Expand and mask to only downstream locations for upstream turbines' wakes
     # import ipdb; ipdb.set_trace()
     # # TODO: STUCK HERE! What does this mask look like??
-    
+
     # e_ji_ = np.repeat(e_ji_[:,:,None], x_pts.shape[1], axis=2)
     # e_ji_[:, i:, :] = 0 # Does not affect wakes of downstream turbines
     # import ipdb; ipdb.set_trace()

@@ -50,7 +50,7 @@ class SOED(BaseModel):
 
     #     # Convert back to dimensionalized form and return
     #     return u_initial * (1 - U_tilde_updated)
-    
+
     def function(
         self,
         U_tilde_field: np.ndarray,

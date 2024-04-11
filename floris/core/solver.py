@@ -1521,7 +1521,7 @@ def streamtube_expansion_solver(
     # Algorithm
     # For each turbine, calculate its effect on every downstream turbine.
     # Also calculates the expansion in the streamtube of upstream turbines.
-    
+
     # <<interface>>
     deflection_model_args = model_manager.deflection_model.prepare_function(grid, flow_field)
     deficit_model_args = model_manager.velocity_model.prepare_function(grid, flow_field)
@@ -1618,9 +1618,8 @@ def streamtube_expansion_solver(
                 "WARNING: Deflection with the eddy viscosity model has not been implemented."
             )
 
-        # Model calculations
-        # TODO: what happens with this?
-        deflection_field = model_manager.deflection_model.function(
+        # TODO: assign and use deflection_field
+        _ = model_manager.deflection_model.function(
             x_i,
             y_i,
             effective_yaw_i,
@@ -1679,7 +1678,6 @@ def full_flow_streamtube_expansion_solver(
     flow_field_grid: FlowFieldGrid,
     model_manager: WakeModelManager
 ) -> None:
-    #raise NotImplementedError("Plotting for the Streamtube Expansion model is not currently implemented.")
 
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
@@ -1709,7 +1707,7 @@ def full_flow_streamtube_expansion_solver(
     )
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize(turbine_grid.sorted_indices)
-    
+
     # TODO: DO I need something like this (to get a "field")? possibly npt? Not sure.
     # wim_field = empirical_gauss_solver(
     #     turbine_grid_farm,
@@ -1815,9 +1813,8 @@ def full_flow_streamtube_expansion_solver(
                 "WARNING: Deflection with the eddy viscosity model has not been implemented."
             )
 
-        # Model calculations
-        # NOTE: exponential
-        deflection_field = model_manager.deflection_model.function(
+        # TODO: assign and use deflection_field
+        _ = model_manager.deflection_model.function(
             x_i,
             y_i,
             effective_yaw_i,
