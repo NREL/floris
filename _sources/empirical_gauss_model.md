@@ -172,10 +172,10 @@ The effect of AWC is represented by updating the
 wake-induced mixing term as follows:
 
 $$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i} {(x_j - x_i)/D_i} +
-\frac{A_{\text{AWC},j}^{p_\text{AWC}}}{d_\text{AWC}}$$
+\frac{\beta_{j}^{p}{d}$$
 
-where $A_{\text{AWC},j}$ is the AWC amplitude of turbine $j$, and the exponent $p_\text{AWC}$ and
-denominator $d_\text{AWC}$ are tuning parameters that can be set in the `emgauss.yaml` file with
+where $\beta_{j}$ is the AWC amplitude of turbine $j$, and the exponent $p$ and
+denominator $d$ are tuning parameters that can be set in the `emgauss.yaml` file with
 the fields `awc_wake_exp` and `awc_wake_denominator`, respectively.
 Note that, in contrast to the yaw added mixing case, a turbine currently affects _only_ its own
 wake by applying AWC.

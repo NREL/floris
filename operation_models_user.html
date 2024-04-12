@@ -290,7 +290,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control types</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/001_derating_control.html">Example of using the simple-derating control model in FLORIS.</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/002_disable_turbines.html">Example 001: Disable turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
 </ul>
@@ -652,8 +652,8 @@ We also describe the different parameters that must be specified in the turbine
 cosine-loss operation model powers [kW]:  [[1561.31837381  778.04338242  651.77709894]]
 </pre></div>
 </div>
-<img alt="_images/23634896fb924d8c8c1186e04bacbfff72ae371de5fa2195eeb1a827813743cd.png" src="_images/23634896fb924d8c8c1186e04bacbfff72ae371de5fa2195eeb1a827813743cd.png" />
-<img alt="_images/887f0e2b55a73b89a84d7600e3b37d669c5d7e7220c38152584af0e614e6c453.png" src="_images/887f0e2b55a73b89a84d7600e3b37d669c5d7e7220c38152584af0e614e6c453.png" />
+<img alt="_images/d3c9bbf211768e844e708734bf7adee0ec971be2ef9e48fd77dcd86fa6b8f643.png" src="_images/d3c9bbf211768e844e708734bf7adee0ec971be2ef9e48fd77dcd86fa6b8f643.png" />
+<img alt="_images/803d46cee160074f6616fb1c0f91d20262c1f8806fe18f626a815e75b98db22a.png" src="_images/803d46cee160074f6616fb1c0f91d20262c1f8806fe18f626a815e75b98db22a.png" />
 </div>
 </div>
 </section>
@@ -733,7 +733,7 @@ thus vary as a function of the turbine's yaw angle, set using the <code class="d
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/165c42a72adb379e661c7a7944cdd8dd5c424a52d1acf17141f993999fcd380b.png" src="_images/165c42a72adb379e661c7a7944cdd8dd5c424a52d1acf17141f993999fcd380b.png" />
+<img alt="_images/fe36b79eaa5892b39bf9c35f1aa75fb95fdf7d6c18718ae033756bce819f1bd5.png" src="_images/fe36b79eaa5892b39bf9c35f1aa75fb95fdf7d6c18718ae033756bce819f1bd5.png" />
 </div>
 </div>
 </section>
@@ -783,20 +783,20 @@ appropriate entries of <code class="docutils literal notranslate"><span class="p
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/msinner/floris3/floris/core/turbine/operation_models.py:367: RuntimeWarning: divide by zero encountered in divide
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/turbine/operation_models.py:358: RuntimeWarning: divide by zero encountered in divide
   power_fractions = power_setpoints / base_powers
-/Users/msinner/floris3/floris/core/wake_deflection/gauss.py:323: RuntimeWarning: invalid value encountered in divide
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-/Users/msinner/floris3/floris/core/wake_deflection/gauss.py:158: RuntimeWarning: invalid value encountered in divide
+/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
-/Users/msinner/floris3/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/9facc726018877ff30b9530a9ba631cfdb7d3a64c4bc5eb2fef1017a0b0c5a37.png" src="_images/9facc726018877ff30b9530a9ba631cfdb7d3a64c4bc5eb2fef1017a0b0c5a37.png" />
+<img alt="_images/e180faa553dbca3d36c21e11a981d4c0e939c41e4166cc35e9146ede25690ea5.png" src="_images/e180faa553dbca3d36c21e11a981d4c0e939c41e4166cc35e9146ede25690ea5.png" />
 </div>
 </div>
 </section>
@@ -889,21 +889,22 @@ The thrust coefficient follows the same equation, but with the respective thrust
 turned on while <span class="math notranslate nohighlight">\(P_\text{baseline} &gt; P_\text{rated}\)</span>, a warning is given as the model is not yet tuned for region III.</p>
 <p>The figure below shows the fit between the turbine power and thrust in OpenFAST helix AWC simulations (x)
 and FLORIS simulations (--) at different region II wind speeds for the NREL 5MW reference turbine.</p>
-<img src="powerthrust_helix.png" width="600px"><div class="cell docutils container">
+<!--<img src="powerthrust_helix.png" width="600px">-->
+<p><img alt="" src="_images/powerthrust_helix.png" /></p>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fmodel</span><span class="o">.</span><span class="n">set_operation_model</span><span class="p">(</span><span class="s2">&quot;awc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/emgauss_helix.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set_operation_model</span><span class="p">(</span><span class="s2">&quot;awc&quot;</span><span class="p">)</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">])</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-    <span class="n">wind_data</span><span class="o">=</span><span class="n">TimeSeries</span><span class="p">(</span>
-        <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.0</span><span class="p">]),</span>
-        <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">270.0</span><span class="p">]),</span>
-        <span class="n">turbulence_intensities</span><span class="o">=</span><span class="mf">0.06</span>
-    <span class="p">)</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">8.0</span><span class="p">]),</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">270.0</span><span class="p">]),</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.06</span><span class="p">])</span>
 <span class="p">)</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-    <span class="n">awc_modes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;helix&quot;</span><span class="p">,</span> <span class="s2">&quot;baseline&quot;</span><span class="p">]),</span>
-    <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">awc_modes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="s2">&quot;helix&quot;</span><span class="p">,</span> <span class="s2">&quot;baseline&quot;</span><span class="p">]]),</span>
+    <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
 <span class="p">)</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Powers [kW]: &quot;</span><span class="p">,</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span>
@@ -911,98 +912,7 @@ and FLORIS simulations (--) at different region II wind speeds for the NREL 5MW 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">set_operation_model</span><span class="p">(</span><span class="s2">&quot;awc&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">])</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
-
-<span class="nn">File ~\projects\floris\floris\floris_model.py:1306,</span> in <span class="ni">FlorisModel.set_operation_model</span><span class="nt">(self, operation_model)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1304</span> <span class="n">turbine_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="g g-Whitespace">   </span><span class="mi">1305</span> <span class="n">turbine_type</span><span class="p">[</span><span class="s2">&quot;operation_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operation_model</span>
-<span class="ne">-&gt; </span><span class="mi">1306</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">turbine_type</span><span class="o">=</span><span class="p">[</span><span class="n">turbine_type</span><span class="p">])</span>
-
-<span class="nn">File ~\projects\floris\floris\floris_model.py:347,</span> in <span class="ni">FlorisModel.set</span><span class="nt">(self, wind_speeds, wind_directions, wind_shear, wind_veer, reference_wind_height, turbulence_intensities, air_density, layout_x, layout_y, turbine_type, turbine_library_path, solver_settings, heterogenous_inflow_config, wind_data, yaw_angles, power_setpoints, disable_turbines)</span>
-<span class="g g-Whitespace">    </span><span class="mi">345</span> <span class="n">_yaw_angles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles</span>
-<span class="g g-Whitespace">    </span><span class="mi">346</span> <span class="n">_power_setpoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">power_setpoints</span>
-<span class="ne">--&gt; </span><span class="mi">347</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reinitialize</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">348</span>     <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">349</span>     <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">350</span>     <span class="n">wind_shear</span><span class="o">=</span><span class="n">wind_shear</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">351</span>     <span class="n">wind_veer</span><span class="o">=</span><span class="n">wind_veer</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">352</span>     <span class="n">reference_wind_height</span><span class="o">=</span><span class="n">reference_wind_height</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">353</span>     <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">354</span>     <span class="n">air_density</span><span class="o">=</span><span class="n">air_density</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">355</span>     <span class="n">layout_x</span><span class="o">=</span><span class="n">layout_x</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">356</span>     <span class="n">layout_y</span><span class="o">=</span><span class="n">layout_y</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">357</span>     <span class="n">turbine_type</span><span class="o">=</span><span class="n">turbine_type</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">358</span>     <span class="n">turbine_library_path</span><span class="o">=</span><span class="n">turbine_library_path</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">359</span>     <span class="n">solver_settings</span><span class="o">=</span><span class="n">solver_settings</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">360</span>     <span class="n">heterogenous_inflow_config</span><span class="o">=</span><span class="n">heterogenous_inflow_config</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">361</span>     <span class="n">wind_data</span><span class="o">=</span><span class="n">wind_data</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">362</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">364</span> <span class="c1"># If the yaw angles or power setpoints are not the default, set them back to the</span>
-<span class="g g-Whitespace">    </span><span class="mi">365</span> <span class="c1"># previous setting</span>
-<span class="g g-Whitespace">    </span><span class="mi">366</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">_yaw_angles</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-
-<span class="nn">File ~\projects\floris\floris\floris_model.py:230,</span> in <span class="ni">FlorisModel._reinitialize</span><span class="nt">(self, wind_speeds, wind_directions, wind_shear, wind_veer, reference_wind_height, turbulence_intensities, air_density, layout_x, layout_y, turbine_type, turbine_library_path, solver_settings, heterogenous_inflow_config, wind_data)</span>
-<span class="g g-Whitespace">    </span><span class="mi">227</span> <span class="n">floris_dict</span><span class="p">[</span><span class="s2">&quot;farm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">farm_dict</span>
-<span class="g g-Whitespace">    </span><span class="mi">229</span> <span class="c1"># Create a new instance of floris and attach to self</span>
-<span class="ne">--&gt; </span><span class="mi">230</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="n">Core</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">floris_dict</span><span class="p">)</span>
-
-<span class="nn">File ~\projects\floris\floris\type_dec.py:226,</span> in <span class="ni">FromDictMixin.from_dict</span><span class="nt">(cls, data)</span>
-<span class="g g-Whitespace">    </span><span class="mi">221</span> <span class="k">if</span> <span class="n">undefined</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">222</span>     <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">223</span>         <span class="sa">f</span><span class="s2">&quot;The class definition for </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">224</span>         <span class="sa">f</span><span class="s2">&quot;is missing the following inputs: </span><span class="si">{</span><span class="n">undefined</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">225</span>     <span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">226</span> <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="nn">File &lt;attrs generated init floris.core.core.Core&gt;:13,</span> in <span class="ni">__init__</span><span class="nt">(self, logging, solver, wake, farm, flow_field, name, description, floris_version)</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="n">__attr_converter_description</span><span class="p">(</span><span class="n">description</span><span class="p">))</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="n">_setattr</span><span class="p">(</span><span class="s1">&#39;floris_version&#39;</span><span class="p">,</span> <span class="n">__attr_converter_floris_version</span><span class="p">(</span><span class="n">floris_version</span><span class="p">))</span>
-<span class="ne">---&gt; </span><span class="mi">13</span> <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_post_init__</span><span class="p">()</span>
-
-<span class="nn">File ~\projects\floris\floris\core\core.py:75,</span> in <span class="ni">Core.__attrs_post_init__</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">     </span><span class="mi">69</span> <span class="n">logging_manager</span><span class="o">.</span><span class="n">configure_file_log</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">70</span>     <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;enable&quot;</span><span class="p">],</span>
-<span class="g g-Whitespace">     </span><span class="mi">71</span>     <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;level&quot;</span><span class="p">],</span>
-<span class="g g-Whitespace">     </span><span class="mi">72</span> <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">74</span> <span class="c1"># Initialize farm quantities that depend on other objects</span>
-<span class="ne">---&gt; </span><span class="mi">75</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_map</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">76</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_thrust_coefficient_functions</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">77</span> <span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">construct_turbine_axial_induction_functions</span><span class="p">()</span>
-
-<span class="nn">File ~\projects\floris\floris\core\farm.py:262,</span> in <span class="ni">Farm.construct_turbine_map</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">261</span> <span class="k">def</span> <span class="nf">construct_turbine_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">262</span>     <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">Turbine</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">turb</span><span class="p">)</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">]</span>
-
-<span class="nn">File ~\projects\floris\floris\type_dec.py:226,</span> in <span class="ni">FromDictMixin.from_dict</span><span class="nt">(cls, data)</span>
-<span class="g g-Whitespace">    </span><span class="mi">221</span> <span class="k">if</span> <span class="n">undefined</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">222</span>     <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">223</span>         <span class="sa">f</span><span class="s2">&quot;The class definition for </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">224</span>         <span class="sa">f</span><span class="s2">&quot;is missing the following inputs: </span><span class="si">{</span><span class="n">undefined</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">225</span>     <span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">226</span> <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="nn">File &lt;attrs generated init floris.core.turbine.turbine.Turbine&gt;:24,</span> in <span class="ni">__init__</span><span class="nt">(self, turbine_type, rotor_diameter, hub_height, TSR, power_thrust_table, operation_model, correct_cp_ct_for_tilt, floating_tilt_table, multi_dimensional_cp_ct, power_thrust_data_file, turbine_library_path)</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span>     <span class="n">__attr_validator_floating_tilt_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__attr_floating_tilt_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">floating_tilt_table</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">23</span>     <span class="n">__attr_validator_turbine_library_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__attr_turbine_library_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_library_path</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">24</span> <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_post_init__</span><span class="p">()</span>
-
-<span class="nn">File ~\projects\floris\floris\core\turbine\turbine.py:461,</span> in <span class="ni">Turbine.__attrs_post_init__</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">460</span> <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">461</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_power_thrust_functions</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">462</span>     <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
-
-<span class="nn">File ~\projects\floris\floris\core\turbine\turbine.py:472,</span> in <span class="ni">Turbine._initialize_power_thrust_functions</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">471</span> <span class="k">def</span> <span class="nf">_initialize_power_thrust_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">472</span>     <span class="n">turbine_function_model</span> <span class="o">=</span> <span class="n">TURBINE_MODEL_MAP</span><span class="p">[</span><span class="s2">&quot;operation_model&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_model</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">473</span>     <span class="bp">self</span><span class="o">.</span><span class="n">thrust_coefficient_function</span> <span class="o">=</span> <span class="n">turbine_function_model</span><span class="o">.</span><span class="n">thrust_coefficient</span>
-<span class="g g-Whitespace">    </span><span class="mi">474</span>     <span class="bp">self</span><span class="o">.</span><span class="n">axial_induction_function</span> <span class="o">=</span> <span class="n">turbine_function_model</span><span class="o">.</span><span class="n">axial_induction</span>
-
-<span class="ne">KeyError</span>: &#39;awc&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Powers [kW]:  [[6133.16222884 6301.1399872 ]]
 </pre></div>
 </div>
 </div>
