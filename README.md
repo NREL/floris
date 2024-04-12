@@ -115,15 +115,15 @@ fmodel.run()
 Finally, results can be analyzed via post-processing functions available within
 [FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel)
 such as
-- [FlorisModel.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_turbine_layout)
-- [FlorisModel.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_turbine_powers)
-- [FlorisModel.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_farm_AEP)
+- [FlorisModel.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_turbine_layout)
+- [FlorisModel.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_turbine_powers)
+- [FlorisModel.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_farm_AEP)
 
 and in two visualization packages: [layoutviz](https://nrel.github.io/floris/_autosummary/floris.layout_visualization.html) and [flowviz](https://nrel.github.io/floris/_autosummary/floris.flow_visualization.html).
 A collection of examples describing the creation of simulations as well as
 analysis and post processing are included in the
-[repository](https://github.com/NREL/floris/tree/main/examples)
-and described in [Examples Index](https://github.nrel.io/floris/examples).
+[repository](https://github.com/NREL/floris/tree/main/examples). Examples are also listed
+in the [online documentation](https://nrel.github.io/floris/examples/001_opening_floris_computing_power.html).
 
 ## Engaging on GitHub
 
