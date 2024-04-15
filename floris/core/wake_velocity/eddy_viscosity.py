@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict
 
 import matplotlib.pyplot as plt
@@ -19,6 +20,8 @@ from floris.utilities import (
     tand,
 )
 
+
+logger = logging.getLogger(name="floris")
 
 @define
 class EddyViscosityVelocity(BaseModel):
@@ -155,6 +158,16 @@ class EddyViscosityVelocity(BaseModel):
                     self.von_Karman_constant
                 )
             )
+
+            if sol.status == -1:
+                raise RuntimeError(
+                    f"Eddy viscosity ODE solver failed to converge for findex={findex}.\n"
+                    + "t_span: " + np.array2string(np.array([2, x_tilde_eval[-1]])) + "\n"
+                    + "y0: " + np.array2string(U_tilde_c_initial[findex,:]) + "\n"
+                    + "t_eval: " + np.array2string(x_tilde_eval) + "\n\n"
+                    + "This may be caused by an initial condition for the ODE that is "
+                    + "greater than 1."
+                )
 
             # Extract the solution
             if (sol.t != x_tilde_eval).any():
@@ -350,6 +363,12 @@ def initial_centerline_velocity(Ct, ambient_ti, i_const_1, i_const_2, i_const_3,
         - i_const_1
         - (i_const_2 * Ct - i_const_3) * ambient_ti / i_const_4
     )
+
+    if (initial_velocity_deficit < 0).any():
+        logger.warning(
+            "Initial velocity deficit is negative. Setting to 0."
+        )
+        initial_velocity_deficit[initial_velocity_deficit < 0] = 0
 
     U_c0_ = 1 - initial_velocity_deficit
 
