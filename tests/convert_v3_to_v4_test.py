@@ -40,7 +40,10 @@ def test_v3_to_v4_convert():
         file.write(filedata)
 
     # Now confirm that the converted file can be loaded by FLORIS
-    _ = FlorisModel(filename_v4_floris)
+    fmodel = FlorisModel(filename_v4_floris)
+
+    # Now confirm this model runs
+    fmodel.run()
 
     # Delete the newly created files to clean up
     os.system(f"rm {filename_v4_floris}")
