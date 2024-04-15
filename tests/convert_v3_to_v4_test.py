@@ -31,7 +31,7 @@ def test_v3_to_v4_convert():
     # Run the converter on the floris file
     os.system(f"python convert_floris_input_v3_to_v4.py {filename_v3_floris}")
 
-    # Go through the file filename_v4_turbine and where the place-holder string "XXXXX" is found
+    # Go through the file filename_v4_floris and where the place-holder string "XXXXX" is found
     # replace it with the string f"!include {filename_v4_turbine}"
     with open(filename_v4_floris, "r") as file:
         filedata = file.read()
