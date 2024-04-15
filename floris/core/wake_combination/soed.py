@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict
 
 import numpy as np
@@ -5,6 +6,8 @@ from attrs import define
 
 from floris.core import BaseModel, FlowField
 
+
+logger = logging.getLogger(name="floris")
 
 @define
 class SOED(BaseModel):
@@ -60,7 +63,10 @@ class SOED(BaseModel):
         U_tilde_combined = np.sqrt(1 - n_turbines + np.sum(U_tilde_field**2, axis=1))
 
         if (U_tilde_combined < 0).any() or np.isnan(U_tilde_combined).any():
-            print("uh oh")
+            logger.warning(
+                "Negative or NaN values detected in combined velocity deficit field. "
+                "These values will be set to zero."
+            )
             U_tilde_combined[U_tilde_combined < 0] = 0
             U_tilde_combined[np.isnan(U_tilde_combined)] = 0
 
