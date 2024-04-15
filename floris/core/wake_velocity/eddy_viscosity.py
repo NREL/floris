@@ -94,43 +94,6 @@ class EddyViscosityVelocity(BaseModel):
             self.i_const_4
         )
 
-        # # Solve ODE to find centerline velocities at each x
-        # x_tilde_unique, unique_ind = np.unique(x_tilde, return_inverse=True)
-        # sorting_indices = np.argsort(x_tilde_unique)
-        # x_tilde_sorted = x_tilde_unique[sorting_indices]
-        # valid_indices = x_tilde_sorted >= 2
-        # x_tilde_eval = x_tilde_sorted[valid_indices]
-        # import ipdb; ipdb.set_trace()
-        # sol = solve_ivp(
-        #     fun=centerline_ode,
-        #     t_span=[2, x_tilde_eval[-1]],
-        #     y0=[U_tilde_c_initial],
-        #     method='RK45',
-        #     t_eval=x_tilde_eval,
-        #     args=(
-        #         turbulence_intensity_i,
-        #         ct_i,
-        #         hub_height_i,
-        #         rotor_diameter_i,
-        #         self.k_a,
-        #         self.k_l,
-        #         self.von_Karman_constant
-        #     )
-        # )
-
-        # # Extract the solution
-        # if (sol.t != x_tilde_eval).any():
-        #     raise ValueError("ODE solver did not return requested values")
-        # U_tilde_c_eval = sol.y.flatten()
-
-        # U_tilde_c_fill = np.full_like(x_tilde_sorted[x_tilde_sorted < 2], U_tilde_c_initial)
-        # # TODO: I think concatenation will be along axis=1 finally
-        # U_tilde_c_sorted = np.concatenate((U_tilde_c_fill, U_tilde_c_eval))
-
-        # # "Unsort", and broadcast back to shape of x_tilde
-        # U_tilde_c_unique = U_tilde_c_sorted[np.argsort(sorting_indices)]
-        # U_tilde_c = U_tilde_c_unique[unique_ind]
-
         # Solve ODE to find centerline velocities at each x
         U_tilde_c = np.zeros_like(x_tilde)
         for findex in range(x_tilde.shape[0]):
@@ -178,7 +141,6 @@ class EddyViscosityVelocity(BaseModel):
                 x_tilde_sorted[x_tilde_sorted < 2],
                 U_tilde_c_initial[findex,:]
             )
-            # TODO: I think concatenation will be along axis=1 finally
             U_tilde_c_sorted = np.concatenate((U_tilde_c_fill, U_tilde_c_eval))
 
             # "Unsort", and broadcast back to shape of x_tilde
@@ -198,11 +160,11 @@ class EddyViscosityVelocity(BaseModel):
         # Recompute wake width
         w_tilde_sq_meandering = wake_width_squared(ct_i, U_tilde_c)
 
-        # # Set all upstream values (including current turbine's position) to no wake
+        # Set all upstream values (including current turbine's position) to no wake
         U_tilde_c_meandering[x_tilde < 0.1] = 1
         w_tilde_sq_meandering[x_tilde < 0.1] = 0
 
-        # # Return velocities NOT as deficits
+        # Return velocities NOT as deficits
         return U_tilde_c_meandering, w_tilde_sq_meandering
 
     def streamtube_expansion(
@@ -241,7 +203,6 @@ class EddyViscosityVelocity(BaseModel):
 
         w_tilde_sq_tt = expanded_wake_width_squared(w_tilde_sq_tt, e_tilde)
 
-        # Wait we don't need U_tilde_c_tt as an input? w is enough? Interesting, but OK.
         U_tilde_c_tt = expanded_wake_centerline_velocity(ct_all[:,:,None], w_tilde_sq_tt)
 
         return U_tilde_c_tt, w_tilde_sq_tt
@@ -269,10 +230,8 @@ class EddyViscosityVelocity(BaseModel):
             (z[:,None,:,:,:] - z_turbines[:,:,None,None,None])
             / rotor_diameters[:,:,None,None,None]
         )
-        # TODO: Check working as expected with correct D, hh being applied
-
-        # y_D_rel = y_D[:,:,None,:,:] - np.transpose(y_D[:,:,None,:,:], axes=(0,2,1,3,4))
-        # z_D_rel = z_D[:,:,None,:,:] - np.transpose(z_D[:,:,None,:,:], axes=(0,2,1,3,4))
+        # TODO: Check working as expected with correct D, hh being applied 
+        # when there are multiple turbine types
 
         # Compute radial positions
         r_tilde_sq = y_tilde_rel**2 + z_tilde_rel**2
@@ -322,7 +281,6 @@ def centerline_ode(x_tilde, U_tilde_c, ambient_ti, Ct, hh, D, k_a, k_l, von_Karm
     """
     Define the ODE for the centerline velocities
     """
-    # Define constants (will later define these as class attribtues)
 
     # Local component, nondimensionalized by U_inf*D (compared to Gunn 2019's K_l)
     K_l_tilde = k_l * np.sqrt(wake_width_squared(Ct, U_tilde_c)) * (1 - U_tilde_c)
@@ -333,18 +291,18 @@ def centerline_ode(x_tilde, U_tilde_c, ambient_ti, Ct, hh, D, k_a, k_l, von_Karm
     def filter_function(x_tilde):
         """ Identity mapping (assumed by 'F=1') """
 
-        # Wait, is this just a multiplier? Seems to be?
-        filter_const_1 = 0.65
-        filter_const_2 = 4.5
-        filter_const_3 = 23.32
-        filter_const_4 = 1/3
-        filter_cutoff_x_ = 0.0 # 5.5 doesn't seem to work; F negative, not good for EV model
-        if x_tilde < filter_cutoff_x_: # How should this work? Is this smooth??
-            return filter_const_1 * ((x_tilde - filter_const_2) / filter_const_3)**filter_const_4
-        else:
-            return 1
+        # Following are not used in the current implementation
+        # filter_const_1 = 0.65
+        # filter_const_2 = 4.5
+        # filter_const_3 = 23.32
+        # filter_const_4 = 1/3
+        # filter_cutoff_x_ = 0.0
+        # if x_tilde < filter_cutoff_x_:
+        #     return filter_const_1 * ((x_tilde - filter_const_2) / filter_const_3)**filter_const_4
+        # else:
+        #     return 1
+        return 1
 
-    #eddy_viscosity = filter_function(K_l + K_a)
     eddy_viscosity_tilde = filter_function(x_tilde)*(K_l_tilde + K_a_tilde)
 
     dU_tilde_c_dx_tilde = (
@@ -391,17 +349,6 @@ def wake_width_streamtube_correction_term(ai_i, x_pts, x_ji_, y_ji_, z_ji_, c_0,
     e_ji_[x_ji_ >= 0] = 0 # Does not affect wakes of self or downstream turbines
     downstream_mask = (x_pts > 0).astype(int)
     e_ji_ = e_ji_[:,:,None] * downstream_mask[:,None,:] # Affects only downstream locations
-    #e_ji_ =
-
-    # # Expand and mask to only downstream locations for upstream turbines' wakes
-    # import ipdb; ipdb.set_trace()
-    # # TODO: STUCK HERE! What does this mask look like??
-
-    # e_ji_ = np.repeat(e_ji_[:,:,None], x_pts.shape[1], axis=2)
-    # e_ji_[:, i:, :] = 0 # Does not affect wakes of downstream turbines
-    # import ipdb; ipdb.set_trace()
-    # e_ji_[x_ji_ < 0, x_ji_ <= 0] = 0 # Does not apply to upstream locations
-    # #e_ji_ = e_ji_ * np.triu(np.ones_like(e_ji_), k=2)
 
     return e_ji_
 
@@ -416,7 +363,7 @@ def expanded_wake_centerline_velocity(Ct, w_tilde_sq):
         1 - Ct[w_tilde_sq_mask]/(4*w_tilde_sq[w_tilde_sq_mask])
     )
     expanded_U_tilde_c.reshape(w_tilde_sq.shape)
-    #return np.where(w_tilde_sq > 0, np.sqrt(1-Ct/(4*w_tilde_sq)), 1)
+
     return expanded_U_tilde_c
 
 def _resize_Ct(Ct, resize_like):
