@@ -92,14 +92,14 @@ features, improvements, and bug fixes will be issued on an ongoing basis.
 
 FLORIS is a Python package run on the command line typically by providing
 an input file with an initial configuration. It can be installed with
-```pip install floris``` (see [installation](https://github.nrel.io/floris/installation)).
+```pip install floris``` (see [installation](https://nrel.github.io/floris/installation.html)).
 The typical entry point is
-[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel)
+[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.html)
 which accepts the path to the input file as an argument. From there,
 changes can be made to the initial configuration through the
-[FlorisModel.set](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.set)
+[FlorisModel.set](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.set)
 routine, and the simulation is executed with
-[FlorisModel.run](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.run).
+[FlorisModel.run](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.run).
 
 ```python
 from floris import FlorisModel
@@ -113,17 +113,17 @@ fmodel.run()
 ```
 
 Finally, results can be analyzed via post-processing functions available within
-[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel)
+[FlorisModel](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel)
 such as
-- [FlorisModel.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_turbine_layout)
-- [FlorisModel.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_turbine_powers)
-- [FlorisModel.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.floris_model.FlorisModel.html#floris.floris_model.FlorisModel.get_farm_AEP)
+- [FlorisModel.get_turbine_layout](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_turbine_layout)
+- [FlorisModel.get_turbine_powers](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_turbine_powers)
+- [FlorisModel.get_farm_AEP](https://nrel.github.io/floris/_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_farm_AEP)
 
 and in two visualization packages: [layoutviz](https://nrel.github.io/floris/_autosummary/floris.layout_visualization.html) and [flowviz](https://nrel.github.io/floris/_autosummary/floris.flow_visualization.html).
 A collection of examples describing the creation of simulations as well as
 analysis and post processing are included in the
-[repository](https://github.com/NREL/floris/tree/main/examples)
-and described in [Examples Index](https://github.nrel.io/floris/examples).
+[repository](https://github.com/NREL/floris/tree/main/examples). Examples are also listed
+in the [online documentation](https://nrel.github.io/floris/examples/001_opening_floris_computing_power.html).
 
 ## Engaging on GitHub
 
@@ -131,7 +131,7 @@ FLORIS leverages the following GitHub features to coordinate support and develop
 
 - [Discussions](https://github.com/NREL/floris/discussions): Collaborate to develop ideas for new use cases, features, and software designs, and get support for usage questions
 - [Issues](https://github.com/NREL/floris/issues): Report potential bugs and well-developed feature requests
-- [Projects](https://github.com/orgs/NREL/projects/18/): Include current and future work on a timeline and assign a person to "own" it
+- [Projects](https://github.com/orgs/NREL/projects/96): Include current and future work on a timeline and assign a person to "own" it
 
 Generally, the first entry point for the community will be within one of the
 categories in Discussions.
