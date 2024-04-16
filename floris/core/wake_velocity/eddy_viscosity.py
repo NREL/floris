@@ -230,7 +230,7 @@ class EddyViscosityVelocity(BaseModel):
             (z[:,None,:,:,:] - z_turbines[:,:,None,None,None])
             / rotor_diameters[:,:,None,None,None]
         )
-        # TODO: Check working as expected with correct D, hh being applied 
+        # TODO: Check working as expected with correct D, hh being applied
         # when there are multiple turbine types
 
         # Compute radial positions
