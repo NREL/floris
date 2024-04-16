@@ -1643,7 +1643,8 @@ def streamtube_expansion_solver(
         wake_widths_squared[:, tindex, :] = wake_width_squared_i
 
         # Now, apply the streamtube expansion.
-        centerline_velocities, _ = model_manager.velocity_model.streamtube_expansion(
+        (centerline_velocities,
+         wake_widths_squared) = model_manager.velocity_model.streamtube_expansion(
             x_i[:,:,0,0],
             (grid.x_sorted.mean(axis=(2,3)) - x_i[:,:,0,0]),
             (grid.y_sorted.mean(axis=(2,3)) - y_i[:,:,0,0]),
@@ -1708,13 +1709,13 @@ def full_flow_streamtube_expansion_solver(
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize(turbine_grid.sorted_indices)
 
-    # TODO: DO I need something like this (to get a "field")? possibly npt? Not sure.
-    # wim_field = empirical_gauss_solver(
-    #     turbine_grid_farm,
-    #     turbine_grid_flow_field,
-    #     turbine_grid,
-    #     model_manager
-    # )
+    # Perform turbine grid calculation to compute inflows
+    streamtube_expansion_solver(
+        turbine_grid_farm,
+        turbine_grid_flow_field,
+        turbine_grid,
+        model_manager
+    )
 
     ### Referring to the quantities from above, calculate the wake in the full grid
 
@@ -1749,6 +1750,7 @@ def full_flow_streamtube_expansion_solver(
         z_i = np.mean(turbine_grid.z_sorted[:, tindex:tindex+1], axis=(2,3))
         z_i = z_i[:, :, None, None]
 
+        # Thrust, axial induction need to be recomputed as not stored in turbine solve.
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
             air_density=turbine_grid_flow_field.air_density,
@@ -1839,7 +1841,8 @@ def full_flow_streamtube_expansion_solver(
         wake_widths_squared[:, tindex, :] = wake_width_squared_i
 
         # Apply the streamtube expansion.
-        centerline_velocities, _ = model_manager.velocity_model.streamtube_expansion(
+        (centerline_velocities,
+         wake_widths_squared) = model_manager.velocity_model.streamtube_expansion(
             x_i[:,:,0,0],
             (turbine_grid.x_sorted.mean(axis=(2,3)) - x_i[:,:,0,0]),
             (turbine_grid.y_sorted.mean(axis=(2,3)) - y_i[:,:,0,0]),
