@@ -359,7 +359,7 @@ class TurbineCubatureGrid(Grid):
             integration coefficients, "r", "t", "q", "A" and "B".
         """
 
-        if N < 1 and N < 10:
+        if N < 1 or N > 10:
             raise ValueError(
                 f"Order of cubature integration must be between '1' and '10', given {N}."
             )
