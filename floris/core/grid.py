@@ -317,21 +317,28 @@ class TurbineCubatureGrid(Grid):
             ),
             dtype=floris_float_type
         )
-        _x = x[:, :, :, None, None] * template_grid
-        _y = y[:, :, :, None, None] * template_grid
-        _z = z[:, :, :, None, None] * template_grid
+        _x = x[:, :, None, None] * template_grid
+        _y = y[:, :, None, None] * template_grid
+        _z = z[:, :, None, None] * template_grid
+
+        n_coordinates = len(yv)
+        yv = np.broadcast_to(yv, (self.n_findex, self.n_turbines, n_coordinates))
+        yv = np.expand_dims(yv, axis=-1)
+        zv = np.broadcast_to(zv, (self.n_findex, self.n_turbines, n_coordinates))
+        zv = np.expand_dims(zv, axis=-1)
+
         for ti in range(self.n_turbines):
-            _y[:, :, ti, :, :] += yv[None, None, :, None]*self.turbine_diameters[ti] / 2.0
-            _z[:, :, ti, :, :] += zv[None, None, :, None]*self.turbine_diameters[ti] / 2.0
+            _y[:, ti, :, :] += yv[:, ti] * self.turbine_diameters[ti] / 2.0
+            _z[:, ti, :, :] += zv[:, ti] * self.turbine_diameters[ti] / 2.0
 
         # Sort the turbines at each wind direction
 
         # Get the sorted indices for the x coordinates. These are the indices
         # to sort the turbines from upstream to downstream for all wind directions.
         # Also, store the indices to sort them back for when the calculation finishes.
-        self.sorted_indices = _x.argsort(axis=2)
-        self.sorted_coord_indices = x.argsort(axis=2)
-        self.unsorted_indices = self.sorted_indices.argsort(axis=2)
+        self.sorted_indices = _x.argsort(axis=1)
+        self.sorted_coord_indices = x.argsort(axis=1)
+        self.unsorted_indices = self.sorted_indices.argsort(axis=1)
 
         # Put the turbine coordinates into the final arrays in their sorted order
         # These are the coordinates that should be used within the internal calculations
@@ -339,10 +346,6 @@ class TurbineCubatureGrid(Grid):
         self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=1)
         self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=1)
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=1)
-
-        self.x = np.take_along_axis(self.x_sorted, self.unsorted_indices, axis=1)
-        self.y = np.take_along_axis(self.y_sorted, self.unsorted_indices, axis=1)
-        self.z = np.take_along_axis(self.z_sorted, self.unsorted_indices, axis=1)
 
     @classmethod
     def get_cubature_coefficients(cls, N: int):
