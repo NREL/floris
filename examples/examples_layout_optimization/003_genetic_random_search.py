@@ -51,7 +51,7 @@ if __name__ == '__main__':
     #distance_pmf = {"d": [100, 1000], "p": [0.8, 0.2]}
     #p = gamma.pdf(np.linspace(0, 900, 91), 15, scale=20); p = p/p.sum()
     #distance_pmf = {"d": np.linspace(100, 1000, 91), "p": p}
-    
+
     layout_opt = LayoutOptimizationRandomSearch(
         fmodel,
         boundaries,

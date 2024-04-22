@@ -1,7 +1,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from shapely.geometry import Polygon, MultiPolygon
+from shapely.geometry import MultiPolygon, Polygon
 
 from floris import TimeSeries
 from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
@@ -45,7 +45,7 @@ class LayoutOptimization(LoggingManager):
         self.enable_geometric_yaw = enable_geometric_yaw
         self.use_value = use_value
 
-        # Allow boundaries to be set either as a list of corners or as a 
+        # Allow boundaries to be set either as a list of corners or as a
         # nested list of corners (for seperable regions)
         self.boundaries = boundaries
         b_depth = list_depth(boundaries)
@@ -54,7 +54,7 @@ class LayoutOptimization(LoggingManager):
             "boundaries should be a list of coordinates (specifed as (x,y) "+\
             "tuples) or as a list of list of tuples (for seperable regions)."
         )
-        
+
         if b_depth == 1:
             self._boundary_polygon = MultiPolygon([Polygon(self.boundaries)])
             self._boundary_line = self._boundary_polygon.boundary
@@ -64,7 +64,7 @@ class LayoutOptimization(LoggingManager):
             self._boundary_polygon = MultiPolygon([Polygon(p) for p in self.boundaries])
             self._boundary_line = self._boundary_polygon.boundary
         else:
-            raise TypeError(boundary_specification_error_msg) 
+            raise TypeError(boundary_specification_error_msg)
 
         self.xmin, self.ymin, self.xmax, self.ymax = self._boundary_polygon.bounds
 
@@ -131,7 +131,7 @@ class LayoutOptimization(LoggingManager):
         return sol
 
     def plot_layout_opt_results(self, plot_boundary_dict={}, ax=None, fontsize=16):
-        
+
         x_initial, y_initial, x_opt, y_opt = self._get_initial_and_final_locs()
 
         # Generate axis, if needed
@@ -139,7 +139,7 @@ class LayoutOptimization(LoggingManager):
             fig = plt.figure(figsize=(9,6))
             ax = fig.add_subplot(111)
             ax.set_aspect("equal")
-        
+
         default_plot_boundary_dict = {
             "color":"None",
             "alpha":1,
@@ -198,12 +198,12 @@ class LayoutOptimization(LoggingManager):
             fig, ax = plt.subplots(1,1)
 
         aep_log_array = np.array(self.aep_candidate_log)
-        
+
         if len(aep_log_array.shape) == 1: # Just one AEP candidate per step
             ax.plot(np.arange(len(aep_log_array)), aep_log_array, color="k")
         elif len(aep_log_array.shape) == 2: # Multiple AEP candidates per step
             for i in range(aep_log_array.shape[1]):
-                ax.plot(np.arange(len(aep_log_array)), aep_log_array[:,i]/1e9, 
+                ax.plot(np.arange(len(aep_log_array)), aep_log_array[:,i]/1e9,
                     color="lightgray")
 
         # TODO: add initial point and final value (possibly with value labels?)
@@ -239,8 +239,8 @@ class LayoutOptimization(LoggingManager):
 
 # Helper functions
 
-def list_depth(l):
-    if isinstance(l, list) and len(l) > 0:
-        return 1 + max(list_depth(item) for item in l)
+def list_depth(x):
+    if isinstance(x, list) and len(x) > 0:
+        return 1 + max(list_depth(item) for item in x)
     else:
         return 0

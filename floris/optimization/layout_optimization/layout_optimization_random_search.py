@@ -23,22 +23,22 @@
 
 
 
-from numpy import random
 from multiprocessing import Pool
 from time import perf_counter as timerpc
 
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy import random
 from scipy.spatial.distance import cdist, pdist
 from shapely.geometry import Point, Polygon
 
 from floris import FlorisModel
-
-from .layout_optimization_base import LayoutOptimization
-
 from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
+
+from .layout_optimization_base import LayoutOptimization
+
 
 def _load_local_floris_object(
     fmodel_dict,
@@ -156,11 +156,11 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 between turbines during the optimization, specified as a multiple
                 of the rotor diameter.
             distance_pmf (dict, optional): Probability mass function describing the
-                length of steps in the random search. Specified as a dictionary with 
-                keys "d" (array of step distances, specified in meters) and "p" 
-                (array of probability of occurrence, should sum to 1). Defaults to 
+                length of steps in the random search. Specified as a dictionary with
+                keys "d" (array of step distances, specified in meters) and "p"
+                (array of probability of occurrence, should sum to 1). Defaults to
                 uniform probability between 0.5D and 2D, with some extra mass
-                to encourage large changes. 
+                to encourage large changes.
             n_individuals (int, optional): The number of individuals to use in the
                 optimization. Defaults to 4.
             seconds_per_iteration (float, optional): The number of seconds to
@@ -178,7 +178,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             relegation_number (int): The number of the lowest performing individuals to be replaced
                 with new individuals generated from the best performing individual.  Must
                 be less than n_individuals / 2.  Defaults to 1.
-            enable_geometric_yaw (bool): Use geometric yaw code to determine approximate wake 
+            enable_geometric_yaw (bool): Use geometric yaw code to determine approximate wake
                 steering yaw angles during layout optimization routine. Defaults to False.
             use_dist_based_init (bool): Generate initial layouts automatically by placing turbines
                 as far apart as possible.
@@ -201,7 +201,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 max_workers = None
                 n_individuals = 1
 
-            
+
         # elif interface == "concurrent":
         #     from concurrent.futures import ProcessPoolExecutor
         #     self._PoolExecutor = ProcessPoolExecutor
@@ -341,7 +341,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         if not all(k in dist_pmf for k in ("d", "p")):
             raise KeyError("distance_pmf must contains keys \"d\" (step distance)"+\
                 " and \"p\" (probability of occurance).")
-        
+
         # Check entries are in the correct form
         if not hasattr(dist_pmf["d"], "__len__") or not hasattr(dist_pmf["d"], "__len__")\
             or len(dist_pmf["d"]) != len(dist_pmf["p"]):
@@ -391,7 +391,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         # Replace the relegation_number worst performing layouts with relegation_number
         # best layouts
         if self.relegation_number > 0:
-            self.aep_candidate[-self.relegation_number:] = self.aep_candidate[:self.relegation_number]
+            self.aep_candidate[-self.relegation_number:] = (
+                self.aep_candidate[:self.relegation_number]
+            )
             self.x_candidate[-self.relegation_number:] = self.x_candidate[:self.relegation_number]
             self.y_candidate[-self.relegation_number:] = self.y_candidate[:self.relegation_number]
 
@@ -411,7 +413,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             multi_random_seeds = [23 + i for i in range(self.n_individuals)]
             # 23 is just an arbitrary choice to ensure different random seeds
             # to the evaluation code
-            
+
         print(f'Generating {self.n_individuals} initial layouts...')
         t1 = timerpc()
         # Generate the multiargs for parallel execution
@@ -484,7 +486,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             if self.random_seed is None:
                 multi_random_seeds = [None]*self.n_individuals
             else:
-                multi_random_seeds = [55 + self.iteration_step + i 
+                multi_random_seeds = [55 + self.iteration_step + i
                     for i in range(self.n_individuals)]
             # 55 is just an arbitrary choice to ensure different random seeds
             # to the initialization code
@@ -541,7 +543,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
         return self.final_aep, self.x_opt, self.y_opt
 
-    
+
     # Helpful visualizations
     def plot_distance_pmf(self, ax=None):
         """
@@ -550,7 +552,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
         if ax is None:
             fig, ax = plt.subplots(1,1)
-        
+
         ax.stem(self.distance_pmf["d"], self.distance_pmf["p"], linefmt="k-")
         ax.grid(True)
         ax.set_xlabel("Step distance [m]")
@@ -645,7 +647,7 @@ def _single_individual_opt(
                 yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
 
             num_aep_calls += 1
-            test_aep = _get_aep(layout_x, layout_y, fmodel_, yaw_angles) 
+            test_aep = _get_aep(layout_x, layout_y, fmodel_, yaw_angles)
             # TODO: Geoyaw angles not available here!
 
             if test_aep > current_aep:
