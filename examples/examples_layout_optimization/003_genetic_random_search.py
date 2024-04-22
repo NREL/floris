@@ -10,7 +10,7 @@ from floris.optimization.layout_optimization.layout_optimization_random_search i
 
 if __name__ == '__main__':
     # Set up FLORIS
-    fmodel = FlorisModel('inputs/gch.yaml')
+    fmodel = FlorisModel('../inputs/gch.yaml')
 
 
     # Setup 72 wind directions with a random wind speed and frequency distribution
