@@ -1,17 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
 
 from pathlib import Path
 
@@ -30,18 +16,18 @@ REQUIRES_PYTHON = ">=3.8.0"
 REQUIRED = [
     # simulation
     "attrs",
-    "pyyaml",
-    "numexpr",
-    "numpy>=1.20",
-    "scipy>=1.1",
+    "pyyaml~=6.0",
+    "numexpr~=2.0",
+    "numpy~=1.20",
+    "scipy~=1.1",
 
     # tools
-    "matplotlib>=3",
-    "pandas",
-    "shapely",
+    "matplotlib~=3.0",
+    "pandas~=2.0",
+    "shapely~=2.0",
 
     # utilities
-    "coloredlogs>=10.0",
+    "coloredlogs~=10.0",
 ]
 
 # What packages are optional?
@@ -51,7 +37,7 @@ REQUIRED = [
 #   pip install "floris[develop]"       installs developer packages in non-editable install
 EXTRAS = {
     "docs": {
-        "jupyter-book<=0.13.3",
+        "jupyter-book",
         "sphinx-book-theme",
         "sphinx-autodoc-typehints",
         "sphinxcontrib-autoyaml",
@@ -81,16 +67,16 @@ setup(
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     package_data={
-        'floris': ['turbine_library/*.yaml', 'simulation/wake_velocity/turbopark_lookup_table.mat']
+        'floris': ['turbine_library/*.yaml', 'core/wake_velocity/turbopark_lookup_table.mat']
     },
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
-    license="Apache-2.0",
+    license_files = ('LICENSE.txt',),
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: BSD License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",

@@ -1,7 +1,7 @@
 
 name: Emperical Gaussian
 description: Example of single fixed-bottom turbine
-floris_version: v3.x
+floris_version: v4
 
 logging:
   console:
@@ -30,7 +30,8 @@ farm:
 flow_field:
   air_density: 1.225
   reference_wind_height: -1 # -1 is code for use the hub height
-  turbulence_intensity: 0.06
+  turbulence_intensities:
+  - 0.06
   wind_directions:
   - 270.0
   wind_shear: 0.12
@@ -48,6 +49,7 @@ wake:
   enable_secondary_steering: false
   enable_yaw_added_recovery: true
   enable_transverse_velocities: false
+  enable_active_wake_mixing: false
 
   wake_deflection_parameters:
     gauss:
@@ -65,7 +67,7 @@ wake:
     empirical_gauss:
       horizontal_deflection_gain_D: 3.0
       vertical_deflection_gain_D: -1
-      deflection_rate: 15
+      deflection_rate: 22
       mixing_gain_deflection: 0.0
       yaw_added_mixing_gain: 0.0
 
@@ -88,8 +90,8 @@ wake:
       we: 0.05
     empirical_gauss:
       wake_expansion_rates:
-      - 0.01
-      - 0.005
+      - 0.023
+      - 0.008
       breakpoints_D:
       - 10
       sigma_0_D: 0.28

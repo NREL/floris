@@ -1,20 +1,8 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
 
 import copy
+import inspect
 from pathlib import Path
 from typing import (
     Any,
@@ -39,16 +27,74 @@ NDArrayInt = npt.NDArray[np.int_]
 NDArrayFilter = Union[npt.NDArray[np.int_], npt.NDArray[np.bool_]]
 NDArrayObject = npt.NDArray[np.object_]
 NDArrayBool = npt.NDArray[np.bool_]
+NDArrayStr = npt.NDArray[np.str_]
 
 
 ### Custom callables for attrs objects and functions
 
 def floris_array_converter(data: Iterable) -> np.ndarray:
+    """
+    For a given iterable, convert the data to a numpy array and cast to `floris_float_type`.
+    If the input is a scalar, np.array() creates a 0-dimensional array, and this is not supported
+    in FLORIS so this function raises an error.
+
+    Args:
+        data (Iterable): The input data to be converted to a Numpy array.
+
+    Raises:
+        TypeError: Raises if the input data is not iterable.
+        TypeError: Raises if the input data cannot be converted to a Numpy array.
+
+    Returns:
+        np.ndarray: data converted to a Numpy array and cast to `floris_float_type`.
+    """
     try:
-        a = np.array(data, dtype=floris_float_type)
+        iter(data)
     except TypeError as e:
         raise TypeError(e.args[0] + f". Data given: {data}")
+
+    try:
+        a = np.array(data, dtype=floris_float_type)
+    except (TypeError, ValueError) as e:
+        raise TypeError(e.args[0] + f". Data given: {data}")
     return a
+
+def floris_numeric_dict_converter(data: dict) -> dict:
+    """
+    For the given dictionary, convert all the values to a numeric type. If a value is a scalar, it
+    will be converted to a float. If a value is an iterable, it will be converted to a Numpy
+    array and cast to `floris_float_type`. If a value is not a numeric type, a TypeError will be
+    raised.
+
+    Args:
+        data (dict): Dictionary of data to be converted to a numeric type.
+
+    Returns:
+        dict: Dictionary with the same keys and all values converted to a numeric type.
+    """
+    converted_dict = copy.deepcopy(data)  # deepcopy -> data is a container and passed by reference
+    for k, v in data.items():
+        try:
+            iter(v)
+        except TypeError:
+            # Not iterable so try to cast to float
+            converted_dict[k] = float(v)
+        else:
+            # Iterable so convert to Numpy array
+            converted_dict[k] = floris_array_converter(v)
+    return converted_dict
+
+# def array_field(**kwargs) -> Callable:
+#     """
+#     A wrapper for the :py:func:`attr.field` function that converts the input to a Numpy array,
+#     adds a comparison function specific to Numpy arrays, and passes through all additional
+#     keyword arguments.
+#     """
+#     return field(
+#         converter=floris_array_converter,
+#         eq=cmp_using(eq=np.array_equal),
+#         **kwargs
+#     )
 
 def _attr_serializer(inst: type, field: Attribute, value: Any):
     if isinstance(value, np.ndarray):
@@ -66,20 +112,16 @@ def _attr_floris_filter(inst: Attribute, value: Any) -> bool:
     return True
 
 def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
-    """Helper function to generate iterable validators that will reduce the amount of
+    """
+    Helper function to generate iterable validators that will reduce the amount of
     boilerplate code.
 
-    Parameters
-    ----------
-    iter_type : any iterable
-        The type of iterable object that should be validated.
-    item_types : Union[Any, Tuple[Any]]
-        The type or types of acceptable item types.
+    Args:
+        iter_type (iterable): The type of iterable object that should be validated.
+        item_types (Union[Any, Tuple[Any]]): The type or types of acceptable item types.
 
-    Returns
-    -------
-    Callable
-        The attr.validators.deep_iterable iterable and instance validator.
+    Returns:
+        Callable: The attr.validators.deep_iterable iterable and instance validator.
     """
     validator = attrs.validators.deep_iterable(
         member_validator=attrs.validators.instance_of(item_types),
@@ -88,13 +130,19 @@ def iter_validator(iter_type, item_types: Union[Any, Tuple[Any]]) -> Callable:
     return validator
 
 def convert_to_path(fn: str | Path) -> Path:
-    """Converts an input string or pathlib.Path object to a fully resolved ``pathlib.Path``
-    object.
+    """
+    Converts an input string or ``pathlib.Path`` object to a fully resolved ``pathlib.Path``
+    object. If the input is a string, it is converted to a pathlib.Path object.
+    The function then checks if the path exists as an absolute path, a relative path from
+    the script, or a relative path from the system location. If the path does not exist in
+    any of these locations, a FileExistsError is raised.
 
     Args:
         fn (str | Path): The user input file path or file name.
 
     Raises:
+        FileExistsError: Raised if :py:attr:`fn` is not able to be found as an absolute path, nor as
+            a relative path.
         TypeError: Raised if :py:attr:`fn` is neither a :py:obj:`str`, nor a :py:obj:`pathlib.Path`.
 
     Returns:
@@ -103,11 +151,30 @@ def convert_to_path(fn: str | Path) -> Path:
     if isinstance(fn, str):
         fn = Path(fn)
 
+    # Get the base path from where the analysis script was run to determine the relative
+    # path from which `fn` might be based. [1] is where a direct call to this function will be
+    # located (e.g., testing via pytest), and [-1] is where a direct call to the function via an
+    # analysis script will be located (e.g., running an example).
+    base_fn_script = Path(inspect.stack()[-1].filename).resolve().parent
+    base_fn_sys = Path(inspect.stack()[1].filename).resolve().parent
+
     if isinstance(fn, Path):
-        fn.resolve()
-    else:
-        raise TypeError(f"The passed input: {fn} could not be converted to a pathlib.Path object")
-    return fn
+        absolute_fn = fn.resolve()
+        relative_fn_script = (base_fn_script / fn).resolve()
+        relative_fn_sys = (base_fn_sys / fn).resolve()
+        if absolute_fn.exists():
+            return absolute_fn
+        if relative_fn_script.exists():
+            return relative_fn_script
+        if relative_fn_sys.exists():
+            return relative_fn_sys
+        raise FileExistsError(
+            f"{fn} could not be found as either a\n"
+            f"  - relative file path from a script: {relative_fn_script}\n"
+            f"  - relative file path from a system location: {relative_fn_sys}\n"
+            f"  - or absolute file path: {absolute_fn}"
+        )
+    raise TypeError(f"The passed input: {fn} could not be converted to a pathlib.Path object")
 
 
 @define

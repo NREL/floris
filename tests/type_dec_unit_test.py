@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from pathlib import Path
 from typing import List
@@ -22,6 +9,7 @@ from attrs import define, field
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
+    floris_numeric_dict_converter,
     FromDictMixin,
     iter_validator,
 )
@@ -39,11 +27,11 @@ class AttrsDemoClass(FromDictMixin):
         self.non_initd = 1.1
 
     liststr: List[str] = field(
-        default=["qwerty", "asdf"],
+        factory=lambda:["qwerty", "asdf"],
         validator=iter_validator(list, str)
     )
     array: np.ndarray = field(
-        default=[1.0, 2.0],
+        factory=lambda:[1.0, 2.0],
         converter=floris_array_converter,
         # validator=iter_validator(np.ndarray, floris_float_type)
     )
@@ -63,8 +51,8 @@ def test_FromDictMixin_defaults():
     defaults = {a.name: a.default for a in AttrsDemoClass.__attrs_attrs__ if a.default}
     assert cls.y == defaults["y"]
     assert cls.z == defaults["z"]
-    np.testing.assert_array_equal(cls.liststr, defaults["liststr"])
-    np.testing.assert_array_equal(cls.array, defaults["array"])
+    np.testing.assert_array_equal(cls.liststr, defaults["liststr"].factory())
+    np.testing.assert_array_equal(cls.array, defaults["array"].factory())
 
     # Test that defaults can be overwritten
     inputs = {"w": 0, "x": 1, "y": 4.5}
@@ -116,7 +104,7 @@ def test_iter_validator():
         AttrsDemoClass(w=0, x=1, liststr=("a", "b"))
 
 
-def test_attrs_array_converter():
+def test_array_converter():
     array_input = [[1, 2, 3], [4.5, 6.3, 2.2]]
     test_array = np.array(array_input)
 
@@ -124,29 +112,85 @@ def test_attrs_array_converter():
     cls = AttrsDemoClass(w=0, x=1, array=array_input)
     np.testing.assert_allclose(test_array, cls.array)
 
-    # Test converstion on reset
+    # Test conversion on reset
     cls.array = array_input
     np.testing.assert_allclose(test_array, cls.array)
 
+    # Test that a non-iterable item like a scalar number fails
+    with pytest.raises(TypeError):
+        cls.array = 1
+
+
+def test_numeric_dict_converter():
+    """
+    This function converts data in a dictionary to a numeric type.
+    If it can't convert the data, it will raise a TypeError.
+    It should support scalar, list, and numpy array types
+    for values in the dictionary.
+    """
+    test_dict = {
+        "scalar_string": "1",
+        "scalar_int": 1,
+        "scalar_float": 1.0,
+        "list_string": ["1", "2", "3"],
+        "list_int": [1, 2, 3],
+        "list_float": [1.0, 2.0, 3.0],
+        "array_string": np.array(["1", "2", "3"]),
+        "array_int": np.array([1, 2, 3]),
+        "array_float": np.array([1.0, 2.0, 3.0]),
+    }
+    numeric_dict = floris_numeric_dict_converter(test_dict)
+    assert numeric_dict["scalar_string"] == 1
+    assert numeric_dict["scalar_int"] == 1
+    assert numeric_dict["scalar_float"] == 1.0
+    np.testing.assert_allclose(numeric_dict["list_string"], [1, 2, 3])
+    np.testing.assert_allclose(numeric_dict["list_int"], [1, 2, 3])
+    np.testing.assert_allclose(numeric_dict["list_float"], [1.0, 2.0, 3.0])
+    np.testing.assert_allclose(numeric_dict["array_string"], [1, 2, 3])
+    np.testing.assert_allclose(numeric_dict["array_int"], [1, 2, 3])
+    np.testing.assert_allclose(numeric_dict["array_float"], [1.0, 2.0, 3.0])
+
+    test_dict = {"scalar_fail": "a"}
+    with pytest.raises(TypeError):
+        floris_numeric_dict_converter(test_dict)
+    test_dict = {"list_fail": ["a", "2", "3"]}
+    with pytest.raises(TypeError):
+        floris_numeric_dict_converter(test_dict)
+    test_dict = {"array_fail": np.array(["a", "2", "3"])}
+    with pytest.raises(TypeError):
+        floris_numeric_dict_converter(test_dict)
 
 def test_convert_to_path():
-    # Test that a string works
     str_input = "../tests"
+    expected_path = (Path(__file__).parent / str_input).resolve()
+
+    # Test that a string works
     test_str_input = convert_to_path(str_input)
-    assert isinstance(test_str_input, Path)
+    assert test_str_input == expected_path
 
     # Test that a pathlib.Path works
-    path_input = Path("../tests")
+    path_input = Path(str_input)
     test_path_input = convert_to_path(path_input)
-    assert isinstance(test_path_input, Path)
+    assert test_path_input == expected_path
 
     # Test that both of those inputs are the same
+    # NOTE These first three asserts tests the relative path search
     assert test_str_input == test_path_input
 
-    # Test that a non-existent folder also works even though it's a valid data type
-    str_input = "tests"
-    test_str_input = convert_to_path(str_input)
-    assert isinstance(test_str_input, Path)
+    # Test absolute path
+    abs_path = expected_path
+    test_abs_path = convert_to_path(abs_path)
+    assert test_abs_path == expected_path
+
+    # Test a file
+    file_input = Path(__file__)
+    test_file = convert_to_path(file_input)
+    assert test_file == file_input
+
+    # Test that a non-existent folder fails, now that the conversion has a multi-pronged search
+    str_input = str(Path(__file__).parent / "bad_path")
+    with pytest.raises(FileExistsError):
+        convert_to_path(str_input)
 
     # Test that invalid data types fail
     with pytest.raises(TypeError):

@@ -2,18 +2,21 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: intro
+root: index
 parts:
   - caption: Getting Started
     chapters:
-    # - file: intro
     - file: installation
+    - file: v3_to_v4
 
   - caption: User Reference
     chapters:
-    - file: floris_101
+    - file: intro_concepts
+    - file: advanced_concepts
+    - file: wind_data_user
     - file: floating_wind_turbine
     - file: turbine_interaction
+    - file: operation_models_user
     - file: input_reference_main
     - file: input_reference_turbine
     - file: examples
@@ -21,6 +24,8 @@ parts:
   - caption: Theory and Background
     chapters:
     - file: wake_models
+      sections:
+      - file: empirical_gauss_model
     - file: bibliography
 
   - caption: Developer Reference

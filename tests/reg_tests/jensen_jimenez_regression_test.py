@@ -1,32 +1,18 @@
-# Copyright 2022 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 import numpy as np
 
-from floris.simulation import (
+from floris.core import (
     average_velocity,
     axial_induction,
-    Ct,
-    Floris,
+    Core,
     power,
     rotor_effective_velocity,
+    thrust_coefficient,
 )
 from tests.conftest import (
     assert_results_arrays,
+    N_FINDEX,
     N_TURBINES,
-    N_WIND_DIRECTIONS,
-    N_WIND_SPEEDS,
     print_test_values,
 )
 
@@ -40,27 +26,27 @@ baseline = np.array(
     [
         # 8 m/s
         [
-            [7.9736330, 0.7636044, 1691326.6483808, 0.2568973],
-            [6.1528670, 0.8283770, 769344.9989547, 0.2928630],
-            [5.6590323, 0.8528710, 589128.2717851, 0.3082130],
+            [7.9736858, 0.7871515, 1753954.4591792, 0.2693224],
+            [6.0660565, 0.8578454, 767287.2198744, 0.3114830],
+            [5.5204712, 0.8881097, 577575.9208353, 0.3327500],
         ],
         # 9 m/s
         [
-            [8.9703371, 0.7625570, 2407841.6718785, 0.2563594],
-            [6.9262647, 0.7952248, 1108399.9545223, 0.2737395],
-            [6.5033542, 0.8122418, 911557.7945732, 0.2833446],
+            [8.9703965, 0.7858774, 2496427.8618358, 0.2686331],
+            [6.8298067, 0.8231113, 1110660.4518964, 0.2897093],
+            [6.3668912, 0.8441639, 902538.9934586, 0.3026196],
         ],
         # 10 m/s
         [
-            [9.9670412, 0.7529384, 3298067.1555604, 0.2514735],
-            [7.7391355, 0.7696661, 1550802.6855981, 0.2600344],
-            [7.3444882, 0.7809516, 1325146.7113373, 0.2659870],
+            [9.9671073, 0.7838789, 3417797.0050916, 0.2675559],
+            [7.5982117, 0.7945856, 1518587.8467982, 0.2733867],
+            [7.2042504, 0.8077903, 1294847.7809883, 0.2807914],
         ],
         # 11 m/s
         [
-            [10.9637454, 0.7306256, 4363191.9880631, 0.2404936],
-            [8.6200527, 0.7618150, 2139354.1087623, 0.2559790],
-            [8.1422116, 0.7625354, 1803890.3447532, 0.2563483],
+            [10.9638180, 0.7565157, 4519404.3072862, 0.2532794],
+            [8.4970746, 0.7864874, 2142673.1558338, 0.2689629],
+            [7.9997342, 0.7871282, 1770992.0756703, 0.2693098],
         ],
     ]
 )
@@ -69,28 +55,70 @@ yawed_baseline = np.array(
     [
         # 8 m/s
         [
-            [7.9736330, 0.7606986, 1679924.0721706, 0.2549029],
-            [6.1670027, 0.8277254, 775072.5021192, 0.2924701],
-            [5.6650398, 0.8525636, 591212.2253601, 0.3080128],
+            [7.9736858, 0.7841561, 1741508.6722008, 0.2671213],
+            [6.0816475, 0.8571363, 774296.7271893, 0.3110134],
+            [5.5272875, 0.8877222, 579850.4298177, 0.3324606],
         ],
         # 9 m/s
         [
-            [8.9703371, 0.7596552, 2391434.0080674, 0.2543734],
-            [6.9420997, 0.7945877, 1115770.2903095, 0.2733878],
-            [6.5099782, 0.8119752, 914640.8879238, 0.2831909],
+            [8.9703965, 0.7828869, 2480428.8963141, 0.2664440],
+            [6.8472506, 0.8223180, 1118503.0309148, 0.2892383],
+            [6.3747452, 0.8438067, 906070.0511419, 0.3023935],
         ],
         # 10 m/s
         [
-            [9.9670412, 0.7500732, 3275671.6727516, 0.2495630],
-            [7.7560617, 0.7692286, 1560945.8383104, 0.2598066],
-            [7.3508004, 0.7807445, 1328489.3723384, 0.2658764],
+            [9.9671073, 0.7808960, 3395681.0032992, 0.2653854],
+            [7.6174285, 0.7940006, 1530191.8035935, 0.2730642],
+            [7.2119500, 0.8075204, 1299067.3876318, 0.2806375],
         ],
         # 11 m/s
         [
-            [10.9637454, 0.7278454, 4333842.6695283, 0.2387424],
-            [8.6371187, 0.7618512, 2152434.8973815, 0.2559975],
-            [8.1465243, 0.7625236, 1806824.8092631, 0.2563423],
+            [10.9638180, 0.7536370, 4488242.9153943, 0.2513413],
+            [8.5159500, 0.7864631, 2156780.3499849, 0.2689497],
+            [8.0047998, 0.7871218, 1774753.2988553, 0.2693064],
         ],
+    ]
+)
+
+full_flow_baseline = np.array(
+    [
+        [
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [5.55736296, 5.63646825, 5.708184  ],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [5.11849406, 5.19135235, 5.25740466],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.18032699, 7.28253407, 7.37519358],
+                [4.98829055, 5.05929547, 5.12366755],
+                [7.18032699, 7.28253407, 7.37519358],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [6.97109947, 6.37648724, 7.16028784],
+                [6.28699612, 6.37648724, 6.45761864],
+                [6.97109947, 6.37648724, 7.16028784],
+                [7.88772361, 8.        , 8.10178821],
+            ]
+        ]
     ]
 )
 
@@ -103,75 +131,75 @@ def test_regression_tandem(sample_inputs_fixture):
     """
     Tandem turbines
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     n_turbines = floris.farm.n_turbines
-    n_wind_speeds = floris.flow_field.n_wind_speeds
-    n_wind_directions = floris.flow_field.n_wind_directions
+    n_findex = floris.flow_field.n_findex
 
     velocities = floris.flow_field.u
+    air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
-    ref_tilt_cp_cts = (
-        np.ones((n_wind_directions, n_wind_speeds, n_turbines))
-        * floris.farm.ref_tilt_cp_cts
-    )
-    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
+    power_setpoints = floris.farm.power_setpoints
+    awc_modes = floris.farm.awc_modes
+    awc_amplitudes = floris.farm.awc_amplitudes
+    test_results = np.zeros((n_findex, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_density_cp_cts,
+    farm_cts = thrust_coefficient(
         velocities,
+        air_density,
         yaw_angles,
         tilt_angles,
-        ref_tilt_cp_cts,
-        floris.farm.pPs,
-        floris.farm.pTs,
-        floris.farm.turbine_fTilts,
+        power_setpoints,
+        awc_modes,
+        awc_amplitudes,
+        floris.farm.turbine_thrust_coefficient_functions,
+        floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        ref_tilt_cp_cts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_fTilts,
-        floris.farm.correct_cp_ct_for_tilt,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        floris.farm.ref_density_cp_cts,
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
+        velocities,
+        air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        power_setpoints,
+        awc_modes,
+        awc_amplitudes,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        air_density,
         yaw_angles,
         tilt_angles,
-        ref_tilt_cp_cts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_fTilts,
+        power_setpoints,
+        awc_modes,
+        awc_amplitudes,
+        floris.farm.turbine_axial_induction_functions,
+        floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
-    for i in range(n_wind_directions):
-        for j in range(n_wind_speeds):
-            for k in range(n_turbines):
-                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
-                test_results[i, j, k, 1] = farm_cts[i, j, k]
-                test_results[i, j, k, 2] = farm_powers[i, j, k]
-                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
+    for i in range(n_findex):
+        for j in range(n_turbines):
+            test_results[i, j, 0] = farm_avg_velocities[i, j]
+            test_results[i, j, 1] = farm_cts[i, j]
+            test_results[i, j, 2] = farm_powers[i, j]
+            test_results[i, j, 3] = farm_axial_inductions[i, j]
 
     if DEBUG:
         print_test_values(
@@ -179,9 +207,10 @@ def test_regression_tandem(sample_inputs_fixture):
             farm_cts,
             farm_powers,
             farm_axial_inductions,
+            max_findex_print=4
         )
 
-    assert_results_arrays(test_results[0], baseline)
+    assert_results_arrays(test_results[0:4], baseline)
 
 
 def test_regression_rotation(sample_inputs_fixture):
@@ -223,38 +252,39 @@ def test_regression_rotation(sample_inputs_fixture):
     """
     TURBINE_DIAMETER = 126.0
 
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
-    sample_inputs_fixture.floris["farm"]["layout_x"] = [
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["farm"]["layout_x"] = [
         0.0,
         0.0,
         5 * TURBINE_DIAMETER,
         5 * TURBINE_DIAMETER,
     ]
-    sample_inputs_fixture.floris["farm"]["layout_y"] = [
+    sample_inputs_fixture.core["farm"]["layout_y"] = [
         0.0,
         5 * TURBINE_DIAMETER,
         0.0,
         5 * TURBINE_DIAMETER
     ]
-    sample_inputs_fixture.floris["flow_field"]["wind_directions"] = [270.0, 360.0]
-    sample_inputs_fixture.floris["flow_field"]["wind_speeds"] = [8.0]
+    sample_inputs_fixture.core["flow_field"]["wind_directions"] = [270.0, 360.0]
+    sample_inputs_fixture.core["flow_field"]["wind_speeds"] = [8.0, 8.0]
+    sample_inputs_fixture.core["flow_field"]["turbulence_intensities"] = [0.1, 0.1]
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     farm_avg_velocities = average_velocity(floris.flow_field.u)
 
-    t0_270 = farm_avg_velocities[0, 0, 0]  # upstream
-    t1_270 = farm_avg_velocities[0, 0, 1]  # upstream
-    t2_270 = farm_avg_velocities[0, 0, 2]  # waked
-    t3_270 = farm_avg_velocities[0, 0, 3]  # waked
+    t0_270 = farm_avg_velocities[0, 0]  # upstream
+    t1_270 = farm_avg_velocities[0, 1]  # upstream
+    t2_270 = farm_avg_velocities[0, 2]  # waked
+    t3_270 = farm_avg_velocities[0, 3]  # waked
 
-    t0_360 = farm_avg_velocities[1, 0, 0]  # waked
-    t1_360 = farm_avg_velocities[1, 0, 1]  # upstream
-    t2_360 = farm_avg_velocities[1, 0, 2]  # waked
-    t3_360 = farm_avg_velocities[1, 0, 3]  # upstream
+    t0_360 = farm_avg_velocities[1, 0]  # waked
+    t1_360 = farm_avg_velocities[1, 1]  # upstream
+    t2_360 = farm_avg_velocities[1, 2]  # waked
+    t3_360 = farm_avg_velocities[1, 3]  # upstream
 
     assert np.allclose(t0_270, t1_360)
     assert np.allclose(t1_270, t3_360)
@@ -266,80 +296,80 @@ def test_regression_yaw(sample_inputs_fixture):
     """
     Tandem turbines with the upstream turbine yawed
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
 
-    yaw_angles = np.zeros((N_WIND_DIRECTIONS, N_WIND_SPEEDS, N_TURBINES))
-    yaw_angles[:,:,0] = 5.0
+    yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
+    yaw_angles[:,0] = 5.0
     floris.farm.yaw_angles = yaw_angles
 
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     n_turbines = floris.farm.n_turbines
-    n_wind_speeds = floris.flow_field.n_wind_speeds
-    n_wind_directions = floris.flow_field.n_wind_directions
+    n_findex = floris.flow_field.n_findex
 
     velocities = floris.flow_field.u
+    air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
-    ref_tilt_cp_cts = (
-        np.ones((n_wind_directions, n_wind_speeds, n_turbines))
-        * floris.farm.ref_tilt_cp_cts
-    )
-    test_results = np.zeros((n_wind_directions, n_wind_speeds, n_turbines, 4))
+    power_setpoints = floris.farm.power_setpoints
+    awc_modes = floris.farm.awc_modes
+    awc_amplitudes = floris.farm.awc_amplitudes
+    test_results = np.zeros((n_findex, n_turbines, 4))
 
     farm_avg_velocities = average_velocity(
         velocities,
     )
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_density_cp_cts,
+    farm_cts = thrust_coefficient(
         velocities,
+        air_density,
         yaw_angles,
         tilt_angles,
-        ref_tilt_cp_cts,
-        floris.farm.pPs,
-        floris.farm.pTs,
-        floris.farm.turbine_fTilts,
+        power_setpoints,
+        awc_modes,
+        awc_amplitudes,
+        floris.farm.turbine_thrust_coefficient_functions,
+        floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
-    )
-    farm_cts = Ct(
-        velocities,
-        yaw_angles,
-        tilt_angles,
-        ref_tilt_cp_cts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_fTilts,
-        floris.farm.correct_cp_ct_for_tilt,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_powers = power(
-        floris.farm.ref_density_cp_cts,
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
+        velocities,
+        air_density,
+        floris.farm.turbine_power_functions,
+        yaw_angles,
+        tilt_angles,
+        power_setpoints,
+        awc_modes,
+        awc_amplitudes,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        air_density,
         yaw_angles,
         tilt_angles,
-        ref_tilt_cp_cts,
-        floris.farm.turbine_fCts,
-        floris.farm.turbine_fTilts,
+        power_setpoints,
+        awc_modes,
+        awc_amplitudes,
+        floris.farm.turbine_axial_induction_functions,
+        floris.farm.turbine_tilt_interps,
         floris.farm.correct_cp_ct_for_tilt,
         floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
-    for i in range(n_wind_directions):
-        for j in range(n_wind_speeds):
-            for k in range(n_turbines):
-                test_results[i, j, k, 0] = farm_avg_velocities[i, j, k]
-                test_results[i, j, k, 1] = farm_cts[i, j, k]
-                test_results[i, j, k, 2] = farm_powers[i, j, k]
-                test_results[i, j, k, 3] = farm_axial_inductions[i, j, k]
+    for i in range(n_findex):
+        for j in range(n_turbines):
+            test_results[i, j, 0] = farm_avg_velocities[i, j]
+            test_results[i, j, 1] = farm_cts[i, j]
+            test_results[i, j, 2] = farm_powers[i, j]
+            test_results[i, j, 3] = farm_axial_inductions[i, j]
 
     if DEBUG:
         print_test_values(
@@ -347,13 +377,19 @@ def test_regression_yaw(sample_inputs_fixture):
             farm_cts,
             farm_powers,
             farm_axial_inductions,
+            max_findex_print=4
         )
 
-    assert_results_arrays(test_results[0], yawed_baseline)
+    assert_results_arrays(test_results[0:4], yawed_baseline)
 
 
 def test_regression_small_grid_rotation(sample_inputs_fixture):
     """
+    This utilizes a 5x5 wind farm with the layout in a regular grid oriented along the cardinal
+    directions. The wind direction in this test is from 285 degrees which is slightly north of
+    west. The objective of this test is to create a case with a very slight rotation of the wind
+    farm to target the rotation and masking routines.
+
     Where wake models are masked based on the x-location of a turbine, numerical precision
     can cause masking to fail unexpectedly. For example, in the configuration here one of
     the turbines has these delta x values;
@@ -368,8 +404,8 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     turbine to be affected by its own wake. This test requires that at least in this particular
     configuration the masking correctly filters grid points.
     """
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
     X, Y = np.meshgrid(
         6.0 * 126.0 * np.arange(0, 5, 1),
         6.0 * 126.0 * np.arange(0, 5, 1)
@@ -377,43 +413,83 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     X = X.flatten()
     Y = Y.flatten()
 
-    sample_inputs_fixture.floris["farm"]["layout_x"] = X
-    sample_inputs_fixture.floris["farm"]["layout_y"] = Y
+    sample_inputs_fixture.core["farm"]["layout_x"] = X
+    sample_inputs_fixture.core["farm"]["layout_y"] = Y
 
-    floris = Floris.from_dict(sample_inputs_fixture.floris)
+    floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
 
     # farm_avg_velocities = average_velocity(floris.flow_field.u)
     velocities = floris.flow_field.u
+    air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
-    ref_tilt_cp_cts = np.ones((1, 1, len(X))) * floris.farm.ref_tilt_cp_cts
+    power_setpoints = floris.farm.power_setpoints
+    awc_modes = floris.farm.awc_modes
+    awc_amplitudes = floris.farm.awc_amplitudes
 
-    farm_eff_velocities = rotor_effective_velocity(
-        floris.flow_field.air_density,
-        floris.farm.ref_density_cp_cts,
+    # farm_eff_velocities = rotor_effective_velocity(
+    #     floris.flow_field.air_density,
+    #     floris.farm.ref_air_densities,
+    #     velocities,
+    #     yaw_angles,
+    #     tilt_angles,
+    #     floris.farm.ref_tilts,
+    #     floris.farm.pPs,
+    #     floris.farm.pTs,
+    #     floris.farm.turbine_tilt_interps,
+    #     floris.farm.correct_cp_ct_for_tilt,
+    #     floris.farm.turbine_type_map,
+    # )
+    farm_powers = power(
         velocities,
+        air_density,
+        floris.farm.turbine_power_functions,
         yaw_angles,
         tilt_angles,
-        ref_tilt_cp_cts,
-        floris.farm.pPs,
-        floris.farm.pTs,
-        floris.farm.turbine_fTilts,
-        floris.farm.correct_cp_ct_for_tilt,
+        power_setpoints,
+        awc_modes,
+        awc_amplitudes,
+        floris.farm.turbine_tilt_interps,
         floris.farm.turbine_type_map,
-    )
-    farm_powers = power(
-        floris.farm.ref_density_cp_cts,
-        farm_eff_velocities,
-        floris.farm.turbine_power_interps,
-        floris.farm.turbine_type_map,
+        floris.farm.turbine_power_thrust_tables,
     )
 
     # A "column" is oriented parallel to the wind direction
     # Columns 1 - 4 should have the same power profile
     # Column 5 is completely unwaked in this model
-    assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,5:10])
-    assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,10:15])
-    assert np.allclose(farm_powers[2,0,0:5], farm_powers[2,0,15:20])
-    assert np.allclose(farm_powers[2,0,20], farm_powers[2,0,20:25])
+    assert np.allclose(farm_powers[8,0:5], farm_powers[8,5:10])
+    assert np.allclose(farm_powers[8,0:5], farm_powers[8,10:15])
+    assert np.allclose(farm_powers[8,0:5], farm_powers[8,15:20])
+    assert np.allclose(farm_powers[8,20], farm_powers[8,20:25])
+
+
+def test_full_flow_solver(sample_inputs_fixture):
+    """
+    Full flow solver test with the flow field planar grid.
+    This requires one wind condition, and the grid is deliberately coarse to allow for
+    visually comparing results, as needed.
+    The u-component of velocity is compared, and the array has the shape
+    (n_findex, n_turbines, n grid points in x, n grid points in y, 3 grid points in z).
+    """
+
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.core["solver"] = {
+        "type": "flow_field_planar_grid",
+        "normal_vector": "z",
+        "planar_coordinate": sample_inputs_fixture.core["farm"]["turbine_type"][0]["hub_height"],
+        "flow_field_grid_points": [5, 5],
+        "flow_field_bounds": [None, None],
+    }
+    sample_inputs_fixture.core["flow_field"]["wind_directions"] = [270.0]
+    sample_inputs_fixture.core["flow_field"]["wind_speeds"] = [8.0]
+    sample_inputs_fixture.core["flow_field"]["turbulence_intensities"] = [0.1]
+
+    floris = Core.from_dict(sample_inputs_fixture.core)
+    floris.solve_for_viz()
+
+    velocities = floris.flow_field.u_sorted
+
+    assert_results_arrays(velocities, full_flow_baseline)

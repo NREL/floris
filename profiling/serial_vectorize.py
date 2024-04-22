@@ -11,7 +11,7 @@ from floris.simulation import Floris
 
 def time_vec(input_dict):
     start = time.time()
-    floris = Floris(input_dict=input_dict.floris)
+    floris = Floris(input_dict=input_dict.core)
     end = time.time()
     init_time = end - start
 
@@ -29,11 +29,11 @@ def time_serial(input_dict, wd, ws):
 
     for i, (d, s) in enumerate(zip(wd, ws)):
 
-        input_dict.floris["flow_field"]["wind_directions"] = [d]
-        input_dict.floris["flow_field"]["wind_speeds"] = [s]
+        input_dict.core["flow_field"]["wind_directions"] = [d]
+        input_dict.core["flow_field"]["wind_speeds"] = [s]
 
         start = time.time()
-        floris = Floris(input_dict=input_dict.floris)
+        floris = Floris(input_dict=input_dict.core)
         end = time.time()
         init_times[i] = end - start
 
@@ -48,9 +48,9 @@ if __name__=="__main__":
     plt.figure()
 
     sample_inputs = SampleInputs()
-    sample_inputs.floris["flow_field"]["wind_directions"] = [270.0]
-    sample_inputs.floris["flow_field"]["wind_speeds"] = [8.0]
-    TURBINE_DIAMETER = sample_inputs.floris["turbine"]["rotor_diameter"]
+    sample_inputs.core["flow_field"]["wind_directions"] = [270.0]
+    sample_inputs.core["flow_field"]["wind_speeds"] = [8.0]
+    TURBINE_DIAMETER = sample_inputs.core["turbine"]["rotor_diameter"]
 
     N = 5
     simulation_size = np.arange(N)
@@ -61,8 +61,8 @@ if __name__=="__main__":
         vectorize_scaling_inputs = copy.deepcopy(sample_inputs)
 
         factor = (i+1) * 50
-        vectorize_scaling_inputs.floris["flow_field"]["wind_directions"] = [270.0]
-        vectorize_scaling_inputs.floris["flow_field"]["wind_speeds"] = factor * [8.0]
+        vectorize_scaling_inputs.core["flow_field"]["wind_directions"] = [270.0]
+        vectorize_scaling_inputs.core["flow_field"]["wind_speeds"] = factor * [8.0]
 
         vectorize_init[i], vectorize_calc[i] = time_vec(copy.deepcopy(vectorize_scaling_inputs))
         print("vectorize", i, vectorize_calc[i])
@@ -90,16 +90,16 @@ if __name__=="__main__":
 
     # More than 1 turbine
     n_turbines = 10
-    sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(n_turbines)]
-    sample_inputs.floris["farm"]["layout_y"] = n_turbines * [0.0]
+    sample_inputs.core["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * j for j in range(n_turbines)]
+    sample_inputs.core["farm"]["layout_y"] = n_turbines * [0.0]
 
     vectorize_init, vectorize_calc = np.zeros(N), np.zeros(N)
     for i in range(N):
         vectorize_scaling_inputs = copy.deepcopy(sample_inputs)
 
         factor = (i+1) * 50
-        vectorize_scaling_inputs.floris["flow_field"]["wind_speeds"] = factor * [8.0]
-        vectorize_scaling_inputs.floris["flow_field"]["wind_directions"] = [270.0]
+        vectorize_scaling_inputs.core["flow_field"]["wind_speeds"] = factor * [8.0]
+        vectorize_scaling_inputs.core["flow_field"]["wind_directions"] = [270.0]
 
         vectorize_init[i], vectorize_calc[i] = time_vec(copy.deepcopy(vectorize_scaling_inputs))
         print("vectorize", i, vectorize_calc[i])
