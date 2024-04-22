@@ -2,15 +2,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import gamma
 
-from floris.tools import FlorisInterface
-from floris.tools.optimization.layout_optimization.layout_optimization_random_search import (
+from floris import FlorisModel, WindRose
+from floris.optimization.layout_optimization.layout_optimization_random_search import (
     LayoutOptimizationRandomSearch,
 )
 
 
 if __name__ == '__main__':
     # Set up FLORIS
-    fi = FlorisInterface('inputs/gch.yaml')
+    fmodel = FlorisModel('inputs/gch.yaml')
 
 
     # Setup 72 wind directions with a random wind speed and frequency distribution
@@ -27,7 +27,14 @@ if __name__ == '__main__':
         .reshape( ( len(wind_directions), len(wind_speeds) ) )
     )
     freq = freq / freq.sum()
-    fi.reinitialize(wind_directions=wind_directions, wind_speeds=wind_speeds)
+    fmodel.set(
+        wind_data=WindRose(
+            wind_directions=wind_directions,
+            wind_speeds=wind_speeds,
+            freq_table=freq,
+            ti_table=0.06
+        )
+    )
 
     # Set the boundaries
     # The boundaries for the turbines, specified as vertices
@@ -37,7 +44,7 @@ if __name__ == '__main__':
     D = 126.0 # rotor diameter for the NREL 5MW
     layout_x = [0, 0, 6 * D, 6 * D]
     layout_y = [0, 4 * D, 0, 4 * D]
-    fi.reinitialize(layout_x=layout_x, layout_y=layout_y)
+    fmodel.set(layout_x=layout_x, layout_y=layout_y)
 
     # Perform the optimization
     distance_pmf = None
@@ -46,9 +53,8 @@ if __name__ == '__main__':
     #distance_pmf = {"d": np.linspace(100, 1000, 91), "p": p}
     
     layout_opt = LayoutOptimizationRandomSearch(
-        fi,
+        fmodel,
         boundaries,
-        freq=freq,
         min_dist_D=5.,
         seconds_per_iteration=10,
         total_optimization_seconds=60.,

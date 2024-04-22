@@ -32,20 +32,20 @@ import numpy as np
 from scipy.spatial.distance import cdist, pdist
 from shapely.geometry import Point, Polygon
 
-from floris.tools.uncertainty_interface import FlorisInterface
+from floris import FlorisModel
 
 from .layout_optimization_base import LayoutOptimization
 
-from floris.tools.optimization.yaw_optimization.yaw_optimizer_geometric import (
+from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
     YawOptimizationGeometric,
 )
 
 def _load_local_floris_object(
-    fi_dict,
+    fmodel_dict,
 ):
     # Load local FLORIS object
-    fi = FlorisInterface(fi_dict)
-    return fi
+    fmodel = FlorisModel(fmodel_dict)
+    return fmodel
 
 def test_min_dist(layout_x, layout_y, min_dist):
     coords = np.array([layout_x,layout_y]).T
@@ -56,13 +56,15 @@ def test_point_in_bounds(test_x, test_y, poly_outer):
     return poly_outer.contains(Point(test_x, test_y))
 
 # Return in MW
-def _get_aep(layout_x, layout_y, fi, freq, yaw_angles=None):
-    fi.reinitialize(
-        layout_x = layout_x,
-        layout_y = layout_y
+def _get_aep(layout_x, layout_y, fmodel, yaw_angles=None):
+    fmodel.set(
+        layout_x=layout_x,
+        layout_y=layout_y,
+        yaw_angles=yaw_angles
     )
+    fmodel.run()
 
-    return fi.get_farm_AEP(freq, yaw_angles=yaw_angles)#/1E6
+    return fmodel.get_farm_AEP()#/1E6
 
 def _gen_dist_based_init(
     N, # Number of turbins to place
@@ -122,10 +124,9 @@ def _gen_dist_based_init(
 class LayoutOptimizationRandomSearch(LayoutOptimization):
     def __init__(
         self,
-        fi,
+        fmodel,
         boundaries,
         min_dist=None,
-        freq=None,
         min_dist_D=None,
         distance_pmf=None,
         n_individuals=4,
@@ -143,23 +144,19 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         _summary_
 
         Args:
-            fi (_type_): _description_
+            fmodel (_type_): _description_
             boundaries (iterable(float, float)): Pairs of x- and y-coordinates
                 that represent the boundary's vertices (m).
             min_dist (float, optional): The minimum distance to be maintained
                 between turbines during the optimization (m). If not specified,
                 initializes to 2 rotor diameters. Defaults to None.
-            freq (np.array): An array of the frequencies of occurance
-                correponding to each pair of wind direction and wind speed
-                values. If None, equal weight is given to each pair of wind conditions
-                Defaults to None.
             min_dist_D (float, optional): The minimum distance to be maintained
                 between turbines during the optimization, specified as a multiple
                 of the rotor diameter.
             distance_pmf (dict, optional): Probability mass function describing the
                 length of steps in the random search. Specified as a dictionary with 
                 keys "d" (array of step distances, specified in meters) and "p" 
-                (array of probability of occurence, should sum to 1). Defaults to 
+                (array of probability of occurrence, should sum to 1). Defaults to 
                 uniform probability between 0.5D and 2D, with some extra mass
                 to encourage large changes. 
             n_individuals (int, optional): The number of individuals to use in the
@@ -174,7 +171,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             max_workers (int): Number of parallel workers, typically equal to the number of cores
                 you have on your system or HPC.  Defaults to None, which will use all
                 available cores.
-            grid_step_size (float): The courseness of the grid used to generate the initial layout.
+            grid_step_size (float): The coarseness of the grid used to generate the initial layout.
                 Defaults to 100.
             relegation_number (int): The number of the lowest performing individuals to be replaced
                 with new individuals generated from the best performing individual.  Must
@@ -227,8 +224,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.relegation_number = relegation_number
 
         # Store the rotor diameter and number of turbines
-        self.D = fi.floris.farm.rotor_diameters_sorted[0][0][0]
-        self.N_turbines = fi.floris.farm.n_turbines
+        self.D = fmodel.core.farm.rotor_diameters_sorted[0][0]
+        # TODO: check that the rotor diameter is the same for all turbines
+        self.N_turbines = fmodel.n_turbines
 
         # Make sure not both min_dist and min_dist_D are defined
         if min_dist is not None and min_dist_D is not None:
@@ -238,8 +236,12 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         if min_dist_D is not None:
             min_dist = min_dist_D * self.D
 
-        super().__init__(fi, boundaries, min_dist=min_dist, freq=freq,
-            enable_geometric_yaw=enable_geometric_yaw)
+        super().__init__(
+            fmodel,
+            boundaries,
+            min_dist=min_dist,
+            enable_geometric_yaw=enable_geometric_yaw
+        )
 
         # Save min_dist_D
         self.min_dist_D = self.min_dist / self.D
@@ -247,8 +249,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         # Process and save the step distribution
         self._process_dist_pmf(distance_pmf)
 
-        # Store the fi_dict
-        self.fi_dict = self.fi.floris.as_dict()
+        # Store the Core dictionary
+        self.fmodel_dict = self.fmodel.core.as_dict()
 
         # Save the grid step size
         self.grid_step_size = grid_step_size
@@ -257,8 +259,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.n_individuals = n_individuals
 
         # Store the initial locations
-        self.x_initial = self.fi.layout_x
-        self.y_initial = self.fi.layout_y
+        self.x_initial = self.fmodel.layout_x
+        self.y_initial = self.fmodel.layout_y
 
         # Store the total optimization seconds
         self.total_optimization_seconds = total_optimization_seconds
@@ -272,8 +274,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.aep_initial = _get_aep(
             self.x_initial,
             self.y_initial,
-            self.fi,
-            self.freq,
+            self.fmodel,
             self._get_geoyaw_angles()
         )
         #del self.x # Deleting to avoid confusion, since not updated
@@ -443,8 +444,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             self.aep_candidate[i] = _get_aep(
                 self.x_candidate[i, :],
                 self.y_candidate[i, :],
-                self.fi,
-                self.freq,
+                self.fmodel,
                 self._get_geoyaw_angles()
             )
 
@@ -452,8 +452,6 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         print(f"  Time to generate intial layouts: {t2-t1:.3f} s")
         print(len(out))
         print(out)
-
-
 
     def _get_initial_and_final_locs(self):
         x_initial = self.x_initial
@@ -500,8 +498,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                  self.aep_candidate[i],
                  self.x_candidate[i, :],
                  self.y_candidate[i, :],
-                 self.fi_dict,
-                 self.freq,
+                 self.fmodel_dict,
                  self.min_dist,
                  self._boundary_polygon,
                  self.distance_pmf,
@@ -565,8 +562,7 @@ def _single_individual_opt(
     initial_aep,
     layout_x,
     layout_y,
-    fi_dict,
-    freq,
+    fmodel_dict,
     min_dist,
     poly_outer,
     dist_pmf,
@@ -582,8 +578,8 @@ def _single_individual_opt(
 
     num_aep_calls = 0
 
-    # Get the fi
-    fi_ = _load_local_floris_object(fi_dict)
+    # Get the fmodel
+    fmodel_ = _load_local_floris_object(fmodel_dict)
 
     # Initialize local variables
     num_turbines = len(layout_x)
@@ -593,7 +589,7 @@ def _single_individual_opt(
     # Establish geometric yaw optimizer, if desired
     if enable_geometric_yaw:
         yaw_opt = YawOptimizationGeometric(
-            fi_,
+            fmodel_,
             minimum_yaw_angle=-30.0,
             maximum_yaw_angle=30.0,
             exploit_layout_symmetry=False
@@ -640,12 +636,12 @@ def _single_individual_opt(
 
             # Does it improve AEP?
             if enable_geometric_yaw: # Select appropriate yaw angles
-                yaw_opt.fi_subset.reinitialize(layout_x=layout_x, layout_y=layout_y)
+                yaw_opt.fmodel_subset.reinitialize(layout_x=layout_x, layout_y=layout_y)
                 df_opt = yaw_opt.optimize()
                 yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
 
             num_aep_calls += 1
-            test_aep = _get_aep(layout_x, layout_y, fi_, freq, yaw_angles) 
+            test_aep = _get_aep(layout_x, layout_y, fmodel_, yaw_angles) 
             # TODO: Geoyaw angles not available here!
 
             if test_aep > current_aep:
