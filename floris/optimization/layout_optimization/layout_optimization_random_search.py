@@ -42,9 +42,11 @@ from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
 
 def _load_local_floris_object(
     fmodel_dict,
+    wind_data=None,
 ):
     # Load local FLORIS object
     fmodel = FlorisModel(fmodel_dict)
+    fmodel.set(wind_data=wind_data)
     return fmodel
 
 def test_min_dist(layout_x, layout_y, min_dist):
@@ -499,6 +501,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                  self.x_candidate[i, :],
                  self.y_candidate[i, :],
                  self.fmodel_dict,
+                 self.fmodel.wind_data,
                  self.min_dist,
                  self._boundary_polygon,
                  self.distance_pmf,
@@ -563,6 +566,7 @@ def _single_individual_opt(
     layout_x,
     layout_y,
     fmodel_dict,
+    wind_data,
     min_dist,
     poly_outer,
     dist_pmf,
@@ -579,7 +583,7 @@ def _single_individual_opt(
     num_aep_calls = 0
 
     # Get the fmodel
-    fmodel_ = _load_local_floris_object(fmodel_dict)
+    fmodel_ = _load_local_floris_object(fmodel_dict, wind_data)
 
     # Initialize local variables
     num_turbines = len(layout_x)
