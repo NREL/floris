@@ -616,10 +616,19 @@ class PeakShavingTurbine():
             average_method=average_method,
             cubature_weights=cubature_weights
         )
-        thrust_fractions = peak_shaving_thrust_coefficients / base_thrust_coefficients
+
+        # Compute equivalent axial inductions
+        base_ais = (1 - np.sqrt(1 - base_thrust_coefficients))/2
+        peak_shaving_ais = (1 - np.sqrt(1 - peak_shaving_thrust_coefficients))/2
+
+        # Power proportion
+        power_fractions = (
+            (peak_shaving_thrust_coefficients * (1-peak_shaving_ais))
+            / (base_thrust_coefficients * (1-base_ais))
+        )
 
         # Apply fraction to power and return
-        powers = thrust_fractions * base_powers
+        powers = power_fractions * base_powers
 
         return powers
 
