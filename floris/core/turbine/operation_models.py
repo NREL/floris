@@ -642,21 +642,24 @@ class PeakShavingTurbine():
             np.array(power_thrust_table["wind_speed"])**2
             * np.array(power_thrust_table["thrust_coefficient"])
         )
+        rotor_average_velocities = average_velocity(
+            velocities=velocities,
+            method=average_method,
+            cubature_weights=cubature_weights,
+        )
+        # Replace zeros with small values to avoid division by zero
+        rotor_average_velocities = np.maximum(rotor_average_velocities, 0.01)
         max_allowable_thrust_coefficient = (
             (1-power_thrust_table["peak_shaving_fraction"])
             * peak_normal_thrust_prime
-            / average_velocity(
-                velocities=velocities,
-                method=average_method,
-                cubature_weights=cubature_weights,
-            )**2
+            / rotor_average_velocities**2
         )
 
         # Apply TI mask
         max_allowable_thrust_coefficient = np.where(
             (
                 turbulence_intensities.mean(axis=(2,3))
-                > power_thrust_table["peak_shaving_TI_threshold"]
+                >= power_thrust_table["peak_shaving_TI_threshold"]
             ),
             max_allowable_thrust_coefficient,
             base_thrust_coefficients
