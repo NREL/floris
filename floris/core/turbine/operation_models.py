@@ -581,3 +581,106 @@ class AWCTurbine(BaseOperationModel):
         )
 
         return (1 - np.sqrt(1 - thrust_coefficient))/2
+    
+@define
+class PeakShavingTurbine():
+
+    def power(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        turbulence_intensities: NDArrayFloat,
+        air_density: float,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        base_powers = SimpleTurbine.power(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            air_density=air_density,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+        
+        # Get fraction by thrust
+        base_thrust_coefficients = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+        peak_shaving_thrust_coefficients = PeakShavingTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            turbulence_intensities=turbulence_intensities,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+        thrust_fractions = peak_shaving_thrust_coefficients / base_thrust_coefficients
+
+        # Apply fraction to power and return
+        powers = thrust_fractions * base_powers
+
+        return powers
+
+    def thrust_coefficient(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        turbulence_intensities: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        base_thrust_coefficients = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            average_method=average_method,
+            cubature_weights=cubature_weights
+        )
+
+        peak_normal_thrust_prime = np.max(
+            np.array(power_thrust_table["wind_speed"])**2
+            * np.array(power_thrust_table["thrust_coefficient"])
+        )
+        max_allowable_thrust_coefficient = (
+            (1-power_thrust_table["peak_shaving_fraction"])
+            * peak_normal_thrust_prime
+            / average_velocity(
+                velocities=velocities,
+                method=average_method,
+                cubature_weights=cubature_weights,
+            )**2
+        )
+
+        # Apply TI mask
+        max_allowable_thrust_coefficient = np.where(
+            (
+                turbulence_intensities.mean(axis=(2,3))
+                > power_thrust_table["peak_shaving_TI_threshold"]
+            ),
+            max_allowable_thrust_coefficient,
+            base_thrust_coefficients
+        )
+
+        thrust_coefficient = np.minimum(base_thrust_coefficients, max_allowable_thrust_coefficient)
+
+        return thrust_coefficient
+
+    def axial_induction(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        turbulence_intensities: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+
+        thrust_coefficient = PeakShavingTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            turbulence_intensities=turbulence_intensities,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        return (1 - np.sqrt(1 - thrust_coefficient))/2
