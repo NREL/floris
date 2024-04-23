@@ -581,7 +581,7 @@ class AWCTurbine(BaseOperationModel):
         )
 
         return (1 - np.sqrt(1 - thrust_coefficient))/2
-    
+
 @define
 class PeakShavingTurbine():
 
@@ -601,7 +601,7 @@ class PeakShavingTurbine():
             average_method=average_method,
             cubature_weights=cubature_weights
         )
-        
+
         # Get fraction by thrust
         base_thrust_coefficients = SimpleTurbine.thrust_coefficient(
             power_thrust_table=power_thrust_table,

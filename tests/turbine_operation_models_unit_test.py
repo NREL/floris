@@ -575,7 +575,7 @@ def test_PeakShavingTurbine():
     turbulence_intensity_low = 0.05
     turbulence_intensity_high = 0.2
     turbine_data = SampleInputs().turbine
-    
+
 
     # Baseline
     base_Ct = SimpleTurbine.thrust_coefficient(
