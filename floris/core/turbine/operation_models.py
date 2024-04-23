@@ -658,7 +658,9 @@ class PeakShavingTurbine():
         # Apply TI mask
         max_allowable_thrust_coefficient = np.where(
             (
-                turbulence_intensities.mean(axis=(2,3))
+                turbulence_intensities.mean(
+                    axis=tuple([2 + i for i in range(turbulence_intensities.ndim - 2)])
+                )
                 >= power_thrust_table["peak_shaving_TI_threshold"]
             ),
             max_allowable_thrust_coefficient,
