@@ -142,6 +142,7 @@ def test_regression_tandem(sample_inputs_fixture):
     n_findex = floris.flow_field.n_findex
 
     velocities = floris.flow_field.u
+    turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
@@ -155,6 +156,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_cts = thrust_coefficient(
         velocities,
+        turbulence_intensities,
         air_density,
         yaw_angles,
         tilt_angles,
@@ -169,6 +171,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_powers = power(
         velocities,
+        turbulence_intensities,
         air_density,
         floris.farm.turbine_power_functions,
         yaw_angles,
@@ -182,6 +185,7 @@ def test_regression_tandem(sample_inputs_fixture):
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        turbulence_intensities,
         air_density,
         yaw_angles,
         tilt_angles,
@@ -312,6 +316,7 @@ def test_regression_yaw(sample_inputs_fixture):
     n_findex = floris.flow_field.n_findex
 
     velocities = floris.flow_field.u
+    turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
@@ -325,6 +330,7 @@ def test_regression_yaw(sample_inputs_fixture):
     )
     farm_cts = thrust_coefficient(
         velocities,
+        turbulence_intensities,
         air_density,
         yaw_angles,
         tilt_angles,
@@ -339,6 +345,7 @@ def test_regression_yaw(sample_inputs_fixture):
     )
     farm_powers = power(
         velocities,
+        turbulence_intensities,
         air_density,
         floris.farm.turbine_power_functions,
         yaw_angles,
@@ -352,6 +359,7 @@ def test_regression_yaw(sample_inputs_fixture):
     )
     farm_axial_inductions = axial_induction(
         velocities,
+        turbulence_intensities,
         air_density,
         yaw_angles,
         tilt_angles,
@@ -422,6 +430,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
 
     # farm_avg_velocities = average_velocity(floris.flow_field.u)
     velocities = floris.flow_field.u
+    turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
     tilt_angles = floris.farm.tilt_angles
@@ -444,6 +453,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     # )
     farm_powers = power(
         velocities,
+        turbulence_intensities,
         air_density,
         floris.farm.turbine_power_functions,
         yaw_angles,

@@ -492,6 +492,7 @@ class FlorisModel(LoggingManager):
 
         turbine_powers = power(
             velocities=self.core.flow_field.u,
+            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
             power_functions=self.core.farm.turbine_power_functions,
             yaw_angles=self.core.farm.yaw_angles,
@@ -900,6 +901,7 @@ class FlorisModel(LoggingManager):
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.core.flow_field.u,
+            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
@@ -920,6 +922,7 @@ class FlorisModel(LoggingManager):
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
             velocities=self.core.flow_field.u,
+            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,

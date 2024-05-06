@@ -5,6 +5,7 @@ from floris.core.turbine.operation_models import (
     AWCTurbine,
     CosineLossTurbine,
     MixedOperationTurbine,
+    PeakShavingTurbine,
     POWER_SETPOINT_DEFAULT,
     SimpleDeratingTurbine,
     SimpleTurbine,
@@ -34,6 +35,10 @@ def test_submodel_attributes():
     assert hasattr(AWCTurbine, "power")
     assert hasattr(AWCTurbine, "thrust_coefficient")
     assert hasattr(AWCTurbine, "axial_induction")
+
+    assert hasattr(PeakShavingTurbine, "power")
+    assert hasattr(PeakShavingTurbine, "thrust_coefficient")
+    assert hasattr(PeakShavingTurbine, "axial_induction")
 
 def test_SimpleTurbine():
 
@@ -562,3 +567,95 @@ def test_AWCTurbine():
     )
     assert test_ai < base_ai
     assert test_ai > 0
+
+def test_PeakShavingTurbine():
+
+    n_turbines = 1
+    wind_speed = 10.0
+    turbulence_intensity_low = 0.05
+    turbulence_intensity_high = 0.2
+    turbine_data = SampleInputs().turbine
+
+
+    # Baseline
+    base_Ct = SimpleTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+    base_power = SimpleTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+    )
+    base_ai = SimpleTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+    )
+
+    # Test no change to Ct, power, or ai when below TI threshold
+    test_Ct = PeakShavingTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        turbulence_intensities=turbulence_intensity_low * np.ones((1, n_turbines, 3, 3)),
+    )
+    assert np.allclose(test_Ct, base_Ct)
+
+    test_power = PeakShavingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+        turbulence_intensities=turbulence_intensity_low * np.ones((1, n_turbines, 3, 3)),
+    )
+    assert np.allclose(test_power, base_power)
+
+    test_ai = PeakShavingTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        turbulence_intensities=turbulence_intensity_low * np.ones((1, n_turbines, 3, 3)),
+    )
+    assert np.allclose(test_ai, base_ai)
+
+    # Test that Ct, power, and ai all decrease when above TI threshold
+    test_Ct = PeakShavingTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        turbulence_intensities=turbulence_intensity_high * np.ones((1, n_turbines, 3, 3)),
+    )
+    assert test_Ct < base_Ct
+    assert test_Ct > 0
+
+    test_power = PeakShavingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        turbulence_intensities=turbulence_intensity_high * np.ones((1, n_turbines, 3, 3)),
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+    )
+
+    assert test_power < base_power
+    assert test_power > 0
+
+    test_ai = PeakShavingTurbine.axial_induction(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        turbulence_intensities=turbulence_intensity_high * np.ones((1, n_turbines, 3, 3)),
+    )
+    assert test_ai < base_ai
+    assert test_ai > 0
+
+    # Test that, for an array of wind speeds, only wind speeds near rated are affected
+    wind_speeds = np.linspace(1, 20, 10)
+    turbulence_intensities = turbulence_intensity_high * np.ones_like(wind_speeds)
+    base_power = SimpleTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds[:, None, None, None],
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+    )
+    test_power = PeakShavingTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds[:, None, None, None],
+        turbulence_intensities=turbulence_intensities[:, None, None, None],
+        air_density=turbine_data["power_thrust_table"]["ref_air_density"],
+    )
+    assert (test_power <= base_power).all()
+    assert test_power[0,0] == base_power[0,0]
+    assert test_power[-1,0] == base_power[-1,0]
