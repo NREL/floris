@@ -12,18 +12,8 @@ def test_NoneWakeTurbulence(sample_inputs_fixture):
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["turbulence_model"] = "none"
-    sample_inputs_fixture.core["farm"]["layout_x"] = [
-        0.0,
-        0.0,
-        600.0,
-        600.0,
-    ]
-    sample_inputs_fixture.core["farm"]["layout_y"] = [
-        0.0,
-        600.0,
-        0.0,
-        600.0,
-    ]
+    sample_inputs_fixture.core["farm"]["layout_x"] = [0.0, 0.0, 600.0, 600.0]
+    sample_inputs_fixture.core["farm"]["layout_y"] = [0.0, 600.0, 0.0, 600.0]
     sample_inputs_fixture.core["flow_field"]["wind_directions"] = [270.0, 360.0]
     sample_inputs_fixture.core["flow_field"]["wind_speeds"] = [8.0, 8.0]
     sample_inputs_fixture.core["flow_field"]["turbulence_intensities"] = turbulence_intensities
