@@ -40,3 +40,9 @@ examples/SLSQP.out
 
 # Log files
 *.log
+
+# Temp files in convert test
+tests/v3_to_v4_convert_test/convert_turbine_v3_to_v4.py
+tests/v3_to_v4_convert_test/convert_floris_input_v3_to_v4.py
+tests/v3_to_v4_convert_test/gch_v4.yaml
+tests/v3_to_v4_convert_test/nrel_5MW_v3_v4.yaml
