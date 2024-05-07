@@ -669,7 +669,7 @@ def test_gen_heterogeneous_inflow_config():
     wind_speeds = 8.0
     turbulence_intensities = 0.06
 
-    heterogeneous_inflow_config_by_wd = {
+    heterogeneous_map_config = {
         "speed_multipliers": np.array(
             [
                 [0.9, 0.9],
@@ -686,7 +686,7 @@ def test_gen_heterogeneous_inflow_config():
         wind_directions,
         wind_speeds,
         turbulence_intensities=turbulence_intensities,
-        heterogeneous_inflow_config_by_wd=heterogeneous_inflow_config_by_wd,
+        heterogeneous_map=heterogeneous_map_config,
     )
 
     (_, _, _, _, _, heterogeneous_inflow_config) = time_series.unpack()
@@ -694,11 +694,58 @@ def test_gen_heterogeneous_inflow_config():
     expected_result = np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.1, 1.2]])
     np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
     np.testing.assert_allclose(
-        heterogeneous_inflow_config["x"], heterogeneous_inflow_config_by_wd["x"]
+        heterogeneous_inflow_config["x"], heterogeneous_inflow_config["x"]
     )
 
+
+def test_heterogeneous_inflow_config_by_wd():
+    # Show that passing the config dict to the old heterogeneous_inflow_config_by_wd input
+    # is equivalent to passing it to the heterogeneous_map input
+
+    wind_directions = np.array([250.0, 260.0])
+    wind_speeds = np.array([8.0])
+
+    heterogeneous_map_config = {
+        "speed_multipliers": np.array(
+            [
+                [0.9, 0.9],
+                [1.0, 1.0],
+                [1.1, 1.2],
+            ]
+        ),
+        "wind_directions": np.array([250, 260, 270]),
+        "x": np.array([0, 1000]),
+        "y": np.array([0, 0]),
+    }
+
+    # Using heterogeneous_map input
+    time_series = WindRose(
+        wind_directions,
+        wind_speeds,
+        ti_table=0.06,
+        heterogeneous_map=heterogeneous_map_config,
+    )
+
+    (_, _, _, _, _, heterogeneous_inflow_config_a) = time_series.unpack()
+
+    # Using heterogeneous_inflow_config_by_wd input
+    time_series = WindRose(
+        wind_directions,
+        wind_speeds,
+        ti_table=0.06,
+        heterogeneous_inflow_config_by_wd=heterogeneous_map_config,
+    )
+
+    (_, _, _, _, _, heterogeneous_inflow_config_b) = time_series.unpack()
+
+    np.testing.assert_allclose(
+        heterogeneous_inflow_config_a["speed_multipliers"],
+        heterogeneous_inflow_config_b["speed_multipliers"],
+    )
+
+
 def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds():
-    heterogeneous_inflow_config_by_wd = {
+    heterogeneous_map_config = {
         "speed_multipliers": np.array(
             [
                 [0.9, 0.9],
@@ -717,7 +764,7 @@ def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds():
         wind_directions = np.array([259.8, 260.2, 260.3, 260.1, 200.0]),
         wind_speeds = np.array([4, 9, 4, 9, 4]),
         turbulence_intensities=0.06,
-        heterogeneous_inflow_config_by_wd=heterogeneous_inflow_config_by_wd,
+        heterogeneous_map=heterogeneous_map_config,
     )
 
     (_, _, _, _, _, heterogeneous_inflow_config) = time_series.unpack()
@@ -726,7 +773,7 @@ def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds():
     np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
 
 def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds_wind_rose():
-    heterogeneous_inflow_config_by_wd = {
+    heterogeneous_map_config = {
         "speed_multipliers": np.array(
             [
                 [0.9, 0.9],
@@ -745,7 +792,7 @@ def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds_wi
         wind_directions = np.array([250.0, 260.]),
         wind_speeds = np.array([9.0]),
         ti_table=0.06,
-        heterogeneous_inflow_config_by_wd=heterogeneous_inflow_config_by_wd,
+        heterogeneous_map=heterogeneous_map_config,
     )
 
     (_, _, _, _, _, heterogeneous_inflow_config) = wind_rose.unpack()
