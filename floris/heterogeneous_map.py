@@ -14,48 +14,48 @@ from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from floris.type_dec import NDArrayFloat
 
 
-class HetMap:
+class HeterogeneousMap:
     """
     Class for handling heterogeneous inflow configurations when defined by wind direction
       and wind speed.
     Args:
-        heterogeneous_inflow_config_by_wd (dict): A dictionary containing the following
-            keys:
-            * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
-            * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
-            * 'speed_multipliers': A 2D NumPy array (size num_wd (or num_ws) x num_points)
-                of speed multipliers.  If neither wind_directions nor wind_speeds are
-                defined, then this should be a single row array
-            * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
-                Optional.
-            * 'wind_speeds': A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.
+        x (NDArrayFloat): A 1D NumPy array (size num_points) of x-coordinates (meters).
+        y (NDArrayFloat): A 1D NumPy array (size num_points) of y-coordinates (meters).
+        speed_multipliers (NDArrayFloat): A 2D NumPy array (size num_wd (or num_ws) x num_points)
+            of speed multipliers.  If neither wind_directions nor wind_speeds are defined, then
+            this should be a single row array
+        wind_directions (NDArrayFloat, optional): A 1D NumPy array (size num_wd) of wind directions
+            (degrees). Optional.
+        wind_speeds (NDArrayFloat, optional): A 1D NumPy array (size num_ws) of wind speeds (m/s).
+            Optional.
+
 
     Notes:
-        * If 'wind_directions' and 'wind_speeds' are both defined, then they must be the same length
+        * If wind_directions and wind_speeds are both defined, then they must be the same length
             and equal the length of the 0th dimension of 'speed_multipliers'.
 
     """
 
     def __init__(
         self,
-        heterogeneous_inflow_config_by_wd: dict,
+        x: NDArrayFloat,
+        y: NDArrayFloat,
+        speed_multipliers: NDArrayFloat,
+        wind_directions: NDArrayFloat = None,
+        wind_speeds: NDArrayFloat = None,
     ):
-        # Check the dictionary contains x, y, and speed_multipliers
-        if not isinstance(heterogeneous_inflow_config_by_wd, dict):
-            raise TypeError("heterogeneous_inflow_config_by_wd must be a dictionary")
-        if "x" not in heterogeneous_inflow_config_by_wd:
-            raise ValueError("heterogeneous_inflow_config_by_wd must contain a key 'x'")
-        if "y" not in heterogeneous_inflow_config_by_wd:
-            raise ValueError("heterogeneous_inflow_config_by_wd must contain a key 'y'")
-        if "speed_multipliers" not in heterogeneous_inflow_config_by_wd:
-            raise ValueError(
-                "heterogeneous_inflow_config_by_wd must contain a key 'speed_multipliers'"
-            )
+        # Check that x, y and speed_multipliers are numpy arrays
+        if not isinstance(x, np.ndarray):
+            raise TypeError("x must be a numpy array")
+        if not isinstance(y, np.ndarray):
+            raise TypeError("y must be a numpy array")
+        if not isinstance(speed_multipliers, np.ndarray):
+            raise TypeError("speed_multipliers must be a numpy array")
 
         # Save the values
-        self.x = np.array(heterogeneous_inflow_config_by_wd["x"])
-        self.y = np.array(heterogeneous_inflow_config_by_wd["y"])
-        self.speed_multipliers = np.array(heterogeneous_inflow_config_by_wd["speed_multipliers"])
+        self.x = x
+        self.y = y
+        self.speed_multipliers = speed_multipliers
 
         # Check that the length of the 1st dimension of speed_multipliers is the
         # same as the length of both x and y
@@ -70,32 +70,39 @@ class HetMap:
                 "Within the heterogeneous_inflow_config_by_wd dictionary"
             )
 
-        # If wind_directions is a defined element of the dictionary, then save it
-        if "wind_directions" in heterogeneous_inflow_config_by_wd:
-            self.wind_directions = np.array(heterogeneous_inflow_config_by_wd["wind_directions"])
+        # If wind_directions is note None, check that it is valid then save it
+        if wind_directions is not None:
+            if not isinstance(wind_directions, np.ndarray):
+                raise TypeError("wind_directions must be a numpy array")
 
             # Check that length of wind_directions is the same as the length of the 0th
             # dimension of speed_multipliers
-            if len(self.wind_directions) != self.speed_multipliers.shape[0]:
+            if len(wind_directions) != self.speed_multipliers.shape[0]:
                 raise ValueError(
                     "The length of wind_directions must equal "
                     "the 0th dimension of speed_multipliers"
                     "Within the heterogeneous_inflow_config_by_wd dictionary"
                 )
+
+            self.wind_directions = wind_directions
         else:
             self.wind_directions = None
 
-        # If wind_speeds is a defined element of the dictionary, then save it
-        if "wind_speeds" in heterogeneous_inflow_config_by_wd:
-            self.wind_speeds = np.array(heterogeneous_inflow_config_by_wd["wind_speeds"])
+        # If wind_speeds is not None, check that it is valid then save it
+        if wind_speeds is not None:
+            if not isinstance(wind_speeds, np.ndarray):
+                raise TypeError("wind_speeds must be a numpy array")
 
-            # Check that length of wind_speeds is the same as the length of the 1th
+            # Check that length of wind_speeds is the same as the length of the 0th
             # dimension of speed_multipliers
-            if len(self.wind_speeds) != self.speed_multipliers.shape[0]:
+            if len(wind_speeds) != self.speed_multipliers.shape[0]:
                 raise ValueError(
-                    "The length of wind_speeds must equal the 1th dimension of speed_multipliers"
+                    "The length of wind_speeds must equal "
+                    "the 0th dimension of speed_multipliers"
                     "Within the heterogeneous_inflow_config_by_wd dictionary"
                 )
+
+            self.wind_speeds = wind_speeds
         else:
             self.wind_speeds = None
 
@@ -119,8 +126,6 @@ class HetMap:
                     "should be unique"
                 )
 
-        # Save the heterogeneous_inflow_config_by_wd dictionary
-        # self.heterogeneous_inflow_config_by_wd = heterogeneous_inflow_config_by_wd
 
     def get_heterogeneous_inflow_config(
         self,
@@ -192,3 +197,68 @@ class HetMap:
             "y": self.y,
             "speed_multipliers": speed_multipliers_by_findex,
         }
+
+    # def plot_single_speed_multiplier(self,
+    #                                  wind_direction: float,
+    #                                  wind_speed: float,
+    #                                  ax=None,
+    #                                  cmap=cm.viridis, **kwargs):
+    #     """
+    #     Plot the speed multipliers as a heatmap.
+    #     Args:
+    #         wind_direction (float): The wind direction for which to plot the speed multipliers.
+
+    #         wind_speed (float): The wind speed for which to plot the speed multipliers.
+    #         ax (matplotlib.axes.Axes, optional): The axes on which to plot the speed multipliers.
+    #             If None, a new figure and axes will be created.
+    #         cmap (matplotlib.colors.Colormap, optional): The colormap to use for the heatmap.
+    #         **kwargs: Additional keyword arguments to pass to ax.imshow().
+    #     Returns:
+    #         matplotlib.axes.Axes: The axes on which the speed multipliers are plotted.
+    #     """
+
+    #     # Confirm wind_direction and wind_speed are floats
+    #     if not isinstance(wind_direction, float):
+    #         raise TypeError("wind_direction must be a float")
+    #     if not isinstance(wind_speed, float):
+    #         raise TypeError("wind_speed must be a float")
+
+    #     # Get the speed multipliers for the given wind direction and wind speed
+    #     speed_multipliers = self.get_heterogeneous_inflow_config(
+    #         np.array([wind_direction]), np.array([wind_speed])
+    #     )["speed_multipliers"]
+
+    #     # Get the x and y coordinates
+    #     x = self.x
+    #     y = self.y
+
+    #     # Get some boundary info
+    #     min_x = np.min(x)
+    #     max_x = np.max(x)
+    #     min_y = np.min(y)
+    #     max_y = np.max(y)
+    #     delta_x = max_x - min_x
+    #     delta_y = max_y - min_y
+
+
+    #     # If not provided create the axis
+    #     if ax is None:
+    #         fig, ax = plt.subplots()
+    #     else:
+    #         fig = ax.get_figure()
+
+    #     # Plot the grid coordinates as a scatter plot
+    #     ax.scatter(x, y, color='gray', **kwargs)
+    #     ax.set_xlim
+
+    #     # Create the heatmap
+    #     # im = ax.imshow(speed_multipliers, cmap=cmap, **kwargs)
+
+    #     # Add a colorbar
+    #     # fig.colorbar(im, ax=ax)
+
+    #     # Set the x and y labels
+    #     ax.set_xlabel("X (m)")
+    #     ax.set_ylabel("Y (m)")
+
+    #     return ax
