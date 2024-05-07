@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import inspect
 from abc import abstractmethod
 from pathlib import Path
@@ -12,7 +11,7 @@ import pandas as pd
 from pandas.api.types import CategoricalDtype
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 
-from floris.het_map import HetMap
+from floris.heterogeneous_map import HeterogeneousMap
 from floris.type_dec import NDArrayFloat
 
 
@@ -111,8 +110,13 @@ class WindRose(WindDataBase):
             each bin to compute the total value of the energy produced
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
-        heterogeneous_inflow_config_by_wd (dict, HetMap): A dictionary containing the following
-            keys:
+        heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define
+            background heterogeneous inflow condition as a function
+            of wind direction and wind speed.  Alternatively, a dictionary can be
+            passed in to define a HeterogeneousMap object.  Defaults to None.
+        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+            which can be used to define a heterogeneous_map object (note this parameter is kept
+            for backwards compatibility and is not recommended for use):
             * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
             * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
             * 'speed_multipliers': A 2D NumPy array (size num_wd (or num_ws) x num_points)
@@ -121,8 +125,7 @@ class WindRose(WindDataBase):
             * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
                 Optional.
             * 'wind_speeds': A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.
-            This can also be a HetMap object.
-
+            Defaults to None.
 
     """
 
@@ -134,7 +137,8 @@ class WindRose(WindDataBase):
         freq_table: NDArrayFloat | None = None,
         value_table: NDArrayFloat | None = None,
         compute_zero_freq_occurrence: bool = False,
-        heterogeneous_inflow_config_by_wd: dict | HetMap | None = None,
+        heterogeneous_map: HeterogeneousMap | dict | None = None,
+        heterogeneous_inflow_config_by_wd: dict | None = None,
     ):
         if not isinstance(wind_directions, np.ndarray):
             raise TypeError("wind_directions must be a NumPy array")
@@ -198,17 +202,39 @@ class WindRose(WindDataBase):
                 )
         self.compute_zero_freq_occurrence = compute_zero_freq_occurrence
 
-        # If heterogeneous_inflow_config_by_wd is None, then self.het_map is None
-        if heterogeneous_inflow_config_by_wd is None:
-            self.het_map = None
+        # Check that heterogeneous_map and heterogeneous_inflow_config_by_wd are not both defined
+        if heterogeneous_map is not None and heterogeneous_inflow_config_by_wd is not None:
+            raise ValueError(
+                "Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be defined"
+            )
 
-        # Else if heterogeneous_inflow_config_by_wd is a dictionary, then create a HetMap object
-        elif isinstance(heterogeneous_inflow_config_by_wd, dict):
-            self.het_map = HetMap(heterogeneous_inflow_config_by_wd)
+        # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
+        # using the dictionary
+        if heterogeneous_inflow_config_by_wd is not None:
+            # TODO: In future, add deprectation warning for this parameter here
 
-        # Else if heterogeneous_inflow_config_by_wd is a HetMap object, then save it
-        elif isinstance(heterogeneous_inflow_config_by_wd, HetMap):
-            self.het_map = copy.deepcopy(heterogeneous_inflow_config_by_wd)
+            self.heterogeneous_map = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
+
+        # Else if heterogeneous_map is not None
+        elif heterogeneous_map is not None:
+            # If heterogeneous_map is a dictionary, then create a HeterogeneousMap object
+            if isinstance(heterogeneous_map, dict):
+                self.heterogeneous_map = HeterogeneousMap(**heterogeneous_map)
+
+            # Else if heterogeneous_map is a HeterogeneousMap object, then save it
+            elif isinstance(heterogeneous_map, HeterogeneousMap):
+                self.heterogeneous_map = heterogeneous_map
+
+            # Else raise an error
+            else:
+                raise ValueError(
+                    "heterogeneous_map must be a HeterogeneousMap " "object or a dictionary"
+                )
+
+        # Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,
+        # then set heterogeneous_map to None
+        else:
+            self.heterogeneous_map = None
 
         # Build the gridded and flatten versions
         self._build_gridded_and_flattened_version()
@@ -274,9 +300,9 @@ class WindRose(WindDataBase):
         else:
             value_table_unpack = None
 
-        # If het_map is not None, then get the heterogeneous_inflow_config
-        if self.het_map is not None:
-            heterogeneous_inflow_config = self.het_map.get_heterogeneous_inflow_config(
+        # If heterogeneous_map is not None, then get the heterogeneous_inflow_config
+        if self.heterogeneous_map is not None:
+            heterogeneous_inflow_config = self.heterogeneous_map.get_heterogeneous_inflow_config(
                 wind_directions=wind_directions_unpack, wind_speeds=wind_speeds_unpack
             )
         else:
@@ -359,7 +385,7 @@ class WindRose(WindDataBase):
             self.ws_flat,
             self.ti_table_flat,
             self.value_table_flat,
-            self.het_map,
+            self.heterogeneous_map,
         )
 
         # Now build a new wind rose using the new steps
@@ -374,7 +400,7 @@ class WindRose(WindDataBase):
                 aggregated_wind_rose.freq_table,
                 aggregated_wind_rose.value_table,
                 aggregated_wind_rose.compute_zero_freq_occurrence,
-                aggregated_wind_rose.het_map,
+                aggregated_wind_rose.heterogeneous_map,
             )
         else:
             return aggregated_wind_rose
@@ -524,7 +550,7 @@ class WindRose(WindDataBase):
             new_freq_matrix,
             new_value_matrix,
             self.compute_zero_freq_occurrence,
-            self.het_map,
+            self.heterogeneous_map,
         )
 
         if inplace:
@@ -535,7 +561,7 @@ class WindRose(WindDataBase):
                 resampled_wind_rose.freq_table,
                 resampled_wind_rose.value_table,
                 resampled_wind_rose.compute_zero_freq_occurrence,
-                resampled_wind_rose.het_map,
+                resampled_wind_rose.heterogeneous_map,
             )
         else:
             return resampled_wind_rose
@@ -907,8 +933,13 @@ class WindTIRose(WindDataBase):
             to compute the total value of the energy produced.
         compute_zero_freq_occurrence: Flag indicating whether to compute zero
             frequency occurrences (bool, optional).  Defaults to False.
-        heterogeneous_inflow_config_by_wd (dict, HetMap): A dictionary containing the following
-            keys:
+        heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define
+            background heterogeneous inflow condition as a function
+            of wind direction and wind speed.  Alternatively, a dictionary can be
+            passed in to define a HeterogeneousMap object.  Defaults to None.
+        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+            which can be used to define a heterogeneous_map object (note this parameter is kept
+            for backwards compatibility and is not recommended for use):
             * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
             * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
             * 'speed_multipliers': A 2D NumPy array (size num_wd (or num_ws) x num_points)
@@ -917,7 +948,7 @@ class WindTIRose(WindDataBase):
             * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
                 Optional.
             * 'wind_speeds': A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.
-            This can also be a HetMap object.
+            Defaults to None.
 
     """
 
@@ -929,7 +960,8 @@ class WindTIRose(WindDataBase):
         freq_table: NDArrayFloat | None = None,
         value_table: NDArrayFloat | None = None,
         compute_zero_freq_occurrence: bool = False,
-        heterogeneous_inflow_config_by_wd: dict | HetMap | None = None,
+        heterogeneous_map: HeterogeneousMap | dict | None = None,
+        heterogeneous_inflow_config_by_wd: dict | None = None,
     ):
         if not isinstance(wind_directions, np.ndarray):
             raise TypeError("wind_directions must be a NumPy array")
@@ -981,17 +1013,39 @@ class WindTIRose(WindDataBase):
         # Save whether zero occurrence cases should be computed
         self.compute_zero_freq_occurrence = compute_zero_freq_occurrence
 
-        # If heterogeneous_inflow_config_by_wd is None, then self.het_map is None
-        if heterogeneous_inflow_config_by_wd is None:
-            self.het_map = None
+        # Check that heterogeneous_map and heterogeneous_inflow_config_by_wd are not both defined
+        if heterogeneous_map is not None and heterogeneous_inflow_config_by_wd is not None:
+            raise ValueError(
+                "Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be defined"
+            )
 
-        # Else if heterogeneous_inflow_config_by_wd is a dictionary, then create a HetMap object
-        elif isinstance(heterogeneous_inflow_config_by_wd, dict):
-            self.het_map = HetMap(heterogeneous_inflow_config_by_wd)
+        # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
+        # using the dictionary
+        if heterogeneous_inflow_config_by_wd is not None:
+            # TODO: In future, add deprectation warning for this parameter here
 
-        # Else if heterogeneous_inflow_config_by_wd is a HetMap object, then save it
-        elif isinstance(heterogeneous_inflow_config_by_wd, HetMap):
-            self.het_map = copy.deepcopy(heterogeneous_inflow_config_by_wd)
+            self.heterogeneous_map = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
+
+        # Else if heterogeneous_map is not None
+        elif heterogeneous_map is not None:
+            # If heterogeneous_map is a dictionary, then create a HeterogeneousMap object
+            if isinstance(heterogeneous_map, dict):
+                self.heterogeneous_map = HeterogeneousMap(**heterogeneous_map)
+
+            # Else if heterogeneous_map is a HeterogeneousMap object, then save it
+            elif isinstance(heterogeneous_map, HeterogeneousMap):
+                self.heterogeneous_map = heterogeneous_map
+
+            # Else raise an error
+            else:
+                raise ValueError(
+                    "heterogeneous_map must be a HeterogeneousMap " "object or a dictionary"
+                )
+
+        # Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,
+        # then set heterogeneous_map to None
+        else:
+            self.heterogeneous_map = None
 
         # Build the gridded and flatten versions
         self._build_gridded_and_flattened_version()
@@ -1055,9 +1109,9 @@ class WindTIRose(WindDataBase):
         else:
             value_table_unpack = None
 
-        # If het_map is not None, then get the heterogeneous_inflow_config
-        if self.het_map is not None:
-            heterogeneous_inflow_config = self.het_map.get_heterogeneous_inflow_config(
+        # If heterogeneous_map is not None, then get the heterogeneous_inflow_config
+        if self.heterogeneous_map is not None:
+            heterogeneous_inflow_config = self.heterogeneous_map.get_heterogeneous_inflow_config(
                 wind_directions=wind_directions_unpack, wind_speeds=wind_speeds_unpack
             )
         else:
@@ -1154,7 +1208,7 @@ class WindTIRose(WindDataBase):
             self.ws_flat,
             self.ti_flat,
             self.value_table_flat,
-            self.het_map,
+            self.heterogeneous_map,
         )
 
         # Now build a new wind rose using the new steps
@@ -1170,7 +1224,7 @@ class WindTIRose(WindDataBase):
                 aggregated_wind_rose.freq_table,
                 aggregated_wind_rose.value_table,
                 aggregated_wind_rose.compute_zero_freq_occurrence,
-                aggregated_wind_rose.het_map,
+                aggregated_wind_rose.heterogeneous_map,
             )
         else:
             return aggregated_wind_rose
@@ -1375,7 +1429,7 @@ class WindTIRose(WindDataBase):
             new_freq_matrix,
             new_value_matrix,
             self.compute_zero_freq_occurrence,
-            self.het_map,
+            self.heterogeneous_map,
         )
 
         if inplace:
@@ -1386,7 +1440,7 @@ class WindTIRose(WindDataBase):
                 resampled_wind_rose.freq_table,
                 resampled_wind_rose.value_table,
                 resampled_wind_rose.compute_zero_freq_occurrence,
-                resampled_wind_rose.het_map,
+                resampled_wind_rose.heterogeneous_map,
             )
         else:
             return resampled_wind_rose
@@ -1727,8 +1781,13 @@ class TimeSeries(WindDataBase):
             a single value or an array of values.
         values (NDArrayFloat, optional): Values associated with each wind
             direction, wind speed, and turbulence intensity. Defaults to None.
-        heterogeneous_inflow_config_by_wd (dict, HetMap): A dictionary containing the following
-            keys:
+        heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define
+            background heterogeneous inflow condition as a function
+            of wind direction and wind speed.  Alternatively, a dictionary can be
+            passed in to define a HeterogeneousMap object.  Defaults to None.
+        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following
+            which can be used to define a heterogeneous_map object (note this parameter is kept
+            for backwards compatibility and is not recommended for use):
             * 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
             * 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
             * 'speed_multipliers': A 2D NumPy array (size num_wd (or num_ws) x num_points)
@@ -1737,7 +1796,7 @@ class TimeSeries(WindDataBase):
             * 'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).
                 Optional.
             * 'wind_speeds': A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.
-            This can also be a HetMap object.
+            Defaults to None.
         heterogeneous_inflow_config (dict, optional): A dictionary containing the following keys.
             Defaults to None.
             * 'speed_multipliers': A 2D NumPy array (size n_findex x num_points)
@@ -1752,7 +1811,8 @@ class TimeSeries(WindDataBase):
         wind_speeds: float | NDArrayFloat,
         turbulence_intensities: float | NDArrayFloat,
         values: NDArrayFloat | None = None,
-        heterogeneous_inflow_config_by_wd: dict | HetMap | None = None,
+        heterogeneous_map: HeterogeneousMap | dict | None = None,
+        heterogeneous_inflow_config_by_wd: dict | None = None,
         heterogeneous_inflow_config: dict | None = None,
     ):
         # Check that wind_directions, wind_speeds, and turbulence_intensities are either numpy array
@@ -1830,15 +1890,21 @@ class TimeSeries(WindDataBase):
         self.turbulence_intensities = turbulence_intensities
         self.values = values
 
-        # Only one of heterogeneous_inflow_config_by_wd and
-        # heterogeneous_inflow_config can be not None
+        # Check that at most one of heterogeneous_inflow_config_by_wd,
+        # heterogeneous_map and heterogeneous_inflow_config is not None
         if (
-            heterogeneous_inflow_config_by_wd is not None
-            and heterogeneous_inflow_config is not None
+            sum(
+                [
+                    heterogeneous_inflow_config_by_wd is not None,
+                    heterogeneous_map is not None,
+                    heterogeneous_inflow_config is not None,
+                ]
+            )
+            > 1
         ):
             raise ValueError(
-                "Only one of heterogeneous_inflow_config_by_wd and heterogeneous_inflow_config "
-                "can be not None"
+                "Only one of heterogeneous_inflow_config_by_wd, "
+                "heterogeneous_map, and heterogeneous_inflow_config can be not None"
             )
 
         # if heterogeneous_inflow_config is not None, then the speed_multipliers
@@ -1848,21 +1914,39 @@ class TimeSeries(WindDataBase):
             if len(heterogeneous_inflow_config["speed_multipliers"]) != len(wind_directions):
                 raise ValueError("speed_multipliers must be the same length as wind_directions")
 
-        # Check  heterogeneous_inflow_config and save
-        self.check_heterogeneous_inflow_config(heterogeneous_inflow_config)
-        self.heterogeneous_inflow_config = heterogeneous_inflow_config
+            # Check  heterogeneous_inflow_config and save
+            self.check_heterogeneous_inflow_config(heterogeneous_inflow_config)
+            self.heterogeneous_inflow_config = heterogeneous_inflow_config
+        else:
+            self.heterogeneous_inflow_config = None
 
-        # If heterogeneous_inflow_config_by_wd is None, then self.het_map is None
-        if heterogeneous_inflow_config_by_wd is None:
-            self.het_map = None
+        # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
+        # using the dictionary
+        if heterogeneous_inflow_config_by_wd is not None:
+            # TODO: In future, add deprectation warning for this parameter here
 
-        # Else if heterogeneous_inflow_config_by_wd is a dictionary, then create a HetMap object
-        elif isinstance(heterogeneous_inflow_config_by_wd, dict):
-            self.het_map = HetMap(heterogeneous_inflow_config_by_wd)
+            self.heterogeneous_map = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
 
-        # Else if heterogeneous_inflow_config_by_wd is a HetMap object, then save it
-        elif isinstance(heterogeneous_inflow_config_by_wd, HetMap):
-            self.het_map = copy.deepcopy(heterogeneous_inflow_config_by_wd)
+        # Else if heterogeneous_map is not None
+        elif heterogeneous_map is not None:
+            # If heterogeneous_map is a dictionary, then create a HeterogeneousMap object
+            if isinstance(heterogeneous_map, dict):
+                self.heterogeneous_map = HeterogeneousMap(**heterogeneous_map)
+
+            # Else if heterogeneous_map is a HeterogeneousMap object, then save it
+            elif isinstance(heterogeneous_map, HeterogeneousMap):
+                self.heterogeneous_map = heterogeneous_map
+
+            # Else raise an error
+            else:
+                raise ValueError(
+                    "heterogeneous_map must be a HeterogeneousMap " "object or a dictionary"
+                )
+
+        # Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,
+        # then set heterogeneous_map to None
+        else:
+            self.heterogeneous_map = None
 
         # Record findex
         self.n_findex = len(self.wind_directions)
@@ -1876,10 +1960,10 @@ class TimeSeries(WindDataBase):
         uniform_frequency = np.ones_like(self.wind_directions)
         uniform_frequency = uniform_frequency / uniform_frequency.sum()
 
-        # If heterogeneous_inflow_config_by_wd is not None, then update
+        # If heterogeneous_map is not None, then update
         # heterogeneous_inflow_config to match wind_directions_unpack
-        if self.het_map is not None:
-            heterogeneous_inflow_config = self.het_map.get_heterogeneous_inflow_config(
+        if self.heterogeneous_map is not None:
+            heterogeneous_inflow_config = self.heterogeneous_map.get_heterogeneous_inflow_config(
                 wind_directions=self.wind_directions, wind_speeds=self.wind_speeds
             )
         else:
@@ -2153,7 +2237,7 @@ class TimeSeries(WindDataBase):
             ti_table,
             freq_table,
             value_table,
-            self.het_map,
+            self.heterogeneous_map,
         )
 
     def to_WindTIRose(
@@ -2320,5 +2404,5 @@ class TimeSeries(WindDataBase):
             ti_centers,
             freq_table,
             value_table,
-            self.het_map,
+            self.heterogeneous_map,
         )
