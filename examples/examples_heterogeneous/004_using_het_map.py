@@ -24,4 +24,4 @@ heterogeneous_inflow_config_by_wd = {
     "wind_speeds": np.array([5.0, 15.0, 5.0, 15.0]),
 }
 
-hm = HeterogeneousMap(heterogeneous_inflow_config_by_wd)
+hm = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
