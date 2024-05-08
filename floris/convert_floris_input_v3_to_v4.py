@@ -70,11 +70,15 @@ if __name__ == "__main__":
     # Add enable_active_wake_mixing field
     v4_floris_input_dict["wake"]["enable_active_wake_mixing"] = False
 
+    # Write the new v4 model to a new file, note that the in order to ignore the !include tag
+    # it is wrapped in single quotes by the ignore include/load/dump sequence and these will
+    # need to be removed in the next block of code
     yaml.dump(v4_floris_input_dict, open(output_path, "w"), sort_keys=False)
 
     # Open the output file and loop through line by line
     # if a line contains the substring !include, then strip all
-    # occurrences of ' from the line
+    # occurrences of ' from the line to remove the extra single quotes
+    # added by the ignore include/load/dump sequence
     temp_output_path = output_path.with_name("temp.yaml")
     with open(temp_output_path, "w") as file:
         with open(output_path, "r") as f:
