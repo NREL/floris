@@ -22,20 +22,19 @@ def test_v3_to_v4_convert():
     # Change directory to the test folder
     os.chdir(CONVERT_FOLDER)
 
-    # Print the current directory
-    print(os.getcwd())
-
     # Run the converter on the turbine file
     os.system(f"python convert_turbine_v3_to_v4.py {filename_v3_turbine}")
 
     # Run the converter on the floris file
     os.system(f"python convert_floris_input_v3_to_v4.py {filename_v3_floris}")
 
-    # Go through the file filename_v4_floris and where the place-holder string "XXXXX" is found
-    # replace it with the string f"!include {filename_v4_turbine}"
+    # Go through the file filename_v4_floris and replace f"!include {filename_v3_turbine}"
+    # with f"!include {filename_v4_turbine}"
     with open(filename_v4_floris, "r") as file:
         filedata = file.read()
-    filedata = filedata.replace("XXXXX", f"!include {filename_v4_turbine}")
+    filedata = filedata.replace(
+        f"!include {filename_v3_turbine}", f"!include {filename_v4_turbine}"
+    )
     with open(filename_v4_floris, "w") as file:
         file.write(filedata)
 

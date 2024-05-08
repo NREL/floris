@@ -29,4 +29,4 @@ class NoneWakeTurbulence(BaseModel):
         self.logger.info(
             "The wake-turbulence model is set to 'none'. Turbulence model disabled."
         )
-        return np.ones_like(x) * ambient_TI
+        return np.zeros_like(x)
