@@ -16,6 +16,7 @@ from floris.core.turbine import (
     AWCTurbine,
     CosineLossTurbine,
     MixedOperationTurbine,
+    PeakShavingTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
 )
@@ -39,6 +40,7 @@ TURBINE_MODEL_MAP = {
         "simple-derating": SimpleDeratingTurbine,
         "mixed": MixedOperationTurbine,
         "awc": AWCTurbine,
+        "peak-shaving": PeakShavingTurbine,
     },
 }
 
@@ -73,6 +75,7 @@ def select_multidim_condition(
 
 def power(
     velocities: NDArrayFloat,
+    turbulence_intensities: NDArrayFloat,
     air_density: float,
     power_functions: dict[str, Callable],
     yaw_angles: NDArrayFloat,
@@ -95,6 +98,8 @@ def power(
     Args:
         velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a
             turbine.
+        turbulence_intensities (NDArrayFloat[findex, turbines]): The turbulence intensity at
+            each turbine.
         air_density (float): air density for simulation [kg/m^3]
         power_functions (dict[str, Callable]): A dictionary of power functions for
             each turbine type. Keys are the turbine type and values are the callable functions.
@@ -130,6 +135,7 @@ def power(
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         velocities = velocities[:, ix_filter]
+        turbulence_intensities = turbulence_intensities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
         power_setpoints = power_setpoints[:, ix_filter]
@@ -161,6 +167,7 @@ def power(
         power_model_kwargs = {
             "power_thrust_table": power_thrust_table,
             "velocities": velocities,
+            "turbulence_intensities": turbulence_intensities,
             "air_density": air_density,
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
@@ -182,6 +189,7 @@ def power(
 
 def thrust_coefficient(
     velocities: NDArrayFloat,
+    turbulence_intensities: NDArrayFloat,
     air_density: float,
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
@@ -206,6 +214,8 @@ def thrust_coefficient(
     Args:
         velocities (NDArrayFloat[findex, turbines, grid1, grid2]): The velocity field at
             a turbine.
+        turbulence_intensities (NDArrayFloat[findex, turbines]): The turbulence intensity at
+            each turbine.
         air_density (float): air density for simulation [kg/m^3]
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
@@ -241,6 +251,7 @@ def thrust_coefficient(
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         velocities = velocities[:, ix_filter]
+        turbulence_intensities = turbulence_intensities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
         power_setpoints = power_setpoints[:, ix_filter]
@@ -272,6 +283,7 @@ def thrust_coefficient(
         thrust_model_kwargs = {
             "power_thrust_table": power_thrust_table,
             "velocities": velocities,
+            "turbulence_intensities": turbulence_intensities,
             "air_density": air_density,
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,
@@ -296,6 +308,7 @@ def thrust_coefficient(
 
 def axial_induction(
     velocities: NDArrayFloat,
+    turbulence_intensities: NDArrayFloat,
     air_density: float,
     yaw_angles: NDArrayFloat,
     tilt_angles: NDArrayFloat,
@@ -318,6 +331,9 @@ def axial_induction(
     Args:
         velocities (NDArrayFloat): The velocity field at each turbine; should be shape:
             (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
+        turbulence_intensities (NDArrayFloat[findex, turbines]): The turbulence intensity at
+            each turbine.
+        air_density (float): air density for simulation [kg/m^3]
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
@@ -350,6 +366,7 @@ def axial_induction(
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         velocities = velocities[:, ix_filter]
+        turbulence_intensities = turbulence_intensities[:, ix_filter]
         yaw_angles = yaw_angles[:, ix_filter]
         tilt_angles = tilt_angles[:, ix_filter]
         power_setpoints = power_setpoints[:, ix_filter]
@@ -381,6 +398,7 @@ def axial_induction(
         axial_induction_model_kwargs = {
             "power_thrust_table": power_thrust_table,
             "velocities": velocities,
+            "turbulence_intensities": turbulence_intensities,
             "air_density": air_density,
             "yaw_angles": yaw_angles,
             "tilt_angles": tilt_angles,

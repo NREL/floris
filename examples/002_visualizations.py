@@ -69,8 +69,10 @@ ax.set_title("Use Provided Turbine Names")
 # we show the horizontal plane at hub height, further examples are provided within
 # the examples_visualizations folder
 
-# For flow visualizations, the FlorisModel must be set to run a single condition
-# (n_findex = 1)
+# For flow visualizations, the FlorisModel may be set to run a single condition
+# (n_findex = 1). Otherwise, the user may set multiple conditions and then use
+# the findex_for_viz keyword argument to calculate_horizontal_plane to specify which
+# flow condition to visualize.
 fmodel.set(wind_speeds=[8.0], wind_directions=[290.0], turbulence_intensities=[0.06])
 horizontal_plane = fmodel.calculate_horizontal_plane(
     x_resolution=200,
