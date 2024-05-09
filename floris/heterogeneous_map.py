@@ -41,18 +41,18 @@ class HeterogeneousMap(LoggingManager):
         wind_directions: NDArrayFloat = None,
         wind_speeds: NDArrayFloat = None,
     ):
-        # Check that x, y and speed_multipliers are numpy arrays
-        if not isinstance(x, np.ndarray):
-            raise TypeError("x must be a numpy array")
-        if not isinstance(y, np.ndarray):
-            raise TypeError("y must be a numpy array")
-        if not isinstance(speed_multipliers, np.ndarray):
-            raise TypeError("speed_multipliers must be a numpy array")
+        # Check that x, y and speed_multipliers are lists or numpy arrays
+        if not isinstance(x, (list, np.ndarray)):
+            raise TypeError("x must be a numpy array or list")
+        if not isinstance(y, (list, np.ndarray)):
+            raise TypeError("y must be a numpy array or list")
+        if not isinstance(speed_multipliers, (list, np.ndarray)):
+            raise TypeError("speed_multipliers must be a numpy array or list")
 
         # Save the values
-        self.x = x
-        self.y = y
-        self.speed_multipliers = speed_multipliers
+        self.x = np.array(x)
+        self.y = np.array(y)
+        self.speed_multipliers = np.array(speed_multipliers)
 
         # Check that the length of the 1st dimension of speed_multipliers is the
         # same as the length of both x and y
@@ -69,8 +69,8 @@ class HeterogeneousMap(LoggingManager):
 
         # If wind_directions is note None, check that it is valid then save it
         if wind_directions is not None:
-            if not isinstance(wind_directions, np.ndarray):
-                raise TypeError("wind_directions must be a numpy array")
+            if not isinstance(wind_directions, (list, np.ndarray)):
+                raise TypeError("wind_directions must be a numpy array or list")
 
             # Check that length of wind_directions is the same as the length of the 0th
             # dimension of speed_multipliers
@@ -81,14 +81,15 @@ class HeterogeneousMap(LoggingManager):
                     "Within the heterogeneous_inflow_config_by_wd dictionary"
                 )
 
-            self.wind_directions = wind_directions
+            self.wind_directions = np.array(wind_directions)
+
         else:
             self.wind_directions = None
 
         # If wind_speeds is not None, check that it is valid then save it
         if wind_speeds is not None:
-            if not isinstance(wind_speeds, np.ndarray):
-                raise TypeError("wind_speeds must be a numpy array")
+            if not isinstance(wind_speeds, (list, np.ndarray)):
+                raise TypeError("wind_speeds must be a numpy array or list")
 
             # Check that length of wind_speeds is the same as the length of the 0th
             # dimension of speed_multipliers
@@ -99,7 +100,7 @@ class HeterogeneousMap(LoggingManager):
                     "Within the heterogeneous_inflow_config_by_wd dictionary"
                 )
 
-            self.wind_speeds = wind_speeds
+            self.wind_speeds = np.array(wind_speeds)
         else:
             self.wind_speeds = None
 
