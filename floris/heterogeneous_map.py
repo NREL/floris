@@ -7,6 +7,7 @@ import scipy.spatial._qhull
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from scipy.spatial import ConvexHull
 
+from floris.core.flow_field import FlowField
 from floris.logging_manager import LoggingManager
 from floris.type_dec import NDArrayFloat
 
@@ -264,7 +265,7 @@ class HeterogeneousMap(LoggingManager):
         ycirc = np.sin(theta) * radius + ym
         ax.scatter(xm, ym, color="k", marker="o")
         ax.plot(xcirc, ycirc, color="w", linewidth=2)
-        plt.arrow(
+        ax.arrow(
             x=xm - np.cos(-(wind_direction - 270.0) * np.pi / 180.0) * radius,
             y=ym - np.sin(-(wind_direction - 270.0) * np.pi / 180.0) * radius,
             dx=1 * np.cos(-(wind_direction - 270.0) * np.pi / 180.0) * radius,
@@ -280,11 +281,13 @@ class HeterogeneousMap(LoggingManager):
         self,
         wind_direction: float,
         wind_speed: float,
-        ax=None,
-        cmap=cm.viridis,
-        show_boundary=True,
-        show_wind_direction=True,
-        show_colorbar=True,
+        ax: plt.Axes = None,
+        vmin: float = None,
+        vmax: float = None,
+        cmap: cm = cm.viridis,
+        show_boundary: bool = True,
+        show_wind_direction: bool = True,
+        show_colorbar: bool = True,
     ):
         """
         Plot the speed multipliers as a heatmap.
@@ -293,6 +296,10 @@ class HeterogeneousMap(LoggingManager):
             wind_speed (float): The wind speed for which to plot the speed multipliers.
             ax (matplotlib.axes.Axes, optional): The axes on which to plot the speed multipliers.
                 If None, a new figure and axes will be created.
+            vmin (float, optional): The minimum value for the colorbar. Default is the minimum
+                value of the speed multipliers.
+            vmax (float, optional): The maximum value for the colorbar. Default is the maximum
+                value of the speed multipliers.
             cmap (matplotlib.colors.Colormap, optional): The colormap to use for the heatmap.
                 Default is matplotlib.cm.viridis.
             show_boundary (bool, optional): Whether to show the boundary of the heterogeneous
@@ -348,14 +355,14 @@ class HeterogeneousMap(LoggingManager):
         y_plot = y_plot.flatten()
 
         try:
-            lin_interpolant = LinearNDInterpolator(
-                points=np.vstack([x, y]).T,
-                values=speed_multiplier_row,
-                fill_value=np.nan,
-            )
+            lin_interpolant = FlowField.interpolate_multiplier_xy(x,y,speed_multiplier_row)
+
             lin_values = lin_interpolant(x, y)
         except scipy.spatial._qhull.QhullError:
-            self.logger.warning("QhullError occurred. Falling back to nearest neighbor.")
+            self.logger.warning(
+                "QhullError occurred in computing visualize. Falling back to nearest neighbor.  "
+                "Note this may not represent the exact speed multipliers used within FLORIS."
+            )
             lin_values = np.nan * np.ones_like(x)
 
         nearest_interpolant = NearestNDInterpolator(
@@ -368,14 +375,24 @@ class HeterogeneousMap(LoggingManager):
         het_map_mesh = np.array(lin_values, copy=True)
         het_map_mesh[ids_isnan] = nn_values[ids_isnan]
 
+        # If vmin is not provided, use a value rounded to the nearest 0.01 below the minimum
+        if vmin is None:
+            vmin = np.floor(het_map_mesh.min() * 100) / 100
+
+        # If vmax is not provided, use a value rounded to the nearest 0.01 above the maximum
+        if vmax is None:
+            vmax = np.ceil(het_map_mesh.max() * 100) / 100
+
+        print(vmin, vmax)
+
         # Produce color plot of the speed multipliers
         im = ax.tricontourf(
             x,
             y,
             het_map_mesh,
             cmap=cmap,
-            vmin=speed_multiplier_row.min(),
-            vmax=speed_multiplier_row.max(),
+            vmin=vmin,
+            vmax=vmax,
             levels=50,
             zorder=-1,
         )
