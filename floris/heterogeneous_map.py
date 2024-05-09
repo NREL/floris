@@ -206,6 +206,15 @@ class HeterogeneousMap(LoggingManager):
 
     @staticmethod
     def plot_heterogeneous_boundary(x, y, ax=None):
+        """
+        Plot the boundary of the heterogeneous inflow configuration.
+        Args:
+            x (NDArrayFloat): A 1D NumPy array of x-coordinates (meters).
+            y (NDArrayFloat): A 1D NumPy array of y-coordinates (meters).
+            ax (matplotlib.axes.Axes, optional): The axes on which to plot the boundary.
+                If None, a new figure and axes will be created.
+        """
+
         # If not provided create the axis
         if ax is None:
             _, ax = plt.subplots()
