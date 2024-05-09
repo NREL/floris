@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris import FlorisModel, TimeSeries
-from floris.flow_visualization import visualize_cut_plane
+from floris.flow_visualization import visualize_heterogeneous_cut_plane
 from floris.layout_visualization import plot_turbine_labels
 
 
@@ -67,13 +67,15 @@ horizontal_plane = fmodel.calculate_horizontal_plane(
 
 # Plot the horizontal plane
 fig, ax = plt.subplots()
-visualize_cut_plane(
+visualize_heterogeneous_cut_plane(
     horizontal_plane,
+    fmodel=fmodel,
     ax=ax,
     title="Horizontal plane at hub height",
     color_bar=True,
     label_contours=True,
 )
 plot_turbine_labels(fmodel, ax)
+ax.legend()
 
 plt.show()
