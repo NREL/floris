@@ -72,7 +72,7 @@ fig.suptitle("Heterogeneous speedup map for several directions and wind speeds")
 # Initialize FlorisModel
 fmodel = FlorisModel("../inputs/gch.yaml")
 
-# Change the layout to a 4 turbine layout within the heterogenous domain
+# Change the layout to a 2 turbine layout within the heterogeneous domain
 fmodel.set(layout_x=[200, 200.0], layout_y=[50, 450.0])
 
 # Define a TimeSeries object with 3 wind directions and wind speeds
