@@ -245,8 +245,7 @@ def visualize_heterogeneous_cut_plane(
     """
 
     ax = visualize_cut_plane(
-        cut_plane,
-        fmodel,
+        cut_plane=cut_plane,
         ax=ax,
         vel_component=vel_component,
         min_speed=min_speed,
