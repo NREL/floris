@@ -204,7 +204,8 @@ class HeterogeneousMap(LoggingManager):
             "speed_multipliers": speed_multipliers_by_findex,
         }
 
-    def plot_heterogeneous_boundary(self, ax=None):
+    @staticmethod
+    def plot_heterogeneous_boundary(x, y, ax=None):
         # If not provided create the axis
         if ax is None:
             _, ax = plt.subplots()
@@ -213,8 +214,8 @@ class HeterogeneousMap(LoggingManager):
         points = np.array(
             list(
                 zip(
-                    self.x,
-                    self.y,
+                    x,
+                    y,
                 )
             )
         )
@@ -375,7 +376,7 @@ class HeterogeneousMap(LoggingManager):
 
         # Show the boundary
         if show_boundary:
-            self.plot_heterogeneous_boundary(ax)
+            self.plot_heterogeneous_boundary(self.x, self.y, ax)
 
         # Add a colorbar
         if show_colorbar:
