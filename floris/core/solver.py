@@ -1571,6 +1571,7 @@ def streamtube_expansion_solver(
 
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -1592,6 +1593,7 @@ def streamtube_expansion_solver(
         # get the first index here (0:1)
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -1770,6 +1772,7 @@ def full_flow_streamtube_expansion_solver(
         # Thrust, axial induction need to be recomputed as not stored in turbine solve.
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
+            turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
@@ -1791,6 +1794,7 @@ def full_flow_streamtube_expansion_solver(
         # get the first index here (0:1)
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u_sorted,
+            turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
