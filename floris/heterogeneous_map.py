@@ -383,8 +383,6 @@ class HeterogeneousMap(LoggingManager):
         if vmax is None:
             vmax = np.ceil(het_map_mesh.max() * 100) / 100
 
-        print(vmin, vmax)
-
         # Produce color plot of the speed multipliers
         im = ax.tricontourf(
             x,
