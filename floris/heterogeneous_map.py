@@ -1,20 +1,17 @@
 from __future__ import annotations
 
-import inspect
-from abc import abstractmethod
-from pathlib import Path
-
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-from pandas.api.types import CategoricalDtype
+import scipy.spatial._qhull
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
+from scipy.spatial import ConvexHull
 
+from floris.logging_manager import LoggingManager
 from floris.type_dec import NDArrayFloat
 
 
-class HeterogeneousMap:
+class HeterogeneousMap(LoggingManager):
     """
     Class for handling heterogeneous inflow configurations when defined by wind direction
       and wind speed.
@@ -126,12 +123,21 @@ class HeterogeneousMap:
                     "should be unique"
                 )
 
-
     def get_heterogeneous_inflow_config(
         self,
-        wind_directions,
-        wind_speeds,
+        wind_directions: NDArrayFloat | list[float],
+        wind_speeds: NDArrayFloat | list[float],
     ):
+        """
+        Get the heterogeneous inflow configuration for the given wind directions and wind speeds.
+        Args:
+            wind_directions (NDArrayFloat | list[float]): A 1D NumPy array or
+                list of wind directions (degrees).
+            wind_speeds (NDArrayFloat | list[float]): A 1D NumPy array or list of wind speeds (m/s).
+        Returns:
+            dict: A dictionary (heterogeneous_inflow_config) containing the x, y,
+            and speed_multipliers for the given wind directions and wind speeds.
+        """
         # Check the wind_directions and wind_speeds are either lists or numpy arrays,
         # and are the same length
         if not isinstance(wind_directions, (list, np.ndarray)):
@@ -198,67 +204,196 @@ class HeterogeneousMap:
             "speed_multipliers": speed_multipliers_by_findex,
         }
 
-    # def plot_single_speed_multiplier(self,
-    #                                  wind_direction: float,
-    #                                  wind_speed: float,
-    #                                  ax=None,
-    #                                  cmap=cm.viridis, **kwargs):
-    #     """
-    #     Plot the speed multipliers as a heatmap.
-    #     Args:
-    #         wind_direction (float): The wind direction for which to plot the speed multipliers.
+    def plot_heterogeneous_boundary(self, ax=None):
+        # If not provided create the axis
+        if ax is None:
+            _, ax = plt.subplots()
 
-    #         wind_speed (float): The wind speed for which to plot the speed multipliers.
-    #         ax (matplotlib.axes.Axes, optional): The axes on which to plot the speed multipliers.
-    #             If None, a new figure and axes will be created.
-    #         cmap (matplotlib.colors.Colormap, optional): The colormap to use for the heatmap.
-    #         **kwargs: Additional keyword arguments to pass to ax.imshow().
-    #     Returns:
-    #         matplotlib.axes.Axes: The axes on which the speed multipliers are plotted.
-    #     """
+        # Get the x and y coordinates of the het map
+        points = np.array(
+            list(
+                zip(
+                    self.x,
+                    self.y,
+                )
+            )
+        )
 
-    #     # Confirm wind_direction and wind_speed are floats
-    #     if not isinstance(wind_direction, float):
-    #         raise TypeError("wind_direction must be a float")
-    #     if not isinstance(wind_speed, float):
-    #         raise TypeError("wind_speed must be a float")
+        # Derive and plot the convex hull surrounding the points
+        hull = ConvexHull(points)
+        ax.plot(
+            points[np.append(hull.vertices, hull.vertices[0]), 0],
+            points[np.append(hull.vertices, hull.vertices[0]), 1],
+            "--",
+            color="gray",
+            label="Heterogeneous Boundary",
+        )
 
-    #     # Get the speed multipliers for the given wind direction and wind speed
-    #     speed_multipliers = self.get_heterogeneous_inflow_config(
-    #         np.array([wind_direction]), np.array([wind_speed])
-    #     )["speed_multipliers"]
+    def plot_wind_direction(self, ax: plt.Axes, wind_direction: float):
+        """
+        Plot the wind direction as an arrow on the plot.
+        Args:
+            ax (matplotlib.axes.Axes): The axes on which to plot the wind direction.
+            wind_direction (float): The wind direction to plot.
+        """
 
-    #     # Get the x and y coordinates
-    #     x = self.x
-    #     y = self.y
+        # Get the x and y limits of the axis
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
 
-    #     # Get some boundary info
-    #     min_x = np.min(x)
-    #     max_x = np.max(x)
-    #     min_y = np.min(y)
-    #     max_y = np.max(y)
-    #     delta_x = max_x - min_x
-    #     delta_y = max_y - min_y
+        # Find a point in the top-left corner of the plot
+        xm = xlim[0] + 0.2 * (xlim[1] - xlim[0])
+        ym = ylim[1] - 0.2 * (ylim[1] - ylim[0])
 
+        # Select a radius for the circle 5% the plot width
+        radius = 0.075 * (xlim[1] - xlim[0])
 
-    #     # If not provided create the axis
-    #     if ax is None:
-    #         fig, ax = plt.subplots()
-    #     else:
-    #         fig = ax.get_figure()
+        theta = np.linspace(0.0, 2 * np.pi, 100)
+        xcirc = np.cos(theta) * radius + xm
+        ycirc = np.sin(theta) * radius + ym
+        ax.scatter(xm, ym, color="k", marker="o")
+        ax.plot(xcirc, ycirc, color="w", linewidth=2)
+        plt.arrow(
+            x=xm - np.cos(-(wind_direction - 270.0) * np.pi / 180.0) * radius,
+            y=ym - np.sin(-(wind_direction - 270.0) * np.pi / 180.0) * radius,
+            dx=1 * np.cos(-(wind_direction - 270.0) * np.pi / 180.0) * radius,
+            dy=1 * np.sin(-(wind_direction - 270.0) * np.pi / 180.0) * radius,
+            width=0.125 * radius,
+            head_width=0.3 * radius,
+            head_length=0.3 * radius,
+            length_includes_head=True,
+            color="w",
+        )
 
-    #     # Plot the grid coordinates as a scatter plot
-    #     ax.scatter(x, y, color='gray', **kwargs)
-    #     ax.set_xlim
+    def plot_single_speed_multiplier(
+        self,
+        wind_direction: float,
+        wind_speed: float,
+        ax=None,
+        cmap=cm.viridis,
+        show_boundary=True,
+        show_wind_direction=True,
+        show_colorbar=True,
+    ):
+        """
+        Plot the speed multipliers as a heatmap.
+        Args:
+            wind_direction (float): The wind direction for which to plot the speed multipliers.
+            wind_speed (float): The wind speed for which to plot the speed multipliers.
+            ax (matplotlib.axes.Axes, optional): The axes on which to plot the speed multipliers.
+                If None, a new figure and axes will be created.
+            cmap (matplotlib.colors.Colormap, optional): The colormap to use for the heatmap.
+                Default is matplotlib.cm.viridis.
+            show_boundary (bool, optional): Whether to show the boundary of the heterogeneous
+                inflow configuration. Default is True.
+            show_wind_direction (bool, optional): Whether to show the wind direction as an arrow.
+                Default is True.
+            show_colorbar (bool, optional): Whether to show the colorbar. Default is True.
 
-    #     # Create the heatmap
-    #     # im = ax.imshow(speed_multipliers, cmap=cmap, **kwargs)
+        Returns:
+            matplotlib.axes.Axes: The axes on which the speed multipliers are plotted.
+        """
 
-    #     # Add a colorbar
-    #     # fig.colorbar(im, ax=ax)
+        # Confirm wind_direction and wind_speed are floats
+        if not isinstance(wind_direction, float):
+            raise TypeError("wind_direction must be a float")
+        if not isinstance(wind_speed, float):
+            raise TypeError("wind_speed must be a float")
 
-    #     # Set the x and y labels
-    #     ax.set_xlabel("X (m)")
-    #     ax.set_ylabel("Y (m)")
+        # Get the speed multipliers for the given wind direction and wind speed
+        speed_multiplier_row = self.get_heterogeneous_inflow_config(
+            np.array([wind_direction]), np.array([wind_speed])
+        )["speed_multipliers"][0]
 
-    #     return ax
+        # If not provided create the axis
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = ax.get_figure()
+
+        # Get the x and y coordinates
+        x = self.x
+        y = self.y
+
+        # Get some boundary info
+        min_x = np.min(x)
+        max_x = np.max(x)
+        min_y = np.min(y)
+        max_y = np.max(y)
+        delta_x = max_x - min_x
+        delta_y = max_y - min_y
+        plot_min_x = min_x - 0.1 * delta_x
+        plot_max_x = max_x + 0.1 * delta_x
+        plot_min_y = min_y - 0.1 * delta_y
+        plot_max_y = max_y + 0.1 * delta_y
+
+        # Fill in the plot area
+        x_plot, y_plot = np.meshgrid(
+            np.linspace(plot_min_x, plot_max_x, 100),
+            np.linspace(plot_min_y, plot_max_y, 100),
+            indexing="ij",
+        )
+        x_plot = x_plot.flatten()
+        y_plot = y_plot.flatten()
+
+        try:
+            lin_interpolant = LinearNDInterpolator(
+                points=np.vstack([x, y]).T,
+                values=speed_multiplier_row,
+                fill_value=np.nan,
+            )
+            lin_values = lin_interpolant(x, y)
+        except scipy.spatial._qhull.QhullError:
+            self.logger.warning("QhullError occurred. Falling back to nearest neighbor.")
+            lin_values = np.nan * np.ones_like(x)
+
+        nearest_interpolant = NearestNDInterpolator(
+            x=np.vstack([x, y]).T,
+            y=speed_multiplier_row,
+        )
+        nn_values = nearest_interpolant(x, y)
+        ids_isnan = np.isnan(lin_values)
+
+        het_map_mesh = np.array(lin_values, copy=True)
+        het_map_mesh[ids_isnan] = nn_values[ids_isnan]
+
+        # Produce color plot of the speed multipliers
+        im = ax.tricontourf(
+            x,
+            y,
+            het_map_mesh,
+            cmap=cmap,
+            vmin=speed_multiplier_row.min(),
+            vmax=speed_multiplier_row.max(),
+            levels=50,
+            zorder=-1,
+        )
+
+        # Plot the grid coordinates as a scatter plot
+        ax.scatter(x, y, color="gray", marker=".", label="Heterogeneous Points")
+        ax.set_xlim
+
+        # Show the boundary
+        if show_boundary:
+            self.plot_heterogeneous_boundary(ax)
+
+        # Add a colorbar
+        if show_colorbar:
+            fig.colorbar(im, ax=ax)
+
+        # Set the x and y limits
+        ax.set_xlim(plot_min_x, plot_max_x)
+        ax.set_ylim(plot_min_y, plot_max_y)
+
+        # Make equal axis
+        ax.set_aspect("equal")
+
+        # Set the x and y labels
+        ax.set_xlabel("X (m)")
+        ax.set_ylabel("Y (m)")
+
+        # Add the wind direction arrow
+        if show_wind_direction:
+            self.plot_wind_direction(ax, wind_direction)
+
+        return ax
