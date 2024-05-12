@@ -87,8 +87,8 @@ class TurboparkgaussVelocityDeficit(BaseModel):
         val = np.clip(1 - ct_i / (8 * (sigma / rotor_diameter_i) ** 2), 0.0, 1.0)
         C = 1 - np.sqrt(val)
 
-        r_dist = np.sqrt((y_i - y) ** 2 + (z_i - z) ** 2)
-        r_dist_image = np.sqrt((y_i - y) ** 2 + (z_i - (-z)) ** 2)
+        r_dist = np.sqrt((y - y_i) ** 2 + (z - z_i) ** 2)
+        r_dist_image = np.sqrt((y - y_i) ** 2 + (z - 3*z_i) ** 2)
         
         # Compute deficit for all turbines and mask to keep upstream and overlapping turbines
         # NOTE self.sigma_max_rel * sigma is an effective wake width
@@ -102,7 +102,8 @@ class TurboparkgaussVelocityDeficit(BaseModel):
         delta_real  = wtg_overlapping * gaussian_function(C, r_dist, 2, sigma)
         delta_image = wtg_overlapping * gaussian_function(C, r_dist_image, 2, sigma)
 
-        delta = delta_real # np.concatenate((delta_real, delta_image), axis=2)
+        # delta = delta_real # np.concatenate((delta_real, delta_image), axis=2) # No mirror turbines
+        delta = np.hypot(delta_real,delta_image) # incl mirror turbines
 
         velocity_deficit = np.nan_to_num(delta)
 
