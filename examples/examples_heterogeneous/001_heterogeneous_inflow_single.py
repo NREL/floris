@@ -65,10 +65,10 @@ horizontal_plane = fmodel.calculate_horizontal_plane(
     x_resolution=200, y_resolution=100, height=90.0
 )
 
-# Plot the horizontal plane using the visualize_heterogeneous_cut_plane
-# note this function is not very different than the standard visualize_cut_plane
-# accept that it accepts the fmodel object in order to visualize the boundary
-# of the heterogeneous inflow region.
+# Plot the horizontal plane using the visualize_heterogeneous_cut_plane.
+# Note that this function is not very different than the standard
+# visualize_cut_plane except that it accepts the fmodel object in order to
+# visualize the boundary of the heterogeneous inflow region.
 fig, ax = plt.subplots()
 visualize_heterogeneous_cut_plane(
     horizontal_plane,

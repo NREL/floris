@@ -205,7 +205,8 @@ class WindRose(WindDataBase):
         # Check that heterogeneous_map and heterogeneous_inflow_config_by_wd are not both defined
         if heterogeneous_map is not None and heterogeneous_inflow_config_by_wd is not None:
             raise ValueError(
-                "Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be defined"
+                "Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be"
+                +" defined."
             )
 
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
@@ -228,7 +229,7 @@ class WindRose(WindDataBase):
             # Else raise an error
             else:
                 raise ValueError(
-                    "heterogeneous_map must be a HeterogeneousMap " "object or a dictionary"
+                    "heterogeneous_map must be a HeterogeneousMap object or a dictionary."
                 )
 
         # Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,
@@ -1016,7 +1017,8 @@ class WindTIRose(WindDataBase):
         # Check that heterogeneous_map and heterogeneous_inflow_config_by_wd are not both defined
         if heterogeneous_map is not None and heterogeneous_inflow_config_by_wd is not None:
             raise ValueError(
-                "Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be defined"
+                "Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be"
+                +" defined."
             )
 
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
@@ -1039,7 +1041,7 @@ class WindTIRose(WindDataBase):
             # Else raise an error
             else:
                 raise ValueError(
-                    "heterogeneous_map must be a HeterogeneousMap " "object or a dictionary"
+                    "heterogeneous_map must be a HeterogeneousMap object or a dictionary."
                 )
 
         # Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,
@@ -1904,7 +1906,7 @@ class TimeSeries(WindDataBase):
         ):
             raise ValueError(
                 "Only one of heterogeneous_inflow_config_by_wd, "
-                "heterogeneous_map, and heterogeneous_inflow_config can be not None"
+                +"heterogeneous_map, and heterogeneous_inflow_config can be not None."
             )
 
         # if heterogeneous_inflow_config is not None, then the speed_multipliers
@@ -1940,7 +1942,7 @@ class TimeSeries(WindDataBase):
             # Else raise an error
             else:
                 raise ValueError(
-                    "heterogeneous_map must be a HeterogeneousMap " "object or a dictionary"
+                    "heterogeneous_map must be a HeterogeneousMap object or a dictionary."
                 )
 
         # Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,

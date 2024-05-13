@@ -57,15 +57,11 @@ class HeterogeneousMap(LoggingManager):
 
         # Check that the length of the 1st dimension of speed_multipliers is the
         # same as the length of both x and y
-        if len(self.x) != self.speed_multipliers.shape[1]:
+        if (len(self.x) != self.speed_multipliers.shape[1]
+            or len(self.y) != self.speed_multipliers.shape[1]):
             raise ValueError(
-                "The length of x must equal the 1th dimension of speed_multipliers"
-                "Within the heterogeneous_inflow_config_by_wd dictionary"
-            )
-        if len(self.y) != self.speed_multipliers.shape[1]:
-            raise ValueError(
-                "The length of y must equal the 1th dimension of speed_multipliers"
-                "Within the heterogeneous_inflow_config_by_wd dictionary"
+                "The lengths of x and y must equal the 1th dimension of speed_multipliers "
+                "within the heterogeneous_inflow_config_by_wd dictionary"
             )
 
         # If wind_directions is note None, check that it is valid then save it
@@ -110,8 +106,8 @@ class HeterogeneousMap(LoggingManager):
         if self.wind_speeds is None and self.wind_directions is None:
             if self.speed_multipliers.shape[0] != 1:
                 raise ValueError(
-                    "If both wind_speeds and wind_directions are None, then speed_multipliers"
-                    "should be length 1 in 0th dimension"
+                    "If both wind_speeds and wind_directions are None, then speed_multipliers "
+                    "should be length 1 in 0th dimension."
                 )
 
         # If both wind_directions and wind_speeds are not None, then make sure each row
@@ -121,8 +117,8 @@ class HeterogeneousMap(LoggingManager):
                 np.unique(np.column_stack((self.wind_directions, self.wind_speeds)), axis=0)
             ) != len(self.wind_directions):
                 raise ValueError(
-                    "Each row of a matrix where wind directions and wind speeds are the columns"
-                    "should be unique"
+                    "Each row of a matrix where wind directions and wind speeds are the columns "
+                    "should be unique."
                 )
 
     def get_heterogeneous_inflow_config(
@@ -238,7 +234,7 @@ class HeterogeneousMap(LoggingManager):
             points[np.append(hull.vertices, hull.vertices[0]), 1],
             "--",
             color="gray",
-            label="Heterogeneous Boundary",
+            label="Heterogeneity Boundary",
         )
 
     def plot_wind_direction(self, ax: plt.Axes, wind_direction: float):
@@ -360,7 +356,7 @@ class HeterogeneousMap(LoggingManager):
             lin_values = lin_interpolant(x, y)
         except scipy.spatial._qhull.QhullError:
             self.logger.warning(
-                "QhullError occurred in computing visualize. Falling back to nearest neighbor.  "
+                "QhullError occurred in computing visualize. Falling back to nearest neighbor. "
                 "Note this may not represent the exact speed multipliers used within FLORIS."
             )
             lin_values = np.nan * np.ones_like(x)
@@ -396,7 +392,7 @@ class HeterogeneousMap(LoggingManager):
         )
 
         # Plot the grid coordinates as a scatter plot
-        ax.scatter(x, y, color="gray", marker=".", label="Heterogeneous Points")
+        ax.scatter(x, y, color="gray", marker=".", label="Heterogeneity Coordinates")
         ax.set_xlim
 
         # Show the boundary

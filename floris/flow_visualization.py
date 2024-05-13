@@ -260,9 +260,11 @@ def visualize_heterogeneous_cut_plane(
     )
 
     if plot_het_bounds:
-        HeterogeneousMap.plot_heterogeneous_boundary(fmodel.core.flow_field.heterogeneous_inflow_config['x'],
-                                    fmodel.core.flow_field.heterogeneous_inflow_config['y'],
-                                    ax=ax)
+        HeterogeneousMap.plot_heterogeneous_boundary(
+            fmodel.core.flow_field.heterogeneous_inflow_config['x'],
+            fmodel.core.flow_field.heterogeneous_inflow_config['y'],
+            ax=ax
+        )
     return ax
 
 

@@ -4,12 +4,11 @@ When multiple cases are considered, the heterogeneous inflow conditions can be d
 
   1. Passing heterogeneous_inflow_config to the set method, with P points,
         and speedups of size n_findex X P
-  2. More conveniently, building a HeterogeneousMap object that
-        defines the speed_multipliers as a function
-        of wind direction and/or wind speed and passing that to a WindData object.  When the
-        WindData object is passed to the set method, the heterogeneous_inflow_config
-        is automatically generated for each findex by finding the nearest wind direction
-        and/or wind speed in the HeterogeneousMap object.
+  2. More conveniently, building a HeterogeneousMap object that defines the speed_multipliers as a
+        function of wind direction and/or wind speed and passing that to a WindData object.  When
+        the WindData object is passed to the set method, the heterogeneous_inflow_config is
+        automatically generated for each findex by finding the nearest wind direction and/or wind
+        speed in the HeterogeneousMap object.
 
 This example:
 
@@ -53,8 +52,8 @@ y_locs = [-500.0, 1000.0, -500.0, 1000.0]
 
 # Assume the speed-ups are defined such that they are the same 265-275 degrees and 275-285 degrees
 
-# If defining heterogeneous_inflow_config directly, then the speedups are of size n_findex X P
-# where the first 3 rows are identical, and the last row is different
+# If defining heterogeneous_inflow_config directly, then the speed_multiploers are of size
+# n_findex x P, where the first 3 rows are identical and the last row is different
 speed_ups = [
     [1.0, 1.25, 1.0, 1.25],
     [1.0, 1.25, 1.0, 1.25],
@@ -78,15 +77,15 @@ fmodel.run()
 turbine_powers = fmodel.get_turbine_powers() / 1000.0
 
 # Now repeat using the wind_data object and HeterogeneousMap object
-# First, create the speedups for the two wind directions
-speed_ups = [[1.0, 1.25, 1.0, 1.25], [1.0, 1.35, 1.0, 1.35]]
+# First, create the speed multipliers for the two wind directions
+speed_multipliers = [[1.0, 1.25, 1.0, 1.25], [1.0, 1.35, 1.0, 1.35]]
 
 # Now define the HeterogeneousMap object
 heterogeneous_map = HeterogeneousMap(
-    x = x_locs,
-    y = y_locs,
-    speed_multipliers = speed_ups,
-    wind_directions = [270.0, 280.0],
+    x=x_locs,
+    y=y_locs,
+    speed_multipliers=speed_multipliers,
+    wind_directions=[270.0, 280.0],
 )
 
 # Now create a new TimeSeries object including the heterogeneous_inflow_config_by_wd

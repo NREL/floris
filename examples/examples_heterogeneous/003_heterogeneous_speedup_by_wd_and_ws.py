@@ -23,7 +23,6 @@ from floris import (
     TimeSeries,
 )
 from floris.flow_visualization import visualize_heterogeneous_cut_plane
-from floris.layout_visualization import plot_turbine_rotors
 
 
 # Define a HeterogeneousMap object with speedups defined for two wind directions
