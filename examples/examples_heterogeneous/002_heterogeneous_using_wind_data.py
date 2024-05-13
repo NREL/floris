@@ -101,7 +101,7 @@ time_series = TimeSeries(
 # this is still accepted.  However, the HeterogeneousMap object is more flexible.
 # The following code produces the same results as the previous code block.
 heterogeneous_inflow_config_by_wd = {
-    "speed_multipliers": speed_ups,
+    "speed_multipliers": speed_multipliers,
     "x": x_locs,
     "y": y_locs,
     "wind_directions": [270.0, 280.0],
