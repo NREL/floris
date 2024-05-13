@@ -3,7 +3,7 @@
 When multiple cases are considered, the heterogeneous inflow conditions can be defined in two ways:
 
   1. Passing heterogeneous_inflow_config to the set method, with P points,
-        and speedups of size n_findex X P
+        and speed_multipliers of size n_findex X P
   2. More conveniently, building a HeterogeneousMap object that defines the speed_multipliers as a
         function of wind direction and/or wind speed and passing that to a WindData object.  When
         the WindData object is passed to the set method, the heterogeneous_inflow_config is
@@ -52,9 +52,9 @@ y_locs = [-500.0, 1000.0, -500.0, 1000.0]
 
 # Assume the speed-ups are defined such that they are the same 265-275 degrees and 275-285 degrees
 
-# If defining heterogeneous_inflow_config directly, then the speed_multiploers are of size
+# If defining heterogeneous_inflow_config directly, then the speed_multipliers are of size
 # n_findex x P, where the first 3 rows are identical and the last row is different
-speed_ups = [
+speed_multipliers = [
     [1.0, 1.25, 1.0, 1.25],
     [1.0, 1.25, 1.0, 1.25],
     [1.0, 1.25, 1.0, 1.25],
@@ -62,7 +62,7 @@ speed_ups = [
 ]
 
 heterogeneous_inflow_config = {
-    "speed_multipliers": speed_ups,
+    "speed_multipliers": speed_multipliers,
     "x": x_locs,
     "y": y_locs,
 }
