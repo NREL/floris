@@ -1,0 +1,40 @@
+# Select the models to use for the simulation.
+model_strings:
+
+  # Select the wake combination model.
+  combination_model: sosfs
+
+  # Select the wake deflection model.
+  deflection_model: none
+
+  # Select the wake turbulence model.
+  turbulence_model: none
+
+  # Select the wake velocity deficit model.
+  velocity_model: turbopark
+
+# Can be "true" or "false".
+enable_secondary_steering: false
+
+# Can be "true" or "false".
+enable_yaw_added_recovery: false
+
+# Can be "true" or "false".
+enable_active_wake_mixing: false
+
+# Can be "true" or "false".
+enable_transverse_velocities: false
+
+# Configure the parameters for the wake velocity deficit model
+wake_velocity_parameters:
+  turbopark:
+    A: 0.04
+    sigma_max_rel: 4.0
+
+# Configure the parameters for the wake deflection model
+wake_deflection_parameters:
+  none:
+
+# Configure the parameters for the wake turbulence model
+wake_turbulence_parameters:
+  none:

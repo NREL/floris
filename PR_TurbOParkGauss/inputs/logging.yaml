@@ -1,0 +1,25 @@
+###
+# Settings for logging to the console (i.e. terminal).
+console:
+
+  ###
+  # Can be "true" or "false".
+  enable: true
+
+  ###
+  # Set the severity to show output. Messages at this level or higher will be shown.
+  # Can be one of "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG".
+  level: WARNING
+
+###
+# Settings for logging to a file.
+file:
+
+  ###
+  # Can be "true" or "false".
+  enable: false
+
+  ###
+  # Set the severity to show output. Messages at this level or higher will be shown.
+  # Can be one of "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG".
+  level: WARNING
