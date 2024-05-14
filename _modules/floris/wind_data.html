@@ -41,7 +41,7 @@
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operation_models_user.html">Turbine Operation Models</a></li>
@@ -292,6 +293,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -313,8 +315,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -513,6 +516,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="kn">import</span> <span class="n">CategoricalDtype</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">LinearNDInterpolator</span><span class="p">,</span> <span class="n">NearestNDInterpolator</span>
 
+<span class="kn">from</span> <span class="nn">floris.heterogeneous_map</span> <span class="kn">import</span> <span class="n">HeterogeneousMap</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
 
 
@@ -575,37 +579,6 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack</span><span class="p">()[</span><span class="mi">4</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="WindDataBase.check_heterogeneous_inflow_config_by_wd">
-<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config_by_wd">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_heterogeneous_inflow_config_by_wd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check that the heterogeneous_inflow_config_by_wd dictionary is properly formatted</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            heterogeneous_inflow_config_by_wd (dict): A dictionary containing the following keys:</span>
-<span class="sd">                * &#39;speed_multipliers&#39;: A 2D NumPy array (size num_wd x num_points)</span>
-<span class="sd">                     of speed multipliers.</span>
-<span class="sd">                * &#39;wind_directions&#39;: A 1D NumPy array (size num_wd) of wind directions (degrees).</span>
-<span class="sd">                * &#39;x&#39;: A 1D NumPy array (size num_points) of x-coordinates (meters).</span>
-<span class="sd">                * &#39;y&#39;: A 1D NumPy array (size num_points) of y-coordinates (meters).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;heterogeneous_inflow_config_by_wd must be a dictionary&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;speed_multipliers&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;heterogeneous_inflow_config_by_wd must contain a key &#39;speed_multipliers&#39;&quot;</span>
-                <span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;wind_directions&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;heterogeneous_inflow_config_by_wd must contain a key &#39;wind_directions&#39;&quot;</span>
-                <span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;x&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;heterogeneous_inflow_config_by_wd must contain a key &#39;x&#39;&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;y&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;heterogeneous_inflow_config_by_wd must contain a key &#39;y&#39;&quot;</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="WindDataBase.check_heterogeneous_inflow_config">
 <a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config">[docs]</a>
     <span class="k">def</span> <span class="nf">check_heterogeneous_inflow_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heterogeneous_inflow_config</span><span class="p">):</span>
@@ -630,68 +603,6 @@ document.write(`
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;heterogeneous_inflow_config must contain a key &#39;x&#39;&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="s2">&quot;y&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">heterogeneous_inflow_config</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;heterogeneous_inflow_config must contain a key &#39;y&#39;&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="WindDataBase.get_speed_multipliers_by_wd">
-<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindDataBase.get_speed_multipliers_by_wd">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_speed_multipliers_by_wd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span> <span class="n">wind_directions</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Processes heterogeneous inflow configuration data to generate a speed multiplier array</span>
-<span class="sd">        aligned with the wind directions. Accounts for the cyclical nature of wind directions.</span>
-<span class="sd">        Args:</span>
-<span class="sd">            heterogeneous_inflow_config_by_wd (dict): A dictionary containing the following keys:</span>
-<span class="sd">                * &#39;speed_multipliers&#39;: A 2D NumPy array (size num_wd x num_points)</span>
-<span class="sd">                     of speed multipliers.</span>
-<span class="sd">                * &#39;wind_directions&#39;: A 1D NumPy array (size num_wd) of wind directions (degrees).</span>
-<span class="sd">                * &#39;x&#39;: A 1D NumPy array (size num_points) of x-coordinates (meters).</span>
-<span class="sd">                * &#39;y&#39;: A 1D NumPy array (size num_points) of y-coordinates (meters).</span>
-
-<span class="sd">            wind_directions (np.array): Wind directions to map onto</span>
-<span class="sd">        Returns:</span>
-<span class="sd">                numpy.ndarray: A 2D NumPy array (size n_findex x n) of speed multipliers</span>
-<span class="sd">                            Each row corresponds to a wind direction,</span>
-<span class="sd">                            with speed multipliers selected</span>
-<span class="sd">                            based on the closest matching wind direction in &#39;het_wd&#39;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Extract data from the configuration dictionary</span>
-        <span class="n">speed_multipliers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">[</span><span class="s2">&quot;speed_multipliers&quot;</span><span class="p">])</span>
-        <span class="n">het_wd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">[</span><span class="s2">&quot;wind_directions&quot;</span><span class="p">])</span>
-
-        <span class="c1"># Confirm 0th dimension of speed_multipliers == len(het_wd)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">het_wd</span><span class="p">)</span> <span class="o">!=</span> <span class="n">speed_multipliers</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The legnth of het_wd must equal the number of rows speed_multipliers&quot;</span>
-                <span class="s2">&quot;Within the heterogeneous_inflow_config_by_wd dictionary&quot;</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Calculate closest wind direction indices (accounting for angles)</span>
-        <span class="n">angle_diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">het_wd</span><span class="p">)</span>
-        <span class="n">min_angle_diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">angle_diffs</span><span class="p">,</span> <span class="mi">360</span> <span class="o">-</span> <span class="n">angle_diffs</span><span class="p">)</span>
-        <span class="n">closest_wd_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">min_angle_diffs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="c1"># Construct the output array using the calculated indices</span>
-        <span class="k">return</span> <span class="n">speed_multipliers</span><span class="p">[</span><span class="n">closest_wd_indices</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="WindDataBase.get_heterogeneous_inflow_config">
-<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindDataBase.get_heterogeneous_inflow_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_heterogeneous_inflow_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span> <span class="n">wind_directions</span><span class="p">):</span>
-        <span class="c1"># If heterogeneous_inflow_config_by_wd is None, return None</span>
-        <span class="k">if</span> <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="c1"># If heterogeneous_inflow_config_by_wd is not None, then process it</span>
-        <span class="c1"># Build the n-findex version of the het map</span>
-        <span class="n">speed_multipliers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_speed_multipliers_by_wd</span><span class="p">(</span>
-            <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span> <span class="n">wind_directions</span>
-        <span class="p">)</span>
-        <span class="c1"># Return heterogeneous_inflow_config</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;speed_multipliers&quot;</span><span class="p">:</span> <span class="n">speed_multipliers</span><span class="p">,</span>
-            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
-        <span class="p">}</span></div>
 </div>
 
 
@@ -724,13 +635,22 @@ document.write(`
 <span class="sd">            each bin to compute the total value of the energy produced</span>
 <span class="sd">        compute_zero_freq_occurrence: Flag indicating whether to compute zero</span>
 <span class="sd">            frequency occurrences (bool, optional).  Defaults to False.</span>
+<span class="sd">        heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define</span>
+<span class="sd">            background heterogeneous inflow condition as a function</span>
+<span class="sd">            of wind direction and wind speed.  Alternatively, a dictionary can be</span>
+<span class="sd">            passed in to define a HeterogeneousMap object.  Defaults to None.</span>
 <span class="sd">        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</span>
-<span class="sd">            keys. Defaults to None.</span>
-<span class="sd">            * &#39;speed_multipliers&#39;: A 2D NumPy array (size num_wd x num_points)</span>
-<span class="sd">                    of speed multipliers.</span>
-<span class="sd">            * &#39;wind_directions&#39;: A 1D NumPy array (size num_wd) of wind directions (degrees).</span>
+<span class="sd">            which can be used to define a heterogeneous_map object (note this parameter is kept</span>
+<span class="sd">            for backwards compatibility and is not recommended for use):</span>
 <span class="sd">            * &#39;x&#39;: A 1D NumPy array (size num_points) of x-coordinates (meters).</span>
 <span class="sd">            * &#39;y&#39;: A 1D NumPy array (size num_points) of y-coordinates (meters).</span>
+<span class="sd">            * &#39;speed_multipliers&#39;: A 2D NumPy array (size num_wd (or num_ws) x num_points)</span>
+<span class="sd">                of speed multipliers.  If neither wind_directions nor wind_speeds are</span>
+<span class="sd">                defined, then this should be a single row array</span>
+<span class="sd">            * &#39;wind_directions&#39;: A 1D NumPy array (size num_wd) of wind directions (degrees).</span>
+<span class="sd">                Optional.</span>
+<span class="sd">            * &#39;wind_speeds&#39;: A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.</span>
+<span class="sd">            Defaults to None.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -742,6 +662,7 @@ document.write(`
         <span class="n">freq_table</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">value_table</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">compute_zero_freq_occurrence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">heterogeneous_map</span><span class="p">:</span> <span class="n">HeterogeneousMap</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -753,6 +674,10 @@ document.write(`
         <span class="c1"># Save the wind speeds and directions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span> <span class="o">=</span> <span class="n">wind_directions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">wind_speeds</span>
+
+        <span class="c1"># Check ti_table is a float or a NumPy array</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ti_table</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;ti_table must be a float or a NumPy array&quot;</span><span class="p">)</span>
 
         <span class="c1"># Check if ti_table is a single float value</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ti_table</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
@@ -802,12 +727,40 @@ document.write(`
                 <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span> <span class="o">=</span> <span class="n">compute_zero_freq_occurrence</span>
 
-        <span class="c1"># Check that heterogeneous_inflow_config_by_wd is a dictionary with keys:</span>
-        <span class="c1"># speed_multipliers, wind_directions, x and y</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_heterogeneous_inflow_config_by_wd</span><span class="p">(</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">)</span>
+        <span class="c1"># Check that heterogeneous_map and heterogeneous_inflow_config_by_wd are not both defined</span>
+        <span class="k">if</span> <span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be&quot;</span>
+                <span class="o">+</span><span class="s2">&quot; defined.&quot;</span>
+            <span class="p">)</span>
 
-        <span class="c1"># Then save</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span> <span class="o">=</span> <span class="n">heterogeneous_inflow_config_by_wd</span>
+        <span class="c1"># If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object</span>
+        <span class="c1"># using the dictionary</span>
+        <span class="k">if</span> <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: In future, add deprectation warning for this parameter here</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span><span class="o">**</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">)</span>
+
+        <span class="c1"># Else if heterogeneous_map is not None</span>
+        <span class="k">elif</span> <span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If heterogeneous_map is a dictionary, then create a HeterogeneousMap object</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">heterogeneous_map</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span><span class="o">**</span><span class="n">heterogeneous_map</span><span class="p">)</span>
+
+            <span class="c1"># Else if heterogeneous_map is a HeterogeneousMap object, then save it</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">heterogeneous_map</span><span class="p">,</span> <span class="n">HeterogeneousMap</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">heterogeneous_map</span>
+
+            <span class="c1"># Else raise an error</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;heterogeneous_map must be a HeterogeneousMap object or a dictionary.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,</span>
+        <span class="c1"># then set heterogeneous_map to None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Build the gridded and flatten versions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_gridded_and_flattened_version</span><span class="p">()</span>
@@ -875,11 +828,10 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value_table_unpack</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># If heterogeneous_inflow_config_by_wd is not None, then update</span>
-        <span class="c1"># heterogeneous_inflow_config to match wind_directions_unpack</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_heterogeneous_inflow_config</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span> <span class="n">wind_directions_unpack</span>
+        <span class="c1"># If heterogeneous_map is not None, then get the heterogeneous_inflow_config</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">get_heterogeneous_inflow_config</span><span class="p">(</span>
+                <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions_unpack</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds_unpack</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="kc">None</span>
@@ -964,7 +916,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">ws_flat</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ti_table_flat</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value_table_flat</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Now build a new wind rose using the new steps</span>
@@ -979,7 +931,7 @@ document.write(`
                 <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">freq_table</span><span class="p">,</span>
                 <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">value_table</span><span class="p">,</span>
                 <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span><span class="p">,</span>
-                <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+                <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">aggregated_wind_rose</span></div>
@@ -1132,7 +1084,7 @@ document.write(`
             <span class="n">new_freq_matrix</span><span class="p">,</span>
             <span class="n">new_value_matrix</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
@@ -1143,7 +1095,7 @@ document.write(`
                 <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">freq_table</span><span class="p">,</span>
                 <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">value_table</span><span class="p">,</span>
                 <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span><span class="p">,</span>
-                <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+                <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">resampled_wind_rose</span></div>
@@ -1543,13 +1495,22 @@ document.write(`
 <span class="sd">            to compute the total value of the energy produced.</span>
 <span class="sd">        compute_zero_freq_occurrence: Flag indicating whether to compute zero</span>
 <span class="sd">            frequency occurrences (bool, optional).  Defaults to False.</span>
+<span class="sd">        heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define</span>
+<span class="sd">            background heterogeneous inflow condition as a function</span>
+<span class="sd">            of wind direction and wind speed.  Alternatively, a dictionary can be</span>
+<span class="sd">            passed in to define a HeterogeneousMap object.  Defaults to None.</span>
 <span class="sd">        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</span>
-<span class="sd">            keys. Defaults to None.</span>
-<span class="sd">            * &#39;speed_multipliers&#39;: A 2D NumPy array (size num_wd x num_points)</span>
-<span class="sd">                    of speed multipliers.</span>
-<span class="sd">            * &#39;wind_directions&#39;: A 1D NumPy array (size num_wd) of wind directions (degrees).</span>
+<span class="sd">            which can be used to define a heterogeneous_map object (note this parameter is kept</span>
+<span class="sd">            for backwards compatibility and is not recommended for use):</span>
 <span class="sd">            * &#39;x&#39;: A 1D NumPy array (size num_points) of x-coordinates (meters).</span>
 <span class="sd">            * &#39;y&#39;: A 1D NumPy array (size num_points) of y-coordinates (meters).</span>
+<span class="sd">            * &#39;speed_multipliers&#39;: A 2D NumPy array (size num_wd (or num_ws) x num_points)</span>
+<span class="sd">                of speed multipliers.  If neither wind_directions nor wind_speeds are</span>
+<span class="sd">                defined, then this should be a single row array</span>
+<span class="sd">            * &#39;wind_directions&#39;: A 1D NumPy array (size num_wd) of wind directions (degrees).</span>
+<span class="sd">                Optional.</span>
+<span class="sd">            * &#39;wind_speeds&#39;: A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.</span>
+<span class="sd">            Defaults to None.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1561,6 +1522,7 @@ document.write(`
         <span class="n">freq_table</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">value_table</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">compute_zero_freq_occurrence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">heterogeneous_map</span><span class="p">:</span> <span class="n">HeterogeneousMap</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -1610,15 +1572,43 @@ document.write(`
                 <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value_table</span> <span class="o">=</span> <span class="n">value_table</span>
 
-        <span class="c1"># Check that heterogeneous_inflow_config_by_wd is a dictionary with keys:</span>
-        <span class="c1"># speed_multipliers, wind_directions, x and y</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_heterogeneous_inflow_config_by_wd</span><span class="p">(</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">)</span>
-
-        <span class="c1"># Then save</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span> <span class="o">=</span> <span class="n">heterogeneous_inflow_config_by_wd</span>
-
         <span class="c1"># Save whether zero occurrence cases should be computed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span> <span class="o">=</span> <span class="n">compute_zero_freq_occurrence</span>
+
+        <span class="c1"># Check that heterogeneous_map and heterogeneous_inflow_config_by_wd are not both defined</span>
+        <span class="k">if</span> <span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be&quot;</span>
+                <span class="o">+</span><span class="s2">&quot; defined.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object</span>
+        <span class="c1"># using the dictionary</span>
+        <span class="k">if</span> <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: In future, add deprectation warning for this parameter here</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span><span class="o">**</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">)</span>
+
+        <span class="c1"># Else if heterogeneous_map is not None</span>
+        <span class="k">elif</span> <span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If heterogeneous_map is a dictionary, then create a HeterogeneousMap object</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">heterogeneous_map</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span><span class="o">**</span><span class="n">heterogeneous_map</span><span class="p">)</span>
+
+            <span class="c1"># Else if heterogeneous_map is a HeterogeneousMap object, then save it</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">heterogeneous_map</span><span class="p">,</span> <span class="n">HeterogeneousMap</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">heterogeneous_map</span>
+
+            <span class="c1"># Else raise an error</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;heterogeneous_map must be a HeterogeneousMap object or a dictionary.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,</span>
+        <span class="c1"># then set heterogeneous_map to None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Build the gridded and flatten versions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_gridded_and_flattened_version</span><span class="p">()</span>
@@ -1684,11 +1674,10 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value_table_unpack</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># If heterogeneous_inflow_config_by_wd is not None, then update</span>
-        <span class="c1"># heterogeneous_inflow_config to match wind_directions_unpack</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_heterogeneous_inflow_config</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span> <span class="n">wind_directions_unpack</span>
+        <span class="c1"># If heterogeneous_map is not None, then get the heterogeneous_inflow_config</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">get_heterogeneous_inflow_config</span><span class="p">(</span>
+                <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_directions_unpack</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds_unpack</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1787,7 +1776,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">ws_flat</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ti_flat</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value_table_flat</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Now build a new wind rose using the new steps</span>
@@ -1803,7 +1792,7 @@ document.write(`
                 <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">freq_table</span><span class="p">,</span>
                 <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">value_table</span><span class="p">,</span>
                 <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span><span class="p">,</span>
-                <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+                <span class="n">aggregated_wind_rose</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">aggregated_wind_rose</span></div>
@@ -2011,7 +2000,7 @@ document.write(`
             <span class="n">new_freq_matrix</span><span class="p">,</span>
             <span class="n">new_value_matrix</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
@@ -2022,7 +2011,7 @@ document.write(`
                 <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">freq_table</span><span class="p">,</span>
                 <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">value_table</span><span class="p">,</span>
                 <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span><span class="p">,</span>
-                <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+                <span class="n">resampled_wind_rose</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">resampled_wind_rose</span></div>
@@ -2385,13 +2374,22 @@ document.write(`
 <span class="sd">            a single value or an array of values.</span>
 <span class="sd">        values (NDArrayFloat, optional): Values associated with each wind</span>
 <span class="sd">            direction, wind speed, and turbulence intensity. Defaults to None.</span>
+<span class="sd">        heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define</span>
+<span class="sd">            background heterogeneous inflow condition as a function</span>
+<span class="sd">            of wind direction and wind speed.  Alternatively, a dictionary can be</span>
+<span class="sd">            passed in to define a HeterogeneousMap object.  Defaults to None.</span>
 <span class="sd">        heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</span>
-<span class="sd">            keys. Defaults to None.</span>
-<span class="sd">            * &#39;speed_multipliers&#39;: A 2D NumPy array (size num_wd x num_points)</span>
-<span class="sd">                    of speed multipliers.</span>
-<span class="sd">            * &#39;wind_directions&#39;: A 1D NumPy array (size num_wd) of wind directions (degrees).</span>
+<span class="sd">            which can be used to define a heterogeneous_map object (note this parameter is kept</span>
+<span class="sd">            for backwards compatibility and is not recommended for use):</span>
 <span class="sd">            * &#39;x&#39;: A 1D NumPy array (size num_points) of x-coordinates (meters).</span>
 <span class="sd">            * &#39;y&#39;: A 1D NumPy array (size num_points) of y-coordinates (meters).</span>
+<span class="sd">            * &#39;speed_multipliers&#39;: A 2D NumPy array (size num_wd (or num_ws) x num_points)</span>
+<span class="sd">                of speed multipliers.  If neither wind_directions nor wind_speeds are</span>
+<span class="sd">                defined, then this should be a single row array</span>
+<span class="sd">            * &#39;wind_directions&#39;: A 1D NumPy array (size num_wd) of wind directions (degrees).</span>
+<span class="sd">                Optional.</span>
+<span class="sd">            * &#39;wind_speeds&#39;: A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.</span>
+<span class="sd">            Defaults to None.</span>
 <span class="sd">        heterogeneous_inflow_config (dict, optional): A dictionary containing the following keys.</span>
 <span class="sd">            Defaults to None.</span>
 <span class="sd">            * &#39;speed_multipliers&#39;: A 2D NumPy array (size n_findex x num_points)</span>
@@ -2406,9 +2404,19 @@ document.write(`
         <span class="n">wind_speeds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">turbulence_intensities</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">values</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">heterogeneous_map</span><span class="p">:</span> <span class="n">HeterogeneousMap</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">heterogeneous_inflow_config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="c1"># Check that wind_directions, wind_speeds, and turbulence_intensities are either numpy array</span>
+        <span class="c1"># of floats</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;wind_directions must be a float or a NumPy array&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;wind_speeds must be a float or a NumPy array&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">turbulence_intensities</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;turbulence_intensities must be a float or a NumPy array&quot;</span><span class="p">)</span>
+
         <span class="c1"># At least one of wind_directions, wind_speeds, or turbulence_intensities must be an array</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
@@ -2475,15 +2483,21 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">turbulence_intensities</span> <span class="o">=</span> <span class="n">turbulence_intensities</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
 
-        <span class="c1"># Only one of heterogeneous_inflow_config_by_wd and</span>
-        <span class="c1"># heterogeneous_inflow_config can be not None</span>
+        <span class="c1"># Check that at most one of heterogeneous_inflow_config_by_wd,</span>
+        <span class="c1"># heterogeneous_map and heterogeneous_inflow_config is not None</span>
         <span class="k">if</span> <span class="p">(</span>
-            <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="n">heterogeneous_inflow_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="nb">sum</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">heterogeneous_inflow_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="o">&gt;</span> <span class="mi">1</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Only one of heterogeneous_inflow_config_by_wd and heterogeneous_inflow_config &quot;</span>
-                <span class="s2">&quot;can be not None&quot;</span>
+                <span class="s2">&quot;Only one of heterogeneous_inflow_config_by_wd, &quot;</span>
+                <span class="o">+</span><span class="s2">&quot;heterogeneous_map, and heterogeneous_inflow_config can be not None.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># if heterogeneous_inflow_config is not None, then the speed_multipliers</span>
@@ -2493,14 +2507,39 @@ document.write(`
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">heterogeneous_inflow_config</span><span class="p">[</span><span class="s2">&quot;speed_multipliers&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;speed_multipliers must be the same length as wind_directions&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Check that heterogeneous_inflow_config_by_wd is a dictionary with keys:</span>
-        <span class="c1"># speed_multipliers, wind_directions, x and y</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_heterogeneous_inflow_config_by_wd</span><span class="p">(</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_heterogeneous_inflow_config</span><span class="p">(</span><span class="n">heterogeneous_inflow_config</span><span class="p">)</span>
+            <span class="c1"># Check  heterogeneous_inflow_config and save</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_heterogeneous_inflow_config</span><span class="p">(</span><span class="n">heterogeneous_inflow_config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="n">heterogeneous_inflow_config</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># Then save</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span> <span class="o">=</span> <span class="n">heterogeneous_inflow_config_by_wd</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="n">heterogeneous_inflow_config</span>
+        <span class="c1"># If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object</span>
+        <span class="c1"># using the dictionary</span>
+        <span class="k">if</span> <span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: In future, add deprectation warning for this parameter here</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span><span class="o">**</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">)</span>
+
+        <span class="c1"># Else if heterogeneous_map is not None</span>
+        <span class="k">elif</span> <span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If heterogeneous_map is a dictionary, then create a HeterogeneousMap object</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">heterogeneous_map</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span><span class="o">**</span><span class="n">heterogeneous_map</span><span class="p">)</span>
+
+            <span class="c1"># Else if heterogeneous_map is a HeterogeneousMap object, then save it</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">heterogeneous_map</span><span class="p">,</span> <span class="n">HeterogeneousMap</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">heterogeneous_map</span>
+
+            <span class="c1"># Else raise an error</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;heterogeneous_map must be a HeterogeneousMap object or a dictionary.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Else if neither heterogeneous_map nor heterogeneous_inflow_config_by_wd are defined,</span>
+        <span class="c1"># then set heterogeneous_map to None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Record findex</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_findex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">)</span>
@@ -2516,11 +2555,11 @@ document.write(`
         <span class="n">uniform_frequency</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">)</span>
         <span class="n">uniform_frequency</span> <span class="o">=</span> <span class="n">uniform_frequency</span> <span class="o">/</span> <span class="n">uniform_frequency</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-        <span class="c1"># If heterogeneous_inflow_config_by_wd is not None, then update</span>
+        <span class="c1"># If heterogeneous_map is not None, then update</span>
         <span class="c1"># heterogeneous_inflow_config to match wind_directions_unpack</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_heterogeneous_inflow_config</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">get_heterogeneous_inflow_config</span><span class="p">(</span>
+                <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span>
@@ -2808,7 +2847,7 @@ document.write(`
             <span class="n">ti_table</span><span class="p">,</span>
             <span class="n">freq_table</span><span class="p">,</span>
             <span class="n">value_table</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -2978,7 +3017,7 @@ document.write(`
             <span class="n">ti_centers</span><span class="p">,</span>
             <span class="n">freq_table</span><span class="p">,</span>
             <span class="n">value_table</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 

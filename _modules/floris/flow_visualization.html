@@ -41,7 +41,7 @@
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operation_models_user.html">Turbine Operation Models</a></li>
@@ -292,6 +293,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -313,8 +315,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -521,6 +524,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="n">Core</span>
 <span class="kn">from</span> <span class="nn">floris.core.turbine.operation_models</span> <span class="kn">import</span> <span class="n">POWER_SETPOINT_DEFAULT</span>
 <span class="kn">from</span> <span class="nn">floris.cut_plane</span> <span class="kn">import</span> <span class="n">CutPlane</span>
+<span class="kn">from</span> <span class="nn">floris.heterogeneous_map</span> <span class="kn">import</span> <span class="n">HeterogeneousMap</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">floris_array_converter</span><span class="p">,</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
@@ -634,7 +638,7 @@ document.write(`
 <span class="sd">        **kwargs: Additional parameters to pass to line contour plot.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.</span>
+<span class="sd">        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
@@ -753,92 +757,31 @@ document.write(`
 <span class="sd">        **kwargs: Additional parameters to pass to line contour plot.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.</span>
+<span class="sd">        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
-        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;u&#39;</span><span class="p">:</span>
-        <span class="c1"># vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
-        <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;v&#39;</span><span class="p">:</span>
-        <span class="c1"># vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
-        <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">vel_component</span><span class="o">==</span><span class="s1">&#39;w&#39;</span><span class="p">:</span>
-        <span class="c1"># vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])</span>
-        <span class="k">if</span> <span class="n">min_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">min_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">max_speed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">max_speed</span> <span class="o">=</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-
-    <span class="c1"># Allow separate number of levels for tricontourf and for line_contour</span>
-    <span class="k">if</span> <span class="n">clevels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">clevels</span> <span class="o">=</span> <span class="n">levels</span>
-
-    <span class="c1"># Plot the cut-through</span>
-    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">tricontourf</span><span class="p">(</span>
-        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span>
-        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span>
-        <span class="n">cut_plane</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">u</span><span class="p">,</span>
-        <span class="n">vmin</span><span class="o">=</span><span class="n">min_speed</span><span class="p">,</span>
-        <span class="n">vmax</span><span class="o">=</span><span class="n">max_speed</span><span class="p">,</span>
-        <span class="n">levels</span><span class="o">=</span><span class="n">clevels</span><span class="p">,</span>
-        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
-        <span class="n">extend</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Add line contour</span>
-    <span class="n">line_contour_cut_plane</span><span class="p">(</span>
-        <span class="n">cut_plane</span><span class="p">,</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">visualize_cut_plane</span><span class="p">(</span>
+        <span class="n">cut_plane</span><span class="o">=</span><span class="n">cut_plane</span><span class="p">,</span>
         <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">vel_component</span><span class="o">=</span><span class="n">vel_component</span><span class="p">,</span>
+        <span class="n">min_speed</span><span class="o">=</span><span class="n">min_speed</span><span class="p">,</span>
+        <span class="n">max_speed</span><span class="o">=</span><span class="n">max_speed</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
         <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
-        <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+        <span class="n">clevels</span><span class="o">=</span><span class="n">clevels</span><span class="p">,</span>
+        <span class="n">color_bar</span><span class="o">=</span><span class="n">color_bar</span><span class="p">,</span>
         <span class="n">label_contours</span><span class="o">=</span><span class="n">label_contours</span><span class="p">,</span>
-        <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
-        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span>
 
-    <span class="c1"># Plot the user-defined heterogeneous flow area</span>
     <span class="k">if</span> <span class="n">plot_het_bounds</span><span class="p">:</span>
-        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="nb">list</span><span class="p">(</span>
-                <span class="nb">zip</span><span class="p">(</span>
-                    <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span>
-                    <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
+        <span class="n">HeterogeneousMap</span><span class="o">.</span><span class="n">plot_heterogeneous_boundary</span><span class="p">(</span>
+            <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span>
+            <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
         <span class="p">)</span>
-        <span class="n">hull</span> <span class="o">=</span> <span class="n">ConvexHull</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">points</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="mi">0</span><span class="p">],</span>
-            <span class="n">points</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">1</span><span class="p">],</span>
-            <span class="s1">&#39;k--&#39;</span><span class="p">,</span>
-            <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;ko&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;defined heterogeneous bounds&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">cut_plane</span><span class="o">.</span><span class="n">normal_vector</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">color_bar</span><span class="p">:</span>
-        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-        <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;m/s&#39;</span><span class="p">)</span>
-
-    <span class="c1"># Set the title</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-
-    <span class="c1"># Make equal axis</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">im</span></div>
+    <span class="k">return</span> <span class="n">ax</span></div>
 
 
 

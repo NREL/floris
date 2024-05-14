@@ -41,7 +41,7 @@
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../../../_static/documentation_options.js?v=30a733bc"></script>
-    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
@@ -200,6 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../operation_models_user.html">Turbine Operation Models</a></li>
@@ -292,6 +293,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -313,8 +315,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -1148,6 +1151,135 @@ document.write(`
             <span class="n">velocities</span><span class="o">=</span><span class="n">velocities</span><span class="p">,</span>
             <span class="n">awc_modes</span><span class="o">=</span><span class="n">awc_modes</span><span class="p">,</span>
             <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">awc_amplitudes</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">thrust_coefficient</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span></div>
+</div>
+
+
+<div class="viewcode-block" id="PeakShavingTurbine">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.PeakShavingTurbine">[docs]</a>
+<span class="nd">@define</span>
+<span class="k">class</span> <span class="nc">PeakShavingTurbine</span><span class="p">():</span>
+
+<div class="viewcode-block" id="PeakShavingTurbine.power">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.PeakShavingTurbine.power">[docs]</a>
+    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
+        <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+        <span class="n">turbulence_intensities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+        <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+        <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">_</span> <span class="c1"># &lt;- Allows other models to accept other keyword arguments</span>
+    <span class="p">):</span>
+        <span class="n">base_powers</span> <span class="o">=</span> <span class="n">SimpleTurbine</span><span class="o">.</span><span class="n">power</span><span class="p">(</span>
+            <span class="n">power_thrust_table</span><span class="o">=</span><span class="n">power_thrust_table</span><span class="p">,</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">velocities</span><span class="p">,</span>
+            <span class="n">air_density</span><span class="o">=</span><span class="n">air_density</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get fraction by thrust</span>
+        <span class="n">base_thrust_coefficients</span> <span class="o">=</span> <span class="n">SimpleTurbine</span><span class="o">.</span><span class="n">thrust_coefficient</span><span class="p">(</span>
+            <span class="n">power_thrust_table</span><span class="o">=</span><span class="n">power_thrust_table</span><span class="p">,</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">velocities</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span>
+        <span class="p">)</span>
+        <span class="n">peak_shaving_thrust_coefficients</span> <span class="o">=</span> <span class="n">PeakShavingTurbine</span><span class="o">.</span><span class="n">thrust_coefficient</span><span class="p">(</span>
+            <span class="n">power_thrust_table</span><span class="o">=</span><span class="n">power_thrust_table</span><span class="p">,</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">velocities</span><span class="p">,</span>
+            <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Compute equivalent axial inductions</span>
+        <span class="n">base_ais</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">base_thrust_coefficients</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">peak_shaving_ais</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">peak_shaving_thrust_coefficients</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span>
+
+        <span class="c1"># Power proportion</span>
+        <span class="n">power_fractions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">peak_shaving_thrust_coefficients</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">peak_shaving_ais</span><span class="p">))</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">base_thrust_coefficients</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">base_ais</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Apply fraction to power and return</span>
+        <span class="n">powers</span> <span class="o">=</span> <span class="n">power_fractions</span> <span class="o">*</span> <span class="n">base_powers</span>
+
+        <span class="k">return</span> <span class="n">powers</span></div>
+
+
+<div class="viewcode-block" id="PeakShavingTurbine.thrust_coefficient">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.PeakShavingTurbine.thrust_coefficient">[docs]</a>
+    <span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">(</span>
+        <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+        <span class="n">turbulence_intensities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+        <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+        <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">_</span> <span class="c1"># &lt;- Allows other models to accept other keyword arguments</span>
+    <span class="p">):</span>
+        <span class="n">base_thrust_coefficients</span> <span class="o">=</span> <span class="n">SimpleTurbine</span><span class="o">.</span><span class="n">thrust_coefficient</span><span class="p">(</span>
+            <span class="n">power_thrust_table</span><span class="o">=</span><span class="n">power_thrust_table</span><span class="p">,</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">velocities</span><span class="p">,</span>
+            <span class="n">average_method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span>
+        <span class="p">)</span>
+
+        <span class="n">peak_normal_thrust_prime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;wind_speed&quot;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;thrust_coefficient&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">rotor_average_velocities</span> <span class="o">=</span> <span class="n">average_velocity</span><span class="p">(</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">velocities</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
+            <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Replace zeros with small values to avoid division by zero</span>
+        <span class="n">rotor_average_velocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">rotor_average_velocities</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+        <span class="n">max_allowable_thrust_coefficient</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;peak_shaving_fraction&quot;</span><span class="p">])</span>
+            <span class="o">*</span> <span class="n">peak_normal_thrust_prime</span>
+            <span class="o">/</span> <span class="n">rotor_average_velocities</span><span class="o">**</span><span class="mi">2</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Apply TI mask</span>
+        <span class="n">max_allowable_thrust_coefficient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">turbulence_intensities</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="nb">tuple</span><span class="p">([</span><span class="mi">2</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">turbulence_intensities</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)])</span>
+                <span class="p">)</span>
+                <span class="o">&gt;=</span> <span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;peak_shaving_TI_threshold&quot;</span><span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">max_allowable_thrust_coefficient</span><span class="p">,</span>
+            <span class="n">base_thrust_coefficients</span>
+        <span class="p">)</span>
+
+        <span class="n">thrust_coefficient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">base_thrust_coefficients</span><span class="p">,</span> <span class="n">max_allowable_thrust_coefficient</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">thrust_coefficient</span></div>
+
+
+<div class="viewcode-block" id="PeakShavingTurbine.axial_induction">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.PeakShavingTurbine.axial_induction">[docs]</a>
+    <span class="k">def</span> <span class="nf">axial_induction</span><span class="p">(</span>
+        <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+        <span class="n">turbulence_intensities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+        <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
+        <span class="n">cubature_weights</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">_</span> <span class="c1"># &lt;- Allows other models to accept other keyword arguments</span>
+    <span class="p">):</span>
+
+        <span class="n">thrust_coefficient</span> <span class="o">=</span> <span class="n">PeakShavingTurbine</span><span class="o">.</span><span class="n">thrust_coefficient</span><span class="p">(</span>
+            <span class="n">power_thrust_table</span><span class="o">=</span><span class="n">power_thrust_table</span><span class="p">,</span>
+            <span class="n">velocities</span><span class="o">=</span><span class="n">velocities</span><span class="p">,</span>
+            <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
             <span class="n">average_method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
             <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span><span class="p">,</span>
         <span class="p">)</span>

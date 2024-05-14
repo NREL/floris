@@ -21,6 +21,7 @@ floris.core.turbine.operation\_models
       BaseOperationModel
       CosineLossTurbine
       MixedOperationTurbine
+      PeakShavingTurbine
       SimpleDeratingTurbine
       SimpleTurbine
    

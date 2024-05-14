@@ -42,7 +42,7 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
@@ -201,6 +201,7 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Turbine Operation Models</a></li>
@@ -293,6 +294,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -314,8 +316,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -570,6 +573,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-derating-model">Simple derating model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mixed-operation-model">Mixed operation model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#awc-model">AWC model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peak-shaving-model">Peak shaving model</a></li>
 </ul>
 </li>
 </ul>
@@ -918,6 +922,84 @@ and FLORIS simulations (--) at different region II wind speeds for the NREL 5MW 
 </div>
 </div>
 </section>
+<section id="peak-shaving-model">
+<h3>Peak shaving model<a class="headerlink" href="#peak-shaving-model" title="Link to this heading">#</a></h3>
+<p>User-level name: <code class="docutils literal notranslate"><span class="pre">&quot;peak-shaving&quot;</span></code></p>
+<p>Underlying class: <code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine</span></code></p>
+<p>Required data on <code class="docutils literal notranslate"><span class="pre">power_thrust_table</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ref_air_density</span></code> (scalar)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ref_tilt</span></code> (scalar)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wind_speed</span></code> (list)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">power</span></code> (list)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thrust_coefficient</span></code> (list)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">peak_shaving_fraction</span></code> (scalar)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">peak_shaving_TI_threshold</span></code> (scalar)</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">&quot;peak-shaving&quot;</span></code> operation model allows users to implement peak shaving, where the thrust
+of the wind turbine is reduced from the nominal curve near rated to reduce unwanted structural
+loading. Peak shaving here is implemented here by reducing the thrust by a fixed fraction from
+the peak thrust on the nominal thrust curve, as specified by <code class="docutils literal notranslate"><span class="pre">peak_shaving_fraction</span></code>.This only
+affects wind speeds near the peak in the thrust
+curve (usually near rated wind speed), as thrust values away from the peak will be below the
+fraction regardless. Further, peak shaving is only applied if the turbulence intensity experienced
+by the turbine meets the <code class="docutils literal notranslate"><span class="pre">peak_shaving_TI_threshold</span></code>. To apply peak shaving in all wind conditions,
+<code class="docutils literal notranslate"><span class="pre">peak_shaving_TI_threshold</span></code> may be set to zero.</p>
+<p>When the turbine is peak shaving to reduce thrust, the power output is updated accordingly. Letting
+<span class="math notranslate nohighlight">\(C_{T}\)</span> represent the thrust coefficient when peak shaving (at given wind speed), and <span class="math notranslate nohighlight">\(C_{T}'\)</span>
+represent the thrust coefficient that the turbine would be operating at under nominal control, then
+the power <span class="math notranslate nohighlight">\(P\)</span> due to peak shaving (compared to the power <span class="math notranslate nohighlight">\(P'\)</span> available under nominal control) is
+computed (based on actuator disk theory) as</p>
+<div class="math notranslate nohighlight">
+\[ P = \frac{C_T (1 - a)}{C_T' (1 - a')} P'\]</div>
+<p>where <span class="math notranslate nohighlight">\(a\)</span> (respectively, <span class="math notranslate nohighlight">\(a'\)</span>) is the axial induction factor corresponding to <span class="math notranslate nohighlight">\(C_T\)</span>
+(respectively, <span class="math notranslate nohighlight">\(C_T'\)</span>), computed using the usual relationship from actuator disk theory,
+i.e. the lesser solution to <span class="math notranslate nohighlight">\(C_T=4a(1-a)\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up the FlorisModel</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/gch.yaml&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+    <span class="n">wind_data</span><span class="o">=</span><span class="n">TimeSeries</span><span class="p">(</span>
+        <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+        <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="mf">270.0</span><span class="p">,</span>
+        <span class="n">turbulence_intensities</span><span class="o">=</span><span class="mf">0.2</span> <span class="c1"># Higher than threshold value of 0.1</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set_operation_model</span><span class="p">(</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">powers_base</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span><span class="o">/</span><span class="mi">1000</span>
+<span class="n">thrust_coefficients_base</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_thrust_coefficients</span><span class="p">()</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set_operation_model</span><span class="p">(</span><span class="s2">&quot;peak-shaving&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">powers_peak_shaving</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span><span class="o">/</span><span class="mi">1000</span>
+<span class="n">thrust_coefficients_peak_shaving</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_thrust_coefficients</span><span class="p">()</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">thrust_coefficients_base</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Without peak shaving&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">thrust_coefficients_peak_shaving</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;With peak shaving&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">powers_base</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Without peak shaving&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">,</span> <span class="n">powers_peak_shaving</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;With peak shaving&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Thrust coefficient [-]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Wind speed [m/s]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Power [kW]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
+</pre></div>
+</div>
+<img alt="_images/ed7f9bc00c3b95f6fa0d086d70418b42e03b6d6157f09ddcef5d50110eaf3b41.png" src="_images/ed7f9bc00c3b95f6fa0d086d70418b42e03b6d6157f09ddcef5d50110eaf3b41.png" />
+</div>
+</div>
+</section>
 </section>
 </section>
 
@@ -992,6 +1074,7 @@ and FLORIS simulations (--) at different region II wind speeds for the NREL 5MW 
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-derating-model">Simple derating model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mixed-operation-model">Mixed operation model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#awc-model">AWC model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peak-shaving-model">Peak shaving model</a></li>
 </ul>
 </li>
 </ul>

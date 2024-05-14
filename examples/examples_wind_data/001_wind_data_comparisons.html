@@ -42,7 +42,7 @@
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -199,6 +199,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operation_models_user.html">Turbine Operation Models</a></li>
@@ -291,6 +292,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -312,8 +314,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -693,17 +696,17 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Computing AVP with uniform frequencies. Results results may not reflect annual operation.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 36.82 GWh
-AEP from WindRose 37.22 GWh
-AEP from WindTIRose 37.22 GWh
-Annual Value Production (AVP) from TimeSeries 917989.02 dollars
-AVP from WindRose 928620.61 dollars
-AVP from WindTIRose 928462.10 dollars
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 37.00 GWh
+AEP from WindRose 37.20 GWh
+AEP from WindTIRose 37.21 GWh
+Annual Value Production (AVP) from TimeSeries 878484.23 dollars
+AVP from WindRose 879444.72 dollars
+AVP from WindTIRose 879838.09 dollars
 </pre></div>
 </div>
-<img alt="../../_images/6282633794591855a44d3f6bd75315861e4ed49c16476e7ac182d8b8bc118d44.png" src="../../_images/6282633794591855a44d3f6bd75315861e4ed49c16476e7ac182d8b8bc118d44.png" />
-<img alt="../../_images/23250f00cb715eaed37495f374286050e1a129b4be637a7d2192ca0e4123257e.png" src="../../_images/23250f00cb715eaed37495f374286050e1a129b4be637a7d2192ca0e4123257e.png" />
-<img alt="../../_images/c7a3271fe661baa3ff0a7f4ece6088fca52f37be83881dcfbae2e41a77762cb4.png" src="../../_images/c7a3271fe661baa3ff0a7f4ece6088fca52f37be83881dcfbae2e41a77762cb4.png" />
+<img alt="../../_images/d3eae1bdffdbd3b3dc0f37a0ec8ed45ce8e6412624edbdf513b58f8e85d89b4d.png" src="../../_images/d3eae1bdffdbd3b3dc0f37a0ec8ed45ce8e6412624edbdf513b58f8e85d89b4d.png" />
+<img alt="../../_images/aa24de26c9502c0014663cd6b054e8a941e275fec7fb1f558f16c5ed760ee77c.png" src="../../_images/aa24de26c9502c0014663cd6b054e8a941e275fec7fb1f558f16c5ed760ee77c.png" />
+<img alt="../../_images/bcf6ac9b679b38f7557112c8f520b4e61d8fa3fee2c1bb97fb490e6e81ab40df.png" src="../../_images/bcf6ac9b679b38f7557112c8f520b4e61d8fa3fee2c1bb97fb490e6e81ab40df.png" />
 </div>
 </div>
 </section>

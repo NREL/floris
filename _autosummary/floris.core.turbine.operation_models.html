@@ -42,7 +42,7 @@
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../_static/documentation_options.js?v=30a733bc"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -197,6 +197,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../operation_models_user.html">Turbine Operation Models</a></li>
@@ -289,6 +290,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -310,8 +312,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -595,6 +598,12 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.AWCTurbine.axial_induction"><code class="docutils literal notranslate"><span class="pre">AWCTurbine.axial_induction()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.PeakShavingTurbine"><code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.PeakShavingTurbine.power"><code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine.power()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.PeakShavingTurbine.thrust_coefficient"><code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine.thrust_coefficient()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.PeakShavingTurbine.axial_induction"><code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine.axial_induction()</span></code></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -623,10 +632,13 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="#floris.core.turbine.operation_models.MixedOperationTurbine" title="floris.core.turbine.operation_models.MixedOperationTurbine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MixedOperationTurbine</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#floris.core.turbine.operation_models.SimpleDeratingTurbine" title="floris.core.turbine.operation_models.SimpleDeratingTurbine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleDeratingTurbine</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.core.turbine.operation_models.PeakShavingTurbine" title="floris.core.turbine.operation_models.PeakShavingTurbine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PeakShavingTurbine</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.core.turbine.operation_models.SimpleDeratingTurbine" title="floris.core.turbine.operation_models.SimpleDeratingTurbine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleDeratingTurbine</span></code></a>()</p></td>
 <td><p>power_thrust_table is a dictionary (normally defined on the turbine input yaml) that contains the parameters necessary to evaluate power(), thrust(), and axial_induction().</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.core.turbine.operation_models.SimpleTurbine" title="floris.core.turbine.operation_models.SimpleTurbine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleTurbine</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.core.turbine.operation_models.SimpleTurbine" title="floris.core.turbine.operation_models.SimpleTurbine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleTurbine</span></code></a>()</p></td>
 <td><p>Static class defining an actuator disk turbine model that is fully aligned with the flow.</p></td>
 </tr>
 </tbody>
@@ -694,11 +706,11 @@ not intended to be instantiated; it simply defines a library of static methods.<
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>air_density</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -710,10 +722,10 @@ not intended to be instantiated; it simply defines a library of static methods.<
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -725,10 +737,10 @@ not intended to be instantiated; it simply defines a library of static methods.<
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -754,15 +766,15 @@ not intended to be instantiated; it simply defines a library of static methods.<
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>air_density</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>tilt_interp</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
-<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_interp</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -774,14 +786,14 @@ not intended to be instantiated; it simply defines a library of static methods.<
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>tilt_interp</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
-<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_interp</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -793,14 +805,14 @@ not intended to be instantiated; it simply defines a library of static methods.<
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>tilt_interp</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
-<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_interp</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -825,12 +837,12 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>air_density</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -842,12 +854,12 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>air_density</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -859,12 +871,12 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>air_density</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -883,8 +895,8 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -896,8 +908,8 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -909,8 +921,8 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -936,13 +948,13 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>air_density</strong> (<em>float</em>) -- </p></li>
-<li><p><strong>awc_modes</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>awc_modes</strong> (<em>str</em>)</p></li>
+<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -954,12 +966,12 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>awc_modes</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>awc_modes</strong> (<em>str</em>)</p></li>
+<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -971,12 +983,68 @@ the other operation models.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>power_thrust_table</strong> (<em>dict</em>) -- </p></li>
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>awc_modes</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>) -- </p></li>
-<li><p><strong>average_method</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>) -- </p></li>
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>awc_modes</strong> (<em>str</em>)</p></li>
+<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.core.turbine.operation_models.PeakShavingTurbine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.core.turbine.operation_models.</span></span><span class="sig-name descname"><span class="pre">PeakShavingTurbine</span></span><a class="reference internal" href="../_modules/floris/core/turbine/operation_models.html#PeakShavingTurbine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.operation_models.PeakShavingTurbine" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.operation_models.PeakShavingTurbine.power">
+<span class="sig-name descname"><span class="pre">power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cubature_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/operation_models.html#PeakShavingTurbine.power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.operation_models.PeakShavingTurbine.power" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.operation_models.PeakShavingTurbine.thrust_coefficient">
+<span class="sig-name descname"><span class="pre">thrust_coefficient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cubature_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/operation_models.html#PeakShavingTurbine.thrust_coefficient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.operation_models.PeakShavingTurbine.thrust_coefficient" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.operation_models.PeakShavingTurbine.axial_induction">
+<span class="sig-name descname"><span class="pre">axial_induction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cubature_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/operation_models.html#PeakShavingTurbine.axial_induction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.operation_models.PeakShavingTurbine.axial_induction" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1066,6 +1134,12 @@ the other operation models.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.AWCTurbine.power"><code class="docutils literal notranslate"><span class="pre">AWCTurbine.power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.AWCTurbine.thrust_coefficient"><code class="docutils literal notranslate"><span class="pre">AWCTurbine.thrust_coefficient()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.AWCTurbine.axial_induction"><code class="docutils literal notranslate"><span class="pre">AWCTurbine.axial_induction()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.PeakShavingTurbine"><code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.PeakShavingTurbine.power"><code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine.power()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.PeakShavingTurbine.thrust_coefficient"><code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine.thrust_coefficient()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.operation_models.PeakShavingTurbine.axial_induction"><code class="docutils literal notranslate"><span class="pre">PeakShavingTurbine.axial_induction()</span></code></a></li>
 </ul>
 </li>
 </ul>

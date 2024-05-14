@@ -42,7 +42,7 @@
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -199,6 +199,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operation_models_user.html">Turbine Operation Models</a></li>
@@ -291,6 +292,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -312,8 +314,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -975,7 +978,9 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    9    40    -1.046685E+00     2.824111E-06
-   10    42    -1.046685E+00     6.047025E-08
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   10    42    -1.046685E+00     6.047025E-08
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.0466852786523977
             Iterations: 10
@@ -1020,7 +1025,9 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    3    10    -1.000035E+00     5.322843E-04
-    4    12    -1.000035E+00     4.924128E-04
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    4    12    -1.000035E+00     4.924128E-04
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.0000354608371065
             Iterations: 4
@@ -1165,7 +1172,9 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    7    22    -1.214237E+00     1.013118E-01
-    8    24    -1.214237E+00     1.013095E-01
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    8    24    -1.214237E+00     1.013095E-01
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.2142370269715692
             Iterations: 8
@@ -1365,10 +1374,11 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Performing optimizations with Geometric Yaw...
-
- Time spent, Geometric Yaw: 0.19 s.
- Time spent, Serial Refine: 1.08 s.
- Time spent, SciPy (SLSQP): 51.95 s.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Time spent, Geometric Yaw: 0.21 s.
+ Time spent, Serial Refine: 1.18 s.
+ Time spent, SciPy (SLSQP): 56.36 s.
 </pre></div>
 </div>
 <img alt="../../_images/7eefd5698cb5b8bfb142078ce377d36347c866c2e052932eb939c334c39d31ac.png" src="../../_images/7eefd5698cb5b8bfb142078ce377d36347c866c2e052932eb939c334c39d31ac.png" />
@@ -1376,7 +1386,7 @@ Optimization terminated successfully    (Exit mode 0)
 <img alt="../../_images/fd8df850f216cfc500c693709cbccdc425d46db714bbef62cb0dc1484f10c1f7.png" src="../../_images/fd8df850f216cfc500c693709cbccdc425d46db714bbef62cb0dc1484f10c1f7.png" />
 <img alt="../../_images/29b8296c6cf902bf22447f744f67167135d071fde9f5f25dd1ad566d5ee2432f.png" src="../../_images/29b8296c6cf902bf22447f744f67167135d071fde9f5f25dd1ad566d5ee2432f.png" />
 <img alt="../../_images/c6c4496373e9aaa1bfc898292d30e50fa2375cf51bf859c4de95788cc96d1e5c.png" src="../../_images/c6c4496373e9aaa1bfc898292d30e50fa2375cf51bf859c4de95788cc96d1e5c.png" />
-<img alt="../../_images/f94d7a0521c2dd95d591239f12efe510d37684f4031e0ae393158b7455998ab5.png" src="../../_images/f94d7a0521c2dd95d591239f12efe510d37684f4031e0ae393158b7455998ab5.png" />
+<img alt="../../_images/2733d4a13549fa4bf8454a0164e4085ef61dd7e34f9ef3e59be33dc6eb0254a8.png" src="../../_images/2733d4a13549fa4bf8454a0164e4085ef61dd7e34f9ef3e59be33dc6eb0254a8.png" />
 </div>
 </div>
 </section>

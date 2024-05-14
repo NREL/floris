@@ -9,6 +9,12 @@
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      ignore_include
+   
    
 
    

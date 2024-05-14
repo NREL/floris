@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example: Heterogeneous Inflow for multiple conditions &#8212; FLORIS</title>
+    <title>Example: Heterogeneous Speedup by Wind Direction and Wind Speed &#8212; FLORIS</title>
   
   
   
@@ -42,7 +42,7 @@
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -70,11 +70,11 @@
                 gtag('config', 'G-JV2SK7CNPR');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_heterogeneous/002_heterogeneous_inflow_multi';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Example: Heterogeneous Inflow in 2D and 3D" href="003_heterogeneous_2d_and_3d.html" />
-    <link rel="prev" title="Example: Heterogeneous Inflow for single case" href="001_heterogeneous_inflow_single.html" />
+    <link rel="next" title="Example: Heterogeneous Inflow in 2D and 3D" href="004_heterogeneous_2d_and_3d.html" />
+    <link rel="prev" title="Example: Heterogeneous Inflow using wind data" href="002_heterogeneous_using_wind_data.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   </head>
@@ -199,6 +199,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operation_models_user.html">Turbine Operation Models</a></li>
@@ -291,6 +292,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -312,8 +314,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -420,7 +423,7 @@
       
       
       
-      <li><a href="https://github.com/NREL/floris/edit/main/docs/examples/examples_heterogeneous/002_heterogeneous_inflow_multi.ipynb" target="_blank"
+      <li><a href="https://github.com/NREL/floris/edit/main/docs/examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -437,7 +440,7 @@
       
       
       
-      <li><a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2Fexamples/examples_heterogeneous/002_heterogeneous_inflow_multi.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2Fexamples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -467,7 +470,7 @@
       
       
       
-      <li><a href="../../_sources/examples/examples_heterogeneous/002_heterogeneous_inflow_multi.ipynb" target="_blank"
+      <li><a href="../../_sources/examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -549,7 +552,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Example: Heterogeneous Inflow for multiple conditions</h1>
+    <h1>Example: Heterogeneous Speedup by Wind Direction and Wind Speed</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -563,28 +566,22 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="example-heterogeneous-inflow-for-multiple-conditions">
-<h1>Example: Heterogeneous Inflow for multiple conditions<a class="headerlink" href="#example-heterogeneous-inflow-for-multiple-conditions" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="example-heterogeneous-speedup-by-wind-direction-and-wind-speed">
+<h1>Example: Heterogeneous Speedup by Wind Direction and Wind Speed<a class="headerlink" href="#example-heterogeneous-speedup-by-wind-direction-and-wind-speed" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Heterogeneous Inflow for multiple conditions</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Heterogeneous Speedup by Wind Direction and Wind Speed</span>
 
-<span class="sd">When multiple cases are considered, the heterogeneous inflow conditions can be defined in two ways:</span>
-
-<span class="sd">  1. Passing heterogeneous_inflow_config to the set method, with P points,</span>
-<span class="sd">        and speedups of size n_findex X P</span>
-<span class="sd">  2. Assigning heterogeneous_inflow_config_by_wd to the wind_data object</span>
-<span class="sd">        used to drive FLORIS.  This object includes</span>
-<span class="sd">        n_wd wind_directions, and speedups is of size n_wd X P.  When applied</span>
-<span class="sd">          to set, the heterogeneous_inflow_config</span>
-<span class="sd">        is automatically generated by using the nearest wind direction</span>
-<span class="sd">        defined in heterogeneous_inflow_config_by_wd</span>
-<span class="sd">        for each findex.</span>
+<span class="sd">The HeterogeneousMap object is a flexible way to define speedups as a function of wind direction</span>
+<span class="sd">and/or wind speed.  It also contains methods to plot the speedup map for a given wind direction</span>
+<span class="sd">and wind speed.</span>
 
 <span class="sd">This example:</span>
 
-<span class="sd">    1) Implements heterogeneous inflow for a 4 turbine layout using both of the above methods</span>
-<span class="sd">    2) Compares the results of the two methods and shows that they are equivalent</span>
+<span class="sd">    1) Instantiates a HeterogeneousMap object with speedups defined for two wind directions</span>
+<span class="sd">        and two wind speeds</span>
+<span class="sd">    2) Visualizes the speedups for two particular combinations of wind direction and wind speed</span>
+<span class="sd">    3) Runs a FLORIS simulation using the HeterogeneousMap and visualizes the results</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -592,76 +589,70 @@ document.write(`
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">TimeSeries</span>
+<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FlorisModel</span><span class="p">,</span>
+    <span class="n">HeterogeneousMap</span><span class="p">,</span>
+    <span class="n">TimeSeries</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">floris.flow_visualization</span> <span class="kn">import</span> <span class="n">visualize_heterogeneous_cut_plane</span>
+
+
+<span class="c1"># Define a HeterogeneousMap object with speedups defined for two wind directions</span>
+<span class="c1"># and two wind speeds.  The speedups imply no heterogeneity for the first wind direction</span>
+<span class="c1"># (0 degrees) with heterogeneity for the second wind direction (180 degrees) with the</span>
+<span class="c1"># specific speedups for this direction depending on the wind speed.</span>
+<span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">250.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">]),</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">250.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">]),</span>
+    <span class="n">speed_multipliers</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">]),</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]),</span>
+<span class="p">)</span>
+
+<span class="c1"># Use the HeterogeneousMap object to plot the speedup map for 3 wd/ws combinations</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">plot_single_speed_multiplier</span><span class="p">(</span>
+    <span class="n">wind_direction</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="mf">8.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.2</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Wind Direction = 60.0</span><span class="se">\n</span><span class="s2">Wind Speed = 8.5&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">plot_single_speed_multiplier</span><span class="p">(</span>
+    <span class="n">wind_direction</span><span class="o">=</span><span class="mf">130.0</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.2</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Wind Direction = 130.0</span><span class="se">\n</span><span class="s2">Wind Speed = 4.0&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">plot_single_speed_multiplier</span><span class="p">(</span>
+    <span class="n">wind_direction</span><span class="o">=</span><span class="mf">280.0</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="mf">16.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.2</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Wind Direction = 280.0</span><span class="se">\n</span><span class="s2">Wind Speed = 16.0&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Heterogeneous speedup map for several directions and wind speeds&quot;</span><span class="p">)</span>
 
 
 <span class="c1"># Initialize FlorisModel</span>
 <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../inputs/gch.yaml&quot;</span><span class="p">)</span>
 
-<span class="c1"># Change the layout to a 4 turbine layout in a box</span>
-<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">])</span>
+<span class="c1"># Change the layout to a 2 turbine layout within the heterogeneous domain</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mf">450.0</span><span class="p">])</span>
 
-<span class="c1"># Define a TimeSeries object with 4 wind directions and constant wind speed</span>
-<span class="c1"># and turbulence intensity</span>
-
+<span class="c1"># Define a TimeSeries object with 3 wind directions and wind speeds</span>
+<span class="c1"># and turbulence intensity and using the above HeterogeneousMap object</span>
 <span class="n">time_series</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span>
-    <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">269.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">,</span> <span class="mf">271.0</span><span class="p">,</span> <span class="mf">282.0</span><span class="p">]),</span>
-    <span class="n">wind_speeds</span><span class="o">=</span><span class="mf">8.0</span><span class="p">,</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">275.0</span><span class="p">,</span> <span class="mf">95.0</span><span class="p">,</span> <span class="mf">75.0</span><span class="p">]),</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">6.2</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]),</span>
     <span class="n">turbulence_intensities</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Apply the time series to the FlorisModel</span>
-<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_data</span><span class="o">=</span><span class="n">time_series</span><span class="p">)</span>
-
-<span class="c1"># Define the x_locs to be used in the heterogeneous inflow configuration that form</span>
-<span class="c1"># a box around the turbines</span>
-<span class="n">x_locs</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">]</span>
-<span class="n">y_locs</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">]</span>
-
-<span class="c1"># Assume the speed-ups are defined such that they are the same 265-275 degrees and 275-285 degrees</span>
-
-<span class="c1"># If defining heterogeneous_inflow_config directly, then the speedups are of size n_findex X P</span>
-<span class="c1"># where the first 3 rows are identical, and the last row is different</span>
-<span class="n">speed_ups</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.35</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.35</span><span class="p">],</span>
-<span class="p">]</span>
-
-<span class="n">heterogeneous_inflow_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;speed_multipliers&quot;</span><span class="p">:</span> <span class="n">speed_ups</span><span class="p">,</span>
-    <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x_locs</span><span class="p">,</span>
-    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y_locs</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="c1"># Set the heterogeneous inflow configuration</span>
-<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">heterogeneous_inflow_config</span><span class="o">=</span><span class="n">heterogeneous_inflow_config</span><span class="p">)</span>
-
-<span class="c1"># Run the FLORIS simulation</span>
-<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-
-<span class="c1"># Get the power output of the turbines</span>
-<span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>
-
-<span class="c1"># Now repeat using the wind_data object and heterogeneous_inflow_config_by_wd</span>
-<span class="c1"># First, create the speedups for the two wind directions</span>
-<span class="n">speed_ups</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.35</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.35</span><span class="p">]]</span>
-
-<span class="c1"># Create the heterogeneous_inflow_config_by_wd dictionary</span>
-<span class="n">heterogeneous_inflow_config_by_wd</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;speed_multipliers&quot;</span><span class="p">:</span> <span class="n">speed_ups</span><span class="p">,</span>
-    <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x_locs</span><span class="p">,</span>
-    <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y_locs</span><span class="p">,</span>
-    <span class="s2">&quot;wind_directions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">280.0</span><span class="p">],</span>
-<span class="p">}</span>
-
-<span class="c1"># Now create a new TimeSeries object including the heterogeneous_inflow_config_by_wd</span>
-<span class="n">time_series</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span>
-    <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">269.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">,</span> <span class="mf">271.0</span><span class="p">,</span> <span class="mf">282.0</span><span class="p">]),</span>
-    <span class="n">wind_speeds</span><span class="o">=</span><span class="mf">8.0</span><span class="p">,</span>
-    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
-    <span class="n">heterogeneous_inflow_config_by_wd</span><span class="o">=</span><span class="n">heterogeneous_inflow_config_by_wd</span><span class="p">,</span>
+    <span class="n">heterogeneous_map</span><span class="o">=</span><span class="n">heterogeneous_map</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Apply the time series to the FlorisModel</span>
@@ -670,24 +661,26 @@ document.write(`
 <span class="c1"># Run the FLORIS simulation</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-<span class="c1"># Get the power output of the turbines</span>
-<span class="n">turbine_powers_by_wd</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1000.0</span>
+<span class="c1"># Visualize each of the findices</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 
-<span class="c1"># Plot the results</span>
-<span class="n">wind_directions</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">wind_directions</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="n">axarr</span> <span class="o">=</span> <span class="n">axarr</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">findex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span>
 
-<span class="k">for</span> <span class="n">tindex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="n">tindex</span><span class="p">]</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">turbine_powers</span><span class="p">[:,</span> <span class="n">tindex</span><span class="p">],</span> <span class="s2">&quot;ks-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Heterogeneous Inflow&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">wind_directions</span><span class="p">,</span> <span class="n">turbine_powers_by_wd</span><span class="p">[:,</span> <span class="n">tindex</span><span class="p">],</span> <span class="s2">&quot;.--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Heterogeneous Inflow by WD&quot;</span>
+    <span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span>
+        <span class="n">x_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">y_resolution</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span> <span class="n">findex_for_viz</span><span class="o">=</span><span class="n">findex</span>
     <span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Turbine </span><span class="si">{</span><span class="n">tindex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Wind Direction (deg)&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Power (kW)&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="n">visualize_heterogeneous_cut_plane</span><span class="p">(</span>
+        <span class="n">cut_plane</span><span class="o">=</span><span class="n">horizontal_plane</span><span class="p">,</span>
+        <span class="n">fmodel</span><span class="o">=</span><span class="n">fmodel</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -699,7 +692,23 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
 </pre></div>
 </div>
-<img alt="../../_images/c9c7f897a5dc087195b9b2c5343240e2f3f26a394c7557643a51077a2d3bfc67.png" src="../../_images/c9c7f897a5dc087195b9b2c5343240e2f3f26a394c7557643a51077a2d3bfc67.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The calculated flow field contains points outside of the the user-defined heterogeneous inflow bounds. For these points, the interpolated value has been filled with the freestream wind speed. If this is not the desired behavior, the user will need to expand the heterogeneous inflow bounds to fully cover the calculated flow field area.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The calculated flow field contains points outside of the the user-defined heterogeneous inflow bounds. For these points, the interpolated value has been filled with the freestream wind speed. If this is not the desired behavior, the user will need to expand the heterogeneous inflow bounds to fully cover the calculated flow field area.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The calculated flow field contains points outside of the the user-defined heterogeneous inflow bounds. For these points, the interpolated value has been filled with the freestream wind speed. If this is not the desired behavior, the user will need to expand the heterogeneous inflow bounds to fully cover the calculated flow field area.</span>
+</pre></div>
+</div>
+<img alt="../../_images/a36e8df5c214ac6979ac4a6a957947ef1b1c10512b0cc8138155aa732d6ee4d0.png" src="../../_images/a36e8df5c214ac6979ac4a6a957947ef1b1c10512b0cc8138155aa732d6ee4d0.png" />
+<img alt="../../_images/1954ee2f90ed8fab506f54482431f88bd07ba13f3b775ff13160d4689b6ba78c.png" src="../../_images/1954ee2f90ed8fab506f54482431f88bd07ba13f3b775ff13160d4689b6ba78c.png" />
 </div>
 </div>
 </section>
@@ -735,16 +744,16 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="001_heterogeneous_inflow_single.html"
+       href="002_heterogeneous_using_wind_data.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Example: Heterogeneous Inflow for single case</p>
+        <p class="prev-next-title">Example: Heterogeneous Inflow using wind data</p>
       </div>
     </a>
     <a class="right-next"
-       href="003_heterogeneous_2d_and_3d.html"
+       href="004_heterogeneous_2d_and_3d.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>

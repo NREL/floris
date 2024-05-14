@@ -42,7 +42,7 @@
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../_static/documentation_options.js?v=30a733bc"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -199,6 +199,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../operation_models_user.html">Turbine Operation Models</a></li>
@@ -291,6 +292,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -312,8 +314,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -566,10 +569,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_for_reinitialize"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_for_reinitialize()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_freq"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_freq()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_value"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_value()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config_by_wd"><code class="docutils literal notranslate"><span class="pre">WindDataBase.check_heterogeneous_inflow_config_by_wd()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config"><code class="docutils literal notranslate"><span class="pre">WindDataBase.check_heterogeneous_inflow_config()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.get_speed_multipliers_by_wd"><code class="docutils literal notranslate"><span class="pre">WindDataBase.get_speed_multipliers_by_wd()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.get_heterogeneous_inflow_config"><code class="docutils literal notranslate"><span class="pre">WindDataBase.get_heterogeneous_inflow_config()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRose"><code class="docutils literal notranslate"><span class="pre">WindRose</span></code></a><ul class="nav section-nav flex-column">
@@ -670,28 +670,6 @@ method.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="floris.wind_data.WindDataBase.check_heterogeneous_inflow_config_by_wd">
-<span class="sig-name descname"><span class="pre">check_heterogeneous_inflow_config_by_wd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindDataBase.check_heterogeneous_inflow_config_by_wd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config_by_wd" title="Link to this definition">#</a></dt>
-<dd><p>Check that the heterogeneous_inflow_config_by_wd dictionary is properly formatted</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>heterogeneous_inflow_config_by_wd (dict): A dictionary containing the following keys:</dt><dd><ul class="simple">
-<li><dl class="simple">
-<dt>'speed_multipliers': A 2D NumPy array (size num_wd x num_points)</dt><dd><p>of speed multipliers.</p>
-</dd>
-</dl>
-</li>
-<li><p>'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).</p></li>
-<li><p>'x': A 1D NumPy array (size num_points) of x-coordinates (meters).</p></li>
-<li><p>'y': A 1D NumPy array (size num_points) of y-coordinates (meters).</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="floris.wind_data.WindDataBase.check_heterogeneous_inflow_config">
 <span class="sig-name descname"><span class="pre">check_heterogeneous_inflow_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindDataBase.check_heterogeneous_inflow_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config" title="Link to this definition">#</a></dt>
 <dd><p>Check that the heterogeneous_inflow_config dictionary is properly formatted</p>
@@ -712,49 +690,11 @@ method.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="floris.wind_data.WindDataBase.get_speed_multipliers_by_wd">
-<span class="sig-name descname"><span class="pre">get_speed_multipliers_by_wd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindDataBase.get_speed_multipliers_by_wd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindDataBase.get_speed_multipliers_by_wd" title="Link to this definition">#</a></dt>
-<dd><p>Processes heterogeneous inflow configuration data to generate a speed multiplier array
-aligned with the wind directions. Accounts for the cyclical nature of wind directions.
-Args:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>heterogeneous_inflow_config_by_wd (dict): A dictionary containing the following keys:</dt><dd><ul class="simple">
-<li><dl class="simple">
-<dt>'speed_multipliers': A 2D NumPy array (size num_wd x num_points)</dt><dd><p>of speed multipliers.</p>
-</dd>
-</dl>
-</li>
-<li><p>'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).</p></li>
-<li><p>'x': A 1D NumPy array (size num_points) of x-coordinates (meters).</p></li>
-<li><p>'y': A 1D NumPy array (size num_points) of y-coordinates (meters).</p></li>
-</ul>
-</dd>
-</dl>
-<p>wind_directions (np.array): Wind directions to map onto</p>
-</div></blockquote>
-<dl class="simple">
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>numpy.ndarray: A 2D NumPy array (size n_findex x n) of speed multipliers</dt><dd><p>Each row corresponds to a wind direction,
-with speed multipliers selected
-based on the closest matching wind direction in 'het_wd'.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="floris.wind_data.WindDataBase.get_heterogeneous_inflow_config">
-<span class="sig-name descname"><span class="pre">get_heterogeneous_inflow_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindDataBase.get_heterogeneous_inflow_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindDataBase.get_heterogeneous_inflow_config" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.wind_data.WindRose">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.wind_data.</span></span><span class="sig-name descname"><span class="pre">WindRose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ti_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_zero_freq_occurrence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRose" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.wind_data.</span></span><span class="sig-name descname"><span class="pre">WindRose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ti_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_zero_freq_occurrence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRose" title="Link to this definition">#</a></dt>
 <dd><p>The WindRose class is used to drive FLORIS and optimization operations in
 which the inflow is characterized by the frequency of binned wind speed and
 wind direction values.  Turbulence intensities are defined as a function of
@@ -781,16 +721,28 @@ each bin to compute the total value of the energy produced</p>
 </dd>
 <dt>compute_zero_freq_occurrence: Flag indicating whether to compute zero</dt><dd><p>frequency occurrences (bool, optional).  Defaults to False.</p>
 </dd>
-<dt>heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</dt><dd><p>keys. Defaults to None.
-* 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)</p>
+<dt>heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define</dt><dd><p>background heterogeneous inflow condition as a function
+of wind direction and wind speed.  Alternatively, a dictionary can be
+passed in to define a HeterogeneousMap object.  Defaults to None.</p>
+</dd>
+<dt>heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</dt><dd><p>which can be used to define a heterogeneous_map object (note this parameter is kept
+for backwards compatibility and is not recommended for use):
+* 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
+* 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
+* 'speed_multipliers': A 2D NumPy array (size num_wd (or num_ws) x num_points)</p>
 <blockquote>
-<div><p>of speed multipliers.</p>
+<div><p>of speed multipliers.  If neither wind_directions nor wind_speeds are
+defined, then this should be a single row array</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).</p></li>
-<li><p>'x': A 1D NumPy array (size num_points) of x-coordinates (meters).</p></li>
-<li><p>'y': A 1D NumPy array (size num_points) of y-coordinates (meters).</p></li>
+<li><dl class="simple">
+<dt>'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).</dt><dd><p>Optional.</p>
+</dd>
+</dl>
+</li>
+<li><p>'wind_speeds': A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.</p></li>
 </ul>
+<p>Defaults to None.</p>
 </dd>
 </dl>
 </dd>
@@ -798,13 +750,14 @@ each bin to compute the total value of the energy produced</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wind_directions</strong> (<em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>wind_speeds</strong> (<em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>ti_table</strong> (<em>float</em><em> | </em><em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>freq_table</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>value_table</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>compute_zero_freq_occurrence</strong> (<em>bool</em>) -- </p></li>
-<li><p><strong>heterogeneous_inflow_config_by_wd</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>wind_directions</strong> (<em>NDArrayFloat</em>)</p></li>
+<li><p><strong>wind_speeds</strong> (<em>NDArrayFloat</em>)</p></li>
+<li><p><strong>ti_table</strong> (<em>float</em><em> | </em><em>NDArrayFloat</em>)</p></li>
+<li><p><strong>freq_table</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>value_table</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>compute_zero_freq_occurrence</strong> (<em>bool</em>)</p></li>
+<li><p><strong>heterogeneous_map</strong> (<em>HeterogeneousMap</em><em> | </em><em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>heterogeneous_inflow_config_by_wd</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1051,12 +1004,12 @@ turbulence intensity value for all wind speed and direction combinations.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>file_path</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>ws_col</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>wd_col</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>ti_col_or_value</strong> (<em>str</em><em> | </em><em>float</em>) -- </p></li>
-<li><p><strong>freq_col</strong> (<em>str</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>sep</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>file_path</strong> (<em>str</em>)</p></li>
+<li><p><strong>ws_col</strong> (<em>str</em>)</p></li>
+<li><p><strong>wd_col</strong> (<em>str</em>)</p></li>
+<li><p><strong>ti_col_or_value</strong> (<em>str</em><em> | </em><em>float</em>)</p></li>
+<li><p><strong>freq_col</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>sep</strong> (<em>str</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1085,7 +1038,7 @@ ws_col (str): Name of the column in the CSV file that contains the wind speed</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.wind_data.WindTIRose">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.wind_data.</span></span><span class="sig-name descname"><span class="pre">WindTIRose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_zero_freq_occurrence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindTIRose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindTIRose" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.wind_data.</span></span><span class="sig-name descname"><span class="pre">WindTIRose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_zero_freq_occurrence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindTIRose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindTIRose" title="Link to this definition">#</a></dt>
 <dd><p>WindTIRose is similar to the WindRose class, but contains turbulence
 intensity as an additional wind rose dimension instead of being defined
 as a function of wind direction and wind speed. The class is used to drive
@@ -1112,16 +1065,28 @@ to compute the total value of the energy produced.</p>
 </dd>
 <dt>compute_zero_freq_occurrence: Flag indicating whether to compute zero</dt><dd><p>frequency occurrences (bool, optional).  Defaults to False.</p>
 </dd>
-<dt>heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</dt><dd><p>keys. Defaults to None.
-* 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)</p>
+<dt>heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define</dt><dd><p>background heterogeneous inflow condition as a function
+of wind direction and wind speed.  Alternatively, a dictionary can be
+passed in to define a HeterogeneousMap object.  Defaults to None.</p>
+</dd>
+<dt>heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</dt><dd><p>which can be used to define a heterogeneous_map object (note this parameter is kept
+for backwards compatibility and is not recommended for use):
+* 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
+* 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
+* 'speed_multipliers': A 2D NumPy array (size num_wd (or num_ws) x num_points)</p>
 <blockquote>
-<div><p>of speed multipliers.</p>
+<div><p>of speed multipliers.  If neither wind_directions nor wind_speeds are
+defined, then this should be a single row array</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).</p></li>
-<li><p>'x': A 1D NumPy array (size num_points) of x-coordinates (meters).</p></li>
-<li><p>'y': A 1D NumPy array (size num_points) of y-coordinates (meters).</p></li>
+<li><dl class="simple">
+<dt>'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).</dt><dd><p>Optional.</p>
+</dd>
+</dl>
+</li>
+<li><p>'wind_speeds': A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.</p></li>
 </ul>
+<p>Defaults to None.</p>
 </dd>
 </dl>
 </dd>
@@ -1129,13 +1094,14 @@ to compute the total value of the energy produced.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wind_directions</strong> (<em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>wind_speeds</strong> (<em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>turbulence_intensities</strong> (<em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>freq_table</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>value_table</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>compute_zero_freq_occurrence</strong> (<em>bool</em>) -- </p></li>
-<li><p><strong>heterogeneous_inflow_config_by_wd</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>wind_directions</strong> (<em>NDArrayFloat</em>)</p></li>
+<li><p><strong>wind_speeds</strong> (<em>NDArrayFloat</em>)</p></li>
+<li><p><strong>turbulence_intensities</strong> (<em>NDArrayFloat</em>)</p></li>
+<li><p><strong>freq_table</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>value_table</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>compute_zero_freq_occurrence</strong> (<em>bool</em>)</p></li>
+<li><p><strong>heterogeneous_map</strong> (<em>HeterogeneousMap</em><em> | </em><em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>heterogeneous_inflow_config_by_wd</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1357,12 +1323,12 @@ provided, uniform frequency of all bins is assumed.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>file_path</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>ws_col</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>wd_col</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>ti_col</strong> (<em>str</em>) -- </p></li>
-<li><p><strong>freq_col</strong> (<em>str</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>sep</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>file_path</strong> (<em>str</em>)</p></li>
+<li><p><strong>ws_col</strong> (<em>str</em>)</p></li>
+<li><p><strong>wd_col</strong> (<em>str</em>)</p></li>
+<li><p><strong>ti_col</strong> (<em>str</em>)</p></li>
+<li><p><strong>freq_col</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>sep</strong> (<em>str</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1391,7 +1357,7 @@ ws_col (str): Name of the column in the CSV file that contains the wind speed</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="floris.wind_data.TimeSeries">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.wind_data.</span></span><span class="sig-name descname"><span class="pre">TimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#TimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.TimeSeries" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.wind_data.</span></span><span class="sig-name descname"><span class="pre">TimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config_by_wd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#TimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.TimeSeries" title="Link to this definition">#</a></dt>
 <dd><p>The TimeSeries class is used to drive FLORIS and optimization operations in
 which the inflow is by a sequence of wind direction, wind speed and
 turbulence intensity values.  Each input of wind direction, wind speed, and
@@ -1411,16 +1377,28 @@ value.</p>
 </dd>
 <dt>values (NDArrayFloat, optional): Values associated with each wind</dt><dd><p>direction, wind speed, and turbulence intensity. Defaults to None.</p>
 </dd>
-<dt>heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</dt><dd><p>keys. Defaults to None.
-* 'speed_multipliers': A 2D NumPy array (size num_wd x num_points)</p>
+<dt>heterogeneous_map (HeterogeneousMap, optional): A HeterogeneousMap object to define</dt><dd><p>background heterogeneous inflow condition as a function
+of wind direction and wind speed.  Alternatively, a dictionary can be
+passed in to define a HeterogeneousMap object.  Defaults to None.</p>
+</dd>
+<dt>heterogeneous_inflow_config_by_wd (dict, optional): A dictionary containing the following</dt><dd><p>which can be used to define a heterogeneous_map object (note this parameter is kept
+for backwards compatibility and is not recommended for use):
+* 'x': A 1D NumPy array (size num_points) of x-coordinates (meters).
+* 'y': A 1D NumPy array (size num_points) of y-coordinates (meters).
+* 'speed_multipliers': A 2D NumPy array (size num_wd (or num_ws) x num_points)</p>
 <blockquote>
-<div><p>of speed multipliers.</p>
+<div><p>of speed multipliers.  If neither wind_directions nor wind_speeds are
+defined, then this should be a single row array</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).</p></li>
-<li><p>'x': A 1D NumPy array (size num_points) of x-coordinates (meters).</p></li>
-<li><p>'y': A 1D NumPy array (size num_points) of y-coordinates (meters).</p></li>
+<li><dl class="simple">
+<dt>'wind_directions': A 1D NumPy array (size num_wd) of wind directions (degrees).</dt><dd><p>Optional.</p>
+</dd>
+</dl>
+</li>
+<li><p>'wind_speeds': A 1D NumPy array (size num_ws) of wind speeds (m/s). Optional.</p></li>
 </ul>
+<p>Defaults to None.</p>
 </dd>
 <dt>heterogeneous_inflow_config (dict, optional): A dictionary containing the following keys.</dt><dd><p>Defaults to None.
 * 'speed_multipliers': A 2D NumPy array (size n_findex x num_points)</p>
@@ -1438,12 +1416,13 @@ value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wind_directions</strong> (<em>float</em><em> | </em><em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>wind_speeds</strong> (<em>float</em><em> | </em><em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>turbulence_intensities</strong> (<em>float</em><em> | </em><em>NDArrayFloat</em>) -- </p></li>
-<li><p><strong>values</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>heterogeneous_inflow_config_by_wd</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
-<li><p><strong>heterogeneous_inflow_config</strong> (<em>dict</em><em> | </em><em>None</em>) -- </p></li>
+<li><p><strong>wind_directions</strong> (<em>float</em><em> | </em><em>NDArrayFloat</em>)</p></li>
+<li><p><strong>wind_speeds</strong> (<em>float</em><em> | </em><em>NDArrayFloat</em>)</p></li>
+<li><p><strong>turbulence_intensities</strong> (<em>float</em><em> | </em><em>NDArrayFloat</em>)</p></li>
+<li><p><strong>values</strong> (<em>NDArrayFloat</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>heterogeneous_map</strong> (<em>HeterogeneousMap</em><em> | </em><em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>heterogeneous_inflow_config_by_wd</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>heterogeneous_inflow_config</strong> (<em>dict</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1673,10 +1652,7 @@ Defaults to None.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_for_reinitialize"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_for_reinitialize()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_freq"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_freq()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_value"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_value()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config_by_wd"><code class="docutils literal notranslate"><span class="pre">WindDataBase.check_heterogeneous_inflow_config_by_wd()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config"><code class="docutils literal notranslate"><span class="pre">WindDataBase.check_heterogeneous_inflow_config()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.get_speed_multipliers_by_wd"><code class="docutils literal notranslate"><span class="pre">WindDataBase.get_speed_multipliers_by_wd()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.get_heterogeneous_inflow_config"><code class="docutils literal notranslate"><span class="pre">WindDataBase.get_heterogeneous_inflow_config()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRose"><code class="docutils literal notranslate"><span class="pre">WindRose</span></code></a><ul class="nav section-nav flex-column">

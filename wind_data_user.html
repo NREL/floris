@@ -42,7 +42,7 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
@@ -73,7 +73,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'wind_data_user';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Floating Wind Turbine Modeling" href="floating_wind_turbine.html" />
+    <link rel="next" title="HeterogeneousMap" href="heterogeneous_map.html" />
     <link rel="prev" title="Advanced Concepts" href="advanced_concepts.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
@@ -199,6 +199,7 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">HeterogeneousMap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_models_user.html">Turbine Operation Models</a></li>
@@ -291,6 +292,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
 <ul class="nav bd-sidenav">
@@ -312,8 +314,9 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/002_heterogeneous_inflow_multi.html">Example: Heterogeneous Inflow for multiple conditions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/003_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -840,7 +843,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/0f2a5cf08185451c16250f9dffe3fff9b55afacfe3c62cb5396740543a3f8f27.png" src="_images/0f2a5cf08185451c16250f9dffe3fff9b55afacfe3c62cb5396740543a3f8f27.png" />
+<img alt="_images/fb9c37aaf53dc1ce8acde19eb74f08b6472f8e6b3caa7593b25afd2c03a39657.png" src="_images/fb9c37aaf53dc1ce8acde19eb74f08b6472f8e6b3caa7593b25afd2c03a39657.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -856,7 +859,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/6cf02c9d6f46d37a5d3e2224e92e20839a63bcf3227ba96b7d071388d5381ef2.png" src="_images/6cf02c9d6f46d37a5d3e2224e92e20839a63bcf3227ba96b7d071388d5381ef2.png" />
+<img alt="_images/abb7495de192df98b11bfda572a117d79beb47e472fa4f7127fd5c866c2710ae.png" src="_images/abb7495de192df98b11bfda572a117d79beb47e472fa4f7127fd5c866c2710ae.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -872,7 +875,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/d78c89098e5b564711c4006c26357771f9141e80eba8b37b737c22b509b8b410.png" src="_images/d78c89098e5b564711c4006c26357771f9141e80eba8b37b737c22b509b8b410.png" />
+<img alt="_images/990f337f96c1aba83429363d7669203cbaee578636bdeee2f34f96cae85c618a.png" src="_images/990f337f96c1aba83429363d7669203cbaee578636bdeee2f34f96cae85c618a.png" />
 </div>
 </div>
 </section>
@@ -909,8 +912,8 @@ wind_rose.value_table
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c28fdeb600980a2eb6143111eb14e9518530dddd3a5f18933e53b059079c8cb5.png" src="_images/c28fdeb600980a2eb6143111eb14e9518530dddd3a5f18933e53b059079c8cb5.png" />
-<img alt="_images/401081fed82a9b204f953b44b44d754d6c8a3a1bddc7ffb5778d5845f3eb58f4.png" src="_images/401081fed82a9b204f953b44b44d754d6c8a3a1bddc7ffb5778d5845f3eb58f4.png" />
+<img alt="_images/4b93a7002834e400a9292a99acfc16cd03212829e7fce8c071f5a5593e7674d3.png" src="_images/4b93a7002834e400a9292a99acfc16cd03212829e7fce8c071f5a5593e7674d3.png" />
+<img alt="_images/ecbaa4ab22c5d0f84ca17fefdd412c9a8aee59a779bb5a8b366179d822c69627.png" src="_images/ecbaa4ab22c5d0f84ca17fefdd412c9a8aee59a779bb5a8b366179d822c69627.png" />
 <img alt="_images/dd91cab9ca0182579fbf3ebdc6aacf23f098e290d264dcf2200e8232b3f4d2d8.png" src="_images/dd91cab9ca0182579fbf3ebdc6aacf23f098e290d264dcf2200e8232b3f4d2d8.png" />
 <img alt="_images/765251d3e3de313717f2cf945d801aa1541f84d6d1ef85438531d4284a4f86e2.png" src="_images/765251d3e3de313717f2cf945d801aa1541f84d6d1ef85438531d4284a4f86e2.png" />
 </div>
@@ -1198,11 +1201,11 @@ Farm annual value production (AVP) is 464356.91342938814 USD
       </div>
     </a>
     <a class="right-next"
-       href="floating_wind_turbine.html"
+       href="heterogeneous_map.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Floating Wind Turbine Modeling</p>
+        <p class="prev-next-title">HeterogeneousMap</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
