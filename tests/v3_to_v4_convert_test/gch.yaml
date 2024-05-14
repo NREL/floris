@@ -87,7 +87,7 @@ farm:
   # The types can be either a name included in the turbine_library or
   # a full definition of a wind turbine directly.
   turbine_type:
-  - XXXXX
+  - !include nrel_5MW_v3.yaml
 
 ###
 # Configure the atmospheric conditions.
