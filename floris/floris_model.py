@@ -492,6 +492,7 @@ class FlorisModel(LoggingManager):
 
         turbine_powers = power(
             velocities=self.core.flow_field.u,
+            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
             power_functions=self.core.farm.turbine_power_functions,
             yaw_angles=self.core.farm.yaw_angles,
@@ -900,6 +901,7 @@ class FlorisModel(LoggingManager):
     def get_turbine_ais(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.core.flow_field.u,
+            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
@@ -920,6 +922,7 @@ class FlorisModel(LoggingManager):
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
             velocities=self.core.flow_field.u,
+            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
@@ -951,6 +954,22 @@ class FlorisModel(LoggingManager):
             findex (int): The findex to set the floris object to.
             solver_settings (dict): The solver settings to use for visualization.
         """
+
+        # If not None, set the heterogeneous inflow configuration
+        if self.core.flow_field.heterogeneous_inflow_config is not None:
+            heterogeneous_inflow_config = {
+                'x': self.core.flow_field.heterogeneous_inflow_config['x'],
+                'y': self.core.flow_field.heterogeneous_inflow_config['y'],
+                'speed_multipliers':
+                    self.core.flow_field.heterogeneous_inflow_config['speed_multipliers'][findex:findex+1],
+            }
+            if 'z' in self.core.flow_field.heterogeneous_inflow_config:
+                heterogeneous_inflow_config['z'] = (
+                    self.core.flow_field.heterogeneous_inflow_config['z']
+                )
+        else:
+            heterogeneous_inflow_config = None
+
         self.set(
             wind_speeds=self.wind_speeds[findex:findex+1],
             wind_directions=self.wind_directions[findex:findex+1],
@@ -959,6 +978,7 @@ class FlorisModel(LoggingManager):
             power_setpoints=self.core.farm.power_setpoints[findex:findex+1,:],
             awc_modes=self.core.farm.awc_modes[findex:findex+1,:],
             awc_amplitudes=self.core.farm.awc_amplitudes[findex:findex+1,:],
+            heterogeneous_inflow_config = heterogeneous_inflow_config,
             solver_settings=solver_settings,
         )
 

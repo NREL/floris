@@ -173,6 +173,7 @@ def test_ct():
     wind_speed = 10.0
     thrust = thrust_coefficient(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        turbulence_intensities=0.06 * np.zeros((1, 1, 3, 3)),
         air_density=None,
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
@@ -196,6 +197,10 @@ def test_ct():
     # 4 turbines with 3 x 3 grid arrays
     thrusts = thrust_coefficient(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 12 x 4 x 3 x 3
+        turbulence_intensities=(
+            0.06 * np.ones((N_TURBINES, 3, 3))
+            * np.ones_like(WIND_CONDITION_BROADCAST)
+        ),
         air_density=None,
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
@@ -221,6 +226,7 @@ def test_ct():
     # Single floating turbine; note that 'tilt_interp' is not set to None
     thrust = thrust_coefficient(
         velocities=wind_speed * np.ones((1, 1, 3, 3)), # One findex, one turbine
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=None,
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
@@ -255,6 +261,7 @@ def test_power():
     turbine_type_map = turbine_type_map[None, :]
     test_power = power(
         velocities=wind_speed * np.ones((1, 1, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=turbine.power_thrust_table["ref_air_density"],
         power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, 1)), # 1 findex, 1 turbine
@@ -277,6 +284,7 @@ def test_power():
     wind_speed = 18.0
     rated_power = power(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=turbine.power_thrust_table["ref_air_density"],
         power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, 1)), # 1 findex, 1 turbine
@@ -295,6 +303,7 @@ def test_power():
     wind_speed = 0.0
     zero_power = power(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=turbine.power_thrust_table["ref_air_density"],
         power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, 1)), # 1 findex, 1 turbine
@@ -318,6 +327,7 @@ def test_power():
     turbine_type_map = turbine_type_map[None, :]
     test_4_power = power(
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)),
+        turbulence_intensities=0.06 * np.ones((1, n_turbines, 3, 3)),
         air_density=turbine.power_thrust_table["ref_air_density"],
         power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, n_turbines)),
@@ -341,6 +351,7 @@ def test_power():
     turbine_type_map = turbine_type_map[None, :]
     test_grid_power = power(
         velocities=wind_speed * np.ones((1, n_turbines, 1)),
+        turbulence_intensities=0.06 * np.ones((1, n_turbines, 3)),
         air_density=turbine.power_thrust_table["ref_air_density"],
         power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, n_turbines)),
@@ -374,6 +385,7 @@ def test_axial_induction():
     wind_speed = 10.0
     ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 3, 3)), # 1 findex, 1 Turbine
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=None,
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
@@ -391,6 +403,10 @@ def test_axial_induction():
     # Multiple turbines with ix filter
     ai = axial_induction(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 12 x 4 x 3 x 3
+        turbulence_intensities=(
+            0.06 * np.ones((N_TURBINES, 3, 3))
+            * np.ones_like(WIND_CONDITION_BROADCAST)
+        ),
         air_density=None,
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
@@ -413,6 +429,7 @@ def test_axial_induction():
     # Single floating turbine; note that 'tilt_interp' is not set to None
     ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=None,
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,

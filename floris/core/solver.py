@@ -91,6 +91,7 @@ def sequential_solver(
 
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -112,6 +113,7 @@ def sequential_solver(
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -327,6 +329,7 @@ def full_flow_sequential_solver(
 
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
+            turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
@@ -348,6 +351,7 @@ def full_flow_sequential_solver(
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u_sorted,
+            turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
@@ -506,6 +510,7 @@ def cc_solver(
         turb_avg_vels = average_velocity(turb_inflow_field)
         turb_Cts = thrust_coefficient(
             turb_avg_vels,
+            flow_field.turbulence_intensity_field_sorted,
             flow_field.air_density,
             farm.yaw_angles_sorted,
             farm.tilt_angles_sorted,
@@ -524,6 +529,7 @@ def cc_solver(
         turb_Cts = turb_Cts[:, :, None, None]
         turb_aIs = axial_induction(
             turb_avg_vels,
+            flow_field.turbulence_intensity_field_sorted,
             flow_field.air_density,
             farm.yaw_angles_sorted,
             farm.tilt_angles_sorted,
@@ -547,6 +553,7 @@ def cc_solver(
 
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -762,6 +769,7 @@ def full_flow_cc_solver(
         turb_avg_vels = average_velocity(turbine_grid_flow_field.u_sorted)
         turb_Cts = thrust_coefficient(
             velocities=turb_avg_vels,
+            turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
@@ -781,6 +789,7 @@ def full_flow_cc_solver(
 
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u_sorted,
+            turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
@@ -923,6 +932,7 @@ def turbopark_solver(
 
         Cts = thrust_coefficient(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -941,6 +951,7 @@ def turbopark_solver(
 
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -962,6 +973,7 @@ def turbopark_solver(
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -1010,6 +1022,7 @@ def turbopark_solver(
                 turbulence_intensity_ii = turbine_turbulence_intensity[:, ii:ii+1]
                 ct_ii = thrust_coefficient(
                     velocities=flow_field.u_sorted,
+                    turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
                     air_density=flow_field.air_density,
                     yaw_angles=farm.yaw_angles_sorted,
                     tilt_angles=farm.tilt_angles_sorted,
@@ -1187,6 +1200,7 @@ def empirical_gauss_solver(
 
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -1208,6 +1222,7 @@ def empirical_gauss_solver(
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
             velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
@@ -1408,6 +1423,7 @@ def full_flow_empirical_gauss_solver(
 
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
+            turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
@@ -1429,6 +1445,7 @@ def full_flow_empirical_gauss_solver(
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
             velocities=turbine_grid_flow_field.u_sorted,
+            turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
