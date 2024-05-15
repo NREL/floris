@@ -204,12 +204,11 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 max_workers = None
                 n_individuals = 1
 
-
         # elif interface == "concurrent":
         #     from concurrent.futures import ProcessPoolExecutor
         #     self._PoolExecutor = ProcessPoolExecutor
         else:
-            raise UserWarning(
+            raise ValueError(
                 f"Interface '{interface}' not recognized. "
                 "Please use ' 'multiprocessing' or 'mpi4py'."
             )
@@ -635,14 +634,14 @@ def _single_individual_opt(
     else: # yaw_angles will always be none
         yaw_angles = None
 
-    # We have a beta feature to maintain momentum, i.e., if a move improves 
+    # We have a beta feature to maintain momentum, i.e., if a move improves
     # the objective, we try to keep moving in that direction. This is currently
     # disabled.
     use_momentum = False
 
     # Loop as long as we've not hit the stop time
     while timerpc() < stop_time:
-            
+
             if not use_momentum:
                 get_new_point = True
 
