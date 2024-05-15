@@ -12,16 +12,6 @@
 
 # See https://floris.readthedocs.io for documentation
 
-#TODO LIST
-# INCLUDE HET MAPS (Actually I think happens automatically)
-# INCLUDE LOGGING
-# Allow multiple zones
-# Update probability distribution handling
-# STRETCH: allow parallelization within a node for flow evaluations,
-# similar to how the ParallelInterface handles wake steering optimization
-# (possibly future work)
-
-
 
 from multiprocessing import Pool
 from time import perf_counter as timerpc
@@ -239,8 +229,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self.relegation_number = relegation_number
 
         # Store the rotor diameter and number of turbines
-        self.D = fmodel.core.farm.rotor_diameters_sorted[0][0]
-        # TODO: check that the rotor diameter is the same for all turbines
+        self.D = fmodel.core.farm.rotor_diameters.max()
+        if not all(fmodel.core.farm.rotor_diameters == self.D):
+            self.logger.warning("Using largest rotor diameter for min_dist_D and distance_pmf.")
         self.N_turbines = fmodel.n_turbines
 
         # Make sure not both min_dist and min_dist_D are defined
@@ -361,7 +352,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         # Check correct keys are provided
         if not all(k in dist_pmf for k in ("d", "p")):
             raise KeyError("distance_pmf must contains keys \"d\" (step distance)"+\
-                " and \"p\" (probability of occurance).")
+                " and \"p\" (probability of occurrence).")
 
         # Check entries are in the correct form
         if not hasattr(dist_pmf["d"], "__len__") or not hasattr(dist_pmf["d"], "__len__")\
@@ -630,7 +621,7 @@ def _single_individual_opt(
 
     # Initialize local variables
     num_turbines = len(layout_x)
-    get_new_point = True # TODO: CHECK: how useful is this?
+    get_new_point = True # Will always be true, due to hardcoded use_momentum
     current_objective = initial_objective
 
     # Establish geometric yaw optimizer, if desired
@@ -644,10 +635,18 @@ def _single_individual_opt(
     else: # yaw_angles will always be none
         yaw_angles = None
 
+    # We have a beta feature to maintain momentum, i.e., if a move improves 
+    # the objective, we try to keep moving in that direction. This is currently
+    # disabled.
+    use_momentum = False
+
     # Loop as long as we've not hit the stop time
     while timerpc() < stop_time:
+            
+            if not use_momentum:
+                get_new_point = True
 
-            if get_new_point: #If the last test wasn't succesfull
+            if get_new_point: #If the last test wasn't successful
 
                 # Randomly select a turbine to nudge
                 tr = random.randint(0,num_turbines-1)
@@ -689,7 +688,6 @@ def _single_individual_opt(
 
             num_objective_calls += 1
             test_objective = _get_objective(layout_x, layout_y, fmodel_, yaw_angles, use_value)
-            # TODO: Geoyaw angles not available here!
 
             if test_objective > current_objective:
                 # Accept the change
@@ -697,14 +695,14 @@ def _single_individual_opt(
 
                 # If not a random point this cycle and it did improve things
                 # try not getting a new point
-                get_new_point = False # TODO: Possibly remove this feature
+                # Feature is currently disabled by use_momentum flag
+                get_new_point = False
 
             else:
                 # Revert the change
                 layout_x[tr] = original_x
                 layout_y[tr] = original_y
-                get_new_point = True # TODO: Possibly remove this feature
-                continue
+                get_new_point = True
 
     # Return the best result from this individual
     return current_objective, layout_x, layout_y, num_objective_calls

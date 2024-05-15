@@ -12,11 +12,11 @@ from floris import (
 from floris.optimization.layout_optimization.layout_optimization_base import (
     LayoutOptimization,
 )
-from floris.optimization.layout_optimization.layout_optimization_scipy import (
-    LayoutOptimizationScipy,
-)
 from floris.optimization.layout_optimization.layout_optimization_random_search import (
     LayoutOptimizationRandomSearch,
+)
+from floris.optimization.layout_optimization.layout_optimization_scipy import (
+    LayoutOptimizationScipy,
 )
 from floris.wind_data import WindDataBase
 
