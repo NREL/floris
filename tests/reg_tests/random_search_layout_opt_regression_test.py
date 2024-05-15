@@ -11,11 +11,11 @@ from tests.conftest import (
 )
 
 
-DEBUG = True
+DEBUG = False
 VELOCITY_MODEL = "gauss"
 DEFLECTION_MODEL = "gauss"
 
-locations_baseline = np.array(
+locations_baseline_aep = np.array(
     [
         [0.0, 571.5416296, 1260.0],
         [0.0, 496.57085993, 0.],
@@ -25,11 +25,11 @@ baseline_aep = 44787987324.21652
 
 locations_baseline_value = np.array(
     [
-        [309.0, 100.0, 100.0, 300.0],
-        [318.0, 100.0, 300.0, 100.0],
+        [387.0, 100.0, 200.0, 300.0],
+        [192.0, 300.0, 100.0, 300.0],
     ]
 )
-baseline_aep_value = 46563247953.10059
+baseline_value = 8780876351.32277
 
 
 def test_random_search_layout_opt(sample_inputs_fixture):
@@ -76,7 +76,7 @@ def test_random_search_layout_opt(sample_inputs_fixture):
         print(locations_opt)
         print(optimized_aep)
 
-    assert_results_arrays(locations_opt, locations_baseline)
+    assert_results_arrays(locations_opt, locations_baseline_aep)
     assert np.isclose(optimized_aep, baseline_aep)
 
 def test_random_search_layout_opt_value(sample_inputs_fixture):
@@ -128,14 +128,15 @@ def test_random_search_layout_opt_value(sample_inputs_fixture):
         total_optimization_seconds=1,
         use_dist_based_init=True,
         random_seed=0,
+        use_value=True,
     )
     sol = layout_opt.optimize()
-    optimized_aep = sol[0]
+    optimized_value = sol[0]
     locations_opt = np.array([sol[1], sol[2]])
 
     if DEBUG:
         print(locations_opt)
-        print(optimized_aep)
+        print(optimized_value)
 
     assert_results_arrays(locations_opt, locations_baseline_value)
-    assert np.isclose(optimized_aep, baseline_aep_value)
+    assert np.isclose(optimized_value, baseline_value)

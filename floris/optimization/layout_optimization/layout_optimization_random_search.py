@@ -58,7 +58,13 @@ def test_point_in_bounds(test_x, test_y, poly_outer):
     return poly_outer.contains(Point(test_x, test_y))
 
 # Return in MW
-def _get_aep(layout_x, layout_y, fmodel, yaw_angles=None):
+def _get_objective(
+        layout_x,
+        layout_y,
+        fmodel,
+        yaw_angles=None,
+        use_value=False
+):
     fmodel.set(
         layout_x=layout_x,
         layout_y=layout_y,
@@ -66,7 +72,7 @@ def _get_aep(layout_x, layout_y, fmodel, yaw_angles=None):
     )
     fmodel.run()
 
-    return fmodel.get_farm_AEP()#/1E6
+    return fmodel.get_farm_AVP() if use_value else fmodel.get_farm_AEP()
 
 def _gen_dist_based_init(
     N, # Number of turbins to place
@@ -140,7 +146,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         relegation_number=1,
         enable_geometric_yaw=False,
         use_dist_based_init=True,
-        random_seed=None
+        random_seed=None,
+        use_value=False,
     ):
         """
         _summary_
@@ -183,6 +190,10 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             use_dist_based_init (bool): Generate initial layouts automatically by placing turbines
                 as far apart as possible.
             random_seed (int or None): Random seed for reproducibility. Defaults to None.
+            use_value (bool, optional): If True, the layout optimization objective
+                is to maximize annual value production using the value array in the
+                FLORIS model's WindData object. If False, the optimization
+                objective is to maximize AEP. Defaults to False.
         """
         # The parallel computing interface to use
         if interface == "mpi4py":
@@ -244,8 +255,15 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             fmodel,
             boundaries,
             min_dist=min_dist,
-            enable_geometric_yaw=enable_geometric_yaw
+            enable_geometric_yaw=enable_geometric_yaw,
+            use_value=use_value,
         )
+        if use_value:
+            self._obj_name = "value"
+            self._obj_unit = ""
+        else:
+            self._obj_name = "AEP"
+            self._obj_unit = "[GWh]"
 
         # Save min_dist_D
         self.min_dist_D = self.min_dist / self.D
@@ -272,31 +290,32 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         # Store the seconds per iteration
         self.seconds_per_iteration = seconds_per_iteration
 
-        # Get the initial AEP value
+        # Get the initial objective value
         self.x = self.x_initial # Required by _get_geoyaw_angles
         self.y = self.y_initial # Required by _get_geoyaw_angles
-        self.aep_initial = _get_aep(
+        self.objective_initial = _get_objective(
             self.x_initial,
             self.y_initial,
             self.fmodel,
-            self._get_geoyaw_angles()
+            self._get_geoyaw_angles(),
+            self.use_value,
         )
         #del self.x # Deleting to avoid confusion, since not updated
         #del self.y # Deleting to avoid confusion, since not updated
 
-        # Initialize the aep statistics
-        self.aep_mean = self.aep_initial
-        self.aep_median = self.aep_initial
-        self.aep_max = self.aep_initial
-        self.aep_min = self.aep_initial
+        # Initialize the objective statistics
+        self.objective_mean = self.objective_initial
+        self.objective_median = self.objective_initial
+        self.objective_max = self.objective_initial
+        self.objective_min = self.objective_initial
 
         # Initialize the numpy arrays which will hold the candidate layouts
         # these will have dimensions n_individuals x N_turbines
         self.x_candidate = np.zeros((self.n_individuals, self.N_turbines))
         self.y_candidate = np.zeros((self.n_individuals, self.N_turbines))
 
-        # Initialize the array which will hold the AEP values for each candidate
-        self.aep_candidate = np.zeros(self.n_individuals)
+        # Initialize the array which will hold the objective function values for each candidate
+        self.objective_candidate = np.zeros(self.n_individuals)
 
         # Initialize the iteration step
         self.iteration_step = -1
@@ -313,7 +332,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             for i in range(self.n_individuals):
                 self.x_candidate[i, :] = self.x_initial
                 self.y_candidate[i, :] = self.y_initial
-                self.aep_candidate[i] = self.aep_initial
+                self.objective_candidate[i] = self.objective_initial
 
         # Evaluate the initial optimization step
         self._evaluate_opt_step()
@@ -324,7 +343,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         print(f"Minimum distance between turbines = {self.min_dist_D} [D], {self.min_dist} [m]")
         print(f"Number of individuals = {self.n_individuals}")
         print(f"Seconds per iteration = {self.seconds_per_iteration}")
-        print(f"Initial AEP = {self.aep_initial/1e9:.1f} [GWh]")
+        print(f"Initial {self._obj_name} = {self.objective_initial/1e9:.1f} {self._obj_unit}")
 
     def _process_dist_pmf(self, dist_pmf):
         """
@@ -358,9 +377,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
     def _evaluate_opt_step(self):
 
-        # Sort the candidate layouts by AEP
-        sorted_indices = np.argsort(self.aep_candidate)[::-1] # Decreasing order
-        self.aep_candidate = self.aep_candidate[sorted_indices]
+        # Sort the candidate layouts by objective function value
+        sorted_indices = np.argsort(self.objective_candidate)[::-1] # Decreasing order
+        self.objective_candidate = self.objective_candidate[sorted_indices]
         self.x_candidate = self.x_candidate[sorted_indices]
         self.y_candidate = self.y_candidate[sorted_indices]
 
@@ -370,31 +389,47 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         # Update the optimizations step
         self.iteration_step += 1
 
-        # Update the AEP statistics
-        self.aep_mean = np.mean(self.aep_candidate)
-        self.aep_median = np.median(self.aep_candidate)
-        self.aep_max = np.max(self.aep_candidate)
-        self.aep_min = np.min(self.aep_candidate)
+        # Update the objective statistics
+        self.objective_mean = np.mean(self.objective_candidate)
+        self.objective_median = np.median(self.objective_candidate)
+        self.objective_max = np.max(self.objective_candidate)
+        self.objective_min = np.min(self.objective_candidate)
 
         # Report the results
+        increase_mean = (
+            100 * (self.objective_mean - self.objective_initial) / self.objective_initial
+        )
+        increase_median = (
+            100 * (self.objective_median - self.objective_initial) / self.objective_initial
+        )
+        increase_max = 100 * (self.objective_max - self.objective_initial) / self.objective_initial
+        increase_min = 100 * (self.objective_min - self.objective_initial) / self.objective_initial
         print("=======================================")
         print(f"Optimization step {self.iteration_step:+.1f}")
         print(f"Optimization time = {self.opt_time:+.1f} [s]")
-        print(f"Mean AEP = {self.aep_mean/1e9:.1f} [GWh] \
-              ({100 * (self.aep_mean - self.aep_initial) / self.aep_initial:+.2f}%)")
-        print(f"Median AEP = {self.aep_median/1e9:.1f} [GWh] \
-               ({100 * (self.aep_median - self.aep_initial) / self.aep_initial:+.2f}%)")
-        print(f"Max AEP = {self.aep_max/1e9:.1f} [GWh] \
-              ({100 * (self.aep_max - self.aep_initial) / self.aep_initial:+.2f}%)")
-        print(f"Min AEP = {self.aep_min/1e9:.1f} [GWh] \
-               ({100 * (self.aep_min - self.aep_initial) / self.aep_initial:+.2f}%)")
+        print(
+            f"Mean {self._obj_name} = {self.objective_mean/1e9:.1f}"
+            f" {self._obj_unit} ({increase_mean:+.2f}%)"
+        )
+        print(
+            f"Median {self._obj_name} = {self.objective_median/1e9:.1f}"
+            f" {self._obj_unit} ({increase_median:+.2f}%)"
+        )
+        print(
+            f"Max {self._obj_name} = {self.objective_max/1e9:.1f}"
+            f" {self._obj_unit} ({increase_max:+.2f}%)"
+        )
+        print(
+            f"Min {self._obj_name} = {self.objective_min/1e9:.1f}"
+            f" {self._obj_unit} ({increase_min:+.2f}%)"
+        )
         print("=======================================")
 
         # Replace the relegation_number worst performing layouts with relegation_number
         # best layouts
         if self.relegation_number > 0:
-            self.aep_candidate[-self.relegation_number:] = (
-                self.aep_candidate[:self.relegation_number]
+            self.objective_candidate[-self.relegation_number:] = (
+                self.objective_candidate[:self.relegation_number]
             )
             self.x_candidate[-self.relegation_number:] = self.x_candidate[:self.relegation_number]
             self.y_candidate[-self.relegation_number:] = self.y_candidate[:self.relegation_number]
@@ -445,19 +480,18 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             self.x_candidate[i, :] = out[i][0]
             self.y_candidate[i, :] = out[i][1]
 
-        # Get the AEP values for each candidate layout
+        # Get the objective function values for each candidate layout
         for i in range(self.n_individuals):
-            self.aep_candidate[i] = _get_aep(
+            self.objective_candidate[i] = _get_objective(
                 self.x_candidate[i, :],
                 self.y_candidate[i, :],
                 self.fmodel,
-                self._get_geoyaw_angles()
+                self._get_geoyaw_angles(),
+                self.use_value,
             )
 
         t2 = timerpc()
-        print(f"  Time to generate intial layouts: {t2-t1:.3f} s")
-        print(len(out))
-        print(out)
+        print(f"  Time to generate initial layouts: {t2-t1:.3f} s")
 
     def _get_initial_and_final_locs(self):
         x_initial = self.x_initial
@@ -478,9 +512,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         opt_stop_time = opt_start_time + self.total_optimization_seconds
         sim_time = 0
 
-        self.aep_candidate_log = [self.aep_candidate.copy()]
-        self.num_aep_calls_log = []
-        self._num_aep_calls = [0]*self.n_individuals
+        self.objective_candidate_log = [self.objective_candidate.copy()]
+        self.num_objective_calls_log = []
+        self._num_objective_calls = [0]*self.n_individuals
 
         while timerpc() < opt_stop_time:
 
@@ -501,7 +535,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             # Generate the multiargs for parallel execution of single individual optimization
             multiargs = [
                 (self.seconds_per_iteration,
-                 self.aep_candidate[i],
+                 self.objective_candidate[i],
                  self.x_candidate[i, :],
                  self.y_candidate[i, :],
                  self.fmodel_dict,
@@ -510,7 +544,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                  self._boundary_polygon,
                  self.distance_pmf,
                  self.enable_geometric_yaw,
-                 multi_random_seeds[i]
+                 multi_random_seeds[i],
+                 self.use_value
                 )
                     for i in range(self.n_individuals)
             ]
@@ -524,26 +559,29 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
             # Unpack the results
             for i in range(self.n_individuals):
-                self.aep_candidate[i] = out[i][0]
+                self.objective_candidate[i] = out[i][0]
                 self.x_candidate[i, :] = out[i][1]
                 self.y_candidate[i, :] = out[i][2]
-                self._num_aep_calls[i] = out[i][3]
-            self.aep_candidate_log.append(self.aep_candidate)
-            self.num_aep_calls_log.append(self._num_aep_calls)
+                self._num_objective_calls[i] = out[i][3]
+            self.objective_candidate_log.append(self.objective_candidate)
+            self.num_objective_calls_log.append(self._num_objective_calls)
 
             # Evaluate the individuals for this step
             self._evaluate_opt_step()
 
         # Finalize the result
-        self.final_aep = self.aep_candidate[0]
+        self.objective_final = self.objective_candidate[0]
         self.x_opt = self.x_candidate[0, :]
         self.y_opt = self.y_candidate[0, :]
 
         # Print the final result
-        print(f'Final AEP = {self.final_aep/1e9:.1f} [GWh] \
-               ({100 * (self.final_aep - self.aep_initial) / self.aep_initial:+.2f}%)')
+        increase = 100 * (self.objective_final - self.objective_initial) / self.objective_initial
+        print(
+            f"Final {self._obj_name} = {self.objective_final/1e9:.1f}"
+            f" {self._obj_unit} ({increase:+.2f}%)"
+        )
 
-        return self.final_aep, self.x_opt, self.y_opt
+        return self.objective_final, self.x_opt, self.y_opt
 
 
     # Helpful visualizations
@@ -553,7 +591,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         """
 
         if ax is None:
-            fig, ax = plt.subplots(1,1)
+            _, ax = plt.subplots(1,1)
 
         ax.stem(self.distance_pmf["d"], self.distance_pmf["p"], linefmt="k-")
         ax.grid(True)
@@ -566,7 +604,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
 def _single_individual_opt(
     seconds_per_iteration,
-    initial_aep,
+    initial_objective,
     layout_x,
     layout_y,
     fmodel_dict,
@@ -575,7 +613,8 @@ def _single_individual_opt(
     poly_outer,
     dist_pmf,
     enable_geometric_yaw,
-    s
+    s,
+    use_value
 ):
     # Set random seed
     np.random.seed(s)
@@ -584,7 +623,7 @@ def _single_individual_opt(
     single_opt_start_time = timerpc()
     stop_time = single_opt_start_time + seconds_per_iteration
 
-    num_aep_calls = 0
+    num_objective_calls = 0
 
     # Get the fmodel
     fmodel_ = _load_local_floris_object(fmodel_dict, wind_data)
@@ -592,7 +631,7 @@ def _single_individual_opt(
     # Initialize local variables
     num_turbines = len(layout_x)
     get_new_point = True # TODO: CHECK: how useful is this?
-    current_aep = initial_aep
+    current_objective = initial_objective
 
     # Establish geometric yaw optimizer, if desired
     if enable_geometric_yaw:
@@ -642,19 +681,19 @@ def _single_individual_opt(
                 get_new_point = True
                 continue
 
-            # Does it improve AEP?
+            # Does it improve the objective?
             if enable_geometric_yaw: # Select appropriate yaw angles
                 yaw_opt.fmodel_subset.reinitialize(layout_x=layout_x, layout_y=layout_y)
                 df_opt = yaw_opt.optimize()
                 yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
 
-            num_aep_calls += 1
-            test_aep = _get_aep(layout_x, layout_y, fmodel_, yaw_angles)
+            num_objective_calls += 1
+            test_objective = _get_objective(layout_x, layout_y, fmodel_, yaw_angles, use_value)
             # TODO: Geoyaw angles not available here!
 
-            if test_aep > current_aep:
+            if test_objective > current_objective:
                 # Accept the change
-                current_aep = test_aep
+                current_objective = test_objective
 
                 # If not a random point this cycle and it did improve things
                 # try not getting a new point
@@ -668,4 +707,4 @@ def _single_individual_opt(
                 continue
 
     # Return the best result from this individual
-    return current_aep, layout_x, layout_y, num_aep_calls
+    return current_objective, layout_x, layout_y, num_objective_calls
