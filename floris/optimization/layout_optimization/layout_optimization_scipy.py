@@ -51,10 +51,6 @@ class LayoutOptimizationScipy(LayoutOptimization):
             fi (_type_): _description_
             boundaries (iterable(float, float)): Pairs of x- and y-coordinates
                 that represent the boundary's vertices (m).
-            freq (np.array): An array of the frequencies of occurance
-                correponding to each pair of wind direction and wind speed
-                values. If None, equal weight is given to each pair of wind conditions
-                Defaults to None.
             bnds (iterable, optional): Bounds for the optimization
                 variables (pairs of min/max values for each variable (m)). If
                 none are specified, they are set to 0 and 1. Defaults to None.
