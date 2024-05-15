@@ -133,11 +133,11 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         distance_pmf=None,
         n_individuals=4,
         seconds_per_iteration=60.,
-        total_optimization_seconds = 600.,
+        total_optimization_seconds=600.,
         interface="multiprocessing",  # Options are 'multiprocessing', 'mpi4py', None
         max_workers=None,
-        grid_step_size = 100.,
-        relegation_number = 1,
+        grid_step_size=100.,
+        relegation_number=1,
         enable_geometric_yaw=False,
         use_dist_based_init=True,
         random_seed=None
@@ -195,8 +195,10 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 max_workers = mp.cpu_count()
         elif interface is None:
             if n_individuals > 1 or (max_workers is not None and max_workers > 1):
-                print("Parallelization not possible with interface=None. "+\
-                    "Reducing n_individuals to 1 and ignoring max_workers.")
+                print(
+                    "Parallelization not possible with interface=None. "
+                    +"Reducing n_individuals to 1 and ignoring max_workers."
+                )
                 self._PoolExecutor = None
                 max_workers = None
                 n_individuals = 1
@@ -348,7 +350,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             raise TypeError("distance_pmf entries should be numpy arrays or lists"+\
                 " of equal length.")
 
-        if np.sum(dist_pmf["p"]) != 1:
+        if not np.isclose(dist_pmf["p"].sum(), 1):
             print("Probability mass function does not sum to 1. Normalizing.")
             dist_pmf["p"] = np.array(dist_pmf["p"]) / np.array(dist_pmf["p"]).sum()
 
