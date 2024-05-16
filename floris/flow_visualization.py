@@ -369,7 +369,7 @@ def plot_rotor_values(
         plot_rotor_values(floris.flow_field.w, findex=0, n_rows=1, ncols=4, show=True)
     """
 
-    cmap = plt.cm.get_cmap(name=cmap)
+    cmap = plt.get_cmap(name=cmap)
 
     if t_range is None:
         t_range = range(values.shape[1])
