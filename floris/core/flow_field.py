@@ -105,8 +105,10 @@ class FlowField(BaseClass):
             return
 
         # Check that the correct keys are supplied for the heterogeneous_inflow_config dict
-        for k in ["speed_multipliers", "x", "y"]:
-            if k not in value.keys():
+        speed_het_keys = ["speed_multipliers", "x", "y", "z"]
+        bulk_wd_het_keys = ["bulk_wd_change", "bulk_wd_x"]
+        for k in value.keys():
+            if k not in speed_het_keys and k not in bulk_wd_het_keys:
                 raise ValueError(
                     "heterogeneous_inflow_config must contain entries for 'speed_multipliers',"
                     f"'x', and 'y', with 'z' optional. Missing '{k}'."
@@ -130,7 +132,8 @@ class FlowField(BaseClass):
 
 
     def __attrs_post_init__(self) -> None:
-        if self.heterogeneous_inflow_config is not None:
+        if self.heterogeneous_inflow_config is not None and self._speed_heterogeneity:
+            print(self._speed_heterogeneity)
             self.generate_heterogeneous_wind_map()
 
 
@@ -304,6 +307,20 @@ class FlowField(BaseClass):
             ]
 
         self.het_map = in_region
+
+    @property
+    def _speed_heterogeneity(self):
+        if self.heterogeneous_inflow_config is not None:
+            return "speed_multipliers" in self.heterogeneous_inflow_config
+        else:
+            return False
+
+    @property
+    def _bulk_wd_heterogeneity(self):
+        if self.heterogeneous_inflow_config is not None:
+            return "bulk_wd_change" in self.heterogeneous_inflow_config
+        else:
+            return False
 
     @staticmethod
     def interpolate_multiplier_xy(x: NDArrayFloat,
