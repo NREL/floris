@@ -194,22 +194,21 @@ class TurbineGrid(Grid):
             wd_het_x_points = np.array(self.heterogeneous_inflow_config["bulk_wd_x"])
             wd_het_values = np.array(self.heterogeneous_inflow_config["bulk_wd_change"])
             # TODO: does the below work as expected? Do I need the y values too?
-            coordinates_to_rotate = np.concatenate(
-                (
-                    wd_het_x_points[:,:,None],
-                    np.zeros((wd_het_x_points.shape[0], wd_het_x_points.shape[1], 2))
-                ),
-                axis=2
-            )[None,:,:,:]
-            wd_het_x_points = rotate_coordinates_rel_west(
-                np.repeat(self.wind_directions[None,:], wd_het_x_points.shape[1], axis=0),
-                coordinates_to_rotate,
-                self.x_center_of_rotation,
-                self.y_center_of_rotation,
-            )[0][:, :, 0].T
-
+            # coordinates_to_rotate = np.concatenate(
+            #     (
+            #         wd_het_x_points[:,:,None],
+            #         np.zeros((wd_het_x_points.shape[0], wd_het_x_points.shape[1], 2))
+            #     ),
+            #     axis=2
+            # )[None,:,:,:]
+            # wd_het_x_points = rotate_coordinates_rel_west(
+            #     np.repeat(self.wind_directions[None,:], wd_het_x_points.shape[1], axis=0),
+            #     coordinates_to_rotate,
+            #     self.x_center_of_rotation,
+            #     self.y_center_of_rotation,
+            # )[0][:, :, 0].T
             x, y, z = warp_grid_for_wind_direction_heterogeneity(
-                x, y, z, wd_het_x_points, wd_het_values
+                x, y, z, wd_het_x_points + x.min(), wd_het_values
             )
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
