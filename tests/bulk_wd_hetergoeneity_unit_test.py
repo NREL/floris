@@ -21,10 +21,9 @@ from floris.wind_data import WindDataBase
 TEST_DATA = Path(__file__).resolve().parent / "data"
 YAML_INPUT = TEST_DATA / "input_full.yaml"
 
-def test_base_class(caplog):
+def test_bulk_wd_heterogeneity_flow_field():
     # Get a test fi (single turbine at 0,0)
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    fmodel.set(layout_x=[0, 1000], layout_y=[0, 0])
 
     # Directly downstream at 270 degrees
     sample_x = [500.0]
@@ -52,4 +51,32 @@ def test_base_class(caplog):
     u_at_points = fmodel.sample_flow_at_points(sample_x, sample_y, sample_z)
     assert (wd_array[np.argmin(u_at_points)] == 280)
 
+def test_bulk_wd_heterogeneity_turbine():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(layout_x=[0, 600], layout_y=[0, 0])
 
+    # Run straight as a benchmark
+    fmodel.set(wind_directions=[270.0], wind_speeds=[8.0], turbulence_intensities=[0.06])
+    fmodel.run()
+    powers_straight = fmodel.get_turbine_powers()[0,:]
+
+
+    # Single wind direction, with two wind direction shifts as well as straight
+    fmodel.set(
+        wind_directions=[270.0, 270.0, 270.0],
+        wind_speeds=[8.0, 8.0, 8.0],
+        turbulence_intensities=[0.06, 0.06, 0.06],
+        heterogeneous_inflow_config={
+            "bulk_wd_change": [[0.0, 0.0], [0.0, -10.0], [0.0, 10.0]], # 10 degree changes
+            "bulk_wd_x": [[0, 1000], [0, 1000], [0, 1000]] # Past downstream turbine
+        }
+    )
+
+    fmodel.run()
+    powers = fmodel.get_turbine_powers()
+
+    assert (powers_straight == powers[0,:]).all() # Verify straight case
+
+    assert (powers[:,0] == powers[0,0]).all() # Upstream turbine not affected
+    assert powers[0,1] < powers[1,1] # wake shifted away from downstream turbine
+    assert powers[1,1] == powers[2,1] # Shifted wake is symmetric

@@ -235,8 +235,7 @@ def warp_grid_for_wind_direction_heterogeneity(
     x0 = wd_het_x_points[:,0:1]
 
     # Compute radius of curvature for the warp (not sign swap in tand)
-    import ipdb; ipdb.set_trace()
-    warp_radius = (wd_het_x_points[:,1] - x0) / tand(wd_het_values[:,0] - wd_het_values[:,1]) 
+    warp_radius = (wd_het_x_points[:,1:] - x0) / tand(wd_het_values[:,0:1] - wd_het_values[:,1:])
 
     # Compute the angle of warping for each grid point (radians)
     warp_theta = np.arctan2(x - x0, warp_radius)

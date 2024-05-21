@@ -189,7 +189,7 @@ class TurbineGrid(Grid):
             self.turbine_coordinates,
         )
 
-        if (self.heterogeneous_inflow_config is not None 
+        if (self.heterogeneous_inflow_config is not None
             and "bulk_wd_change" in self.heterogeneous_inflow_config):
             wd_het_x_points = np.array(self.heterogeneous_inflow_config["bulk_wd_x"])
             wd_het_values = np.array(self.heterogeneous_inflow_config["bulk_wd_change"])
