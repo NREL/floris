@@ -258,7 +258,7 @@ def warp_grid_for_wind_direction_heterogeneity(
     ### Instead, use a simpler y "slide" approach
     y_warped = np.where(
         (np.abs(warp_radius)  != np.inf ) & (x >= x0) & (x <= x1),
-        warp_radius - np.sqrt(warp_radius**2 - (x - x0)**2) + y,
+        -warp_radius + np.sign(warp_radius) * np.sqrt(warp_radius**2 - (x - x0)**2) + y,
         y
     )
 

@@ -7,8 +7,8 @@ from floris.flow_visualization import visualize_cut_plane
 
 
 # Get a test fi (single turbine at 0,0)
-fmodel = FlorisModel("inputs/gch.yaml")
-fmodel.set(layout_x=[0], layout_y=[0])
+fmodel = FlorisModel("../inputs/gch.yaml")
+fmodel.set(layout_x=[0, 600], layout_y=[0, 0])
 
 # Directly downstream at 270 degrees
 ### Let's try something else
@@ -21,7 +21,7 @@ fmodel.set(
     wind_speeds=[8.0],
     turbulence_intensities=[0.06],
     heterogeneous_inflow_config={
-        "bulk_wd_change": [[0.0, 15.0]], # -10 degree change, CW
+        "bulk_wd_change": [[0.0, -15.0]], # -10 degree change, CW
         "bulk_wd_x": [[0, 2000.0]]
     },
 )
