@@ -24,6 +24,7 @@ YAML_INPUT = TEST_DATA / "input_full.yaml"
 def test_base_class(caplog):
     # Get a test fi (single turbine at 0,0)
     fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(layout_x=[0, 1000], layout_y=[0, 0])
 
     # Directly downstream at 270 degrees
     sample_x = [500.0]
@@ -43,12 +44,12 @@ def test_base_class(caplog):
     # Now, apply bulk wind direction heterogeneity to the flow
     fmodel.set(
         heterogeneous_inflow_config={
-            "bulk_wd_change": [0.0, 10.0], # 10 degree change, CW
-            "bulk_wd_x": [0, 500.0]
+            "bulk_wd_change": [[0.0, -10.0]]*180, # -10 degree change, CW
+            "bulk_wd_x": [[0, 500.0]]*180
         }
-    )
+    ) # TODO: Build something that checks the dimensions of the inputs here
 
     u_at_points = fmodel.sample_flow_at_points(sample_x, sample_y, sample_z)
-    assert (wd_array[np.argmin(u_at_points)] != 270)
+    assert (wd_array[np.argmin(u_at_points)] == 280)
 
 

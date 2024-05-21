@@ -18,6 +18,7 @@ from floris.type_dec import (
 from floris.utilities import (
     reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
+    warp_grid_for_wind_direction_heterogeneity,
 )
 
 
@@ -52,6 +53,7 @@ class Grid(ABC, BaseClass):
     turbine_diameters: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     grid_resolution: int | Iterable = field()
+    heterogeneous_inflow_config: dict | None = field()
 
     n_turbines: int = field(init=False)
     n_findex: int = field(init=False)
@@ -186,6 +188,29 @@ class TurbineGrid(Grid):
             self.wind_directions,
             self.turbine_coordinates,
         )
+
+        if (self.heterogeneous_inflow_config is not None 
+            and "bulk_wd_change" in self.heterogeneous_inflow_config):
+            wd_het_x_points = np.array(self.heterogeneous_inflow_config["bulk_wd_x"])
+            wd_het_values = np.array(self.heterogeneous_inflow_config["bulk_wd_change"])
+            # TODO: does the below work as expected? Do I need the y values too?
+            coordinates_to_rotate = np.concatenate(
+                (
+                    wd_het_x_points[:,:,None],
+                    np.zeros((wd_het_x_points.shape[0], wd_het_x_points.shape[1], 2))
+                ),
+                axis=2
+            )[None,:,:,:]
+            wd_het_x_points = rotate_coordinates_rel_west(
+                np.repeat(self.wind_directions[None,:], wd_het_x_points.shape[1], axis=0),
+                coordinates_to_rotate,
+                self.x_center_of_rotation,
+                self.y_center_of_rotation,
+            )[0][:, :, 0].T
+
+            x, y, z = warp_grid_for_wind_direction_heterogeneity(
+                x, y, z, wd_het_x_points, wd_het_values
+            )
 
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of

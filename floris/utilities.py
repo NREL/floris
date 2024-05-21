@@ -139,7 +139,7 @@ def rotate_coordinates_rel_west(
 
     # Calculate the difference in given wind direction from 270 / West
     wind_deviation_from_west = wind_delta(wind_directions)
-    wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1))
+    wind_deviation_from_west = np.expand_dims(wind_deviation_from_west, axis=-1)
 
     # Construct the arrays storing the turbine locations
     x_coordinates, y_coordinates, z_coordinates = coordinates.T
@@ -223,6 +223,30 @@ def reverse_rotate_coordinates_rel_west(
         grid_z_reversed[wii] = z
 
     return grid_x_reversed, grid_y_reversed, grid_z_reversed
+
+def warp_grid_for_wind_direction_heterogeneity(
+        x,
+        y,
+        z,
+        wd_het_x_points,
+        wd_het_values,
+    ):
+
+    x0 = wd_het_x_points[:,0:1]
+
+    # Compute radius of curvature for the warp (not sign swap in tand)
+    import ipdb; ipdb.set_trace()
+    warp_radius = (wd_het_x_points[:,1] - x0) / tand(wd_het_values[:,0] - wd_het_values[:,1]) 
+
+    # Compute the angle of warping for each grid point (radians)
+    warp_theta = np.arctan2(x - x0, warp_radius)
+
+    # Apply warp
+    x_warped = warp_radius * np.sin(warp_theta) + y * np.sin(warp_theta) + x0
+    y_warped = warp_radius * np.cos(warp_theta) + y * np.cos(warp_theta) - warp_radius
+
+    # Return warped grid
+    return np.where(x >= x0, x_warped, x), np.where(x >= x0, y_warped, y), z
 
 
 class Loader(yaml.SafeLoader):

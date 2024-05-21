@@ -287,6 +287,7 @@ def full_flow_sequential_solver(
         turbine_coordinates=turbine_grid_farm.coordinates,
         turbine_diameters=turbine_grid_farm.rotor_diameters,
         wind_directions=turbine_grid_flow_field.wind_directions,
+        heterogeneous_inflow_config=turbine_grid_flow_field.heterogeneous_inflow_config,
         grid_resolution=3,
     )
     turbine_grid_farm.expand_farm_properties(
