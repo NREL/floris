@@ -957,16 +957,18 @@ class FlorisModel(LoggingManager):
 
         # If not None, set the heterogeneous inflow configuration
         if self.core.flow_field.heterogeneous_inflow_config is not None:
-            heterogeneous_inflow_config = {
-                'x': self.core.flow_field.heterogeneous_inflow_config['x'],
-                'y': self.core.flow_field.heterogeneous_inflow_config['y'],
-                'speed_multipliers':
-                    self.core.flow_field.heterogeneous_inflow_config['speed_multipliers'][findex:findex+1],
-            }
-            if 'z' in self.core.flow_field.heterogeneous_inflow_config:
-                heterogeneous_inflow_config['z'] = (
-                    self.core.flow_field.heterogeneous_inflow_config['z']
-                )
+            speed_het_keys = ["speed_multipliers", "x", "y", "z"]
+            bulk_wd_het_keys = ["bulk_wd_change", "bulk_wd_x"]
+            heterogeneous_inflow_config = {}
+            for k in self.core.flow_field.heterogeneous_inflow_config.keys():
+                if (
+                    (k in speed_het_keys
+                     or k in bulk_wd_het_keys)
+                    and self.core.flow_field.heterogeneous_inflow_config[k] is not None
+                ):
+                    heterogeneous_inflow_config[k] = (
+                        self.core.flow_field.heterogeneous_inflow_config[k][findex:findex+1]
+                    )
         else:
             heterogeneous_inflow_config = None
 
@@ -978,7 +980,7 @@ class FlorisModel(LoggingManager):
             power_setpoints=self.core.farm.power_setpoints[findex:findex+1,:],
             awc_modes=self.core.farm.awc_modes[findex:findex+1,:],
             awc_amplitudes=self.core.farm.awc_amplitudes[findex:findex+1,:],
-            heterogeneous_inflow_config = heterogeneous_inflow_config,
+            heterogeneous_inflow_config=heterogeneous_inflow_config,
             solver_settings=solver_settings,
         )
 
