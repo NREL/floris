@@ -232,35 +232,48 @@ def warp_grid_for_wind_direction_heterogeneity(
         wd_het_values,
     ):
 
-    x0 = wd_het_x_points[:,0:1]
-    x1 = wd_het_x_points[:,1:]
+    y_warped = y.copy()
+    
+    for i in range(wd_het_values.shape[1]-1):
 
-    # Compute radius of curvature for the warp (not sign swap in tand)
-    warp_radius = (x1 - x0) / tand(wd_het_values[:,0:1] - wd_het_values[:,1:])
+        x0 = wd_het_x_points[:,i:i+1]
+        x1 = wd_het_x_points[:,i+1:i+2]
 
-    ### Below is code for a "true" warp in x and y, but is not complete.
-    # # Compute the angle of warping for each grid point (radians)
-    # warp_theta = np.arctan2(x - x0, np.abs(warp_radius))*np.sign(warp_radius)
+        # Compute radius of curvature for the warp (not sign swap in tand)
+        warp_radius = (x1 - x0) / tand(wd_het_values[:,i:i+1] - wd_het_values[:,i+1:i+2])
 
-    # # Apply warp
-    # import ipdb; ipdb.set_trace()
-    # x_warped = np.where( # Also add end points
-    #     (x >= x0) & (x <= x1) & (np.abs(warp_radius) < np.inf),
-    #     warp_radius * np.sin(warp_theta) + y * np.sin(warp_theta) + x0,
-    #     x
-    # )
-    # y_warped = np.where(
-    #     (x >= x0) & (x <= x1) & (np.abs(warp_radius) < np.inf),
-    #     warp_radius * np.cos(warp_theta) + y * np.cos(warp_theta) - warp_radius,
-    #     y
-    # )
+        ### Below is code for a "true" warp in x and y, but is not complete.
+        # # Compute the angle of warping for each grid point (radians)
+        # warp_theta = np.arctan2(x - x0, np.abs(warp_radius))*np.sign(warp_radius)
 
-    ### Instead, use a simpler y "slide" approach
-    y_warped = np.where(
-        (np.abs(warp_radius)  != np.inf ) & (x >= x0) & (x <= x1),
-        -warp_radius + np.sign(warp_radius) * np.sqrt(warp_radius**2 - (x - x0)**2) + y,
-        y
-    )
+        # # Apply warp
+        # import ipdb; ipdb.set_trace()
+        # x_warped = np.where( # Also add end points
+        #     (x >= x0) & (x <= x1) & (np.abs(warp_radius) < np.inf),
+        #     warp_radius * np.sin(warp_theta) + y * np.sin(warp_theta) + x0,
+        #     x
+        # )
+        # y_warped = np.where(
+        #     (x >= x0) & (x <= x1) & (np.abs(warp_radius) < np.inf),
+        #     warp_radius * np.cos(warp_theta) + y * np.cos(warp_theta) - warp_radius,
+        #     y
+        # )
+
+        ### Instead, use a simpler y "slide" approach
+        if len(x.shape) == len(x1.shape):
+            x1_rep = np.repeat(x1, x.shape[1], axis=1) # Usual solve
+        else:
+            x1_rep = x1[:,:,None] # Full field solve
+        x_mod = np.where(
+            x > x1_rep,
+            x1_rep,
+            x
+        )
+        y_warped = np.where(
+            (np.abs(warp_radius)  != np.inf ) & (x >= x0),
+            -warp_radius + np.sign(warp_radius) * np.sqrt(warp_radius**2 - (x_mod - x0)**2) + y_warped,
+            y_warped
+        )
 
     # Return warped grid
     return x, y_warped, z

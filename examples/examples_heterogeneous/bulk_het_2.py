@@ -21,8 +21,9 @@ fmodel.set(
     wind_speeds=[8.0],
     turbulence_intensities=[0.06],
     heterogeneous_inflow_config={
-        "bulk_wd_change": [[0.0, -15.0]], # -10 degree change, CW
-        "bulk_wd_x": [[0, 2000.0]]
+        "bulk_wd_change": [[0.0, -20.0, 20.0, -20.0]], # -10 degree change, CW
+        #"bulk_wd_change": [[0.0, 0.0, 0.0, 0.0]], # -10 degree change, CCW
+        "bulk_wd_x": [[0, 600, 1200, 1800]]
     },
 )
 horizontal_plane = fmodel.calculate_horizontal_plane(
@@ -37,11 +38,11 @@ visualize_cut_plane(
     horizontal_plane,
     ax=ax,
     label_contours=False,
-    title="Horizontal Flow with Turbine Rotors and labels",
+    #title="Horizontal Flow with Turbine Rotors and labels",
 )
 
 # Plot the turbine rotors
-layoutviz.plot_turbine_rotors(fmodel, ax=ax)
+ax.grid()
 
 plt.show()
 
