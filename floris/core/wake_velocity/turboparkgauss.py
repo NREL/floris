@@ -35,7 +35,7 @@ class TurboparkgaussVelocityDeficit(BaseModel):
 
     A: float = field(default=0.04)
     sigma_max_rel: float = field(default=4.0)
-        
+
     def prepare_function(
         self,
         grid: Grid,
@@ -81,15 +81,17 @@ class TurboparkgaussVelocityDeficit(BaseModel):
         x_dist = (x - x_i) * downstream_mask / rotor_diameter_i
 
         # Characteristic wake widths from all turbines relative to turbine i
-        sigma = characteristic_wake_width(x_dist, rotor_diameter_i, turbulence_intensity_i, ct_i, self.A)
-        
+        sigma = characteristic_wake_width(
+            x_dist, rotor_diameter_i, turbulence_intensity_i, ct_i, self.A
+        )
+
         # Peak wake deficits
         val = np.clip(1 - ct_i / (8 * (sigma / rotor_diameter_i) ** 2), 0.0, 1.0)
         C = 1 - np.sqrt(val)
 
         r_dist = np.sqrt((y - y_i) ** 2 + (z - z_i) ** 2)
         r_dist_image = np.sqrt((y - y_i) ** 2 + (z - 3*z_i) ** 2)
-        
+
         # Compute deficit for all turbines and mask to keep upstream and overlapping turbines
         # NOTE self.sigma_max_rel * sigma is an effective wake width
         is_overlapping = (self.sigma_max_rel * sigma) / 2 + rotor_diameter_i / 2 > r_dist
@@ -102,7 +104,7 @@ class TurboparkgaussVelocityDeficit(BaseModel):
         delta_real  = wtg_overlapping * gaussian_function(C, r_dist, 2, sigma)
         delta_image = wtg_overlapping * gaussian_function(C, r_dist_image, 2, sigma)
 
-        # delta = delta_real # np.concatenate((delta_real, delta_image), axis=2) # No mirror turbines
+        # delta = delta_real # np.concatenate((delta_real, delta_image), axis=2)# No mirror turbines
         delta = np.hypot(delta_real,delta_image) # incl mirror turbines
 
         velocity_deficit = np.nan_to_num(delta)
@@ -128,7 +130,7 @@ def characteristic_wake_width(x_dist, D, TI, Cts, A):
             / ((np.sqrt(1 + alpha ** 2) + 1) * (alpha + beta * x_dist))
         )
     )
-    
+
     epsilon = 0.25 * np.sqrt( np.min( 0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts) ) )
     sigma = D * (epsilon + dw)
 

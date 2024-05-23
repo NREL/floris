@@ -4,6 +4,7 @@ import pandas as pd
 
 from floris import FlorisModel
 
+
 fmodel1 = FlorisModel("Case_RowPark_TurbOPark.yaml")
 fmodel1.run()
 raws1 = fmodel1.turbine_average_velocities

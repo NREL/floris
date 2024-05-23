@@ -14,8 +14,8 @@ from typing import Any, Dict
 
 import numexpr as ne
 import numpy as np
-from scipy import special as sp
 from attrs import define, field
+from scipy import special as sp
 
 from floris.core import (
     BaseModel,
@@ -37,7 +37,7 @@ class DoublegaussVelocityDeficit(BaseModel):
     # These two parameters should be inputs
     # A: float = field(default=0.04)
     # sigma_max_rel: float = field(default=4.0)
-        
+
     def prepare_function(
         self,
         grid: Grid,
@@ -96,8 +96,11 @@ class DoublegaussVelocityDeficit(BaseModel):
 
         sigma_r0 = sigma_D/r0_D + 1e-16
 
-        M = sigma_r0*(2*sigma_r0*np.exp(-1/2./sigma_r0**2) + np.sqrt(2*np.pi)*(sp.erfc(1./(np.sqrt(2)*sigma_r0))-1))
-        N = sigma_r0*(  sigma_r0*np.exp(-sigma_r0**-2)     + np.sqrt(np.pi)/2*(sp.erfc(1./sigma_r0)-1))
+        M = sigma_r0*(
+            2*sigma_r0*np.exp(-1/2./sigma_r0**2)
+            + np.sqrt(2*np.pi)*(sp.erfc(1./(np.sqrt(2)*sigma_r0))-1)
+        )
+        N = sigma_r0*(sigma_r0*np.exp(-sigma_r0**-2) + np.sqrt(np.pi)/2*(sp.erfc(1./sigma_r0)-1))
 
         C_ = ( M-np.sqrt(M**2-1/2*N*ct_i/r0_D**2) ) / (2*N)
         C_[X_D<=0]=0

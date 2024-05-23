@@ -21,13 +21,13 @@ from floris.core.wake_turbulence import (
 )
 from floris.core.wake_velocity import (
     CumulativeGaussCurlVelocityDeficit,
+    DoublegaussVelocityDeficit,
     EmpiricalGaussVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
     NoneVelocityDeficit,
-    TurbOParkVelocityDeficit,
     TurboparkgaussVelocityDeficit,
-    DoublegaussVelocityDeficit,
+    TurbOParkVelocityDeficit,
 )
 
 

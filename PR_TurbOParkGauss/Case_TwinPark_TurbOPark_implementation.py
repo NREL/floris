@@ -7,6 +7,7 @@ from floris import (
     TimeSeries,
 )
 
+
 fmodel = FlorisModel("Case_TwinPark_TurbOPark.yaml")
 
 wd_array = np.arange(225,315,0.1)
