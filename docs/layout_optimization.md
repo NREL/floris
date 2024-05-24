@@ -73,6 +73,9 @@ chosen at any iteration of the random search algorithm. The `distance_pmf` can t
 used to encourage or discourage more aggressive or more conservative movements, and to enable
 or disable jumps between disjoint regions for turbine placement.
 
-<!--
-![](grs_optimization.mp4)
--->
+The figure below shows an example of the optimized layout of a farm using the GRS algorithm, with
+the black dots indicating the initial layout; red dots indicating the final layout; and blue
+shading indicating wind speed heterogeneity (lighter shade is lower wind speed, darker shade is
+higher wind speed). The progress of each of the genetic individuals in the optimization process is
+shown in the right-hand plot.
+![](plot_complex_docs.png)

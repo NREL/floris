@@ -1,3 +1,9 @@
+"""Example: Layout optimization with genetic random search
+This example shows a layout optimization using the genetic random search
+algorithm. It provides options for the users to try different distance
+probability mass functions for the random search perturbations.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import gamma
@@ -48,9 +54,13 @@ if __name__ == '__main__':
 
     # Perform the optimization
     distance_pmf = None
-    #distance_pmf = {"d": [100, 1000], "p": [0.8, 0.2]}
-    #p = gamma.pdf(np.linspace(0, 900, 91), 15, scale=20); p = p/p.sum()
-    #distance_pmf = {"d": np.linspace(100, 1000, 91), "p": p}
+
+    # Other options that users can try
+    # 1.
+    # distance_pmf = {"d": [100, 1000], "p": [0.8, 0.2]}
+    # 2.
+    # p = gamma.pdf(np.linspace(0, 900, 91), 15, scale=20); p = p/p.sum()
+    # distance_pmf = {"d": np.linspace(100, 1000, 91), "p": p}
 
     layout_opt = LayoutOptimizationRandomSearch(
         fmodel,
