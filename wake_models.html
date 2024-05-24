@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -207,6 +207,7 @@
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layout_optimization.html">Layout optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -240,6 +241,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
@@ -326,6 +328,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -672,7 +675,7 @@ wake boundary line. The slope of the wake boundary line, or wake expansion, is a
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/33ba1766d2121ee1884d7804a075d3ab3ea70f32223b635cfbf999d5a2bbfaf2.png" src="_images/33ba1766d2121ee1884d7804a075d3ab3ea70f32223b635cfbf999d5a2bbfaf2.png" />
+<img alt="_images/960a0c45b041db719463c3957aac2ead476cb29d95968d428b5160a1c5fc6359.png" src="_images/960a0c45b041db719463c3957aac2ead476cb29d95968d428b5160a1c5fc6359.png" />
 </div>
 </div>
 </section>
@@ -693,7 +696,7 @@ the deflection field in turbine wakes.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/99adb07b8c3a79b5119001c2d9cf37f22b78dfe3fc40aae9389b1907fb3bfca7.png" src="_images/99adb07b8c3a79b5119001c2d9cf37f22b78dfe3fc40aae9389b1907fb3bfca7.png" />
+<img alt="_images/ad384c53fe76b2b87c831e0385c949b79c3f1059bc5e23d4a95865d1e660745b.png" src="_images/ad384c53fe76b2b87c831e0385c949b79c3f1059bc5e23d4a95865d1e660745b.png" />
 </div>
 </div>
 </section>
@@ -710,7 +713,7 @@ simpler tuning and data fitting.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/19e468fc9138c5910e28dd255914da73b2019101e539839ac8cb46e30552d1fd.png" src="_images/19e468fc9138c5910e28dd255914da73b2019101e539839ac8cb46e30552d1fd.png" />
+<img alt="_images/ae302361e17975c664f8ec5eb20c2d3b4f2a0bd6eb001259fea27cd347737607.png" src="_images/ae302361e17975c664f8ec5eb20c2d3b4f2a0bd6eb001259fea27cd347737607.png" />
 </div>
 </div>
 </section>
@@ -725,7 +728,7 @@ which itself is based on the cumulative model of <span id="id8">Bastankhah <em>e
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8ea4319a119a7a1b7adcd494fe3035f6959cab9d79ca6eb7f8692830c71d1fbd.png" src="_images/8ea4319a119a7a1b7adcd494fe3035f6959cab9d79ca6eb7f8692830c71d1fbd.png" />
+<img alt="_images/f4649ece1e9916f08c91e70cff6f20ccace6efdddc04c28099174436b7fde7df.png" src="_images/f4649ece1e9916f08c91e70cff6f20ccace6efdddc04c28099174436b7fde7df.png" />
 </div>
 </div>
 </section>
@@ -828,8 +831,8 @@ flow field.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0f8f9536d9e7296fedc71e98f11288a9bf854d6f39e92282ae26e65fcd1cc3a1.png" src="_images/0f8f9536d9e7296fedc71e98f11288a9bf854d6f39e92282ae26e65fcd1cc3a1.png" />
-<img alt="_images/3216c3c63b9d81dfa626e6ff86973590cfb31c1dd190e90e277a4c0cbc7c2870.png" src="_images/3216c3c63b9d81dfa626e6ff86973590cfb31c1dd190e90e277a4c0cbc7c2870.png" />
+<img alt="_images/f813c8be6ef4e2689e91ea856a413a18116cb765c316c1d6e383a462253ac5a2.png" src="_images/f813c8be6ef4e2689e91ea856a413a18116cb765c316c1d6e383a462253ac5a2.png" />
+<img alt="_images/b19c170e0072cc76ad87826dc492bf11ed0ab1bc4191db496aa9a4177e0b04b2.png" src="_images/b19c170e0072cc76ad87826dc492bf11ed0ab1bc4191db496aa9a4177e0b04b2.png" />
 </div>
 </div>
 </section>
@@ -844,8 +847,8 @@ maximum of the two for each point. For more information, refer to <span id="id10
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0f8f9536d9e7296fedc71e98f11288a9bf854d6f39e92282ae26e65fcd1cc3a1.png" src="_images/0f8f9536d9e7296fedc71e98f11288a9bf854d6f39e92282ae26e65fcd1cc3a1.png" />
-<img alt="_images/d232b2e7f166b63ade8115dccaff96529239151c3b401d26a92b9e2c61fa53b2.png" src="_images/d232b2e7f166b63ade8115dccaff96529239151c3b401d26a92b9e2c61fa53b2.png" />
+<img alt="_images/f813c8be6ef4e2689e91ea856a413a18116cb765c316c1d6e383a462253ac5a2.png" src="_images/f813c8be6ef4e2689e91ea856a413a18116cb765c316c1d6e383a462253ac5a2.png" />
+<img alt="_images/474f720bc956af40a551717c5a143768f59a2ce260f1d1b27952e2c2e08b04da.png" src="_images/474f720bc956af40a551717c5a143768f59a2ce260f1d1b27952e2c2e08b04da.png" />
 </div>
 </div>
 </section>
@@ -860,8 +863,8 @@ flow field.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0f8f9536d9e7296fedc71e98f11288a9bf854d6f39e92282ae26e65fcd1cc3a1.png" src="_images/0f8f9536d9e7296fedc71e98f11288a9bf854d6f39e92282ae26e65fcd1cc3a1.png" />
-<img alt="_images/9b3587649cd07b1eb3ff13d5ae9a795999462564aab32a9f38924b2d54e75b49.png" src="_images/9b3587649cd07b1eb3ff13d5ae9a795999462564aab32a9f38924b2d54e75b49.png" />
+<img alt="_images/f813c8be6ef4e2689e91ea856a413a18116cb765c316c1d6e383a462253ac5a2.png" src="_images/f813c8be6ef4e2689e91ea856a413a18116cb765c316c1d6e383a462253ac5a2.png" />
+<img alt="_images/43ccb31eef6d5ffb6926f6cdb5d1f48063e4bd55408734faaa7bc89812a7a898.png" src="_images/43ccb31eef6d5ffb6926f6cdb5d1f48063e4bd55408734faaa7bc89812a7a898.png" />
 </div>
 </div>
 </section>

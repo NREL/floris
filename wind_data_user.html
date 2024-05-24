@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layout_optimization.html">Layout optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -236,6 +237,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
@@ -322,6 +324,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -678,7 +681,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Turbulence Intensity&#39;)
 </pre></div>
 </div>
-<img alt="_images/e5a73da782caf6eced4d4740a5d50b2ea7d665e91f2970af0aaefdedf7e34efe.png" src="_images/e5a73da782caf6eced4d4740a5d50b2ea7d665e91f2970af0aaefdedf7e34efe.png" />
+<img alt="_images/da4e8cb30c0752214f064d37c606926a7be2a936af033cdaa3145b40e0233f80.png" src="_images/da4e8cb30c0752214f064d37c606926a7be2a936af033cdaa3145b40e0233f80.png" />
 </div>
 </div>
 </section>
@@ -702,7 +705,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Value (normalized price/MWh)&#39;)
 </pre></div>
 </div>
-<img alt="_images/36591e5fae7e024182c5831585858c4320caf3e7ad4f9b816be34fe5b1ab58fe.png" src="_images/36591e5fae7e024182c5831585858c4320caf3e7ad4f9b816be34fe5b1ab58fe.png" />
+<img alt="_images/ae21094837b9b4d113837b394f6a4fe9742a8a2c5781277a699db821ce2f7512.png" src="_images/ae21094837b9b4d113837b394f6a4fe9742a8a2c5781277a699db821ce2f7512.png" />
 </div>
 </div>
 </section>
@@ -843,7 +846,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/fb9c37aaf53dc1ce8acde19eb74f08b6472f8e6b3caa7593b25afd2c03a39657.png" src="_images/fb9c37aaf53dc1ce8acde19eb74f08b6472f8e6b3caa7593b25afd2c03a39657.png" />
+<img alt="_images/0a67d7d86535af0e7483a54a6525bb0196a8d441e1a526bbc22e6d7bb894c232.png" src="_images/0a67d7d86535af0e7483a54a6525bb0196a8d441e1a526bbc22e6d7bb894c232.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -859,7 +862,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/abb7495de192df98b11bfda572a117d79beb47e472fa4f7127fd5c866c2710ae.png" src="_images/abb7495de192df98b11bfda572a117d79beb47e472fa4f7127fd5c866c2710ae.png" />
+<img alt="_images/d6f8635e01b6c672ff9626d63b05919d3050b85b820680049b31bb5d86ed6a8e.png" src="_images/d6f8635e01b6c672ff9626d63b05919d3050b85b820680049b31bb5d86ed6a8e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -875,7 +878,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/990f337f96c1aba83429363d7669203cbaee578636bdeee2f34f96cae85c618a.png" src="_images/990f337f96c1aba83429363d7669203cbaee578636bdeee2f34f96cae85c618a.png" />
+<img alt="_images/5585263d1797c6730585dfad47068a5e90384c85ca49ae12f3589a3808c1ff4c.png" src="_images/5585263d1797c6730585dfad47068a5e90384c85ca49ae12f3589a3808c1ff4c.png" />
 </div>
 </div>
 </section>
@@ -912,10 +915,10 @@ wind_rose.value_table
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4b93a7002834e400a9292a99acfc16cd03212829e7fce8c071f5a5593e7674d3.png" src="_images/4b93a7002834e400a9292a99acfc16cd03212829e7fce8c071f5a5593e7674d3.png" />
-<img alt="_images/ecbaa4ab22c5d0f84ca17fefdd412c9a8aee59a779bb5a8b366179d822c69627.png" src="_images/ecbaa4ab22c5d0f84ca17fefdd412c9a8aee59a779bb5a8b366179d822c69627.png" />
-<img alt="_images/dd91cab9ca0182579fbf3ebdc6aacf23f098e290d264dcf2200e8232b3f4d2d8.png" src="_images/dd91cab9ca0182579fbf3ebdc6aacf23f098e290d264dcf2200e8232b3f4d2d8.png" />
-<img alt="_images/765251d3e3de313717f2cf945d801aa1541f84d6d1ef85438531d4284a4f86e2.png" src="_images/765251d3e3de313717f2cf945d801aa1541f84d6d1ef85438531d4284a4f86e2.png" />
+<img alt="_images/65dbd12092d93d8e68672ccc128fa2a4d32033ba5efc8625a5c9503a3819eb2f.png" src="_images/65dbd12092d93d8e68672ccc128fa2a4d32033ba5efc8625a5c9503a3819eb2f.png" />
+<img alt="_images/7026356b2c835f55c12194bc366b31f3942ea3f88bf32fab81a393fb4c060c79.png" src="_images/7026356b2c835f55c12194bc366b31f3942ea3f88bf32fab81a393fb4c060c79.png" />
+<img alt="_images/30db0b52572535f42f8722fae89b299ea96983032ed9c772eedadff438837c02.png" src="_images/30db0b52572535f42f8722fae89b299ea96983032ed9c772eedadff438837c02.png" />
+<img alt="_images/cf02ff6e20dddd49d846b22eb3418167103f4d4fe9322520692e90f4ea04e6f8.png" src="_images/cf02ff6e20dddd49d846b22eb3418167103f4d4fe9322520692e90f4ea04e6f8.png" />
 </div>
 </div>
 </section>

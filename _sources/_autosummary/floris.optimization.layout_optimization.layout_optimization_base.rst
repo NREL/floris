@@ -9,6 +9,12 @@ floris.optimization.layout\_optimization.layout\_optimization\_base
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      list_depth
+   
    
 
    

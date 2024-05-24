@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -75,7 +75,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'operation_models_user';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Main Input File Reference" href="input_reference_main.html" />
+    <link rel="next" title="Layout optimization" href="layout_optimization.html" />
     <link rel="prev" title="Turbine Library Interface" href="turbine_interaction.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
@@ -205,6 +205,7 @@
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layout_optimization.html">Layout optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -238,6 +239,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
@@ -324,6 +326,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -656,8 +659,8 @@ We also describe the different parameters that must be specified in the turbine
 cosine-loss operation model powers [kW]:  [[1561.31837381  778.04338242  651.77709894]]
 </pre></div>
 </div>
-<img alt="_images/d3c9bbf211768e844e708734bf7adee0ec971be2ef9e48fd77dcd86fa6b8f643.png" src="_images/d3c9bbf211768e844e708734bf7adee0ec971be2ef9e48fd77dcd86fa6b8f643.png" />
-<img alt="_images/803d46cee160074f6616fb1c0f91d20262c1f8806fe18f626a815e75b98db22a.png" src="_images/803d46cee160074f6616fb1c0f91d20262c1f8806fe18f626a815e75b98db22a.png" />
+<img alt="_images/b42b94682ce0bfdd37418924e5459f8233e1debc637ddc2e3b863a26cbf44de3.png" src="_images/b42b94682ce0bfdd37418924e5459f8233e1debc637ddc2e3b863a26cbf44de3.png" />
+<img alt="_images/8e845c5db4dcee4bd044d2190b0de19ecd60e76221bda8d35b78cc76caaefe15.png" src="_images/8e845c5db4dcee4bd044d2190b0de19ecd60e76221bda8d35b78cc76caaefe15.png" />
 </div>
 </div>
 </section>
@@ -737,7 +740,7 @@ thus vary as a function of the turbine's yaw angle, set using the <code class="d
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/fe36b79eaa5892b39bf9c35f1aa75fb95fdf7d6c18718ae033756bce819f1bd5.png" src="_images/fe36b79eaa5892b39bf9c35f1aa75fb95fdf7d6c18718ae033756bce819f1bd5.png" />
+<img alt="_images/e92187c0a1291efa636bb92634db919e22cc1956013911655d91bbf2eea59e40.png" src="_images/e92187c0a1291efa636bb92634db919e22cc1956013911655d91bbf2eea59e40.png" />
 </div>
 </div>
 </section>
@@ -800,7 +803,7 @@ appropriate entries of <code class="docutils literal notranslate"><span class="p
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/e180faa553dbca3d36c21e11a981d4c0e939c41e4166cc35e9146ede25690ea5.png" src="_images/e180faa553dbca3d36c21e11a981d4c0e939c41e4166cc35e9146ede25690ea5.png" />
+<img alt="_images/6a33aa44c531b6b20e6506f49990918214be596e4ea364cd095e60eae40bfe87.png" src="_images/6a33aa44c531b6b20e6506f49990918214be596e4ea364cd095e60eae40bfe87.png" />
 </div>
 </div>
 </section>
@@ -996,7 +999,7 @@ i.e. the lesser solution to <span class="math notranslate nohighlight">\(C_T=4a(
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/ed7f9bc00c3b95f6fa0d086d70418b42e03b6d6157f09ddcef5d50110eaf3b41.png" src="_images/ed7f9bc00c3b95f6fa0d086d70418b42e03b6d6157f09ddcef5d50110eaf3b41.png" />
+<img alt="_images/0d9a784a613811d9a36434b36590b3db18f98f1ae20004ba9ec93039197e453f.png" src="_images/0d9a784a613811d9a36434b36590b3db18f98f1ae20004ba9ec93039197e453f.png" />
 </div>
 </div>
 </section>
@@ -1043,11 +1046,11 @@ i.e. the lesser solution to <span class="math notranslate nohighlight">\(C_T=4a(
       </div>
     </a>
     <a class="right-next"
-       href="input_reference_main.html"
+       href="layout_optimization.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Main Input File Reference</p>
+        <p class="prev-next-title">Layout optimization</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

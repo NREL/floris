@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../layout_optimization.html">Layout optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -236,6 +237,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
@@ -322,6 +324,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -717,9 +720,9 @@ Farm AEP (floating): 359.237 GWh
 Floating AEP increase: 0.376 GWh (0.10%)
 </pre></div>
 </div>
-<img alt="../../_images/0097ddd5523c25066ab7deb84fb6bb2b1bfe0e4840c369d5e12831a0c72ed870.png" src="../../_images/0097ddd5523c25066ab7deb84fb6bb2b1bfe0e4840c369d5e12831a0c72ed870.png" />
-<img alt="../../_images/3ca1a4e1f6bbd310edf1835d0f1af944ee820205cc62d0866cd1ea617250f5b8.png" src="../../_images/3ca1a4e1f6bbd310edf1835d0f1af944ee820205cc62d0866cd1ea617250f5b8.png" />
-<img alt="../../_images/e72ecbd83f44d2f1bba9678d516982f7efdf786be137479437abb8f6cb6909d2.png" src="../../_images/e72ecbd83f44d2f1bba9678d516982f7efdf786be137479437abb8f6cb6909d2.png" />
+<img alt="../../_images/fac37447d087a69ba98950e3d978832de70ad15f87e55b4aa97b7dd0a23fc40b.png" src="../../_images/fac37447d087a69ba98950e3d978832de70ad15f87e55b4aa97b7dd0a23fc40b.png" />
+<img alt="../../_images/1bb55fdc1f680727ac5c6eeb9293e3774109c02bcfbc7db9a0d8f611ced12357.png" src="../../_images/1bb55fdc1f680727ac5c6eeb9293e3774109c02bcfbc7db9a0d8f611ced12357.png" />
+<img alt="../../_images/af7ed0437d2d52f1a169bdbc5795c16583773a33b9787c581c16331d69c96768.png" src="../../_images/af7ed0437d2d52f1a169bdbc5795c16583773a33b9787c581c16331d69c96768.png" />
 </div>
 </div>
 </section>

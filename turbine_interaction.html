@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layout_optimization.html">Layout optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -236,6 +237,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
@@ -322,6 +324,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -646,7 +649,7 @@ below. For convenience, we'll only consider the object created from the internal
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/996d77be17b63c65293eb81d0f8ddb3c844876ae305eee5cdd63abc78f6ca1d2.png" src="_images/996d77be17b63c65293eb81d0f8ddb3c844876ae305eee5cdd63abc78f6ca1d2.png" />
+<img alt="_images/7ed47dbc29696c679bb54c103a7f4b8f5d42bc42bf86ae6cc192950ebd711a9b.png" src="_images/7ed47dbc29696c679bb54c103a7f4b8f5d42bc42bf86ae6cc192950ebd711a9b.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -656,7 +659,7 @@ below. For convenience, we'll only consider the object created from the internal
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5fc0c114a3338dab485e785557ee22f69abf8ef1bfe9426f943689aa21039e84.png" src="_images/5fc0c114a3338dab485e785557ee22f69abf8ef1bfe9426f943689aa21039e84.png" />
+<img alt="_images/03a87c5759e25c5bb4bc5cef72f5f86c3fc77bb5503a045a1fd3fe599bcf86e3.png" src="_images/03a87c5759e25c5bb4bc5cef72f5f86c3fc77bb5503a045a1fd3fe599bcf86e3.png" />
 </div>
 </div>
 </section>
@@ -683,7 +686,7 @@ below. For convenience, we'll only consider the object created from the internal
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/13172a4e21715950c5bb62eaad998865ba12888fc197fdfe3e2ee8f1905e15ea.png" src="_images/13172a4e21715950c5bb62eaad998865ba12888fc197fdfe3e2ee8f1905e15ea.png" />
+<img alt="_images/7b8c5c1eaa5ee10194516882c8f05569ff443fb107b011c1122a6ab6cc370d32.png" src="_images/7b8c5c1eaa5ee10194516882c8f05569ff443fb107b011c1122a6ab6cc370d32.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -695,7 +698,7 @@ below. For convenience, we'll only consider the object created from the internal
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8814864c74f8b9bfcae31a2c07717e5590ab02812a99b26f42ce74dd07fc05c2.png" src="_images/8814864c74f8b9bfcae31a2c07717e5590ab02812a99b26f42ce74dd07fc05c2.png" />
+<img alt="_images/ccdf46a5f8570f5ca9926ecb6baa9297431db28a678f2ffb28d13196ed3a17d7.png" src="_images/ccdf46a5f8570f5ca9926ecb6baa9297431db28a678f2ffb28d13196ed3a17d7.png" />
 </div>
 </div>
 </section>
@@ -726,8 +729,8 @@ are going to be compared.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW_floating
-nrel_5MW
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>nrel_5MW
+iea_15MW_floating
 iea_15MW_multi_dim_cp_ct
 iea_10MW
 </pre></div>
@@ -749,8 +752,8 @@ arguments.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW_floating
-nrel_5MW
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>nrel_5MW
+iea_15MW_floating
 iea_15MW_multi_dim_cp_ct
 iea_10MW
 iea_15MW
@@ -780,7 +783,7 @@ a multi-dimensional turbine in relation to the standard 15 MW example.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a66e6c86ddad3e19e6dbfcc6b04a1063b65bb1040ed3f0253d60c15e9174d605.png" src="_images/a66e6c86ddad3e19e6dbfcc6b04a1063b65bb1040ed3f0253d60c15e9174d605.png" />
+<img alt="_images/e13ad55dbe7b74b298f0b0de26a33842f994e0fb63f6ff67981dc3956fe30080.png" src="_images/e13ad55dbe7b74b298f0b0de26a33842f994e0fb63f6ff67981dc3956fe30080.png" />
 </div>
 </div>
 <p>Alternatively, these can all be ploted individually with:</p>
@@ -821,8 +824,8 @@ a multi-dimensional turbine in relation to the standard 15 MW example.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                  Turbine | Rotor Diameter (m) | Hub Height (m) |    TSR | Air Density (ρ) | Tilt (º)
 -----------------------------------------------------------------------------------------------------
-        iea_15MW_floating |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
                  nrel_5MW |             125.88 |           90.0 |    8.0 |           1.225 |    5.000
+        iea_15MW_floating |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
  iea_15MW_multi_dim_cp_ct |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
                  iea_10MW |             198.00 |          119.0 |    8.0 |           1.225 |    6.000
                  iea_15MW |             242.24 |          150.0 |    8.0 |           1.225 |    6.000

@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../layout_optimization.html">Layout optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -236,6 +237,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
@@ -322,6 +324,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -978,9 +981,7 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    9    40    -1.046685E+00     2.824111E-06
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   10    42    -1.046685E+00     6.047025E-08
+   10    42    -1.046685E+00     6.047025E-08
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.0466852786523977
             Iterations: 10
@@ -1025,9 +1026,7 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    3    10    -1.000035E+00     5.322843E-04
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    4    12    -1.000035E+00     4.924128E-04
+    4    12    -1.000035E+00     4.924128E-04
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.0000354608371065
             Iterations: 4
@@ -1172,9 +1171,7 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    7    22    -1.214237E+00     1.013118E-01
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    8    24    -1.214237E+00     1.013095E-01
+    8    24    -1.214237E+00     1.013095E-01
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.2142370269715692
             Iterations: 8
@@ -1374,19 +1371,18 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Performing optimizations with Geometric Yaw...
+
+ Time spent, Geometric Yaw: 0.20 s.
+ Time spent, Serial Refine: 1.12 s.
+ Time spent, SciPy (SLSQP): 52.58 s.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Time spent, Geometric Yaw: 0.21 s.
- Time spent, Serial Refine: 1.18 s.
- Time spent, SciPy (SLSQP): 56.36 s.
-</pre></div>
-</div>
-<img alt="../../_images/7eefd5698cb5b8bfb142078ce377d36347c866c2e052932eb939c334c39d31ac.png" src="../../_images/7eefd5698cb5b8bfb142078ce377d36347c866c2e052932eb939c334c39d31ac.png" />
-<img alt="../../_images/08d490cd45d87c30c2282d2190344838d3c92b73176d53430bfffc1c5e7f26c4.png" src="../../_images/08d490cd45d87c30c2282d2190344838d3c92b73176d53430bfffc1c5e7f26c4.png" />
-<img alt="../../_images/fd8df850f216cfc500c693709cbccdc425d46db714bbef62cb0dc1484f10c1f7.png" src="../../_images/fd8df850f216cfc500c693709cbccdc425d46db714bbef62cb0dc1484f10c1f7.png" />
-<img alt="../../_images/29b8296c6cf902bf22447f744f67167135d071fde9f5f25dd1ad566d5ee2432f.png" src="../../_images/29b8296c6cf902bf22447f744f67167135d071fde9f5f25dd1ad566d5ee2432f.png" />
-<img alt="../../_images/c6c4496373e9aaa1bfc898292d30e50fa2375cf51bf859c4de95788cc96d1e5c.png" src="../../_images/c6c4496373e9aaa1bfc898292d30e50fa2375cf51bf859c4de95788cc96d1e5c.png" />
-<img alt="../../_images/2733d4a13549fa4bf8454a0164e4085ef61dd7e34f9ef3e59be33dc6eb0254a8.png" src="../../_images/2733d4a13549fa4bf8454a0164e4085ef61dd7e34f9ef3e59be33dc6eb0254a8.png" />
+<img alt="../../_images/9e5218fa26a01ee7ff8b5261a80137cdecce6cfc24a11c74701b7e98736605e3.png" src="../../_images/9e5218fa26a01ee7ff8b5261a80137cdecce6cfc24a11c74701b7e98736605e3.png" />
+<img alt="../../_images/fa064ffc67cbf0a0479ed8eba4493dfd0e30ba89a29e8bfbf4edf4c5afa41580.png" src="../../_images/fa064ffc67cbf0a0479ed8eba4493dfd0e30ba89a29e8bfbf4edf4c5afa41580.png" />
+<img alt="../../_images/0fad85dc73d35ad300b63969a4af55bc8be168c19153ea184b8e9b8cb81aacee.png" src="../../_images/0fad85dc73d35ad300b63969a4af55bc8be168c19153ea184b8e9b8cb81aacee.png" />
+<img alt="../../_images/c16225142fadd7e7cd08c6c6be9b24d6a861e0f1c5dd08731fd683ebd86aaef2.png" src="../../_images/c16225142fadd7e7cd08c6c6be9b24d6a861e0f1c5dd08731fd683ebd86aaef2.png" />
+<img alt="../../_images/2c96f305d3c953f0a1c930dfb0997ef192433078c11a852737d2e6b2d50e67d8.png" src="../../_images/2c96f305d3c953f0a1c930dfb0997ef192433078c11a852737d2e6b2d50e67d8.png" />
+<img alt="../../_images/abcc6a1798993bb6cc2f8681bcb192b24a7e84b56912bfe3ceaeb7930c8c4f62.png" src="../../_images/abcc6a1798993bb6cc2f8681bcb192b24a7e84b56912bfe3ceaeb7930c8c4f62.png" />
 </div>
 </div>
 </section>

@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../layout_optimization.html">Layout optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -236,6 +237,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
@@ -322,6 +324,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -775,11 +778,11 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/45a2409dddf479892ae46c28f0a2188e3c6cdf7099ce5c31477d98c34711755a.png" src="../../_images/45a2409dddf479892ae46c28f0a2188e3c6cdf7099ce5c31477d98c34711755a.png" />
-<img alt="../../_images/bfc4e8e2b8c73c305f75b3b403fd5ec2292de35cbbd06aa3d54446886c13809e.png" src="../../_images/bfc4e8e2b8c73c305f75b3b403fd5ec2292de35cbbd06aa3d54446886c13809e.png" />
-<img alt="../../_images/eb73d664e2ecaedf79b2b769ecb582fef30cc21980b694ff51225f07132bada9.png" src="../../_images/eb73d664e2ecaedf79b2b769ecb582fef30cc21980b694ff51225f07132bada9.png" />
-<img alt="../../_images/ff6149b84198f3dcc64d7750ef1a88b3a20a4f8838b3e28326083ec27b3b9a32.png" src="../../_images/ff6149b84198f3dcc64d7750ef1a88b3a20a4f8838b3e28326083ec27b3b9a32.png" />
-<img alt="../../_images/83048a5db142e670bfe7f25a57d88f87180044d803e4b6b545a0114fa5562552.png" src="../../_images/83048a5db142e670bfe7f25a57d88f87180044d803e4b6b545a0114fa5562552.png" />
+<img alt="../../_images/bfe70e839027cfc0a85a67ad419f16600cda9eb49feb4d4c70782177071e666c.png" src="../../_images/bfe70e839027cfc0a85a67ad419f16600cda9eb49feb4d4c70782177071e666c.png" />
+<img alt="../../_images/15d5eb18ade4f6dc8a5e4ee625bf44aa607cd0965216584e0cae456be1cca567.png" src="../../_images/15d5eb18ade4f6dc8a5e4ee625bf44aa607cd0965216584e0cae456be1cca567.png" />
+<img alt="../../_images/bdfbf72c923dc7f835a09a5b12f9f864969e0216a9148e57b7672ecd87f1ac4a.png" src="../../_images/bdfbf72c923dc7f835a09a5b12f9f864969e0216a9148e57b7672ecd87f1ac4a.png" />
+<img alt="../../_images/294a7cf88fd3de487a931a634aaa4379c84e47ddd3a7d450154b7206269bc075.png" src="../../_images/294a7cf88fd3de487a931a634aaa4379c84e47ddd3a7d450154b7206269bc075.png" />
+<img alt="../../_images/be342b5937a997e3d9247fb969813248b8bf5939b9638fa90c61b1e28f6ed4cc.png" src="../../_images/be342b5937a997e3d9247fb969813248b8bf5939b9638fa90c61b1e28f6ed4cc.png" />
 </div>
 </div>
 </section>

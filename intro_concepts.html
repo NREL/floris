@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layout_optimization.html">Layout optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -236,6 +237,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </li>
@@ -322,6 +324,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -754,7 +757,7 @@ space to get an idea of the overall form of our grid.</p>
  [800. 800. 800.]]
 </pre></div>
 </div>
-<img alt="_images/c31e16b3a973e6d840d2eaa32c542ef906951660aea840ecdc72fd86255d564b.png" src="_images/c31e16b3a973e6d840d2eaa32c542ef906951660aea840ecdc72fd86255d564b.png" />
+<img alt="_images/d29b5b4dd673aec7ce18ff4969e743e13dd21875e4e1eae747fcea9c2ef8a6d4.png" src="_images/d29b5b4dd673aec7ce18ff4969e743e13dd21875e4e1eae747fcea9c2ef8a6d4.png" />
 </div>
 </div>
 </section>
@@ -999,7 +1002,7 @@ yaw settings included.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/35440ad19c91abb2a7bd9c3d4a7ea3d3640ce2586f931f4cd32d39d2b8613f10.png" src="_images/35440ad19c91abb2a7bd9c3d4a7ea3d3640ce2586f931f4cd32d39d2b8613f10.png" />
+<img alt="_images/b6f0396e96c28fbfa1da5d126087b8e2c3a46031b478c11ccda61609dd4ea99f.png" src="_images/b6f0396e96c28fbfa1da5d126087b8e2c3a46031b478c11ccda61609dd4ea99f.png" />
 </div>
 </div>
 <p>We can also plot the streamwise inflow velocities on the turbine rotor
@@ -1037,8 +1040,8 @@ simply plots any data given as the first argument, so in this case
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0d3c9371983b973353dc53f438e32c42445402750d7c2ace800cb760e3290eb3.png" src="_images/0d3c9371983b973353dc53f438e32c42445402750d7c2ace800cb760e3290eb3.png" />
-<img alt="_images/24fd829003b35b19ff42e5d6add41b58db47fe34fc0b654a6be412b6749b0419.png" src="_images/24fd829003b35b19ff42e5d6add41b58db47fe34fc0b654a6be412b6749b0419.png" />
+<img alt="_images/2855703162c4ae3505a0b422c1a197d16a0e8cdb7469dc6f93d7036819957379.png" src="_images/2855703162c4ae3505a0b422c1a197d16a0e8cdb7469dc6f93d7036819957379.png" />
+<img alt="_images/d61a61a9f6c1f53e07a3adcea8bc943816dce8abd3cc744eb2e6553723b0fae1.png" src="_images/d61a61a9f6c1f53e07a3adcea8bc943816dce8abd3cc744eb2e6553723b0fae1.png" />
 </div>
 </div>
 </section>
@@ -1082,7 +1085,7 @@ but retuning of some parameters might be required.</p>
   2 wd x 2 ws x 4 turbines x 3 x 3 grid points
 </pre></div>
 </div>
-<img alt="_images/9df43537313bc333dad961c85a7be8f3b1e574d44472bd036596abd81e05b47f.png" src="_images/9df43537313bc333dad961c85a7be8f3b1e574d44472bd036596abd81e05b47f.png" />
+<img alt="_images/f28b18ed9934c77f584757184333f233d1512dc2912376d8100e5d9525a4443f.png" src="_images/f28b18ed9934c77f584757184333f233d1512dc2912376d8100e5d9525a4443f.png" />
 </div>
 </div>
 </section>
@@ -1196,9 +1199,9 @@ Number of turbines = 25
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
-Jensen   661.838    0.748 
-GCH      683.869    3.160 
-CC       661.315    6.136 
+Jensen   661.838    0.689 
+GCH      683.869    2.927 
+CC       661.315    5.693 
 </pre></div>
 </div>
 </div>
@@ -1300,7 +1303,7 @@ CC       661.315    6.136
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=6 (92.9%)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 4.958 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 4.590 s
 </pre></div>
 </div>
 </div>
@@ -1323,7 +1326,7 @@ CC       661.315    6.136
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/90ed0afbd678a04cfc9b759263bc7bd4f8f553447c2db7de9674ec29c746d75e.png" src="_images/90ed0afbd678a04cfc9b759263bc7bd4f8f553447c2db7de9674ec29c746d75e.png" />
+<img alt="_images/12f7925dd803936655e72851fc31827ad3c48685980bd63bcb1c5440b66718a8.png" src="_images/12f7925dd803936655e72851fc31827ad3c48685980bd63bcb1c5440b66718a8.png" />
 </div>
 </div>
 </section>
