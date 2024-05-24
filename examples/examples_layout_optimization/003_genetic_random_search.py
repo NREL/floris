@@ -77,4 +77,6 @@ if __name__ == '__main__':
 
     layout_opt.plot_layout_opt_results()
 
+    layout_opt.plot_progress()
+
     plt.show()

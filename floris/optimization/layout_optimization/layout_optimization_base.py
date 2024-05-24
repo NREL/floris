@@ -189,30 +189,44 @@ class LayoutOptimization(LoggingManager):
 
     def plot_progress(self, ax=None):
 
-        if not hasattr(self, "aep_candidate_log"):
+        if not hasattr(self, "objective_candidate_log"):
             raise NotImplementedError(
                 "plot_progress not yet configured for "+self.__class__.__name__
             )
 
         if ax is None:
-            fig, ax = plt.subplots(1,1)
+            _, ax = plt.subplots(1,1)
 
-        aep_log_array = np.array(self.aep_candidate_log)
+        objective_log_array = np.array(self.objective_candidate_log)
 
-        if len(aep_log_array.shape) == 1: # Just one AEP candidate per step
-            ax.plot(np.arange(len(aep_log_array)), aep_log_array, color="k")
-        elif len(aep_log_array.shape) == 2: # Multiple AEP candidates per step
-            for i in range(aep_log_array.shape[1]):
-                ax.plot(np.arange(len(aep_log_array)), aep_log_array[:,i]/1e9,
-                    color="lightgray")
+        if len(objective_log_array.shape) == 1: # Just one AEP candidate per step
+            ax.plot(np.arange(len(objective_log_array)), objective_log_array, color="k")
+        elif len(objective_log_array.shape) == 2: # Multiple AEP candidates per step
+            for i in range(objective_log_array.shape[1]):
+                ax.plot(
+                    np.arange(len(objective_log_array)),
+                    objective_log_array[:,i],
+                    color="lightgray"
+                )
 
-        # TODO: add initial point and final value (possibly with value labels?)
+        ax.scatter(
+            np.zeros(objective_log_array.shape[1]),
+            objective_log_array[0,:],
+            color="b",
+            label="Initial"
+        )
+        ax.scatter(
+            objective_log_array.shape[0]-1,
+            objective_log_array[-1,:].max(),
+            color="r",
+            label="Final"
+        )
 
         # Plot aesthetics
         ax.grid(True)
         ax.set_xlabel("Optimization step [-]")
-        ax.set_ylabel("AEP value [GWh]")
-        # TODO: Check optimizers for AEP unit consistency
+        ax.set_ylabel("Objective function")
+        ax.legend()
 
         return ax
 
