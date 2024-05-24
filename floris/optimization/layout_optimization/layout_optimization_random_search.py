@@ -290,8 +290,6 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             self._get_geoyaw_angles(),
             self.use_value,
         )
-        #del self.x # Deleting to avoid confusion, since not updated
-        #del self.y # Deleting to avoid confusion, since not updated
 
         # Initialize the objective statistics
         self.objective_mean = self.objective_initial
@@ -326,6 +324,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
         # Evaluate the initial optimization step
         self._evaluate_opt_step()
+
+        # Delete stored x and y to avoid confusion
+        del self.x, self.y
 
     def describe(self):
         print("Random Layout Optimization")
