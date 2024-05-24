@@ -629,7 +629,6 @@ def _single_individual_opt(
             fmodel_,
             minimum_yaw_angle=-30.0,
             maximum_yaw_angle=30.0,
-            exploit_layout_symmetry=False
         )
     else: # yaw_angles will always be none
         yaw_angles = None
@@ -681,9 +680,9 @@ def _single_individual_opt(
 
             # Does it improve the objective?
             if enable_geometric_yaw: # Select appropriate yaw angles
-                yaw_opt.fmodel_subset.reinitialize(layout_x=layout_x, layout_y=layout_y)
+                yaw_opt.fmodel_subset.set(layout_x=layout_x, layout_y=layout_y)
                 df_opt = yaw_opt.optimize()
-                yaw_angles = np.vstack(df_opt['yaw_angles_opt'])[:, None, :]
+                yaw_angles = np.vstack(df_opt['yaw_angles_opt'])
 
             num_objective_calls += 1
             test_objective = _get_objective(layout_x, layout_y, fmodel_, yaw_angles, use_value)
