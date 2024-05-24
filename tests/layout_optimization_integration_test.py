@@ -12,6 +12,9 @@ from floris import (
 from floris.optimization.layout_optimization.layout_optimization_base import (
     LayoutOptimization,
 )
+from floris.optimization.layout_optimization.layout_optimization_random_search import (
+    LayoutOptimizationRandomSearch,
+)
 from floris.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
@@ -70,3 +73,22 @@ def test_base_class(caplog):
 
     LayoutOptimization(fmodel, boundaries, 5)
     LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)
+
+def test_LayoutOptimizationRandomSearch():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(layout_x=[0, 500], layout_y = [0, 0])
+
+    # Set up a sample boundary
+    boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
+
+    layout_opt = LayoutOptimizationRandomSearch(
+        fmodel=fmodel,
+        boundaries=boundaries,
+        min_dist_D=5,
+        seconds_per_iteration=1,
+        total_optimization_seconds=1,
+        use_dist_based_init=False,
+    )
+
+    # Check that the optimization runs
+    layout_opt.optimize()

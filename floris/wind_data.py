@@ -4,7 +4,6 @@ import inspect
 from abc import abstractmethod
 from pathlib import Path
 
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -614,7 +613,7 @@ class WindRose(WindDataBase):
             wd_step = wd_bins[1] - wd_bins[0]
 
         # Get a color array
-        color_array = cm.get_cmap(color_map, len(ws_bins))
+        color_array = plt.get_cmap(color_map, len(ws_bins))
 
         for wd_idx, wd in enumerate(wd_bins):
             rects = []
@@ -1514,7 +1513,7 @@ class WindTIRose(WindDataBase):
             _, ax = plt.subplots(subplot_kw={"polar": True})
 
         # Get a color array
-        color_array = cm.get_cmap(color_map, len(var_bins))
+        color_array = plt.get_cmap(color_map, len(var_bins))
 
         for wd_idx, wd in enumerate(wd_bins):
             rects = []
