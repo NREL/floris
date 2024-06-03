@@ -39,4 +39,4 @@ layout_y:
 turbine_type:
   - WT_constant_ct
 
-turbine_library_path: /mnt/c/Users/Jasper.Kreeft/Data/PYTHON/NREL/floris4/PR_TurbOParkGauss/inputs
+turbine_library_path: ./inputs

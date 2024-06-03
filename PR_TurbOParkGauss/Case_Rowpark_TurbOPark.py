@@ -4,7 +4,6 @@ import pandas as pd
 
 from floris import FlorisModel
 
-
 fmodel1 = FlorisModel("Case_RowPark_TurbOPark.yaml")
 fmodel1.run()
 raws1 = fmodel1.turbine_average_velocities
@@ -15,7 +14,7 @@ fmodel2 = FlorisModel("Case_RowPark_TurbOParkGauss.yaml")
 fmodel2.run()
 raws2 = fmodel2.turbine_average_velocities
 
-df = pd.read_csv("/mnt/c/Users/Jasper.Kreeft/Data/PYTHON/NREL/floris4/PR_TurbOParkGauss/Rowpark_Orsted.csv")
+df = pd.read_csv("Rowpark_Orsted.csv")
 
 fig, ax = plt.subplots()
 ax.scatter(range(1,11),raws1/u0,s=80,marker='p',label='Floris - TurbOPark')
