@@ -20,6 +20,7 @@ def test_declare_by_parameters():
         wind_speeds=np.array([5.0, 15.0, 5.0, 15.0]),
     )
 
+
 def test_heterogeneous_map_no_ws_no_wd():
     heterogeneous_map_config = {
         "x": np.array([0.0, 1.0, 2.0]),
@@ -232,3 +233,60 @@ def test_get_heterogeneous_inflow_config_no_wind_direction_no_wind_speed():
 
     output_dict = hm.get_heterogeneous_inflow_config(wind_directions, wind_speeds)
     assert np.allclose(output_dict["speed_multipliers"], expected_output)
+
+
+def test_get_2d_heterogenous_map_from_3d():
+    hm_3d = HeterogeneousMap(
+        x=np.array(
+            [
+                0.0,
+                1.0,
+                2.0,
+                0.0,
+                1.0,
+                2.0,
+            ]
+        ),
+        y=np.array(
+            [
+                0.0,
+                1.0,
+                2.0,
+                0.0,
+                1.0,
+                2.0,
+            ]
+        ),
+        z=np.array([0.0, 0.0, 0.0, 1.0, 1.0, 1.0]),
+        speed_multipliers=np.array(
+            [
+                [1.0, 1.1, 1.2, 2.0, 2.1, 2.2],
+                [1.1, 1.1, 1.1, 2.1, 2.1, 2.1],
+                [1.3, 1.4, 1.5, 2.3, 2.4, 2.5],
+            ]
+        ),
+        wind_directions=np.array([0, 90, 270]),
+    )
+
+    hm_2d_0 = hm_3d.get_heterogeneous_map_2d(0.0)
+    hm_2d_1 = hm_3d.get_heterogeneous_map_2d(1.0)
+
+    # Test that x values in both cases are 0, 1, 2
+    assert np.allclose(hm_2d_0.x, np.array([0.0, 1.0, 2.0]))
+    assert np.allclose(hm_2d_1.x, np.array([0.0, 1.0, 2.0]))
+
+    # Test that the speed multipliers are correct
+    assert np.allclose(
+        hm_2d_0.speed_multipliers, np.array([[1.0, 1.1, 1.2], [1.1, 1.1, 1.1], [1.3, 1.4, 1.5]])
+    )
+    assert np.allclose(
+        hm_2d_1.speed_multipliers, np.array([[2.0, 2.1, 2.2], [2.1, 2.1, 2.1], [2.3, 2.4, 2.5]])
+    )
+
+    # Test that wind directions are the same between 2d and 3d
+    assert np.allclose(hm_2d_0.wind_directions, hm_3d.wind_directions)
+
+    # Test that wind speed is None in all cases
+    assert hm_3d.wind_speeds is None
+    assert hm_2d_0.wind_speeds is None
+    assert hm_2d_1.wind_speeds is None
