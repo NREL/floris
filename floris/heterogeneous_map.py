@@ -144,6 +144,23 @@ class HeterogeneousMap(LoggingManager):
                     "should be unique."
                 )
 
+    def __str__(self) -> str:
+        """
+        Return a string representation of the HeterogeneousMap.
+        Returns:
+            str: A string representation of the HeterogeneousMap.
+        """
+        if self.z is None:
+            num_dim = 2
+        else:
+            num_dim = 3
+
+        return (
+            f"HeterogeneousMap with {num_dim} dimensions\n"
+            f"Speeds-up defined for {len(self.x)} points and\n"
+            f"{self.speed_multipliers.shape[0]} wind conditions"
+        )
+
     def get_heterogeneous_inflow_config(
         self,
         wind_directions: NDArrayFloat | list[float],
