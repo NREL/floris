@@ -219,11 +219,12 @@ class FlorisModel(LoggingManager):
                 "z" in heterogeneous_inflow_config
                 and flow_field_dict["wind_shear"] != 0.0
             ):
-                raise ValueError(
-                    "Heterogeneous inflow configuration contains a z term, and "
-                    "flow_field_dict['wind_shear'] is not 0.0. This may result in "
-                    "double-counting of shear."
-                )
+                if heterogeneous_inflow_config['z'] is not None:
+                    raise ValueError(
+                        "Heterogeneous inflow configuration contains a z term, and "
+                        "flow_field_dict['wind_shear'] is not 0.0. This may result in "
+                        "double-counting of shear."
+                    )
 
             flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
