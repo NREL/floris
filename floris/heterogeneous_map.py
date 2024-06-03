@@ -22,6 +22,8 @@ class HeterogeneousMap(LoggingManager):
         speed_multipliers (NDArrayFloat): A 2D NumPy array (size num_wd (or num_ws) x num_points)
             of speed multipliers.  If neither wind_directions nor wind_speeds are defined, then
             this should be a single row array
+        z (NDArrayFloat, optional): A 1D NumPy array (size num_points) of z-coordinates (meters).
+            Optional.
         wind_directions (NDArrayFloat, optional): A 1D NumPy array (size num_wd) of wind directions
             (degrees). Optional.
         wind_speeds (NDArrayFloat, optional): A 1D NumPy array (size num_ws) of wind speeds (m/s).
@@ -39,6 +41,7 @@ class HeterogeneousMap(LoggingManager):
         x: NDArrayFloat,
         y: NDArrayFloat,
         speed_multipliers: NDArrayFloat,
+        z: NDArrayFloat = None,
         wind_directions: NDArrayFloat = None,
         wind_speeds: NDArrayFloat = None,
     ):
@@ -50,19 +53,39 @@ class HeterogeneousMap(LoggingManager):
         if not isinstance(speed_multipliers, (list, np.ndarray)):
             raise TypeError("speed_multipliers must be a numpy array or list")
 
+        # If z is provided, check that it is a list or numpy array
+        if z is not None:
+            if not isinstance(z, (list, np.ndarray)):
+                raise TypeError("z must be a numpy array or list")
+
         # Save the values
         self.x = np.array(x)
         self.y = np.array(y)
         self.speed_multipliers = np.array(speed_multipliers)
 
+        # If z is provided, save it as an np array
+        if z is not None:
+            self.z = np.array(z)
+        else:
+            self.z = None
+
         # Check that the length of the 1st dimension of speed_multipliers is the
         # same as the length of both x and y
-        if (len(self.x) != self.speed_multipliers.shape[1]
-            or len(self.y) != self.speed_multipliers.shape[1]):
+        if (
+            len(self.x) != self.speed_multipliers.shape[1]
+            or len(self.y) != self.speed_multipliers.shape[1]
+        ):
             raise ValueError(
                 "The lengths of x and y must equal the 1th dimension of speed_multipliers "
-                "within the heterogeneous_inflow_config_by_wd dictionary"
             )
+
+        # If z is provided, check that it is the same length as the 1st
+        # dimension of speed_multipliers
+        if self.z is not None:
+            if len(self.z) != self.speed_multipliers.shape[1]:
+                raise ValueError(
+                    "The length of z must equal the 1th dimension of speed_multipliers "
+                )
 
         # If wind_directions is note None, check that it is valid then save it
         if wind_directions is not None:
@@ -195,12 +218,49 @@ class HeterogeneousMap(LoggingManager):
                 self.speed_multipliers, len(wind_directions), axis=0
             )
 
-        # Return heterogeneous_inflow_config
-        return {
-            "x": self.x,
-            "y": self.y,
-            "speed_multipliers": speed_multipliers_by_findex,
-        }
+        # Return heterogeneous_inflow_config with only x and y is z is not defined
+        if self.z is None:
+            return {
+                "x": self.x,
+                "y": self.y,
+                "speed_multipliers": speed_multipliers_by_findex,
+            }
+        else:
+            return {
+                "x": self.x,
+                "y": self.y,
+                "z": self.z,
+                "speed_multipliers": speed_multipliers_by_findex,
+            }
+
+    def get_heterogeneous_map_2d(self, z: float):
+        """
+        Return a HeterogeneousMap with only x and y coordinates and a constant z value.
+        Do this by selecting from x, y and speed_multipliers where z is nearest to the given value.
+        """
+        if self.z is None:
+            raise ValueError("No z values defined in the HeterogeneousMap")
+
+        # Find the value in self.z that is closest to the given z value
+        closest_z_index = np.argmin(np.abs(self.z - z))
+
+        # Get the indices of all the values in self.z that are equal to the closest value
+        closest_z_indices = np.where(self.z == self.z[closest_z_index])[0]
+
+        # Get versions of x, y and speed_multipliers that include only the closest z values
+        # by selecting the indices in closest_z_indices
+        x = self.x[closest_z_indices]
+        y = self.y[closest_z_indices]
+        speed_multipliers = self.speed_multipliers[:, closest_z_indices]
+
+        # Return a new HeterogeneousMap with the new x, y and speed_multipliers
+        return HeterogeneousMap(
+            x=x,
+            y=y,
+            speed_multipliers=speed_multipliers,
+            wind_directions=self.wind_directions,
+            wind_speeds=self.wind_speeds,
+        )
 
     @staticmethod
     def plot_heterogeneous_boundary(x, y, ax=None):
@@ -351,7 +411,7 @@ class HeterogeneousMap(LoggingManager):
         y_plot = y_plot.flatten()
 
         try:
-            lin_interpolant = FlowField.interpolate_multiplier_xy(x,y,speed_multiplier_row)
+            lin_interpolant = FlowField.interpolate_multiplier_xy(x, y, speed_multiplier_row)
 
             lin_values = lin_interpolant(x, y)
         except scipy.spatial._qhull.QhullError:
