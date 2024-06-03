@@ -210,6 +210,21 @@ class FlorisModel(LoggingManager):
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
         if heterogeneous_inflow_config is not None:
+
+            # If both heterogeneous_inflow_config contains a z term,
+            # and flow_field_dict["wind_shear"] is
+            # not 0, raise and error the user that there is potential
+            # for double-counting of shear
+            if (
+                "z" in heterogeneous_inflow_config
+                and flow_field_dict["wind_shear"] != 0.0
+            ):
+                raise ValueError(
+                    "Heterogeneous inflow configuration contains a z term, and "
+                    "flow_field_dict['wind_shear'] is not 0.0. This may result in "
+                    "double-counting of shear."
+                )
+
             flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
         ## Farm
