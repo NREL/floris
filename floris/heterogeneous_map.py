@@ -337,6 +337,7 @@ class HeterogeneousMap(LoggingManager):
         self,
         wind_direction: float,
         wind_speed: float,
+        z: float = None,
         ax: plt.Axes = None,
         vmin: float = None,
         vmax: float = None,
@@ -350,6 +351,9 @@ class HeterogeneousMap(LoggingManager):
         Args:
             wind_direction (float): The wind direction for which to plot the speed multipliers.
             wind_speed (float): The wind speed for which to plot the speed multipliers.
+            z (float, optional): The z-coordinate for which to plot the speed multipliers.
+                If None, the z-coordinate is not used.  Only for when z is defined in the
+                HeterogeneousMap.
             ax (matplotlib.axes.Axes, optional): The axes on which to plot the speed multipliers.
                 If None, a new figure and axes will be created.
             vmin (float, optional): The minimum value for the colorbar. Default is the minimum
@@ -374,20 +378,38 @@ class HeterogeneousMap(LoggingManager):
         if not isinstance(wind_speed, float):
             raise TypeError("wind_speed must be a float")
 
-        # Get the speed multipliers for the given wind direction and wind speed
-        speed_multiplier_row = self.get_heterogeneous_inflow_config(
-            np.array([wind_direction]), np.array([wind_speed])
-        )["speed_multipliers"][0]
+        # If self.z is None, then z should be None
+        if self.z is None and z is not None:
+            raise ValueError("No z values defined in the HeterogeneousMap")
+
+        # If self.z is defined and has more than one unique value, then z should be defined
+        if self.z is not None and len(np.unique(self.z)) > 1 and z is None:
+            raise ValueError(
+                "Multiple z values defined in the HeterogeneousMap. z must be provided"
+            )
+
+        # Get the 2d version at height z if z is defined and get the speed multiplier from there
+        # as well as x and y
+        if z is not None:
+            hm_2d = self.get_heterogeneous_map_2d(z)
+            x = hm_2d.x
+            y = hm_2d.y
+            speed_multiplier_row = hm_2d.get_heterogeneous_inflow_config(
+                np.array([wind_direction]), np.array([wind_speed])
+            )["speed_multipliers"][0]
+        else:
+            x = self.x
+            y = self.y
+            # Get the speed multipliers for the given wind direction and wind speed
+            speed_multiplier_row = self.get_heterogeneous_inflow_config(
+                np.array([wind_direction]), np.array([wind_speed])
+            )["speed_multipliers"][0]
 
         # If not provided create the axis
         if ax is None:
             fig, ax = plt.subplots()
         else:
             fig = ax.get_figure()
-
-        # Get the x and y coordinates
-        x = self.x
-        y = self.y
 
         # Get some boundary info
         min_x = np.min(x)
