@@ -1,7 +1,7 @@
-name: Case RowPark
+name: Case RowPark FLORIS v4.0
 
 # This is only for the user's reference.
-description: Wake of ten aligned wind turbines with 5D spacing
+description: TurboPark model as currently implemented in FLORIS v4.0
 
 floris_version: v4.0
 
@@ -19,13 +19,12 @@ solver:
   type: turbine_cubature_grid # turbine_grid
   turbine_grid_points: 6
 
-# Configure the turbine types and their placement within the wind farm.
 farm: 
   layout_x:
     - 0.0
   layout_y:
     - 0.0
-  turbine_type: 
+  turbine_type: # Constant CT turbine (TODO: implement in script?)
     - WT_constant_ct
   turbine_library_path: inputs
 
@@ -39,7 +38,7 @@ flow_field:
     - 270.0
   wind_speeds:
     - 8.0
-  wind_shear: 0.0 # Needed to reproduce Nygaard et al's results?
+  wind_shear: 0.0 # Needed to reproduce Nygaard et al's results with new model
   wind_veer: 0.0
 
 # Configure the wake model.
@@ -48,7 +47,7 @@ wake:
     combination_model: sosfs
     deflection_model: none
     turbulence_model: none
-    velocity_model: turbopark
+    velocity_model: turbopark # current TurboPark model in FLORIS
   enable_secondary_steering: false
   enable_yaw_added_recovery: false
   enable_active_wake_mixing: false
