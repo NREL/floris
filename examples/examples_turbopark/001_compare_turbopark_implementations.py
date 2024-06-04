@@ -13,6 +13,7 @@ import floris.flow_visualization as flowviz
 from floris import FlorisModel, TimeSeries
 from floris.turbine_library import build_cosine_loss_turbine_dict
 
+
 # Note: "new" is used to refer to the new implementation of TurbOPark, which is
 # more faithful to the original description provided by Nygaard et al. "orig"
 # is used to refer to the existing TurbOPark implementation in Floris.
