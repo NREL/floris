@@ -3,6 +3,64 @@ import numpy as np
 import pandas as pd
 
 from floris import FlorisModel, TimeSeries
+import floris.flow_visualization as flowviz
+
+### Start by visualizing a single turbine in and its wake with the new model
+fmodel_new = FlorisModel("turboparkgauss_cubature.yaml")
+fmodel_new.run()
+u0 = fmodel_new.wind_speeds[0]
+
+col_orig = "C0"
+col_new = "C1"
+
+# Get plane of points for visualization
+rotor_diameter = 120.0
+x_resolution=1501
+y_resolution=201
+z_resolution=100
+x_bounds = [-5*rotor_diameter, 25*rotor_diameter]
+
+horizontal_plane = fmodel_new.calculate_horizontal_plane(
+    x_resolution=x_resolution,
+    y_resolution=y_resolution,
+    height=100.0,
+    x_bounds=x_bounds
+)
+
+# Visualize the flows with a horizontal slice
+fig, ax = plt.subplots(3,1)
+fig.set_size_inches(7, 10)
+flowviz.visualize_cut_plane(
+    horizontal_plane,
+    ax=ax[0],
+    label_contours=True,
+    title="Horizontal plane"
+)
+ax[0].set_xlabel("x [m]")
+ax[0].set_ylabel("y [m]")
+
+# Get points and velocities, normalized by rotor diameter and freestream velocity
+x_locs_norm = horizontal_plane.df.x1[:x_resolution]/rotor_diameter
+y_locs_norm = horizontal_plane.df.x2[::x_resolution]/rotor_diameter
+u_norm = horizontal_plane.df.u[150100:151601]/u0
+
+# Plot downstream velocities
+ax[1].plot(x_locs_norm, u_norm, color=col_new)
+ax[1].set_xlabel("Downstream distance [D]")
+ax[1].set_ylabel("Normalized velocity [-]")
+ax[1].grid()
+ax[1].set_xlim([x/rotor_diameter for x in x_bounds])
+
+# Plot axial velocities at various downstream distances
+for loc in np.append(251, np.linspace(350,750,5)):  #range(200,1200,200):
+    u_norm = horizontal_plane.df.u[int(loc)::x_resolution]/u0
+    alpha = 1.0 - (loc-250)/1000
+    ax[2].plot(y_locs_norm, u_norm, label=str((loc-250)/50)+"D downstream", alpha=alpha, c=col_new)
+ax[2].legend()
+ax[2].set_xlabel("Radial distance [D]")
+ax[2].set_ylabel("Normalized velocity [-]")
+ax[2].grid()
+ax[2].set_xlim([-2, 2])
 
 ### Look at the wake profile at a single downstream distance for a range of wind directions
 # Load the original TurboPark implementation
@@ -26,9 +84,6 @@ fmodel_orig.run()
 orig_vels_ds = fmodel_orig.turbine_average_velocities[:,1]
 u0 = fmodel_orig.wind_speeds[0] # Get freestream wind speed for normalization
 
-# Load the new implementation
-fmodel_new = FlorisModel("turboparkgauss_cubature.yaml")
-
 # Set up and solve flows; extract velocities at downstream turbine
 fmodel_new.set(
     layout_x = [0.0, 600.0],
@@ -44,8 +99,8 @@ df_twinpark = pd.read_csv("comparison_data/WindDirection_Sweep_Orsted.csv")
 # Plot the data and compare
 fig, ax = plt.subplots(2, 1)
 fig.set_size_inches(7, 10)
-ax[0].plot(wd_array, orig_vels_ds/u0, label="Floris - TurbOPark")
-ax[0].plot(wd_array, new_vels_ds/u0, label="Floris - TurbOPark-Gauss")
+ax[0].plot(wd_array, orig_vels_ds/u0, label="Floris - TurbOPark", c=col_orig)
+ax[0].plot(wd_array, new_vels_ds/u0, label="Floris - TurbOPark-Gauss", c=col_new)
 df_twinpark.plot("wd", "wws", ax=ax[0], linestyle="--", color="k", label="Orsted - TurbOPark")
 
 ax[0].set_xlabel("Wind direction [deg]")
@@ -87,8 +142,8 @@ df_rowpark = pd.read_csv("comparison_data/Rowpark_Orsted.csv")
 
 # Plot the data and compare
 ax[1].scatter(turbines, df_rowpark["wws"], s=80, marker="o", color="k", label="Orsted - TurbOPark")
-ax[1].scatter(turbines, orig_vels_row/u0, s=20, marker="o", label="Floris - TurbOPark")
-ax[1].scatter(turbines, new_vels_row/u0, s=20, marker="o", label="Floris - TurbOPark_Gauss")
+ax[1].scatter(turbines, orig_vels_row/u0, s=20, marker="o", color=col_orig, label="Floris - TurbOPark")
+ax[1].scatter(turbines, new_vels_row/u0, s=20, marker="o", color=col_new, label="Floris - TurbOPark_Gauss")
 ax[1].set_xlabel("Turbine number")
 ax[1].set_ylabel("Normalized rotor averaged wind speed [-]")
 ax[1].set_ylim(0.25, 1.05)
