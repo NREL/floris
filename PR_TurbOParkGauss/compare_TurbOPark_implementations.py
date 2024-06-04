@@ -6,7 +6,7 @@ from floris import FlorisModel, TimeSeries
 
 ### Look at the wake profile at a single downstream distance for a range of wind directions
 # Load the original TurboPark implementation
-fmodel_orig = FlorisModel("Case_TwinPark_TurbOPark.yaml")
+fmodel_orig = FlorisModel("turbopark_cubature.yaml")
 
 # Set up and solve flows
 wd_array = np.arange(225,315,0.1)
@@ -27,7 +27,7 @@ orig_vels_ds = fmodel_orig.turbine_average_velocities[:,1]
 u0 = fmodel_orig.wind_speeds[0] # Get freestream wind speed for normalization
 
 # Load the new implementation
-fmodel_new = FlorisModel("Case_TwinPark_TurbOParkGauss.yaml")
+fmodel_new = FlorisModel("turboparkgauss_cubature.yaml")
 
 # Set up and solve flows; extract velocities at downstream turbine
 fmodel_new.set(
