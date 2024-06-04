@@ -4,49 +4,48 @@ import pandas as pd
 
 from floris import FlorisModel, TimeSeries
 
-fmodel = FlorisModel("Case_TwinPark_TurbOPark.yaml")
+### Look at the wake profile at a single downstream distance for a range of wind directions
+# Load the original TurboPark implementation
+fmodel_orig = FlorisModel("Case_TwinPark_TurbOPark.yaml")
 
+# Set up and solve flows
 wd_array = np.arange(225,315,0.1)
-fmodel.set(
+fmodel_orig.set(
     layout_x = [0.0, 600.0],
     layout_y = [0.0, 0.0],
     wind_data=TimeSeries(wind_speeds=8.0, wind_directions=wd_array, turbulence_intensities=0.06)
 )
+fmodel_orig.run()
 
-fmodel.run()
+# Extract output velocities at downstream turbine
+orig_vels_ds = fmodel_orig.turbine_average_velocities[:,1]
+u0 = fmodel_orig.wind_speeds[0]
 
-rawss = fmodel.turbine_average_velocities
-raws = rawss[:,1]
-u0 = fmodel.wind_speeds
+# Load the new implementation
+fmodel_new = FlorisModel("Case_TwinPark_TurbOParkGauss.yaml")
 
-###
-
-fmodel2 = FlorisModel("Case_TwinPark_TurbOParkGauss.yaml")
-
-wd_array = np.arange(225,315,0.1)
-fmodel2.set(
+# Set up and solve flows; extract velocities at downstream turbine
+fmodel_new.set(
     layout_x = [0.0, 600.0],
     layout_y = [0.0, 0.0],
     wind_data=TimeSeries(wind_speeds=8.0, wind_directions=wd_array, turbulence_intensities=0.06)
 )
+fmodel_new.run()
+new_vels_ds = fmodel_new.turbine_average_velocities[:,1]
 
-fmodel2.run()
-
-rawss2 = fmodel2.turbine_average_velocities
-raws2 = rawss2[:,1]
-
-###
+# Load comparison data
 df = pd.read_csv("WindDirection_Sweep_Orsted.csv")
 
-###
-fig, ax1 = plt.subplots()
-ax1.plot(wd_array,raws/u0,label='Floris 4 - TurbOPark')
-ax1.plot(wd_array,raws2/u0,label='Floris 4 - TurbOPark-Gauss')
-ax1.plot(df.values[:,0],df.values[:,1],'--',label='Orsted - TurbOPark')
+# Plot the data and compare
+fig, ax = plt.subplots()
+ax.plot(wd_array, orig_vels_ds/u0, label="Floris 4 - TurbOPark")
+ax.plot(wd_array, new_vels_ds/u0, label="Floris 4 - TurbOPark-Gauss")
+df.plot("wd", "wws", ax=ax, linestyle="--", color="k", label="Orsted - TurbOPark")
 
-ax1.set_xlabel('Wind Direction (deg)')
-ax1.set_ylabel('Normalized rotor averaged waked wind speed [-]')
-ax1.set_xlim(240,300)
-ax1.set_ylim(0.65,1.05)
-ax1.legend()
+ax.set_xlabel("Wind direction [deg]")
+ax.set_ylabel("Normalized rotor averaged waked wind speed [-]")
+ax.set_xlim(240,300)
+ax.set_ylim(0.65,1.05)
+ax.legend()
+ax.grid()
 plt.show()
