@@ -2,9 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from floris import FlorisModel, TimeSeries
 import floris.flow_visualization as flowviz
+from floris import FlorisModel, TimeSeries
 from floris.turbine_library import build_cosine_loss_turbine_dict
+
 
 ### Build a constant CT turbine model for use in comparisons (not realistic)
 const_CT_turb = build_cosine_loss_turbine_dict(
@@ -21,7 +22,7 @@ const_CT_turb = build_cosine_loss_turbine_dict(
 
 ### Start by visualizing a single turbine in and its wake with the new model
 # Load the new TurboPark implementation and switch to constant CT turbine
-fmodel_new = FlorisModel("turboparkgauss_cubature.yaml")
+fmodel_new = FlorisModel("../inputs/turboparkgauss_cubature.yaml")
 fmodel_new.set(turbine_type=[const_CT_turb])
 fmodel_new.run()
 u0 = fmodel_new.wind_speeds[0]
@@ -80,7 +81,7 @@ ax[2].set_xlim([-2, 2])
 
 ### Look at the wake profile at a single downstream distance for a range of wind directions
 # Load the original TurboPark implementation and switch to constant CT turbine
-fmodel_orig = FlorisModel("turbopark_cubature.yaml")
+fmodel_orig = FlorisModel("../inputs/turbopark_cubature.yaml")
 fmodel_orig.set(turbine_type=[const_CT_turb])
 
 # Set up and solve flows
@@ -158,9 +159,15 @@ u0 = fmodel_orig.wind_speeds[0] # Get freestream wind speed for normalization
 df_rowpark = pd.read_csv("comparison_data/Rowpark_Orsted.csv")
 
 # Plot the data and compare
-ax[1].scatter(turbines, df_rowpark["wws"], s=80, marker="o", color="k", label="Orsted - TurbOPark")
-ax[1].scatter(turbines, orig_vels_row/u0, s=20, marker="o", color=col_orig, label="Floris - TurbOPark")
-ax[1].scatter(turbines, new_vels_row/u0, s=20, marker="o", color=col_new, label="Floris - TurbOPark_Gauss")
+ax[1].scatter(
+    turbines, df_rowpark["wws"], s=80, marker="o", c="k", label="Orsted - TurbOPark"
+)
+ax[1].scatter(
+    turbines, orig_vels_row/u0, s=20, marker="o", c=col_orig, label="Floris - TurbOPark"
+)
+ax[1].scatter(
+    turbines, new_vels_row/u0, s=20, marker="o", c=col_new, label="Floris - TurbOPark_Gauss"
+)
 ax[1].set_xlabel("Turbine number")
 ax[1].set_ylabel("Normalized rotor averaged wind speed [-]")
 ax[1].set_ylim(0.25, 1.05)
