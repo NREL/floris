@@ -2,19 +2,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from floris import (
-    FlorisModel,
-    TimeSeries,
-)
-
+from floris import FlorisModel, TimeSeries
 
 fmodel = FlorisModel("Case_TwinPark_TurbOPark.yaml")
 
 wd_array = np.arange(225,315,0.1)
 fmodel.set(
-    wind_data=TimeSeries(
-        wind_speeds=8.0, wind_directions=wd_array, turbulence_intensities=0.06
-    )
+    layout_x = [0.0, 600.0],
+    layout_y = [0.0, 0.0],
+    wind_data=TimeSeries(wind_speeds=8.0, wind_directions=wd_array, turbulence_intensities=0.06)
 )
 
 fmodel.run()
@@ -29,9 +25,9 @@ fmodel2 = FlorisModel("Case_TwinPark_TurbOParkGauss.yaml")
 
 wd_array = np.arange(225,315,0.1)
 fmodel2.set(
-    wind_data=TimeSeries(
-        wind_speeds=8.0, wind_directions=wd_array, turbulence_intensities=0.06
-    )
+    layout_x = [0.0, 600.0],
+    layout_y = [0.0, 0.0],
+    wind_data=TimeSeries(wind_speeds=8.0, wind_directions=wd_array, turbulence_intensities=0.06)
 )
 
 fmodel2.run()
@@ -40,7 +36,7 @@ rawss2 = fmodel2.turbine_average_velocities
 raws2 = rawss2[:,1]
 
 ###
-df = pd.read_csv("/mnt/c/Users/Jasper.Kreeft/Data/PYTHON/NREL/floris4/PR_TurbOParkGauss/WindDirection_Sweep_Orsted.csv")
+df = pd.read_csv("WindDirection_Sweep_Orsted.csv")
 
 ###
 fig, ax1 = plt.subplots()

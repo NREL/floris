@@ -1,27 +1,60 @@
-# A name for this input file.
-# This is not currently only for the user's reference.
-name: Case TwinPark
+name: Case TwinPark new implementation
+description: Two aligned wind turbines with 5D spacing under the new implementation
 
-# A description of the contents of this input file.
-# This is not currently only for the user's reference.
-description: Wake of 2 aligned wind turbines with 5D spacing
-
-# The earliest verion of FLORIS this input file supports.
-# This is not currently only for the user's reference.
 floris_version: v4.0
 
-# Configure the logging level and where to show the logs.
-logging: !include inputs/logging.yaml
+logging:
+  console:
+    enable: true
+    # Can be one of "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG".
+    level: WARNING
+  file:
+    enable: false
+    # Can be one of "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG".
+    level: WARNING
 
-# Configure the solver for the type of simulation.
-solver: !include inputs/Solver_turbine_grid.yaml
+solver:
+  type: turbine_cubature_grid # turbine_grid
+  turbine_grid_points: 6
 
-# Configure the turbine types and their placement within the wind farm.
-farm: !include inputs/WF_TwinPark_Constant_Ct.yaml
-# farm: !include inputs/WF_TriplePark_Constant_Ct.yaml
+farm: 
+  layout_x:
+    - 0.0
+  layout_y:
+    - 0.0
+  turbine_type: # Constant CT turbine (TODO: implement in script?)
+    - WT_constant_ct
+  turbine_library_path: inputs
 
 # Configure the atmospheric conditions.
-flow_field: !include inputs/WR_Single_WS_Single_WD.yaml
+flow_field:
+  air_density: 1.225
+  reference_wind_height: -1
+  turbulence_intensities:
+    - 0.06
+  wind_directions:
+    - 270.0
+  wind_speeds:
+    - 8.0
+  wind_shear: 0.0 # Needed to reproduce Nygaard et al's results
+  wind_veer: 0.0
 
 # Configure the wake model.
-wake: !include inputs/WM_TurboParkGauss.yaml
+wake:
+  model_strings:
+    combination_model: sosfs
+    deflection_model: none
+    turbulence_model: none
+    velocity_model: turboparkgauss # New model
+  enable_secondary_steering: false
+  enable_yaw_added_recovery: false
+  enable_active_wake_mixing: false
+  enable_transverse_velocities: false
+  wake_velocity_parameters: # Parameters for the wake velocity deficit model
+    turboparkgauss:
+      A: 0.04
+      sigma_max_rel: 4.0
+  wake_deflection_parameters:
+    none:
+  wake_turbulence_parameters:
+    none:
