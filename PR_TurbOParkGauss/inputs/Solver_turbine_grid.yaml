@@ -1,8 +1,0 @@
-###
-# Select the solver type.
-# Can be one of: "turbine_grid", "flow_field_grid", "flow_field_planar_grid".
-type: turbine_cubature_grid # turbine_grid # 
-
-###
-# Options for the turbine type selected above. See the solver documentation for available parameters.
-turbine_grid_points: 6
