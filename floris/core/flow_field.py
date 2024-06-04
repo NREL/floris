@@ -291,7 +291,7 @@ class FlowField(BaseClass):
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
             in_region = [
-                LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=1.0)
+                self.interpolate_multiplier_xyz(x, y, z, multiplier, fill_value=1.0)
                 for multiplier in speed_multipliers
             ]
         else:
@@ -299,8 +299,49 @@ class FlowField(BaseClass):
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
             in_region = [
-                LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=1.0)
+                self.interpolate_multiplier_xy(x, y, multiplier, fill_value=1.0)
                 for multiplier in speed_multipliers
             ]
 
         self.het_map = in_region
+
+    @staticmethod
+    def interpolate_multiplier_xy(x: NDArrayFloat,
+                                  y: NDArrayFloat,
+                                  multiplier: NDArrayFloat,
+                                  fill_value: float = 1.0):
+        """Return an interpolant for a 2D multiplier field.
+
+        Args:
+            x (NDArrayFloat): x locations
+            y (NDArrayFloat): y locations
+            multiplier (NDArrayFloat): multipliers
+            fill_value (float): fill value for points outside the region
+
+        Returns:
+            LinearNDInterpolator: interpolant
+        """
+
+        return LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=fill_value)
+
+
+    @staticmethod
+    def interpolate_multiplier_xyz(x: NDArrayFloat,
+                                   y: NDArrayFloat,
+                                   z: NDArrayFloat,
+                                   multiplier: NDArrayFloat,
+                                   fill_value: float = 1.0):
+        """Return an interpolant for a 3D multiplier field.
+
+        Args:
+            x (NDArrayFloat): x locations
+            y (NDArrayFloat): y locations
+            z (NDArrayFloat): z locations
+            multiplier (NDArrayFloat): multipliers
+            fill_value (float): fill value for points outside the region
+
+        Returns:
+            LinearNDInterpolator: interpolant
+        """
+
+        return LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=fill_value)

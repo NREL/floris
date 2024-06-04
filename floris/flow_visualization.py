@@ -19,6 +19,7 @@ from floris import FlorisModel
 from floris.core import Core
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.cut_plane import CutPlane
+from floris.heterogeneous_map import HeterogeneousMap
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,
@@ -124,7 +125,7 @@ def visualize_cut_plane(
         **kwargs: Additional parameters to pass to line contour plot.
 
     Returns:
-        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
     """
 
     if not ax:
@@ -240,92 +241,31 @@ def visualize_heterogeneous_cut_plane(
         **kwargs: Additional parameters to pass to line contour plot.
 
     Returns:
-        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
     """
 
-    if not ax:
-        fig, ax = plt.subplots()
-    if vel_component=='u':
-        # vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if min_speed is None:
-            min_speed = cut_plane.df.u.min()
-        if max_speed is None:
-            max_speed = cut_plane.df.u.max()
-    elif vel_component=='v':
-        # vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if min_speed is None:
-            min_speed = cut_plane.df.v.min()
-        if max_speed is None:
-            max_speed = cut_plane.df.v.max()
-    elif vel_component=='w':
-        # vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if min_speed is None:
-            min_speed = cut_plane.df.w.min()
-        if max_speed is None:
-            max_speed = cut_plane.df.w.max()
-
-    # Allow separate number of levels for tricontourf and for line_contour
-    if clevels is None:
-        clevels = levels
-
-    # Plot the cut-through
-    im = ax.tricontourf(
-        cut_plane.df.x1,
-        cut_plane.df.x2,
-        cut_plane.df.u,
-        vmin=min_speed,
-        vmax=max_speed,
-        levels=clevels,
-        cmap=cmap,
-        extend="both",
-    )
-
-    # Add line contour
-    line_contour_cut_plane(
-        cut_plane,
+    ax = visualize_cut_plane(
+        cut_plane=cut_plane,
         ax=ax,
+        vel_component=vel_component,
+        min_speed=min_speed,
+        max_speed=max_speed,
+        cmap=cmap,
         levels=levels,
-        colors="b",
+        clevels=clevels,
+        color_bar=color_bar,
         label_contours=label_contours,
-        linewidths=0.8,
-        alpha=0.3,
+        title=title,
         **kwargs
     )
 
-    # Plot the user-defined heterogeneous flow area
     if plot_het_bounds:
-        points = np.array(
-            list(
-                zip(
-                    fmodel.core.flow_field.heterogeneous_inflow_config['x'],
-                    fmodel.core.flow_field.heterogeneous_inflow_config['y'],
-                )
-            )
+        HeterogeneousMap.plot_heterogeneous_boundary(
+            fmodel.core.flow_field.heterogeneous_inflow_config['x'],
+            fmodel.core.flow_field.heterogeneous_inflow_config['y'],
+            ax=ax
         )
-        hull = ConvexHull(points)
-        h = ax.plot(
-            points[np.append(hull.vertices, hull.vertices[0]),0],
-            points[np.append(hull.vertices, hull.vertices[0]), 1],
-            'k--',
-            lw=2,
-        )
-        ax.plot(points[hull.vertices,0], points[hull.vertices,1], 'ko')
-        ax.legend(h, ["defined heterogeneous bounds"], loc=1)
-
-    if cut_plane.normal_vector == "x":
-        ax.invert_xaxis()
-
-    if color_bar:
-        cbar = plt.colorbar(im, ax=ax)
-        cbar.set_label('m/s')
-
-    # Set the title
-    ax.set_title(title)
-
-    # Make equal axis
-    ax.set_aspect("equal")
-
-    return im
+    return ax
 
 
 def visualize_quiver(cut_plane, ax=None, min_speed=None, max_speed=None, downSamp=1, **kwargs):
@@ -429,7 +369,7 @@ def plot_rotor_values(
         plot_rotor_values(floris.flow_field.w, findex=0, n_rows=1, ncols=4, show=True)
     """
 
-    cmap = plt.cm.get_cmap(name=cmap)
+    cmap = plt.get_cmap(name=cmap)
 
     if t_range is None:
         t_range = range(values.shape[1])

@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris import FlorisModel, TimeSeries
-from floris.flow_visualization import visualize_cut_plane
+from floris.flow_visualization import visualize_heterogeneous_cut_plane
 from floris.layout_visualization import plot_turbine_labels
 
 
@@ -65,15 +65,20 @@ horizontal_plane = fmodel.calculate_horizontal_plane(
     x_resolution=200, y_resolution=100, height=90.0
 )
 
-# Plot the horizontal plane
+# Plot the horizontal plane using the visualize_heterogeneous_cut_plane.
+# Note that this function is not very different than the standard
+# visualize_cut_plane except that it accepts the fmodel object in order to
+# visualize the boundary of the heterogeneous inflow region.
 fig, ax = plt.subplots()
-visualize_cut_plane(
+visualize_heterogeneous_cut_plane(
     horizontal_plane,
+    fmodel=fmodel,
     ax=ax,
     title="Horizontal plane at hub height",
     color_bar=True,
     label_contours=True,
 )
 plot_turbine_labels(fmodel, ax)
+ax.legend()
 
 plt.show()
