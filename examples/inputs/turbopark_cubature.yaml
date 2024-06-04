@@ -17,7 +17,7 @@ solver:
   type: turbine_cubature_grid # turbine_grid
   turbine_grid_points: 6
 
-farm: 
+farm:
   layout_x:
     - 0.0
   layout_y:
