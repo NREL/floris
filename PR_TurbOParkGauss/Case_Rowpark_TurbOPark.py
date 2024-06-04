@@ -17,9 +17,12 @@ tp_paper_vels = [
     0.377783142608699,
     0.356429516711137,
 ]
+layout_x = np.linspace(0.0, 5400.0, 10)
+layout_y = np.zeros_like(layout_x)
 
 # First, run the current TurboPark implementation from FLORIS.
 fmodel_tp_orig = FlorisModel("Case_RowPark_TurbOPark.yaml")
+fmodel_tp_orig.set(layout_x=layout_x, layout_y=layout_y)
 fmodel_tp_orig.run()
 tp_orig_vels = fmodel_tp_orig.turbine_average_velocities
 
@@ -28,6 +31,7 @@ u0 = fmodel_tp_orig.wind_speeds[0]
 
 # New implementation
 fmodel_tp_new = FlorisModel("Case_RowPark_TurbOParkGauss.yaml")
+fmodel_tp_new.set(layout_x=layout_x, layout_y=layout_y)
 fmodel_tp_new.run()
 tp_new_vels = fmodel_tp_new.turbine_average_velocities
 
