@@ -4,9 +4,25 @@ import pandas as pd
 
 from floris import FlorisModel, TimeSeries
 import floris.flow_visualization as flowviz
+from floris.turbine_library import build_cosine_loss_turbine_dict
+
+### Build a constant CT turbine model for use in comparisons (not realistic)
+const_CT_turb = build_cosine_loss_turbine_dict(
+    turbine_data_dict={
+        "wind_speed":[0.0, 30.0],
+        "power":[0.0, 1.0], # Not realistic but won't be used here
+        "thrust_coefficient":[0.75, 0.75]
+    },
+    turbine_name="ConstantCT",
+    rotor_diameter=120.0,
+    hub_height=100.0,
+    ref_tilt=0.0,
+)
 
 ### Start by visualizing a single turbine in and its wake with the new model
+# Load the new TurboPark implementation and switch to constant CT turbine
 fmodel_new = FlorisModel("turboparkgauss_cubature.yaml")
+fmodel_new.set(turbine_type=[const_CT_turb])
 fmodel_new.run()
 u0 = fmodel_new.wind_speeds[0]
 
@@ -63,8 +79,9 @@ ax[2].grid()
 ax[2].set_xlim([-2, 2])
 
 ### Look at the wake profile at a single downstream distance for a range of wind directions
-# Load the original TurboPark implementation
+# Load the original TurboPark implementation and switch to constant CT turbine
 fmodel_orig = FlorisModel("turbopark_cubature.yaml")
+fmodel_orig.set(turbine_type=[const_CT_turb])
 
 # Set up and solve flows
 wd_array = np.arange(225,315,0.1)

@@ -23,8 +23,7 @@ farm:
   layout_y:
     - 0.0
   turbine_type: # Constant CT turbine (TODO: implement in script?)
-    - WT_constant_ct
-  turbine_library_path: inputs
+    - nrel_5MW # Will be replaced in script
 
 # Configure the atmospheric conditions.
 flow_field:
