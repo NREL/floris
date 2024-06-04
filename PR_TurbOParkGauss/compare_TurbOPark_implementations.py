@@ -39,7 +39,7 @@ fmodel_new.run()
 new_vels_ds = fmodel_new.turbine_average_velocities[:,1]
 
 # Load comparison data
-df_twinpark = pd.read_csv("WindDirection_Sweep_Orsted.csv")
+df_twinpark = pd.read_csv("comparison_data/WindDirection_Sweep_Orsted.csv")
 
 # Plot the data and compare
 fig, ax = plt.subplots(2, 1)
@@ -83,7 +83,7 @@ new_vels_row = fmodel_new.turbine_average_velocities
 u0 = fmodel_orig.wind_speeds[0] # Get freestream wind speed for normalization
 
 # Load comparison data
-df_rowpark = pd.read_csv("Rowpark_Orsted.csv")
+df_rowpark = pd.read_csv("comparison_data/Rowpark_Orsted.csv")
 
 # Plot the data and compare
 ax[1].scatter(turbines, df_rowpark["wws"], s=80, marker="o", color="k", label="Orsted - TurbOPark")
