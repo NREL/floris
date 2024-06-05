@@ -17,7 +17,7 @@ from tests.conftest import (
 )
 
 
-DEBUG = False
+DEBUG = True
 VELOCITY_MODEL = "turboparkgauss"
 DEFLECTION_MODEL = "gauss"
 COMBINATION_MODEL = "sosfs"
@@ -78,6 +78,48 @@ yawed_baseline = np.array(
             [7.4229011, 0.8002352, 1416412.6499511, 0.2765247],
             [6.1814044, 0.8525995, 819146.2607092, 0.3080362],
         ],
+    ]
+)
+
+full_flow_baseline = np.array(
+    [
+        [
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.79725047, 7.90606371, 8.00885965],
+                [4.18190854, 4.15233328, 4.29539865],
+                [7.79725047, 7.90606371, 8.00885965],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.66326846, 7.7681154 , 7.87123883],
+                [3.69538982, 3.66849132, 3.79562999],
+                [7.66326846, 7.7681154 , 7.87123883],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.50793067, 7.6089272 , 7.71165714],
+                [3.64994795, 3.63535913, 3.74869   ],
+                [7.50793067, 7.6089272 , 7.71165714],
+                [7.88772361, 8.        , 8.10178821],
+            ],
+            [
+                [7.88772361, 8.        , 8.10178821],
+                [7.44424308, 7.54429736, 7.64614946],
+                [4.32643439, 4.33927499, 4.44299895],
+                [7.44424308, 7.54429736, 7.64614946],
+                [7.88772361, 8.        , 8.10178821],
+            ]
+        ]
     ]
 )
 
@@ -418,8 +460,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     assert np.allclose(farm_powers[8,20], farm_powers[8,0])
     assert np.allclose(farm_powers[8,21], farm_powers[8,21:25])
 
-'''
-## Not implemented in TurbOPark
+# TurboParkGauss enables full_flow_solver
 def test_full_flow_solver(sample_inputs_fixture):
     """
     Full flow solver test with the flow field planar grid.
@@ -440,11 +481,14 @@ def test_full_flow_solver(sample_inputs_fixture):
     }
     sample_inputs_fixture.core["flow_field"]["wind_directions"] = [270.0]
     sample_inputs_fixture.core["flow_field"]["wind_speeds"] = [8.0]
+    sample_inputs_fixture.core["flow_field"]["turbulence_intensities"] = [0.1]
 
     floris = Core.from_dict(sample_inputs_fixture.core)
     floris.solve_for_viz()
 
     velocities = floris.flow_field.u_sorted
-    print(velocities)
+
+    if DEBUG:
+        print(velocities)
+
     assert_results_arrays(velocities, full_flow_baseline)
-'''
