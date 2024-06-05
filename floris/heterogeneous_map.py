@@ -54,8 +54,7 @@ class HeterogeneousMap(LoggingManager):
             raise TypeError("speed_multipliers must be a numpy array or list")
 
         # If z is provided, check that it is a list or numpy array
-        if z is not None:
-            if not isinstance(z, (list, np.ndarray)):
+        if (z is not None) and (not isinstance(z, (list, np.ndarray))):
                 raise TypeError("z must be a numpy array or list")
 
         # Save the values
