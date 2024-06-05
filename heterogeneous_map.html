@@ -14,19 +14,19 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
@@ -37,9 +37,9 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -84,27 +84,23 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -126,8 +122,13 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
     </header>
   
 
@@ -209,10 +210,10 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory and Background</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="wake_models.html">Wake Models</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="wake_models.html">Wake Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="empirical_gauss_model.html">Empirical Gaussian model</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
@@ -220,19 +221,19 @@
 <li class="toctree-l1"><a class="reference internal" href="dev_guide.html">Developer's Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="code_quality.html">Code Quality</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="api_docs.html">API Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api_docs.html">API Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.flow_visualization.html">floris.flow_visualization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.floris_model.html">floris.floris_model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.wind_data.html">floris.wind_data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.uncertain_floris_model.html">floris.uncertain_floris_model</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.turbine_library.html">floris.turbine_library</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.turbine_library.html">floris.turbine_library</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.turbine_library.turbine_previewer.html">floris.turbine_library.turbine_previewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.parallel_floris_model.html">floris.parallel_floris_model</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.optimization.html">floris.optimization</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/floris.optimization.html">floris.optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
@@ -240,21 +241,21 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.other.html">floris.optimization.other</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.other.html">floris.optimization.other</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
 </ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimization_base.html">floris.optimization.yaw_optimization.yaw_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimization_tools.html">floris.optimization.yaw_optimization.yaw_optimization_tools</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_geometric.html">floris.optimization.yaw_optimization.yaw_optimizer_geometric</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_scipy.html">floris.optimization.yaw_optimization.yaw_optimizer_scipy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_sr.html">floris.optimization.yaw_optimization.yaw_optimizer_sr</a></li>
 </ul>
-</li>
+</details></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.layout_visualization.html">floris.layout_visualization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.cut_plane.html">floris.cut_plane</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.core.html">floris.core</a></li>
@@ -264,7 +265,7 @@
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.type_dec.html">floris.type_dec</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/floris.logging_manager.html">floris.logging_manager</a></li>
 </ul>
-</li>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
 <ul class="nav bd-sidenav">
@@ -370,7 +371,7 @@
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
 
@@ -379,7 +380,7 @@
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article">
+              <div class="bd-header-article d-print-none">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
@@ -570,6 +571,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialization">Initialization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-heterogeneity-to-a-florismodel">Applying heterogeneity to a FlorisModel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definining-a-3d-heterogeneousmap">Definining a 3D HeterogeneousMap</a></li>
 </ul>
             </nav>
         </div>
@@ -595,7 +597,7 @@ document.write(`
     <span class="n">HeterogeneousMap</span><span class="p">,</span>
     <span class="n">TimeSeries</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.flow_visualization</span> <span class="kn">import</span> <span class="n">visualize_heterogeneous_cut_plane</span>
+<span class="kn">from</span> <span class="nn">floris.flow_visualization</span> <span class="kn">import</span> <span class="n">visualize_heterogeneous_cut_plane</span><span class="p">,</span> <span class="n">visualize_cut_plane</span>
 </pre></div>
 </div>
 </div>
@@ -621,6 +623,21 @@ document.write(`
     <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">]),</span>
     <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]),</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Can print basic information about the map</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">heterogeneous_map</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>HeterogeneousMap with 2 dimensions
+Speeds-up defined for 5 points and
+4 wind conditions
 </pre></div>
 </div>
 </div>
@@ -736,6 +753,168 @@ document.write(`
 </div>
 </div>
 </section>
+<section id="definining-a-3d-heterogeneousmap">
+<h2>Definining a 3D HeterogeneousMap<a class="headerlink" href="#definining-a-3d-heterogeneousmap" title="Link to this heading">#</a></h2>
+<p>Including a z-dimension in the HetereogeneousMap allows for a 3D heterogeneity.   This uses the underlying support in FlorisMode for 3D heterogeneous_inflow_config_by_wd.</p>
+<p>Note that when using the 3D version, wind_sheer must be set to 0.0 to avoid an error.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define a 3D heterogeneous map with two z-levels</span>
+
+<span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span>
+            <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span>
+            <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span>
+            <span class="mf">1000.0</span><span class="p">,</span>
+            <span class="mf">1000.0</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.00</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">speed_multipliers</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">270.0</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">]),</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">heterogeneous_map</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>HeterogeneousMap with 3 dimensions
+Speeds-up defined for 12 points and
+4 wind conditions
+</pre></div>
+</div>
+</div>
+</div>
+<p>When visualizing the 3D heterogeneity, the z-height to plot must be specified (nearest defined is used)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">plot_single_speed_multiplier</span><span class="p">(</span><span class="n">wind_direction</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;X (m)&#39;, ylabel=&#39;Y (m)&#39;&gt;
+</pre></div>
+</div>
+<img alt="_images/37218ea0159c67765a4925b093f48eaa61addfc60a0fb1d5aaf3065a71ba60cb.png" src="_images/37218ea0159c67765a4925b093f48eaa61addfc60a0fb1d5aaf3065a71ba60cb.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">heterogeneous_map</span><span class="o">.</span><span class="n">plot_single_speed_multiplier</span><span class="p">(</span><span class="n">wind_direction</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span> <span class="n">wind_speed</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">200.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;X (m)&#39;, ylabel=&#39;Y (m)&#39;&gt;
+</pre></div>
+</div>
+<img alt="_images/64a392c99df675ad5efbddd5e02d8c1461c237ba3835fbd27a908ccd96ce8cd8.png" src="_images/64a392c99df675ad5efbddd5e02d8c1461c237ba3835fbd27a908ccd96ce8cd8.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Apply the 3D heterogeneous map to the FlorisModel</span>
+<span class="n">time_series</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">275.0</span><span class="p">,</span> <span class="mf">95.0</span><span class="p">,</span> <span class="mf">75.0</span><span class="p">]),</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">6.2</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]),</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
+    <span class="n">heterogeneous_map</span><span class="o">=</span><span class="n">heterogeneous_map</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Apply the time series to the FlorisModel, make sure to set wind_shear to 0.0</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">wind_data</span><span class="o">=</span><span class="n">time_series</span><span class="p">,</span> <span class="n">wind_shear</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+<span class="c1"># Run the FLORIS simulation</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show a horizontal and y plane slice (note that heterogeneity is only defined within the hull of points)</span>
+
+<span class="c1"># Visualize each of the findices</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">findex</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">horizontal_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_horizontal_plane</span><span class="p">(</span>
+    <span class="n">x_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">y_resolution</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">90.0</span><span class="p">,</span> <span class="n">findex_for_viz</span><span class="o">=</span><span class="n">findex</span>
+<span class="p">)</span>
+
+<span class="n">visualize_heterogeneous_cut_plane</span><span class="p">(</span>
+    <span class="n">cut_plane</span><span class="o">=</span><span class="n">horizontal_plane</span><span class="p">,</span>
+    <span class="n">fmodel</span><span class="o">=</span><span class="n">fmodel</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axarr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">y_plane</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">calculate_y_plane</span><span class="p">(</span>
+    <span class="n">x_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">z_resolution</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">findex_for_viz</span><span class="o">=</span><span class="n">findex</span><span class="p">,</span>
+    <span class="n">crossstream_dist</span><span class="o">=</span><span class="mf">400.0</span><span class="p">,</span>  <span class="c1"># x_bounds=[-200,500]</span>
+<span class="p">)</span>
+
+<span class="n">visualize_cut_plane</span><span class="p">(</span>
+    <span class="n">cut_plane</span><span class="o">=</span><span class="n">y_plane</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Wind Direction = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Wind Speed = </span><span class="si">{</span><span class="n">time_series</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">findex</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The calculated flow field contains points outside of the the user-defined heterogeneous inflow bounds. For these points, the interpolated value has been filled with the freestream wind speed. If this is not the desired behavior, the user will need to expand the heterogeneous inflow bounds to fully cover the calculated flow field area.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The calculated flow field contains points outside of the the user-defined heterogeneous inflow bounds. For these points, the interpolated value has been filled with the freestream wind speed. If this is not the desired behavior, the user will need to expand the heterogeneous inflow bounds to fully cover the calculated flow field area.</span>
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: title={&#39;center&#39;: &#39;Wind Direction = 275.0\nWind Speed = 7.0&#39;}&gt;
+</pre></div>
+</div>
+<img alt="_images/e3411f0f6056decc644d466a4ca1ddb792d2dce8fe77dfe0fa944ea6b58dde20.png" src="_images/e3411f0f6056decc644d466a4ca1ddb792d2dce8fe77dfe0fa944ea6b58dde20.png" />
+</div>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -765,7 +944,7 @@ document.write(`
               
               
               
-                <footer class="prev-next-footer">
+                <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
     <a class="left-prev"
@@ -805,6 +984,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initialization">Initialization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-heterogeneity-to-a-florismodel">Applying heterogeneity to a FlorisModel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definining-a-3d-heterogeneousmap">Definining a 3D HeterogeneousMap</a></li>
 </ul>
   </nav></div>
 
@@ -853,8 +1033,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
 
   <footer class="bd-footer">
   </footer>
