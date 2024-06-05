@@ -210,6 +210,19 @@ class FlorisModel(LoggingManager):
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
         if heterogeneous_inflow_config is not None:
+            if (
+                "z" in heterogeneous_inflow_config
+                and flow_field_dict["wind_shear"] != 0.0
+                and heterogeneous_inflow_config['z'] is not None
+            ):
+                raise ValueError(
+                    "Heterogeneous inflow configuration contains a z term, and "
+                    "flow_field_dict['wind_shear'] is not 0.0. Combining both options "
+                    "is not currently allowed in FLORIS.  If using a z term in the "
+                    " heterogeneous inflow configuration, set flow_field_dict['wind_shear'] "
+                    "to 0.0."
+                )
+
             flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
         ## Farm
