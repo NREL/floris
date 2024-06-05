@@ -77,4 +77,3 @@ def test_row_of_turbines():
         velocities_comparison,
         rtol=1e-2,
     ) # Within 1% tolerance
-
