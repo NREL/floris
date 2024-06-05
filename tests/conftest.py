@@ -490,6 +490,10 @@ class SampleInputs:
                     "A": 0.04,
                     "sigma_max_rel": 4.0
                 },
+                "turboparkgauss": {
+                    "A": 0.04,
+                    "sigma_max_rel": 4.0
+                },
                 "empirical_gauss": {
                     "wake_expansion_rates": [0.023, 0.008],
                     "breakpoints_D": [10],
