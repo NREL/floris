@@ -6,4 +6,5 @@ from floris.core.turbine.operation_models import (
     PeakShavingTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
+    MITTurbine,
 )

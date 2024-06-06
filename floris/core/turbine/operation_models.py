@@ -698,3 +698,81 @@ class PeakShavingTurbine():
         )
 
         return (1 - np.sqrt(1 - thrust_coefficient))/2
+
+
+class MITTurbine(BaseOperationModel):
+    """
+    Base class for turbine operation models. All turbine operation models must implement static
+    power(), thrust_coefficient(), and axial_induction() methods, which are called by power() and
+    thrust_coefficient() through the interface in the turbine.py module.
+
+    Args:
+        BaseClass (_type_): _description_
+
+    Raises:
+        NotImplementedError: _description_
+        NotImplementedError: _description_
+    """
+
+    @staticmethod
+    @abstractmethod
+    def power(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **kwargs,
+    ) -> None:
+        # Compute the power-effective wind speed across the rotor
+        rotor_average_velocities = average_velocity(
+            velocities=velocities,
+            method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=power_thrust_table["ref_air_density"],
+        )
+
+        breakpoint()
+
+    @staticmethod
+    @abstractmethod
+    def thrust_coefficient(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **kwargs,
+    ) -> None:
+
+        # Compute the effective wind speed across the rotor
+        rotor_average_velocities = average_velocity(
+            velocities=velocities,
+            method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        breakpoint()
+
+    @staticmethod
+    @abstractmethod
+    def axial_induction(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        **kwargs,
+    ):
+
+        thrust_coefficient = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
+        )
+        breakpoint()
