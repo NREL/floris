@@ -119,6 +119,17 @@ class WindResourceGrid(LoggingManager):
             self.x_array, self.y_array, self.n_sectors, self.weibull_k
         )
 
+    def __str__(self) -> str:
+        """
+        Return a string representation of the WindRose object
+        """
+
+        return (
+            f"WindResourceGrid with {self.nx} x {self.ny} grid points, "
+            f"min x: {self.xmin}, min y: {self.ymin}, grid size: {self.grid_size}, "
+            f"z: {self.z}, h: {self.h}, {self.n_sectors} sectors"
+        )
+
     def _build_interpolant_function_list(self, x, y, n_sectors, data):
         """
         Build a list of interpolant functions for the data.  It is assumed that the function
