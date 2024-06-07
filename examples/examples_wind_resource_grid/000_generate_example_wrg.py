@@ -39,7 +39,7 @@ def estimate_weibull(U, freq):
 # Parameters
 ##################################################
 # Top line parameters
-Nx = 3  # Number of grid points in x
+Nx = 2  # Number of grid points in x
 Ny = 3  # Number of grid points in y
 Xmin = 0.0  # Minimum value of x (m)
 Ymin = 0.0  # Minimum value of y (m)
