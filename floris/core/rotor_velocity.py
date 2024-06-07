@@ -15,6 +15,7 @@ from floris.type_dec import (
     NDArrayObject,
 )
 from floris.utilities import cosd
+from floris.core.turbine.mit_models.momentum import Heck
 
 
 def rotor_velocity_yaw_cosine_correction(
@@ -239,3 +240,49 @@ def rotor_velocity_air_density_correction(
     # Produce equivalent velocities at the reference air density
 
     return (air_density/ref_air_density)**(1/3) * velocities
+
+
+def mit_rotor_axial_induction(Cts: NDArrayFloat, yaw_angles: NDArrayFloat)-> NDArrayFloat:
+    """
+    Computes the axial induction of a yawed rotor given the yaw-aligned thrust
+    coefficient and yaw angles using the yawed actuator disk model developed at
+    MIT as described in Heck et al. 2023. Assumes the modified thrust
+    coefficient, C_T', is invariant to yaw misalignment angle.
+
+    Args
+        Cts (NDArrayFloat): Yaw-aligned thrust coefficient(s).
+        yaw_angles (NDArrayFloat): Rotor yaw angle(s) in degrees.
+
+    Returns: NDArrayFloat: Axial induction factor(s) of the yawed rotor.
+    """
+    Ctprime = - 4 * (Cts + 2 * np.sqrt(1 - Cts) - 2) / Cts
+    sol = Heck()(Ctprime, np.deg2rad(yaw_angles))
+
+    return sol.an
+
+
+def mit_rotor_velocity_yaw_correction(
+        Cts: NDArrayFloat,
+        yaw_angles: NDArrayFloat,
+        axial_inductions: NDArrayFloat,
+        rotor_effective_velocities: NDArrayFloat,
+) -> NDArrayFloat:
+    """
+    Computes adjusted rotor wind speeds given the yaw-aligned thrust
+    coefficient, yaw angles, and axial induction values using the yawed actuator
+    disk model developed at MIT as described in Heck et al. 2023. Assumes the
+    modified thrust coefficient, C_T', is invariant to yaw misalignment angle.
+
+    Args
+        Cts (NDArrayFloat): Yaw-aligned thrust coefficient(s).
+        yaw_angles (NDArrayFloat): Rotor yaw angle(s) in degrees.
+        axial_induction (NDArrayFloat): Rotor axial induction(s).
+        rotor_effective_velocities (NDArrayFloat) rotor effective wind speed(s) at the rotor. .
+
+    Returns: NDArrayFloat: corrected rotor effective wind speed(s) of the yawed rotor.
+    """
+    Ctprime = - 4 * (Cts + 2 * np.sqrt(1 - Cts) - 2) / Cts
+
+    ratio = (1 + 0.25 * Ctprime) * (1 - axial_inductions) * np.cos(np.deg2rad(yaw_angles))
+
+    return ratio * rotor_effective_velocities

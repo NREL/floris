@@ -20,6 +20,8 @@ from floris.core.rotor_velocity import (
     rotor_velocity_air_density_correction,
     rotor_velocity_tilt_cosine_correction,
     rotor_velocity_yaw_cosine_correction,
+    mit_rotor_axial_induction,
+    mit_rotor_velocity_yaw_correction,
 )
 from floris.type_dec import (
     NDArrayFloat,
@@ -720,10 +722,21 @@ class MITTurbine(BaseOperationModel):
         power_thrust_table: dict,
         velocities: NDArrayFloat,
         air_density: float,
+        yaw_angles: NDArrayFloat,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
         **kwargs,
     ) -> None:
+
+
+        # Construct thrust coefficient interpolant
+        thrust_coefficient_interpolator = interp1d(
+            power_thrust_table["wind_speed"],
+            power_thrust_table["thrust_coefficient"],
+            fill_value=0.0001,
+            bounds_error=False,
+        )
+
         # Compute the power-effective wind speed across the rotor
         rotor_average_velocities = average_velocity(
             velocities=velocities,
@@ -734,10 +747,36 @@ class MITTurbine(BaseOperationModel):
         rotor_effective_velocities = rotor_velocity_air_density_correction(
             velocities=rotor_average_velocities,
             air_density=air_density,
-            ref_air_density=power_thrust_table["ref_air_density"],
+            ref_air_density=power_thrust_table["ref_air_density"]
         )
 
-        breakpoint()
+        thrust_coefficients = thrust_coefficient_interpolator(rotor_effective_velocities)
+
+
+        # mit_rotor_velocity_yaw_correction
+        axial_inductions = mit_rotor_axial_induction(thrust_coefficients, yaw_angles)
+
+
+        corrected_rotor_effective_velocities = mit_rotor_velocity_yaw_correction(
+           thrust_coefficients, yaw_angles, axial_inductions, rotor_effective_velocities
+        )
+
+        # Tilt correction?
+
+
+        # Construct power interpolant
+        power_interpolator = interp1d(
+            power_thrust_table["wind_speed"],
+            power_thrust_table["power"],
+            fill_value=0.0,
+            bounds_error=False,
+        )
+
+        # Compute power
+        power = power_interpolator(corrected_rotor_effective_velocities) * 1e3 # Convert to W
+
+        return power
+
 
     @staticmethod
     @abstractmethod
@@ -745,34 +784,88 @@ class MITTurbine(BaseOperationModel):
         power_thrust_table: dict,
         velocities: NDArrayFloat,
         air_density: float,
+        yaw_angles: NDArrayFloat,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
         **kwargs,
     ) -> None:
 
-        # Compute the effective wind speed across the rotor
+        # Construct thrust coefficient interpolant
+        thrust_coefficient_interpolator = interp1d(
+            power_thrust_table["wind_speed"],
+            power_thrust_table["thrust_coefficient"],
+            fill_value=0.0001,
+            bounds_error=False,
+        )
+
+        # Compute the power-effective wind speed across the rotor
         rotor_average_velocities = average_velocity(
             velocities=velocities,
             method=average_method,
             cubature_weights=cubature_weights,
         )
 
-        breakpoint()
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=power_thrust_table["ref_air_density"]
+        )
+
+        thrust_coefficients = thrust_coefficient_interpolator(rotor_effective_velocities)
+
+
+        # mit_rotor_velocity_yaw_correction
+        axial_inductions = mit_rotor_axial_induction(thrust_coefficients, yaw_angles)
+
+
+        corrected_rotor_effective_velocities = mit_rotor_velocity_yaw_correction(
+           thrust_coefficients, yaw_angles, axial_inductions, rotor_effective_velocities
+        )
+
+        # Tilt correction?
+
+        # Compute thrust coefficient
+        yawed_thrust_coefficients = thrust_coefficient_interpolator(corrected_rotor_effective_velocities) 
+
+        return yawed_thrust_coefficients
 
     @staticmethod
     @abstractmethod
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
+        air_density: float,
+        yaw_angles: NDArrayFloat,
         average_method: str = "cubic-mean",
         cubature_weights: NDArrayFloat | None = None,
         **kwargs,
     ):
 
-        thrust_coefficient = SimpleTurbine.thrust_coefficient(
-            power_thrust_table=power_thrust_table,
+        # Construct thrust coefficient interpolant
+        thrust_coefficient_interpolator = interp1d(
+            power_thrust_table["wind_speed"],
+            power_thrust_table["thrust_coefficient"],
+            fill_value=0.0001,
+            bounds_error=False,
+        )
+
+        # Compute the power-effective wind speed across the rotor
+        rotor_average_velocities = average_velocity(
             velocities=velocities,
-            average_method=average_method,
+            method=average_method,
             cubature_weights=cubature_weights,
         )
-        breakpoint()
+
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=power_thrust_table["ref_air_density"]
+        )
+
+        thrust_coefficients = thrust_coefficient_interpolator(rotor_effective_velocities)
+
+
+        # mit_rotor_velocity_yaw_correction
+        axial_inductions = mit_rotor_axial_induction(thrust_coefficients, yaw_angles)
+
+        return axial_inductions
