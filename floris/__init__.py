@@ -20,3 +20,4 @@ from .wind_data import (
     WindRose,
     WindTIRose,
 )
+from .wind_resource_grid import WindResourceGrid
