@@ -42,7 +42,7 @@ TURBINE_MODEL_MAP = {
         "mixed": MixedOperationTurbine,
         "awc": AWCTurbine,
         "peak-shaving": PeakShavingTurbine,
-        "mit-turbine": MITTurbine,
+        "mit-loss": MITTurbine,
     },
 }
 
