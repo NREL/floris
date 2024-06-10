@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 
-from floris import WindRose
+from floris import WindRose, WindRoseByTurbine
 from floris.logging_manager import LoggingManager
 
 
@@ -297,3 +297,32 @@ class WindResourceGrid(LoggingManager):
             freq_table=freq_table,
             ti_table=fixed_ti_value,
         )
+
+    def get_wind_rose_by_turbine(self, layout_x, layout_y, wind_speeds=None, fixed_ti_value=0.06):
+        """
+        Get the wind rose at each turbine location in the layout.
+
+        Args:
+            layout_x (np.array): The x locations of the turbines.
+            layout_y (np.array): The y locations of the turbines.
+            wind_speeds (np.array): The wind speeds to calculate the frequencies for.
+                If None, the frequencies are calculated for 0 to 25 m/s in 1 m/s increments.
+                Default is None.
+            fixed_ti_value (float): The fixed turbulence intensity value to use in the wind rose.
+                Default is 0.06.
+        """
+
+        if wind_speeds is None:
+            wind_speeds = np.arange(0.0, 25.0, 1.0)
+
+        # Initialize the list of wind roses
+        wind_roses = []
+
+        # Loop through the turbines and get the wind rose at each location
+        for i in range(len(layout_x)):
+            wind_rose = self.get_wind_rose_at_point(
+                layout_x[i], layout_y[i], wind_speeds=wind_speeds, fixed_ti_value=fixed_ti_value
+            )
+            wind_roses.append(wind_rose)
+
+        return WindRoseByTurbine(layout_x=layout_x, layout_y=layout_y, wind_roses=wind_roses)
