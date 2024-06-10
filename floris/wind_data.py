@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 from abc import abstractmethod
 from pathlib import Path
+from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -205,7 +206,7 @@ class WindRose(WindDataBase):
         if heterogeneous_map is not None and heterogeneous_inflow_config_by_wd is not None:
             raise ValueError(
                 "Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be"
-                +" defined."
+                + " defined."
             )
 
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
@@ -1017,7 +1018,7 @@ class WindTIRose(WindDataBase):
         if heterogeneous_map is not None and heterogeneous_inflow_config_by_wd is not None:
             raise ValueError(
                 "Only one of heterogeneous_map and heterogeneous_inflow_config_by_wd can be"
-                +" defined."
+                + " defined."
             )
 
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
@@ -1905,7 +1906,7 @@ class TimeSeries(WindDataBase):
         ):
             raise ValueError(
                 "Only one of heterogeneous_inflow_config_by_wd, "
-                +"heterogeneous_map, and heterogeneous_inflow_config can be not None."
+                + "heterogeneous_map, and heterogeneous_inflow_config can be not None."
             )
 
         # if heterogeneous_inflow_config is not None, then the speed_multipliers
@@ -2407,3 +2408,93 @@ class TimeSeries(WindDataBase):
             value_table,
             self.heterogeneous_map,
         )
+
+
+class WindRoseByTurbine(WindDataBase):
+    """
+    The WindRoseByTurbine class is used to store wind rose data for each turbine.  This method
+    is meant to be used when the wind rose data is different for each turbine, such as stored in
+    WindResourceGrid.  The wind rose data is stored in a list of WindRose objects, one for each
+    turbine.
+
+    Args:
+        layout_x (NDArrayFloat): X-coordinates of the layout.
+        layout_y (NDArrayFloat): Y-coordinates of the layout.
+        wind_roses (List[WindRose]): List of WindRose objects, one for each turbine.
+    """
+
+    def __init__(
+        self,
+        layout_x: NDArrayFloat,
+        layout_y: NDArrayFloat,
+        wind_roses: List[WindRose],
+    ):
+        # Confirm that wind_roses is a length of at least 1 element
+        if len(wind_roses) < 1:
+            raise ValueError("wind_roses must have at least one element")
+
+        # Confirm that layout_x, layout_y, and wind_roses are the same length
+        if len(layout_x) != len(layout_y):
+            raise ValueError("layout_x and layout_y must be the same length")
+        if len(layout_x) != len(wind_roses):
+            raise ValueError("layout_x/y and wind_roses must be the same length")
+
+        # Confirm that the wind_directions and wind_speeds within each wind_rose are the same
+        # for all wind_roses
+        wind_directions = wind_roses[0].wind_directions
+        wind_speeds = wind_roses[0].wind_speeds
+
+        for wind_rose in wind_roses:
+            if not np.array_equal(wind_rose.wind_directions, wind_directions):
+                raise ValueError("wind_directions must be the same for all wind_roses")
+            if not np.array_equal(wind_rose.wind_speeds, wind_speeds):
+                raise ValueError("wind_speeds must be the same for all wind_roses")
+
+        # Save the layout and wind roses per turbine
+        self.layout_x = layout_x
+        self.layout_y = layout_y
+        self.wind_roses = wind_roses
+
+        # Save the wind directions and wind speeds
+        self.wind_directions = wind_directions
+        self.wind_speeds = wind_speeds
+
+    def unpack(self):
+        """
+        Implement the unpack method for WindRoseByTurbine by
+        calling the unpack method for the first wind rose
+        in the list of wind roses.
+
+        Returns:
+            Tuple: Tuple containing the unpacked wind rose data.
+        """
+        return self.wind_roses[0].unpack()
+
+    def plot_wind_roses(
+        self,
+        axarr=None,
+        wd_step=None,
+        ws_step=None,
+    ):
+        """
+        Plot the wind roses for each turbine in the WindRoseByTurbine object.
+
+        Args:
+            axarr (NDArrayAxes, optional): Array of axes to plot the wind roses on.
+                Defaults to None.  Must have length equal to the number of wind roses.
+            wd_step (float, optional): Step size for wind direction. Defaults to None.
+            ws_step (float, optional): Step size for wind speed. Defaults to None.
+        """
+
+        # If axarr is not defined, create a new figure
+        if axarr is None:
+            fig, axarr = plt.subplots(1, len(self.wind_roses), subplot_kw={"polar": True})
+
+        # Test that axarr is the correct length
+        if len(axarr) != len(self.wind_roses):
+            raise ValueError("axarr must have the same length as the number of wind roses")
+
+        # Plot the wind roses for each turbine
+        for i, wind_rose in enumerate(self.wind_roses):
+            wind_rose.plot(ax=axarr[i], wd_step=wd_step, ws_step=ws_step)
+            axarr[i].set_title(f"Turbine {i}\n ({self.layout_x[i]:.1f}, {self.layout_y[i]:.1f})")

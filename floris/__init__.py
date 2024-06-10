@@ -18,6 +18,7 @@ from .uncertain_floris_model import ApproxFlorisModel, UncertainFlorisModel
 from .wind_data import (
     TimeSeries,
     WindRose,
+    WindRoseByTurbine,
     WindTIRose,
 )
 from .wind_resource_grid import WindResourceGrid
