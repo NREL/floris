@@ -7,6 +7,7 @@ import pytest
 from floris import (
     TimeSeries,
     WindRose,
+    WindRoseByTurbine,
     WindTIRose,
 )
 from floris.wind_data import WindDataBase
@@ -663,7 +664,6 @@ def test_time_series_to_WindTIRose():
     np.testing.assert_almost_equal(freq_table[0, 1, :], [0, 0])
 
 
-
 def test_gen_heterogeneous_inflow_config():
     wind_directions = np.array([259.8, 260.2, 260.3, 260.1, 270.0])
     wind_speeds = 8.0
@@ -693,9 +693,7 @@ def test_gen_heterogeneous_inflow_config():
 
     expected_result = np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.1, 1.2]])
     np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
-    np.testing.assert_allclose(
-        heterogeneous_inflow_config["x"], heterogeneous_inflow_config["x"]
-    )
+    np.testing.assert_allclose(heterogeneous_inflow_config["x"], heterogeneous_inflow_config["x"])
 
 
 def test_heterogeneous_inflow_config_by_wd():
@@ -746,14 +744,7 @@ def test_heterogeneous_inflow_config_by_wd():
 
 def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds():
     heterogeneous_map_config = {
-        "speed_multipliers": np.array(
-            [
-                [0.9, 0.9],
-                [1.0, 1.0],
-                [1.1, 1.2],
-                [1.2, 1.3]
-            ]
-        ),
+        "speed_multipliers": np.array([[0.9, 0.9], [1.0, 1.0], [1.1, 1.2], [1.2, 1.3]]),
         "wind_directions": np.array([250, 260, 250, 260]),
         "wind_speeds": np.array([5, 5, 10, 10]),
         "x": np.array([0, 1000]),
@@ -761,27 +752,21 @@ def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds():
     }
 
     time_series = TimeSeries(
-        wind_directions = np.array([259.8, 260.2, 260.3, 260.1, 200.0]),
-        wind_speeds = np.array([4, 9, 4, 9, 4]),
+        wind_directions=np.array([259.8, 260.2, 260.3, 260.1, 200.0]),
+        wind_speeds=np.array([4, 9, 4, 9, 4]),
         turbulence_intensities=0.06,
         heterogeneous_map=heterogeneous_map_config,
     )
 
     (_, _, _, _, _, heterogeneous_inflow_config) = time_series.unpack()
 
-    expected_result = np.array([[1.0, 1.0],[1.2, 1.3],[1.0, 1.0],[1.2, 1.3],[0.9, 0.9]])
+    expected_result = np.array([[1.0, 1.0], [1.2, 1.3], [1.0, 1.0], [1.2, 1.3], [0.9, 0.9]])
     np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
+
 
 def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds_wind_rose():
     heterogeneous_map_config = {
-        "speed_multipliers": np.array(
-            [
-                [0.9, 0.9],
-                [1.0, 1.0],
-                [1.1, 1.2],
-                [1.2, 1.3]
-            ]
-        ),
+        "speed_multipliers": np.array([[0.9, 0.9], [1.0, 1.0], [1.1, 1.2], [1.2, 1.3]]),
         "wind_directions": np.array([250, 260, 250, 260]),
         "wind_speeds": np.array([5, 5, 10, 10]),
         "x": np.array([0, 1000]),
@@ -789,8 +774,8 @@ def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds_wi
     }
 
     wind_rose = WindRose(
-        wind_directions = np.array([250.0, 260.]),
-        wind_speeds = np.array([9.0]),
+        wind_directions=np.array([250.0, 260.0]),
+        wind_speeds=np.array([9.0]),
         ti_table=0.06,
         heterogeneous_map=heterogeneous_map_config,
     )
@@ -799,6 +784,7 @@ def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds_wi
 
     expected_result = np.array([[1.1, 1.2], [1.2, 1.3]])
     np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
+
 
 def test_read_csv_long():
     # Read in the wind rose data from the csv file
@@ -867,3 +853,70 @@ def test_read_csv_long_ti():
 
     expected_result = np.array([0.06, 0.07])
     np.testing.assert_allclose(wind_ti_rose.turbulence_intensities, expected_result)
+
+
+def test_wind_rose_by_turbine():
+    wind_directions = np.array([270, 280, 290])
+    wind_speeds = np.array([6, 7])
+
+    wind_rose_0 = WindRose(wind_directions, wind_speeds, 0.06)
+
+    wind_directions = np.array([270, 280, 290])
+    wind_speeds = np.array([6, 7])
+
+    wind_rose_1 = WindRose(wind_directions, wind_speeds, 0.06)
+
+    wind_roses = [wind_rose_0, wind_rose_1]
+
+    # Test that have layout not match the length of wind_roses raises a value error
+    with pytest.raises(ValueError):
+        WindRoseByTurbine(layout_x=[0, 0, 0], layout_y=[0, 0, 0], wind_roses=wind_roses)
+
+    # Test that if the wind roses don't have the same wind directions and speeds,
+    # this raises a value error
+    wind_speeds = np.array([6, 7, 8])
+    wind_rose_1 = WindRose(wind_directions, wind_speeds, 0.06)
+    wind_roses = [wind_rose_0, wind_rose_1]
+    # Test that have layout not match the length of wind_roses raises a value error
+    with pytest.raises(ValueError):
+        WindRoseByTurbine(layout_x=[0, 0], layout_y=[0, 0], wind_roses=wind_roses)
+
+    # Finally make sure that if set correctly no errors are raised
+    wind_speeds = np.array([6, 7])
+    wind_rose_1 = WindRose(wind_directions, wind_speeds, 0.06)
+    wind_roses = [wind_rose_0, wind_rose_1]
+    wind_rose_by_turbine = WindRoseByTurbine(
+        layout_x=[0, 0], layout_y=[0, 0], wind_roses=wind_roses
+    )
+
+    # Test the unpack method
+    (
+        wind_directions_unpack_by_turbine,
+        _,
+        _,
+        _,
+        _,
+        _,
+    ) = wind_rose_by_turbine.unpack()
+
+    (
+        wind_directions_unpack_0,
+        _,
+        _,
+        _,
+        _,
+        _,
+    ) = wind_rose_0.unpack()
+
+    (
+        wind_directions_unpack_1,
+        _,
+        _,
+        _,
+        _,
+        _,
+    ) = wind_rose_1.unpack()
+
+    # Check that the unpacked wind directions and wind speeds are correct
+    np.testing.assert_allclose(wind_directions_unpack_by_turbine, wind_directions_unpack_0)
+    np.testing.assert_allclose(wind_directions_unpack_by_turbine, wind_directions_unpack_1)
