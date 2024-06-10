@@ -174,3 +174,16 @@ def test_get_wind_rose_at_point():
     # Test that freq table generated at (0, 0) is the same at that of (-1 , -1)
     wind_rose2 = wrg.get_wind_rose_at_point(-1, -1)
     assert np.allclose(wind_rose.freq_table, wind_rose2.freq_table)
+
+def test_get_wind_rose_by_turbine():
+    wrg = WindResourceGrid(WRG_FILE_FILE)
+
+
+    wind_rose_test = wrg.get_wind_rose_at_point(0, 0)
+
+    wind_rose_by_turbine = wrg.get_wind_rose_by_turbine([0, 10], [0,10])
+
+    wind_roses = wind_rose_by_turbine.wind_roses
+
+    # Confirm the first WindRose object in wind_roses is the same as wind_rose_test
+    assert np.allclose(wind_roses[0].freq_table, wind_rose_test.freq_table)
