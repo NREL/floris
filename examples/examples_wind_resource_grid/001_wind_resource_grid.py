@@ -1,4 +1,4 @@
-"""Example: Use Wind Resource Grid
+"""Example: Wind Resource Grid
 
 Open the WRG file generated in the previous example using the `WindResourceGrid` object
 and show that wind roses can be interpolated between grid points.
