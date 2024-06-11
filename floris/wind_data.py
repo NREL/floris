@@ -2453,22 +2453,70 @@ class WindRoseByTurbine(WindDataBase):
         # Save the layout and wind roses per turbine
         self.layout_x = layout_x
         self.layout_y = layout_y
-        self.wind_roses = wind_roses
+
+        # Force that compute_zero_freq_occurrence is True for all wind roses in self.wind_roses
+        # Having some conditions not computed for some of the wind roses might cause misalignment
+        # so force computation of all combinations of wd/ws for all wind roses
+        self.wind_roses = []
+        for wind_rose in wind_roses:
+            self.wind_roses.append(
+                WindRose(
+                    wind_rose.wind_directions,
+                    wind_rose.wind_speeds,
+                    wind_rose.ti_table,
+                    wind_rose.freq_table,
+                    wind_rose.value_table,
+                    True,
+                    wind_rose.heterogeneous_map,
+                )
+            )
 
         # Save the wind directions and wind speeds
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
 
+        # Save also the wd_flat and ws_flat from the first wind rose as this could be needed
+        # for unpacking and non_zero_freq_mask
+        self.wd_flat = wind_roses[0].wd_flat
+        self.ws_flat = wind_roses[0].ws_flat
+        self.non_zero_freq_mask = wind_roses[0].non_zero_freq_mask
+
+        # Expose that
+
     def unpack(self):
         """
         Implement the unpack method for WindRoseByTurbine by
-        calling the unpack method for the first wind rose
-        in the list of wind roses.
+        calling the unpack method for each of the WindRose objects in wind_roses.
+        Mose of the variables can be passed as is but freq_table_unpack are combined
+        and stacked along the 1th axis
 
         Returns:
             Tuple: Tuple containing the unpacked wind rose data.
         """
-        return self.wind_roses[0].unpack()
+
+        # Initialize freq_table_unpack
+        freq_table_unpack = np.zeros((len(self.wind_roses[0].wd_flat), len(self.layout_x)))
+
+        # Loop over remaining wind roses and stack freq_table_unpack
+        for i, wind_rose in enumerate(self.wind_roses):
+            (
+                wind_directions_unpack,
+                wind_speeds_unpack,
+                ti_table_unpack,
+                freq_table_unpack_0,
+                value_table_unpack,
+                heterogeneous_inflow_config,
+            ) = wind_rose.unpack()
+            freq_table_unpack[:, i] = freq_table_unpack_0
+
+        return (
+            wind_directions_unpack,
+            wind_speeds_unpack,
+            ti_table_unpack,
+            freq_table_unpack,
+            value_table_unpack,
+            heterogeneous_inflow_config,
+        )
 
     def plot_wind_roses(
         self,
