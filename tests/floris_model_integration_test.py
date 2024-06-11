@@ -390,6 +390,32 @@ def test_get_farm_aep(caplog):
     expected_farm_power = fmodel.get_expected_farm_power(freq=freq)
     np.testing.assert_allclose(expected_farm_power, aep / (365 * 24))
 
+def test_for_changes_in_expected_farm_power():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 8.0, 8.0])
+    wind_directions = np.array([270.0, 270.0, 270.0])
+    turbulence_intensities = np.array([0.06, 0.06, 0.06])
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=layout_x,
+        layout_y=layout_y,
+    )
+
+    fmodel.run()
+
+    expected_farm_power = fmodel.get_expected_farm_power()
+
+    # Assert the expected farm power has not inadvetently changed
+    np.testing.assert_allclose(expected_farm_power, 3507908.918358342, atol=1e-1)
+
 def test_get_farm_avp(caplog):
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
