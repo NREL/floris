@@ -58,4 +58,6 @@ print("Last wind rose:", expected_turbine_powers_last)
 # Compare expected farm power against the sum of expected_turbine_power
 expected_farm_power = fmodel.get_expected_farm_power()
 print("Expected farm power:", expected_farm_power)
-print("Sum of expected turbine powers:", expected_turbine_powers.sum())
+print("Sum of expected turbine powers:", expected_turbine_powers_last.sum())
+
+plt.show()
