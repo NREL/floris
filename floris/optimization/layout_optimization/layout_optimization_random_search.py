@@ -53,13 +53,26 @@ def _get_objective(
         layout_y,
         fmodel,
         yaw_angles=None,
-        use_value=False
+        use_value=False,
+        wind_resource_grid=None,
+        wind_resource_grid_wind_speeds = np.arange(0.0,25.0,2.0)
 ):
-    fmodel.set(
-        layout_x=layout_x,
-        layout_y=layout_y,
-        yaw_angles=yaw_angles
-    )
+    if wind_resource_grid is not None:
+        wind_rose_by_turbine = wind_resource_grid.get_wind_rose_by_turbine(layout_x,
+                                                                           layout_y,
+                                                                           wind_speeds=wind_resource_grid_wind_speeds)
+        fmodel.set(
+            layout_x=layout_x,
+            layout_y=layout_y,
+            yaw_angles=yaw_angles,
+            wind_data = wind_rose_by_turbine
+        )
+    else:
+        fmodel.set(
+            layout_x=layout_x,
+            layout_y=layout_y,
+            yaw_angles=yaw_angles
+        )
     fmodel.run()
 
     return fmodel.get_farm_AVP() if use_value else fmodel.get_farm_AEP()
@@ -138,6 +151,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         use_dist_based_init=True,
         random_seed=None,
         use_value=False,
+        wind_resource_grid=None,
+        wind_resource_grid_wind_speeds = np.arange(0.0,25.0,2.0)
     ):
         """
         _summary_
@@ -184,6 +199,12 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 is to maximize annual value production using the value array in the
                 FLORIS model's WindData object. If False, the optimization
                 objective is to maximize AEP. Defaults to False.
+            wind_resource_grid (WindResourceGrid, optional): WindResourceGrid object
+                if supplied, the wind roses at each candidate turbine location will be
+                computed for each new layout. Defaults to None.
+            wind_resource_grid_wind_speeds (np.array, optional): Wind speeds to use
+                when computing wind roses at each candidate turbine location. Defaults
+                to np.arange(0.0, 25.0, 2.0).
         """
         # The parallel computing interface to use
         if interface == "mpi4py":
@@ -221,6 +242,12 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
 
         # Set and store the random seed
         self.random_seed = random_seed
+
+        # Store the wind_rose_by_turbine object
+        self.wind_resource_grid = wind_resource_grid
+
+        # Store the wind_resource_grid_wind_speeds
+        self.wind_resource_grid_wind_speeds = wind_resource_grid_wind_speeds
 
         # Confirm the relegation_number is valid
         if relegation_number > n_individuals / 2:
@@ -289,6 +316,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             self.fmodel,
             self._get_geoyaw_angles(),
             self.use_value,
+            self.wind_resource_grid,
+            self.wind_resource_grid_wind_speeds
         )
 
         # Initialize the objective statistics
@@ -479,6 +508,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 self.fmodel,
                 self._get_geoyaw_angles(),
                 self.use_value,
+                self.wind_resource_grid,
+                self.wind_resource_grid_wind_speeds
             )
 
         t2 = timerpc()
@@ -536,7 +567,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                  self.distance_pmf,
                  self.enable_geometric_yaw,
                  multi_random_seeds[i],
-                 self.use_value
+                 self.use_value,
+                 self.wind_resource_grid,
+                 self.wind_resource_grid_wind_speeds
                 )
                     for i in range(self.n_individuals)
             ]
@@ -605,7 +638,9 @@ def _single_individual_opt(
     dist_pmf,
     enable_geometric_yaw,
     s,
-    use_value
+    use_value,
+    wind_resource_grid,
+    wind_resource_grid_wind_speeds
 ):
     # Set random seed
     np.random.seed(s)
@@ -686,7 +721,13 @@ def _single_individual_opt(
                 yaw_angles = np.vstack(df_opt['yaw_angles_opt'])
 
             num_objective_calls += 1
-            test_objective = _get_objective(layout_x, layout_y, fmodel_, yaw_angles, use_value)
+            test_objective = _get_objective(layout_x,
+                                            layout_y,
+                                            fmodel_,
+                                            yaw_angles,
+                                            use_value,
+                                            wind_resource_grid,
+                                            wind_resource_grid_wind_speeds)
 
             if test_objective > current_objective:
                 # Accept the change
