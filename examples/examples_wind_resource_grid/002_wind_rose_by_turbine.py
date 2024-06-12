@@ -39,6 +39,14 @@ fmodel = FlorisModel("../inputs/gch.yaml")
 fmodel.set(layout_x=layout_x, layout_y=layout_y, wind_data=wind_rose_by_turbine)
 fmodel.run()
 expected_turbine_powers = fmodel.get_expected_turbine_powers()
+expected_farm_power = fmodel.get_expected_farm_power()
+
+# Print the expected turbine powers, farm power, and the sum of the expected turbine powers
+print("Expected turbine powers:", expected_turbine_powers)
+print("Expected farm power:", expected_farm_power)
+print("Sum of expected turbine powers:", expected_turbine_powers.sum())
+
+# Now re-run using one of the turbine wind roses alone
 
 # Compare with the result if just using the first wind rose or the last wind rose
 fmodel.set(wind_data=wind_rose_by_turbine.wind_roses[0])
@@ -49,15 +57,10 @@ fmodel.set(wind_data=wind_rose_by_turbine.wind_roses[-1])
 fmodel.run()
 expected_turbine_powers_last = fmodel.get_expected_turbine_powers()
 
-# Print the results
+# Print the results to show match of first and last turbine when using their respective wind roses
 print("Expected turbine powers:")
 print("All wind roses:", expected_turbine_powers)
 print("First wind rose:", expected_turbine_powers_first)
 print("Last wind rose:", expected_turbine_powers_last)
-
-# Compare expected farm power against the sum of expected_turbine_power
-expected_farm_power = fmodel.get_expected_farm_power()
-print("Expected farm power:", expected_farm_power)
-print("Sum of expected turbine powers:", expected_turbine_powers_last.sum())
 
 plt.show()
