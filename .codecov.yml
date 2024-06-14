@@ -9,6 +9,7 @@ coverage:
     status:
         project:
             default:
+                target: 40
                 # allow coverage to drop by this amount and still post success
                 threshold: 10
 
