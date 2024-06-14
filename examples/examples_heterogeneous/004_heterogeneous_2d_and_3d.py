@@ -99,10 +99,12 @@ heterogeneous_inflow_config = {
 # Note that we initialize FLORIS with a homogenous flow input file, but
 # then configure the heterogeneous inflow via the reinitialize method.
 fmodel_3d = FlorisModel("../inputs/gch.yaml")
-fmodel_3d.set(heterogeneous_inflow_config=heterogeneous_inflow_config)
 
 # Set shear to 0.0 to highlight the heterogeneous inflow
 fmodel_3d.set(wind_shear=0.0)
+
+# Apply the heterogeneous inflow configuration
+fmodel_3d.set(heterogeneous_inflow_config=heterogeneous_inflow_config)
 
 # Using the FlorisModel functions for generating plots, run FLORIS
 # and extract 2D planes of data.

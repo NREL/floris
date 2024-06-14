@@ -663,50 +663,13 @@ def test_time_series_to_WindTIRose():
     np.testing.assert_almost_equal(freq_table[0, 1, :], [0, 0])
 
 
-def test_get_speed_multipliers_by_wd():
-    heterogeneous_inflow_config_by_wd = {
-        "speed_multipliers": np.array(
-            [
-                [1.0, 1.1, 1.2],
-                [1.1, 1.1, 1.1],
-                [1.3, 1.4, 1.5],
-            ]
-        ),
-        "wind_directions": np.array([0, 90, 270]),
-    }
-
-    # Check for correctness
-    wind_directions = np.array([240, 80, 15])
-    expected_output = np.array([[1.3, 1.4, 1.5], [1.1, 1.1, 1.1], [1.0, 1.1, 1.2]])
-    wind_data = WindDataBase()
-    result = wind_data.get_speed_multipliers_by_wd(
-        heterogeneous_inflow_config_by_wd, wind_directions
-    )
-    assert np.allclose(result, expected_output)
-
-    # Confirm wrapping behavior
-    wind_directions = np.array([350, 10])
-    expected_output = np.array([[1.0, 1.1, 1.2], [1.0, 1.1, 1.2]])
-    result = wind_data.get_speed_multipliers_by_wd(
-        heterogeneous_inflow_config_by_wd, wind_directions
-    )
-    assert np.allclose(result, expected_output)
-
-    # Confirm can expand the result to match wind directions
-    wind_directions = np.arange(0.0, 360.0, 10.0)
-    num_wd = len(wind_directions)
-    result = wind_data.get_speed_multipliers_by_wd(
-        heterogeneous_inflow_config_by_wd, wind_directions
-    )
-    assert result.shape[0] == num_wd
-
 
 def test_gen_heterogeneous_inflow_config():
     wind_directions = np.array([259.8, 260.2, 260.3, 260.1, 270.0])
-    wind_speeds = 8
+    wind_speeds = 8.0
     turbulence_intensities = 0.06
 
-    heterogeneous_inflow_config_by_wd = {
+    heterogeneous_map_config = {
         "speed_multipliers": np.array(
             [
                 [0.9, 0.9],
@@ -723,7 +686,7 @@ def test_gen_heterogeneous_inflow_config():
         wind_directions,
         wind_speeds,
         turbulence_intensities=turbulence_intensities,
-        heterogeneous_inflow_config_by_wd=heterogeneous_inflow_config_by_wd,
+        heterogeneous_map=heterogeneous_map_config,
     )
 
     (_, _, _, _, _, heterogeneous_inflow_config) = time_series.unpack()
@@ -731,9 +694,111 @@ def test_gen_heterogeneous_inflow_config():
     expected_result = np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.1, 1.2]])
     np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
     np.testing.assert_allclose(
-        heterogeneous_inflow_config["x"], heterogeneous_inflow_config_by_wd["x"]
+        heterogeneous_inflow_config["x"], heterogeneous_inflow_config["x"]
     )
 
+
+def test_heterogeneous_inflow_config_by_wd():
+    # Show that passing the config dict to the old heterogeneous_inflow_config_by_wd input
+    # is equivalent to passing it to the heterogeneous_map input
+
+    wind_directions = np.array([250.0, 260.0])
+    wind_speeds = np.array([8.0])
+
+    heterogeneous_map_config = {
+        "speed_multipliers": np.array(
+            [
+                [0.9, 0.9],
+                [1.0, 1.0],
+                [1.1, 1.2],
+            ]
+        ),
+        "wind_directions": np.array([250, 260, 270]),
+        "x": np.array([0, 1000]),
+        "y": np.array([0, 0]),
+    }
+
+    # Using heterogeneous_map input
+    time_series = WindRose(
+        wind_directions,
+        wind_speeds,
+        ti_table=0.06,
+        heterogeneous_map=heterogeneous_map_config,
+    )
+
+    (_, _, _, _, _, heterogeneous_inflow_config_a) = time_series.unpack()
+
+    # Using heterogeneous_inflow_config_by_wd input
+    time_series = WindRose(
+        wind_directions,
+        wind_speeds,
+        ti_table=0.06,
+        heterogeneous_inflow_config_by_wd=heterogeneous_map_config,
+    )
+
+    (_, _, _, _, _, heterogeneous_inflow_config_b) = time_series.unpack()
+
+    np.testing.assert_allclose(
+        heterogeneous_inflow_config_a["speed_multipliers"],
+        heterogeneous_inflow_config_b["speed_multipliers"],
+    )
+
+
+def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds():
+    heterogeneous_map_config = {
+        "speed_multipliers": np.array(
+            [
+                [0.9, 0.9],
+                [1.0, 1.0],
+                [1.1, 1.2],
+                [1.2, 1.3]
+            ]
+        ),
+        "wind_directions": np.array([250, 260, 250, 260]),
+        "wind_speeds": np.array([5, 5, 10, 10]),
+        "x": np.array([0, 1000]),
+        "y": np.array([0, 0]),
+    }
+
+    time_series = TimeSeries(
+        wind_directions = np.array([259.8, 260.2, 260.3, 260.1, 200.0]),
+        wind_speeds = np.array([4, 9, 4, 9, 4]),
+        turbulence_intensities=0.06,
+        heterogeneous_map=heterogeneous_map_config,
+    )
+
+    (_, _, _, _, _, heterogeneous_inflow_config) = time_series.unpack()
+
+    expected_result = np.array([[1.0, 1.0],[1.2, 1.3],[1.0, 1.0],[1.2, 1.3],[0.9, 0.9]])
+    np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
+
+def test_gen_heterogeneous_inflow_config_with_wind_directions_and_wind_speeds_wind_rose():
+    heterogeneous_map_config = {
+        "speed_multipliers": np.array(
+            [
+                [0.9, 0.9],
+                [1.0, 1.0],
+                [1.1, 1.2],
+                [1.2, 1.3]
+            ]
+        ),
+        "wind_directions": np.array([250, 260, 250, 260]),
+        "wind_speeds": np.array([5, 5, 10, 10]),
+        "x": np.array([0, 1000]),
+        "y": np.array([0, 0]),
+    }
+
+    wind_rose = WindRose(
+        wind_directions = np.array([250.0, 260.]),
+        wind_speeds = np.array([9.0]),
+        ti_table=0.06,
+        heterogeneous_map=heterogeneous_map_config,
+    )
+
+    (_, _, _, _, _, heterogeneous_inflow_config) = wind_rose.unpack()
+
+    expected_result = np.array([[1.1, 1.2], [1.2, 1.3]])
+    np.testing.assert_allclose(heterogeneous_inflow_config["speed_multipliers"], expected_result)
 
 def test_read_csv_long():
     # Read in the wind rose data from the csv file

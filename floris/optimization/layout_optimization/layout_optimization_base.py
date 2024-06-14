@@ -1,7 +1,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from shapely.geometry import LineString, Polygon
+from shapely.geometry import MultiPolygon, Polygon
 
 from floris import TimeSeries
 from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
@@ -45,13 +45,28 @@ class LayoutOptimization(LoggingManager):
         self.enable_geometric_yaw = enable_geometric_yaw
         self.use_value = use_value
 
-        self._boundary_polygon = Polygon(self.boundaries)
-        self._boundary_line = LineString(self.boundaries)
+        # Allow boundaries to be set either as a list of corners or as a
+        # nested list of corners (for seperable regions)
+        self.boundaries = boundaries
+        b_depth = list_depth(boundaries)
 
-        self.xmin = np.min([tup[0] for tup in boundaries])
-        self.xmax = np.max([tup[0] for tup in boundaries])
-        self.ymin = np.min([tup[1] for tup in boundaries])
-        self.ymax = np.max([tup[1] for tup in boundaries])
+        boundary_specification_error_msg = (
+            "boundaries should be a list of coordinates (specifed as (x,y) "+\
+            "tuples) or as a list of list of tuples (for seperable regions)."
+        )
+
+        if b_depth == 1:
+            self._boundary_polygon = MultiPolygon([Polygon(self.boundaries)])
+            self._boundary_line = self._boundary_polygon.boundary
+        elif b_depth == 2:
+            if not isinstance(self.boundaries[0][0], tuple):
+                raise TypeError(boundary_specification_error_msg)
+            self._boundary_polygon = MultiPolygon([Polygon(p) for p in self.boundaries])
+            self._boundary_line = self._boundary_polygon.boundary
+        else:
+            raise TypeError(boundary_specification_error_msg)
+
+        self.xmin, self.ymin, self.xmax, self.ymax = self._boundary_polygon.bounds
 
         # If no minimum distance is provided, assume a value of 2 rotor diameters
         if min_dist is None:
@@ -115,35 +130,105 @@ class LayoutOptimization(LoggingManager):
         sol = self._optimize()
         return sol
 
-    def plot_layout_opt_results(self):
+    def plot_layout_opt_results(self, plot_boundary_dict={}, ax=None, fontsize=16):
+
         x_initial, y_initial, x_opt, y_opt = self._get_initial_and_final_locs()
 
-        plt.figure(figsize=(9, 6))
-        fontsize = 16
-        plt.plot(x_initial, y_initial, "ob")
-        plt.plot(x_opt, y_opt, "or")
-        # plt.title('Layout Optimization Results', fontsize=fontsize)
-        plt.xlabel("x (m)", fontsize=fontsize)
-        plt.ylabel("y (m)", fontsize=fontsize)
-        plt.axis("equal")
-        plt.grid()
-        plt.tick_params(which="both", labelsize=fontsize)
-        plt.legend(
-            ["Old locations", "New locations"],
+        # Generate axis, if needed
+        if ax is None:
+            fig = plt.figure(figsize=(9,6))
+            ax = fig.add_subplot(111)
+            ax.set_aspect("equal")
+
+        default_plot_boundary_dict = {
+            "color":"None",
+            "alpha":1,
+            "edgecolor":"b",
+            "linewidth":2
+        }
+        plot_boundary_dict = {**default_plot_boundary_dict, **plot_boundary_dict}
+
+        self.plot_layout_opt_boundary(plot_boundary_dict, ax=ax)
+        ax.plot(x_initial, y_initial, "ob", label="Initial locations")
+        ax.plot(x_opt, y_opt, "or", label="New locations")
+        ax.set_xlabel("x (m)", fontsize=fontsize)
+        ax.set_ylabel("y (m)", fontsize=fontsize)
+        ax.grid(True)
+        ax.tick_params(which="both", labelsize=fontsize)
+        ax.legend(
             loc="lower center",
             bbox_to_anchor=(0.5, 1.01),
             ncol=2,
             fontsize=fontsize,
         )
 
-        verts = self.boundaries
-        for i in range(len(verts)):
-            if i == len(verts) - 1:
-                plt.plot([verts[i][0], verts[0][0]], [verts[i][1], verts[0][1]], "b")
-            else:
-                plt.plot(
-                    [verts[i][0], verts[i + 1][0]], [verts[i][1], verts[i + 1][1]], "b"
+        return ax
+
+    def plot_layout_opt_boundary(self, plot_boundary_dict={}, ax=None):
+
+        # Generate axis, if needed
+        if ax is None:
+            fig = plt.figure(figsize=(9,6))
+            ax = fig.add_subplot(111)
+            ax.set_aspect("equal")
+
+        default_plot_boundary_dict = {
+            "color":"k",
+            "alpha":0.1,
+            "edgecolor":None
+        }
+
+        plot_boundary_dict = {**default_plot_boundary_dict, **plot_boundary_dict}
+
+        for line in self._boundary_line.geoms:
+            xy = np.array(line.coords)
+            ax.fill(xy[:,0], xy[:,1], **plot_boundary_dict)
+        ax.grid(True)
+
+        return ax
+
+    def plot_progress(self, ax=None):
+
+        if not hasattr(self, "objective_candidate_log"):
+            raise NotImplementedError(
+                "plot_progress not yet configured for "+self.__class__.__name__
+            )
+
+        if ax is None:
+            _, ax = plt.subplots(1,1)
+
+        objective_log_array = np.array(self.objective_candidate_log)
+
+        if len(objective_log_array.shape) == 1: # Just one AEP candidate per step
+            ax.plot(np.arange(len(objective_log_array)), objective_log_array, color="k")
+        elif len(objective_log_array.shape) == 2: # Multiple AEP candidates per step
+            for i in range(objective_log_array.shape[1]):
+                ax.plot(
+                    np.arange(len(objective_log_array)),
+                    objective_log_array[:,i],
+                    color="lightgray"
                 )
+
+        ax.scatter(
+            np.zeros(objective_log_array.shape[1]),
+            objective_log_array[0,:],
+            color="b",
+            label="Initial"
+        )
+        ax.scatter(
+            objective_log_array.shape[0]-1,
+            objective_log_array[-1,:].max(),
+            color="r",
+            label="Final"
+        )
+
+        # Plot aesthetics
+        ax.grid(True)
+        ax.set_xlabel("Optimization step [-]")
+        ax.set_ylabel("Objective function")
+        ax.legend()
+
+        return ax
 
 
     ###########################################################################
@@ -165,3 +250,11 @@ class LayoutOptimization(LoggingManager):
     @property
     def rotor_diameter(self):
         return self.fmodel.core.farm.rotor_diameters_sorted[0][0]
+
+# Helper functions
+
+def list_depth(x):
+    if isinstance(x, list) and len(x) > 0:
+        return 1 + max(list_depth(item) for item in x)
+    else:
+        return 0
