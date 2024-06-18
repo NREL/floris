@@ -95,9 +95,9 @@ class FlorisModel(LoggingManager):
             (np.abs(self.core.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6
         )):
             err_msg = (
-                "The only unique hub-height is not the equal to the specified reference "
+                "The only unique hub-height is not equal to the specified reference "
                 "wind height. If this was unintended use -1 as the reference hub height to "
-                " indicate use of hub-height as reference wind height."
+                "indicate use of hub-height as reference wind height."
             )
             self.logger.warning(err_msg, stack_info=True)
 
