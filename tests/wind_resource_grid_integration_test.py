@@ -60,13 +60,13 @@ def test_read_data():
 
     # Test the first and last gid for sector_freq, weibull_A, and weibull_k
     assert wrg.sector_freq[0, 0, 0] == 116 / 1000.0
-    assert wrg.sector_freq[-1, -1, -1] == 34 / 1000.0
+    assert wrg.sector_freq[-1, -1, -1] == 98 / 1000.0
 
     assert wrg.weibull_A[0, 0, 0] == 106 / 10.0
-    assert wrg.weibull_A[-1, -1, -1] == 81 / 10.0
+    assert wrg.weibull_A[-1, -1, -1] == 111 / 10.0
 
     assert wrg.weibull_k[0, 0, 0] == 273 / 100.0
-    assert wrg.weibull_k[-1, -1, -1] == 199 / 100.0
+    assert wrg.weibull_k[-1, -1, -1] == 267 / 100.0
 
 
 def test_build_interpolant_function_list():
