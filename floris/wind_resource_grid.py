@@ -1,7 +1,14 @@
+import copy
+
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
 
-from floris import WindRose, WindRoseByTurbine
+from floris import (
+    HeterogeneousMap,
+    TimeSeries,
+    WindRose,
+    WindRoseByTurbine,
+)
 from floris.logging_manager import LoggingManager
 
 
@@ -88,6 +95,11 @@ class WindResourceGrid(LoggingManager):
                 weibull_k_gid[gid, sector] = (
                     float(line[80 + sector * 13 : 85 + sector * 13]) / 100.0
                 )
+        # Save the x_gid and y_gid form for iteration in het map
+        self.x_gid = x_gid
+        self.y_gid = y_gid
+        self.weibull_A_gid = weibull_A_gid
+        self.weibull_k_gid = weibull_k_gid
 
         # Save a single value of z and h for the entire grid
         self.z = z_gid[0]
@@ -326,3 +338,70 @@ class WindResourceGrid(LoggingManager):
             wind_roses.append(wind_rose)
 
         return WindRoseByTurbine(layout_x=layout_x, layout_y=layout_y, wind_roses=wind_roses)
+
+    def get_heterogeneous_map(
+        self,
+        fmodel,
+        wind_speeds=np.arange(0.0, 25.0, 1.0),
+        gid_norm_index=0,
+    ):
+        """
+        Get the heterogeneous map at each location in the grid, with the speeds ups
+        defined relative the location indicated by gid_norm_index.
+
+        Args:
+            fmodel (FlorisModel): The FlorisModel object to use to generate the power curve.
+            wind_speeds (np.array): The wind speeds to calculate the frequencies for.
+                Default is np.arange(0.0, 25.0, 1.0).
+            gid_norm_index (int): The index of the turbine to normalize the speed ups to.
+                Default is 0.
+
+        Returns:
+            HeterogeneousMap: The heterogeneous map object.
+        """
+        # Get a local copy
+        fm = copy.deepcopy(fmodel)
+
+        # Get the power curve for the turbine
+        fm.set(
+            layout_x=[0],
+            layout_y=[0],
+            wind_data=TimeSeries(
+                wind_speeds=wind_speeds,
+                wind_directions=270.0,
+                turbulence_intensities=0.06,
+            ),
+        )
+        fm.run()
+        turbine_power = fm.get_turbine_powers().flatten()
+
+        speed_multipliers = np.zeros((self.n_sectors, self.n_gid))
+
+        for direction_sector in range(self.n_sectors):
+            for gid in range(self.n_gid):
+                # self.weibull_A[x_idx, y_idx, :]
+                _, freq = self._generate_wind_speed_frequencies_from_weibull(
+                    self.weibull_A_gid[gid, direction_sector],
+                    self.weibull_k_gid[gid, direction_sector],
+                    wind_speeds=wind_speeds,
+                )
+
+                # Record the expected power
+                speed_multipliers[direction_sector, gid] = np.sum(turbine_power * freq)
+
+            # Normalize the speed ups
+            speed_multipliers[direction_sector, :] = (
+                speed_multipliers[direction_sector, :]
+                / speed_multipliers[direction_sector, gid_norm_index]
+            )
+
+        # Take the cube root of the speed ups to place in the frame of wind speed ups
+        speed_multipliers = np.cbrt(speed_multipliers)
+
+        # Create the heterogeneous map
+        return HeterogeneousMap(
+            x=self.x_gid,
+            y=self.y_gid,
+            wind_directions=self.wind_directions,
+            speed_multipliers=speed_multipliers,
+        )
