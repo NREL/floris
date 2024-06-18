@@ -1,6 +1,7 @@
 """Example: Wind Rose By Turbine With Layout Optimization
 
-To Be Written
+Perform a layout optimization using a random search algorithm and the WindRoseByTurbine.  This
+optimization will be repeated in the next example using a HeterogeneousMap.
 
 """
 
@@ -23,7 +24,7 @@ if __name__ == '__main__':
 
     # Select and initial layout
     layout_x = np.array([0,0])
-    layout_y = np.array([100,200])
+    layout_y = np.array([1500,1800])
 
     # Define an optimization boundary within the grid
     boundaries = [(0.0, 0.0), (1000.0, 1000.0), (0.0, 2000.0), (0.0, 0.0)]
