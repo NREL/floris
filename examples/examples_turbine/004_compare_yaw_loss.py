@@ -66,6 +66,7 @@ linestyles = ["solid", "dashed", "dotted"]
 for wsp, ax in zip(wind_speeds, axes):
     ax.set_title(f"wsp: {wsp} m/s")
     ax.set_xlabel("Yaw angle [deg]")
+    ax.grid(True)
     for op_model, c, ls in zip(op_models, colors, linestyles):
 
         upstream_yaw_angle = yaw_angles[:, 0]
