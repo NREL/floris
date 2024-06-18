@@ -5,6 +5,8 @@ This example illustrates how to define different operational models and compares
 the power loss resulting from yaw misalignment across these various models.
 """
 
+import itertools
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -21,13 +23,8 @@ yaw_angles[:, 0] = np.linspace(-yaw_max, yaw_max, N)
 print(yaw_angles.shape)
 
 
-# Loop over the operational models to compare
-op_models = ["cosine-loss", "mit-loss"]
-results = {}
-
-for op_model in op_models:
-
-    print(f"Evaluating model: {op_model}")
+def evaluate_yawed_power(wsp: float, op_model: str) -> float:
+    print(f"Evaluating model: {op_model}   wind speed: {wsp} m/s")
 
     # Grab model of FLORIS
     fmodel = FlorisModel("../inputs/gch.yaml")
@@ -36,7 +33,7 @@ for op_model in op_models:
     wind_directions = np.ones(N) * 270.0
     fmodel.set(
         wind_data=TimeSeries(
-            wind_speeds=11.5,
+            wind_speeds=wsp,
             wind_directions=wind_directions,
             turbulence_intensities=0.06,
         )
@@ -50,27 +47,40 @@ for op_model in op_models:
     fmodel.run()
 
     # Save the power output results in kW
-    results[op_model] = fmodel.get_turbine_powers()[:, 0] / 1000
+    return fmodel.get_turbine_powers()[:, 0] / 1000
 
+
+# Loop over the operational models and wind speeds to compare
+op_models = ["simple", "cosine-loss", "mit-loss"]
+wind_speeds = [11.0, 11.5, 15.0]
+results = {}
+for op_model, wsp in itertools.product(op_models, wind_speeds):
+
+    # Save the power output results in kW
+    results[(op_model, wsp)] = evaluate_yawed_power(wsp, op_model)
 # Plot the results
-fig, ax = plt.subplots()
+fig, axes = plt.subplots(1, len(wind_speeds), sharey=True)
 
 colors = ["C0", "k", "r"]
 linestyles = ["solid", "dashed", "dotted"]
-for key, c, ls in zip(results, colors, linestyles):
-    upstream_yaw_angle = yaw_angles[:, 0]
-    central_power = results[key][upstream_yaw_angle == 0]
-    ax.plot(
-        upstream_yaw_angle,
-        results[key] / central_power,
-        label=key,
-        color=c,
-        linestyle=ls,
-    )
+for wsp, ax in zip(wind_speeds, axes):
+    ax.set_title(f"wsp: {wsp} m/s")
+    ax.set_xlabel("Yaw angle [deg]")
+    for op_model, c, ls in zip(op_models, colors, linestyles):
+
+        upstream_yaw_angle = yaw_angles[:, 0]
+        central_power = results[(op_model, wsp)][upstream_yaw_angle == 0]
+        ax.plot(
+            upstream_yaw_angle,
+            results[(op_model, wsp)] / central_power,
+            label=op_model,
+            color=c,
+            linestyle=ls,
+        )
 
 ax.grid(True)
 ax.legend()
-ax.set_xlabel("Yaw angle [deg]")
-ax.set_ylabel("Normalized turbine power [deg]")
+axes[0].set_xlabel("Yaw angle [deg]")
+axes[0].set_ylabel("Normalized turbine power [-]")
 
 plt.show()
