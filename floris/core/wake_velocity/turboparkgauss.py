@@ -32,6 +32,14 @@ from floris.utilities import (
 
 @define
 class TurboparkgaussVelocityDeficit(BaseModel):
+    """
+    Model based on the TurbOPark model with Gaussian wake profile.
+    For model details see:
+    Pedersen J G, Svensen E, Poulsen L, and Nygaard N G. "Turbulence Optimized
+    Park model with Gaussian wake profile." Journal of Physics: Conference
+    Series. Vol. 2265. No. 022063. IOP Publishing, 2020.
+    doi:10.1088/1742-6596/2265/2/022063
+    """
 
     A: float = field(default=0.04)
     sigma_max_rel: float = field(default=4.0)
@@ -91,16 +99,18 @@ class TurboparkgaussVelocityDeficit(BaseModel):
         C = 1 - np.sqrt(np.clip(1 - ct_i / (8 * (sigma / rotor_diameter_i) ** 2), 0.0, 1.0))
 
         r_dist = np.sqrt((y - y_i) ** 2 + (z - z_i) ** 2)
-        r_dist_image = np.sqrt((y - y_i) ** 2 + (z - 3*z_i) ** 2)
 
         # Compute deficit for all turbines and mask to keep upstream and overlapping turbines
-        # NOTE self.sigma_max_rel * sigma is an effective wake width
-        is_overlapping = (self.sigma_max_rel * sigma) / 2 + rotor_diameter_i / 2 > r_dist
-        wtg_overlapping = (x_dist > 0) * is_overlapping
+        # self.sigma_max_rel * sigma is effectively the wake width (0.006% of mass outside of this)
+        wtg_overlapping = (
+            ((self.sigma_max_rel * sigma) / 2 + rotor_diameter_i / 2 > r_dist)
+            & (x_dist > 0)
+        )
 
         # Compute deficits for real turbines and for mirrored (image) turbines
         delta_real  = wtg_overlapping * gaussian_function(C, r_dist, 2, sigma)
         if include_mirror_wake:
+            r_dist_image = np.sqrt((y - y_i) ** 2 + (z - 3*z_i) ** 2)
             delta_image = wtg_overlapping * gaussian_function(C, r_dist_image, 2, sigma)
             delta = np.hypot(delta_real, delta_image)
         else: # No mirror wakes
@@ -124,6 +134,8 @@ def characteristic_wake_width(x_D, ambient_TI, Cts, A):
     # Term for the initial width at the turbine location (denoted epsilon in Pedersen et al.)
     # Is this 0.25 also an empirical parameter? Check B & PA?
     # MS TODO: why is np.min needed here? What is that doing?
+    # -> Carry-over from existing implementation.
+    # -> Takes the minimum over all of the findices---this seems bad? Check with CB
     initial_width = 0.25 * np.sqrt( np.min( 0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts) ) )
 
     # Term for the added width downstream of the turbine
