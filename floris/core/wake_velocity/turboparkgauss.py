@@ -82,8 +82,8 @@ class TurboparkgaussVelocityDeficit(BaseModel):
 
         # Characteristic wake widths from all turbines relative to turbine i
         sigma = characteristic_wake_width(
-            x_dist, rotor_diameter_i, turbulence_intensity_i, ct_i, self.A
-        )
+            x_dist, turbulence_intensity_i, ct_i, self.A
+        ) * rotor_diameter_i
 
         # Peak wake deficits
         val = np.clip(1 - ct_i / (8 * (sigma / rotor_diameter_i) ** 2), 0.0, 1.0)
@@ -112,29 +112,34 @@ class TurboparkgaussVelocityDeficit(BaseModel):
         return velocity_deficit
 
 
-def characteristic_wake_width(x_dist, D, TI, Cts, A):
+def characteristic_wake_width(x_D, ambient_TI, Cts, A):
     # Parameter values taken from S. T. Frandsen, “Risø-R-1188(EN) Turbulence
     # and turbulence generated structural loading in wind turbine clusters”
     # Risø, Roskilde, Denmark, 2007.
-    c1 = 1.5
+    c1 = 1.5 # Should these be exposed at the top level? Probably?
     c2 = 0.8
 
-    alpha = TI * c1
-    beta = c2 * TI / np.sqrt(Cts)
+    alpha = ambient_TI * c1
+    beta = c2 * ambient_TI / np.sqrt(Cts)
 
-    dw = A * TI / beta * (
-        np.sqrt((alpha + beta * x_dist) ** 2 + 1)
+    # Term for the initial width at the turbine location (denoted epsilon in Pedersen et al.)
+    # Is this 0.25 also an empirical parameter? Check B & PA?
+    # MS TODO: why is np.min needed here? What is that doing?
+    initial_width = 0.25 * np.sqrt( np.min( 0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts) ) )
+
+    # Term for the added width downstream of the turbine
+    added_width = A * ambient_TI / beta * (
+        np.sqrt((alpha + beta * x_D) ** 2 + 1)
         - np.sqrt(1 + alpha ** 2)
         - np.log(
-            ((np.sqrt((alpha + beta * x_dist) ** 2 + 1) + 1) * alpha)
-            / ((np.sqrt(1 + alpha ** 2) + 1) * (alpha + beta * x_dist))
+            ((np.sqrt((alpha + beta * x_D) ** 2 + 1) + 1) * alpha)
+            / ((np.sqrt(1 + alpha ** 2) + 1) * (alpha + beta * x_D))
         )
     )
 
-    epsilon = 0.25 * np.sqrt( np.min( 0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts) ) )
-    sigma = D * (epsilon + dw)
+    sigma_w_D = initial_width + added_width
 
-    return sigma
+    return sigma_w_D
 
 
 def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine_yaw):
