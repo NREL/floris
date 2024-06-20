@@ -23,6 +23,7 @@ from floris.core import (
     Grid,
     Turbine,
 )
+from floris.core.wake_velocity.gauss import gaussian_function
 from floris.utilities import (
     cosd,
     sind,
@@ -151,14 +152,3 @@ def characteristic_wake_width(x_D, ambient_TI, Cts, A):
     sigma_w_D = initial_width + added_width
 
     return sigma_w_D
-
-
-def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine_yaw):
-    yR = mesh_y_rotated - y_coord_rotated
-    xR = yR * tand(turbine_yaw) + x_coord_rotated
-    return xR, yR
-
-
-def gaussian_function(C, r, n, sigma):
-    result = ne.evaluate("C * exp(-1 * r ** n / (2 * sigma ** 2))")
-    return result
