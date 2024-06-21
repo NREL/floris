@@ -1,9 +1,7 @@
-import copy
+import math
 from pathlib import Path
 
 import numpy as np
-import pytest
-from scipy.optimize import curve_fit
 
 from floris import WindRoseWRG
 
@@ -156,7 +154,7 @@ def test_generate_wind_speed_frequencies_from_weibull():
 
     # Test that the mean value matches theory
     mean_value = np.sum(wind_speeds * freq)
-    assert np.allclose(mean_value, A_test * np.math.gamma(1 + 1 / k_test), rtol=0.1)
+    assert np.allclose(mean_value, A_test * math.gamma(1 + 1 / k_test), rtol=0.1)
 
 
 def test_get_wind_rose_at_point():

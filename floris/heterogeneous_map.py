@@ -156,9 +156,11 @@ class HeterogeneousMap(LoggingManager):
             num_dim = 3
 
         # Make a pandas dataframe of the data
-        df = pd.DataFrame(data=self.speed_multipliers,
-                          index=self.wind_directions,
-                          columns=list(range(len(self.x))))
+        df = pd.DataFrame(
+            data=self.speed_multipliers,
+            index=self.wind_directions,
+            columns=list(range(len(self.x)))
+        )
 
         return (
             f"HeterogeneousMap with {num_dim} dimensions\n"
