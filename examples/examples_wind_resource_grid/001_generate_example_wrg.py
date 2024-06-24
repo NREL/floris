@@ -222,9 +222,6 @@ with open("wrg_example.wrg", "w") as f:
         # Write the line to the file
         f.write(line + "\n")
 
-# Echo the file contents in this cell
-with open("wrg_example.wrg", "r") as f:
-    print(f.read())
 
 # Show the plots
 plt.show()
