@@ -59,7 +59,7 @@ turbine placement
 - Set up to run cheap constraint checks prior to more expensive objective function evaluations
 to accelerate optimization
 
-The algorithm, described in full in {cite:t}`SinnerFleming2024grs`, 
+The algorithm, described in full in {cite:t}`SinnerFleming2024grs`,
 moves a random turbine and random distance in a random direction; checks
 that constraints are satisfied; evaluates the objective function (AEP or value); and then
 commits to the move if there is an objective function improvement. The main tuning parameter
