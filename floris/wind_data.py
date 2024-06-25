@@ -623,7 +623,7 @@ class WindRose(WindDataBase):
             rects = []
             freq_table_sub = freq_table[wd_idx, :].flatten()
             for ws_idx, ws in reversed(list(enumerate(ws_bins))):
-                plot_val = freq_table_sub[: ws_idx + 1].sum()
+                plot_val = freq_table_sub[:ws_idx + 1].sum()
                 rects.append(
                     ax.bar(
                         np.radians(wd),
