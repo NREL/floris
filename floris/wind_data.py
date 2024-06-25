@@ -1457,7 +1457,7 @@ class WindTIRose(WindDataBase):
         color_map="viridis_r",
         wd_step=15.0,
         wind_rose_var_step=None,
-        legend_kwargs={},
+        legend_kwargs={"title": "Wind speed [m/s]"},
     ):
         """
         This method creates a wind rose plot showing the frequency of occurrence
@@ -1484,7 +1484,7 @@ class WindTIRose(WindDataBase):
                 will be used if wind_rose_var = "ws", and a value of 4% will be
                 used if wind_rose_var = "ti".
             legend_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.legend().
+                ax.legend(). Defaults to {"title": "Wind speed [m/s]"}.
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
