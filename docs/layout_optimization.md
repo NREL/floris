@@ -1,6 +1,6 @@
 
 (layout_optimization)=
-# Layout optimization
+# Layout Optimization
 
 The FLORIS package provides layout optimization tools to place turbines within a specified
 boundary area to optimize annual energy production (AEP) or wind plant value. Layout
@@ -59,8 +59,8 @@ turbine placement
 - Set up to run cheap constraint checks prior to more expensive objective function evaluations
 to accelerate optimization
 
-The algorithm, described in full in an upcoming paper that will be linked here when it is
-publicly available, moves a random turbine and random distance in a random direction; checks
+The algorithm, described in full in {cite:t}`SinnerFleming2024grs`, 
+moves a random turbine and random distance in a random direction; checks
 that constraints are satisfied; evaluates the objective function (AEP or value); and then
 commits to the move if there is an objective function improvement. The main tuning parameter
 is the probability mass function for the random movement distance, which is a dictionary to be
