@@ -610,7 +610,11 @@ class WindRose(WindDataBase):
 
         # Get the wd_step
         if wd_step is None:
-            wd_step = wd_bins[1] - wd_bins[0]
+            if len(wd_bins) >= 2:
+                wd_step = wd_bins[1] - wd_bins[0]
+            else:
+                # This admittedly an odd edge case
+                wd_step = 360.0
 
         # Get a color array
         color_array = plt.get_cmap(color_map, len(ws_bins))
@@ -619,7 +623,7 @@ class WindRose(WindDataBase):
             rects = []
             freq_table_sub = freq_table[wd_idx, :].flatten()
             for ws_idx, ws in reversed(list(enumerate(ws_bins))):
-                plot_val = freq_table_sub[:ws_idx].sum()
+                plot_val = freq_table_sub[: ws_idx + 1].sum()
                 rects.append(
                     ax.bar(
                         np.radians(wd),
