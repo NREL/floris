@@ -41,7 +41,7 @@ from floris.wind_data import (
     TimeSeries,
     WindDataBase,
     WindRose,
-    WindRoseByTurbine,
+    WindRoseWRG,
     WindTIRose,
 )
 
@@ -533,7 +533,7 @@ class FlorisModel(LoggingManager):
         turbine_powers = self._get_turbine_powers()
 
         if self.wind_data is not None:
-            if isinstance(self.wind_data, (WindRose, WindRoseByTurbine)):
+            if isinstance(self.wind_data, (WindRose, WindRoseWRG)):
                 turbine_powers_rose = np.full(
                     (len(self.wind_data.wd_flat), self.core.farm.n_turbines),
                     np.nan
@@ -706,7 +706,7 @@ class FlorisModel(LoggingManager):
         farm_power = self._get_farm_power(turbine_weights, use_turbulence_correction)
 
         if self.wind_data is not None:
-            if isinstance(self.wind_data, (WindRose, WindRoseByTurbine)):
+            if isinstance(self.wind_data, (WindRose, WindRoseWRG)):
                 farm_power_rose = np.full(len(self.wind_data.wd_flat), np.nan)
                 farm_power_rose[self.wind_data.non_zero_freq_mask] = farm_power
                 farm_power = farm_power_rose.reshape(
@@ -814,7 +814,7 @@ class FlorisModel(LoggingManager):
         if (
             freq is None
             and not isinstance(self.wind_data, WindRose)
-            and not isinstance(self.wind_data, WindRoseByTurbine)
+            and not isinstance(self.wind_data, WindRoseWRG)
             and not isinstance(self.wind_data, WindTIRose)
         ):
             self.logger.warning(
@@ -949,7 +949,7 @@ class FlorisModel(LoggingManager):
         if (
             freq is None
             and not isinstance(self.wind_data, WindRose)
-            and not isinstance(self.wind_data, WindRoseByTurbine)
+            and not isinstance(self.wind_data, WindRoseWRG)
             and not isinstance(self.wind_data, WindTIRose)
         ):
             self.logger.warning(
