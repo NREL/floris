@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import inspect
 from abc import abstractmethod
 from pathlib import Path
@@ -9,10 +10,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas.api.types import CategoricalDtype
-from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
+from scipy.interpolate import (
+    LinearNDInterpolator,
+    NearestNDInterpolator,
+    RegularGridInterpolator,
+)
 
 from floris.heterogeneous_map import HeterogeneousMap
 from floris.type_dec import NDArrayFloat
+
+
+# from floris import WindResourceGrid
 
 
 class WindDataBase:
@@ -82,6 +90,17 @@ class WindDataBase:
                 raise ValueError("heterogeneous_inflow_config must contain a key 'x'")
             if "y" not in heterogeneous_inflow_config:
                 raise ValueError("heterogeneous_inflow_config must contain a key 'y'")
+
+    def set_layout(self, layout_x=None, layout_y=None, wind_speeds=None, fixed_ti_value=None):
+        """
+        Default implementation the explicitly does nothing.  Only WindData objects that depend
+        on layout need to implement this method.
+
+        Included so that FlorisModel can call this method on the WindData object when the layout
+        is updated.
+        """
+        # No operation performed
+        return None
 
 
 class WindRose(WindDataBase):
@@ -2409,79 +2428,362 @@ class TimeSeries(WindDataBase):
             self.heterogeneous_map,
         )
 
-
-class WindRoseByTurbine(WindDataBase):
-    """
-    The WindRoseByTurbine class is used to store wind rose data for each turbine.  This method
-    is meant to be used when the wind rose data is different for each turbine, such as stored in
-    WindResourceGrid.  The wind rose data is stored in a list of WindRose objects, one for each
-    turbine.
-
-    Args:
-        layout_x (NDArrayFloat): X-coordinates of the layout.
-        layout_y (NDArrayFloat): Y-coordinates of the layout.
-        wind_roses (List[WindRose]): List of WindRose objects, one for each turbine.
+class WindRoseWRG(WindDataBase):
     """
 
-    def __init__(
-        self,
-        layout_x: NDArrayFloat,
-        layout_y: NDArrayFloat,
-        wind_roses: List[WindRose],
-    ):
-        # Confirm that wind_roses is a length of at least 1 element
-        if len(wind_roses) < 1:
-            raise ValueError("wind_roses must have at least one element")
+    """
+    def __init__(self, filename):
 
-        # Confirm that layout_x, layout_y, and wind_roses are the same length
-        if len(layout_x) != len(layout_y):
-            raise ValueError("layout_x and layout_y must be the same length")
-        if len(layout_x) != len(wind_roses):
-            raise ValueError("layout_x/y and wind_roses must be the same length")
+        # Read in the WRG file
+        self.filename = filename
+        self.read_wrg_file(filename)
 
-        # Confirm that the wind_directions and wind_speeds within each wind_rose are the same
-        # for all wind_roses
-        wind_directions = wind_roses[0].wind_directions
-        wind_speeds = wind_roses[0].wind_speeds
+        # Initialize the layouts which will need to be specified
+        self.layout_x = None
+        self.layout_y = None
 
-        for wind_rose in wind_roses:
-            if not np.array_equal(wind_rose.wind_directions, wind_directions):
-                raise ValueError("wind_directions must be the same for all wind_roses")
-            if not np.array_equal(wind_rose.wind_speeds, wind_speeds):
-                raise ValueError("wind_speeds must be the same for all wind_roses")
+        # Initialize the wind_speeds to be None
+        # Note that wrg files define wind speeds via the Weibull A and k parameters
+        # and so which wind speeds to calculate is not explicit in the file
+        self.wind_speeds = None
 
-        # Save the layout and wind roses per turbine
-        self.layout_x = layout_x
-        self.layout_y = layout_y
+        # Initialize the flat arrays, these will depend on the specified wind speeds
+        self.wd_flat = None
+        self.ws_flat = None
+        self.non_zero_freq_mask = None
 
-        # Force that compute_zero_freq_occurrence is True for all wind roses in self.wind_roses
-        # Having some conditions not computed for some of the wind roses might cause misalignment
-        # so force computation of all combinations of wd/ws for all wind roses
-        self.wind_roses = []
-        for wind_rose in wind_roses:
-            self.wind_roses.append(
-                WindRose(
-                    wind_rose.wind_directions,
-                    wind_rose.wind_speeds,
-                    wind_rose.ti_table,
-                    wind_rose.freq_table,
-                    wind_rose.value_table,
-                    True,
-                    wind_rose.heterogeneous_map,
+    def read_wrg_file(self, filename):
+        """
+        Read the contents of a WRG file and store the data in the object.
+
+        Args:
+            filename (str): The name of the WRG file to read.
+
+        """
+
+        # Read the file into data
+        with open(filename, "r") as f:
+            data = f.readlines()
+
+        # Read the header
+        header = data[0].split()
+        self.nx = int(header[0])
+        self.ny = int(header[1])
+        self.xmin = float(header[2])
+        self.ymin = float(header[3])
+        self.grid_size = float(header[4])
+
+        # The grid of points is implied by the values above
+        self.x_array = np.arange(self.nx) * self.grid_size + self.xmin
+        self.y_array = np.arange(self.ny) * self.grid_size + self.ymin
+
+        # The number of grid points (n_gid) is the product of the number of points in x and y
+        self.n_gid = self.nx * self.ny
+
+        # Finally get the number of sectors from the first line after the header
+        self.n_sectors = int(data[1][70:72])
+
+        # The wind directions are implied by the number of sectors
+        self.wind_directions = np.arange(0.0, 360.0, 360.0 / self.n_sectors)
+
+        # Initialize the data arrays which have the same number of
+        # elements as the number of grid points
+        x_gid = np.zeros(self.n_gid)
+        y_gid = np.zeros(self.n_gid)
+        z_gid = np.zeros(self.n_gid)
+        h_gid = np.zeros(self.n_gid)
+
+        # Initialize the data arrays which are n_gid x n_sectors
+        sector_freq_gid = np.zeros((self.n_gid, self.n_sectors))
+        weibull_A_gid = np.zeros((self.n_gid, self.n_sectors))
+        weibull_k_gid = np.zeros((self.n_gid, self.n_sectors))
+
+        # Loop through the data and extract the values
+        for gid in range(self.n_gid):
+            line = data[1 + gid]
+            x_gid[gid] = float(line[10:20])
+            y_gid[gid] = float(line[20:30])
+            z_gid[gid] = float(line[30:38])
+            h_gid[gid] = float(line[38:43])
+
+            for sector in range(self.n_sectors):
+                # The frequency of the wind in this sector is in probablility * 1000
+                sector_freq_gid[gid, sector] = (
+                    float(line[72 + sector * 13 : 76 + sector * 13]) / 1000.0
+                )
+
+                # The A and k parameters are in the next 10 characters, with A stored * 10
+                # and k stored * 100
+                weibull_A_gid[gid, sector] = float(line[76 + sector * 13 : 80 + sector * 13]) / 10.0
+                weibull_k_gid[gid, sector] = (
+                    float(line[80 + sector * 13 : 85 + sector * 13]) / 100.0
+                )
+        # Save the x_gid and y_gid form for iteration in het map
+        self.x_gid = x_gid
+        self.y_gid = y_gid
+        self.weibull_A_gid = weibull_A_gid
+        self.weibull_k_gid = weibull_k_gid
+
+        # Save a single value of z and h for the entire grid
+        self.z = z_gid[0]
+        self.h = h_gid[0]
+
+        # Index the by sector data by x and y
+        self.sector_freq = np.zeros((self.nx, self.ny, self.n_sectors))
+        self.weibull_A = np.zeros((self.nx, self.ny, self.n_sectors))
+        self.weibull_k = np.zeros((self.nx, self.ny, self.n_sectors))
+
+        for x_idx, x in enumerate(self.x_array):
+            for y_idx, y in enumerate(self.y_array):
+                # Find the indices when x_gid and y_gid are equal to x and y
+                idx = np.where((x_gid == x) & (y_gid == y))[0]
+
+                # Assign the data to the correct location
+                self.sector_freq[x_idx, y_idx, :] = sector_freq_gid[idx, :]
+                self.weibull_A[x_idx, y_idx, :] = weibull_A_gid[idx, :]
+                self.weibull_k[x_idx, y_idx, :] = weibull_k_gid[idx, :]
+
+        # Build the interpolant function lists
+        self.interpolant_sector_freq = self._build_interpolant_function_list(
+            self.x_array, self.y_array, self.n_sectors, self.sector_freq
+        )
+        self.interpolant_weibull_A = self._build_interpolant_function_list(
+            self.x_array, self.y_array, self.n_sectors, self.weibull_A
+        )
+        self.interpolant_weibull_k = self._build_interpolant_function_list(
+            self.x_array, self.y_array, self.n_sectors, self.weibull_k
+        )
+
+    def __str__(self) -> str:
+        """
+        Return a string representation of the WindRose object
+        """
+
+        return (
+            f"WindResourceGrid with {self.nx} x {self.ny} grid points, "
+            f"min x: {self.xmin}, min y: {self.ymin}, grid size: {self.grid_size}, "
+            f"z: {self.z}, h: {self.h}, {self.n_sectors} sectors"
+        )
+
+    def _build_interpolant_function_list(self, x, y, n_sectors, data):
+        """
+        Build a list of interpolant functions for the data.  It is assumed that the function
+        should return a list of interpolant functions, length n_sectors.
+
+        Args:
+            x (np.array): The x values of the data, length nx.
+            y (np.array): The y values of the data, length ny.
+            n_sectors (int): The number of sectors.
+            data (np.array): The data to interpolate, shape (nx, ny, n_sectors).
+
+        Returns:
+            list: A list of interpolant functions, length n_sectors.
+        """
+
+        function_list = []
+
+        for sector in range(n_sectors):
+            function_list.append(
+                RegularGridInterpolator(
+                    (x, y),
+                    data[:, :, sector],
+                    bounds_error=False,
+                    fill_value=None,
                 )
             )
 
-        # Save the wind directions and wind speeds
-        self.wind_directions = wind_directions
-        self.wind_speeds = wind_speeds
+        return function_list
+
+    def _interpolate_data(self, x, y, interpolant_function_list):
+        """
+        Interpolate the data at a given x, y location using the interpolant function list.
+
+        Args:
+            x (float): The x location to interpolate.
+            y (float): The y location to interpolate.
+            interpolant_function_list (list): A list of interpolant functions.
+
+        Returns:
+            list: A list of interpolated data, length n_sectors.
+        """
+
+        # Check if x and y are within the bounds of the self.x_array and self.y_array, if
+        # so use the nearest method, otherwise use the linear method of interpolation
+        if (
+            x < self.x_array[0]
+            or x > self.x_array[-1]
+            or y < self.y_array[0]
+            or y > self.y_array[-1]
+        ):
+            method = "nearest"
+        else:
+            method = "linear"
+
+        result = np.zeros(self.n_sectors)
+        for sector in range(self.n_sectors):
+            result[sector] = interpolant_function_list[sector]((x, y), method=method)
+
+        return result
+
+
+    def _weibull_cumulative(self, x, a, k):
+        """
+        Calculate the Weibull cumulative distribution function.
+
+        Args:
+            x (np.array): The wind speed values.
+            a (np.array): The Weibull A parameter values.
+            k (np.array): The Weibull k parameter values.
+
+        Returns:
+            np.array: The cumulative distribution function values.
+        """
+
+        exponent = -((x / a) ** k)
+        result = 1.0 - np.exp(exponent)
+
+        # Where x is less than 0, the result should be 0
+        result[x < 0] = 0.0
+
+        return result
+
+        # Original code from PJ Stanley
+        # if x >= 0.0:
+        #     exponent = -(x / a) ** k
+        #     return 1.0 - np.exp(exponent)
+        # else:
+        #     return 0.0
+
+
+    def _generate_wind_speed_frequencies_from_weibull(self, A, k, wind_speeds=None):
+        """
+        Generate the wind speed frequencies from the Weibull parameters.  Use the
+        cumulative form of the function and calculate the probability of the wind speed
+        in a given bin via the difference in the cumulative function at the bin edges.
+        Args:
+
+            A (np.array): The Weibull A parameter.
+            k (np.array): The Weibull k parameter.
+            wind_speeds (np.array): The wind speeds to calculate the frequencies for.
+                If None, the frequencies are calculated for 0 to 25 m/s in 1 m/s increments.
+                Default is None.
+
+        Returns:
+            np.array: The wind speed frequencies.
+        """
+
+        if wind_speeds is None:
+            wind_speeds = np.arange(0.0, 25.0, 1.0)
+
+        # Define the wind speed edges
+        ws_step = wind_speeds[1] - wind_speeds[0]
+        wind_speed_edges = np.arange(
+            wind_speeds[0] - ws_step / 2, wind_speeds[-1] + ws_step, ws_step
+        )
+
+        # Get the cumulative distribution function at the edges
+        cdf_edges = self._weibull_cumulative(wind_speed_edges, A, k)
+
+        # The frequency is the difference in the cumulative distribution function
+        # at the edges
+        freq = cdf_edges[1:] - cdf_edges[:-1]
+
+        # Normalize the frequency
+        # TODO: This is perhaps not quite right, if the user only asks
+        # for wind speeds at say 8 and 10 m/s
+        # then the bins would be from 7 to 11 and so fairly there is
+        # distribution outside the range, but
+        # I think this is on the whole right -- PF
+        freq = freq / freq.sum()
+
+        return wind_speeds, freq
+
+    def get_wind_rose_at_point(self, x, y, wind_speeds=None, fixed_ti_value=0.06):
+        """
+        Get the wind rose at a given x, y location.  Interpolate the parameters to the point
+        and then generate the wind rose.
+
+        Args:
+            x (float): The x location to interpolate.
+            y (float): The y location to interpolate.
+            wind_speeds (np.array): The wind speeds to calculate the frequencies for.
+                If None, the frequencies are calculated for 0 to 25 m/s in 1 m/s increments.
+                Default is None.
+            fixed_ti_value (float): The fixed turbulence intensity value to use in the wind rose.
+                Default is 0.06.
+        """
+
+        if wind_speeds is None:
+            wind_speeds = np.arange(0.0, 25.0, 1.0)
+
+        # Get the interpolated data
+        sector_freq = self._interpolate_data(x, y, self.interpolant_sector_freq)
+        weibull_A = self._interpolate_data(x, y, self.interpolant_weibull_A)
+        weibull_k = self._interpolate_data(x, y, self.interpolant_weibull_k)
+
+        # Initialize the freq_table
+        freq_table = np.zeros((self.n_sectors, len(wind_speeds)))
+
+        # First fill in the rows of the table using the weibull distributions,
+        # weighted by the sector freq
+        for sector in range(self.n_sectors):
+            wind_speeds, freq = self._generate_wind_speed_frequencies_from_weibull(
+                weibull_A[sector], weibull_k[sector], wind_speeds=wind_speeds
+            )
+            freq_table[sector, :] = sector_freq[sector] * freq
+
+        # Normalize the table
+        freq_table = freq_table / freq_table.sum()
+
+        # Return the wind rose
+        return WindRose(
+            wind_directions=self.wind_directions,
+            wind_speeds=wind_speeds,
+            freq_table=freq_table,
+            ti_table=fixed_ti_value,
+            compute_zero_freq_occurrence=True,
+        )
+
+    def set_layout(self, layout_x, layout_y, wind_speeds=None, fixed_ti_value=0.06):
+        """
+        """
+        # Confirm that layout_x, layout_y, and wind_roses are the same length
+        if len(layout_x) != len(layout_y):
+            raise ValueError("layout_x and layout_y must be the same length")
+
+        # If the current layout is the same as the new layout, return
+        if np.allclose(np.array(layout_x), self.layout_x) \
+            and np.allclose(np.array(layout_y), self.layout_y):
+            return
+
+        # Save the layouts
+        self.layout_x = np.array(layout_x)
+        self.layout_y = np.array(layout_y)
+
+        if wind_speeds is None:
+            wind_speeds = np.arange(0.0, 25.0, 1.0)
+
+        # Initialize the list of wind roses
+        self.wind_roses = []
+
+        # Loop through the turbines and get the wind rose at each location
+        for i in range(len(layout_x)):
+            wind_rose = self.get_wind_rose_at_point(
+                layout_x[i], layout_y[i], wind_speeds=wind_speeds, fixed_ti_value=fixed_ti_value
+            )
+            self.wind_roses.append(wind_rose)
+
+        # Save the wind directions and the wind speeds from the first wind rose
+        # self.wind_directions = self.wind_roses[0].wind_directions
+        self.wind_speeds = self.wind_roses[0].wind_speeds
 
         # Save also the wd_flat and ws_flat from the first wind rose as this could be needed
         # for unpacking and non_zero_freq_mask
-        self.wd_flat = wind_roses[0].wd_flat
-        self.ws_flat = wind_roses[0].ws_flat
-        self.non_zero_freq_mask = wind_roses[0].non_zero_freq_mask
+        self.wd_flat = self.wind_roses[0].wd_flat
+        self.ws_flat = self.wind_roses[0].ws_flat
+        self.non_zero_freq_mask = self.wind_roses[0].non_zero_freq_mask
 
-        # Expose that
+
 
     def unpack(self):
         """
@@ -2494,8 +2796,11 @@ class WindRoseByTurbine(WindDataBase):
             Tuple: Tuple containing the unpacked wind rose data.
         """
 
+        if self.wd_flat is None:
+            raise ValueError("WindRoseByTurbine must be initialized to a layout before unpacking")
+
         # Initialize freq_table_unpack
-        freq_table_unpack = np.zeros((len(self.wind_roses[0].wd_flat), len(self.layout_x)))
+        freq_table_unpack = np.zeros((len(self.wd_flat), len(self.layout_x)))
 
         # Loop over remaining wind roses and stack freq_table_unpack
         for i, wind_rose in enumerate(self.wind_roses):
@@ -2534,9 +2839,12 @@ class WindRoseByTurbine(WindDataBase):
             ws_step (float, optional): Step size for wind speed. Defaults to None.
         """
 
+        if self.wd_flat is None:
+            raise ValueError("WindRoseByTurbine must be initialized to a layout before plotting")
+
         # If axarr is not defined, create a new figure
         if axarr is None:
-            fig, axarr = plt.subplots(1, len(self.wind_roses), subplot_kw={"polar": True})
+            _, axarr = plt.subplots(1, len(self.wind_roses), subplot_kw={"polar": True})
 
         # Test that axarr is the correct length
         if len(axarr) != len(self.wind_roses):
@@ -2546,3 +2854,71 @@ class WindRoseByTurbine(WindDataBase):
         for i, wind_rose in enumerate(self.wind_roses):
             wind_rose.plot(ax=axarr[i], wd_step=wd_step, ws_step=ws_step)
             axarr[i].set_title(f"Turbine {i}\n ({self.layout_x[i]:.1f}, {self.layout_y[i]:.1f})")
+
+
+    def get_heterogeneous_map(
+        self,
+        fmodel,
+        wind_speeds=np.arange(0.0, 25.0, 1.0),
+        gid_norm_index=0,
+    ):
+        """
+        Get the heterogeneous map at each location in the grid, with the speeds ups
+        defined relative the location indicated by gid_norm_index.
+
+        Args:
+            fmodel (FlorisModel): The FlorisModel object to use to generate the power curve.
+            wind_speeds (np.array): The wind speeds to calculate the frequencies for.
+                Default is np.arange(0.0, 25.0, 1.0).
+            gid_norm_index (int): The index of the turbine to normalize the speed ups to.
+                Default is 0.
+
+        Returns:
+            HeterogeneousMap: The heterogeneous map object.
+        """
+        # Get a local copy
+        fm = copy.deepcopy(fmodel)
+
+        # Get the power curve for the turbine
+        fm.set(
+            layout_x=[0],
+            layout_y=[0],
+            wind_data=TimeSeries(
+                wind_speeds=wind_speeds,
+                wind_directions=270.0,
+                turbulence_intensities=0.06,
+            ),
+        )
+        fm.run()
+        turbine_power = fm.get_turbine_powers().flatten()
+
+        speed_multipliers = np.zeros((self.n_sectors, self.n_gid))
+
+        for direction_sector in range(self.n_sectors):
+            for gid in range(self.n_gid):
+                # self.weibull_A[x_idx, y_idx, :]
+                _, freq = self._generate_wind_speed_frequencies_from_weibull(
+                    self.weibull_A_gid[gid, direction_sector],
+                    self.weibull_k_gid[gid, direction_sector],
+                    wind_speeds=wind_speeds,
+                )
+
+                # Record the expected power
+                speed_multipliers[direction_sector, gid] = np.sum(turbine_power * freq)
+
+            # Normalize the speed ups
+            speed_multipliers[direction_sector, :] = (
+                speed_multipliers[direction_sector, :]
+                / speed_multipliers[direction_sector, gid_norm_index]
+            )
+
+        # Take the cube root of the speed ups to place in the frame of wind speed ups
+        speed_multipliers = np.cbrt(speed_multipliers)
+
+        # Create the heterogeneous map
+        return HeterogeneousMap(
+            x=self.x_gid,
+            y=self.y_gid,
+            wind_directions=self.wind_directions,
+            speed_multipliers=speed_multipliers,
+        )
