@@ -140,7 +140,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         use_value=False,
     ):
         """
-        _summary_
+        Optimize layout using genetic random search algorithm. Details of the algorithm can be found
+        in Sinner and Fleming, 2024: https://dx.doi.org/10.1088/1742-6596/2767/3/032036
 
         Args:
             fmodel (_type_): _description_
