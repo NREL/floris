@@ -1523,7 +1523,7 @@ class WindTIRose(WindDataBase):
             rects = []
             freq_table_sub = freq_table[wd_idx, :].flatten()
             for var_idx, ws in reversed(list(enumerate(var_bins))):
-                plot_val = freq_table_sub[:var_idx].sum()
+                plot_val = freq_table_sub[:var_idx + 1].sum()
                 rects.append(
                     ax.bar(
                         np.radians(wd),
