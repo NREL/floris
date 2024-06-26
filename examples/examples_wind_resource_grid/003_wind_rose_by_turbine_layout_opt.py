@@ -29,8 +29,6 @@ if __name__ == "__main__":
     # Initialize the WindRoseWRG object with wind speeds every 2 m/s and fixed ti of 6%
     wind_rose_wrg = WindRoseWRG("wrg_example.wrg", wind_speeds=np.arange(0, 26, 2.0), ti_table=0.06)
 
-
-
     # Define an optimization boundary within the grid
     #  boundaries = [(0.0, 0.0), (1000.0, 0.0), (0.0, 2200.0), (0.0, 0.0)]
     width = 200.0  # You can adjust this value as needed
@@ -39,7 +37,7 @@ if __name__ == "__main__":
     # Select and initial layout in the corners of the boundary
     # layout_x = np.array([0, 1000])
     # layout_y = np.array([0, 2000])
-    layout_x = np.array([0, 1000-width])
+    layout_x = np.array([0, 1000 - width])
     layout_y = np.array([0, 2000])
 
     # Set up the FlorisModel
@@ -52,7 +50,7 @@ if __name__ == "__main__":
         boundaries,
         min_dist_D=5.0,
         seconds_per_iteration=15,
-        total_optimization_seconds=60.0,
+        total_optimization_seconds=15.0,
     )
 
     layout_opt.optimize()
@@ -67,18 +65,19 @@ if __name__ == "__main__":
         boundaries,
         min_dist_D=5.0,
         seconds_per_iteration=15,
-        total_optimization_seconds=60.0,
+        total_optimization_seconds=15.0,
     )
     layout_opt.optimize()
     _, _, x_opt_wr, y_opt_wr = layout_opt._get_initial_and_final_locs()
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     layout_opt.plot_layout_opt_boundary(ax=ax)
-    ax.plot(x_initial, y_initial, "ks", label="Initial Layout")
-    ax.plot(x_opt_wr, y_opt_wr, "bh", label="Optimized Layout (Single Wind Rose)")
-    ax.plot(x_opt_wrg, y_opt_wrg, "ro", label="Optimized Layout (WRG)")
+    ax.scatter(x_initial, y_initial, label="Initial Layout", s=60, color="k", marker="s")
+    ax.scatter(
+        x_opt_wr, y_opt_wr, label="Optimized Layout (Single Wind Rose)", s=40, color="b", marker="h"
+    )
+    ax.scatter(x_opt_wrg, y_opt_wrg, label="Optimized Layout (WRG)", s=20, color="r", marker="o")
     ax.legend()
-
 
     # layout_opt.plot_layout_opt_results()
 
