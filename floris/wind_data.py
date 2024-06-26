@@ -91,13 +91,17 @@ class WindDataBase:
             if "y" not in heterogeneous_inflow_config:
                 raise ValueError("heterogeneous_inflow_config must contain a key 'y'")
 
-    def set_layout(self, layout_x=None, layout_y=None, wind_speeds=None, fixed_ti_value=None):
+    def set_layout(self, layout_x=None, layout_y=None):
         """
         Default implementation the explicitly does nothing.  Only WindData objects that depend
         on layout need to implement this method.
 
         Included so that FlorisModel can call this method on the WindData object when the layout
         is updated.
+
+        Args:
+            layout_x (list, optional): List of x-coordinates of the turbines. Defaults to None.
+            layout_y (list, optional): List of y-coordinates of the turbines. Defaults to None.
         """
         # No operation performed
         return None
@@ -643,7 +647,7 @@ class WindRose(WindDataBase):
             rects = []
             freq_table_sub = freq_table[wd_idx, :].flatten()
             for ws_idx, ws in reversed(list(enumerate(ws_bins))):
-                plot_val = freq_table_sub[:ws_idx + 1].sum()
+                plot_val = freq_table_sub[: ws_idx + 1].sum()
                 rects.append(
                     ax.bar(
                         np.radians(wd),
@@ -1543,7 +1547,7 @@ class WindTIRose(WindDataBase):
             rects = []
             freq_table_sub = freq_table[wd_idx, :].flatten()
             for var_idx, ws in reversed(list(enumerate(var_bins))):
-                plot_val = freq_table_sub[:var_idx + 1].sum()
+                plot_val = freq_table_sub[: var_idx + 1].sum()
                 rects.append(
                     ax.bar(
                         np.radians(wd),
@@ -2432,12 +2436,33 @@ class TimeSeries(WindDataBase):
             self.heterogeneous_map,
         )
 
+
 class WindRoseWRG(WindDataBase):
     """
+    The WindRoseWRG class is a WindData object the represents a wind resource grid (WRG) file
+    to FLORIS.  As a WindData object it can be passed to the FlorisModel.set method.  A WRG file
+    represents a wind resource as a grid of points where each point has a separate wind rose define
+    by the frequency of each wind direction and the Weibull parameters for each wind direction.
+
+    WindRoseWRG objects are provided the layout of a wind farm and computes a wind rose at
+    each point in the layout.  The wind rose at each point is computed by interpolating the weibull
+    parameter in the WRG file to the point in the layout and using them to compute a WindRose
+    object.  Each WindRose object shares wind direction and wind speed, only the frequencies differ.
+
+    When running a FlorisModel with a WindRoseWRG object, most behaviors are the same
+    except functions which compute an expected value, use separate frequencies for each
+    turbine to weight the individual power bins.
+
+    Args:
+        filename (str): The name of the WRG file to read.
+        wind_speeds (NDArrayFloat, optional): Wind speeds to use in the wind rose. Defaults to
+            np.arange(0.0, 26.0, 1.0).
+        fixed_ti_value (float, optional): A fixed turbulence intensity value to use
+            in the wind rose.  Defaults to 0.06.
 
     """
-    def __init__(self, filename):
 
+    def __init__(self, filename, wind_speeds=np.arange(0.0, 26.0, 1.0), fixed_ti_value=0.06):
         # Read in the WRG file
         self.filename = filename
         self.read_wrg_file(filename)
@@ -2446,10 +2471,9 @@ class WindRoseWRG(WindDataBase):
         self.layout_x = None
         self.layout_y = None
 
-        # Initialize the wind_speeds to be None
-        # Note that wrg files define wind speeds via the Weibull A and k parameters
-        # and so which wind speeds to calculate is not explicit in the file
-        self.wind_speeds = None
+        # Save the wind speeds and fixed_ti_value
+        self.wind_speeds = wind_speeds
+        self.fixed_ti_value = fixed_ti_value
 
         # Initialize the flat arrays, these will depend on the specified wind speeds
         self.wd_flat = None
@@ -2629,7 +2653,6 @@ class WindRoseWRG(WindDataBase):
 
         return result
 
-
     def _weibull_cumulative(self, x, a, k):
         """
         Calculate the Weibull cumulative distribution function.
@@ -2657,7 +2680,6 @@ class WindRoseWRG(WindDataBase):
         #     return 1.0 - np.exp(exponent)
         # else:
         #     return 0.0
-
 
     def _generate_wind_speed_frequencies_from_weibull(self, A, k, wind_speeds=None):
         """
@@ -2718,7 +2740,7 @@ class WindRoseWRG(WindDataBase):
         """
 
         if wind_speeds is None:
-            wind_speeds = np.arange(0.0, 25.0, 1.0)
+            wind_speeds = np.arange(0.0, 26.0, 1.0)
 
         # Get the interpolated data
         sector_freq = self._interpolate_data(x, y, self.interpolant_sector_freq)
@@ -2748,46 +2770,79 @@ class WindRoseWRG(WindDataBase):
             compute_zero_freq_occurrence=True,
         )
 
-    def set_layout(self, layout_x, layout_y, wind_speeds=None, fixed_ti_value=0.06):
+    def set_wind_speeds(self, wind_speeds):
         """
+        Set the wind speeds for the WindRoseWRG object.
+
+        Args:
+            wind_speeds (np.array): The wind speeds to use for the wind roses.
         """
+
+        self.wind_speeds = wind_speeds
+
+        # Update the wind roses if the layout has been set
+        if self.layout_x is not None:
+            self._update_wind_roses()
+
+    def set_fixed_ti_value(self, fixed_ti_value):
+        """
+        Set the fixed turbulence intensity value for the WindRoseWRG object.
+
+        Args:
+            fixed_ti_value (float): The fixed turbulence intensity value to use in the wind roses.
+        """
+
+        self.fixed_ti_value = fixed_ti_value
+
+        # Update the wind roses if the layout has been set
+        if self.layout_x is not None:
+            self._update_wind_roses()
+
+    def set_layout(self, layout_x, layout_y):
+        """
+        Set the layout for the WindRoseWRG object.
+
+        Args:
+            layout_x (np.array): The x coordinates of the layout.
+            layout_y (np.array): The y coordinates of the layout.
+        """
+
         # Confirm that layout_x, layout_y, and wind_roses are the same length
         if len(layout_x) != len(layout_y):
             raise ValueError("layout_x and layout_y must be the same length")
 
         # If the current layout is the same as the new layout, return
-        if np.allclose(np.array(layout_x), self.layout_x) \
-            and np.allclose(np.array(layout_y), self.layout_y):
+        if np.allclose(np.array(layout_x), self.layout_x) and np.allclose(
+            np.array(layout_y), self.layout_y
+        ):
             return
 
         # Save the layouts
         self.layout_x = np.array(layout_x)
         self.layout_y = np.array(layout_y)
 
-        if wind_speeds is None:
-            wind_speeds = np.arange(0.0, 25.0, 1.0)
+        # Update the wind roses
+        self._update_wind_roses()
 
+    def _update_wind_roses(self):
         # Initialize the list of wind roses
         self.wind_roses = []
 
         # Loop through the turbines and get the wind rose at each location
-        for i in range(len(layout_x)):
+        for i in range(len(self.layout_x)):
             wind_rose = self.get_wind_rose_at_point(
-                layout_x[i], layout_y[i], wind_speeds=wind_speeds, fixed_ti_value=fixed_ti_value
+                self.layout_x[i],
+                self.layout_y[i],
+                wind_speeds=self.wind_speeds,
+                fixed_ti_value=self.fixed_ti_value,
             )
             self.wind_roses.append(wind_rose)
-
-        # Save the wind directions and the wind speeds from the first wind rose
-        # self.wind_directions = self.wind_roses[0].wind_directions
-        self.wind_speeds = self.wind_roses[0].wind_speeds
 
         # Save also the wd_flat and ws_flat from the first wind rose as this could be needed
         # for unpacking and non_zero_freq_mask
         self.wd_flat = self.wind_roses[0].wd_flat
         self.ws_flat = self.wind_roses[0].ws_flat
         self.non_zero_freq_mask = self.wind_roses[0].non_zero_freq_mask
-
-
 
     def unpack(self):
         """
@@ -2800,7 +2855,7 @@ class WindRoseWRG(WindDataBase):
             Tuple: Tuple containing the unpacked wind rose data.
         """
 
-        if self.wd_flat is None:
+        if self.layout_x is None:
             raise ValueError("WindRoseByTurbine must be initialized to a layout before unpacking")
 
         # Initialize freq_table_unpack
@@ -2843,7 +2898,7 @@ class WindRoseWRG(WindDataBase):
             ws_step (float, optional): Step size for wind speed. Defaults to None.
         """
 
-        if self.wd_flat is None:
+        if self.layout_x is None:
             raise ValueError("WindRoseByTurbine must be initialized to a layout before plotting")
 
         # If axarr is not defined, create a new figure
@@ -2858,7 +2913,6 @@ class WindRoseWRG(WindDataBase):
         for i, wind_rose in enumerate(self.wind_roses):
             wind_rose.plot(ax=axarr[i], wd_step=wd_step, ws_step=ws_step)
             axarr[i].set_title(f"Turbine {i}\n ({self.layout_x[i]:.1f}, {self.layout_y[i]:.1f})")
-
 
     def get_heterogeneous_map(
         self,
