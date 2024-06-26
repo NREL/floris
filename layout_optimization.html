@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Layout optimization &#8212; FLORIS</title>
+    <title>Layout Optimization &#8212; FLORIS</title>
   
   
   
@@ -204,11 +204,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wind_data_user.html">Wind Data Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">HeterogeneousMap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_models_user.html">Turbine Operation Models</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Layout optimization</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Layout Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -562,7 +562,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Layout optimization</h1>
+    <h1>Layout Optimization</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -587,7 +587,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="layout-optimization">
-<span id="id1"></span><h1>Layout optimization<a class="headerlink" href="#layout-optimization" title="Link to this heading">#</a></h1>
+<span id="id1"></span><h1>Layout Optimization<a class="headerlink" href="#layout-optimization" title="Link to this heading">#</a></h1>
 <p>The FLORIS package provides layout optimization tools to place turbines within a specified
 boundary area to optimize annual energy production (AEP) or wind plant value. Layout
 optimizers accept an instantiated <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> and alter the turbine layouts in order to
@@ -643,8 +643,8 @@ turbine placement</p></li>
 <li><p>Set up to run cheap constraint checks prior to more expensive objective function evaluations
 to accelerate optimization</p></li>
 </ul>
-<p>The algorithm, described in full in an upcoming paper that will be linked here when it is
-publicly available, moves a random turbine and random distance in a random direction; checks
+<p>The algorithm, described in full in <span id="id2">Sinner and Fleming [<a class="reference internal" href="bibliography.html#id28" title="Michael Sinner and Paul Fleming. Robust wind farm layout optimization. Journal of Physics: Conference Series, 2767(3):032036, jun 2024. URL: https://dx.doi.org/10.1088/1742-6596/2767/3/032036, doi:10.1088/1742-6596/2767/3/032036.">1</a>]</span>,
+moves a random turbine and random distance in a random direction; checks
 that constraints are satisfied; evaluates the objective function (AEP or value); and then
 commits to the move if there is an objective function improvement. The main tuning parameter
 is the probability mass function for the random movement distance, which is a dictionary to be

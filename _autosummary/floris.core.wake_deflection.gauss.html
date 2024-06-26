@@ -200,11 +200,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">HeterogeneousMap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../operation_models_user.html">Turbine Operation Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../layout_optimization.html">Layout optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layout_optimization.html">Layout Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../input_reference_main.html">Main Input File Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../input_reference_turbine.html">Turbine Input File Reference</a></li>
 </ul>
@@ -673,12 +673,12 @@ See property on super-class for more details.</p></li>
 <div role="list" class="citation-list">
 <div class="citation" id="id8" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id1">2</a>,<a role="doc-backlink" href="#id3">3</a>,<a role="doc-backlink" href="#id32">4</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id1">2</a>,<a role="doc-backlink" href="#id3">3</a>,<a role="doc-backlink" href="#id33">4</a>)</span>
 <p>Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. <em>Journal of Fluid Mechanics</em>, 806:506–541, 2016.</p>
 </div>
 <div class="citation" id="id21" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id4">3</a>,<a role="doc-backlink" href="#id33">4</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id4">3</a>,<a role="doc-backlink" href="#id34">4</a>)</span>
 <p>Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. <em>Submitted to Wind Energy Science</em>, 2019.</p>
 </div>
 </div>
@@ -765,7 +765,7 @@ See property on super-class for more details.</p></li>
 <dt class="sig sig-object py" id="floris.core.wake_deflection.gauss.GaussVelocityDeflection.function">
 <span class="sig-name descname"><span class="pre">function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensity_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ct_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_diameter_i</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freestream_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/wake_deflection/gauss.html#GaussVelocityDeflection.function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.wake_deflection.gauss.GaussVelocityDeflection.function" title="Link to this definition">#</a></dt>
 <dd><p>Calculates the deflection field of the wake. See
-<span id="id32">[<a class="reference internal" href="#id8" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">1</a>]</span> and <span id="id33">[<a class="reference internal" href="#id21" title="Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. Submitted to Wind Energy Science, 2019.">2</a>]</span>
+<span id="id33">[<a class="reference internal" href="#id8" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">1</a>]</span> and <span id="id34">[<a class="reference internal" href="#id21" title="Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. Submitted to Wind Energy Science, 2019.">2</a>]</span>
 for details on the methods used.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>x_i (np.array): x-coordinates of turbine i.
