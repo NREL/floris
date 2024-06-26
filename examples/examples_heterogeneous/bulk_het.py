@@ -1,8 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from floris import FlorisModel
-
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from floris import FlorisModel
 
 
 # Get a test fi (single turbine at 0,0)

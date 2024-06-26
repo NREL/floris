@@ -233,7 +233,7 @@ def warp_grid_for_wind_direction_heterogeneity(
     ):
 
     y_warped = y.copy()
-    
+
     for i in range(wd_het_values.shape[1]-1):
 
         x0 = wd_het_x_points[:,i:i+1]
@@ -271,7 +271,8 @@ def warp_grid_for_wind_direction_heterogeneity(
         )
         y_warped = np.where(
             (np.abs(warp_radius)  != np.inf ) & (x >= x0),
-            -warp_radius + np.sign(warp_radius) * np.sqrt(warp_radius**2 - (x_mod - x0)**2) + y_warped,
+            (-warp_radius + np.sign(warp_radius) * np.sqrt(warp_radius**2 - (x_mod - x0)**2)
+             + y_warped),
             y_warped
         )
 

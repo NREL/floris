@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 import floris.layout_visualization as layoutviz
 from floris import FlorisModel
