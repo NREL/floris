@@ -4,7 +4,7 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from shapely.geometry import Point
 
-from .layout_optimization_base import LayoutOptimization
+from .layout_optimization_base import LayoutOptimization, list_depth
 
 
 class LayoutOptimizationPyOptSparse(LayoutOptimization):
@@ -54,6 +54,10 @@ class LayoutOptimizationPyOptSparse(LayoutOptimization):
         enable_geometric_yaw=False,
         use_value=False,
     ):
+        if list_depth(boundaries) > 1 and hasattr(boundaries[0][0], "__len__"):
+            raise NotImplementedError(
+                "LayoutOptimizationPyOptSparse is not configured for multiple regions."
+            )
 
         super().__init__(
             fmodel,

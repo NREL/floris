@@ -88,6 +88,9 @@ heterogeneous_map = HeterogeneousMap(
     wind_directions=[270.0, 280.0],
 )
 
+# Print the HeterogeneousMap object
+print(heterogeneous_map)
+
 # Now create a new TimeSeries object including the heterogeneous_inflow_config_by_wd
 time_series = TimeSeries(
     wind_directions=np.array([269.0, 270.0, 271.0, 282.0]),

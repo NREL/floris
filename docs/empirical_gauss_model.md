@@ -172,7 +172,7 @@ The effect of AWC is represented by updating the
 wake-induced mixing term as follows:
 
 $$ \text{WIM}_j = \sum_{i \in T^{\text{up}}(j)} \frac{A_{ij} a_i} {(x_j - x_i)/D_i} +
-\frac{\beta_{j}^{p}{d}$$
+\frac{\beta_{j}^{p}}{d}$$
 
 where $\beta_{j}$ is the AWC amplitude of turbine $j$, and the exponent $p$ and
 denominator $d$ are tuning parameters that can be set in the `emgauss.yaml` file with

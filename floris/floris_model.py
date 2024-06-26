@@ -94,9 +94,9 @@ class FlorisModel(LoggingManager):
             (np.abs(self.core.flow_field.reference_wind_height - unique_heights[0]) > 1.0e-6
         )):
             err_msg = (
-                "The only unique hub-height is not the equal to the specified reference "
+                "The only unique hub-height is not equal to the specified reference "
                 "wind height. If this was unintended use -1 as the reference hub height to "
-                " indicate use of hub-height as reference wind height."
+                "indicate use of hub-height as reference wind height."
             )
             self.logger.warning(err_msg, stack_info=True)
 
@@ -210,6 +210,19 @@ class FlorisModel(LoggingManager):
         if air_density is not None:
             flow_field_dict["air_density"] = air_density
         if heterogeneous_inflow_config is not None:
+            if (
+                "z" in heterogeneous_inflow_config
+                and flow_field_dict["wind_shear"] != 0.0
+                and heterogeneous_inflow_config['z'] is not None
+            ):
+                raise ValueError(
+                    "Heterogeneous inflow configuration contains a z term, and "
+                    "flow_field_dict['wind_shear'] is not 0.0. Combining both options "
+                    "is not currently allowed in FLORIS.  If using a z term in the "
+                    " heterogeneous inflow configuration, set flow_field_dict['wind_shear'] "
+                    "to 0.0."
+                )
+
             flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
         ## Farm
