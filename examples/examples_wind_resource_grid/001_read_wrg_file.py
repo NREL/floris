@@ -1,4 +1,4 @@
-"""Example: WindRoseWRG
+"""Example: Read WRG File
 
 Open the WRG file generated in the previous example using the `WindRoseWRG` object
 and show that wind roses can be interpolated between grid points.
@@ -31,8 +31,9 @@ for i in range(5):
     else:
         axarr[i].set_title(f"y = {y_points_to_test[i]}\n(Interpolated)")
 
-# Go through the axarr and delete the legends
-for ax in axarr:
+print(axarr)
+# Go through the axarr and delete the legends except for the middle
+for ax in [axarr[0], axarr[1], axarr[3], axarr[4]]:
     ax.legend().set_visible(False)
 
 
@@ -41,6 +42,8 @@ for ax in axarr:
 for i in range(5):
     axarr[i].axhline(y=0.036, color="red", alpha=0.5)
 
-
+fig.suptitle("Wind Roses at locations with increasing y.  Note the location where the 5 m/s bin \
+transitions to 10 m/s for north wind at y = 0 is \nindicated by the red line to show \
+the increase in wind speed to the north as y increases.")
 
 plt.show()
