@@ -169,7 +169,22 @@ class FlorisModel(LoggingManager):
         flow_field_dict = floris_dict["flow_field"]
         farm_dict = floris_dict["farm"]
 
-        #
+        ## Farm
+        if layout_x is not None:
+            farm_dict["layout_x"] = layout_x
+        if layout_y is not None:
+            farm_dict["layout_y"] = layout_y
+        if turbine_type is not None:
+            farm_dict["turbine_type"] = turbine_type
+        if turbine_library_path is not None:
+            farm_dict["turbine_library_path"] = turbine_library_path
+
+        ## If layout is changed and self._wind_data is not None, update the layout in wind_data
+        if (layout_x is not None) or (layout_y is not None):
+            if self._wind_data is not None:
+                self._wind_data.set_layout(farm_dict["layout_x"], farm_dict["layout_y"])
+
+        # Wind data
         if (
             (wind_directions is not None)
             or (wind_speeds is not None)
@@ -186,14 +201,18 @@ class FlorisModel(LoggingManager):
                 self.logger.warning("Deleting stored wind_data information.")
                 self._wind_data = None
         if wind_data is not None:
-                # Unpack wind data for reinitialization and save wind_data for use in output
-                (
-                    wind_directions,
-                    wind_speeds,
-                    turbulence_intensities,
-                    heterogeneous_inflow_config,
-                ) = wind_data.unpack_for_reinitialize()
-                self._wind_data = wind_data
+
+            # Set the wind data to the current layout
+            wind_data.set_layout(farm_dict["layout_x"], farm_dict["layout_y"])
+
+            # Unpack wind data for reinitialization and save wind_data for use in output
+            (
+                wind_directions,
+                wind_speeds,
+                turbulence_intensities,
+                heterogeneous_inflow_config,
+            ) = wind_data.unpack_for_reinitialize()
+            self._wind_data = wind_data
 
         ## FlowField
         if wind_speeds is not None:
@@ -226,20 +245,7 @@ class FlorisModel(LoggingManager):
 
             flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
-        ## Farm
-        if layout_x is not None:
-            farm_dict["layout_x"] = layout_x
-        if layout_y is not None:
-            farm_dict["layout_y"] = layout_y
-        if turbine_type is not None:
-            farm_dict["turbine_type"] = turbine_type
-        if turbine_library_path is not None:
-            farm_dict["turbine_library_path"] = turbine_library_path
 
-        ## If layout or WindData is changed, may need to update the layout with wind data
-        if (layout_x is not None) or (layout_y is not None) or (wind_data is not None):
-            if self._wind_data is not None:
-                self._wind_data.set_layout(farm_dict["layout_x"], farm_dict["layout_y"])
 
         if solver_settings is not None:
             floris_dict["solver"] = solver_settings
