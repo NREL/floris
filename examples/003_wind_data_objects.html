@@ -727,15 +727,15 @@ document.write(`
 <span class="c1"># Aggregating and Resampling the Wind Rose</span>
 <span class="c1">##################################################</span>
 
-<span class="c1"># The aggregate function allows for aggregation of the wind rose data into</span>
+<span class="c1"># The downsample function allows for aggregation of the wind rose data into</span>
 <span class="c1"># fewer wind direction and wind speed bins.</span>
 <span class="c1"># Note it will throw an error if the step sizes passed in are smaller than the</span>
 <span class="c1"># step sizes of the original data.</span>
-<span class="n">wind_rose_aggregate</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">wd_step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">wind_rose_aggregate</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">wd_step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="c1"># For upsampling, the resample_by_interpolation function can be used to interpolate</span>
+<span class="c1"># For upsampling, the upsample function can be used to interpolate</span>
 <span class="c1"># the wind rose data to a finer grid.  It can use either linear or nearest neighbor</span>
-<span class="n">wind_rose_resample</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">resample_by_interpolation</span><span class="p">(</span><span class="n">wd_step</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="n">wind_rose_resample</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="n">wd_step</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 
 <span class="c1">##################################################</span>
 <span class="c1"># Setting turbulence intensity</span>
@@ -842,8 +842,8 @@ document.write(`
 Number of conditions to simulate with compute_zero_freq_occurrence = True: 4
 </pre></div>
 </div>
-<img alt="../_images/1e9ee87aa37763c85407d3d3965922ae194e2cdb5c18068e85bb66bb3abdb139.png" src="../_images/1e9ee87aa37763c85407d3d3965922ae194e2cdb5c18068e85bb66bb3abdb139.png" />
-<img alt="../_images/1eb535ea58dd22aefc3175bf94892b5b19821fe5e71ba3d8fbae2be1efc012b6.png" src="../_images/1eb535ea58dd22aefc3175bf94892b5b19821fe5e71ba3d8fbae2be1efc012b6.png" />
+<img alt="../_images/5743a8a1a46ac4327bd4c420f56297ccc946e044f06c4fb80415bd62ecab55bd.png" src="../_images/5743a8a1a46ac4327bd4c420f56297ccc946e044f06c4fb80415bd62ecab55bd.png" />
+<img alt="../_images/325544b6cc37a71152f5995fd8f0146015fd1191ad51e042562520d11b643b3d.png" src="../_images/325544b6cc37a71152f5995fd8f0146015fd1191ad51e042562520d11b643b3d.png" />
 <img alt="../_images/c89b00ec42881559c8ada1e523524bc7b0fd8c3d34013acea54c47d01af67bbd.png" src="../_images/c89b00ec42881559c8ada1e523524bc7b0fd8c3d34013acea54c47d01af67bbd.png" />
 <img alt="../_images/5f149c964722d2ce46d8d665dc25ab0a518db26f58908e23f42917452aac723d.png" src="../_images/5f149c964722d2ce46d8d665dc25ab0a518db26f58908e23f42917452aac723d.png" />
 </div>

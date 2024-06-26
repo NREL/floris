@@ -855,6 +855,16 @@ document.write(`
 <a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRose.aggregate">[docs]</a>
     <span class="k">def</span> <span class="nf">aggregate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper for downsample method for backwards compatibility</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="p">,</span> <span class="n">inplace</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WindRose.downsample">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRose.downsample">[docs]</a>
+    <span class="k">def</span> <span class="nf">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Aggregates the wind rose into fewer wind direction and wind speed bins.</span>
 <span class="sd">        It is necessary the wd_step and ws_step passed in are at least as</span>
 <span class="sd">        large as the current wind direction and wind speed steps.  If they are</span>
@@ -946,8 +956,18 @@ document.write(`
 <a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRose.resample_by_interpolation">[docs]</a>
     <span class="k">def</span> <span class="nf">resample_by_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper to upsample method for backwards compatibility</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="sd">        Resample the wind rose using interpolation.  The method can be either</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">inplace</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WindRose.upsample">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRose.upsample">[docs]</a>
+    <span class="k">def</span> <span class="nf">upsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Resample the wind rose using interpolation for upsampling.  The method can be either</span>
 <span class="sd">        &#39;linear&#39; or &#39;nearest&#39;.  If inplace is set to True, the current WindRose</span>
 <span class="sd">        object will be updated with the resampled bins.</span>
 
@@ -1140,8 +1160,8 @@ document.write(`
 <span class="sd">            the plotted wind rose.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Get a aggregated wind_rose</span>
-        <span class="n">wind_rose_aggregate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Get a aggregated (downsampled) wind_rose</span>
+        <span class="n">wind_rose_aggregate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">wd_bins</span> <span class="o">=</span> <span class="n">wind_rose_aggregate</span><span class="o">.</span><span class="n">wind_directions</span>
         <span class="n">ws_bins</span> <span class="o">=</span> <span class="n">wind_rose_aggregate</span><span class="o">.</span><span class="n">wind_speeds</span>
         <span class="n">freq_table</span> <span class="o">=</span> <span class="n">wind_rose_aggregate</span><span class="o">.</span><span class="n">freq_table</span>
@@ -1705,6 +1725,16 @@ document.write(`
 <a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindTIRose.aggregate">[docs]</a>
     <span class="k">def</span> <span class="nf">aggregate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ti_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper for downsample method for backwards compatibility</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="p">,</span> <span class="n">ti_step</span><span class="p">,</span> <span class="n">inplace</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WindTIRose.downsample">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindTIRose.downsample">[docs]</a>
+    <span class="k">def</span> <span class="nf">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ti_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Aggregates the wind TI rose into fewer wind direction, wind speed and TI bins.</span>
 <span class="sd">        It is necessary the wd_step and ws_step ti_step passed in are at least as</span>
 <span class="sd">        large as the current wind direction and wind speed steps.  If they are</span>
@@ -1809,7 +1839,17 @@ document.write(`
 
 <div class="viewcode-block" id="WindTIRose.resample_by_interpolation">
 <a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindTIRose.resample_by_interpolation">[docs]</a>
-    <span class="k">def</span> <span class="nf">resample_by_interpolation</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">resample_by_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper to upsample method for backwards compatibility</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">inplace</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WindTIRose.upsample">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindTIRose.upsample">[docs]</a>
+    <span class="k">def</span> <span class="nf">upsample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ti_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2078,13 +2118,13 @@ document.write(`
         <span class="k">if</span> <span class="n">wind_rose_var</span> <span class="o">==</span> <span class="s2">&quot;ws&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">wind_rose_var_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">wind_rose_var_step</span> <span class="o">=</span> <span class="mf">5.0</span>
-            <span class="n">wind_rose_aggregated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="n">wind_rose_var_step</span><span class="p">)</span>
+            <span class="n">wind_rose_aggregated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="n">wind_rose_var_step</span><span class="p">)</span>
             <span class="n">var_bins</span> <span class="o">=</span> <span class="n">wind_rose_aggregated</span><span class="o">.</span><span class="n">wind_speeds</span>
             <span class="n">freq_table</span> <span class="o">=</span> <span class="n">wind_rose_aggregated</span><span class="o">.</span><span class="n">freq_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># sum along TI dimension</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># wind_rose_var == &quot;ti&quot;</span>
             <span class="k">if</span> <span class="n">wind_rose_var_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">wind_rose_var_step</span> <span class="o">=</span> <span class="mf">0.04</span>
-            <span class="n">wind_rose_aggregated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ti_step</span><span class="o">=</span><span class="n">wind_rose_var_step</span><span class="p">)</span>
+            <span class="n">wind_rose_aggregated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ti_step</span><span class="o">=</span><span class="n">wind_rose_var_step</span><span class="p">)</span>
             <span class="n">var_bins</span> <span class="o">=</span> <span class="n">wind_rose_aggregated</span><span class="o">.</span><span class="n">turbulence_intensities</span>
             <span class="n">freq_table</span> <span class="o">=</span> <span class="n">wind_rose_aggregated</span><span class="o">.</span><span class="n">freq_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># sum along wind speed dimension</span>
 
@@ -2731,7 +2771,7 @@ document.write(`
 <span class="sd">            wd_edges (NDArrayFloat, optional): Custom wind direction edges. Defaults to None.</span>
 <span class="sd">            ws_edges (NDArrayFloat, optional): Custom wind speed edges. Defaults to None.</span>
 <span class="sd">            bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these</span>
-<span class="sd">                are primarily used by the aggregate() method.</span>
+<span class="sd">                are primarily used by the downsample() method.</span>
 <span class="sd">                Defaults to None.</span>
 
 <span class="sd">        Returns:</span>
@@ -2884,7 +2924,7 @@ document.write(`
 <span class="sd">            ti_edges (NDArrayFloat, optional): Custom turbulence intensity</span>
 <span class="sd">                edges. Defaults to None.</span>
 <span class="sd">            bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these</span>
-<span class="sd">                are primarily used by the aggregate() method.</span>
+<span class="sd">                are primarily used by the downsample() method.</span>
 <span class="sd">                Defaults to None.</span>
 
 <span class="sd">        Returns:</span>

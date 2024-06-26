@@ -849,14 +849,14 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/b3966fc871d3bf174d8728e5ae6c2689ef2e567ef934751f376f1f09c4d90874.png" src="_images/b3966fc871d3bf174d8728e5ae6c2689ef2e567ef934751f376f1f09c4d90874.png" />
+<img alt="_images/dc8d87b3d07b0bd467cb7f3192f3b7d40f5871b86ec5f47438184419a0dfe91d.png" src="_images/dc8d87b3d07b0bd467cb7f3192f3b7d40f5871b86ec5f47438184419a0dfe91d.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The aggregate functions of  WindRose/WindTiRose allows for </span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The downsample functions of  WindRose/WindTiRose allows for </span>
 <span class="c1"># aggregating the data into larger bin sizes </span>
-<span class="n">wind_rose_aggregated</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">wd_step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">wind_rose_aggregated</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">wd_step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">wind_rose_aggregated</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -865,14 +865,14 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/9e8fa2d12ce53688db653504d6117c10854a39c604d88f1d0de1878d99d0add6.png" src="_images/9e8fa2d12ce53688db653504d6117c10854a39c604d88f1d0de1878d99d0add6.png" />
+<img alt="_images/b310420aa797a813cdcdebc6833ca3041cd6a278a24f270045b2eb67772f3f14.png" src="_images/b310420aa797a813cdcdebc6833ca3041cd6a278a24f270045b2eb67772f3f14.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># For upsampling, the resample_by_interpolation method is available which can</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># For upsampling, the upsample method is available which can</span>
 <span class="c1"># interpolate the data via linear or nearest-neighbor interpolation</span>
-<span class="n">wind_rose_resampled</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">resample_by_interpolation</span><span class="p">(</span><span class="n">wd_step</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">wind_rose_resampled</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="n">wd_step</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">wind_rose_resampled</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -881,7 +881,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/1155a49cf089993e2c80bdf72739b563e1162000984ebf88748a23ea1449e698.png" src="_images/1155a49cf089993e2c80bdf72739b563e1162000984ebf88748a23ea1449e698.png" />
+<img alt="_images/b5e6315545bc8a051b8c3182636aded644bd3230791a1009b5e44951cb1ff03f.png" src="_images/b5e6315545bc8a051b8c3182636aded644bd3230791a1009b5e44951cb1ff03f.png" />
 </div>
 </div>
 </section>
@@ -918,8 +918,8 @@ wind_rose.value_table
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3a0fbc76cb596aac864e2489ff4af1e296cdd68c670a9abbdccde4d4671a3865.png" src="_images/3a0fbc76cb596aac864e2489ff4af1e296cdd68c670a9abbdccde4d4671a3865.png" />
-<img alt="_images/85d5174079c40a02212a7756863e18b3b295ac0d9856a884ae6fc5ac0d698984.png" src="_images/85d5174079c40a02212a7756863e18b3b295ac0d9856a884ae6fc5ac0d698984.png" />
+<img alt="_images/b46b9f2da1d32b62ef8ffe81a42fab21166a9a3cf8020e5b99dabcc56fb8a301.png" src="_images/b46b9f2da1d32b62ef8ffe81a42fab21166a9a3cf8020e5b99dabcc56fb8a301.png" />
+<img alt="_images/d551aac04a4d557c1b926a948a78b07b6ae0a6498f2b5abc210da4eaeccfa0b7.png" src="_images/d551aac04a4d557c1b926a948a78b07b6ae0a6498f2b5abc210da4eaeccfa0b7.png" />
 <img alt="_images/30db0b52572535f42f8722fae89b299ea96983032ed9c772eedadff438837c02.png" src="_images/30db0b52572535f42f8722fae89b299ea96983032ed9c772eedadff438837c02.png" />
 <img alt="_images/cf02ff6e20dddd49d846b22eb3418167103f4d4fe9322520692e90f4ea04e6f8.png" src="_images/cf02ff6e20dddd49d846b22eb3418167103f4d4fe9322520692e90f4ea04e6f8.png" />
 </div>
