@@ -287,6 +287,16 @@ def test_upsample():
     np.testing.assert_allclose(wind_rose_resample.wind_speeds, [6, 6.5, 7])
     np.testing.assert_allclose(wind_rose_resample.ti_table, ti_table_expected)
 
+    # Test the using the old function name returns the same result
+    wind_rose_resample_old = wind_rose.resample_by_interpolation(
+        wd_step=5.0, ws_step=0.5, inplace=False
+    )
+    np.testing.assert_allclose(wind_rose_resample.wind_directions,
+                               wind_rose_resample_old.wind_directions)
+    np.testing.assert_allclose(wind_rose_resample.wind_speeds, wind_rose_resample_old.wind_speeds)
+    np.testing.assert_allclose(wind_rose_resample.ti_table, wind_rose_resample_old.ti_table)
+    np.testing.assert_allclose(wind_rose_resample.freq_table, wind_rose_resample_old.freq_table)
+
     # Test resampling wind directions when wind speeds is 1D
     wind_directions = np.array([270, 280])
     wind_speeds = np.array([6])
