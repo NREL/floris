@@ -2457,12 +2457,14 @@ class WindRoseWRG(WindDataBase):
         filename (str): The name of the WRG file to read.
         wind_speeds (NDArrayFloat, optional): Wind speeds to use in the wind rose. Defaults to
             np.arange(0.0, 26.0, 1.0).
-        fixed_ti_value (float, optional): A fixed turbulence intensity value to use
-            in the wind rose.  Defaults to 0.06.
+        ti_table (float, optional): Turbulence intensities table to use for each WindRose object.
+            As in the WindRose ti_table, this can be a single value or an array of values.  If an
+            array of values is provided, it must be (len(wind_directions) x len(wind_speeds)).
+            Defaults to 0.06.
 
     """
 
-    def __init__(self, filename, wind_speeds=np.arange(0.0, 26.0, 1.0), fixed_ti_value=0.06):
+    def __init__(self, filename, wind_speeds=np.arange(0.0, 26.0, 1.0), ti_table=0.06):
         # Read in the WRG file
         self.filename = filename
         self.read_wrg_file(filename)
@@ -2471,9 +2473,9 @@ class WindRoseWRG(WindDataBase):
         self.layout_x = None
         self.layout_y = None
 
-        # Save the wind speeds and fixed_ti_value
+        # Save the wind speeds and ti_table
         self.wind_speeds = wind_speeds
-        self.fixed_ti_value = fixed_ti_value
+        self.ti_table = ti_table
 
         # Initialize the flat arrays, these will depend on the specified wind speeds
         self.wd_flat = None
@@ -2590,7 +2592,10 @@ class WindRoseWRG(WindDataBase):
         return (
             f"WindResourceGrid with {self.nx} x {self.ny} grid points, "
             f"min x: {self.xmin}, min y: {self.ymin}, grid size: {self.grid_size}, "
-            f"z: {self.z}, h: {self.h}, {self.n_sectors} sectors"
+            f"z: {self.z}, h: {self.h}, {self.n_sectors} sectors\n"
+            f"Wind directions: {self.wind_directions}\n"
+            f"Wind speeds: {self.wind_speeds}\n"
+            f"ti_table: {self.ti_table}"
         )
 
     def _build_interpolant_function_list(self, x, y, n_sectors, data):
@@ -2724,7 +2729,7 @@ class WindRoseWRG(WindDataBase):
 
         return wind_speeds, freq
 
-    def get_wind_rose_at_point(self, x, y, wind_speeds=None, fixed_ti_value=0.06):
+    def get_wind_rose_at_point(self, x, y, wind_speeds=None, ti_table=0.06):
         """
         Get the wind rose at a given x, y location.  Interpolate the parameters to the point
         and then generate the wind rose.
@@ -2735,7 +2740,7 @@ class WindRoseWRG(WindDataBase):
             wind_speeds (np.array): The wind speeds to calculate the frequencies for.
                 If None, the frequencies are calculated for 0 to 25 m/s in 1 m/s increments.
                 Default is None.
-            fixed_ti_value (float): The fixed turbulence intensity value to use in the wind rose.
+            ti_table (float): The ti_table to use in the wind rose.
                 Default is 0.06.
         """
 
@@ -2766,7 +2771,7 @@ class WindRoseWRG(WindDataBase):
             wind_directions=self.wind_directions,
             wind_speeds=wind_speeds,
             freq_table=freq_table,
-            ti_table=fixed_ti_value,
+            ti_table=ti_table,
             compute_zero_freq_occurrence=True,
         )
 
@@ -2784,15 +2789,15 @@ class WindRoseWRG(WindDataBase):
         if self.layout_x is not None:
             self._update_wind_roses()
 
-    def set_fixed_ti_value(self, fixed_ti_value):
+    def set_ti_table(self, ti_table):
         """
         Set the fixed turbulence intensity value for the WindRoseWRG object.
 
         Args:
-            fixed_ti_value (float): The fixed turbulence intensity value to use in the wind roses.
+            ti_table (float): The ti_table value to use in the wind roses.
         """
 
-        self.fixed_ti_value = fixed_ti_value
+        self.ti_table = ti_table
 
         # Update the wind roses if the layout has been set
         if self.layout_x is not None:
@@ -2812,10 +2817,11 @@ class WindRoseWRG(WindDataBase):
             raise ValueError("layout_x and layout_y must be the same length")
 
         # If the current layout is the same as the new layout, return
-        if np.allclose(np.array(layout_x), self.layout_x) and np.allclose(
-            np.array(layout_y), self.layout_y
-        ):
-            return
+        if self.layout_x is not None and self.layout_y is not None:
+            if np.allclose(np.array(layout_x), self.layout_x) and np.allclose(
+                np.array(layout_y), self.layout_y
+            ):
+                return
 
         # Save the layouts
         self.layout_x = np.array(layout_x)
@@ -2834,7 +2840,7 @@ class WindRoseWRG(WindDataBase):
                 self.layout_x[i],
                 self.layout_y[i],
                 wind_speeds=self.wind_speeds,
-                fixed_ti_value=self.fixed_ti_value,
+                ti_table=self.ti_table,
             )
             self.wind_roses.append(wind_rose)
 
