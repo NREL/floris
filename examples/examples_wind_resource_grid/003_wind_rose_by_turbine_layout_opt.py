@@ -50,7 +50,7 @@ if __name__ == "__main__":
         boundaries,
         min_dist_D=5.0,
         seconds_per_iteration=15,
-        total_optimization_seconds=15.0,
+        total_optimization_seconds=60.0,
     )
 
     layout_opt.optimize()
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         boundaries,
         min_dist_D=5.0,
         seconds_per_iteration=15,
-        total_optimization_seconds=15.0,
+        total_optimization_seconds=60.0,
     )
     layout_opt.optimize()
     _, _, x_opt_wr, y_opt_wr = layout_opt._get_initial_and_final_locs()
