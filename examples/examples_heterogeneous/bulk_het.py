@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 # Get a test fi (single turbine at 0,0)
-fmodel = FlorisModel("inputs/gch.yaml")
+fmodel = FlorisModel("../inputs/gch.yaml")
 fmodel.set(layout_x=[0], layout_y=[0])
 
 # Directly downstream at 270 degrees
