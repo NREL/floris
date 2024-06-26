@@ -24,7 +24,7 @@ wind_rose_wrg = WindRoseWRG("wrg_example.wrg")
 # Print some basic information
 print(wind_rose_wrg)
 
-# The wind roses were set to have a higher concenctration of faster north winds for
+# The wind roses were set to have a higher concentration of faster north winds for
 # increasing y, show that this is contained within the wind roses, even those interpolated
 # between grid points
 y_points_to_test = np.array([0, 500, 1000, 1500, 2000])
@@ -39,7 +39,6 @@ for i in range(5):
     else:
         axarr[i].set_title(f"y = {y_points_to_test[i]}\n(Interpolated)")
 
-print(axarr)
 # Go through the axarr and delete the legends except for the middle
 for ax in [axarr[0], axarr[1], axarr[3], axarr[4]]:
     ax.legend().set_visible(False)
