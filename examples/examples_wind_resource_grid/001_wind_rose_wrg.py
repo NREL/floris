@@ -1,7 +1,15 @@
-"""Example: Read WRG File
+"""Example: WindRoseWRG
 
-Open the WRG file generated in the previous example using the `WindRoseWRG` object
-and show that wind roses can be interpolated between grid points.
+`WindRoseWRG` is a type of WindData object, like `WindRose` and `TimeSeries`, that
+is used to store wind data in a format that can be used by the FLORIS model.  `WindRoseWRG`
+is different that `WindRose` however because the internal data holds the information
+of the WRG file and then a `WindRose` object is created for each turbine in a provided
+layout.
+
+In this example the WRG file generated in the previous example is read in
+using the `WindRoseWRG` object, and wind roses as points on the WRG grid, as will
+as in-between interpolated points have wind roses calculated using the `get_wind_rose_at_point`
+method.
 
 """
 import matplotlib.pyplot as plt
