@@ -236,6 +236,11 @@ class FlorisModel(LoggingManager):
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
 
+        ## If layout or WindData is changed, may need to update the layout with wind data
+        if (layout_x is not None) or (layout_y is not None) or (wind_data is not None):
+            if self._wind_data is not None:
+                self._wind_data.set_layout(layout_x, layout_y)
+
         if solver_settings is not None:
             floris_dict["solver"] = solver_settings
 
