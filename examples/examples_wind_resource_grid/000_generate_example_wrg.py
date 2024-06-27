@@ -101,14 +101,14 @@ for xi in range(Nx):
 
         # East frequency scaling
         east_row = freq_table[3, :]
-        shift_amount = percent_x * east_row[:5] * .5
+        shift_amount = percent_x * east_row[:5] * .9
         east_row[:5] = east_row[:5] - shift_amount
         east_row[5:10] = east_row[5:10] + shift_amount
         freq_table[3, :] = east_row
 
         # North frequency scaling
         north_row = freq_table[0, :]
-        shift_amount = percent_y * north_row[:6] * .5
+        shift_amount = percent_y * north_row[:6] * .9
         north_row[:6] = north_row[:6] - shift_amount
         north_row[6:12] = north_row[6:12] + shift_amount
         freq_table[0, :] = north_row
