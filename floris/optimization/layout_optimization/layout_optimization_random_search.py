@@ -649,7 +649,7 @@ def _single_individual_opt(
             if get_new_point: #If the last test wasn't successful
 
                 # Randomly select a turbine to nudge
-                tr = random.randint(0,num_turbines-1)
+                tr = random.randint(0,num_turbines)
 
                 # Randomly select a direction to nudge in (uniform direction)
                 rand_dir = np.random.uniform(low=0.0, high=2*np.pi)
