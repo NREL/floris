@@ -476,24 +476,43 @@ class WindRose(WindDataBase):
                 "Available methods are 'linear' and 'nearest'"
             )
 
+        # First establish the current ws_step and wd_step
+        if len(self.wind_speeds) >= 2:
+            ws_step_current = self.wind_speeds[1] - self.wind_speeds[0]
+        else:  # wind rose will have only a single wind speed, and we assume a ws_step of 1
+            ws_step_current = 1.0
+
+        if len(self.wind_directions) >= 2:
+            wd_step_current = self.wind_directions[1] - self.wind_directions[0]
+        else:  # wind rose will have only a single wind direction, and we assume a wd_step of 1
+            wd_step_current = 1.0
+
         # If either ws_step or wd_step is None, set it to the current step
         if ws_step is None:
-            if len(self.wind_speeds) >= 2:
-                ws_step = self.wind_speeds[1] - self.wind_speeds[0]
-            else:  # wind rose will have only a single wind speed, and we assume a ws_step of 1
-                ws_step = 1.0
+            ws_step = ws_step_current
         if wd_step is None:
-            if len(self.wind_directions) >= 2:
-                wd_step = self.wind_directions[1] - self.wind_directions[0]
-            else:  # wind rose will have only a single wind direction, and we assume a wd_step of 1
-                wd_step = 1.0
+            wd_step = wd_step_current
 
-        # Set up the new wind direction and wind speed bins
-        new_wind_directions = np.arange(
-            self.wind_directions[0], self.wind_directions[-1] + wd_step / 2.0, wd_step
-        )
+        # Set up the new wind direction and wind speed bins, making sure to cover the full range
+        # of the original data
+        wd_min = self.wind_directions[0] - wd_step_current
+        wd_max = self.wind_directions[-1] + wd_step_current
+
+        if np.abs(wd_max - (wd_min % 360.0)) < 0.1:
+            wd_min = 0.0
+            wd_max = 360.0
+
+        if wd_min < 0:
+            wd_min = 0
+
+        if wd_max > 360:
+            wd_max = 360
+
+        new_wind_directions = np.arange(wd_min, wd_max, wd_step)
         new_wind_speeds = np.arange(
-            self.wind_speeds[0], self.wind_speeds[-1] + ws_step / 2.0, ws_step
+            np.max([self.wind_speeds[0] - ws_step_current / 2.0, 0]),
+            self.wind_speeds[-1] + ws_step_current / 2.0,
+            ws_step,
         )
 
         # Set up for interpolation
@@ -1286,9 +1305,7 @@ class WindTIRose(WindDataBase):
 
         return self.upsample(wd_step, ws_step, method, inplace)
 
-    def upsample(
-        self, wd_step=None, ws_step=None, ti_step=None, method="linear", inplace=False
-    ):
+    def upsample(self, wd_step=None, ws_step=None, ti_step=None, method="linear", inplace=False):
         """
 
         Resample the wind TI rose using interpolation.  The method can be either
@@ -2483,6 +2500,9 @@ class WindRoseWRG(WindDataBase):
 
     Args:
         filename (str): The name of the WRG file to read.
+        wd_step (float, optional): Step size to use resampling the wind directions given by the WRG
+            file. If None, wd_step and wind_directions are set by the number of
+            sectors in the WRG file.   Defaults to None.
         wind_speeds (NDArrayFloat, optional): Wind speeds to use in the wind rose. Defaults to
             np.arange(0.0, 26.0, 1.0).
         ti_table (float, optional): Turbulence intensities table to use for each WindRose object.
@@ -2492,10 +2512,20 @@ class WindRoseWRG(WindDataBase):
 
     """
 
-    def __init__(self, filename, wind_speeds=np.arange(0.0, 26.0, 1.0), ti_table=0.06):
+    def __init__(
+        self, filename, wd_step=None, wind_speeds=np.arange(0.0, 26.0, 1.0), ti_table=0.06
+    ):
         # Read in the WRG file
         self.filename = filename
         self.read_wrg_file(filename)
+
+        # If wd_step is None, then use the wind directions in the WRG file
+        if wd_step is None:
+            self.wind_directions = self._wind_directions_wrg_file
+            self.wd_step = self.wind_directions[1] - self.wind_directions[0]
+        else:
+            self.wind_directions = np.arange(0.0, 360.0, wd_step)
+            self.wd_step = wd_step
 
         # Initialize the layouts which will need to be specified
         self.layout_x = None
@@ -2542,7 +2572,7 @@ class WindRoseWRG(WindDataBase):
         self.n_sectors = int(data[1][70:72])
 
         # The wind directions are implied by the number of sectors
-        self.wind_directions = np.arange(0.0, 360.0, 360.0 / self.n_sectors)
+        self._wind_directions_wrg_file = np.arange(0.0, 360.0, 360.0 / self.n_sectors)
 
         # Initialize the data arrays which have the same number of
         # elements as the number of grid points
@@ -2621,6 +2651,7 @@ class WindRoseWRG(WindDataBase):
             f"WindResourceGrid with {self.nx} x {self.ny} grid points, "
             f"min x: {self.xmin}, min y: {self.ymin}, grid size: {self.grid_size}, "
             f"z: {self.z}, h: {self.h}, {self.n_sectors} sectors\n"
+            f"Wind directions in file: {self._wind_directions_wrg_file}\n"
             f"Wind directions: {self.wind_directions}\n"
             f"Wind speeds: {self.wind_speeds}\n"
             f"ti_table: {self.ti_table}"
@@ -2732,7 +2763,7 @@ class WindRoseWRG(WindDataBase):
         """
 
         if wind_speeds is None:
-            wind_speeds = np.arange(0.0, 25.0, 1.0)
+            wind_speeds = self.wind_speeds
 
         # Define the wind speed edges
         ws_step = wind_speeds[1] - wind_speeds[0]
@@ -2757,7 +2788,7 @@ class WindRoseWRG(WindDataBase):
 
         return wind_speeds, freq
 
-    def get_wind_rose_at_point(self, x, y, wind_speeds=None, ti_table=0.06):
+    def get_wind_rose_at_point(self, x, y, wind_directions=None, wind_speeds=None, ti_table=0.06):
         """
         Get the wind rose at a given x, y location.  Interpolate the parameters to the point
         and then generate the wind rose.
@@ -2765,15 +2796,24 @@ class WindRoseWRG(WindDataBase):
         Args:
             x (float): The x location to interpolate.
             y (float): The y location to interpolate.
+            wind_directions (np.array): The wind directions to calculate the frequencies for.
+                If None, use self.wind_directions.  Default is None.
             wind_speeds (np.array): The wind speeds to calculate the frequencies for.
-                If None, the frequencies are calculated for 0 to 25 m/s in 1 m/s increments.
-                Default is None.
+                If None, use self.wind_speeds.  Default is None.
             ti_table (float): The ti_table to use in the wind rose.
                 Default is 0.06.
         """
 
         if wind_speeds is None:
-            wind_speeds = np.arange(0.0, 26.0, 1.0)
+            wind_speeds = self.wind_speeds
+
+        # If wind directions is None, use the values stored
+        if wind_directions is None:
+            wind_directions = self.wind_directions
+            wd_step = self.wd_step
+        else:
+            # Calculate wd_step for these directions
+            wd_step = wind_directions[1] - wind_directions[0]
 
         # Get the interpolated data
         sector_freq = self._interpolate_data(x, y, self.interpolant_sector_freq)
@@ -2794,14 +2834,40 @@ class WindRoseWRG(WindDataBase):
         # Normalize the table
         freq_table = freq_table / freq_table.sum()
 
-        # Return the wind rose
-        return WindRose(
-            wind_directions=self.wind_directions,
+        # First build the wind rose using the wind directions in the wrg file
+        wind_rose = WindRose(
+            wind_directions=self._wind_directions_wrg_file,
             wind_speeds=wind_speeds,
             freq_table=freq_table,
             ti_table=ti_table,
             compute_zero_freq_occurrence=True,
         )
+
+        # Now upsample or downsample the wind rose to the specified wind directions
+        if wd_step == (self._wind_directions_wrg_file[1] - self._wind_directions_wrg_file[0]):
+            # If the wind directions are the same, return the wind rose
+            return wind_rose
+        elif wd_step < (self._wind_directions_wrg_file[1] - self._wind_directions_wrg_file[0]):
+            # If the wind directions are smaller, upsample
+            return wind_rose.upsample(wd_step)
+        else:
+            # If the wind directions are larger, downsample
+            return wind_rose.downsample(wd_step)
+
+    def set_wd_step(self, wd_step):
+        """
+        Set the wind directions for the WindRoseWRG object.
+
+        Args:
+            wind_directions (np.array): The wind directions to use for the wind roses.
+        """
+
+        self.wind_directions = np.arange(0.0, 360.0, wd_step)
+        self.wd_step = wd_step
+
+        # Update the wind roses if the layout has been set
+        if self.layout_x is not None:
+            self._update_wind_roses()
 
     def set_wind_speeds(self, wind_speeds):
         """
@@ -2867,6 +2933,7 @@ class WindRoseWRG(WindDataBase):
             wind_rose = self.get_wind_rose_at_point(
                 self.layout_x[i],
                 self.layout_y[i],
+                wind_directions=self.wind_directions,
                 wind_speeds=self.wind_speeds,
                 ti_table=self.ti_table,
             )
