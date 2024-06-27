@@ -35,7 +35,7 @@ flow_field:
     - 270.0
   wind_speeds:
     - 8.0
-  wind_shear: 0.0 # Needed to reproduce Nygaard et al's results with new model
+  wind_shear: 0.0 # Needed to reproduce Pedersen et al's results with new model
   wind_veer: 0.0
 
 # Configure the wake model.

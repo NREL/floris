@@ -15,8 +15,9 @@ from floris.turbine_library import build_cosine_loss_turbine_dict
 
 
 # Note: "new" is used to refer to the new implementation of TurbOPark, which is
-# more faithful to the original description provided by Nygaard et al. "orig"
-# is used to refer to the existing TurbOPark implementation in Floris.
+# more faithful to the description provided by Pedersen et al. (2022). "orig"
+# is used to refer to the existing TurbOPark implementation in Floris (which
+# was based on Orsted's Matlab code, originally from Nygaard et al. (2020).
 
 ### Build a constant CT turbine model for use in comparisons (not realistic)
 const_CT_turb = build_cosine_loss_turbine_dict(

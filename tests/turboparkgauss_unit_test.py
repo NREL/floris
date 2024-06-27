@@ -55,7 +55,7 @@ def test_row_of_turbines():
     # Run and extract flow velocities at the turbines
     velocities_row_normalized = fmodel.turbine_average_velocities[0,:] / 8.0
 
-    # Comparison data from Nygaard / Orsted
+    # Comparison data from Orsted
     velocities_comparison = np.array([
         1.0,
         0.709920677983239,
