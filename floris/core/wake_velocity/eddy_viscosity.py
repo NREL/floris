@@ -40,7 +40,7 @@ class EddyViscosityVelocity(BaseModel):
     filter_const_2: float = field(default=4.5)
     filter_const_3: float = field(default=23.32)
     filter_const_4: float = field(default=1/3)
-    filter_cutoff_x_: float = field(default=0.0)
+    filter_cutoff_D: float = field(default=0.0)
 
     c_0: float = field(default=2.0)
     c_1: float = field(default=1.5)
@@ -118,7 +118,12 @@ class EddyViscosityVelocity(BaseModel):
                     rotor_diameter_i[findex,0],
                     self.k_a,
                     self.k_l,
-                    self.von_Karman_constant
+                    self.von_Karman_constant,
+                    self.filter_cutoff_D,
+                    self.filter_const_1,
+                    self.filter_const_2,
+                    self.filter_const_3,
+                    self.filter_const_4
                 )
             )
 
@@ -277,7 +282,22 @@ def wake_width_squared(Ct, U_tilde_c):
     w_tilde_sq.reshape(U_tilde_c.shape)
     return w_tilde_sq
 
-def centerline_ode(x_tilde, U_tilde_c, ambient_ti, Ct, hh, D, k_a, k_l, von_Karman_constant):
+def centerline_ode(
+        x_tilde,
+        U_tilde_c,
+        ambient_ti,
+        Ct,
+        hh,
+        D,
+        k_a,
+        k_l,
+        von_Karman_constant,
+        filter_cutoff_D,
+        filter_const_1,
+        filter_const_2,
+        filter_const_3,
+        filter_const_4
+    ):
     """
     Define the ODE for the centerline velocities
     """
@@ -288,22 +308,10 @@ def centerline_ode(x_tilde, U_tilde_c, ambient_ti, Ct, hh, D, k_a, k_l, von_Karm
     # Ambient component, nondimensionalized by U_inf*D (compared to Gunn 2019's K_a, eq. (9))
     K_a_tilde = k_a * ambient_ti * von_Karman_constant * (hh/D)
 
-    def filter_function(x_tilde):
-        """ Identity mapping (assumed by 'F=1') """
-
-        # Following are not used in the current implementation
-        # filter_const_1 = 0.65
-        # filter_const_2 = 4.5
-        # filter_const_3 = 23.32
-        # filter_const_4 = 1/3
-        # filter_cutoff_x_ = 0.0
-        # if x_tilde < filter_cutoff_x_:
-        #     return filter_const_1 * ((x_tilde - filter_const_2) / filter_const_3)**filter_const_4
-        # else:
-        #     return 1
-        return 1
-
-    eddy_viscosity_tilde = filter_function(x_tilde)*(K_l_tilde + K_a_tilde)
+    F = filter_function(
+        x_tilde, filter_cutoff_D, filter_const_1, filter_const_2, filter_const_3, filter_const_4
+    )
+    eddy_viscosity_tilde = F*(K_l_tilde + K_a_tilde)
 
     dU_tilde_c_dx_tilde = (
         16 * eddy_viscosity_tilde
@@ -312,6 +320,34 @@ def centerline_ode(x_tilde, U_tilde_c, ambient_ti, Ct, hh, D, k_a, k_l, von_Karm
     )
 
     return [dU_tilde_c_dx_tilde]
+
+def filter_function(
+        x_tilde,
+        filter_cutoff_D,
+        filter_const_1,
+        filter_const_2,
+        filter_const_3,
+        filter_const_4
+    ):
+    """
+    Gunn uses 1 for all x, whereas Ainslie uses the filter function.
+    To reproduce Gunn, set filter_cutoff_D to 0.
+    """
+
+    # The form given by Ainslie appears to produce complex numbers for x_tilde < filter_const_2.
+    # Here, we take only the real component.
+    if filter_cutoff_D == 0:
+        return 1
+    else: # TEMP
+        logger.warning("Cannot solve ODE with filter function. Returning 1.")
+        return 1
+        F = np.where(x_tilde < filter_cutoff_D,
+            np.real(filter_const_1 + ((x_tilde - filter_const_2) / filter_const_3)**filter_const_4),
+            1
+        )
+        F = np.clip(F, 0, 1)
+
+        return F
 
 def initial_centerline_velocity(Ct, ambient_ti, i_const_1, i_const_2, i_const_3, i_const_4):
 
