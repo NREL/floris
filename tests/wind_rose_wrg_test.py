@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from scipy.optimize import curve_fit
 
-from floris.wind_resource_grid import WindResourceGrid
+from floris import WindRoseWRG
 
 
 WRG_FILE_FILE = (
@@ -14,7 +14,7 @@ WRG_FILE_FILE = (
 
 
 def test_load_wrg():
-    WindResourceGrid(WRG_FILE_FILE)
+    WindRoseWRG(WRG_FILE_FILE)
 
 
 def test_read_header():
@@ -25,23 +25,23 @@ def test_read_header():
     grid size.
     """
 
-    wrg = WindResourceGrid(WRG_FILE_FILE)
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
 
-    assert wrg.nx == 2
-    assert wrg.ny == 3
-    assert wrg.xmin == 0.0
-    assert wrg.ymin == 0.0
-    assert wrg.grid_size == 1000.0
+    assert wind_rose_wrg.nx == 2
+    assert wind_rose_wrg.ny == 3
+    assert wind_rose_wrg.xmin == 0.0
+    assert wind_rose_wrg.ymin == 0.0
+    assert wind_rose_wrg.grid_size == 1000.0
 
     # Test x and y arrays
-    assert np.allclose(wrg.x_array, np.array([0.0, 1000.0]))
-    assert np.allclose(wrg.y_array, np.array([0.0, 1000.0, 2000.0]))
+    assert np.allclose(wind_rose_wrg.x_array, np.array([0.0, 1000.0]))
+    assert np.allclose(wind_rose_wrg.y_array, np.array([0.0, 1000.0, 2000.0]))
 
     # Test number of grid points
-    assert wrg.n_gid == 6
+    assert wind_rose_wrg.n_gid == 6
 
     # Test number of sectors
-    assert wrg.n_sectors == 12
+    assert wind_rose_wrg.n_sectors == 12
 
 
 def test_read_data():
@@ -52,25 +52,26 @@ def test_read_data():
     parameters for each sector.
     """
 
-    wrg = WindResourceGrid(WRG_FILE_FILE)
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
 
     # Test z and h values
-    assert wrg.z == 0.0
-    assert wrg.h == 90.0
+    assert wind_rose_wrg.z == 0.0
+    assert wind_rose_wrg.h == 90.0
 
     # Test the first and last gid for sector_freq, weibull_A, and weibull_k
-    assert wrg.sector_freq[0, 0, 0] == 116 / 1000.0
-    assert wrg.sector_freq[-1, -1, -1] == 98 / 1000.0
+    assert wind_rose_wrg.sector_freq[0, 0, 0] == 116 / 1000.0
+    assert wind_rose_wrg.sector_freq[-1, -1, -1] == 98 / 1000.0
 
-    assert wrg.weibull_A[0, 0, 0] == 106 / 10.0
-    assert wrg.weibull_A[-1, -1, -1] == 111 / 10.0
+    assert wind_rose_wrg.weibull_A[0, 0, 0] == 106 / 10.0
+    assert wind_rose_wrg.weibull_A[-1, -1, -1] == 111 / 10.0
 
-    assert wrg.weibull_k[0, 0, 0] == 273 / 100.0
-    assert wrg.weibull_k[-1, -1, -1] == 267 / 100.0
+    assert wind_rose_wrg.weibull_k[0, 0, 0] == 273 / 100.0
+    assert wind_rose_wrg.weibull_k[-1, -1, -1] == 267 / 100.0
 
 
 def test_build_interpolant_function_list():
-    wrg = WindResourceGrid(WRG_FILE_FILE)
+
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
 
     # Initialize the values
     x = np.array([0.0, 1000.0])
@@ -84,7 +85,7 @@ def test_build_interpolant_function_list():
     # For the second sector, the point at (1000, 500) is 3.0
     data[1, 1, 1] = 3.0
 
-    function_list = wrg._build_interpolant_function_list(x, y, n_sectors, data)
+    function_list = wind_rose_wrg._build_interpolant_function_list(x, y, n_sectors, data)
 
     # Length of the function list should be n_sectors
     assert len(function_list) == n_sectors
@@ -107,32 +108,32 @@ def test_build_interpolant_function_list():
 
 
 def test_interpolate_data():
-    wrg = WindResourceGrid(WRG_FILE_FILE)
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
 
-    sector_freq = wrg.sector_freq
+    sector_freq = wind_rose_wrg.sector_freq
 
     # Test that interpolating onto the point 0,0 returns the 1st row of the sector_freq
-    test_value = wrg._interpolate_data(0, 0, wrg.interpolant_sector_freq)
+    test_value = wind_rose_wrg._interpolate_data(0, 0, wind_rose_wrg.interpolant_sector_freq)
     assert np.allclose(test_value, sector_freq[0, 0, :])
 
     # Test the interpolating just out of bounds of 0,0 also yields the 1st row of the sector_freq
-    test_value = wrg._interpolate_data(-1, -1, wrg.interpolant_sector_freq)
+    test_value = wind_rose_wrg._interpolate_data(-1, -1, wind_rose_wrg.interpolant_sector_freq)
     assert np.allclose(test_value, sector_freq[0, 0, :])
 
     # Test that value at x=500, y0, this is the average of the rows at [0,0] and [1,0]
-    test_value = wrg._interpolate_data(500, 0, wrg.interpolant_sector_freq)
+    test_value = wind_rose_wrg._interpolate_data(500, 0, wind_rose_wrg.interpolant_sector_freq)
     assert np.allclose(test_value, (sector_freq[0, 0, :] + sector_freq[1, 0, :]) / 2)
 
     # Test that value at x=0, y=500, this is the average of the rows at [0,0] and [0,1]
-    test_value = wrg._interpolate_data(0, 500, wrg.interpolant_sector_freq)
+    test_value = wind_rose_wrg._interpolate_data(0, 500, wind_rose_wrg.interpolant_sector_freq)
     assert np.allclose(test_value, (sector_freq[0, 0, :] + sector_freq[0, 1, :]) / 2)
 
 
 def test_generate_wind_speed_frequencies_from_weibull():
-    wrg = WindResourceGrid(WRG_FILE_FILE)
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
 
     wind_speeds_in = np.array([0.0, 5.0, 10.0, 15.0])
-    wind_speeds, freq = wrg._generate_wind_speed_frequencies_from_weibull(
+    wind_speeds, freq = wind_rose_wrg._generate_wind_speed_frequencies_from_weibull(
         10.0, 2.0, wind_speeds=wind_speeds_in
     )
 
@@ -149,7 +150,7 @@ def test_generate_wind_speed_frequencies_from_weibull():
     wind_speeds = np.arange(0.0, 100.0, 1.0)
     A_test = 9.0
     k_test = 1.8
-    wind_speeds, freq = wrg._generate_wind_speed_frequencies_from_weibull(
+    wind_speeds, freq = wind_rose_wrg._generate_wind_speed_frequencies_from_weibull(
         A_test, k_test, wind_speeds=wind_speeds
     )
 
@@ -159,12 +160,12 @@ def test_generate_wind_speed_frequencies_from_weibull():
 
 
 def test_get_wind_rose_at_point():
-    wrg = WindResourceGrid(WRG_FILE_FILE)
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
 
-    wind_speeds = np.arange(0.0, 25.0, 1.0)
+    wind_speeds = np.arange(0.0, 26.0, 1.0)
     n_wind_speeds = len(wind_speeds)
 
-    wind_rose = wrg.get_wind_rose_at_point(0, 0)
+    wind_rose = wind_rose_wrg.get_wind_rose_at_point(0, 0)
 
     # Test that there are 12 wind directions at n_wind_speeds wind speeds
     assert wind_rose.freq_table.shape == (12, n_wind_speeds)
@@ -172,18 +173,26 @@ def test_get_wind_rose_at_point():
     assert len(wind_rose.wind_directions) == 12
 
     # Test that freq table generated at (0, 0) is the same at that of (-1 , -1)
-    wind_rose2 = wrg.get_wind_rose_at_point(-1, -1)
+    wind_rose2 = wind_rose_wrg.get_wind_rose_at_point(-1, -1)
     assert np.allclose(wind_rose.freq_table, wind_rose2.freq_table)
 
-def test_get_wind_rose_by_turbine():
-    wrg = WindResourceGrid(WRG_FILE_FILE)
 
+def test_wind_rose_wrg_integration():
 
-    wind_rose_test = wrg.get_wind_rose_at_point(0, 0)
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
 
-    wind_rose_by_turbine = wrg.get_wind_rose_by_turbine([0, 10], [0,10])
+    # Set a layout with two turbines
+    layout_x = np.array([0,  1000])
+    layout_y = np.array([0, 2000])
 
-    wind_roses = wind_rose_by_turbine.wind_roses
+    # Apply the layout
+    wind_rose_wrg.set_layout(layout_x, layout_y)
 
-    # Confirm the first WindRose object in wind_roses is the same as wind_rose_test
-    assert np.allclose(wind_roses[0].freq_table, wind_rose_test.freq_table)
+    # Get a wind rose at the second turbine
+    wind_rose = wind_rose_wrg.get_wind_rose_at_point(1000, 2000)
+
+    # Also take the second wind rose from the wind_roses list
+    wind_rose2 = wind_rose_wrg.wind_roses[1]
+
+    # Show these are the same by compare the freq_table
+    assert np.allclose(wind_rose.freq_table, wind_rose2.freq_table)

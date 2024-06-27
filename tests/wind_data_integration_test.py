@@ -7,7 +7,6 @@ import pytest
 from floris import (
     TimeSeries,
     WindRose,
-    WindRoseByTurbine,
     WindTIRose,
 )
 from floris.wind_data import WindDataBase
@@ -869,70 +868,3 @@ def test_read_csv_long_ti():
 
     expected_result = np.array([0.06, 0.07])
     np.testing.assert_allclose(wind_ti_rose.turbulence_intensities, expected_result)
-
-
-def test_wind_rose_by_turbine():
-    wind_directions = np.array([270, 280, 290])
-    wind_speeds = np.array([6, 7])
-
-    wind_rose_0 = WindRose(wind_directions, wind_speeds, 0.06)
-
-    wind_directions = np.array([270, 280, 290])
-    wind_speeds = np.array([6, 7])
-
-    wind_rose_1 = WindRose(wind_directions, wind_speeds, 0.06)
-
-    wind_roses = [wind_rose_0, wind_rose_1]
-
-    # Test that have layout not match the length of wind_roses raises a value error
-    with pytest.raises(ValueError):
-        WindRoseByTurbine(layout_x=[0, 0, 0], layout_y=[0, 0, 0], wind_roses=wind_roses)
-
-    # Test that if the wind roses don't have the same wind directions and speeds,
-    # this raises a value error
-    wind_speeds = np.array([6, 7, 8])
-    wind_rose_1 = WindRose(wind_directions, wind_speeds, 0.06)
-    wind_roses = [wind_rose_0, wind_rose_1]
-    # Test that have layout not match the length of wind_roses raises a value error
-    with pytest.raises(ValueError):
-        WindRoseByTurbine(layout_x=[0, 0], layout_y=[0, 0], wind_roses=wind_roses)
-
-    # Finally make sure that if set correctly no errors are raised
-    wind_speeds = np.array([6, 7])
-    wind_rose_1 = WindRose(wind_directions, wind_speeds, 0.06)
-    wind_roses = [wind_rose_0, wind_rose_1]
-    wind_rose_by_turbine = WindRoseByTurbine(
-        layout_x=[0, 0], layout_y=[0, 0], wind_roses=wind_roses
-    )
-
-    # Test the unpack method
-    (
-        wind_directions_unpack_by_turbine,
-        _,
-        _,
-        _,
-        _,
-        _,
-    ) = wind_rose_by_turbine.unpack()
-
-    (
-        wind_directions_unpack_0,
-        _,
-        _,
-        _,
-        _,
-        _,
-    ) = wind_rose_0.unpack()
-
-    (
-        wind_directions_unpack_1,
-        _,
-        _,
-        _,
-        _,
-        _,
-    ) = wind_rose_1.unpack()
-
-    # Check that the unpacked wind directions and wind speeds are correct
-    np.testing.assert_allclose(wind_directions_unpack_by_turbine, wind_directions_unpack_0)
-    np.testing.assert_allclose(wind_directions_unpack_by_turbine, wind_directions_unpack_1)
