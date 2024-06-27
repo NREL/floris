@@ -341,6 +341,35 @@ class WindRose(WindDataBase):
             heterogeneous_inflow_config,
         )
 
+    def subset_wind_speeds(self, wind_speeds: List[float] | np.array) -> WindRose:
+        """
+        Subset the wind rose to only include the specified wind speeds.
+
+        Args:
+            wind_speeds (np.array): Wind speeds to keep in the wind rose.
+
+        Returns:
+            WindRose: Wind rose with only the specified wind speeds.
+        """
+
+        # Check the all wind speeds are in the wind rose
+        if not np.all(np.isin(wind_speeds, self.wind_speeds)):
+            raise ValueError("All wind speeds must be in the wind rose")
+
+        # Find the indices of the wind speeds to keep
+        ws_indices = np.where(np.isin(self.wind_speeds, wind_speeds))[0]
+
+        # Create a new wind rose with only the specified wind speeds
+        return WindRose(
+            self.wind_directions,
+            self.wind_speeds[ws_indices],
+            self.ti_table[:, ws_indices],
+            self.freq_table[:, ws_indices],
+            self.value_table[:, ws_indices] if self.value_table is not None else None,
+            self.compute_zero_freq_occurrence,
+            self.heterogeneous_map,
+        )
+
     def aggregate(self, wd_step=None, ws_step=None, inplace=False):
         """
         Wrapper for downsample method for backwards compatibility
@@ -3015,11 +3044,13 @@ class WindRoseWRG(WindDataBase):
             wind_rose.plot(ax=axarr[i], wd_step=wd_step, ws_step=ws_step)
             axarr[i].set_title(f"Turbine {i}\n ({self.layout_x[i]:.1f}, {self.layout_y[i]:.1f})")
 
-    def get_heterogeneous_map(
+    def get_heterogeneous_wind_rose(
         self,
         fmodel,
-        wind_speeds=np.arange(0.0, 25.0, 1.0),
-        gid_norm_index=0,
+        wind_speeds=None,
+        x_loc = None,
+        y_loc = None,
+        representative_wind_speed = 8.0,
     ):
         """
         Get the heterogeneous map at each location in the grid, with the speeds ups
@@ -3031,14 +3062,24 @@ class WindRoseWRG(WindDataBase):
                 Default is np.arange(0.0, 25.0, 1.0).
             gid_norm_index (int): The index of the turbine to normalize the speed ups to.
                 Default is 0.
+            representative_wind_speed (float): The representative wind speed to use
+                in the power curve.
 
         Returns:
             HeterogeneousMap: The heterogeneous map object.
         """
+        ############################
+        # Compute the power curve for combining the wind speeds
+        ############################
+
+        if wind_speeds is None:
+            wind_speeds = self.wind_speeds
+
         # Get a local copy
         fm = copy.deepcopy(fmodel)
 
         # Get the power curve for the turbine
+        # TODO: Maybe the power curve could be directly extracted
         fm.set(
             layout_x=[0],
             layout_y=[0],
@@ -3050,6 +3091,37 @@ class WindRoseWRG(WindDataBase):
         )
         fm.run()
         turbine_power = fm.get_turbine_powers().flatten()
+
+        ############################
+        # Identify the point on the original wrg grid closest to the x_loc and y_loc
+        ############################
+
+        if x_loc is None or y_loc is None:
+            # Simply use the first point
+            gid_reference = 0
+
+        else:
+            # Find the closest point
+            gid_reference = np.argmin((self.x_gid - x_loc) ** 2 + (self.y_gid - y_loc) ** 2)
+
+        # Assign x_loc and y_loc to this point
+        x_loc = self.x_gid[gid_reference]
+        y_loc = self.y_gid[gid_reference]
+        print(f"Using point {gid_reference} at ({x_loc}, {y_loc}) as reference location")
+
+        ############################
+        # Get the wind rose at this point
+        ############################
+        wind_rose = self.get_wind_rose_at_point(x=x_loc,
+                                    y=y_loc,)
+                                    #wind_speeds=[representative_wind_speed],)
+
+        # Subset to the representative wind speed
+        wind_rose = wind_rose.subset_wind_speeds([representative_wind_speed])
+
+        ############################
+        # Calculate speed multipliers
+        ############################
 
         speed_multipliers = np.zeros((self.n_sectors, self.n_gid))
 
@@ -3068,16 +3140,25 @@ class WindRoseWRG(WindDataBase):
             # Normalize the speed ups
             speed_multipliers[direction_sector, :] = (
                 speed_multipliers[direction_sector, :]
-                / speed_multipliers[direction_sector, gid_norm_index]
+                / speed_multipliers[direction_sector, gid_reference]
             )
 
         # Take the cube root of the speed ups to place in the frame of wind speed ups
         speed_multipliers = np.cbrt(speed_multipliers)
 
         # Create the heterogeneous map
-        return HeterogeneousMap(
+        heterogeneous_map = HeterogeneousMap(
             x=self.x_gid,
             y=self.y_gid,
-            wind_directions=self.wind_directions,
+            wind_directions=self._wind_directions_wrg_file,
             speed_multipliers=speed_multipliers,
+        )
+
+        # Return the wind rose with the heterogeneous map
+        return WindRose(
+            wind_directions=wind_rose.wind_directions,
+            wind_speeds=wind_rose.wind_speeds,
+            freq_table=wind_rose.freq_table,
+            ti_table=wind_rose.ti_table,
+            heterogeneous_map=heterogeneous_map,
         )
