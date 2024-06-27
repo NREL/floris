@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris import FlorisModel
-import floris.layout_visualization as layoutviz
 import floris.flow_visualization as flowviz
+import floris.layout_visualization as layoutviz
+from floris import FlorisModel
+
 
 # User options
 # FLORIS model to use (limited to Gauss/GCH, Jensen, and empirical Gauss)

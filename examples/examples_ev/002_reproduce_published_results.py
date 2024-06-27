@@ -10,6 +10,7 @@ import pandas as pd
 from floris import FlorisModel, TimeSeries
 from floris.turbine_library import build_cosine_loss_turbine_dict
 
+
 # Build a constant CT turbine model for use in comparisons (not realistic)
 D = 120.0 # rotor diameter [m]
 HH = 100.0 # hub height [m]
