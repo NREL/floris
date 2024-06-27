@@ -134,10 +134,8 @@ def characteristic_wake_width(x_D, ambient_TI, Cts, A):
 
     # Term for the initial width at the turbine location (denoted epsilon in Pedersen et al.)
     # Is this 0.25 also an empirical parameter? Check B & PA?
-    # MS TODO: why is np.min needed here? What is that doing?
-    # -> Carry-over from existing implementation.
-    # -> Takes the minimum over all of the findices---this seems bad? Check with CB
-    initial_width = 0.25 * np.sqrt( np.min( 0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts) ) )
+    # Saturate term in initial width to 3.0, as is done in Orsted Matlab code.
+    initial_width = 0.25 * np.sqrt(np.minimum(0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts), 3.0))
 
     # Term for the added width downstream of the turbine
     added_width = A * ambient_TI / beta * (
