@@ -17,11 +17,11 @@ DEFLECTION_MODEL = "gauss"
 
 locations_baseline_aep = np.array(
     [
-        [0.0, 571.5416296, 1260.0],
-        [0.0, 496.57085993, 0.],
+        [0.0, 619.07183266, 1260.0],
+        [0.0, 499.88056089, 0.0]
     ]
 )
-baseline_aep = 44787987324.21652
+baseline_aep = 44798828639.17205
 
 locations_baseline_value = np.array(
     [
