@@ -492,7 +492,7 @@ class SampleInputs:
                 },
                 "turboparkgauss": {
                     "A": 0.04,
-                    "sigma_max_rel": 4.0
+                    "include_mirror_wake": True
                 },
                 "empirical_gauss": {
                     "wake_expansion_rates": [0.023, 0.008],

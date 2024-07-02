@@ -19,9 +19,8 @@ from floris.core.wake_turbulence import (
     NoneWakeTurbulence,
     WakeInducedMixing,
 )
-from floris.core.wake_velocity import (
+from floris.core.wake_velocity import (  # DoublegaussVelocityDeficit,
     CumulativeGaussCurlVelocityDeficit,
-    # DoublegaussVelocityDeficit,
     EmpiricalGaussVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
