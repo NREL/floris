@@ -1,6 +1,6 @@
 
 from floris.core.wake_velocity.cumulative_gauss_curl import CumulativeGaussCurlVelocityDeficit
-from floris.core.wake_velocity.doublegauss import DoublegaussVelocityDeficit
+# from floris.core.wake_velocity.doublegauss import DoublegaussVelocityDeficit
 from floris.core.wake_velocity.empirical_gauss import EmpiricalGaussVelocityDeficit
 from floris.core.wake_velocity.gauss import GaussVelocityDeficit
 from floris.core.wake_velocity.jensen import JensenVelocityDeficit
