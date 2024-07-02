@@ -319,6 +319,13 @@ class WindRose(WindDataBase):
 
     def aggregate(self, wd_step=None, ws_step=None, inplace=False):
         """
+        Wrapper for downsample method for backwards compatibility
+        """
+
+        return self.downsample(wd_step, ws_step, inplace)
+
+    def downsample(self, wd_step=None, ws_step=None, inplace=False):
+        """
         Aggregates the wind rose into fewer wind direction and wind speed bins.
         It is necessary the wd_step and ws_step passed in are at least as
         large as the current wind direction and wind speed steps.  If they are
@@ -407,8 +414,15 @@ class WindRose(WindDataBase):
 
     def resample_by_interpolation(self, wd_step=None, ws_step=None, method="linear", inplace=False):
         """
+        Wrapper to upsample method for backwards compatibility
+        """
 
-        Resample the wind rose using interpolation.  The method can be either
+        return self.upsample(wd_step, ws_step, method, inplace)
+
+    def upsample(self, wd_step=None, ws_step=None, method="linear", inplace=False):
+        """
+
+        Resample the wind rose using interpolation for upsampling.  The method can be either
         'linear' or 'nearest'.  If inplace is set to True, the current WindRose
         object will be updated with the resampled bins.
 
@@ -598,8 +612,8 @@ class WindRose(WindDataBase):
             the plotted wind rose.
         """
 
-        # Get a aggregated wind_rose
-        wind_rose_aggregate = self.aggregate(wd_step, ws_step, inplace=False)
+        # Get a aggregated (downsampled) wind_rose
+        wind_rose_aggregate = self.downsample(wd_step, ws_step, inplace=False)
         wd_bins = wind_rose_aggregate.wind_directions
         ws_bins = wind_rose_aggregate.wind_speeds
         freq_table = wind_rose_aggregate.freq_table
@@ -610,7 +624,11 @@ class WindRose(WindDataBase):
 
         # Get the wd_step
         if wd_step is None:
-            wd_step = wd_bins[1] - wd_bins[0]
+            if len(wd_bins) >= 2:
+                wd_step = wd_bins[1] - wd_bins[0]
+            else:
+                # This admittedly an odd edge case
+                wd_step = 360.0
 
         # Get a color array
         color_array = plt.get_cmap(color_map, len(ws_bins))
@@ -619,7 +637,7 @@ class WindRose(WindDataBase):
             rects = []
             freq_table_sub = freq_table[wd_idx, :].flatten()
             for ws_idx, ws in reversed(list(enumerate(ws_bins))):
-                plot_val = freq_table_sub[:ws_idx].sum()
+                plot_val = freq_table_sub[:ws_idx + 1].sum()
                 rects.append(
                     ax.bar(
                         np.radians(wd),
@@ -1129,6 +1147,13 @@ class WindTIRose(WindDataBase):
 
     def aggregate(self, wd_step=None, ws_step=None, ti_step=None, inplace=False):
         """
+        Wrapper for downsample method for backwards compatibility
+        """
+
+        return self.downsample(wd_step, ws_step, ti_step, inplace)
+
+    def downsample(self, wd_step=None, ws_step=None, ti_step=None, inplace=False):
+        """
         Aggregates the wind TI rose into fewer wind direction, wind speed and TI bins.
         It is necessary the wd_step and ws_step ti_step passed in are at least as
         large as the current wind direction and wind speed steps.  If they are
@@ -1230,7 +1255,14 @@ class WindTIRose(WindDataBase):
         else:
             return aggregated_wind_rose
 
-    def resample_by_interpolation(
+    def resample_by_interpolation(self, wd_step=None, ws_step=None, method="linear", inplace=False):
+        """
+        Wrapper to upsample method for backwards compatibility
+        """
+
+        return self.upsample(wd_step, ws_step, method, inplace)
+
+    def upsample(
         self, wd_step=None, ws_step=None, ti_step=None, method="linear", inplace=False
     ):
         """
@@ -1453,7 +1485,7 @@ class WindTIRose(WindDataBase):
         color_map="viridis_r",
         wd_step=15.0,
         wind_rose_var_step=None,
-        legend_kwargs={},
+        legend_kwargs={"title": "Wind speed [m/s]"},
     ):
         """
         This method creates a wind rose plot showing the frequency of occurrence
@@ -1480,7 +1512,7 @@ class WindTIRose(WindDataBase):
                 will be used if wind_rose_var = "ws", and a value of 4% will be
                 used if wind_rose_var = "ti".
             legend_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.legend().
+                ax.legend(). Defaults to {"title": "Wind speed [m/s]"}.
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
@@ -1496,13 +1528,13 @@ class WindTIRose(WindDataBase):
         if wind_rose_var == "ws":
             if wind_rose_var_step is None:
                 wind_rose_var_step = 5.0
-            wind_rose_aggregated = self.aggregate(wd_step, ws_step=wind_rose_var_step)
+            wind_rose_aggregated = self.downsample(wd_step, ws_step=wind_rose_var_step)
             var_bins = wind_rose_aggregated.wind_speeds
             freq_table = wind_rose_aggregated.freq_table.sum(2)  # sum along TI dimension
         else:  # wind_rose_var == "ti"
             if wind_rose_var_step is None:
                 wind_rose_var_step = 0.04
-            wind_rose_aggregated = self.aggregate(wd_step, ti_step=wind_rose_var_step)
+            wind_rose_aggregated = self.downsample(wd_step, ti_step=wind_rose_var_step)
             var_bins = wind_rose_aggregated.turbulence_intensities
             freq_table = wind_rose_aggregated.freq_table.sum(1)  # sum along wind speed dimension
 
@@ -1519,7 +1551,7 @@ class WindTIRose(WindDataBase):
             rects = []
             freq_table_sub = freq_table[wd_idx, :].flatten()
             for var_idx, ws in reversed(list(enumerate(var_bins))):
-                plot_val = freq_table_sub[:var_idx].sum()
+                plot_val = freq_table_sub[:var_idx + 1].sum()
                 rects.append(
                     ax.bar(
                         np.radians(wd),
@@ -2113,7 +2145,7 @@ class TimeSeries(WindDataBase):
             wd_edges (NDArrayFloat, optional): Custom wind direction edges. Defaults to None.
             ws_edges (NDArrayFloat, optional): Custom wind speed edges. Defaults to None.
             bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
-                are primarily used by the aggregate() method.
+                are primarily used by the downsample() method.
                 Defaults to None.
 
         Returns:
@@ -2263,7 +2295,7 @@ class TimeSeries(WindDataBase):
             ti_edges (NDArrayFloat, optional): Custom turbulence intensity
                 edges. Defaults to None.
             bin_weights (NDArrayFloat, optional): Bin weights for resampling.  Note these
-                are primarily used by the aggregate() method.
+                are primarily used by the downsample() method.
                 Defaults to None.
 
         Returns:

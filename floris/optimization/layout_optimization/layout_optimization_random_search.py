@@ -18,7 +18,6 @@ from time import perf_counter as timerpc
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy import random
 from scipy.spatial.distance import cdist, pdist
 from shapely.geometry import Point, Polygon
 
@@ -84,11 +83,11 @@ def _gen_dist_based_init(
     np.random.seed(s)
 
     # Choose the initial point randomly
-    init_x = float(random.randint(int(min_x),int(max_x)))
-    init_y = float(random.randint(int(min_y),int(max_y)))
+    init_x = float(np.random.randint(int(min_x),int(max_x)))
+    init_y = float(np.random.randint(int(min_y),int(max_y)))
     while not (poly_outer.contains(Point([init_x,init_y]))):
-        init_x = float(random.randint(int(min_x),int(max_x)))
-        init_y = float(random.randint(int(min_y),int(max_y)))
+        init_x = float(np.random.randint(int(min_x),int(max_x)))
+        init_y = float(np.random.randint(int(min_y),int(max_y)))
 
     # Intialize the layout arrays
     layout_x = np.array([init_x])
@@ -140,7 +139,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         use_value=False,
     ):
         """
-        _summary_
+        Optimize layout using genetic random search algorithm. Details of the algorithm can be found
+        in Sinner and Fleming, 2024: https://dx.doi.org/10.1088/1742-6596/2767/3/032036
 
         Args:
             fmodel (_type_): _description_
@@ -648,7 +648,7 @@ def _single_individual_opt(
             if get_new_point: #If the last test wasn't successful
 
                 # Randomly select a turbine to nudge
-                tr = random.randint(0,num_turbines-1)
+                tr = np.random.randint(0,num_turbines)
 
                 # Randomly select a direction to nudge in (uniform direction)
                 rand_dir = np.random.uniform(low=0.0, high=2*np.pi)
