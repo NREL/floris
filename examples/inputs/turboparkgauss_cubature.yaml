@@ -14,8 +14,8 @@ logging:
     level: WARNING
 
 solver:
-  type: turbine_cubature_grid # turbine_grid
-  turbine_grid_points: 6
+  type: turbine_cubature_grid # turboparkgauss does not work with type: turbine_grid
+  turbine_grid_points: 6      # 4 is sufficient in nearly all cases
 
 farm:
   layout_x:
@@ -52,7 +52,7 @@ wake:
   wake_velocity_parameters: # Parameters for the wake velocity deficit model
     turboparkgauss:
       A: 0.04
-      sigma_max_rel: 4.0
+      include_mirror_wake: true
   wake_deflection_parameters:
     none:
   wake_turbulence_parameters:

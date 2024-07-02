@@ -12,8 +12,8 @@ logging:
     level: WARNING
 
 solver:
-  type: turbine_cubature_grid
-  turbine_grid_points: 3
+  type: turbine_cubature_grid # turboparkgauss does not work with type: turbine_grid
+  turbine_grid_points: 4      # 4 is sufficient in nearly all cases
 
 farm:
   layout_x:
@@ -44,7 +44,7 @@ wake:
     combination_model: sosfs
     deflection_model: none
     turbulence_model: none
-    velocity_model: turboparkgauss # doublegauss
+    velocity_model: turboparkgauss
 
   enable_secondary_steering: false
   enable_yaw_added_recovery: false
@@ -57,8 +57,7 @@ wake:
   wake_velocity_parameters:
     turboparkgauss:
       A: 0.04
-      sigma_max_rel: 4.0
-    doublegauss:
+      include_mirror_wake: true
 
   wake_turbulence_parameters:
     none:

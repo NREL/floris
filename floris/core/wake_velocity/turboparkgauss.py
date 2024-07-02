@@ -43,7 +43,7 @@ class TurboparkgaussVelocityDeficit(BaseModel):
     """
 
     A: float = field(default=0.04)
-    sigma_max_rel: float = field(default=4.0)
+    include_mirror_wake: bool = field(default=True)
 
     def prepare_function(
         self,
@@ -83,8 +83,6 @@ class TurboparkgaussVelocityDeficit(BaseModel):
         wind_veer: float,
     ) -> None:
 
-        include_mirror_wake = True # Could add this as a user preference.
-
         # Initialize the velocity deficit array
         velocity_deficit = np.zeros_like(u_initial)
 
@@ -101,18 +99,11 @@ class TurboparkgaussVelocityDeficit(BaseModel):
 
         r_dist = np.sqrt((y - y_i) ** 2 + (z - z_i) ** 2)
 
-        # Compute deficit for all turbines and mask to keep upstream and overlapping turbines
-        # self.sigma_max_rel * sigma is effectively the wake width (0.006% of mass outside of this)
-        wtg_overlapping = (
-            ((self.sigma_max_rel * sigma) / 2 + rotor_diameter_i / 2 > r_dist)
-            & (x_dist > 0)
-        )
-
         # Compute deficits for real turbines and for mirrored (image) turbines
-        delta_real  = wtg_overlapping * gaussian_function(C, r_dist, 2, sigma)
-        if include_mirror_wake:
+        delta_real  = (x_dist > 0) * gaussian_function(C, r_dist, 2, sigma)
+        if self.include_mirror_wake:
             r_dist_image = np.sqrt((y - y_i) ** 2 + (z - 3*z_i) ** 2)
-            delta_image = wtg_overlapping * gaussian_function(C, r_dist_image, 2, sigma)
+            delta_image = (x_dist > 0) * gaussian_function(C, r_dist_image, 2, sigma)
             delta = np.hypot(delta_real, delta_image)
         else: # No mirror wakes
             delta = delta_real
