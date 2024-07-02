@@ -19,12 +19,13 @@ from floris.core.wake_turbulence import (
     NoneWakeTurbulence,
     WakeInducedMixing,
 )
-from floris.core.wake_velocity import (
+from floris.core.wake_velocity import (  # DoublegaussVelocityDeficit,
     CumulativeGaussCurlVelocityDeficit,
     EmpiricalGaussVelocityDeficit,
     GaussVelocityDeficit,
     JensenVelocityDeficit,
     NoneVelocityDeficit,
+    TurboparkgaussVelocityDeficit,
     TurbOParkVelocityDeficit,
 )
 
@@ -53,6 +54,8 @@ MODEL_MAP = {
         "jensen": JensenVelocityDeficit,
         "turbopark": TurbOParkVelocityDeficit,
         "empirical_gauss": EmpiricalGaussVelocityDeficit,
+        "turboparkgauss": TurboparkgaussVelocityDeficit,
+        # "doublegauss": DoublegaussVelocityDeficit,
     },
 }
 
