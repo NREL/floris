@@ -18,7 +18,7 @@ REQUIRED = [
     "attrs",
     "pyyaml~=6.0",
     "numexpr~=2.0",
-    "numpy~=1.20",
+    "numpy~=2.0",
     "scipy~=1.1",
 
     # tools
@@ -27,7 +27,7 @@ REQUIRED = [
     "shapely~=2.0",
 
     # utilities
-    "coloredlogs~=10.0",
+    "coloredlogs~=15.0",
 ]
 
 # What packages are optional?
