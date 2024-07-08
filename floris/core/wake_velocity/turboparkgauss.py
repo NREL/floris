@@ -117,14 +117,13 @@ def characteristic_wake_width(x_D, ambient_TI, Cts, A):
     # Parameter values taken from S. T. Frandsen, “Risø-R-1188(EN) Turbulence
     # and turbulence generated structural loading in wind turbine clusters”
     # Risø, Roskilde, Denmark, 2007.
-    c1 = 1.5 # Should these be exposed at the top level? Probably?
+    c1 = 1.5
     c2 = 0.8
 
     alpha = ambient_TI * c1
     beta = c2 * ambient_TI / np.sqrt(Cts)
 
     # Term for the initial width at the turbine location (denoted epsilon in Pedersen et al.)
-    # Is this 0.25 also an empirical parameter? Check B & PA?
     # Saturate term in initial width to 3.0, as is done in Orsted Matlab code.
     initial_width = 0.25 * np.sqrt(np.minimum(0.5 * (1 + np.sqrt(1 - Cts)) / np.sqrt(1 - Cts), 3.0))
 

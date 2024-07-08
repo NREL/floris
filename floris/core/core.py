@@ -181,6 +181,10 @@ class Core(BaseClass):
                 self.wake
             )
         elif vel_model=="turbopark":
+            self.logger.warning(
+                "The turbopark model has been superseded by the turboparkgauss model. We " +
+                "recommend using `velocity_model: turboparkgauss` instead."
+            )
             turbopark_solver(
                 self.farm,
                 self.flow_field,
