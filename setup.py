@@ -18,7 +18,7 @@ REQUIRED = [
     "attrs",
     "pyyaml~=6.0",
     "numexpr~=2.0",
-    "numpy~=2.0",
+    "numpy~=1.20",
     "scipy~=1.1",
 
     # tools
