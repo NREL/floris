@@ -575,6 +575,27 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             f" {self._obj_unit} ({increase:+.2f}%)"
         )
 
+    def _test_optimize(self):
+        """
+        Perform a fixed number of iterations with a single worker for
+        debugging and testing purposes.
+        """
+        # Set up a minimal problem to run on a single worker
+        print("Running test optimization on a single worker.")
+        self._PoolExecutor = None
+        self.max_workers = None
+        self.n_individuals = 1
+
+        self._initialize_optimization()
+
+        # Run 2 generations
+        for _ in range(2):
+            self._run_optimization_generation()
+
+        self._finalize_optimization()
+
+        return self.objective_final, self.x_opt, self.y_opt
+
     # Public methods
     def optimize(self):
         """
@@ -657,66 +678,66 @@ def _single_individual_opt(
     # Loop as long as we've not hit the stop time
     while timerpc() < stop_time:
 
-            if not use_momentum:
-                get_new_point = True
+        if not use_momentum:
+            get_new_point = True
 
-            if get_new_point: #If the last test wasn't successful
+        if get_new_point: #If the last test wasn't successful
 
-                # Randomly select a turbine to nudge
-                tr = np.random.randint(0,num_turbines)
+            # Randomly select a turbine to nudge
+            tr = np.random.randint(0,num_turbines)
 
-                # Randomly select a direction to nudge in (uniform direction)
-                rand_dir = np.random.uniform(low=0.0, high=2*np.pi)
+            # Randomly select a direction to nudge in (uniform direction)
+            rand_dir = np.random.uniform(low=0.0, high=2*np.pi)
 
-                # Randomly select a distance to travel according to pmf
-                rand_dist = np.random.choice(dist_pmf["d"], p=dist_pmf["p"])
+            # Randomly select a distance to travel according to pmf
+            rand_dist = np.random.choice(dist_pmf["d"], p=dist_pmf["p"])
 
-            # Get a new test point
-            test_x = layout_x[tr] + np.cos(rand_dir) * rand_dist
-            test_y = layout_y[tr] + np.sin(rand_dir) * rand_dist
+        # Get a new test point
+        test_x = layout_x[tr] + np.cos(rand_dir) * rand_dist
+        test_y = layout_y[tr] + np.sin(rand_dir) * rand_dist
 
-            # In bounds?
-            if not test_point_in_bounds(test_x, test_y, poly_outer):
-                get_new_point = True
-                continue
+        # In bounds?
+        if not test_point_in_bounds(test_x, test_y, poly_outer):
+            get_new_point = True
+            continue
 
-            # Make a new layout
-            original_x = layout_x[tr]
-            original_y = layout_y[tr]
-            layout_x[tr] = test_x
-            layout_y[tr] = test_y
+        # Make a new layout
+        original_x = layout_x[tr]
+        original_y = layout_y[tr]
+        layout_x[tr] = test_x
+        layout_y[tr] = test_y
 
-            # Acceptable distances?
-            if not test_min_dist(layout_x, layout_y,min_dist):
-                # Revert and continue
-                layout_x[tr] = original_x
-                layout_y[tr] = original_y
-                get_new_point = True
-                continue
+        # Acceptable distances?
+        if not test_min_dist(layout_x, layout_y,min_dist):
+            # Revert and continue
+            layout_x[tr] = original_x
+            layout_y[tr] = original_y
+            get_new_point = True
+            continue
 
-            # Does it improve the objective?
-            if enable_geometric_yaw: # Select appropriate yaw angles
-                yaw_opt.fmodel_subset.set(layout_x=layout_x, layout_y=layout_y)
-                df_opt = yaw_opt.optimize()
-                yaw_angles = np.vstack(df_opt['yaw_angles_opt'])
+        # Does it improve the objective?
+        if enable_geometric_yaw: # Select appropriate yaw angles
+            yaw_opt.fmodel_subset.set(layout_x=layout_x, layout_y=layout_y)
+            df_opt = yaw_opt.optimize()
+            yaw_angles = np.vstack(df_opt['yaw_angles_opt'])
 
-            num_objective_calls += 1
-            test_objective = _get_objective(layout_x, layout_y, fmodel_, yaw_angles, use_value)
+        num_objective_calls += 1
+        test_objective = _get_objective(layout_x, layout_y, fmodel_, yaw_angles, use_value)
 
-            if test_objective > current_objective:
-                # Accept the change
-                current_objective = test_objective
+        if test_objective > current_objective:
+            # Accept the change
+            current_objective = test_objective
 
-                # If not a random point this cycle and it did improve things
-                # try not getting a new point
-                # Feature is currently disabled by use_momentum flag
-                get_new_point = False
+            # If not a random point this cycle and it did improve things
+            # try not getting a new point
+            # Feature is currently disabled by use_momentum flag
+            get_new_point = False
 
-            else:
-                # Revert the change
-                layout_x[tr] = original_x
-                layout_y[tr] = original_y
-                get_new_point = True
+        else:
+            # Revert the change
+            layout_x[tr] = original_x
+            layout_y[tr] = original_y
+            get_new_point = True
 
     # Return the best result from this individual
     return current_objective, layout_x, layout_y, num_objective_calls
