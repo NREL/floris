@@ -328,6 +328,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         # Delete stored x and y to avoid confusion
         del self.x, self.y
 
+        # Set up to run in normal mode
+        self.debug = False
+
     def describe(self):
         print("Random Layout Optimization")
         print(f"Number of turbines to optimize = {self.N_turbines}")
@@ -534,7 +537,8 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
                 self.distance_pmf,
                 self.enable_geometric_yaw,
                 multi_random_seeds[i],
-                self.use_value
+                self.use_value,
+                self.debug
             )
                 for i in range(self.n_individuals)
         ]
@@ -585,6 +589,7 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         self._PoolExecutor = None
         self.max_workers = None
         self.n_individuals = 1
+        self.debug = True
 
         self._initialize_optimization()
 
@@ -641,7 +646,8 @@ def _single_individual_opt(
     dist_pmf,
     enable_geometric_yaw,
     s,
-    use_value
+    use_value,
+    debug
 ):
     # Set random seed
     np.random.seed(s)
@@ -675,8 +681,19 @@ def _single_individual_opt(
     # disabled.
     use_momentum = False
 
+    # Special handling for debug mode
+    if debug:
+        debug_iterations = 100
+        stop_time = np.inf
+        dd = 0
+
     # Loop as long as we've not hit the stop time
     while timerpc() < stop_time:
+
+        if debug and dd >= debug_iterations:
+            break
+        elif debug:
+            dd += 1
 
         if not use_momentum:
             get_new_point = True
