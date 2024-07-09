@@ -491,74 +491,77 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         y_opt = self.y_opt
         return x_initial, y_initial, x_opt, y_opt
 
-
-    # Public methods
-
-    def optimize(self):
+    def _initialize_optimization(self):
         """
-        Perform the optimization
+        Set up logs etc
         """
         print(f'Optimizing using {self.n_individuals} individuals.')
-        opt_start_time = timerpc()
-        opt_stop_time = opt_start_time + self.total_optimization_seconds
-        sim_time = 0
+        self._opt_start_time = timerpc()
+        self._opt_stop_time = self._opt_start_time + self.total_optimization_seconds
 
         self.objective_candidate_log = [self.objective_candidate.copy()]
         self.num_objective_calls_log = []
         self._num_objective_calls = [0]*self.n_individuals
 
-        while timerpc() < opt_stop_time:
+    def _run_optimization_generation(self):
+        """
+        Run a generation of the outer genetic algorithm
+        """
+        # Set random seed for the main loop
+        if self.random_seed is None:
+            multi_random_seeds = [None]*self.n_individuals
+        else:
+            multi_random_seeds = [55 + self.iteration_step + i
+                for i in range(self.n_individuals)]
+        # 55 is just an arbitrary choice to ensure different random seeds
+        # to the initialization code
 
-            # Set random seed for the main loop
-            if self.random_seed is None:
-                multi_random_seeds = [None]*self.n_individuals
-            else:
-                multi_random_seeds = [55 + self.iteration_step + i
-                    for i in range(self.n_individuals)]
-            # 55 is just an arbitrary choice to ensure different random seeds
-            # to the initialization code
-
-            # Update the optimization time
-            sim_time = timerpc() - opt_start_time
-            print(f'Optimization time: {sim_time:.1f} s / {self.total_optimization_seconds:.1f} s')
+        # Update the optimization time
+        sim_time = timerpc() - self._opt_start_time
+        print(f'Optimization time: {sim_time:.1f} s / {self.total_optimization_seconds:.1f} s')
 
 
-            # Generate the multiargs for parallel execution of single individual optimization
-            multiargs = [
-                (self.seconds_per_iteration,
-                 self.objective_candidate[i],
-                 self.x_candidate[i, :],
-                 self.y_candidate[i, :],
-                 self.fmodel_dict,
-                 self.fmodel.wind_data,
-                 self.min_dist,
-                 self._boundary_polygon,
-                 self.distance_pmf,
-                 self.enable_geometric_yaw,
-                 multi_random_seeds[i],
-                 self.use_value
-                )
-                    for i in range(self.n_individuals)
-            ]
+        # Generate the multiargs for parallel execution of single individual optimization
+        multiargs = [
+            (self.seconds_per_iteration,
+                self.objective_candidate[i],
+                self.x_candidate[i, :],
+                self.y_candidate[i, :],
+                self.fmodel_dict,
+                self.fmodel.wind_data,
+                self.min_dist,
+                self._boundary_polygon,
+                self.distance_pmf,
+                self.enable_geometric_yaw,
+                multi_random_seeds[i],
+                self.use_value
+            )
+                for i in range(self.n_individuals)
+        ]
 
-            # Run the single individual optimization in parallel
-            if self._PoolExecutor: # Parallelized
-                with self._PoolExecutor(self.max_workers) as p:
-                    out = p.starmap(_single_individual_opt, multiargs)
-            else: # Parallelization not activated
-                out = [_single_individual_opt(*multiargs[0])]
+        # Run the single individual optimization in parallel
+        if self._PoolExecutor: # Parallelized
+            with self._PoolExecutor(self.max_workers) as p:
+                out = p.starmap(_single_individual_opt, multiargs)
+        else: # Parallelization not activated
+            out = [_single_individual_opt(*multiargs[0])]
 
-            # Unpack the results
-            for i in range(self.n_individuals):
-                self.objective_candidate[i] = out[i][0]
-                self.x_candidate[i, :] = out[i][1]
-                self.y_candidate[i, :] = out[i][2]
-                self._num_objective_calls[i] = out[i][3]
-            self.objective_candidate_log.append(self.objective_candidate)
-            self.num_objective_calls_log.append(self._num_objective_calls)
+        # Unpack the results
+        for i in range(self.n_individuals):
+            self.objective_candidate[i] = out[i][0]
+            self.x_candidate[i, :] = out[i][1]
+            self.y_candidate[i, :] = out[i][2]
+            self._num_objective_calls[i] = out[i][3]
+        self.objective_candidate_log.append(self.objective_candidate)
+        self.num_objective_calls_log.append(self._num_objective_calls)
 
-            # Evaluate the individuals for this step
-            self._evaluate_opt_step()
+        # Evaluate the individuals for this step
+        self._evaluate_opt_step()
+
+    def _finalize_optimization(self):
+        """
+        Package and print final results.
+        """
 
         # Finalize the result
         self.objective_final = self.objective_candidate[0]
@@ -572,8 +575,20 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             f" {self._obj_unit} ({increase:+.2f}%)"
         )
 
-        return self.objective_final, self.x_opt, self.y_opt
+    # Public methods
+    def optimize(self):
+        """
+        Perform the optimization
+        """
+        self._initialize_optimization()
 
+        # Run generations until the overall stop time
+        while timerpc() < self._opt_stop_time:
+            self._run_optimization_generation()
+
+        self._finalize_optimization()
+
+        return self.objective_final, self.x_opt, self.y_opt
 
     # Helpful visualizations
     def plot_distance_pmf(self, ax=None):
