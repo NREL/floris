@@ -190,7 +190,7 @@ if __name__ == "__main__":
         color="g",
         marker="h",
     )
-    ax.set_axis("equal")
+    ax.set_aspect('equal')
     ax.legend()
 
     print("=====================================")
