@@ -606,45 +606,11 @@ class FlorisModel(LoggingManager):
         else:
             return np.nansum(np.multiply(freq.reshape(-1, 1), turbine_powers), axis=0)
 
-    def _get_farm_power(
+    def _get_weighted_turbine_powers(
         self,
         turbine_weights=None,
         use_turbulence_correction=False,
-        return_weighted_turbine_powers=False,
     ):
-        """
-        Report wind plant power from instance of floris. Optionally includes
-        uncertainty in wind direction and yaw position when determining power.
-        Uncertainty is included by computing the mean wind farm power for a
-        distribution of wind direction and yaw position deviations from the
-        original wind direction and yaw angles.
-
-        Args:
-            turbine_weights (NDArrayFloat | list[float] | None, optional):
-                weighing terms that allow the user to emphasize power at
-                particular turbines and/or completely ignore the power
-                from other turbines. This is useful when, for example, you are
-                modeling multiple wind farms in a single floris object. If you
-                only want to calculate the power production for one of those
-                farms and include the wake effects of the neighboring farms,
-                you can set the turbine_weights for the neighboring farms'
-                turbines to 0.0. The array of turbine powers from floris
-                is multiplied with this array in the calculation of the
-                objective function. If None, this  is an array with all values
-                1.0 and with shape equal to (n_findex, n_turbines).
-                Defaults to None.
-            use_turbulence_correction: (bool, optional): When True uses a
-                turbulence parameter to adjust power output calculations.
-                Defaults to False. Not currently implemented.
-            return_weighted_turbine_powers (bool, optional): When True,
-                returns the turbine powers after weighting.  This option
-                is primarily for computing expected power with the WindRoseByTurbine
-                object, which has a separate frequency for each turbine.
-                Defaults to False.
-
-        Returns:
-            float: Sum of wind turbine powers in W.
-        """
         if use_turbulence_correction:
             raise NotImplementedError(
                 "Turbulence correction is not yet implemented in the power calculation."
@@ -676,10 +642,47 @@ class FlorisModel(LoggingManager):
         turbine_powers = self._get_turbine_powers()
         turbine_powers = np.multiply(turbine_weights, turbine_powers)
 
-        if return_weighted_turbine_powers:
-            return turbine_powers
-        else:
-            return np.sum(turbine_powers, axis=1)
+        return turbine_powers
+
+    def _get_farm_power(
+        self,
+        turbine_weights=None,
+        use_turbulence_correction=False,
+    ):
+        """
+        Report wind plant power from instance of floris. Optionally includes
+        uncertainty in wind direction and yaw position when determining power.
+        Uncertainty is included by computing the mean wind farm power for a
+        distribution of wind direction and yaw position deviations from the
+        original wind direction and yaw angles.
+
+        Args:
+            turbine_weights (NDArrayFloat | list[float] | None, optional):
+                weighing terms that allow the user to emphasize power at
+                particular turbines and/or completely ignore the power
+                from other turbines. This is useful when, for example, you are
+                modeling multiple wind farms in a single floris object. If you
+                only want to calculate the power production for one of those
+                farms and include the wake effects of the neighboring farms,
+                you can set the turbine_weights for the neighboring farms'
+                turbines to 0.0. The array of turbine powers from floris
+                is multiplied with this array in the calculation of the
+                objective function. If None, this  is an array with all values
+                1.0 and with shape equal to (n_findex, n_turbines).
+                Defaults to None.
+            use_turbulence_correction: (bool, optional): When True uses a
+                turbulence parameter to adjust power output calculations.
+                Defaults to False. Not currently implemented.
+
+        Returns:
+            float: Sum of wind turbine powers in W.
+        """
+
+
+        turbine_powers = self._get_weighted_turbine_powers(turbine_weights=turbine_weights,
+                                                           use_turbulence_correction=use_turbulence_correction)
+
+        return np.sum(turbine_powers, axis=1)
 
     def get_farm_power(
         self,
@@ -778,11 +781,10 @@ class FlorisModel(LoggingManager):
             farm_power = self._get_farm_power(turbine_weights=turbine_weights)
             return np.nansum(np.multiply(freq, farm_power))
         else:
-            farm_power = self._get_farm_power(
+            weighted_turbine_powers = self._get_weighted_turbine_powers(
                 turbine_weights=turbine_weights,
-                return_weighted_turbine_powers=True
             )
-            return np.nansum(np.multiply(freq, farm_power))
+            return np.nansum(np.multiply(freq, weighted_turbine_powers))
 
     def get_farm_AEP(
         self,
@@ -896,11 +898,10 @@ class FlorisModel(LoggingManager):
             farm_power = self._get_farm_power(turbine_weights=turbine_weights)
             farm_power = np.multiply(freq, farm_power)
         else:
-            farm_power = self._get_farm_power(
-                turbine_weights=turbine_weights,
-                return_weighted_turbine_powers=True
+            weighted_turbine_powers = self._get_weighted_turbine_powers(
+                turbine_weights=turbine_weights
             )
-            farm_power = np.nansum(np.multiply(freq, farm_power), axis=1)
+            farm_power = np.nansum(np.multiply(freq, weighted_turbine_powers), axis=1)
         if values is None:
             if self.wind_data is None:
                 values = np.array([1.0])
