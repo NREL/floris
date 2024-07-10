@@ -469,17 +469,18 @@ class WindRose(WindDataBase):
         if wd_step is None:
             wd_step = wd_step_current
 
-        # Set up the new wind directions
+        # Identify the covered range of wind directions
         wd_range_min_current = np.min(self.wind_directions) - wd_step_current / 2.0
         wd_range_max_current = np.max(self.wind_directions) + wd_step_current / 2.0
 
+        # Look for unlikely case where for example wind directions are 8, 28, ... 358
         if wd_range_max_current > 360:
-            # TODO: This could probably be more clear
             raise ValueError(
                 "Cannot upsample wind rose for case when wind directions are defined"
                 " such that 0 degrees is included by bins to the left of 0 degrees. "
             )
 
+        # Identify the new minimum wind direction
         wd_min_new = wd_range_min_current + wd_step / 2.0
         wd_max_new = wd_range_max_current - wd_step / 2.0
 
@@ -508,6 +509,7 @@ class WindRose(WindDataBase):
             value_matrix = None
 
         # Make sure everything sorted by wind direction and wind speed
+        # This should be the case but it's possible user can pass in unsorted data
         sort_indices_wd = np.argsort(wind_direction_column)
         wind_direction_column = wind_direction_column[sort_indices_wd]
         sort_indices_ws = np.argsort(wind_speed_column)
@@ -556,43 +558,11 @@ class WindRose(WindDataBase):
                 wind_direction_column, np.min(self.wind_directions) + 360.0
             )
 
-            # Pat the remaining with the appropriate value
+            # Pad the remaining with the appropriate value
             ti_matrix = ti_matrix = np.vstack((ti_matrix, ti_matrix[0, :]))
             freq_matrix = np.vstack((freq_matrix, freq_matrix[0, :]))
             if self.value_table is not None:
                 value_matrix = np.vstack((value_matrix, value_matrix[0, :]))
-
-        # If the wind_direction columns has length 1, then pad the wind_direction column with
-        # that value + and - 1 and expand the matrices accordingly
-        # (this avoids interpolation errors)
-        if len(wind_direction_column) == 1:
-            wind_direction_column = np.array(
-                [
-                    wind_direction_column[0] - 1,
-                    wind_direction_column[0],
-                    wind_direction_column[0] + 1,
-                ]
-            )
-            ti_matrix = np.vstack((ti_matrix, ti_matrix[0, :], ti_matrix[0, :]))
-            freq_matrix = np.vstack((freq_matrix, freq_matrix[0, :], freq_matrix[0, :]))
-            if self.value_table is not None:
-                value_matrix = np.vstack((value_matrix, value_matrix[0, :], value_matrix[0, :]))
-
-        # If the wind_speed column has length 1, then pad the wind_speed column with
-        # that value + and - 1
-        # and expand the matrices accordingly (this avoids interpolation errors)
-        if len(wind_speed_column) == 1:
-            wind_speed_column = np.array(
-                [wind_speed_column[0] - 1, wind_speed_column[0], wind_speed_column[0] + 1]
-            )
-            ti_matrix = np.hstack((ti_matrix, ti_matrix[:, 0][:, None], ti_matrix[:, 0][:, None]))
-            freq_matrix = np.hstack(
-                (freq_matrix, freq_matrix[:, 0][:, None], freq_matrix[:, 0][:, None])
-            )
-            if self.value_table is not None:
-                value_matrix = np.hstack(
-                    (value_matrix, value_matrix[:, 0][:, None], value_matrix[:, 0][:, None])
-                )
 
         # Grid wind directions and wind speeds to match the ti_matrix and freq_matrix when flattened
         wd_grid, ws_grid = np.meshgrid(wind_direction_column, wind_speed_column, indexing="ij")
