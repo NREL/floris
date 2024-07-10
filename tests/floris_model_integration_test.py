@@ -394,7 +394,7 @@ def test_get_farm_aep(caplog):
     expected_farm_power = fmodel.get_expected_farm_power(freq=freq)
     np.testing.assert_allclose(expected_farm_power, aep / (365 * 24))
 
-def test_for_changes_in_expected_farm_power():
+def test_expected_farm_power_regression():
 
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
@@ -447,7 +447,7 @@ def test_expected_farm_power_equals_sum_of_expected_turbine_powers():
     # Assert the expected farm power is the sum of the expected turbine powers
     np.testing.assert_allclose(expected_farm_power, np.sum(expected_turbine_powers))
 
-def test_for_changes_in_expected_farm_value():
+def test_expected_farm_value_regression():
 
     # Ensure this calculation hasn't changed unintentionally
 
