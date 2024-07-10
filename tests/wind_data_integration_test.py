@@ -226,15 +226,102 @@ def test_wind_rose_downsample():
                                wind_rose_downsample.freq_table_flat)
 
 
+def test_wind_rose_upsample_directions():
+
+    # Test wind direction upsampling under a range of conditions
+
+    # First set up a matrix of input directions, upsampling steps and expected ouputs
+    test_conditions = [
+        [[270.0, 280.0], 5.0, [267.5, 272.5, 277.5, 282.5]],
+        [[10,12,14.0], 1.0, [9.5, 10.5, 11.5, 12.5, 13.5, 14.5]],
+        [[0.0, 90.0, 180.0, 270.0], 1.0, np.arange(0.5,360,1.0)]
+    ]
+
+    for test_cond in test_conditions:
+        wind_directions = np.array(test_cond[0])
+        wd_step = test_cond[1]
+        expected_directions = np.array(test_cond[2])
+
+        # Single wind speed case
+        wind_speeds = np.array([8.0])
+        freq_table = np.ones((len(wind_directions), len(wind_speeds)))
+        freq_table = freq_table / np.sum(freq_table)
+        expected_freq_table = np.ones((len(expected_directions), len(wind_speeds)))
+        expected_freq_table = expected_freq_table / np.sum(expected_freq_table)
+
+        wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
+        wind_rose_resample = wind_rose.upsample(wd_step=wd_step)
+
+        np.testing.assert_allclose(wind_rose_resample.wind_directions, expected_directions)
+        np.testing.assert_allclose(wind_rose_resample.wind_speeds, wind_speeds)
+        np.testing.assert_allclose(wind_rose_resample.freq_table, expected_freq_table)
+
+        # Two wind speed case
+        wind_speeds = np.array([8.0, 10.0])
+        freq_table = np.ones((len(wind_directions), len(wind_speeds)))
+        freq_table = freq_table / np.sum(freq_table)
+        expected_freq_table = np.ones((len(expected_directions), len(wind_speeds)))
+        expected_freq_table = expected_freq_table / np.sum(expected_freq_table)
+
+        wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
+        wind_rose_resample = wind_rose.upsample(wd_step=wd_step)
+
+        np.testing.assert_allclose(wind_rose_resample.wind_directions, expected_directions)
+        np.testing.assert_allclose(wind_rose_resample.wind_speeds, wind_speeds)
+        np.testing.assert_allclose(wind_rose_resample.freq_table, expected_freq_table)
+
+def test_wind_rose_upsample_speeds():
+
+    # Test wind speed upsampling under a range of conditions
+
+    # First set up a matrix of input directions, upsampling steps and expected ouputs
+    test_conditions = [
+        [[5,10.0], 1.0, [3., 4., 5.,6., 7., 8., 9., 10., 11.,12.]],
+        [np.arange(0,25,2.0), 1.0, np.arange(0,25,1.0)]
+    ]
+
+    for test_cond in test_conditions:
+        wind_speeds = np.array(test_cond[0])
+        ws_step = test_cond[1]
+        expected_speeds = np.array(test_cond[2])
+
+        # Single wind direction case
+        wind_directions = np.array([270.0])
+        freq_table = np.ones((len(wind_directions), len(wind_speeds)))
+        freq_table = freq_table / np.sum(freq_table)
+        expected_freq_table = np.ones((len(wind_directions), len(expected_speeds)))
+        expected_freq_table = expected_freq_table / np.sum(expected_freq_table)
+
+        wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
+        wind_rose_resample = wind_rose.upsample(ws_step=ws_step)
+
+        np.testing.assert_allclose(wind_rose_resample.wind_directions, wind_directions)
+        np.testing.assert_allclose(wind_rose_resample.wind_speeds, expected_speeds)
+        np.testing.assert_allclose(wind_rose_resample.freq_table, expected_freq_table)
+
+        # Two wind direction case
+        wind_directions = np.array([270.0, 280.0])
+        freq_table = np.ones((len(wind_directions), len(wind_speeds)))
+        freq_table = freq_table / np.sum(freq_table)
+        expected_freq_table = np.ones((len(wind_directions), len(expected_speeds)))
+        expected_freq_table = expected_freq_table / np.sum(expected_freq_table)
+
+        wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
+        wind_rose_resample = wind_rose.upsample(ws_step=ws_step)
+
+        np.testing.assert_allclose(wind_rose_resample.wind_directions, wind_directions)
+        np.testing.assert_allclose(wind_rose_resample.wind_speeds, expected_speeds)
+        np.testing.assert_allclose(wind_rose_resample.freq_table, expected_freq_table)
+
 def test_upsample():
+
+    # Test that interpolating without specifying new steps returns the same wind rose
     wind_directions = np.array([0, 2, 4, 6, 8, 10])
     wind_speeds = np.array([8, 10])
     freq_table = np.ones((6, 2))
     freq_table = freq_table / np.sum(freq_table)
 
     wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
-
-    # Test that interpolating without specifying new steps returns the same
     wind_rose_resample = wind_rose.upsample(inplace=False)
 
     np.testing.assert_allclose(wind_rose.wind_directions, wind_rose_resample.wind_directions)
@@ -293,65 +380,6 @@ def test_upsample():
     np.testing.assert_allclose(wind_rose_resample.ti_table, wind_rose_resample_old.ti_table)
     np.testing.assert_allclose(wind_rose_resample.freq_table, wind_rose_resample_old.freq_table)
 
-    # Test resampling wind directions when wind speeds is 1D
-    wind_directions = np.array([270, 280])
-    wind_speeds = np.array([6])
-    ti_table = np.array([[0.06], [0.07]])
-    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=ti_table)
-    wind_rose_resample = wind_rose.upsample(wd_step=5.0, inplace=False)
-
-    # Check that the resample ti_table is correct
-    np.testing.assert_allclose(wind_rose_resample.wind_directions, [267.5, 272.5, 277.5, 282.5])
-    np.testing.assert_allclose(wind_rose_resample.wind_speeds, [6])
-    np.testing.assert_allclose(
-        wind_rose_resample.ti_table, np.array([[0.06], [0.0625], [0.0675], [0.07]])
-    )
-
-    # Test resampling wind speeds when wind directions is 1D
-    wind_directions = np.array([270])
-    wind_speeds = np.array([6, 7])
-    ti_table = np.array([[0.06, 0.07]])
-    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=ti_table)
-    wind_rose_resample = wind_rose.upsample(ws_step=0.5, inplace=False)
-
-    # Check that the resample ti_table is correct
-    np.testing.assert_allclose(wind_rose_resample.wind_directions, [270])
-    np.testing.assert_allclose(wind_rose_resample.wind_speeds, [5.75, 6.25, 6.75, 7.25])
-    np.testing.assert_allclose(
-        wind_rose_resample.ti_table, np.array([[0.06, 0.0625, 0.0675, 0.07]])
-    )
-
-
-def test_upsample_wrap_wd():
-    wind_directions = np.arange(0, 360, 2.0)
-    wind_speeds = np.array([8.0])
-    freq_table = np.ones((len(wind_directions), len(wind_speeds)))
-    freq_table = freq_table / np.sum(freq_table)
-
-    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
-
-    wind_rose_resample = wind_rose.upsample(inplace=False, wd_step=1.0)
-
-    np.testing.assert_allclose(wind_rose_resample.wind_directions, np.arange(0.5, 360, 1.0))
-
-    # Test that the frequency table is the uniform
-    np.testing.assert_allclose(wind_rose_resample.freq_table, np.ones((360, 1)) / 360)
-
-
-def test_upsample_ws():
-    wind_directions = np.array([270.0])
-    wind_speeds = np.arange(0, 26, 2.0)
-    freq_table = np.ones((len(wind_directions), len(wind_speeds)))
-    freq_table = freq_table / np.sum(freq_table)
-
-    wind_rose = WindRose(wind_directions, wind_speeds, ti_table=0.06, freq_table=freq_table)
-
-    wind_rose_resample = wind_rose.upsample(inplace=False, ws_step=1.0)
-
-    np.testing.assert_allclose(wind_rose_resample.wind_speeds, np.arange(0.0, 25, 1.0))
-
-    # Test that the frequency table is the uniform
-    np.testing.assert_allclose(wind_rose_resample.freq_table, np.ones((1, 25)) / 25)
 
 
 def test_upsample_ti_rose():
