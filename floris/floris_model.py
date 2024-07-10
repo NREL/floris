@@ -41,7 +41,6 @@ from floris.wind_data import (
     TimeSeries,
     WindDataBase,
     WindRose,
-    WindRoseWRG,
     WindTIRose,
 )
 
@@ -169,22 +168,7 @@ class FlorisModel(LoggingManager):
         flow_field_dict = floris_dict["flow_field"]
         farm_dict = floris_dict["farm"]
 
-        ## Farm
-        if layout_x is not None:
-            farm_dict["layout_x"] = layout_x
-        if layout_y is not None:
-            farm_dict["layout_y"] = layout_y
-        if turbine_type is not None:
-            farm_dict["turbine_type"] = turbine_type
-        if turbine_library_path is not None:
-            farm_dict["turbine_library_path"] = turbine_library_path
-
-        ## If layout is changed and self._wind_data is not None, update the layout in wind_data
-        if (layout_x is not None) or (layout_y is not None):
-            if self._wind_data is not None:
-                self._wind_data.set_layout(farm_dict["layout_x"], farm_dict["layout_y"])
-
-        # Wind data
+        #
         if (
             (wind_directions is not None)
             or (wind_speeds is not None)
@@ -201,18 +185,14 @@ class FlorisModel(LoggingManager):
                 self.logger.warning("Deleting stored wind_data information.")
                 self._wind_data = None
         if wind_data is not None:
-
-            # Set the wind data to the current layout
-            wind_data.set_layout(farm_dict["layout_x"], farm_dict["layout_y"])
-
-            # Unpack wind data for reinitialization and save wind_data for use in output
-            (
-                wind_directions,
-                wind_speeds,
-                turbulence_intensities,
-                heterogeneous_inflow_config,
-            ) = wind_data.unpack_for_reinitialize()
-            self._wind_data = wind_data
+                # Unpack wind data for reinitialization and save wind_data for use in output
+                (
+                    wind_directions,
+                    wind_speeds,
+                    turbulence_intensities,
+                    heterogeneous_inflow_config,
+                ) = wind_data.unpack_for_reinitialize()
+                self._wind_data = wind_data
 
         ## FlowField
         if wind_speeds is not None:
@@ -245,7 +225,15 @@ class FlorisModel(LoggingManager):
 
             flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
-
+        ## Farm
+        if layout_x is not None:
+            farm_dict["layout_x"] = layout_x
+        if layout_y is not None:
+            farm_dict["layout_y"] = layout_y
+        if turbine_type is not None:
+            farm_dict["turbine_type"] = turbine_type
+        if turbine_library_path is not None:
+            farm_dict["turbine_library_path"] = turbine_library_path
 
         if solver_settings is not None:
             floris_dict["solver"] = solver_settings
@@ -544,7 +532,7 @@ class FlorisModel(LoggingManager):
         turbine_powers = self._get_turbine_powers()
 
         if self.wind_data is not None:
-            if isinstance(self.wind_data, (WindRose, WindRoseWRG)):
+            if type(self.wind_data) is WindRose:
                 turbine_powers_rose = np.full(
                     (len(self.wind_data.wd_flat), self.core.farm.n_turbines),
                     np.nan
@@ -570,47 +558,10 @@ class FlorisModel(LoggingManager):
 
         return turbine_powers
 
-    def get_expected_turbine_powers(self, freq=None):
-        """
-        Compute the expected (mean) power of each turbine.
-
-        Args:
-            freq (NDArrayFloat): NumPy array with shape
-                with the frequencies of each wind direction and
-                wind speed combination.  freq is either a 1D array,
-                in which case the same frequencies are used for all
-                turbines, or a 2D array with shape equal to
-                (n_findex, n_turbines), in which case each turbine has a unique
-                set of frequencies (this is the case for example using
-                WindRoseByTurbine).
-
-                    These frequencies should typically sum across rows
-                up to 1.0 and are used to weigh the wind farm power for every
-                condition in calculating the wind farm's AEP. Defaults to None.
-                If None and a WindData object was supplied, the WindData object's
-                frequencies will be used. Otherwise, uniform frequencies are assumed
-                (i.e., a simple mean over the findices is computed).
-        """
-
-        turbine_powers = self._get_turbine_powers()
-
-        if freq is None:
-            if self.wind_data is None:
-                freq = np.array([1.0/self.core.flow_field.n_findex])
-            else:
-                freq = self.wind_data.unpack_freq()
-
-        # If freq is 2d, then use the per turbine frequencies
-        if len(np.shape(freq)) == 2:
-            return np.nansum(np.multiply(freq, turbine_powers), axis=0)
-        else:
-            return np.nansum(np.multiply(freq.reshape(-1, 1), turbine_powers), axis=0)
-
     def _get_farm_power(
         self,
         turbine_weights=None,
         use_turbulence_correction=False,
-        return_weighted_turbine_powers=False,
     ):
         """
         Report wind plant power from instance of floris. Optionally includes
@@ -636,11 +587,6 @@ class FlorisModel(LoggingManager):
             use_turbulence_correction: (bool, optional): When True uses a
                 turbulence parameter to adjust power output calculations.
                 Defaults to False. Not currently implemented.
-            return_weighted_turbine_powers (bool, optional): When True,
-                returns the turbine powers after weighting.  This option
-                is primarily for computing expected power with the WindRoseByTurbine
-                object, which has a separate frequency for each turbine.
-                Defaults to False.
 
         Returns:
             float: Sum of wind turbine powers in W.
@@ -676,10 +622,7 @@ class FlorisModel(LoggingManager):
         turbine_powers = self._get_turbine_powers()
         turbine_powers = np.multiply(turbine_weights, turbine_powers)
 
-        if return_weighted_turbine_powers:
-            return turbine_powers
-        else:
-            return np.sum(turbine_powers, axis=1)
+        return np.sum(turbine_powers, axis=1)
 
     def get_farm_power(
         self,
@@ -717,7 +660,7 @@ class FlorisModel(LoggingManager):
         farm_power = self._get_farm_power(turbine_weights, use_turbulence_correction)
 
         if self.wind_data is not None:
-            if isinstance(self.wind_data, (WindRose, WindRoseWRG)):
+            if type(self.wind_data) is WindRose:
                 farm_power_rose = np.full(len(self.wind_data.wd_flat), np.nan)
                 farm_power_rose[self.wind_data.non_zero_freq_mask] = farm_power
                 farm_power = farm_power_rose.reshape(
@@ -767,22 +710,15 @@ class FlorisModel(LoggingManager):
                 n_turbines). Defaults to None.
         """
 
+        farm_power = self._get_farm_power(turbine_weights=turbine_weights)
+
         if freq is None:
             if self.wind_data is None:
                 freq = np.array([1.0/self.core.flow_field.n_findex])
             else:
                 freq = self.wind_data.unpack_freq()
 
-        # If freq is 1d
-        if len(np.shape(freq)) == 1:
-            farm_power = self._get_farm_power(turbine_weights=turbine_weights)
-            return np.nansum(np.multiply(freq, farm_power))
-        else:
-            farm_power = self._get_farm_power(
-                turbine_weights=turbine_weights,
-                return_weighted_turbine_powers=True
-            )
-            return np.nansum(np.multiply(freq, farm_power))
+        return np.nansum(np.multiply(freq, farm_power))
 
     def get_farm_AEP(
         self,
@@ -825,7 +761,6 @@ class FlorisModel(LoggingManager):
         if (
             freq is None
             and not isinstance(self.wind_data, WindRose)
-            and not isinstance(self.wind_data, WindRoseWRG)
             and not isinstance(self.wind_data, WindTIRose)
         ):
             self.logger.warning(
@@ -886,27 +821,24 @@ class FlorisModel(LoggingManager):
             float:
                 The expected value produced by the wind farm in units of value.
         """
+
+        farm_power = self._get_farm_power(turbine_weights=turbine_weights)
+
         if freq is None:
             if self.wind_data is None:
                 freq = np.array([1.0/self.core.flow_field.n_findex])
             else:
                 freq = self.wind_data.unpack_freq()
-        # If freq is 1d
-        if len(np.shape(freq)) == 1:
-            farm_power = self._get_farm_power(turbine_weights=turbine_weights)
-            farm_power = np.multiply(freq, farm_power)
-        else:
-            farm_power = self._get_farm_power(
-                turbine_weights=turbine_weights,
-                return_weighted_turbine_powers=True
-            )
-            farm_power = np.nansum(np.multiply(freq, farm_power), axis=1)
+
         if values is None:
             if self.wind_data is None:
                 values = np.array([1.0])
             else:
                 values = self.wind_data.unpack_value()
-        return np.nansum(np.multiply(values, farm_power))
+
+        farm_value = np.multiply(values, farm_power)
+
+        return np.nansum(np.multiply(freq, farm_value))
 
     def get_farm_AVP(
         self,
@@ -960,7 +892,6 @@ class FlorisModel(LoggingManager):
         if (
             freq is None
             and not isinstance(self.wind_data, WindRose)
-            and not isinstance(self.wind_data, WindRoseWRG)
             and not isinstance(self.wind_data, WindTIRose)
         ):
             self.logger.warning(
