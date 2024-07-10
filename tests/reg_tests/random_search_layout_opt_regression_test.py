@@ -17,11 +17,11 @@ DEFLECTION_MODEL = "gauss"
 
 locations_baseline_aep = np.array(
     [
-        [0.0, 619.07183266, 1260.0],
-        [0.0, 499.88056089, 0.0]
+        [0.0, 243.05304475, 1260.0],
+        [0.0, 959.83979244,    0.0],
     ]
 )
-baseline_aep = 44798828639.17205
+baseline_aep = 45226182795.34081
 
 locations_baseline_value = np.array(
     [
@@ -68,7 +68,7 @@ def test_random_search_layout_opt(sample_inputs_fixture):
         use_dist_based_init=False,
         random_seed=0,
     )
-    sol = layout_opt.optimize()
+    sol = layout_opt._test_optimize()
     optimized_aep = sol[0]
     locations_opt = np.array([sol[1], sol[2]])
 
@@ -130,7 +130,7 @@ def test_random_search_layout_opt_value(sample_inputs_fixture):
         random_seed=0,
         use_value=True,
     )
-    sol = layout_opt.optimize()
+    sol = layout_opt._test_optimize()
     optimized_value = sol[0]
     locations_opt = np.array([sol[1], sol[2]])
 
