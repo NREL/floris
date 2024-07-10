@@ -3,7 +3,6 @@ from __future__ import annotations
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import scipy.spatial._qhull
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from scipy.spatial import ConvexHull
@@ -155,20 +154,10 @@ class HeterogeneousMap(LoggingManager):
         else:
             num_dim = 3
 
-        # Make a pandas dataframe of the data
-        df = pd.DataFrame(
-            data=self.speed_multipliers,
-            index=self.wind_directions,
-            columns=list(range(len(self.x)))
-        )
-
         return (
             f"HeterogeneousMap with {num_dim} dimensions\n"
             f"Speeds-up defined for {len(self.x)} points and\n"
             f"{self.speed_multipliers.shape[0]} wind conditions"
-
-            f"\n\n{df}"
-
         )
 
     def get_heterogeneous_inflow_config(
