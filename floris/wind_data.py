@@ -145,6 +145,26 @@ class WindRose(WindDataBase):
         if not isinstance(wind_speeds, np.ndarray):
             raise TypeError("wind_speeds must be a NumPy array")
 
+        # Confirm that both wind_directions and wind_speeds are monitonically
+        # increasing and evenly spaced
+        if len(wind_directions) > 1:
+            # Check monotonically increasing
+            if not np.all(np.diff(wind_directions) > 0):
+                raise ValueError("wind_directions must be monotonically increasing")
+
+            # Check evenly spaced
+            if not np.allclose(np.diff(wind_directions), wind_directions[1] - wind_directions[0]):
+                raise ValueError("wind_directions must be evenly spaced")
+
+        if len(wind_speeds) > 1:
+            # Check monotonically increasing
+            if not np.all(np.diff(wind_speeds) > 0):
+                raise ValueError("wind_speeds must be monotonically increasing")
+
+            # Check evenly spaced
+            if not np.allclose(np.diff(wind_speeds), wind_speeds[1] - wind_speeds[0]):
+                raise ValueError("wind_speeds must be evenly spaced")
+
         # Save the wind speeds and directions
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
@@ -469,12 +489,28 @@ class WindRose(WindDataBase):
         if wd_step is None:
             wd_step = wd_step_current
 
+        # Make sure upsampling is appropriate
+        if wd_step > wd_step_current:
+            raise ValueError(
+                f"Provided wd_step ({wd_step}) is larger than the current "
+                f" wind direction step size.  ({wd_step_current} degrees)"
+                " Use the downsample method."
+            )
+
+        if ws_step > ws_step_current:
+            raise ValueError(
+                f"Provided ws_step ({ws_step}) is larger than "
+                f"the current wind speed step size.  ({ws_step_current} m/s)"
+                " Use the downsample method."
+            )
+
         # Identify the covered range of wind directions
         wd_range_min_current = np.min(self.wind_directions) - wd_step_current / 2.0
         wd_range_max_current = np.max(self.wind_directions) + wd_step_current / 2.0
 
         # Look for unlikely case where for example wind directions are 8, 28, ... 358
         if wd_range_max_current > 360:
+            # TODO: Handle this case without an error
             raise ValueError(
                 "Cannot upsample wind rose for case when wind directions are defined"
                 " such that 0 degrees is included by bins to the left of 0 degrees. "
@@ -1040,6 +1076,39 @@ class WindTIRose(WindDataBase):
 
         if not isinstance(turbulence_intensities, np.ndarray):
             raise TypeError("turbulence_intensities must be a NumPy array")
+
+        # Confirm that both wind_directions and wind_speeds
+        # and turbulence intensities are monotonically
+        # increasing and evenly spaced
+        if len(wind_directions) > 1:
+            # Check monotonically increasing
+            if not np.all(np.diff(wind_directions) > 0):
+                raise ValueError("wind_directions must be monotonically increasing")
+
+            # Check evenly spaced
+            if not np.allclose(np.diff(wind_directions), wind_directions[1] - wind_directions[0]):
+                raise ValueError("wind_directions must be evenly spaced")
+
+        if len(wind_speeds) > 1:
+            # Check monotonically increasing
+            if not np.all(np.diff(wind_speeds) > 0):
+                raise ValueError("wind_speeds must be monotonically increasing")
+
+            # Check evenly spaced
+            if not np.allclose(np.diff(wind_speeds), wind_speeds[1] - wind_speeds[0]):
+                raise ValueError("wind_speeds must be evenly spaced")
+
+        if len(turbulence_intensities) > 1:
+            # Check monotonically increasing
+            if not np.all(np.diff(turbulence_intensities) > 0):
+                raise ValueError("turbulence_intensities must be monotonically increasing")
+
+            # Check evenly spaced
+            if not np.allclose(
+                np.diff(turbulence_intensities),
+                turbulence_intensities[1] - turbulence_intensities[0],
+            ):
+                raise ValueError("turbulence_intensities must be evenly spaced")
 
         # Save the wind speeds and directions
         self.wind_directions = wind_directions

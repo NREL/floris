@@ -69,6 +69,18 @@ def test_wind_rose_init():
     The wind directions and wind speeds can have any length, but the frequency
     array must have shape (n wind directions, n wind speeds)
     """
+
+    # Test that passing in unevenly spaced wind directions or wind speeds raises an error
+    with pytest.raises(ValueError):
+        WindRose(np.array([270, 280, 290, 310]), np.array([6, 7]), 0.06)
+
+    with pytest.raises(ValueError):
+        WindRose(np.array([270, 280, 290]), np.array([6, 7, 10]), 0.06)
+
+    # Test that passing in decreasing wind directions raises an error
+    with pytest.raises(ValueError):
+        WindRose(np.array([290, 280, 270]), np.array([6, 7]), 0.06)
+
     wind_directions = np.array([270, 280, 290])
     wind_speeds = np.array([6, 7])
 
