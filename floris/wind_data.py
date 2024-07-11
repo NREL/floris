@@ -558,7 +558,7 @@ class WindRose(WindDataBase):
             value_matrix = value_matrix[sort_indices_wd, :]
             value_matrix = value_matrix[:, sort_indices_ws]
 
-        # Pad out the wind directions and wind speeds to the min and max ranges
+        # Pad out the wind directions to the min and max ranges
         # Add the min range to the wind direction column
         wind_direction_column = np.append(wd_range_min_current, wind_direction_column)
         ti_matrix = ti_matrix = np.vstack((ti_matrix[0, :], ti_matrix))
