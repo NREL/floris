@@ -88,7 +88,7 @@ def wrap_360(x):
 
     return x % 360.0
 
-def identify_step_size(wind_directions):
+def check_and_identify_step_size(wind_directions):
     """
     This function identifies the step size in a series of wind directions. The function will
     return the step size if the wind directions are evenly spaced, otherwise it will raise an
@@ -149,6 +149,37 @@ def identify_step_size(wind_directions):
             return values[np.argmax(counts)]
 
         raise ValueError("wind_directions must be evenly spaced")
+
+def make_wind_directions_adjacent(wind_directions: NDArrayFloat) -> NDArrayFloat:
+    """
+    This function ...
+
+    Args:
+        wind_directions (NDArrayFloat): Array of wind directions.
+
+    Returns:
+        NDArrayFloat: The reordered wind directions to be adjacent.
+    """
+
+    # Check the step size of the wind directions
+    step_size = check_and_identify_step_size(wind_directions)
+
+    # Get a list of steps
+    steps = np.diff(wind_directions)
+
+    # There will be at most one step with a size larger than the step size
+    # If there is one, find it
+    if np.any(steps > step_size):
+        idx = np.argmax(steps)
+
+        # Now change wind_directions such that for each direction after that index
+        # subtract 360 and move that block to the front
+        wind_directions = np.concatenate(
+            (wind_directions[idx+1:] - 360, wind_directions[:idx+1])
+        )
+
+    return wind_directions
+
 
 def wind_delta(wind_directions: NDArrayFloat | float):
     """
