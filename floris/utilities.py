@@ -152,7 +152,9 @@ def check_and_identify_step_size(wind_directions):
 
 def make_wind_directions_adjacent(wind_directions: NDArrayFloat) -> NDArrayFloat:
     """
-    This function ...
+    This function reorders the wind directions so that they are adjacent. The function will
+    return the reordered wind directions if the wind directions are not adjacent, otherwise it
+    will return the input wind directions
 
     Args:
         wind_directions (NDArrayFloat): Array of wind directions.
