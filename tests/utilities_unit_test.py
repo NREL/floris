@@ -7,6 +7,7 @@ import pytest
 
 from floris.utilities import (
     cosd,
+    identify_step_size,
     nested_get,
     nested_set,
     reverse_rotate_coordinates_rel_west,
@@ -76,6 +77,45 @@ def test_wind_delta():
     assert wind_delta(180.0) == 270.0
     assert wind_delta(-10.0) == 80.0
     assert wind_delta(-100.0) == 350.0
+
+
+def test_identify_step_size():
+    # First set up a matrix of input directions, upsampling steps and expected ouputs
+    test_conditions = [
+        [[270.0, 280.0], 10.0],
+        [[0.0, 4.0], 4.0],
+        [[0.0, 358.0], 2.0],
+        [[0, 358], 2],
+        [[10, 20, 30], 10],
+        [[0, 10, 350], 10],
+        [[0,1,359],1.0],
+        [[0,356,358],2.0],
+        [[4, 8, 12, 16], 4],
+        [[0, 90, 180, 270], 90],
+        [[0, 5, 10,355], 5],
+        [np.arange(0,360,1), 1],
+        [sorted(np.arange(330,390,1)%360), 1],
+    ]
+
+    for test_cond in test_conditions:
+        wind_directions = np.array(test_cond[0])
+        expected_step = test_cond[1]
+
+        step_size = identify_step_size(wind_directions)
+        assert step_size == expected_step
+
+
+def test_identify_step_size_value_error():
+    # First set up a matrix of input directions, upsampling steps and expected ouputs
+    test_conditions = [
+        [1,3,7], # Inconsistent step size
+        [4, 3, 2], # Decreasing
+        [5, 10, 15, 45], #Inconsistent step not connected to a wrapping
+    ]
+
+    for wind_directions in test_conditions:
+        with pytest.raises(ValueError):
+            identify_step_size(wind_directions)
 
 
 def test_rotate_coordinates_rel_west():
