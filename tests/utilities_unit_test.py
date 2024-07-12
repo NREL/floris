@@ -6,8 +6,9 @@ import numpy as np
 import pytest
 
 from floris.utilities import (
+    check_and_identify_step_size,
     cosd,
-    identify_step_size,
+    make_wind_directions_adjacent,
     nested_get,
     nested_set,
     reverse_rotate_coordinates_rel_west,
@@ -78,8 +79,27 @@ def test_wind_delta():
     assert wind_delta(-10.0) == 80.0
     assert wind_delta(-100.0) == 350.0
 
+def test_make_wind_directions_adjacent():
 
-def test_identify_step_size():
+    test_conditions = [
+        [[0.0, 10.0], [0.0, 10.0]],
+        [[0.0, 350.], [-10., 0.]],
+        [[20.0, 25., 30.], [20.0, 25., 30.]],
+        [[0.0, 350., 355., ], [-10., -5, 0]],
+        [[0 ,2, 358], [-2, 0, 2]],
+        [[0, 1, 359], [-1, 0, 1]],
+        [np.arange(0,360,1), np.arange(0,360,1)],
+        [sorted(np.arange(330,390,1)%360),np.arange(-30,30,1) ],
+    ]
+
+    for test_cond in test_conditions:
+        wind_directions = np.array(test_cond[0])
+        expected_wind_directions = np.array(test_cond[1])
+
+        wind_directions_adjacent = make_wind_directions_adjacent(wind_directions)
+        np.testing.assert_array_equal(wind_directions_adjacent, expected_wind_directions)
+
+def test_check_and_identify_step_size():
     # First set up a matrix of input directions, upsampling steps and expected ouputs
     test_conditions = [
         [[270.0, 280.0], 10.0],
@@ -101,11 +121,11 @@ def test_identify_step_size():
         wind_directions = np.array(test_cond[0])
         expected_step = test_cond[1]
 
-        step_size = identify_step_size(wind_directions)
+        step_size = check_and_identify_step_size(wind_directions)
         assert step_size == expected_step
 
 
-def test_identify_step_size_value_error():
+def test_check_and_identify_step_size_value_error():
     # First set up a matrix of input directions, upsampling steps and expected ouputs
     test_conditions = [
         [1,3,7], # Inconsistent step size
@@ -115,7 +135,7 @@ def test_identify_step_size_value_error():
 
     for wind_directions in test_conditions:
         with pytest.raises(ValueError):
-            identify_step_size(wind_directions)
+            check_and_identify_step_size(wind_directions)
 
 
 def test_rotate_coordinates_rel_west():
