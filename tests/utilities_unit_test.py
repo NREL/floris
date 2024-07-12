@@ -96,8 +96,10 @@ def test_make_wind_directions_adjacent():
         wind_directions = np.array(test_cond[0])
         expected_wind_directions = np.array(test_cond[1])
 
-        wind_directions_adjacent = make_wind_directions_adjacent(wind_directions)
+        wind_directions_adjacent, sort_indices = make_wind_directions_adjacent(wind_directions)
         np.testing.assert_array_equal(wind_directions_adjacent, expected_wind_directions)
+        np.testing.assert_array_equal(wind_directions[sort_indices]%360.0,
+                                      wind_directions_adjacent%360.0)
 
 def test_check_and_identify_step_size():
     # First set up a matrix of input directions, upsampling steps and expected ouputs

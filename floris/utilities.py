@@ -180,7 +180,14 @@ def make_wind_directions_adjacent(wind_directions: NDArrayFloat) -> NDArrayFloat
             (wind_directions[idx+1:] - 360, wind_directions[:idx+1])
         )
 
-    return wind_directions
+        # Return the wind directions and indices to go from the original to the new
+        sort_indices = np.array(list(range(idx+1,len(wind_directions))) + list(range(idx+1)))
+
+        return wind_directions, sort_indices
+
+    else:
+
+        return wind_directions, np.arange(len(wind_directions))
 
 
 def wind_delta(wind_directions: NDArrayFloat | float):
