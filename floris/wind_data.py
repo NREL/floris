@@ -567,18 +567,15 @@ class WindRose(WindDataBase):
         # This is the case when wind directions doesn't cover the full range of possible
         # degrees (0-360)
         if np.abs((wd_range_min_current % 360.0) - (wd_range_max_current % 360.0)) > 1e-6:
-            wind_direction_column = np.append(wd_range_min_current, wind_direction_column)
-            ti_matrix = ti_matrix = np.vstack((ti_matrix[0, :], ti_matrix))
-            freq_matrix = np.vstack((freq_matrix[0, :], freq_matrix))
+            wind_direction_column = np.concatenate((
+                np.array([wd_range_min_current]),
+                wind_direction_column,
+                np.array([wd_range_max_current])
+            ))
+            ti_matrix = ti_matrix = np.vstack((ti_matrix[0, :], ti_matrix, ti_matrix[-1,:]))
+            freq_matrix = np.vstack((freq_matrix[0, :], freq_matrix, freq_matrix[-1,:]))
             if self.value_table is not None:
-                value_matrix = np.vstack((value_matrix[0, :], value_matrix))
-
-            # Add the max range to the wind direction column
-            wind_direction_column = np.append(wind_direction_column, wd_range_max_current)
-            ti_matrix = np.vstack((ti_matrix, ti_matrix[-1, :]))
-            freq_matrix = np.vstack((freq_matrix, freq_matrix[-1, :]))
-            if self.value_table is not None:
-                value_matrix = np.vstack((value_matrix, value_matrix[-1, :]))
+                value_matrix = np.vstack((value_matrix[0, :], value_matrix, value_matrix[-1,:]))
 
         # In the alternative case, where the wind directions cover the full range
         # ie, 0, 10, 20 30, ...350, then need to place 0 at 360 and 350 at -10
