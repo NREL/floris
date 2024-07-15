@@ -12,6 +12,8 @@ class YawOptimizationGeometric(YawOptimization):
     :py:class:`floris.optimization.general_library.YawOptimization` that is
     used to provide a rough estimate of optimal yaw angles based purely on the
     wind farm geometry. Main use case is for coupled layout and yaw optimization.
+
+    See Stanely et al. (2023) for details: https://wes.copernicus.org/articles/8/1341/2023/
     """
 
     def __init__(

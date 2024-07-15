@@ -27,7 +27,7 @@ REQUIRED = [
     "shapely~=2.0",
 
     # utilities
-    "coloredlogs~=10.0",
+    "coloredlogs~=15.0",
 ]
 
 # What packages are optional?
