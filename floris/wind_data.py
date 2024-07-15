@@ -1656,7 +1656,7 @@ class WindTIRose(WindDataBase):
                     (value_matrix, value_matrix[0, :, :][None, :, :]), axis=0
                 )
 
-        # Grid wind directions, wind speeds and turbulence intensities to match the 
+        # Grid wind directions, wind speeds and turbulence intensities to match the
         # freq_matrix when flattened
         wd_grid, ws_grid, ti_grid = np.meshgrid(
             wind_direction_column, wind_speed_column, turbulence_intensity_column, indexing="ij"
