@@ -106,7 +106,7 @@ ax = plt.gca()
 fig = plt.gcf()
 sm = ax.tricontourf(x_locs, y_locs, speed_multipliers[0], cmap="coolwarm")
 fig.colorbar(sm, ax=ax, label="Speed multiplier")
-ax.legend(["Optimization boundary", "Initial layout", "Optimized layout" ])
+ax.legend(["_Optimization boundary", "Initial layout", "Optimized layout" ])
 ax.set_title("Geometric yaw disabled")
 
 
@@ -144,7 +144,7 @@ ax = plt.gca()
 fig = plt.gcf()
 sm = ax.tricontourf(x_locs, y_locs, speed_multipliers[0], cmap="coolwarm")
 fig.colorbar(sm, ax=ax, label="Speed multiplier")
-ax.legend(["Optimization boundary", "Initial layout", "Optimized layout"])
+ax.legend(["_Optimization boundary", "Initial layout", "Optimized layout"])
 ax.set_title("Geometric yaw enabled")
 
 print(
