@@ -1,6 +1,10 @@
 """Example: Reproduce published eddy viscosity results
 This example attempts to reproduce the results of Ainslie (1988) and Gunn (2019)
 using the FLORIS implementation of the eddy viscosity model.
+
+Links:
+- Ainslie (1988): https://doi.org/10.1016/0167-6105(88)90037-2
+- Gunn (2019): https://dx.doi.org/10.1088/1742-6596/1222/1/012003
 """
 
 import matplotlib.pyplot as plt
