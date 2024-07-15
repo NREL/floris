@@ -237,7 +237,7 @@ class WindRose(WindDataBase):
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
         # using the dictionary
         if heterogeneous_inflow_config_by_wd is not None:
-            # TODO: In future, add deprectation warning for this parameter here
+            # TODO: In future, add deprecation warning for this parameter here
 
             self.heterogeneous_map = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
 
@@ -1656,7 +1656,8 @@ class WindTIRose(WindDataBase):
                     (value_matrix, value_matrix[0, :, :][None, :, :]), axis=0
                 )
 
-        # Grid wind directions and wind speeds to match the ti_matrix and freq_matrix when flattened
+        # Grid wind directions, wind speeds and turbulence intensities to match the 
+        # freq_matrix when flattened
         wd_grid, ws_grid, ti_grid = np.meshgrid(
             wind_direction_column, wind_speed_column, turbulence_intensity_column, indexing="ij"
         )
