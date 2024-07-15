@@ -107,7 +107,7 @@ wake:
       k_l: 0.0283
       k_a: 0.5
       von_Karman_constant: 0.4
-      wd_std: 3.0
+      wd_std_ev: 3.0
 
   wake_turbulence_parameters:
     crespo_hernandez:

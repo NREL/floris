@@ -45,7 +45,7 @@ class EddyViscosityVelocity(BaseModel):
     c_0: float = field(default=2.0)
     c_1: float = field(default=1.5)
 
-    wd_std: float = field(default=3.0) # Also try with 0.0 for no meandering
+    wd_std_ev: float = field(default=3.0) # Also try with 0.0 for no meandering
 
     def prepare_function(
         self,
@@ -159,7 +159,7 @@ class EddyViscosityVelocity(BaseModel):
 
         # Correct for wake meandering
         U_tilde_c_meandering = wake_meandering_centerline_correction(
-            U_tilde_c, w_tilde_sq, x_tilde, self.wd_std
+            U_tilde_c, w_tilde_sq, x_tilde, self.wd_std_ev
         )
 
         # Recompute wake width
@@ -368,8 +368,8 @@ def initial_centerline_velocity(Ct, ambient_ti, i_const_1, i_const_2, i_const_3,
 
     return U_c0_
 
-def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_tilde, wd_std):
-    wd_std_rad = np.deg2rad(wd_std)
+def wake_meandering_centerline_correction(U_tilde_c, w_tilde_sq, x_tilde, wd_std_ev):
+    wd_std_rad = np.deg2rad(wd_std_ev)
 
     m = np.sqrt(1 + 2*wd_std_rad**2 * x_tilde**2/w_tilde_sq)
 
