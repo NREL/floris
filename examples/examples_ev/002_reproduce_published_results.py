@@ -128,12 +128,14 @@ fmodel.set(
 )
 
 n_pts = 1000
-points_x = np.tile(np.linspace(0, 12, n_pts), 2)
+points_x = np.concatenate((np.linspace(0, 10, n_pts), np.linspace(1.5, 11.5, n_pts)))
 points_y = np.concatenate((np.zeros(n_pts), y_offset*np.ones(n_pts)))
 points_z = HH * np.ones_like(points_x)
 u_at_points = fmodel.sample_flow_at_points(points_x, points_y, points_z)
 
 fig, ax = plt.subplots(1,1)
+ax.plot([0.0, 0.0], [0.3, 1.1], color="black")
+ax.plot([1.5, 1.5], [0.3, 1.1], color="black")
 ax.plot(points_x[:n_pts], u_at_points[0, :n_pts]/u_0, color="C0")
 ax.plot(points_x[n_pts:], u_at_points[0, n_pts:]/u_0, color="C2", linestyle="--")
 ax.grid()
