@@ -13,6 +13,7 @@ import floris.flow_visualization as flowviz
 import floris.layout_visualization as layoutviz
 from floris import FlorisModel
 
+
 # Instantiate FLORIS model
 fmodel = FlorisModel("../inputs/ev.yaml")
 

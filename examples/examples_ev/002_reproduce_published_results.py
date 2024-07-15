@@ -23,7 +23,7 @@ u_0 = 8.0 # wind speed [m/s]
 # Load the EV model
 fmodel = FlorisModel("../inputs/ev.yaml")
 
-## First, reproduce results from Ainslie (1988)
+## First, attempt to reproduce Figs. 3 and 4 from Ainslie (1988)
 
 # TODO: set up model parameters to match Ainslie (if possible)
 # z_h = 50
@@ -76,13 +76,10 @@ ax.set_ylim([0, 1])
 ax.legend()
 ax.grid()
 
-## Second, reproduce results from Gunn (2019)
-
-# Figure 1
+## Second, reproduce Figure 1 from Gunn (2019)
 
 # Reset to the default model parameters
 fmodel = FlorisModel("../inputs/ev.yaml")
-dd = 1# downstream distance of second turbine
 
 # Adjustments
 C_T2 = 0.34
