@@ -91,6 +91,9 @@ D2 = 1.52
 y_offset = -20
 HH = 0.8
 
+# Match depends on ambient turbulence intensity. 7.5% appears close.
+TI = 0.075
+
 turb_1 = build_cosine_loss_turbine_dict(
     turbine_data_dict={
         "wind_speed":[0.0, 30.0],
@@ -120,27 +123,22 @@ fmodel.set(
     turbine_type=[turb_1, turb_2],
     wind_speeds=[u_0],
     wind_directions=[270.0],
-    turbulence_intensities=[0.06],
-    wind_shear=0
+    turbulence_intensities=[TI],
+    wind_shear=0.0
 )
 
 n_pts = 1000
 points_x = np.tile(np.linspace(0, 12, n_pts), 2)
 points_y = np.concatenate((np.zeros(n_pts), y_offset*np.ones(n_pts)))
-points_z = 0.8 * np.ones_like(points_x)
+points_z = HH * np.ones_like(points_x)
 u_at_points = fmodel.sample_flow_at_points(points_x, points_y, points_z)
 
-# Some bug here---why is the maximum u_at_points 4.something?
-u0 = fmodel.wind_speeds[0]
-print(u0)
-print(u_at_points.max())
-
-# Pretty close, I think (once u0 thing fixed). Possibly cubature? No.
 fig, ax = plt.subplots(1,1)
 ax.plot(points_x[:n_pts], u_at_points[0, :n_pts]/u_0, color="C0")
 ax.plot(points_x[n_pts:], u_at_points[0, n_pts:]/u_0, color="C2", linestyle="--")
 ax.grid()
 ax.set_xlabel(r"$X$")
 ax.set_ylabel(r"$\tilde{U}_c$")
+ax.set_ylim([0.3, 1.1])
 
 plt.show()
