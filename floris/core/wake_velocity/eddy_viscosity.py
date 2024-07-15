@@ -163,7 +163,7 @@ class EddyViscosityVelocity(BaseModel):
         )
 
         # Recompute wake width
-        w_tilde_sq_meandering = wake_width_squared(ct_i, U_tilde_c)
+        w_tilde_sq_meandering = wake_width_squared(ct_i, U_tilde_c_meandering)
 
         # Set all upstream values (including current turbine's position) to no wake
         U_tilde_c_meandering[x_tilde < 0.1] = 1
