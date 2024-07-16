@@ -79,6 +79,7 @@ ax[0].set_ylabel("Centerline velocity deficit [-]")
 ax[0].set_ylim([0, 1])
 ax[0].legend()
 ax[0].grid()
+ax[1].legend()
 ax[1].grid()
 
 

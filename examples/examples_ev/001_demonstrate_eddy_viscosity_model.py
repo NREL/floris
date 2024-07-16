@@ -35,7 +35,7 @@ fmodel.set(wind_directions=wd_array, wind_speeds=ws_array, turbulence_intensitie
 # Create points to sample the flow in the turbines' wakes, both at the centerline and
 # across the wake's width
 x_locs = np.linspace(0, 2000, 400)
-y_locs = np.linspace(-100, 100, 40)
+y_locs = np.linspace(-100, 100, 41)
 points_x, points_y = np.meshgrid(x_locs, y_locs)
 points_x = points_x.flatten()
 points_y = points_y.flatten()
@@ -48,7 +48,15 @@ u_at_points = u_at_points.reshape((len(y_locs), len(x_locs), 1))
 # Plot the flow velocities
 for y_idx, y in enumerate(y_locs):
     a = 1-np.abs(y/100)
-    ax.plot(x_locs, u_at_points[y_idx, :, 0].flatten(), color="black", alpha=a)
+    if y_idx == (len(y_locs)-1)/2:
+        label = r"$r = 0D$ (centerline)"
+    elif y_idx == 3*(len(y_locs)-1)/4:
+        label = r"$r \approx 0.4D$"
+    elif y_idx == len(y_locs)-1:
+        label = r"$r \approx 0.8D$"
+    else:
+        label=None
+    ax.plot(x_locs, u_at_points[y_idx, :, 0].flatten(), color="black", alpha=a, label=label)
 ax.grid()
 ax.legend()
 ax.set_xlabel("x location [m]")
