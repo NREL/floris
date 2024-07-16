@@ -1635,9 +1635,9 @@ def streamtube_expansion_solver(
         if np.any(farm.yaw_angles_sorted):
             raise NotImplementedError(
                 "WARNING: Deflection with the eddy viscosity model has not been implemented."
+                " Set yaw_angles to zero to run the eddy viscosity model."
             )
 
-        # TODO: assign and use deflection_field
         _ = model_manager.deflection_model.function(
             x_i,
             y_i,
@@ -1834,9 +1834,9 @@ def full_flow_streamtube_expansion_solver(
         if np.any(turbine_grid_farm.yaw_angles_sorted):
             raise NotImplementedError(
                 "WARNING: Deflection with the eddy viscosity model has not been implemented."
+                " Set yaw_angles to zero to run the eddy viscosity model."
             )
 
-        # TODO: assign and use deflection_field
         _ = model_manager.deflection_model.function(
             x_i,
             y_i,

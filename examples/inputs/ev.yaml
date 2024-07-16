@@ -42,7 +42,7 @@ flow_field:
 wake:
   model_strings:
     combination_model: soed
-    deflection_model: gauss
+    deflection_model: none
     turbulence_model: crespo_hernandez
     velocity_model: eddy_viscosity
 
