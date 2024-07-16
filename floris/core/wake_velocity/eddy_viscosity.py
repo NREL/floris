@@ -392,7 +392,7 @@ def expanded_wake_width_squared(w_tilde_sq, e_tilde):
     return (np.sqrt(w_tilde_sq) + e_tilde)**2
 
 def expanded_wake_centerline_velocity(Ct, w_tilde_sq):
-    w_tilde_sq_mask = w_tilde_sq > 0
+    w_tilde_sq_mask = w_tilde_sq > 1e-6
     expanded_U_tilde_c = np.ones_like(w_tilde_sq)
     Ct = _resize_Ct(Ct, w_tilde_sq)
     expanded_U_tilde_c[w_tilde_sq_mask] = np.sqrt(
