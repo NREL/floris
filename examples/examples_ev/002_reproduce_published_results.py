@@ -58,7 +58,8 @@ for i, wd_std_ev in enumerate([0.0, np.rad2deg(0.1)]):
             wind_speeds=[u_0],
             wind_directions=[270],
             turbulence_intensities=[0.14], # As specified by Ainslie
-            wind_shear=0.0
+            wind_shear=0.0,
+            reference_wind_height=HH
         )
 
         points_x = np.linspace(2*D, 10*D, 1000)
@@ -129,7 +130,8 @@ fmodel.set(
     wind_speeds=[u_0],
     wind_directions=[270.0],
     turbulence_intensities=[TI],
-    wind_shear=0.0
+    wind_shear=0.0,
+    reference_wind_height=HH
 )
 
 n_pts = 1000
