@@ -63,6 +63,8 @@ ax.set_xlabel("x location [m]")
 ax.set_ylabel("Wind Speed [m/s]")
 
 ## Visualize the flow in aligned and slightly misaligned conditions for a 9-turbine farm
+fig, ax = plt.subplots(2,2)
+fig.set_size_inches(10, 10)
 D = 126.0
 x_locs = np.array([0, 5*D, 10*D])
 y_locs = x_locs
@@ -73,8 +75,8 @@ fmodel.set(
 )
 
 # Aligned
-ax = layoutviz.plot_turbine_rotors(fmodel)
-layoutviz.plot_turbine_labels(fmodel, ax)
+layoutviz.plot_turbine_rotors(fmodel, ax=ax[0,0])
+layoutviz.plot_turbine_labels(fmodel, ax=ax[0,0])
 
 fmodel.set(
     wind_speeds=[8.0, 8.0],
@@ -84,43 +86,39 @@ fmodel.set(
 fmodel.run()
 cut_plane = fmodel.calculate_horizontal_plane(height=90, findex_for_viz=0)
 
-flowviz.visualize_cut_plane(cut_plane, ax=ax)
-ax.set_title("Aligned flow")
+flowviz.visualize_cut_plane(cut_plane, ax=ax[0,0])
+ax[0,0].set_title("Aligned flow")
 
 # Plot and print the power output of the turbines in each row
-fig, ax = plt.subplots(1,1)
 np.set_printoptions(formatter={"float": "{0:0.3f}".format})
 print("Aligned case:")
 for i in range(3):
     idxs = [3*i, 3*i+1, 3*i+2]
-    ax.scatter([0, 1, 2], fmodel.get_turbine_powers()[0, idxs]/1e6, label="Column {0}".format(i))
+    ax[1,0].scatter([0, 1, 2], fmodel.get_turbine_powers()[0, idxs]/1e6, label="Column {0}".format(i))
     print(idxs, " -- ", fmodel.get_turbine_powers()[0, idxs]/1e6)
-ax.grid()
-ax.legend()
-ax.set_xlabel("Turbine in column")
-ax.set_ylabel("Power [MW]")
-ax.set_title("Aligned case")
-ax.set_ylim([0.5, 1.8])
+ax[1,0].grid()
+ax[1,0].legend()
+ax[1,0].set_xlabel("Turbine in column")
+ax[1,0].set_ylabel("Power [MW]")
+ax[1,0].set_ylim([0.5, 1.8])
 
 # Misaligned
-ax = layoutviz.plot_turbine_rotors(fmodel, yaw_angles=(-15.0)*np.ones(9))
-layoutviz.plot_turbine_labels(fmodel, ax)
+layoutviz.plot_turbine_rotors(fmodel, yaw_angles=(-15.0)*np.ones(9), ax=ax[0,1])
+layoutviz.plot_turbine_labels(fmodel, ax[0,1])
 
 cut_plane = fmodel.calculate_horizontal_plane(height=90, findex_for_viz=1)
-flowviz.visualize_cut_plane(cut_plane, ax=ax)
-ax.set_title("Misaligned flow")
+flowviz.visualize_cut_plane(cut_plane, ax=ax[0,1])
+ax[0,1].set_title("Misaligned flow")
 
-fig, ax = plt.subplots(1,1)
 print("\nMisaligned case:")
 for i in range(3):
     idxs = [3*i, 3*i+1, 3*i+2]
-    ax.scatter([0, 1, 2], fmodel.get_turbine_powers()[1, idxs]/1e6, label="Column {0}".format(i))
+    ax[1,1].scatter([0, 1, 2], fmodel.get_turbine_powers()[1, idxs]/1e6, label="Column {0}".format(i))
     print(idxs, " -- ", fmodel.get_turbine_powers()[1, idxs]/1e6)
-ax.grid()
-ax.legend()
-ax.set_xlabel("Turbine in column")
-ax.set_ylabel("Power [MW]")
-ax.set_title("Misaligned case")
-ax.set_ylim([0.5, 1.8])
+ax[1,1].grid()
+ax[1,1].legend()
+ax[1,1].set_xlabel("Turbine in column")
+ax[1,1].set_ylabel("Power [MW]")
+ax[1,1].set_ylim([0.5, 1.8])
 
 plt.show()
