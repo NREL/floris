@@ -94,7 +94,7 @@ np.set_printoptions(formatter={"float": "{0:0.3f}".format})
 print("Aligned case:")
 for i in range(3):
     idxs = [3*i, 3*i+1, 3*i+2]
-    ax[1,0].scatter([0, 1, 2], fmodel.get_turbine_powers()[0, idxs]/1e6, label="Column {0}".format(i))
+    ax[1,0].scatter([0,1,2], fmodel.get_turbine_powers()[0, idxs]/1e6, label="Column {0}".format(i))
     print(idxs, " -- ", fmodel.get_turbine_powers()[0, idxs]/1e6)
 ax[1,0].grid()
 ax[1,0].legend()
@@ -113,7 +113,7 @@ ax[0,1].set_title("Misaligned flow")
 print("\nMisaligned case:")
 for i in range(3):
     idxs = [3*i, 3*i+1, 3*i+2]
-    ax[1,1].scatter([0, 1, 2], fmodel.get_turbine_powers()[1, idxs]/1e6, label="Column {0}".format(i))
+    ax[1,1].scatter([0,1,2], fmodel.get_turbine_powers()[1, idxs]/1e6, label="Column {0}".format(i))
     print(idxs, " -- ", fmodel.get_turbine_powers()[1, idxs]/1e6)
 ax[1,1].grid()
 ax[1,1].legend()
