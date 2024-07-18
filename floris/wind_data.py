@@ -237,7 +237,7 @@ class WindRose(WindDataBase):
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
         # using the dictionary
         if heterogeneous_inflow_config_by_wd is not None:
-            # TODO: In future, add deprectation warning for this parameter here
+            # TODO: In future, add deprecation warning for this parameter here
 
             self.heterogeneous_map = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
 
@@ -597,17 +597,27 @@ class WindRose(WindDataBase):
                 value_matrix = np.vstack((value_matrix[-1, :], value_matrix, value_matrix[0, :]))
 
         # Pad out the wind speeds
-        wind_speed_column = np.append(ws_range_min_current, wind_speed_column)
-        ti_matrix = np.hstack((ti_matrix[:, 0].reshape((-1, 1)), ti_matrix))
-        freq_matrix = np.hstack((freq_matrix[:, 0].reshape((-1, 1)), freq_matrix))
+        wind_speed_column = np.concatenate(
+            (
+                np.array([ws_range_min_current]),
+                wind_speed_column,
+                np.array([ws_range_max_current])
+            )
+        )
+        ti_matrix = np.hstack(
+            (ti_matrix[:, 0].reshape((-1, 1)), ti_matrix, ti_matrix[:, -1].reshape((-1, 1)))
+        )
+        freq_matrix = np.hstack(
+            (freq_matrix[:, 0].reshape((-1, 1)), freq_matrix, freq_matrix[:, -1].reshape((-1, 1)))
+        )
         if self.value_table is not None:
-            value_matrix = np.hstack((value_matrix[:, 0].reshape((-1, 1)), value_matrix))
-
-        wind_speed_column = np.append(wind_speed_column, ws_range_max_current)
-        ti_matrix = np.hstack((ti_matrix, ti_matrix[:, -1].reshape((-1, 1))))
-        freq_matrix = np.hstack((freq_matrix, freq_matrix[:, -1].reshape((-1, 1))))
-        if self.value_table is not None:
-            value_matrix = np.hstack((value_matrix, value_matrix[:, -1].reshape((-1, 1))))
+            value_matrix = np.hstack(
+                (
+                    value_matrix[:, 0].reshape((-1, 1)),
+                    value_matrix,
+                    value_matrix[:, -1].reshape((-1, 1))
+                )
+            )
 
         # Grid wind directions and wind speeds to match the ti_matrix and freq_matrix when flattened
         wd_grid, ws_grid = np.meshgrid(wind_direction_column, wind_speed_column, indexing="ij")
@@ -1540,19 +1550,25 @@ class WindTIRose(WindDataBase):
         # This is the case when wind directions doesn't cover the full range of possible
         # degrees (0-360)
         if np.abs((wd_range_min_current % 360.0) - (wd_range_max_current % 360.0)) > 1e-6:
-            wind_direction_column = np.append(wd_range_min_current, wind_direction_column)
-            freq_matrix = np.concatenate((freq_matrix[0, :, :][None, :, :], freq_matrix), axis=0)
-            if self.value_table is not None:
-                value_matrix = np.concatenate(
-                    (value_matrix[0, :, :][None, :, :], value_matrix), axis=0
+            wind_direction_column = np.concatenate(
+                (
+                    np.array([wd_range_min_current]),
+                    wind_direction_column,
+                    np.array([wd_range_max_current])
                 )
-
-            # Add the max range to the wind direction column
-            wind_direction_column = np.append(wind_direction_column, wd_range_max_current)
-            freq_matrix = np.concatenate((freq_matrix, freq_matrix[-1, :, :][None, :, :]), axis=0)
+            )
+            freq_matrix = np.concatenate(
+                (freq_matrix[0, :, :][None, :, :], freq_matrix, freq_matrix[-1, :, :][None, :, :]),
+                axis=0
+            )
             if self.value_table is not None:
                 value_matrix = np.concatenate(
-                    (value_matrix, value_matrix[-1, :, :][None, :, :]), axis=0
+                    (
+                        value_matrix[0, :, :][None, :, :],
+                        value_matrix,
+                        value_matrix[-1, :, :][None, :, :]
+                    ),
+                    axis=0
                 )
 
         # In the alternative case, where the wind directions cover the full range
@@ -1582,47 +1598,51 @@ class WindTIRose(WindDataBase):
                 )
 
         # Pad out the wind speeds
-        wind_speed_column = np.append(ws_range_min_current, wind_speed_column)
-        freq_matrix = np.concatenate((freq_matrix[:, 0, :][:, None, :], freq_matrix), axis=1)
-        if self.value_table is not None:
-            value_matrix = np.concatenate((value_matrix[:, 0, :][:, None, :], value_matrix), axis=1)
-
-        wind_speed_column = np.append(wind_speed_column, ws_range_max_current)
-        freq_matrix = np.concatenate((freq_matrix, freq_matrix[:, -1, :][:, None, :]), axis=1)
+        wind_speed_column = np.concatenate(
+            (
+                np.array([ws_range_min_current]),
+                wind_speed_column,
+                np.array([ws_range_max_current])
+            )
+        )
+        freq_matrix = np.concatenate(
+            (freq_matrix[:, 0, :][:, None, :], freq_matrix, freq_matrix[:, -1, :][:, None, :]),
+            axis=1
+        )
         if self.value_table is not None:
             value_matrix = np.concatenate(
-                (value_matrix, value_matrix[:, -1, :][:, None, :]), axis=1
+                (
+                    value_matrix[:, 0, :][:, None, :],
+                    value_matrix,
+                    value_matrix[:, -1, :][:, None, :]
+                ),
+                axis=1
             )
 
         # Pad out the turbulence intensities
-        turbulence_intensity_column = np.append(ti_range_min_current, turbulence_intensity_column)
-        freq_matrix = np.concatenate((freq_matrix[:, :, 0][:, :, None], freq_matrix), axis=2)
-        if self.value_table is not None:
-            value_matrix = np.concatenate((value_matrix[:, :, 0][:, :, None], value_matrix), axis=2)
-
-        turbulence_intensity_column = np.append(turbulence_intensity_column, ti_range_max_current)
-        freq_matrix = np.concatenate((freq_matrix, freq_matrix[:, :, -1][:, :, None]), axis=2)
+        turbulence_intensity_column = np.concatenate(
+            (
+                np.array([ti_range_min_current]),
+                turbulence_intensity_column,
+                np.array([ti_range_max_current])
+            )
+        )
+        freq_matrix = np.concatenate(
+            (freq_matrix[:, :, 0][:, :, None], freq_matrix, freq_matrix[:, :, -1][:, :, None]),
+            axis=2
+        )
         if self.value_table is not None:
             value_matrix = np.concatenate(
-                (value_matrix, value_matrix[:, :, -1][:, :, None]), axis=2
+                (
+                    value_matrix[:, :, 0][:, :, None],
+                    value_matrix,
+                    value_matrix[:, :, -1][:, :, None]
+                ),
+                axis=2
             )
 
-        # If wd_range_min_current is less than 0, then pad the wind_direction column with
-        # that value + 360 and expand the matrices accordingly (this avoids interpolation errors)
-        if wd_range_min_current < 0:
-            # Pad wind direction column with min_wd + 360
-            wind_direction_column = np.append(
-                wind_direction_column, np.min(self.wind_directions) + 360.0
-            )
-
-            # Pad the remaining with the appropriate value
-            freq_matrix = np.concatenate((freq_matrix, freq_matrix[0, :, :][None, :, :]), axis=0)
-            if self.value_table is not None:
-                value_matrix = np.concatenate(
-                    (value_matrix, value_matrix[0, :, :][None, :, :]), axis=0
-                )
-
-        # Grid wind directions and wind speeds to match the ti_matrix and freq_matrix when flattened
+        # Grid wind directions, wind speeds and turbulence intensities to match the
+        # freq_matrix when flattened
         wd_grid, ws_grid, ti_grid = np.meshgrid(
             wind_direction_column, wind_speed_column, turbulence_intensity_column, indexing="ij"
         )
