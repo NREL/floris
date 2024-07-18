@@ -4,15 +4,6 @@ floris.core.turbine.operation\_models
 .. automodule:: floris.core.turbine.operation_models
 
    
-   
-   
-
-   
-   
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
@@ -25,11 +16,3 @@ floris.core.turbine.operation\_models
       SimpleDeratingTurbine
       SimpleTurbine
    
-   
-
-   
-   
-   
-
-
-

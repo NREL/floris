@@ -4,11 +4,6 @@ floris.core.solver
 .. automodule:: floris.core.solver
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -23,15 +18,3 @@ floris.core.solver
       sequential_solver
       turbopark_solver
    
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-

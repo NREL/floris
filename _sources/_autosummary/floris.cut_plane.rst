@@ -4,11 +4,6 @@
 .. automodule:: floris.cut_plane
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -25,21 +20,9 @@
       set_origin
       wind_speed_profile
    
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
    
       CutPlane
    
-   
-
-   
-   
-   
-
-
-

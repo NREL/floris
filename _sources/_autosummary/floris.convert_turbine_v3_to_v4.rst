@@ -4,20 +4,3 @@
 .. automodule:: floris.convert_turbine_v3_to_v4
 
    
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-

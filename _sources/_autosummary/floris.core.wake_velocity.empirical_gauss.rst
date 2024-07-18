@@ -4,11 +4,6 @@ floris.core.wake\_velocity.empirical\_gauss
 .. automodule:: floris.core.wake_velocity.empirical_gauss
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -18,21 +13,9 @@ floris.core.wake\_velocity.empirical\_gauss
       rCalt
       sigmoid_integral
    
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
    
       EmpiricalGaussVelocityDeficit
    
-   
-
-   
-   
-   
-
-
-

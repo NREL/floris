@@ -4,26 +4,9 @@
 .. automodule:: floris.convert_floris_input_v3_to_v4
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
    
       ignore_include
    
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-

@@ -4,11 +4,6 @@ floris.core.wake\_velocity.gauss
 .. automodule:: floris.core.wake_velocity.gauss
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -17,21 +12,9 @@ floris.core.wake\_velocity.gauss
       mask_upstream_wake
       rC
    
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
    
       GaussVelocityDeficit
    
-   
-
-   
-   
-   
-
-
-

@@ -4,11 +4,6 @@ floris.core.rotor\_velocity
 .. automodule:: floris.core.rotor_velocity
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -25,15 +20,3 @@ floris.core.rotor\_velocity
       simple_cubature
       simple_mean
    
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-

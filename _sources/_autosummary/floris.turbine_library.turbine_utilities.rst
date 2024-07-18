@@ -4,11 +4,6 @@ floris.turbine\_library.turbine\_utilities
 .. automodule:: floris.turbine_library.turbine_utilities
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -16,15 +11,3 @@ floris.turbine\_library.turbine\_utilities
       build_cosine_loss_turbine_dict
       check_smooth_power_curve
    
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-

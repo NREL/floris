@@ -4,15 +4,6 @@ floris.core.grid
 .. automodule:: floris.core.grid
 
    
-   
-   
-
-   
-   
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
@@ -24,11 +15,3 @@ floris.core.grid
       TurbineCubatureGrid
       TurbineGrid
    
-   
-
-   
-   
-   
-
-
-

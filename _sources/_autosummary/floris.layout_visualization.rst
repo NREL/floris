@@ -4,11 +4,6 @@
 .. automodule:: floris.layout_visualization
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -22,15 +17,3 @@
       plot_waking_directions
       shade_region
    
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-

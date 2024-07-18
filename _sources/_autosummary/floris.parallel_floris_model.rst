@@ -4,26 +4,9 @@
 .. automodule:: floris.parallel_floris_model
 
    
-   
-   
-
-   
-   
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
    
       ParallelFlorisModel
    
-   
-
-   
-   
-   
-
-
-

@@ -4,11 +4,6 @@
 .. automodule:: floris.type_dec
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -18,21 +13,9 @@
       floris_numeric_dict_converter
       iter_validator
    
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
    
       FromDictMixin
    
-   
-
-   
-   
-   
-
-
-

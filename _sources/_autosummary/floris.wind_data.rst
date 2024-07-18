@@ -4,15 +4,6 @@
 .. automodule:: floris.wind_data
 
    
-   
-   
-
-   
-   
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
@@ -22,11 +13,3 @@
       WindRose
       WindTIRose
    
-   
-
-   
-   
-   
-
-
-

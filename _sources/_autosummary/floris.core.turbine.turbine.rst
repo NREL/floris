@@ -4,11 +4,6 @@ floris.core.turbine.turbine
 .. automodule:: floris.core.turbine.turbine
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -18,21 +13,9 @@ floris.core.turbine.turbine
       select_multidim_condition
       thrust_coefficient
    
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
    
       Turbine
    
-   
-
-   
-   
-   
-
-
-

@@ -4,11 +4,6 @@
 .. automodule:: floris.flow_visualization
 
    
-   
-   
-
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
@@ -22,21 +17,9 @@
       visualize_heterogeneous_cut_plane
       visualize_quiver
    
-   
-
-   
-   
    .. rubric:: Classes
 
    .. autosummary::
    
       VelocityProfilesFigure
    
-   
-
-   
-   
-   
-
-
-
