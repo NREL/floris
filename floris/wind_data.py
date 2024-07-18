@@ -1641,21 +1641,6 @@ class WindTIRose(WindDataBase):
                 axis=2
             )
 
-        # If wd_range_min_current is less than 0, then pad the wind_direction column with
-        # that value + 360 and expand the matrices accordingly (this avoids interpolation errors)
-        if wd_range_min_current < 0:
-            # Pad wind direction column with min_wd + 360
-            wind_direction_column = np.append(
-                wind_direction_column, np.min(self.wind_directions) + 360.0
-            )
-
-            # Pad the remaining with the appropriate value
-            freq_matrix = np.concatenate((freq_matrix, freq_matrix[0, :, :][None, :, :]), axis=0)
-            if self.value_table is not None:
-                value_matrix = np.concatenate(
-                    (value_matrix, value_matrix[0, :, :][None, :, :]), axis=0
-                )
-
         # Grid wind directions, wind speeds and turbulence intensities to match the
         # freq_matrix when flattened
         wd_grid, ws_grid, ti_grid = np.meshgrid(
