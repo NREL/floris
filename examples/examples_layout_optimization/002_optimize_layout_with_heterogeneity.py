@@ -26,10 +26,10 @@ fmodel = FlorisModel("../inputs/gch.yaml")
 
 # Setup 2 wind directions (due east and due west)
 # and 1 wind speed with uniform probability
-wind_directions = np.array([270.0, 90.0])
+wind_directions = np.array([90.0, 270.0])
 n_wds = len(wind_directions)
-wind_speeds = [8.0] * np.ones_like(wind_directions)
-turbulence_intensities = 0.06 * np.ones_like(wind_directions)
+wind_speeds = np.array([8.0])
+
 # Shape frequency distribution to match number of wind directions and wind speeds
 freq_table = np.ones((len(wind_directions), len(wind_speeds)))
 freq_table = freq_table / freq_table.sum()
@@ -106,7 +106,7 @@ ax = plt.gca()
 fig = plt.gcf()
 sm = ax.tricontourf(x_locs, y_locs, speed_multipliers[0], cmap="coolwarm")
 fig.colorbar(sm, ax=ax, label="Speed multiplier")
-ax.legend(["Initial layout", "Optimized layout", "Optimization boundary"])
+ax.legend(["_Optimization boundary", "Initial layout", "Optimized layout" ])
 ax.set_title("Geometric yaw disabled")
 
 
@@ -144,7 +144,7 @@ ax = plt.gca()
 fig = plt.gcf()
 sm = ax.tricontourf(x_locs, y_locs, speed_multipliers[0], cmap="coolwarm")
 fig.colorbar(sm, ax=ax, label="Speed multiplier")
-ax.legend(["Initial layout", "Optimized layout", "Optimization boundary"])
+ax.legend(["_Optimization boundary", "Initial layout", "Optimized layout"])
 ax.set_title("Geometric yaw enabled")
 
 print(
