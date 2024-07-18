@@ -347,6 +347,17 @@ class TurbineCubatureGrid(Grid):
         self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=1)
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=1)
 
+        # Now calculate grid coordinates in original frame (from 270 deg perspective)
+        self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \
+            reverse_rotate_coordinates_rel_west(
+                wind_directions=self.wind_directions,
+                grid_x=self.x_sorted,
+                grid_y=self.y_sorted,
+                grid_z=self.z_sorted,
+                x_center_of_rotation=self.x_center_of_rotation,
+                y_center_of_rotation=self.y_center_of_rotation,
+            )
+
     @classmethod
     def get_cubature_coefficients(cls, N: int):
         """

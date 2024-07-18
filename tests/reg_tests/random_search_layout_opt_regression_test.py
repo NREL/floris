@@ -45,7 +45,7 @@ def test_random_search_layout_opt(sample_inputs_fixture):
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0, 360.0, 5.0)
-    ws_array = 8.0 * np.ones_like(wd_array)
+    ws_array = np.array([8.0])
 
     wind_rose = WindRose(
         wind_directions=wd_array,

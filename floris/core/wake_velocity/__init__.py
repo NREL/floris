@@ -6,3 +6,4 @@ from floris.core.wake_velocity.gauss import GaussVelocityDeficit
 from floris.core.wake_velocity.jensen import JensenVelocityDeficit
 from floris.core.wake_velocity.none import NoneVelocityDeficit
 from floris.core.wake_velocity.turbopark import TurbOParkVelocityDeficit
+from floris.core.wake_velocity.turboparkgauss import TurboparkgaussVelocityDeficit

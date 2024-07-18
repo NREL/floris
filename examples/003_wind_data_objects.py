@@ -224,7 +224,7 @@ fmodel.set(wind_data=wind_rose)
 # bins for which frequency is zero are not simulated.  This can be changed by setting the
 # compute_zero_freq_occurrence parameter to True.
 wind_directions = np.array([200.0, 300.0])
-wind_speeds = np.array([5.0, 1.00])
+wind_speeds = np.array([5.0, 10.0])
 freq_table = np.array([[0.5, 0], [0.5, 0]])
 wind_rose = WindRose(
     wind_directions=wind_directions, wind_speeds=wind_speeds, ti_table=0.06, freq_table=freq_table
