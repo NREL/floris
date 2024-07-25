@@ -290,11 +290,21 @@ def apply_wind_direction_heterogeneity(
         n_turbines
     ):
 
+    # Initialize storage
     x_per_turbine = np.repeat(x[:,:,:,:,None], n_turbines, axis=4)
     y_per_turbine = np.repeat(y[:,:,:,:,None], n_turbines, axis=4)
     z_per_turbine = np.repeat(z[:,:,:,:,None], n_turbines, axis=4)
 
-    # Return warped grid
+    # Compute new relative locations
+    # TODO
+    # TEMP________
+    # Place turbine 2 directly downstream of turbine 1, as seen by turbine 1
+    y_per_turbine[0,2,:,:,1] = y_per_turbine[0,1,:,:,1]
+    # Place turbine 3 out of the direct path of turbine 1, as seen by turbine 1
+    y_per_turbine[0,3,:,:,1] = 2*y_per_turbine[0,3,:,:,1] 
+    # END TEMP____
+
+    # Return full set of locations
     return x_per_turbine, y_per_turbine, z_per_turbine
 
 
