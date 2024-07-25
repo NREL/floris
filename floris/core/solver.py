@@ -25,7 +25,7 @@ from floris.core.wake_deflection.gauss import (
 )
 from floris.core.wake_velocity.empirical_gauss import awc_added_wake_mixing
 from floris.type_dec import NDArrayFloat
-from floris.utilities import cosd
+from floris.utilities import cosd, update_model_args
 
 
 def calculate_area_overlap(wake_velocities, freestream_velocities, y_ngrid, z_ngrid):
@@ -88,6 +88,14 @@ def sequential_solver(
 
         u_i = flow_field.u_sorted[:, i:i+1]
         v_i = flow_field.v_sorted[:, i:i+1]
+
+        if grid.use_turbine_specific_layouts:
+            deficit_model_args = update_model_args(
+                deficit_model_args,
+                grid.x_sorted_per_turbine[:, :, i],
+                grid.y_sorted_per_turbine[:, :, i],
+                grid.z_sorted_per_turbine[:, :, i],
+            )
 
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,

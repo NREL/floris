@@ -393,3 +393,25 @@ def print_nested_dict(dictionary: Dict[str, Any], indent: int = 0) -> None:
             print_nested_dict(value, indent + 4)
         else:
             print(" " * (indent + 4) + str(value))
+
+def update_model_args(
+        model_args: Dict[str, Any],
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray
+    ):
+    """
+    Update the x_sorted, y_sorted, and z_sorted entries of the model_args dict.
+    """
+    # Check that new x, y, z are the same length as the old
+    if (x.shape != model_args["x"].shape or 
+        y.shape != model_args["y"].shape or
+        z.shape != model_args["z"].shape):
+        raise ValueError("Size of new x,y,z arrays must match existing ones.")
+    
+    # Update the x, y, z values
+    model_args["x"] = x
+    model_args["y"] = y
+    model_args["z"] = z
+    
+    return model_args

@@ -65,6 +65,8 @@ class Grid(ABC, BaseClass):
     z_sorted_inertial_frame: NDArrayFloat = field(init=False)
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
+    use_turbine_specific_layouts: NDArrayFloat = field(init=False, default=False)
+
     @turbine_coordinates.validator
     def check_coordinates(self, instance: attrs.Attribute, value: np.ndarray) -> None:
         """
