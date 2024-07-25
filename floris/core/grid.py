@@ -66,6 +66,9 @@ class Grid(ABC, BaseClass):
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
     use_turbine_specific_layouts: NDArrayFloat = field(init=False, default=False)
+    x_sorted_per_turbine: NDArrayFloat = field(init=False)
+    y_sorted_per_turbine: NDArrayFloat = field(init=False)
+    z_sorted_per_turbine: NDArrayFloat = field(init=False)
 
     @turbine_coordinates.validator
     def check_coordinates(self, instance: attrs.Attribute, value: np.ndarray) -> None:
@@ -191,28 +194,6 @@ class TurbineGrid(Grid):
             self.turbine_coordinates,
         )
 
-        if (self.heterogeneous_inflow_config is not None
-            and "bulk_wd_change" in self.heterogeneous_inflow_config):
-            wd_het_x_points = np.array(self.heterogeneous_inflow_config["bulk_wd_x"])
-            wd_het_values = np.array(self.heterogeneous_inflow_config["bulk_wd_change"])
-            # TODO: does the below work as expected? Do I need the y values too?
-            # coordinates_to_rotate = np.concatenate(
-            #     (
-            #         wd_het_x_points[:,:,None],
-            #         np.zeros((wd_het_x_points.shape[0], wd_het_x_points.shape[1], 2))
-            #     ),
-            #     axis=2
-            # )[None,:,:,:]
-            # wd_het_x_points = rotate_coordinates_rel_west(
-            #     np.repeat(self.wind_directions[None,:], wd_het_x_points.shape[1], axis=0),
-            #     coordinates_to_rotate,
-            #     self.x_center_of_rotation,
-            #     self.y_center_of_rotation,
-            # )[0][:, :, 0].T
-            x, y, z = warp_grid_for_wind_direction_heterogeneity(
-                x, y, z, wd_het_x_points + x.min(), wd_het_values
-            )
-
         # -   **rloc** (*float, optional): A value, from 0 to 1, that determines
         #         the width/height of the grid of points on the rotor as a ratio of
         #         the rotor radius.
@@ -270,6 +251,15 @@ class TurbineGrid(Grid):
         self.x_sorted = np.take_along_axis(_x, self.sorted_indices, axis=1)
         self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=1)
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=1)
+
+        # if (self.heterogeneous_inflow_config is not None
+        #     and "wind_directions" in self.heterogeneous_inflow_config):
+        if True:
+            self.use_turbine_specific_layouts = True
+            # set up new x, y, z coordinates as a mockup
+            self.x_sorted_per_turbine = np.repeat(self.x_sorted[:,:,None,:,:], self.n_turbines, axis=2)
+            self.y_sorted_per_turbine = np.repeat(self.y_sorted[:,:,None,:,:], self.n_turbines, axis=2)
+            self.z_sorted_per_turbine = np.repeat(self.z_sorted[:,:,None,:,:], self.n_turbines, axis=2)
 
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \

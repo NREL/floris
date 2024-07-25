@@ -92,9 +92,9 @@ def sequential_solver(
         if grid.use_turbine_specific_layouts:
             deficit_model_args = update_model_args(
                 deficit_model_args,
-                grid.x_sorted_per_turbine[:, :, i],
-                grid.y_sorted_per_turbine[:, :, i],
-                grid.z_sorted_per_turbine[:, :, i],
+                grid.x_sorted_per_turbine[:, :, i, :, :],
+                grid.y_sorted_per_turbine[:, :, i, :, :],
+                grid.z_sorted_per_turbine[:, :, i, :, :],
             )
 
         ct_i = thrust_coefficient(
