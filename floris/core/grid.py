@@ -19,6 +19,7 @@ from floris.utilities import (
     reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
     warp_grid_for_wind_direction_heterogeneity,
+    apply_wind_direction_heterogeneity,
 )
 
 
@@ -252,15 +253,21 @@ class TurbineGrid(Grid):
         self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=1)
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=1)
 
-        # if (self.heterogeneous_inflow_config is not None
-        #     and "wind_directions" in self.heterogeneous_inflow_config):
-        if True:
+        if (self.heterogeneous_inflow_config is not None
+            and "wind_directions" in self.heterogeneous_inflow_config):
             self.use_turbine_specific_layouts = True
             # set up new x, y, z coordinates as a mockup
-            self.x_sorted_per_turbine = np.repeat(self.x_sorted[:,:,None,:,:], self.n_turbines, axis=2)
-            self.y_sorted_per_turbine = np.repeat(self.y_sorted[:,:,None,:,:], self.n_turbines, axis=2)
-            self.z_sorted_per_turbine = np.repeat(self.z_sorted[:,:,None,:,:], self.n_turbines, axis=2)
-
+            self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
+                apply_wind_direction_heterogeneity(
+                    self.x_sorted,
+                    self.y_sorted,
+                    self.z_sorted,
+                    None,
+                    None,
+                    None,
+                    None,
+                    self.n_turbines
+                )
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \
             reverse_rotate_coordinates_rel_west(

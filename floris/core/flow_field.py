@@ -105,10 +105,8 @@ class FlowField(BaseClass):
             return
 
         # Check that the correct keys are supplied for the heterogeneous_inflow_config dict
-        speed_het_keys = ["speed_multipliers", "x", "y", "z"]
-        bulk_wd_het_keys = ["bulk_wd_change", "bulk_wd_x"]
-        for k in value.keys():
-            if k not in speed_het_keys and k not in bulk_wd_het_keys:
+        for k in ["speed_multipliers", "x", "y"]:
+            if k not in value.keys():
                 raise ValueError(
                     "heterogeneous_inflow_config must contain entries for 'speed_multipliers',"
                     f"'x', and 'y', with 'z' optional. Missing '{k}'."
@@ -132,8 +130,7 @@ class FlowField(BaseClass):
 
 
     def __attrs_post_init__(self) -> None:
-        if self.heterogeneous_inflow_config is not None and self._speed_heterogeneity:
-            print(self._speed_heterogeneity)
+        if self._speed_heterogeneity:
             self.generate_heterogeneous_wind_map()
 
 

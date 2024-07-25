@@ -279,6 +279,24 @@ def warp_grid_for_wind_direction_heterogeneity(
     # Return warped grid
     return x, y_warped, z
 
+def apply_wind_direction_heterogeneity(
+        x,
+        y,
+        z,
+        wind_direction_x_points,
+        wind_direction_y_points,
+        wind_direction_z_points,
+        wind_direction_values,
+        n_turbines
+    ):
+
+    x_per_turbine = np.repeat(x[:,:,:,:,None], n_turbines, axis=4)
+    y_per_turbine = np.repeat(y[:,:,:,:,None], n_turbines, axis=4)
+    z_per_turbine = np.repeat(z[:,:,:,:,None], n_turbines, axis=4)
+
+    # Return warped grid
+    return x_per_turbine, y_per_turbine, z_per_turbine
+
 
 class Loader(yaml.SafeLoader):
 
