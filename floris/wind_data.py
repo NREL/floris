@@ -3284,19 +3284,19 @@ class WindRoseWRG(WindDataBase):
 
         # Check the represenative_wind_speed is valid
         if representative_wind_speed in wind_rose.wind_speeds:
-            ws_idx = np.where(wind_rose.wind_speeds == representative_wind_speed)
+            ws_idx = np.where(wind_rose.wind_speeds == representative_wind_speed)[0]
         else:
             raise ValueError("representative_wind_speed must be in original set")
 
         # Create a new wind rose with only the specified wind speeds
         wind_rose = WindRose(
-            self.wind_directions,
-            self.wind_speeds[ws_idx:ws_idx+1],
-            self.ti_table[:, ws_idx:ws_idx+1],
-            self.freq_table[:, ws_idx:ws_idx+1],
-            self.value_table[:, ws_idx:ws_idx+1] if self.value_table is not None else None,
-            self.compute_zero_freq_occurrence,
-            self.heterogeneous_map,
+            wind_rose.wind_directions,
+            wind_rose.wind_speeds[ws_idx],
+            wind_rose.ti_table[:, ws_idx],
+            wind_rose.freq_table[:, ws_idx],
+            wind_rose.value_table[:, ws_idx] if wind_rose.value_table is not None else None,
+            wind_rose.compute_zero_freq_occurrence,
+            wind_rose.heterogeneous_map,
         )
 
         ############################
