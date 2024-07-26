@@ -456,10 +456,12 @@ def test_expected_farm_value_regression():
     wind_speeds = np.array([8.0, 8.0, 9.0])
     wind_directions = np.array([270.0, 270.0, 270.0])
     values = np.array([30.0, 20.0, 10.0])
-    time_series = TimeSeries(wind_directions=wind_directions,
-                              wind_speeds=wind_speeds,
-                              turbulence_intensities=0.06,
-                              values=values, )
+    time_series = TimeSeries(
+        wind_directions=wind_directions,
+        wind_speeds=wind_speeds,
+        turbulence_intensities=0.06,
+        values=values,
+    )
 
     layout_x = np.array([0, 0])
     layout_y = np.array([0, 1000])

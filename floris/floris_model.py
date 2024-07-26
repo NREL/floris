@@ -824,12 +824,7 @@ class FlorisModel(LoggingManager):
                 The Annual Energy Production (AEP) for the wind farm in
                 watt-hours.
         """
-        if (
-            freq is None
-            and not isinstance(self.wind_data, WindRose)
-            and not isinstance(self.wind_data, WindRoseWRG)
-            and not isinstance(self.wind_data, WindTIRose)
-        ):
+        if freq is None and not isinstance(self.wind_data, (WindRose, WindRoseWRG, WindTIRose)):
             self.logger.warning(
                 "Computing AEP with uniform frequencies. Results results may not reflect annual "
                 "operation."
