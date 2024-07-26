@@ -679,8 +679,10 @@ class FlorisModel(LoggingManager):
         """
 
 
-        turbine_powers = self._get_weighted_turbine_powers(turbine_weights=turbine_weights,
-                                                           use_turbulence_correction=use_turbulence_correction)
+        turbine_powers = self._get_weighted_turbine_powers(
+            turbine_weights=turbine_weights,
+            use_turbulence_correction=use_turbulence_correction
+        )
 
         return np.sum(turbine_powers, axis=1)
 

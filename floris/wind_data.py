@@ -3308,7 +3308,6 @@ class WindRoseWRG(WindDataBase):
             x=x_loc,
             y=y_loc,
         )
-        # wind_speeds=[representative_wind_speed],)
 
         # Subset to the representative wind speed
         wind_rose = wind_rose.subset_wind_speeds([representative_wind_speed])
@@ -3321,7 +3320,6 @@ class WindRoseWRG(WindDataBase):
 
         for direction_sector in range(self.n_sectors):
             for gid in range(self.n_gid):
-                # self.weibull_A[x_idx, y_idx, :]
                 _, freq = self._generate_wind_speed_frequencies_from_weibull(
                     self.weibull_A_gid[gid, direction_sector],
                     self.weibull_k_gid[gid, direction_sector],
