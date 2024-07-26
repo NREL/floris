@@ -364,35 +364,6 @@ class WindRose(WindDataBase):
             heterogeneous_inflow_config,
         )
 
-    def subset_wind_speeds(self, wind_speeds: List[float] | np.array) -> WindRose:
-        """
-        Subset the wind rose to only include the specified wind speeds.
-
-        Args:
-            wind_speeds (np.array): Wind speeds to keep in the wind rose.
-
-        Returns:
-            WindRose: Wind rose with only the specified wind speeds.
-        """
-
-        # Check the all wind speeds are in the wind rose
-        if not np.all(np.isin(wind_speeds, self.wind_speeds)):
-            raise ValueError("All wind speeds must be in the wind rose")
-
-        # Find the indices of the wind speeds to keep
-        ws_indices = np.where(np.isin(self.wind_speeds, wind_speeds))[0]
-
-        # Create a new wind rose with only the specified wind speeds
-        return WindRose(
-            self.wind_directions,
-            self.wind_speeds[ws_indices],
-            self.ti_table[:, ws_indices],
-            self.freq_table[:, ws_indices],
-            self.value_table[:, ws_indices] if self.value_table is not None else None,
-            self.compute_zero_freq_occurrence,
-            self.heterogeneous_map,
-        )
-
     def aggregate(self, wd_step=None, ws_step=None, inplace=False):
         """
         Wrapper for downsample method for backwards compatibility
@@ -3310,7 +3281,23 @@ class WindRoseWRG(WindDataBase):
         )
 
         # Subset to the representative wind speed
-        wind_rose = wind_rose.subset_wind_speeds([representative_wind_speed])
+
+        # Check the represenative_wind_speed is valid
+        if representative_wind_speed in wind_rose.wind_speeds:
+            ws_idx = np.where(wind_rose.wind_speeds == representative_wind_speed)
+        else:
+            raise ValueError("representative_wind_speed must be in original set")
+
+        # Create a new wind rose with only the specified wind speeds
+        wind_rose = WindRose(
+            self.wind_directions,
+            self.wind_speeds[ws_idx:ws_idx+1],
+            self.ti_table[:, ws_idx:ws_idx+1],
+            self.freq_table[:, ws_idx:ws_idx+1],
+            self.value_table[:, ws_idx:ws_idx+1] if self.value_table is not None else None,
+            self.compute_zero_freq_occurrence,
+            self.heterogeneous_map,
+        )
 
         ############################
         # Calculate speed multipliers
