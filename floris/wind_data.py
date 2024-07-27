@@ -2971,11 +2971,6 @@ class WindRoseWRG(WindDataBase):
         freq = cdf_edges[1:] - cdf_edges[:-1]
 
         # Normalize the frequency
-        # TODO: This is perhaps not quite right, if the user only asks
-        # for wind speeds at say 8 and 10 m/s
-        # then the bins would be from 7 to 11 and so fairly there is
-        # distribution outside the range, but
-        # I think this is on the whole right -- PF
         freq = freq / freq.sum()
 
         return wind_speeds, freq
