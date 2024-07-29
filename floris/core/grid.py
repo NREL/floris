@@ -67,9 +67,9 @@ class Grid(ABC, BaseClass):
     cubature_weights: NDArrayFloat = field(init=False, default=None)
 
     use_turbine_specific_layouts: NDArrayFloat = field(init=False, default=False)
-    x_sorted_per_turbine: NDArrayFloat = field(init=False)
-    y_sorted_per_turbine: NDArrayFloat = field(init=False)
-    z_sorted_per_turbine: NDArrayFloat = field(init=False)
+    x_sorted_per_turbine: NDArrayFloat = field(init=False, default=None)
+    y_sorted_per_turbine: NDArrayFloat = field(init=False, default=None)
+    z_sorted_per_turbine: NDArrayFloat = field(init=False, default=None)
 
     @turbine_coordinates.validator
     def check_coordinates(self, instance: attrs.Attribute, value: np.ndarray) -> None:
@@ -268,6 +268,7 @@ class TurbineGrid(Grid):
                     None,
                     self.n_turbines
                 )
+
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \
             reverse_rotate_coordinates_rel_west(
@@ -627,6 +628,21 @@ class FlowFieldPlanarGrid(Grid):
         self.y_sorted = y_points[None, :, :, :]
         self.z_sorted = z_points[None, :, :, :]
 
+        if (self.heterogeneous_inflow_config is not None
+            and "wind_directions" in self.heterogeneous_inflow_config):
+            self.use_turbine_specific_layouts = True
+            # set up new x, y, z coordinates as a mockup
+            self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
+                apply_wind_direction_heterogeneity(
+                    self.x_sorted,
+                    self.y_sorted,
+                    self.z_sorted,
+                    None,
+                    None,
+                    None,
+                    None,
+                    self.n_turbines
+                )
 
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \

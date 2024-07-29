@@ -342,6 +342,20 @@ def full_flow_sequential_solver(
         u_i = turbine_grid_flow_field.u_sorted[:, i:i+1]
         v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
 
+        if flow_field_grid.use_turbine_specific_layouts:
+            deficit_model_args = update_model_args(
+                deficit_model_args,
+                flow_field_grid.x_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.y_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+            deflection_model_args = update_model_args(
+                deflection_model_args,
+                flow_field_grid.x_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.y_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,

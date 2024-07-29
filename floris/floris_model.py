@@ -969,18 +969,23 @@ class FlorisModel(LoggingManager):
         """
 
         # If not None, set the heterogeneous inflow configuration
+        # TODO: add wind direction info here
         if self.core.flow_field.heterogeneous_inflow_config is not None:
-            speed_het_keys = ["speed_multipliers", "x", "y", "z"]
-            bulk_wd_het_keys = ["bulk_wd_change", "bulk_wd_x"]
-            heterogeneous_inflow_config = {}
-            for k in self.core.flow_field.heterogeneous_inflow_config.keys():
-                if (
-                    (k in speed_het_keys
-                     or k in bulk_wd_het_keys)
-                    and self.core.flow_field.heterogeneous_inflow_config[k] is not None
-                ):
+            heterogeneous_inflow_config = {
+                'x': self.core.flow_field.heterogeneous_inflow_config['x'],
+                'y': self.core.flow_field.heterogeneous_inflow_config['y'],
+                'speed_multipliers':
+                    self.core.flow_field.heterogeneous_inflow_config['speed_multipliers'][findex:findex+1],
+            }
+            for k in ["z"]: # Optional, independent of findex
+                if k in self.core.flow_field.heterogeneous_inflow_config:
                     heterogeneous_inflow_config[k] = (
-                        self.core.flow_field.heterogeneous_inflow_config[k][findex:findex+1]
+                        self.core.flow_field.heterogeneous_inflow_config[k]
+                    )
+            for k in ["wind_directions"]: # Optional, dependent on findex
+                if k in self.core.flow_field.heterogeneous_inflow_config:
+                    heterogeneous_inflow_config[k] = (
+                        self.core.flow_field.heterogeneous_inflow_config[k][findex:findex+1],
                     )
         else:
             heterogeneous_inflow_config = None

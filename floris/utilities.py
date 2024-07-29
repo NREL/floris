@@ -298,10 +298,19 @@ def apply_wind_direction_heterogeneity(
     # Compute new relative locations
     # TODO
     # TEMP________
-    # Place turbine 2 directly downstream of turbine 1, as seen by turbine 1
-    y_per_turbine[0,2,:,:,1] = y_per_turbine[0,1,:,:,1]
-    # Place turbine 3 out of the direct path of turbine 1, as seen by turbine 1
-    y_per_turbine[0,3,:,:,1] = 2*y_per_turbine[0,3,:,:,1] 
+    option = 3
+    if option == 1:
+        # Place turbine 2 directly downstream of turbine 1, as seen by turbine 1
+        y_per_turbine[0,2,:,:,1] = y_per_turbine[0,1,:,:,1]
+        # Place turbine 3 out of the direct path of turbine 1, as seen by turbine 1
+        y_per_turbine[0,3,:,:,1] = 2*y_per_turbine[0,3,:,:,1] 
+    elif option == 2:
+        #y_per_turbine[0,:,:,:,0] = y_per_turbine[0,:,:,:,0] - 0.2*x_per_turbine[0,:,:,:,0]
+        #y_per_turbine[0,:,:,:,1] = y_per_turbine[0,:,:,:,1] + 0.2*x_per_turbine[0,:,:,:,1]
+        y_per_turbine[0,:,:,:,0] = y_per_turbine[0,:,:,:,0] + 0.2*x_per_turbine[0,:,:,:,0]
+    else:
+        pass # make no change
+
     # END TEMP____
 
     # Return full set of locations
