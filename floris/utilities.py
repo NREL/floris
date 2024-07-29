@@ -14,6 +14,8 @@ from typing import (
 import numpy as np
 import yaml
 from attrs import define, field
+from scipy.interpolate import LinearNDInterpolator
+from scipy.integrate import odeint
 
 from floris.type_dec import floris_array_converter, NDArrayFloat
 
@@ -286,9 +288,13 @@ def apply_wind_direction_heterogeneity(
         wind_direction_x_points,
         wind_direction_y_points,
         wind_direction_z_points,
-        wind_direction_values,
+        wind_direction_u_values,
+        wind_direction_v_values,
+        wind_direction_w_values,
         n_turbines
     ):
+
+    compute_streamline = compute_streamline_2D if wind_direction_z_points is None else compute_streamline_3D
 
     # Initialize storage
     x_per_turbine = np.repeat(x[:,:,:,:,None], n_turbines, axis=4)
@@ -296,7 +302,6 @@ def apply_wind_direction_heterogeneity(
     z_per_turbine = np.repeat(z[:,:,:,:,None], n_turbines, axis=4)
 
     # Compute new relative locations
-    # TODO
     # TEMP________
     option = 3
     if option == 1:
@@ -308,6 +313,25 @@ def apply_wind_direction_heterogeneity(
         #y_per_turbine[0,:,:,:,0] = y_per_turbine[0,:,:,:,0] - 0.2*x_per_turbine[0,:,:,:,0]
         #y_per_turbine[0,:,:,:,1] = y_per_turbine[0,:,:,:,1] + 0.2*x_per_turbine[0,:,:,:,1]
         y_per_turbine[0,:,:,:,0] = y_per_turbine[0,:,:,:,0] + 0.2*x_per_turbine[0,:,:,:,0]
+    elif option == 3:
+        # TODO: compute streamlines; convert to point movements.
+        # TODO: do I need an outer loop over the findices? Maybe; ideally not.
+        for tindex in range(n_turbines):
+            # 1. Compute the streamline
+            streamline = compute_streamline(
+                wind_direction_x_points,
+                wind_direction_y_points,
+                wind_direction_z_points,
+                wind_direction_u_values,
+                wind_direction_v_values,
+                wind_direction_w_values,
+                np.array([-100.0, 50.0]) # Placeholder
+            )
+            import ipdb; ipdb.set_trace()
+            # 2. Compute the point movements
+            # 3. Apply the point movements to x_per_turbine, y_per_turbine, z_per_turbine
+            y_per_turbine[:,:,:,tindex] = 0 # Placeholder
+        
     else:
         pass # make no change
 
@@ -316,6 +340,96 @@ def apply_wind_direction_heterogeneity(
     # Return full set of locations
     return x_per_turbine, y_per_turbine, z_per_turbine
 
+def compute_streamline_3D(x, y, z, u, v, w, xyz_0):
+    """
+    Compute streamline starting at xyz_0.
+    """
+    s = np.linspace(0, 1, 1000) # parametric variable
+
+    scale = np.array([x.max() - x.min(), y.max() - y.min(), z.max() - z.min()])
+    offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2, (z.max() + z.min())/2])
+    # Need to compute the offset too
+
+    # Collect
+    xyz = np.array([x, y, z]).T
+    uvw = np.concatenate((u, v, w), axis=0).T
+
+    # Normalize
+    xyz = (xyz - offset) / scale
+    xyz_0 = (xyz_0 - offset) / scale
+    # TODO: Loop over findices! Maybe not necessary---can I compute all streamlines at once??
+    # Would it help? Currently assuming a single findex.
+    interp = LinearNDInterpolator(xyz, uvw, fill_value=0.0)
+
+    def velocity_field_interpolate_reg(xyz_, s):
+        # if (xyz_ <= -0.5).any() or (xyz_ >= 0.5).any():
+        #     print("hmm")
+        #     return np.array([0.0, 0.0, 0.0])
+        # else:
+        #     return interp(xyz_)[0]
+        return interp(xyz_)[0]
+
+    streamline = odeint(velocity_field_interpolate_reg, xyz_0, s) # 1000 x 3
+
+    # Denormalize
+    streamline = streamline * scale + offset
+
+    return streamline
+
+def compute_streamline_2D(x, y, z, u, v, w, xy_0):
+    """
+    Compute streamline starting at xy_0.
+    z and w will be ignored.
+    """
+    s = np.linspace(0, 1, 1000) # parametric variable
+
+    scale = np.array([x.max() - x.min(), y.max() - y.min()])
+    offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2])
+    # Need to compute the offset too
+
+    # Collect
+    xy = np.array([x, y]).T
+    uv = np.concatenate((u, v), axis=0).T
+
+    # Normalize
+    xy = (xy - offset) / scale
+    xy_0 = (xy_0 - offset) / scale
+    # TODO: Loop over findices! Maybe not necessary---can I compute all streamlines at once??
+    # Would it help? Currently assuming a single findex.
+
+    interp = LinearNDInterpolator(xy, uv)
+
+    def velocity_field_interpolate_reg(xy_, s):
+        if (xy_ <= -0.5).any() or (xy_ >= 0.5).any():
+            return np.array([0, 0])
+        else:
+            return interp(xy_)[0]
+        #return interp(xy_)[0]
+
+    streamline = odeint(velocity_field_interpolate_reg, xy_0, s) # 1000 x 2
+
+    # Determine point of exit from specified domain
+    if (streamline < -0.5).any():
+        low_exit = np.argwhere(streamline < -0.5)[0,0]
+    else:
+        low_exit = 1000
+    if (streamline > 0.5).any():
+        high_exit = np.argwhere(streamline > 0.5)[0,0]
+    else:
+        high_exit = 1000
+    exit_index = np.minimum(low_exit, high_exit)
+    if exit_index == 0:
+        raise ValueError("Streamline could not be propagated inside the domain.")
+    if exit_index == 1000:
+        raise ValueError("Streamline did not reach the edge of the domain.")
+    
+    # Copy points after exit
+    streamline[exit_index:] = streamline[exit_index-1]
+
+    # Denormalize
+    streamline = streamline * scale + offset
+
+    return streamline
 
 class Loader(yaml.SafeLoader):
 

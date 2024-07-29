@@ -262,10 +262,12 @@ class TurbineGrid(Grid):
                     self.x_sorted,
                     self.y_sorted,
                     self.z_sorted,
-                    None,
-                    None,
-                    None,
-                    None,
+                    self.heterogeneous_inflow_config["x"],
+                    self.heterogeneous_inflow_config["y"],
+                    self.heterogeneous_inflow_config["z"] if "z" in self.heterogeneous_inflow_config else None,
+                    self.heterogeneous_inflow_config["u"],
+                    self.heterogeneous_inflow_config["v"],
+                    self.heterogeneous_inflow_config["w"] if "w" in self.heterogeneous_inflow_config else None,
                     self.n_turbines
                 )
 
@@ -637,13 +639,14 @@ class FlowFieldPlanarGrid(Grid):
                     self.x_sorted,
                     self.y_sorted,
                     self.z_sorted,
-                    None,
-                    None,
-                    None,
-                    None,
+                    self.heterogeneous_inflow_config["x"],
+                    self.heterogeneous_inflow_config["y"],
+                    self.heterogeneous_inflow_config["z"],
+                    self.heterogeneous_inflow_config["u"],
+                    self.heterogeneous_inflow_config["v"],
+                    self.heterogeneous_inflow_config["w"],
                     self.n_turbines
                 )
-
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \
             reverse_rotate_coordinates_rel_west(
@@ -673,7 +676,7 @@ class PointsGrid(Grid):
     Args:
         turbine_coordinates (:py:obj:`NDArrayFloat`): Not used for PointsGrid, but
             required for the `Grid` super-class.
-        turbine_diameters (:py:obj:`NDArrayFloat`):  Not used for PointsGrid, but
+        turbine_diameters (:py:obj:`NDArrayFloat`): Not used for PointsGrid, but
             required for the `Grid` super-class.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Not used for PointsGrid, but
