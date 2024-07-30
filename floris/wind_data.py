@@ -2956,9 +2956,13 @@ class WindRoseWRG(WindDataBase):
 
         if wind_speeds is None:
             wind_speeds = self.wind_speeds
+        ws_steps = np.diff(wind_speeds)
+        if not np.all(np.isclose(ws_steps, ws_steps[0])):
+           raise ValueError("wind_speeds must be equally spaced.")
+        else:
+            ws_step = ws_steps[0]
 
-        # Define the wind speed edges
-        ws_step = wind_speeds[1] - wind_speeds[0]
+        # Define the wind speed edges (not half-open interval in np.arange)
         wind_speed_edges = np.arange(
             wind_speeds[0] - ws_step / 2, wind_speeds[-1] + ws_step, ws_step
         )
@@ -2968,6 +2972,9 @@ class WindRoseWRG(WindDataBase):
 
         # The frequency is the difference in the cumulative distribution function
         # at the edges
+        # NOTE: The probability mass associated to each discrete wind speed (ws) is taken as the
+        # cumulative mass under the continuous Weibull distribution from ws - ws_step/2 to
+        # ws + ws_step/2, where ws_step is the step between the provided wind_speeds.
         freq = cdf_edges[1:] - cdf_edges[:-1]
 
         # Normalize the frequency

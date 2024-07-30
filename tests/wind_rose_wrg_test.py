@@ -2,6 +2,7 @@ import math
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from floris import WindRoseWRG
 
@@ -174,6 +175,9 @@ def test_get_wind_rose_at_point():
     wind_rose2 = wind_rose_wrg.get_wind_rose_at_point(-1, -1)
     assert np.allclose(wind_rose.freq_table, wind_rose2.freq_table)
 
+    # Test that uneven spacing in wind_speeds is not allowed
+    with pytest.raises(ValueError):
+        _ = wind_rose_wrg.get_wind_rose_at_point(0, 0, wind_speeds=np.delete(wind_speeds, [2]))
 
 def test_wind_rose_wrg_integration():
 
