@@ -302,6 +302,18 @@ def apply_wind_direction_heterogeneity(
     y_per_turbine = np.repeat(y[:,:,:,:,None], n_turbines, axis=4)
     z_per_turbine = np.repeat(z[:,:,:,:,None], n_turbines, axis=4)
 
+    n_findex = x.shape[0]
+
+    # Ensure all needed elements are arrays
+    wind_direction_x_points = np.array(wind_direction_x_points)
+    wind_direction_y_points = np.array(wind_direction_y_points)
+    wind_direction_u_values = np.array(wind_direction_u_values)
+    wind_direction_v_values = np.array(wind_direction_v_values)
+    if wind_direction_z_points is not None:
+        wind_direction_z_points = np.array(wind_direction_z_points)
+    if wind_direction_w_values is not None:
+        wind_direction_w_values = np.array(wind_direction_w_values)
+
     # Compute new relative locations
     # TEMP________
     option = 3
@@ -316,26 +328,33 @@ def apply_wind_direction_heterogeneity(
         y_per_turbine[0,:,:,:,0] = y_per_turbine[0,:,:,:,0] + 0.2*x_per_turbine[0,:,:,:,0]
     elif option == 3:
         # TODO: compute streamlines; convert to point movements.
-        # TODO: do I need an outer loop over the findices? Maybe; ideally not.
-        for tindex in range(n_turbines):
-            # 1. Compute the streamline
-            streamline = compute_streamline(
-                wind_direction_x_points,
-                wind_direction_y_points,
-                wind_direction_z_points,
-                wind_direction_u_values,
-                wind_direction_v_values,
-                wind_direction_w_values,
-                np.array([x[0,tindex,:,:].mean(), y[0,tindex,:,:].mean()])
-            )
+        # TODO: Can I avoid any of these looping operations? Do I need to?
+        for findex in range(n_findex):
+            for tindex in range(n_turbines):
+                # 1. Compute the streamline
+                streamline = compute_streamline(
+                    wind_direction_x_points,
+                    wind_direction_y_points,
+                    None if wind_direction_z_points is None else wind_direction_z_points[findex,:],
+                    wind_direction_u_values[findex,:],
+                    wind_direction_v_values[findex,:],
+                    None if wind_direction_w_values is None else wind_direction_w_values[findex,:],
+                    np.array([
+                        x[findex,tindex,:,:].mean(),
+                        y[findex,tindex,:,:].mean(),
+                        z[findex,tindex,:,:].mean()
+                    ])
+                )
 
-            # 2. Compute the point movements
-            x_shifted, y_shifted, z_shifted = shift_points_by_streamline(streamline, x, y, z)
-            
-            # 3. Apply to per_turbine values
-            x_per_turbine[:,:,:,:,tindex] = x_shifted
-            y_per_turbine[:,:,:,:,tindex] = y_shifted
-            z_per_turbine[:,:,:,:,tindex] = z_shifted
+                # 2. Compute the point movements
+                x_shifted, y_shifted, z_shifted = shift_points_by_streamline(
+                    streamline, x[findex,:,:,:], y[findex,:,:,:], z[findex,:,:,:]
+                )
+                
+                # 3. Apply to per_turbine values
+                x_per_turbine[findex,:,:,:,tindex] = x_shifted
+                y_per_turbine[findex,:,:,:,tindex] = y_shifted
+                z_per_turbine[findex,:,:,:,tindex] = z_shifted
     else:
         pass # make no change
 
@@ -380,11 +399,14 @@ def compute_streamline_3D(x, y, z, u, v, w, xyz_0):
 
     return streamline
 
-def compute_streamline_2D(x, y, z, u, v, w, xy_0, n_points=1000):
+def compute_streamline_2D(x, y, z, u, v, w, xyz_0, n_points=1000):
     """
-    Compute streamline starting at xy_0.
+    Compute streamline starting at xyz_0.
     z and w will be ignored.
     """
+
+    xy_0 = xyz_0[:2]
+
     s = np.linspace(0, 1, n_points) # parametric variable
 
     scale = np.array([x.max() - x.min(), y.max() - y.min()])
@@ -393,7 +415,7 @@ def compute_streamline_2D(x, y, z, u, v, w, xy_0, n_points=1000):
 
     # Collect
     xy = np.array([x, y]).T
-    uv = np.concatenate((u, v), axis=0).T
+    uv = np.array([u,v]).T
 
     # Normalize
     xy = (xy - offset) / scale
@@ -438,10 +460,10 @@ def shift_points_by_streamline_2D(streamline, x, y, z):
     ## I think should be dist by turbine only (not each rotor point); and then 
     # shift all rotor points by the same amount.
     # TODO: How will this work over findices? Need to work that out.
-    xy = np.concatenate((x.mean(axis=(2,3)),y.mean(axis=(2,3))), axis=0)
+    xy = np.concatenate((x.mean(axis=(1,2))[None,:],y.mean(axis=(1,2))[None,:]), axis=0)
 
-    rotor_y = y - y.mean(axis=(2,3), keepdims=True)
-    rotor_z = z - z.mean(axis=(2,3), keepdims=True)
+    rotor_y = y - y.mean(axis=(1,2), keepdims=True)
+    rotor_z = z - z.mean(axis=(1,2), keepdims=True)
 
     # Storage for new points
     x_new = x.copy()
@@ -465,9 +487,9 @@ def shift_points_by_streamline_2D(streamline, x, y, z):
         
         #theta = np.arctan2(disp_y, disp_x)
         
-        x_new[:,tindex,:,:] = streamline[0,0] + along_stream_dist
+        x_new[tindex,:,:] = streamline[0,0] + along_stream_dist
         #y_new[:,tindex,:,:] = streamline[0,1] + disp_x*np.sin(theta) + disp_y*np.cos(theta) + rotor_y[:,tindex,:,:]
-        y_new[:,tindex,:,:] = streamline[0,1] + off_stream_dist + rotor_y[:,tindex,:,:]
+        y_new[tindex,:,:] = streamline[0,1] + off_stream_dist + rotor_y[tindex,:,:]
 
     return x_new, y_new, z
 

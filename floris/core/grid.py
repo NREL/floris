@@ -262,12 +262,12 @@ class TurbineGrid(Grid):
                     self.x_sorted,
                     self.y_sorted,
                     self.z_sorted,
-                    np.array(self.heterogeneous_inflow_config["x"]),
-                    np.array(self.heterogeneous_inflow_config["y"]),
-                    np.array(self.heterogeneous_inflow_config["z"]) if "z" in self.heterogeneous_inflow_config else None,
-                    np.array(self.heterogeneous_inflow_config["u"]),
-                    np.array(self.heterogeneous_inflow_config["v"]),
-                    np.array(self.heterogeneous_inflow_config["w"]) if "w" in self.heterogeneous_inflow_config else None,
+                    self.heterogeneous_inflow_config["x"],
+                    self.heterogeneous_inflow_config["y"],
+                    self.heterogeneous_inflow_config["z"] if "z" in self.heterogeneous_inflow_config else None,
+                    self.heterogeneous_inflow_config["u"],
+                    self.heterogeneous_inflow_config["v"],
+                    self.heterogeneous_inflow_config["w"] if "w" in self.heterogeneous_inflow_config else None,
                     self.n_turbines
                 )
 
