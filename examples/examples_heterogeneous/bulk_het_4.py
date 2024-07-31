@@ -21,14 +21,13 @@ fmodel.run()
 P_wo_het = fmodel.get_turbine_powers()/1e6
 
 het_inflow_config = {
-    "wind_directions": [270.0, 280.0, 280.0, 290.0], # To trigger the needed code
     "x": np.array([-1000.0, -1000.0, 1000.0, 1000.0]),
     "y": np.array([-1000.0, 1000.0, -1000.0, 1000.0]),
     #"z": np.array([90.0, 90.0, 90.0, 91.0]),
     "speed_multipliers": np.array([[1.0, 1.0, 1.0, 1.0]]),
     "u": np.array([[8.0, 8.0, 8.0, 8.0]]),
     "v": np.array([[-2.0, 0.0, -2.0, 0.0]]),
-    #"w": np.array([[0.0, 0.0, 0.0, 0.0]]),
+    #"v": np.array([[0.0, 0.0, 0.0, 0.0]]),
 }
 
 fmodel.set(heterogeneous_inflow_config=het_inflow_config)

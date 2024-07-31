@@ -982,10 +982,11 @@ class FlorisModel(LoggingManager):
                     heterogeneous_inflow_config[k] = (
                         self.core.flow_field.heterogeneous_inflow_config[k]
                     )
-            for k in ["wind_directions"]: # Optional, dependent on findex
+            for k in ["wind_directions", "u", "v", "w"]: # Optional, dependent on findex
+                # TODO: add findex dimension back in!
                 if k in self.core.flow_field.heterogeneous_inflow_config:
                     heterogeneous_inflow_config[k] = (
-                        self.core.flow_field.heterogeneous_inflow_config[k][findex:findex+1],
+                        self.core.flow_field.heterogeneous_inflow_config[k]#[findex:findex+1],
                     )
         else:
             heterogeneous_inflow_config = None

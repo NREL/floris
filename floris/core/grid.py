@@ -254,7 +254,7 @@ class TurbineGrid(Grid):
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=1)
 
         if (self.heterogeneous_inflow_config is not None
-            and "wind_directions" in self.heterogeneous_inflow_config):
+            and "u" in self.heterogeneous_inflow_config):
             self.use_turbine_specific_layouts = True
             # set up new x, y, z coordinates as a mockup
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
@@ -262,12 +262,12 @@ class TurbineGrid(Grid):
                     self.x_sorted,
                     self.y_sorted,
                     self.z_sorted,
-                    self.heterogeneous_inflow_config["x"],
-                    self.heterogeneous_inflow_config["y"],
-                    self.heterogeneous_inflow_config["z"] if "z" in self.heterogeneous_inflow_config else None,
-                    self.heterogeneous_inflow_config["u"],
-                    self.heterogeneous_inflow_config["v"],
-                    self.heterogeneous_inflow_config["w"] if "w" in self.heterogeneous_inflow_config else None,
+                    np.array(self.heterogeneous_inflow_config["x"]),
+                    np.array(self.heterogeneous_inflow_config["y"]),
+                    np.array(self.heterogeneous_inflow_config["z"]) if "z" in self.heterogeneous_inflow_config else None,
+                    np.array(self.heterogeneous_inflow_config["u"]),
+                    np.array(self.heterogeneous_inflow_config["v"]),
+                    np.array(self.heterogeneous_inflow_config["w"]) if "w" in self.heterogeneous_inflow_config else None,
                     self.n_turbines
                 )
 
@@ -631,7 +631,7 @@ class FlowFieldPlanarGrid(Grid):
         self.z_sorted = z_points[None, :, :, :]
 
         if (self.heterogeneous_inflow_config is not None
-            and "wind_directions" in self.heterogeneous_inflow_config):
+            and "u" in self.heterogeneous_inflow_config):
             self.use_turbine_specific_layouts = True
             # set up new x, y, z coordinates as a mockup
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
@@ -641,10 +641,10 @@ class FlowFieldPlanarGrid(Grid):
                     self.z_sorted,
                     self.heterogeneous_inflow_config["x"],
                     self.heterogeneous_inflow_config["y"],
-                    self.heterogeneous_inflow_config["z"],
+                    self.heterogeneous_inflow_config["z"] if "z" in self.heterogeneous_inflow_config else None,
                     self.heterogeneous_inflow_config["u"],
                     self.heterogeneous_inflow_config["v"],
-                    self.heterogeneous_inflow_config["w"],
+                    self.heterogeneous_inflow_config["w"] if "w" in self.heterogeneous_inflow_config else None,
                     self.n_turbines
                 )
         # Now calculate grid coordinates in original frame (from 270 deg perspective)

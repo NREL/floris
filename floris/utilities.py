@@ -294,7 +294,8 @@ def apply_wind_direction_heterogeneity(
         n_turbines
     ):
 
-    compute_streamline = compute_streamline_2D if wind_direction_z_points is None else compute_streamline_3D
+    compute_streamline = compute_streamline_2D# if wind_direction_z_points is None else compute_streamline_3D
+    shift_points_by_streamline = shift_points_by_streamline_2D# if wind_direction_z_points is None else shift_points_by_streamline_3D
 
     # Initialize storage
     x_per_turbine = np.repeat(x[:,:,:,:,None], n_turbines, axis=4)
@@ -325,13 +326,16 @@ def apply_wind_direction_heterogeneity(
                 wind_direction_u_values,
                 wind_direction_v_values,
                 wind_direction_w_values,
-                np.array([-100.0, 50.0]) # Placeholder
+                np.array([x[0,tindex,:,:].mean(), y[0,tindex,:,:].mean()])
             )
-            import ipdb; ipdb.set_trace()
+
             # 2. Compute the point movements
-            # 3. Apply the point movements to x_per_turbine, y_per_turbine, z_per_turbine
-            y_per_turbine[:,:,:,tindex] = 0 # Placeholder
-        
+            x_shifted, y_shifted, z_shifted = shift_points_by_streamline(streamline, x, y, z)
+            
+            # 3. Apply to per_turbine values
+            x_per_turbine[:,:,:,:,tindex] = x_shifted
+            y_per_turbine[:,:,:,:,tindex] = y_shifted
+            z_per_turbine[:,:,:,:,tindex] = z_shifted
     else:
         pass # make no change
 
@@ -376,12 +380,12 @@ def compute_streamline_3D(x, y, z, u, v, w, xyz_0):
 
     return streamline
 
-def compute_streamline_2D(x, y, z, u, v, w, xy_0):
+def compute_streamline_2D(x, y, z, u, v, w, xy_0, n_points=1000):
     """
     Compute streamline starting at xy_0.
     z and w will be ignored.
     """
-    s = np.linspace(0, 1, 1000) # parametric variable
+    s = np.linspace(0, 1, n_points) # parametric variable
 
     scale = np.array([x.max() - x.min(), y.max() - y.min()])
     offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2])
@@ -400,13 +404,12 @@ def compute_streamline_2D(x, y, z, u, v, w, xy_0):
     interp = LinearNDInterpolator(xy, uv)
 
     def velocity_field_interpolate_reg(xy_, s):
-        if (xy_ <= -0.5).any() or (xy_ >= 0.5).any():
+        if (xy_ < -0.5).any() or (xy_ > 0.5).any():
             return np.array([0, 0])
         else:
             return interp(xy_)[0]
-        #return interp(xy_)[0]
 
-    streamline = odeint(velocity_field_interpolate_reg, xy_0, s) # 1000 x 2
+    streamline = odeint(velocity_field_interpolate_reg, xy_0, s) # n_points x 2
 
     # Determine point of exit from specified domain
     if (streamline < -0.5).any():
@@ -430,6 +433,43 @@ def compute_streamline_2D(x, y, z, u, v, w, xy_0):
     streamline = streamline * scale + offset
 
     return streamline
+
+def shift_points_by_streamline_2D(streamline, x, y, z):
+    ## I think should be dist by turbine only (not each rotor point); and then 
+    # shift all rotor points by the same amount.
+    # TODO: How will this work over findices? Need to work that out.
+    xy = np.concatenate((x.mean(axis=(2,3)),y.mean(axis=(2,3))), axis=0)
+
+    rotor_y = y - y.mean(axis=(2,3), keepdims=True)
+    rotor_z = z - z.mean(axis=(2,3), keepdims=True)
+
+    # Storage for new points
+    x_new = x.copy()
+    y_new = y.copy()
+
+    disps_to_streamline = streamline[:,:,None] - xy[None,:, :]
+    dists_to_streamline = np.linalg.norm(disps_to_streamline, axis=1)
+    min_idx = np.argmin(dists_to_streamline, axis=0)
+    #points = streamline[min_idx, :]
+
+    # At this point, loop over the (downstream) turbines for the shifts
+    # TODO: for viz/solve for points, are there many more points than turbines?
+    # If so, maybe need to work on a non-looped version of this.
+    for tindex in range(len(min_idx)):
+        streamline_diffs = np.diff(streamline[:min_idx[tindex], :], axis=0)
+        along_stream_dist = np.sum(np.linalg.norm(streamline_diffs, axis=1))
+        off_stream_dist = dists_to_streamline[min_idx[tindex], tindex]
+        #off_stream_disp = disps_to_streamline[min_idx[tindex], :, tindex]
+        #disp_x = off_stream_disp[0]
+        #disp_y = off_stream_disp[1]
+        
+        #theta = np.arctan2(disp_y, disp_x)
+        
+        x_new[:,tindex,:,:] = streamline[0,0] + along_stream_dist
+        #y_new[:,tindex,:,:] = streamline[0,1] + disp_x*np.sin(theta) + disp_y*np.cos(theta) + rotor_y[:,tindex,:,:]
+        y_new[:,tindex,:,:] = streamline[0,1] + off_stream_dist + rotor_y[:,tindex,:,:]
+
+    return x_new, y_new, z
 
 class Loader(yaml.SafeLoader):
 
