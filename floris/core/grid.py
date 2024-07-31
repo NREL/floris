@@ -259,6 +259,9 @@ class TurbineGrid(Grid):
             # set up new x, y, z coordinates as a mockup
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
                 apply_wind_direction_heterogeneity(
+                    x,
+                    y,
+                    z,
                     self.x_sorted,
                     self.y_sorted,
                     self.z_sorted,
@@ -636,6 +639,9 @@ class FlowFieldPlanarGrid(Grid):
             # set up new x, y, z coordinates as a mockup
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
                 apply_wind_direction_heterogeneity(
+                    x,
+                    y,
+                    z,
                     self.x_sorted,
                     self.y_sorted,
                     self.z_sorted,

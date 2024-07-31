@@ -9,7 +9,7 @@ visualize = True
 
 # Get a test fi (single turbine at 0,0)
 fmodel = FlorisModel("../inputs/gch.yaml")
-fmodel.set(layout_x=[0, 0, 600, 600], layout_y=[0, -100, 0, -100])
+fmodel.set(layout_x=[0, 0, 600, 600], layout_y=[0, -300, 0, -300])
 
 fmodel.set(
     wind_directions=[270.0],
@@ -22,8 +22,7 @@ P_wo_het = fmodel.get_turbine_powers()/1e6
 
 het_inflow_config = {
     "x": np.array([-1000.0, -1000.0, 1000.0, 1000.0]),
-    "y": np.array([-1000.0, 1000.0, -1000.0, 1000.0]),
-    #"z": np.array([90.0, 90.0, 90.0, 91.0]),
+    "y": np.array([-500.0, 500.0, -500.0, 500.0]),
     "speed_multipliers": np.array([[1.0, 1.0, 1.0, 1.0]]),
     "u": np.array([[8.0, 8.0, 8.0, 8.0]]),
     "v": np.array([[-2.0, 0.0, -2.0, 0.0]]),
@@ -40,10 +39,9 @@ if visualize:
     fig, ax = plt.subplots(2, 1)
     fmodel.set(
         heterogeneous_inflow_config={
-            #"wind_directions": [270.0, 270.0, 270.0, 270.0],
             "x": np.array([-1000.0, -1000.0, 1000.0, 1000.0]),
             "y": np.array([-1000.0, 1000.0, -1000.0, 1000.0]),
-            "speed_multipliers":np.array([[1.0, 1.0, 1.0, 1.0]])#np.array([[1.0, 1.2, 1.2, 1.4]])
+            "speed_multipliers":np.array([[1.0, 1.0, 1.0, 1.0]])
         }
     )
     fmodel.run()
@@ -51,6 +49,8 @@ if visualize:
         x_resolution=200,
         y_resolution=100,
         height=90.0,
+        x_bounds=(-200, 1000),
+        y_bounds=(-500, 500),
     )
     visualize_cut_plane(
         horizontal_plane,
@@ -64,7 +64,10 @@ if visualize:
         x_resolution=200,
         y_resolution=100,
         height=90.0,
+        x_bounds=(-200, 1000),
+        y_bounds=(-500, 500),
     )
+    #import ipdb; ipdb.set_trace()
     visualize_cut_plane(
         horizontal_plane,
         ax=ax[1],
