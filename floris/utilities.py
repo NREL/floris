@@ -379,55 +379,34 @@ def apply_wind_direction_heterogeneity_warping(
         wind_direction_w_values = np.array(wind_direction_w_values)
 
     # Compute new relative locations
-    # TEMP________
-    option = 3
-    if option == 1:
-        # Place turbine 2 directly downstream of turbine 1, as seen by turbine 1
-        y_points_per_turbine[0,2,:,:,1] = y_points_per_turbine[0,1,:,:,1]
-        # Place turbine 3 out of the direct path of turbine 1, as seen by turbine 1
-        y_points_per_turbine[0,3,:,:,1] = 2*y_points_per_turbine[0,3,:,:,1] 
-    elif option == 2:
-        #y_per_turbine[0,:,:,:,0] = y_per_turbine[0,:,:,:,0] - 0.2*x_per_turbine[0,:,:,:,0]
-        #y_per_turbine[0,:,:,:,1] = y_per_turbine[0,:,:,:,1] + 0.2*x_per_turbine[0,:,:,:,1]
-        y_points_per_turbine[0,:,:,:,0] = y_points_per_turbine[0,:,:,:,0] + 0.2*x_points_per_turbine[0,:,:,:,0]
-    elif option == 3:
-        # TODO: Can I avoid any of these looping operations? Do I need to?
-        for findex in range(n_findex):
-            for tindex in range(n_turbines):
-                # 1. Compute the streamline
-                streamline_start = np.array([
-                    x_turbines[findex,tindex],
-                    y_turbines[findex,tindex],
-                    z_turbines[findex,tindex]
-                ])
-                # streamline_start = np.array([
-                #     x_points[findex,tindex,:,:].mean(),
-                #     y_points[findex,tindex,:,:].mean(),
-                #     z_points[findex,tindex,:,:].mean(),
-                # ])
-                streamline = compute_streamline(
-                    wind_direction_x_points,
-                    wind_direction_y_points,
-                    None if wind_direction_z_points is None else wind_direction_z_points[findex,:],
-                    wind_direction_u_values[findex,:],
-                    wind_direction_v_values[findex,:],
-                    None if wind_direction_w_values is None else wind_direction_w_values[findex,:],
-                    streamline_start
-                )
+    # TODO: Can I avoid any of these looping operations? Do I need to?
+    for findex in range(n_findex):
+        for tindex in range(n_turbines):
+            # 1. Compute the streamline
+            streamline_start = np.array([
+                x_turbines[findex,tindex],
+                y_turbines[findex,tindex],
+                z_turbines[findex,tindex]
+            ])
+            streamline = compute_streamline(
+                wind_direction_x_points,
+                wind_direction_y_points,
+                None if wind_direction_z_points is None else wind_direction_z_points[findex,:],
+                wind_direction_u_values[findex,:],
+                wind_direction_v_values[findex,:],
+                None if wind_direction_w_values is None else wind_direction_w_values[findex,:],
+                streamline_start
+            )
 
-                # 2. Compute the point movements
-                x_shifted, y_shifted, z_shifted = shift_points_by_streamline(
-                    streamline, x_points[findex,:,:,:], y_points[findex,:,:,:], z_points[findex,:,:,:]
-                )
-                
-                # 3. Apply to per_turbine values
-                x_points_per_turbine[findex,:,:,:,tindex] = x_shifted
-                y_points_per_turbine[findex,:,:,:,tindex] = y_shifted
-                z_points_per_turbine[findex,:,:,:,tindex] = z_shifted
-    else:
-        pass # make no change
-
-    # END TEMP____
+            # 2. Compute the point movements
+            x_shifted, y_shifted, z_shifted = shift_points_by_streamline(
+                streamline, x_points[findex,:,:,:], y_points[findex,:,:,:], z_points[findex,:,:,:]
+            )
+            
+            # 3. Apply to per_turbine values
+            x_points_per_turbine[findex,:,:,:,tindex] = x_shifted
+            y_points_per_turbine[findex,:,:,:,tindex] = y_shifted
+            z_points_per_turbine[findex,:,:,:,tindex] = z_shifted
 
     # Return full set of locations
     return x_points_per_turbine, y_points_per_turbine, z_points_per_turbine
