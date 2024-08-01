@@ -312,13 +312,6 @@ class FlowField(BaseClass):
         else:
             return False
 
-    @property
-    def _bulk_wd_heterogeneity(self):
-        if self.heterogeneous_inflow_config is not None:
-            return "bulk_wd_change" in self.heterogeneous_inflow_config
-        else:
-            return False
-
     @staticmethod
     def interpolate_multiplier_xy(x: NDArrayFloat,
                                   y: NDArrayFloat,

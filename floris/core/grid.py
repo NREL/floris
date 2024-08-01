@@ -18,8 +18,7 @@ from floris.type_dec import (
 from floris.utilities import (
     reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
-    warp_grid_for_wind_direction_heterogeneity,
-    apply_wind_direction_heterogeneity,
+    apply_wind_direction_heterogeneity_warping,
 )
 
 
@@ -258,7 +257,7 @@ class TurbineGrid(Grid):
             self.use_turbine_specific_layouts = True
             # set up new x, y, z coordinates as a mockup
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
-                apply_wind_direction_heterogeneity(
+                apply_wind_direction_heterogeneity_warping(
                     x,
                     y,
                     z,
@@ -321,13 +320,6 @@ class TurbineCubatureGrid(Grid):
             self.wind_directions,
             self.turbine_coordinates
         )
-        if (self.heterogeneous_inflow_config is not None
-            and "bulk_wd_change" in self.heterogeneous_inflow_config):
-            wd_het_x_points = np.array(self.heterogeneous_inflow_config["bulk_wd_x"])
-            wd_het_values = np.array(self.heterogeneous_inflow_config["bulk_wd_change"])
-            x, y, z = warp_grid_for_wind_direction_heterogeneity(
-                x, y, z, wd_het_x_points + x.min(), wd_het_values
-            )
 
         # Coefficients
         cubature_coefficients = TurbineCubatureGrid.get_cubature_coefficients(self.grid_resolution)
@@ -510,13 +502,6 @@ class FlowFieldGrid(Grid):
             self.wind_directions,
             self.turbine_coordinates
         )
-        if (self.heterogeneous_inflow_config is not None
-            and "bulk_wd_change" in self.heterogeneous_inflow_config):
-            wd_het_x_points = np.array(self.heterogeneous_inflow_config["bulk_wd_x"])
-            wd_het_values = np.array(self.heterogeneous_inflow_config["bulk_wd_change"])
-            x, y, z = warp_grid_for_wind_direction_heterogeneity(
-                x, y, z, wd_het_x_points + x.min(), wd_het_values
-            )
 
         # Construct the arrays storing the grid points
         eps = 0.01
@@ -649,7 +634,7 @@ class FlowFieldPlanarGrid(Grid):
             self.use_turbine_specific_layouts = True
             # set up new x, y, z coordinates as a mockup
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
-                apply_wind_direction_heterogeneity(
+                apply_wind_direction_heterogeneity_warping(
                     x,
                     y,
                     z,
@@ -674,18 +659,6 @@ class FlowFieldPlanarGrid(Grid):
                 x_center_of_rotation=self.x_center_of_rotation,
                 y_center_of_rotation=self.y_center_of_rotation,
             )
-
-        if (self.heterogeneous_inflow_config is not None
-            and "bulk_wd_change" in self.heterogeneous_inflow_config):
-            wd_het_x_points = np.array(self.heterogeneous_inflow_config["bulk_wd_x"])
-            wd_het_values = np.array(self.heterogeneous_inflow_config["bulk_wd_change"])
-            x_points, y_points, z_points = warp_grid_for_wind_direction_heterogeneity(
-                x_points, y_points, z_points, wd_het_x_points + x.min(), wd_het_values
-            )
-
-            self.x_sorted = x_points[None, :, :, :]
-            self.y_sorted = y_points[None, :, :, :]
-            self.z_sorted = z_points[None, :, :, :]
 
 @define
 class PointsGrid(Grid):
@@ -733,13 +706,6 @@ class PointsGrid(Grid):
             x_center_of_rotation=self.x_center_of_rotation,
             y_center_of_rotation=self.y_center_of_rotation
         )
-        if (self.heterogeneous_inflow_config is not None
-            and "bulk_wd_change" in self.heterogeneous_inflow_config):
-            wd_het_x_points = np.array(self.heterogeneous_inflow_config["bulk_wd_x"])
-            wd_het_values = np.array(self.heterogeneous_inflow_config["bulk_wd_change"])
-            x, y, z = warp_grid_for_wind_direction_heterogeneity(
-                x, y, z, wd_het_x_points, wd_het_values
-            )
         self.x_sorted = x[:,:,None,None]
         self.y_sorted = y[:,:,None,None]
         self.z_sorted = z[:,:,None,None]
