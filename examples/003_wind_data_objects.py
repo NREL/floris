@@ -149,15 +149,15 @@ wind_rose_from_csv = WindRose.read_csv_long(
 # Aggregating and Resampling the Wind Rose
 ##################################################
 
-# The aggregate function allows for aggregation of the wind rose data into
+# The downsample function allows for aggregation of the wind rose data into
 # fewer wind direction and wind speed bins.
 # Note it will throw an error if the step sizes passed in are smaller than the
 # step sizes of the original data.
-wind_rose_aggregate = wind_rose.aggregate(wd_step=10, ws_step=2)
+wind_rose_aggregate = wind_rose.downsample(wd_step=10, ws_step=2)
 
-# For upsampling, the resample_by_interpolation function can be used to interpolate
+# For upsampling, the upsample function can be used to interpolate
 # the wind rose data to a finer grid.  It can use either linear or nearest neighbor
-wind_rose_resample = wind_rose.resample_by_interpolation(wd_step=0.5, ws_step=0.25)
+wind_rose_resample = wind_rose.upsample(wd_step=0.5, ws_step=0.25)
 
 ##################################################
 # Setting turbulence intensity
@@ -224,7 +224,7 @@ fmodel.set(wind_data=wind_rose)
 # bins for which frequency is zero are not simulated.  This can be changed by setting the
 # compute_zero_freq_occurrence parameter to True.
 wind_directions = np.array([200.0, 300.0])
-wind_speeds = np.array([5.0, 1.00])
+wind_speeds = np.array([5.0, 10.0])
 freq_table = np.array([[0.5, 0], [0.5, 0]])
 wind_rose = WindRose(
     wind_directions=wind_directions, wind_speeds=wind_speeds, ti_table=0.06, freq_table=freq_table

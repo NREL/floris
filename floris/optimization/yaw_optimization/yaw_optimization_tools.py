@@ -76,18 +76,18 @@ def derive_downstream_turbines(fmodel, wind_direction, wake_slope=0.30, plot_lin
             y = (y0 + D[ii]) + (x - x0) * wake_slope
             if isinstance(y, (float, np.float64, np.float32)):
                 if x < (x0 + 0.01):
-                    y = -np.Inf
+                    y = -np.inf
             else:
-                y[x < x0 + 0.01] = -np.Inf
+                y[x < x0 + 0.01] = -np.inf
             return y
 
         def wake_profile_lb_turbii(x):
             y = (y0 - D[ii]) - (x - x0) * wake_slope
             if isinstance(y, (float, np.float64, np.float32)):
                 if x < (x0 + 0.01):
-                    y = -np.Inf
+                    y = -np.inf
             else:
-                y[x < x0 + 0.01] = -np.Inf
+                y[x < x0 + 0.01] = -np.inf
             return y
 
         def determine_if_in_wake(xt, yt):

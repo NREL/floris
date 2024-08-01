@@ -17,11 +17,11 @@ DEFLECTION_MODEL = "gauss"
 
 locations_baseline_aep = np.array(
     [
-        [0.0, 571.5416296, 1260.0],
-        [0.0, 496.57085993, 0.],
+        [0.0, 243.05304475, 1260.0],
+        [0.0, 959.83979244,    0.0],
     ]
 )
-baseline_aep = 44787987324.21652
+baseline_aep = 45226182795.34081
 
 locations_baseline_value = np.array(
     [
@@ -45,7 +45,7 @@ def test_random_search_layout_opt(sample_inputs_fixture):
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0, 360.0, 5.0)
-    ws_array = 8.0 * np.ones_like(wd_array)
+    ws_array = np.array([8.0])
 
     wind_rose = WindRose(
         wind_directions=wd_array,
@@ -68,7 +68,7 @@ def test_random_search_layout_opt(sample_inputs_fixture):
         use_dist_based_init=False,
         random_seed=0,
     )
-    sol = layout_opt.optimize()
+    sol = layout_opt._test_optimize()
     optimized_aep = sol[0]
     locations_opt = np.array([sol[1], sol[2]])
 
@@ -130,7 +130,7 @@ def test_random_search_layout_opt_value(sample_inputs_fixture):
         random_seed=0,
         use_value=True,
     )
-    sol = layout_opt.optimize()
+    sol = layout_opt._test_optimize()
     optimized_value = sol[0]
     locations_opt = np.array([sol[1], sol[2]])
 

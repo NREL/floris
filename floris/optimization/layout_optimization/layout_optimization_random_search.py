@@ -18,7 +18,6 @@ from time import perf_counter as timerpc
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy import random
 from scipy.spatial.distance import cdist, pdist
 from shapely.geometry import Point, Polygon
 
@@ -84,11 +83,11 @@ def _gen_dist_based_init(
     np.random.seed(s)
 
     # Choose the initial point randomly
-    init_x = float(random.randint(int(min_x),int(max_x)))
-    init_y = float(random.randint(int(min_y),int(max_y)))
+    init_x = float(np.random.randint(int(min_x),int(max_x)))
+    init_y = float(np.random.randint(int(min_y),int(max_y)))
     while not (poly_outer.contains(Point([init_x,init_y]))):
-        init_x = float(random.randint(int(min_x),int(max_x)))
-        init_y = float(random.randint(int(min_y),int(max_y)))
+        init_x = float(np.random.randint(int(min_x),int(max_x)))
+        init_y = float(np.random.randint(int(min_y),int(max_y)))
 
     # Intialize the layout arrays
     layout_x = np.array([init_x])
@@ -329,6 +328,9 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         # Delete stored x and y to avoid confusion
         del self.x, self.y
 
+        # Set up to run in normal mode
+        self.debug = False
+
     def describe(self):
         print("Random Layout Optimization")
         print(f"Number of turbines to optimize = {self.N_turbines}")
@@ -492,74 +494,78 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
         y_opt = self.y_opt
         return x_initial, y_initial, x_opt, y_opt
 
-
-    # Public methods
-
-    def optimize(self):
+    def _initialize_optimization(self):
         """
-        Perform the optimization
+        Set up logs etc
         """
         print(f'Optimizing using {self.n_individuals} individuals.')
-        opt_start_time = timerpc()
-        opt_stop_time = opt_start_time + self.total_optimization_seconds
-        sim_time = 0
+        self._opt_start_time = timerpc()
+        self._opt_stop_time = self._opt_start_time + self.total_optimization_seconds
 
         self.objective_candidate_log = [self.objective_candidate.copy()]
         self.num_objective_calls_log = []
         self._num_objective_calls = [0]*self.n_individuals
 
-        while timerpc() < opt_stop_time:
+    def _run_optimization_generation(self):
+        """
+        Run a generation of the outer genetic algorithm
+        """
+        # Set random seed for the main loop
+        if self.random_seed is None:
+            multi_random_seeds = [None]*self.n_individuals
+        else:
+            multi_random_seeds = [55 + self.iteration_step + i
+                for i in range(self.n_individuals)]
+        # 55 is just an arbitrary choice to ensure different random seeds
+        # to the initialization code
 
-            # Set random seed for the main loop
-            if self.random_seed is None:
-                multi_random_seeds = [None]*self.n_individuals
-            else:
-                multi_random_seeds = [55 + self.iteration_step + i
-                    for i in range(self.n_individuals)]
-            # 55 is just an arbitrary choice to ensure different random seeds
-            # to the initialization code
-
-            # Update the optimization time
-            sim_time = timerpc() - opt_start_time
-            print(f'Optimization time: {sim_time:.1f} s / {self.total_optimization_seconds:.1f} s')
+        # Update the optimization time
+        sim_time = timerpc() - self._opt_start_time
+        print(f'Optimization time: {sim_time:.1f} s / {self.total_optimization_seconds:.1f} s')
 
 
-            # Generate the multiargs for parallel execution of single individual optimization
-            multiargs = [
-                (self.seconds_per_iteration,
-                 self.objective_candidate[i],
-                 self.x_candidate[i, :],
-                 self.y_candidate[i, :],
-                 self.fmodel_dict,
-                 self.fmodel.wind_data,
-                 self.min_dist,
-                 self._boundary_polygon,
-                 self.distance_pmf,
-                 self.enable_geometric_yaw,
-                 multi_random_seeds[i],
-                 self.use_value
-                )
-                    for i in range(self.n_individuals)
-            ]
+        # Generate the multiargs for parallel execution of single individual optimization
+        multiargs = [
+            (self.seconds_per_iteration,
+                self.objective_candidate[i],
+                self.x_candidate[i, :],
+                self.y_candidate[i, :],
+                self.fmodel_dict,
+                self.fmodel.wind_data,
+                self.min_dist,
+                self._boundary_polygon,
+                self.distance_pmf,
+                self.enable_geometric_yaw,
+                multi_random_seeds[i],
+                self.use_value,
+                self.debug
+            )
+                for i in range(self.n_individuals)
+        ]
 
-            # Run the single individual optimization in parallel
-            if self._PoolExecutor: # Parallelized
-                with self._PoolExecutor(self.max_workers) as p:
-                    out = p.starmap(_single_individual_opt, multiargs)
-            else: # Parallelization not activated
-                out = [_single_individual_opt(*multiargs[0])]
+        # Run the single individual optimization in parallel
+        if self._PoolExecutor: # Parallelized
+            with self._PoolExecutor(self.max_workers) as p:
+                out = p.starmap(_single_individual_opt, multiargs)
+        else: # Parallelization not activated
+            out = [_single_individual_opt(*multiargs[0])]
 
-            # Unpack the results
-            for i in range(self.n_individuals):
-                self.objective_candidate[i] = out[i][0]
-                self.x_candidate[i, :] = out[i][1]
-                self.y_candidate[i, :] = out[i][2]
-                self._num_objective_calls[i] = out[i][3]
-            self.objective_candidate_log.append(self.objective_candidate)
-            self.num_objective_calls_log.append(self._num_objective_calls)
+        # Unpack the results
+        for i in range(self.n_individuals):
+            self.objective_candidate[i] = out[i][0]
+            self.x_candidate[i, :] = out[i][1]
+            self.y_candidate[i, :] = out[i][2]
+            self._num_objective_calls[i] = out[i][3]
+        self.objective_candidate_log.append(self.objective_candidate)
+        self.num_objective_calls_log.append(self._num_objective_calls)
 
-            # Evaluate the individuals for this step
-            self._evaluate_opt_step()
+        # Evaluate the individuals for this step
+        self._evaluate_opt_step()
+
+    def _finalize_optimization(self):
+        """
+        Package and print final results.
+        """
 
         # Finalize the result
         self.objective_final = self.objective_candidate[0]
@@ -573,8 +579,42 @@ class LayoutOptimizationRandomSearch(LayoutOptimization):
             f" {self._obj_unit} ({increase:+.2f}%)"
         )
 
+    def _test_optimize(self):
+        """
+        Perform a fixed number of iterations with a single worker for
+        debugging and testing purposes.
+        """
+        # Set up a minimal problem to run on a single worker
+        print("Running test optimization on a single worker.")
+        self._PoolExecutor = None
+        self.max_workers = None
+        self.n_individuals = 1
+        self.debug = True
+
+        self._initialize_optimization()
+
+        # Run 2 generations
+        for _ in range(2):
+            self._run_optimization_generation()
+
+        self._finalize_optimization()
+
         return self.objective_final, self.x_opt, self.y_opt
 
+    # Public methods
+    def optimize(self):
+        """
+        Perform the optimization
+        """
+        self._initialize_optimization()
+
+        # Run generations until the overall stop time
+        while timerpc() < self._opt_stop_time:
+            self._run_optimization_generation()
+
+        self._finalize_optimization()
+
+        return self.objective_final, self.x_opt, self.y_opt
 
     # Helpful visualizations
     def plot_distance_pmf(self, ax=None):
@@ -606,7 +646,8 @@ def _single_individual_opt(
     dist_pmf,
     enable_geometric_yaw,
     s,
-    use_value
+    use_value,
+    debug
 ):
     # Set random seed
     np.random.seed(s)
@@ -640,69 +681,80 @@ def _single_individual_opt(
     # disabled.
     use_momentum = False
 
+    # Special handling for debug mode
+    if debug:
+        debug_iterations = 100
+        stop_time = np.inf
+        dd = 0
+
     # Loop as long as we've not hit the stop time
     while timerpc() < stop_time:
 
-            if not use_momentum:
-                get_new_point = True
+        if debug and dd >= debug_iterations:
+            break
+        elif debug:
+            dd += 1
 
-            if get_new_point: #If the last test wasn't successful
+        if not use_momentum:
+            get_new_point = True
 
-                # Randomly select a turbine to nudge
-                tr = random.randint(0,num_turbines-1)
+        if get_new_point: #If the last test wasn't successful
 
-                # Randomly select a direction to nudge in (uniform direction)
-                rand_dir = np.random.uniform(low=0.0, high=2*np.pi)
+            # Randomly select a turbine to nudge
+            tr = np.random.randint(0,num_turbines)
 
-                # Randomly select a distance to travel according to pmf
-                rand_dist = np.random.choice(dist_pmf["d"], p=dist_pmf["p"])
+            # Randomly select a direction to nudge in (uniform direction)
+            rand_dir = np.random.uniform(low=0.0, high=2*np.pi)
 
-            # Get a new test point
-            test_x = layout_x[tr] + np.cos(rand_dir) * rand_dist
-            test_y = layout_y[tr] + np.sin(rand_dir) * rand_dist
+            # Randomly select a distance to travel according to pmf
+            rand_dist = np.random.choice(dist_pmf["d"], p=dist_pmf["p"])
 
-            # In bounds?
-            if not test_point_in_bounds(test_x, test_y, poly_outer):
-                get_new_point = True
-                continue
+        # Get a new test point
+        test_x = layout_x[tr] + np.cos(rand_dir) * rand_dist
+        test_y = layout_y[tr] + np.sin(rand_dir) * rand_dist
 
-            # Make a new layout
-            original_x = layout_x[tr]
-            original_y = layout_y[tr]
-            layout_x[tr] = test_x
-            layout_y[tr] = test_y
+        # In bounds?
+        if not test_point_in_bounds(test_x, test_y, poly_outer):
+            get_new_point = True
+            continue
 
-            # Acceptable distances?
-            if not test_min_dist(layout_x, layout_y,min_dist):
-                # Revert and continue
-                layout_x[tr] = original_x
-                layout_y[tr] = original_y
-                get_new_point = True
-                continue
+        # Make a new layout
+        original_x = layout_x[tr]
+        original_y = layout_y[tr]
+        layout_x[tr] = test_x
+        layout_y[tr] = test_y
 
-            # Does it improve the objective?
-            if enable_geometric_yaw: # Select appropriate yaw angles
-                yaw_opt.fmodel_subset.set(layout_x=layout_x, layout_y=layout_y)
-                df_opt = yaw_opt.optimize()
-                yaw_angles = np.vstack(df_opt['yaw_angles_opt'])
+        # Acceptable distances?
+        if not test_min_dist(layout_x, layout_y,min_dist):
+            # Revert and continue
+            layout_x[tr] = original_x
+            layout_y[tr] = original_y
+            get_new_point = True
+            continue
 
-            num_objective_calls += 1
-            test_objective = _get_objective(layout_x, layout_y, fmodel_, yaw_angles, use_value)
+        # Does it improve the objective?
+        if enable_geometric_yaw: # Select appropriate yaw angles
+            yaw_opt.fmodel_subset.set(layout_x=layout_x, layout_y=layout_y)
+            df_opt = yaw_opt.optimize()
+            yaw_angles = np.vstack(df_opt['yaw_angles_opt'])
 
-            if test_objective > current_objective:
-                # Accept the change
-                current_objective = test_objective
+        num_objective_calls += 1
+        test_objective = _get_objective(layout_x, layout_y, fmodel_, yaw_angles, use_value)
 
-                # If not a random point this cycle and it did improve things
-                # try not getting a new point
-                # Feature is currently disabled by use_momentum flag
-                get_new_point = False
+        if test_objective > current_objective:
+            # Accept the change
+            current_objective = test_objective
 
-            else:
-                # Revert the change
-                layout_x[tr] = original_x
-                layout_y[tr] = original_y
-                get_new_point = True
+            # If not a random point this cycle and it did improve things
+            # try not getting a new point
+            # Feature is currently disabled by use_momentum flag
+            get_new_point = False
+
+        else:
+            # Revert the change
+            layout_x[tr] = original_x
+            layout_y[tr] = original_y
+            get_new_point = True
 
     # Return the best result from this individual
     return current_objective, layout_x, layout_y, num_objective_calls
