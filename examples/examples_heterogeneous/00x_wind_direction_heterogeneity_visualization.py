@@ -13,8 +13,7 @@ from floris import FlorisModel
 
 fmodel = FlorisModel("../inputs/gch.yaml")
 
-viz_by_sweep = False # TODO: sweep not working correctly.
-# Maybe be to do with rotor points, or how calculate_horizontal_plane_with_turbines is implemented
+viz_by_sweep = False
 
 # # Some wake models may not yet have a visualization method included, for these cases can use
 # # a slower version which scans a turbine model to produce the horizontal flow

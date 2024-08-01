@@ -340,18 +340,33 @@ def apply_wind_direction_heterogeneity_warping(
         wind_direction_u_values,
         wind_direction_v_values,
         wind_direction_w_values,
-        n_turbines
     ):
+    """
+    Args:
+        x_turbines (np.ndarray): x-coordinates of the turbines (n_findex x n_turbines).
+        y_turbines (np.ndarray): y-coordinates of the turbines (n_findex x n_turbines).
+        z_turbines (np.ndarray): z-coordinates of the turbines (n_findex x n_turbines).
+        x_points (np.ndarray): x-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
+        y_points (np.ndarray): y-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
+        z_points (np.ndarray): z-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
+        wind_direction_x_points (np.ndarray): x-coordinates of the specified flow points (n_findex x n_points).
+        wind_direction_y_points (np.ndarray): y-coordinates of the specified flow points (n_findex x n_points).
+        wind_direction_z_points (np.ndarray): z-coordinates of the specified flow points (n_findex x n_points).
+        wind_direction_u_values (np.ndarray): u-velocity values at the specified flow points (n_findex x n_points).
+        wind_direction_v_values (np.ndarray): v-velocity values at the specified flow points (n_findex x n_points).
+        wind_direction_w_values (np.ndarray): w-velocity values at the specified flow points (n_findex x n_points).
+        n_turbines (int): Number of turbines.
+    """
 
     compute_streamline = compute_streamline_2D# if wind_direction_z_points is None else compute_streamline_3D
     shift_points_by_streamline = shift_points_by_streamline_2D# if wind_direction_z_points is None else shift_points_by_streamline_3D
+
+    n_findex, n_turbines = x_turbines.shape
 
     # Initialize storage
     x_points_per_turbine = np.repeat(x_points[:,:,:,:,None], n_turbines, axis=4)
     y_points_per_turbine = np.repeat(y_points[:,:,:,:,None], n_turbines, axis=4)
     z_points_per_turbine = np.repeat(z_points[:,:,:,:,None], n_turbines, axis=4)
-
-    n_findex = x_turbines.shape[0]
 
     # Ensure all needed elements are arrays
     wind_direction_x_points = np.array(wind_direction_x_points)
@@ -385,6 +400,11 @@ def apply_wind_direction_heterogeneity_warping(
                     y_turbines[findex,tindex],
                     z_turbines[findex,tindex]
                 ])
+                # streamline_start = np.array([
+                #     x_points[findex,tindex,:,:].mean(),
+                #     y_points[findex,tindex,:,:].mean(),
+                #     z_points[findex,tindex,:,:].mean(),
+                # ])
                 streamline = compute_streamline(
                     wind_direction_x_points,
                     wind_direction_y_points,
