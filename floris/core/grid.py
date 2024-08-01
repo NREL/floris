@@ -53,7 +53,7 @@ class Grid(ABC, BaseClass):
     turbine_diameters: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     grid_resolution: int | Iterable = field()
-    heterogeneous_inflow_config: dict | None = field()
+    heterogeneous_inflow_config: dict | None = field(init=True, default=None)
 
     n_turbines: int = field(init=False)
     n_findex: int = field(init=False)
@@ -111,7 +111,7 @@ class Grid(ABC, BaseClass):
     def set_grid(self) -> None:
         raise NotImplementedError("Grid.set_grid")
 
-@define
+@define(kw_only=True)
 class TurbineGrid(Grid):
     """See `Grid` for more details.
 
@@ -283,7 +283,7 @@ class TurbineGrid(Grid):
                 y_center_of_rotation=self.y_center_of_rotation,
             )
 
-@define
+@define(kw_only=True)
 class TurbineCubatureGrid(Grid):
     """
     This grid type arranges points throughout the swept area of the rotor based on the cubature
@@ -464,7 +464,7 @@ class TurbineCubatureGrid(Grid):
             "B": np.pi/N,
         }
 
-@define
+@define(kw_only=True)
 class FlowFieldGrid(Grid):
     """
     Args:
@@ -533,7 +533,7 @@ class FlowFieldGrid(Grid):
                 y_center_of_rotation=self.y_center_of_rotation,
             )
 
-@define
+@define(kw_only=True)
 class FlowFieldPlanarGrid(Grid):
     """
     Args:
@@ -659,7 +659,7 @@ class FlowFieldPlanarGrid(Grid):
                 y_center_of_rotation=self.y_center_of_rotation,
             )
 
-@define
+@define(kw_only=True)
 class PointsGrid(Grid):
     """
     Args:
