@@ -5,6 +5,7 @@ import floris.layout_visualization as layoutviz
 from floris import FlorisModel
 from floris.flow_visualization import visualize_cut_plane
 
+
 visualize = True
 
 # Get a test fi (single turbine at 0,0)
@@ -36,7 +37,7 @@ P_w_het = fmodel.get_turbine_powers()/1e6
 print("Difference (MW):", P_w_het - P_wo_het)
 
 if visualize:
-    fig, ax = plt.subplots(2, 1)
+    fig, ax = plt.subplots(2, 1, figsize=(4,8))
     fmodel.set(
         heterogeneous_inflow_config={
             "x": np.array([-1000.0, -1000.0, 1000.0, 1000.0]),

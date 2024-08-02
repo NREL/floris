@@ -37,7 +37,7 @@ def test_power():
     # Confirm upstream power the same; downstream power increased
     assert np.allclose(P_without_het[0], P_with_het[0])
     assert P_with_het[1] > P_without_het[1]
-    
+
 def test_symmetry():
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
@@ -103,8 +103,8 @@ def test_multiple_findices():
 
 
 
-
-def test_rotated_wind_direction(): # Fails because turbines are not correctly inside the domain (possibly)
+# I think failing because turbines are not correctly inside the domain
+def test_rotated_wind_direction():
     fmodel = FlorisModel(configuration=YAML_INPUT)
     fmodel.set(
         layout_x=layout_x,

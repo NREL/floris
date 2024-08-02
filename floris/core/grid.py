@@ -16,9 +16,9 @@ from floris.type_dec import (
     NDArrayInt,
 )
 from floris.utilities import (
+    apply_wind_direction_heterogeneity_warping,
     reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
-    apply_wind_direction_heterogeneity_warping,
 )
 
 
@@ -266,10 +266,12 @@ class TurbineGrid(Grid):
                     self.z_sorted,
                     self.heterogeneous_inflow_config["x"],
                     self.heterogeneous_inflow_config["y"],
-                    self.heterogeneous_inflow_config["z"] if "z" in self.heterogeneous_inflow_config else None,
+                    self.heterogeneous_inflow_config["z"]
+                        if "z" in self.heterogeneous_inflow_config else None,
                     self.heterogeneous_inflow_config["u"],
                     self.heterogeneous_inflow_config["v"],
-                    self.heterogeneous_inflow_config["w"] if "w" in self.heterogeneous_inflow_config else None,
+                    self.heterogeneous_inflow_config["w"]
+                        if "w" in self.heterogeneous_inflow_config else None,
                 )
 
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
@@ -631,7 +633,7 @@ class FlowFieldPlanarGrid(Grid):
         if (self.heterogeneous_inflow_config is not None
             and "u" in self.heterogeneous_inflow_config):
             self.use_turbine_specific_layouts = True
-            
+
             # Apply wind direction heterogeneity to generate turbine-specific layouts
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
                 apply_wind_direction_heterogeneity_warping(
@@ -643,10 +645,12 @@ class FlowFieldPlanarGrid(Grid):
                     self.z_sorted,
                     self.heterogeneous_inflow_config["x"],
                     self.heterogeneous_inflow_config["y"],
-                    self.heterogeneous_inflow_config["z"] if "z" in self.heterogeneous_inflow_config else None,
+                    self.heterogeneous_inflow_config["z"]
+                        if "z" in self.heterogeneous_inflow_config else None,
                     self.heterogeneous_inflow_config["u"],
                     self.heterogeneous_inflow_config["v"],
-                    self.heterogeneous_inflow_config["w"] if "w" in self.heterogeneous_inflow_config else None,
+                    self.heterogeneous_inflow_config["w"]
+                        if "w" in self.heterogeneous_inflow_config else None,
                 )
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \

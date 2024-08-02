@@ -14,8 +14,8 @@ from typing import (
 import numpy as np
 import yaml
 from attrs import define, field
-from scipy.interpolate import LinearNDInterpolator
 from scipy.integrate import odeint
+from scipy.interpolate import LinearNDInterpolator
 
 from floris.type_dec import floris_array_converter, NDArrayFloat
 
@@ -349,17 +349,24 @@ def apply_wind_direction_heterogeneity_warping(
         x_points (np.ndarray): x-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
         y_points (np.ndarray): y-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
         z_points (np.ndarray): z-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
-        wind_direction_x_points (np.ndarray): x-coordinates of the specified flow points (n_findex x n_points).
-        wind_direction_y_points (np.ndarray): y-coordinates of the specified flow points (n_findex x n_points).
-        wind_direction_z_points (np.ndarray): z-coordinates of the specified flow points (n_findex x n_points).
-        wind_direction_u_values (np.ndarray): u-velocity values at the specified flow points (n_findex x n_points).
-        wind_direction_v_values (np.ndarray): v-velocity values at the specified flow points (n_findex x n_points).
-        wind_direction_w_values (np.ndarray): w-velocity values at the specified flow points (n_findex x n_points).
-        n_turbines (int): Number of turbines.
+        wind_direction_x_points (np.ndarray): x-coordinates of the specified flow points
+            (n_findex x n_points).
+        wind_direction_y_points (np.ndarray): y-coordinates of the specified flow points
+            (n_findex x n_points).
+        wind_direction_z_points (np.ndarray): z-coordinates of the specified flow points
+            (n_findex x n_points).
+        wind_direction_u_values (np.ndarray): u-velocity values at the specified flow points
+            (n_findex x n_points).
+        wind_direction_v_values (np.ndarray): v-velocity values at the specified flow points
+            (n_findex x n_points).
+        wind_direction_w_values (np.ndarray): w-velocity values at the specified flow points
+            (n_findex x n_points).
     """
 
-    compute_streamline = compute_streamline_2D# if wind_direction_z_points is None else compute_streamline_3D
-    shift_points_by_streamline = shift_points_by_streamline_2D# if wind_direction_z_points is None else shift_points_by_streamline_3D
+    # TODO: create switch that uses 3D versions, possible, based on whether
+    # wind_direction_z_points is None
+    compute_streamline = compute_streamline_2D
+    shift_points_by_streamline = shift_points_by_streamline_2D
 
     n_findex, n_turbines = x_turbines.shape
 
@@ -402,7 +409,7 @@ def apply_wind_direction_heterogeneity_warping(
             x_shifted, y_shifted, z_shifted = shift_points_by_streamline(
                 streamline, x_points[findex,:,:,:], y_points[findex,:,:,:], z_points[findex,:,:,:]
             )
-            
+
             # 3. Apply to per_turbine values
             x_points_per_turbine[findex,:,:,:,tindex] = x_shifted
             y_points_per_turbine[findex,:,:,:,tindex] = y_shifted
@@ -496,7 +503,7 @@ def compute_streamline_2D(x, y, z, u, v, w, xyz_0, n_points=1000):
         raise ValueError("Streamline could not be propagated inside the domain.")
     if exit_index == 1000:
         raise ValueError("Streamline did not reach the edge of the domain.")
-    
+
     # Copy points after exit
     streamline[exit_index:] = streamline[exit_index-1]
 
@@ -506,13 +513,13 @@ def compute_streamline_2D(x, y, z, u, v, w, xyz_0, n_points=1000):
     return streamline
 
 def shift_points_by_streamline_2D(streamline, x, y, z):
-    ## I think should be dist by turbine only (not each rotor point); and then 
+    ## I think should be dist by turbine only (not each rotor point); and then
     # shift all rotor points by the same amount.
     # TODO: How will this work over findices? Need to work that out.
     xy = np.concatenate((x.mean(axis=(1,2))[None,:],y.mean(axis=(1,2))[None,:]), axis=0)
 
     rotor_y = y - y.mean(axis=(1,2), keepdims=True) # TODO: still ok for viz solve?
-    rotor_z = z - z.mean(axis=(1,2), keepdims=True)
+    z - z.mean(axis=(1,2), keepdims=True)
 
     # Storage for new points
     x_new = x.copy()
@@ -532,11 +539,12 @@ def shift_points_by_streamline_2D(streamline, x, y, z):
         off_stream_disp = disps_to_streamline[min_idx[tindex], :, tindex]
         disp_x = off_stream_disp[0]
         disp_y = off_stream_disp[1]
-        
+
         theta = np.arctan2(disp_y, disp_x)
-        
+
         x_new[tindex,:,:] = streamline[0,0] + along_stream_dist
-        # y_new[tindex,:,:] = streamline[0,1] + disp_x*np.sin(theta) + disp_y*np.cos(theta) + rotor_y[tindex,:,:]
+        # y_new[tindex,:,:] = streamline[0,1] + disp_x*np.sin(theta) + disp_y*np.cos(theta)\
+        # + rotor_y[tindex,:,:]
         y_new[tindex,:,:] = streamline[0,1] + np.sign(theta)*off_stream_dist + rotor_y[tindex,:,:]
         #y_new[tindex,:,:] = streamline[0,1] + off_stream_dist + rotor_y[tindex,:,:]
         #if tindex == 1:
@@ -668,14 +676,14 @@ def update_model_args(
     Update the x_sorted, y_sorted, and z_sorted entries of the model_args dict.
     """
     # Check that new x, y, z are the same length as the old
-    if (x.shape != model_args["x"].shape or 
+    if (x.shape != model_args["x"].shape or
         y.shape != model_args["y"].shape or
         z.shape != model_args["z"].shape):
         raise ValueError("Size of new x,y,z arrays must match existing ones.")
-    
+
     # Update the x, y, z values
     model_args["x"] = x
     model_args["y"] = y
     model_args["z"] = z
-    
+
     return model_args
