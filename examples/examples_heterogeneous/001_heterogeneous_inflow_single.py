@@ -14,12 +14,9 @@ This example illustrates how to set up a heterogeneous inflow condition in FLORI
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
-
-from floris import FlorisModel, TimeSeries
+from floris import FlorisModel
 from floris.flow_visualization import visualize_heterogeneous_cut_plane
 from floris.layout_visualization import plot_turbine_labels
-
 
 # Initialize FlorisModel
 fmodel = FlorisModel("../inputs/gch.yaml")
@@ -82,3 +79,4 @@ plot_turbine_labels(fmodel, ax)
 ax.legend()
 
 plt.show()
+plt.close()

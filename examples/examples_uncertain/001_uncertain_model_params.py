@@ -6,13 +6,11 @@ analyze the impact of uncertain wind direction on power results.
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from floris import (
     FlorisModel,
     TimeSeries,
     UncertainFlorisModel,
 )
-
 
 # Instantiate FlorisModel for comparison
 fmodel = FlorisModel("../inputs/gch.yaml")  # GCH model
@@ -41,7 +39,7 @@ power_setpoint_resolution = 100.0  # kW
 # if the the single condition to analyze is 270 degrees, and the wd_sample_points
 # is [-2, -1, 0, 1 ,2], then the cases to be run and weighted
 #  will be 268, 269, 270, 271, 272.  If not supplied default is
-# [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std]
+# [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std] # noqa ERA001
 wd_sample_points = [-6, -3, 0, 3, 6]
 
 
@@ -53,7 +51,7 @@ wd_sample_points = [-6, -3, 0, 3, 6]
 # to the UncertainFlorisModel class.  This parameter is used to weight the points
 # following expansion by the wd_sample_points.  The smaller the value, the closer
 # the weighting will be to the nominal case.
-wd_std = 3 # Default is 3 degrees
+wd_std = 3  # Default is 3 degrees
 
 ################################################
 # Verbosity
@@ -65,16 +63,18 @@ verbose = True
 ################################################
 # Define the UncertainFlorisModel
 ################################################
-print('*** Instantiating UncertainFlorisModel ***')
-ufmodel = UncertainFlorisModel("../inputs/gch.yaml",
-                               wd_resolution=wd_resolution,
-                                 ws_resolution=ws_resolution,
-                                    ti_resolution=ti_resolution,
-                                    yaw_resolution=yaw_resolution,
-                                    power_setpoint_resolution=power_setpoint_resolution,
-                                    wd_std=wd_std,
-                                    wd_sample_points=wd_sample_points,
-                                    verbose=verbose)
+print("*** Instantiating UncertainFlorisModel ***")
+ufmodel = UncertainFlorisModel(
+    "../inputs/gch.yaml",
+    wd_resolution=wd_resolution,
+    ws_resolution=ws_resolution,
+    ti_resolution=ti_resolution,
+    yaw_resolution=yaw_resolution,
+    power_setpoint_resolution=power_setpoint_resolution,
+    wd_std=wd_std,
+    wd_sample_points=wd_sample_points,
+    verbose=verbose,
+)
 
 
 ################################################
@@ -100,7 +100,7 @@ fmodel.set(
     layout_y=layout_y,
     wind_data=time_series,
 )
-print('*** Setting UncertainFlorisModel to 60 Wind Direction Inflow ***')
+print("*** Setting UncertainFlorisModel to 60 Wind Direction Inflow ***")
 ufmodel.set(
     layout_x=layout_x,
     layout_y=layout_y,
@@ -130,8 +130,9 @@ ax.plot(
     color="r",
     label="Power with uncertainty",
 )
+ax.set_ylim(bottom=0)
 
-ax.grid(True)
+ax.grid()
 ax.legend()
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Power (kW)")
@@ -145,9 +146,10 @@ ax.plot(
     color="r",
     label="Power with uncertainty",
 )
+ax.set_ylim(bottom=0)
 
 ax.set_title("Downstream Turbine")
-ax.grid(True)
+ax.grid()
 ax.legend()
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Power (kW)")
@@ -160,13 +162,14 @@ ax.plot(
     color="r",
     label="Farm power with uncertainty",
 )
-
+ax.set_ylim(bottom=0)
 
 ax.set_title("Farm Power")
-ax.grid(True)
+ax.grid()
 ax.legend()
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Power (kW)")
 
 
 plt.show()
+plt.close()

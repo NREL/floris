@@ -14,13 +14,11 @@ examples_uncertain directory.
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from floris import (
     FlorisModel,
     TimeSeries,
     UncertainFlorisModel,
 )
-
 
 # Instantiate FLORIS FLORIS and UncertainFLORIS models
 fmodel = FlorisModel("inputs/gch.yaml")  # GCH model
@@ -31,9 +29,6 @@ fmodel = FlorisModel("inputs/gch.yaml")  # GCH model
 # expands the wind direction time series to include the uncertainty but then
 # only runs the unique cases.  The final result is computed via a gaussian weighting
 # of the cases according to wd_std.  Here we use the default resolution parameters.
-# wd_resolution=1.0,  # Degree
-# ws_resolution=1.0,  # m/s
-# ti_resolution=0.01,
 
 ufmodel_3 = UncertainFlorisModel("inputs/gch.yaml", wd_std=3)
 ufmodel_5 = UncertainFlorisModel("inputs/gch.yaml", wd_std=5)
@@ -98,7 +93,8 @@ ax.plot(
     color="m",
     label="Power with uncertainty = 5deg",
 )
-ax.grid(True)
+ax.set_ylim(bottom=0)
+ax.grid()
 ax.legend()
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Power (kW)")
@@ -118,8 +114,9 @@ ax.plot(
     color="m",
     label="Power with uncertainty = 5 deg",
 )
+ax.set_ylim(bottom=0)
 ax.set_title("Downstream Turbine")
-ax.grid(True)
+ax.grid()
 ax.legend()
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Power (kW)")
@@ -138,11 +135,15 @@ ax.plot(
     color="m",
     label="Farm power with uncertainty = 5 deg",
 )
+ax.set_ylim(bottom=0)
 ax.set_title("Farm Power")
-ax.grid(True)
+ax.grid()
 ax.legend()
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Power (kW)")
+
+plt.show()
+plt.close()
 
 # Compare the AEP calculation
 freq = np.ones_like(wind_directions)
@@ -153,8 +154,5 @@ aep_unc_3 = ufmodel_3.get_farm_AEP(freq=freq)
 aep_unc_5 = ufmodel_5.get_farm_AEP(freq=freq)
 
 print(f"AEP without uncertainty {aep_nom}")
-print(f"AEP without uncertainty (3 deg) {aep_unc_3} ({100*aep_unc_3/aep_nom:.2f}%)")
-print(f"AEP without uncertainty (5 deg) {aep_unc_5} ({100*aep_unc_5/aep_nom:.2f}%)")
-
-
-plt.show()
+print(f"AEP with uncertainty (3 deg) {aep_unc_3} ({100*aep_unc_3/aep_nom:.2f}%)")
+print(f"AEP with uncertainty (5 deg) {aep_unc_5} ({100*aep_unc_5/aep_nom:.2f}%)")

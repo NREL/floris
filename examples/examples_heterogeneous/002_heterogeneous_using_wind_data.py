@@ -17,16 +17,13 @@ This example:
 
 """
 
-
 import matplotlib.pyplot as plt
 import numpy as np
-
 from floris import (
     FlorisModel,
     HeterogeneousMap,
     TimeSeries,
 )
-
 
 # Initialize FlorisModel
 fmodel = FlorisModel("../inputs/gch.yaml")
@@ -144,3 +141,4 @@ for tindex in range(4):
     ax.legend()
 
 plt.show()
+plt.close()
