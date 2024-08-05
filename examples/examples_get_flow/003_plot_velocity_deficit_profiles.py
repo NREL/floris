@@ -7,20 +7,18 @@ downstream of a turbine. Here we use the following definition:
         same at all heights and equal to `homogeneous_wind_speed`.
 """
 
-
+import floris.flow_visualization as flowviz
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import ticker
-
-import floris.flow_visualization as flowviz
 from floris import FlorisModel
 from floris.flow_visualization import VelocityProfilesFigure
 from floris.utilities import reverse_rotate_coordinates_rel_west
+from matplotlib import ticker
 
 
 # The first two functions are just used to plot the coordinate system in which the
 # profiles are sampled. Please go to the main function to begin the example.
-def plot_coordinate_system(x_origin, y_origin, wind_direction):
+def plot_coordinate_system(x_origin: float, y_origin: float, wind_direction: float) -> None:
     quiver_length = 1.4 * D
     plt.quiver(
         [x_origin, x_origin],
@@ -34,7 +32,7 @@ def plot_coordinate_system(x_origin, y_origin, wind_direction):
     annotate_coordinate_system(x_origin, y_origin, quiver_length)
 
 
-def annotate_coordinate_system(x_origin, y_origin, quiver_length):
+def annotate_coordinate_system(x_origin: float, y_origin: float, quiver_length: float) -> None:
     x1 = np.array([quiver_length + 0.35 * D, 0.0])
     x2 = np.array([0.0, quiver_length + 0.35 * D])
     x3 = np.array([90.0, 90.0])
@@ -84,6 +82,8 @@ if __name__ == "__main__":
     ax.set_title("Streamwise velocity in a horizontal plane: gauss velocity model")
     fig.tight_layout(rect=[0, 0, 0.82, 1])
     ax.legend(bbox_to_anchor=[1.29, 1.04])
+    plt.show()
+    plt.close()
 
     # Initialize a VelocityProfilesFigure. The workflow is similar to a matplotlib Figure:
     # Initialize it, plot data, and then customize it further if needed.
@@ -119,6 +119,8 @@ if __name__ == "__main__":
         "Velocity deficit profiles from different velocity models",
         fontsize=14,
     )
+    plt.show()
+    plt.close()
 
     # -------------------------------- Two-turbine layout --------------------------------
     # This is a two-turbine case where the wind direction is north-west. Velocity profiles
@@ -163,6 +165,9 @@ if __name__ == "__main__":
     ax.legend()
     plot_coordinate_system(x_origin=x_t1, y_origin=y_t1, wind_direction=wind_direction)
 
+    plt.show()
+    plt.close()
+
     # Sample velocity deficit profiles in the vertical direction at the same downstream
     # locations as before. We stay directly downstream of the turbine (i.e. x2 = 0). These
     # profiles are almost identical to the cross-stream profiles. However, we now explicitly
@@ -193,3 +198,4 @@ if __name__ == "__main__":
     )
 
     plt.show()
+    plt.close()
