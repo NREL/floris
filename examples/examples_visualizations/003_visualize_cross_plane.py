@@ -5,10 +5,8 @@ Demonstrate visualizing a plane cut vertically through the flow field across the
 """
 
 import matplotlib.pyplot as plt
-
 from floris import FlorisModel
 from floris.flow_visualization import visualize_cut_plane
-
 
 fmodel = FlorisModel("../inputs/gch.yaml")
 
@@ -35,3 +33,4 @@ visualize_cut_plane(
 )
 
 plt.show()
+plt.close()
