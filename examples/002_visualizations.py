@@ -64,6 +64,8 @@ layoutviz.plot_turbine_labels(fmodel, ax=ax, turbine_names=turbine_names)
 layoutviz.plot_waking_directions(fmodel, ax=ax, limit_num=2)
 ax.set_title("Use Provided Turbine Names")
 
+plt.show()
+plt.close()
 
 # Visualizations of the flow field are made by using calculate plane methods.  In this example
 # we show the horizontal plane at hub height, further examples are provided within
@@ -94,3 +96,4 @@ layoutviz.plot_turbine_rotors(fmodel, ax=ax)
 layoutviz.plot_turbine_labels(fmodel, ax=ax, turbine_names=turbine_names)
 
 plt.show()
+plt.close()
