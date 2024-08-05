@@ -339,7 +339,6 @@ def apply_wind_direction_heterogeneity_warping(
         wind_direction_z_points,
         wind_direction_u_values,
         wind_direction_v_values,
-        wind_direction_w_values,
     ):
     """
     Args:
@@ -365,7 +364,7 @@ def apply_wind_direction_heterogeneity_warping(
 
     # TODO: create switch that uses 3D versions, possible, based on whether
     # wind_direction_z_points is None
-    compute_streamline = compute_streamline_2D
+    #compute_streamline = compute_streamline_2D
     shift_points_by_streamline = shift_points_by_streamline_2D
 
     n_findex, n_turbines = x_turbines.shape
@@ -376,14 +375,8 @@ def apply_wind_direction_heterogeneity_warping(
     z_points_per_turbine = np.repeat(z_points[:,:,:,:,None], n_turbines, axis=4)
 
     # Ensure all needed elements are arrays
-    wind_direction_x_points = np.array(wind_direction_x_points)
-    wind_direction_y_points = np.array(wind_direction_y_points)
     wind_direction_u_values = np.array(wind_direction_u_values)
     wind_direction_v_values = np.array(wind_direction_v_values)
-    if wind_direction_z_points is not None:
-        wind_direction_z_points = np.array(wind_direction_z_points)
-    if wind_direction_w_values is not None:
-        wind_direction_w_values = np.array(wind_direction_w_values)
 
     # Compute new relative locations
     # TODO: Can I avoid any of these looping operations? Do I need to?
@@ -398,10 +391,9 @@ def apply_wind_direction_heterogeneity_warping(
             streamline = compute_streamline(
                 wind_direction_x_points,
                 wind_direction_y_points,
-                None if wind_direction_z_points is None else wind_direction_z_points[findex,:],
+                wind_direction_z_points,
                 wind_direction_u_values[findex,:],
                 wind_direction_v_values[findex,:],
-                None if wind_direction_w_values is None else wind_direction_w_values[findex,:],
                 streamline_start
             )
 
@@ -455,39 +447,36 @@ def apply_wind_direction_heterogeneity_warping(
 
 #     return streamline
 
-def compute_streamline_2D(x, y, z, u, v, w, xyz_0, n_points=1000):
+def compute_streamline(x, y, z, u, v, xyz_0, n_points=1000):
     """
     Compute streamline starting at xyz_0.
-    z and w will be ignored.
     """
-
-    xy_0 = xyz_0[:2]
 
     s = np.linspace(0, 1, n_points) # parametric variable
 
-    scale = np.array([x.max() - x.min(), y.max() - y.min()])
-    offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2])
+    scale = np.array([x.max() - x.min(), y.max() - y.min(), z.max() - z.min()])
+    offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2, (z.max() + z.min())/2])
     # Need to compute the offset too
 
     # Collect
-    xy = np.array([x, y]).T
-    uv = np.array([u,v]).T
+    xyz = np.array([x, y, z]).T
+    uv = np.array([u, v, np.zeros_like(u)]).T # streamlines evolve in (x,y) space
 
     # Normalize
-    xy = (xy - offset) / scale
-    xy_0 = (xy_0 - offset) / scale
+    xyz = (xyz - offset) / scale
+    xyz_0 = (xyz_0 - offset) / scale
     # TODO: Loop over findices! Maybe not necessary---can I compute all streamlines at once??
     # Would it help? Currently assuming a single findex.
 
-    interp = LinearNDInterpolator(xy, uv)
+    interp = LinearNDInterpolator(xyz, uv)
 
-    def velocity_field_interpolate_reg(xy_, s):
-        if (xy_ < -0.5).any() or (xy_ > 0.5).any():
-            return np.array([0, 0])
+    def velocity_field_interpolate_reg(xyz_, s):
+        if (xyz_ < -0.5).any() or (xyz_ > 0.5).any():
+            return np.array([0, 0, 0])
         else:
-            return interp(xy_)[0]
+            return interp(xyz_)[0]
 
-    streamline = odeint(velocity_field_interpolate_reg, xy_0, s) # n_points x 2
+    streamline = odeint(velocity_field_interpolate_reg, xyz_0, s) # n_points x 3
 
     # Determine point of exit from specified domain
     if (streamline < -0.5).any():
@@ -512,7 +501,7 @@ def compute_streamline_2D(x, y, z, u, v, w, xyz_0, n_points=1000):
 
     return streamline
 
-def shift_points_by_streamline_2D(streamline, x, y, z):
+def shift_points_by_streamline(streamline, x, y, z):
     ## I think should be dist by turbine only (not each rotor point); and then
     # shift all rotor points by the same amount.
     # TODO: How will this work over findices? Need to work that out.
