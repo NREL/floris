@@ -9,14 +9,12 @@ with a wind direction standard deviation of 3 degrees.  Compare the results.
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from floris import (
     FlorisModel,
     TimeSeries,
     UncertainFlorisModel,
 )
 from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
-
 
 # Load the  floris model and uncertain floris model
 fmodel = FlorisModel("../inputs/gch.yaml")
@@ -57,8 +55,8 @@ df_opt_uncertain = yaw_opt_u.optimize()
 
 # Split out the turbine results
 for t in range(3):
-    df_opt["t%d" % t] = df_opt.yaw_angles_opt.apply(lambda x: x[t])
-    df_opt_uncertain["t%d" % t] = df_opt_uncertain.yaw_angles_opt.apply(lambda x: x[t])
+    df_opt["t%d" % t] = df_opt.yaw_angles_opt.apply(lambda x: x[t])  # noqa B023
+    df_opt_uncertain["t%d" % t] = df_opt_uncertain.yaw_angles_opt.apply(lambda x: x[t])  # noqa B023
 
 # Show the yaw and turbine results
 fig, axarr = plt.subplots(3, sharex=True, sharey=False, figsize=(15, 8))
@@ -76,10 +74,13 @@ for tindex in range(3):
         color="r",
         marker="x",
     )
-    ax.set_ylabel("Yaw Offset (deg")
+    ax.set_title(f"Turbine {tindex}")
+    ax.set_ylabel("Yaw Offset (deg)")
     ax.legend()
-    ax.grid(True)
+    ax.grid()
 
+plt.show()
+plt.close()
 
 # Power results
 fig, axarr = plt.subplots(1, 2, figsize=(15, 5), sharex=True, sharey=True)
@@ -89,7 +90,7 @@ ax.plot(df_opt.wind_direction, df_opt.farm_power_opt, color="r", label="Optimize
 ax.set_ylabel("Power (W)")
 ax.set_xlabel("Wind Direction (deg)")
 ax.legend()
-ax.grid(True)
+ax.grid()
 ax.set_title("Certain")
 ax = axarr[1]
 ax.plot(
@@ -105,8 +106,8 @@ ax.plot(
     label="Optimized Farm Power",
 )
 ax.set_xlabel("Wind Direction (deg)")
-ax.grid(True)
+ax.grid()
 ax.set_title("Uncertain")
 
-
 plt.show()
+plt.close()
