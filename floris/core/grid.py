@@ -256,49 +256,21 @@ class TurbineGrid(Grid):
             and "u" in self.heterogeneous_inflow_config):
             self.use_turbine_specific_layouts = True
 
-            # Expand z dimension if not provided
-            # TODO: Is there already a validator somewhere else that this could be done?
-            if self.heterogeneous_inflow_config["z"] is None:
-                n_het_points = len(self.heterogeneous_inflow_config["x"])
-                self.heterogeneous_inflow_config["z"] = np.concatenate(
-                    (np.zeros(n_het_points), 1000*np.ones(n_het_points))
-                ) # Assumes no turbines above 1000m
-                
-                # Repeat all other elements
-                self.heterogeneous_inflow_config["x"] = np.tile(
-                    self.heterogeneous_inflow_config["x"],
-                    2
-                )
-                self.heterogeneous_inflow_config["y"] = np.tile(
-                    self.heterogeneous_inflow_config["y"],
-                    2
-                )
-                self.heterogeneous_inflow_config["u"] = np.tile(
-                    self.heterogeneous_inflow_config["u"],
-                    (1, 2)
-                )
-                self.heterogeneous_inflow_config["v"] = np.tile(
-                    self.heterogeneous_inflow_config["v"],
-                    (1, 2)
-                )
-
-
             # Rotate the input x, y, z to match the wind direction
             het_coords = np.concatenate(
                 (
                     np.array(self.heterogeneous_inflow_config["x"])[:, None],
                     np.array(self.heterogeneous_inflow_config["y"])[:, None],
-                    np.array(self.heterogeneous_inflow_config["z"])[:, None]
+                    np.zeros((len(self.heterogeneous_inflow_config["x"]), 1))
                 ),
                 axis=1
             )
-            x_het, y_het, z_het, _, _ = rotate_coordinates_rel_west(
+            x_het, y_het, _, _, _ = rotate_coordinates_rel_west(
                 self.wind_directions,
                 het_coords,
                 x_center_of_rotation=self.x_center_of_rotation,
                 y_center_of_rotation=self.y_center_of_rotation
             )
-
 
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
                 apply_wind_direction_heterogeneity_warping(
@@ -308,10 +280,8 @@ class TurbineGrid(Grid):
                     self.x_sorted,
                     self.y_sorted,
                     self.z_sorted,
-                    self.heterogeneous_inflow_config["x"],
-                    self.heterogeneous_inflow_config["y"],
-                    self.heterogeneous_inflow_config["z"]
-                        if "z" in self.heterogeneous_inflow_config else None,
+                    x_het,
+                    y_het,
                     self.heterogeneous_inflow_config["u"],
                     self.heterogeneous_inflow_config["v"],
                 )
@@ -676,6 +646,22 @@ class FlowFieldPlanarGrid(Grid):
             and "u" in self.heterogeneous_inflow_config):
             self.use_turbine_specific_layouts = True
 
+            # Rotate the input x, y, z to match the wind direction
+            het_coords = np.concatenate(
+                (
+                    np.array(self.heterogeneous_inflow_config["x"])[:, None],
+                    np.array(self.heterogeneous_inflow_config["y"])[:, None],
+                    np.zeros((len(self.heterogeneous_inflow_config["x"]), 1))
+                ),
+                axis=1
+            )
+            x_het, y_het, _, _, _ = rotate_coordinates_rel_west(
+                self.wind_directions,
+                het_coords,
+                x_center_of_rotation=self.x_center_of_rotation,
+                y_center_of_rotation=self.y_center_of_rotation
+            )
+
             # Apply wind direction heterogeneity to generate turbine-specific layouts
             self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
                 apply_wind_direction_heterogeneity_warping(
@@ -685,14 +671,10 @@ class FlowFieldPlanarGrid(Grid):
                     self.x_sorted,
                     self.y_sorted,
                     self.z_sorted,
-                    self.heterogeneous_inflow_config["x"],
-                    self.heterogeneous_inflow_config["y"],
-                    self.heterogeneous_inflow_config["z"]
-                        if "z" in self.heterogeneous_inflow_config else None,
+                    x_het,
+                    y_het,
                     self.heterogeneous_inflow_config["u"],
                     self.heterogeneous_inflow_config["v"],
-                    self.heterogeneous_inflow_config["w"]
-                        if "w" in self.heterogeneous_inflow_config else None,
                 )
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \

@@ -336,7 +336,6 @@ def apply_wind_direction_heterogeneity_warping(
         z_points,
         wind_direction_x_points,
         wind_direction_y_points,
-        wind_direction_z_points,
         wind_direction_u_values,
         wind_direction_v_values,
     ):
@@ -352,8 +351,6 @@ def apply_wind_direction_heterogeneity_warping(
             (n_findex x n_points).
         wind_direction_y_points (np.ndarray): y-coordinates of the specified flow points
             (n_findex x n_points).
-        wind_direction_z_points (np.ndarray): z-coordinates of the specified flow points
-            (n_findex x n_points).
         wind_direction_u_values (np.ndarray): u-velocity values at the specified flow points
             (n_findex x n_points).
         wind_direction_v_values (np.ndarray): v-velocity values at the specified flow points
@@ -364,9 +361,6 @@ def apply_wind_direction_heterogeneity_warping(
 
     # TODO: create switch that uses 3D versions, possible, based on whether
     # wind_direction_z_points is None
-    #compute_streamline = compute_streamline_2D
-    shift_points_by_streamline = shift_points_by_streamline_2D
-
     n_findex, n_turbines = x_turbines.shape
 
     # Initialize storage
@@ -385,13 +379,11 @@ def apply_wind_direction_heterogeneity_warping(
             # 1. Compute the streamline
             streamline_start = np.array([
                 x_turbines[findex,tindex],
-                y_turbines[findex,tindex],
-                z_turbines[findex,tindex]
+                y_turbines[findex,tindex]
             ])
-            streamline = compute_streamline(
-                wind_direction_x_points,
-                wind_direction_y_points,
-                wind_direction_z_points,
+            streamline = compute_2D_streamline(
+                wind_direction_x_points[findex,:],
+                wind_direction_y_points[findex,:],
                 wind_direction_u_values[findex,:],
                 wind_direction_v_values[findex,:],
                 streamline_start
@@ -410,73 +402,36 @@ def apply_wind_direction_heterogeneity_warping(
     # Return full set of locations
     return x_points_per_turbine, y_points_per_turbine, z_points_per_turbine
 
-# def compute_streamline_3D(x, y, z, u, v, w, xyz_0):
-#     """
-#     TODO
-#     Compute streamline starting at xyz_0.
-#     """
-#     s = np.linspace(0, 1, 1000) # parametric variable
-
-#     scale = np.array([x.max() - x.min(), y.max() - y.min(), z.max() - z.min()])
-#     offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2, (z.max() + z.min())/2])
-#     # Need to compute the offset too
-
-#     # Collect
-#     xyz = np.array([x, y, z]).T
-#     uvw = np.concatenate((u, v, w), axis=0).T
-
-#     # Normalize
-#     xyz = (xyz - offset) / scale
-#     xyz_0 = (xyz_0 - offset) / scale
-#     # TODO: Loop over findices! Maybe not necessary---can I compute all streamlines at once??
-#     # Would it help? Currently assuming a single findex.
-#     interp = LinearNDInterpolator(xyz, uvw, fill_value=0.0)
-
-#     def velocity_field_interpolate_reg(xyz_, s):
-#         # if (xyz_ <= -0.5).any() or (xyz_ >= 0.5).any():
-#         #     print("hmm")
-#         #     return np.array([0.0, 0.0, 0.0])
-#         # else:
-#         #     return interp(xyz_)[0]
-#         return interp(xyz_)[0]
-
-#     streamline = odeint(velocity_field_interpolate_reg, xyz_0, s) # 1000 x 3
-
-#     # Denormalize
-#     streamline = streamline * scale + offset
-
-#     return streamline
-
-def compute_streamline(x, y, z, u, v, xyz_0, n_points=1000):
+def compute_2D_streamline(x, y, u, v, xy_0, n_points=1000):
     """
-    Compute streamline starting at xyz_0.
+    Compute 2D streamline (in x-y plane) starting at xy_0, according to (u,v)
+    velocity field.
     """
-
     s = np.linspace(0, 1, n_points) # parametric variable
 
-    scale = np.array([x.max() - x.min(), y.max() - y.min(), z.max() - z.min()])
-    offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2, (z.max() + z.min())/2])
+    scale = np.array([x.max() - x.min(), y.max() - y.min()])
+    offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2])
     # Need to compute the offset too
 
     # Collect
-    xyz = np.array([x, y, z]).T
-    uv = np.array([u, v, np.zeros_like(u)]).T # streamlines evolve in (x,y) space
+    xy = np.array([x, y]).T
+    uv = np.array([u,v]).T
 
     # Normalize
-    xyz = (xyz - offset) / scale
-    xyz_0 = (xyz_0 - offset) / scale
+    xy = (xy - offset) / scale
+    xy_0 = (xy_0 - offset) / scale
     # TODO: Loop over findices! Maybe not necessary---can I compute all streamlines at once??
     # Would it help? Currently assuming a single findex.
 
-    interp = LinearNDInterpolator(xyz, uv)
+    interp = LinearNDInterpolator(xy, uv)
 
-    def velocity_field_interpolate_reg(xyz_, s):
-        if (xyz_ < -0.5).any() or (xyz_ > 0.5).any():
-            return np.array([0, 0, 0])
+    def velocity_field_interpolate_reg(xy_, s):
+        if (xy_ < -0.5).any() or (xy_ > 0.5).any():
+            return np.array([0, 0])
         else:
-            return interp(xyz_)[0]
+            return interp(xy_)[0]
 
-    streamline = odeint(velocity_field_interpolate_reg, xyz_0, s) # n_points x 3
+    streamline = odeint(velocity_field_interpolate_reg, xy_0, s) # n_points x 2
 
     # Determine point of exit from specified domain
     if (streamline < -0.5).any():
@@ -508,7 +463,6 @@ def shift_points_by_streamline(streamline, x, y, z):
     xy = np.concatenate((x.mean(axis=(1,2))[None,:],y.mean(axis=(1,2))[None,:]), axis=0)
 
     rotor_y = y - y.mean(axis=(1,2), keepdims=True) # TODO: still ok for viz solve?
-    z - z.mean(axis=(1,2), keepdims=True)
 
     # Storage for new points
     x_new = x.copy()
