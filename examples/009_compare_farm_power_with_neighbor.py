@@ -6,12 +6,9 @@ via wake losses, but whose own power production is not considered in farm power 
 
 """
 
-
 import matplotlib.pyplot as plt
 import numpy as np
-
 from floris import FlorisModel
-
 
 # Instantiate FLORIS using either the GCH or CC model
 fmodel = FlorisModel("inputs/gch.yaml")  # GCH model matched to the default "legacy_gauss" of V2
@@ -64,13 +61,16 @@ ax.scatter(
     label="Neighboring Farm",
 )
 ax.legend()
+plt.show()
+plt.close()
 
 # Plot the power difference
 fig, ax = plt.subplots()
 ax.plot(wd_array, farm_power_base, color="k", label="Farm Power (no neighbor)")
 ax.plot(wd_array, farm_power_neighbor, color="r", label="Farm Power (neighboring farm due east)")
-ax.grid(True)
+ax.grid()
 ax.legend()
 ax.set_xlabel("Wind Direction (deg)")
 ax.set_ylabel("Power (kW)")
 plt.show()
+plt.close()

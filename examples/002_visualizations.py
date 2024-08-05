@@ -13,13 +13,10 @@ of the wind farm.
 
 """
 
-
-import matplotlib.pyplot as plt
-
 import floris.layout_visualization as layoutviz
+import matplotlib.pyplot as plt
 from floris import FlorisModel
 from floris.flow_visualization import visualize_cut_plane
-
 
 fmodel = FlorisModel("inputs/gch.yaml")
 
