@@ -7,17 +7,16 @@ import copy
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from floris import FlorisModel
 from floris.flow_visualization import visualize_cut_plane
-
 
 # Options
 show_flow_cuts = True
 num_in_row = 5
 
+
 # Define function for visualizing wakes
-def generate_wake_visualization(fmodel: FlorisModel, title=None):
+def generate_wake_visualization(fmodel: FlorisModel, title: str | None = None) -> None:
     # Using the FlorisModel functions, get 2D slices.
     x_bounds = [-500, 3000]
     y_bounds = [-250, 250]
@@ -43,11 +42,10 @@ def generate_wake_visualization(fmodel: FlorisModel, title=None):
         x_bounds=x_bounds,
         z_bounds=z_bounds,
     )
-    cross_planes = []
-    for cpl in cross_plane_locations:
-        cross_planes.append(
-            fmodel.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=cpl)
-        )
+    cross_planes = [
+        fmodel.calculate_cross_plane(y_resolution=100, z_resolution=100, downstream_dist=x)
+        for x in cross_plane_locations
+    ]
 
     # Create the plots
     # Cutplane settings
@@ -78,11 +76,11 @@ def generate_wake_visualization(fmodel: FlorisModel, title=None):
         ax.plot([cpl, cpl], z_bounds, color=cp_clr, linewidth=cp_lw, linestyle=cp_ls)
 
     # Spanwise profiles
-    for i, (cp, cpl) in enumerate(zip(cross_planes, cross_plane_locations)):
+    for i, (cp, cpl) in enumerate(zip(cross_planes, cross_plane_locations, strict=False)):
         visualize_cut_plane(
             cp,
             ax=fig.add_subplot(3, len(cross_planes), i + 7),
-            title="Loc: {:.0f}m".format(cpl),
+            title=f"Loc: {cpl:.0f}m",
             min_speed=min_ws,
             max_speed=max_ws,
         )
@@ -90,6 +88,8 @@ def generate_wake_visualization(fmodel: FlorisModel, title=None):
     # Add overall figure title
     if title is not None:
         fig.suptitle(title, fontsize=16)
+    plt.show()
+    plt.close()
 
 
 ## Main script
@@ -191,9 +191,12 @@ if show_flow_cuts:
 
 # Power plot aesthetics
 ax0.set_xticks(range(num_in_row))
-ax0.set_xticklabels(["T{0}".format(t) for t in range(num_in_row)])
+ax0.set_xticklabels([f"T{t}" for t in range(num_in_row)])
 ax0.legend()
 ax0.set_xlabel("Turbine")
 ax0.set_ylabel("Power [MW]")
 
+plt.figure()
+plt.figure(num=fig0)
 plt.show()
+plt.close()
