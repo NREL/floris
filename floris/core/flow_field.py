@@ -105,12 +105,18 @@ class FlowField(BaseClass):
             return
 
         # Check that the correct keys are supplied for the heterogeneous_inflow_config dict
-        for k in ["speed_multipliers", "x", "y"]:
+        for k in ["x", "y"]:
             if k not in value.keys():
                 raise ValueError(
-                    "heterogeneous_inflow_config must contain entries for 'speed_multipliers',"
-                    f"'x', and 'y', with 'z' optional. Missing '{k}'."
+                    "heterogeneous_inflow_config must contain entries for "
+                    f"'x' and 'y', with 'z' optional. Missing '{k}'."
                 )
+        if ("speed_multipliers" not in value.keys() and
+            ("u" not in value.keys() or "v" not in value.keys())):
+            raise ValueError(
+                "heterogeneous_inflow_config must contain entries for either 'speed_multipliers'"
+                " or 'u' and 'v'."
+            )
         if "z" not in value:
             # If only a 2D case, add "None" for the z locations
             value["z"] = None
@@ -281,7 +287,13 @@ class FlowField(BaseClass):
                 - **y**: A list of y locations at which the speed up factors are defined.
                 - **z** (optional): A list of z locations at which the speed up factors are defined.
         """
-        speed_multipliers = self.heterogeneous_inflow_config['speed_multipliers']
+        if "speed_multipliers" in self.heterogeneous_inflow_config:
+            speed_multipliers = self.heterogeneous_inflow_config['speed_multipliers']
+        else:
+            speed_multipliers = np.sqrt(
+                np.array(self.heterogeneous_inflow_config['u'])**2
+                + np.array(self.heterogeneous_inflow_config['v'])**2
+            ) / self.wind_speeds
         x = self.heterogeneous_inflow_config['x']
         y = self.heterogeneous_inflow_config['y']
         z = self.heterogeneous_inflow_config['z']
@@ -307,10 +319,7 @@ class FlowField(BaseClass):
 
     @property
     def _speed_heterogeneity(self):
-        if self.heterogeneous_inflow_config is not None:
-            return "speed_multipliers" in self.heterogeneous_inflow_config
-        else:
-            return False
+        return self.heterogeneous_inflow_config is not None
 
     @staticmethod
     def interpolate_multiplier_xy(x: NDArrayFloat,

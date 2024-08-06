@@ -18,7 +18,7 @@ heterogeneous_wd_inflow_config_2D = {
     "y": [-1000, 1000, -1000, 1000],
     "u": [[8.0, 8.0, 8.0, 8.0]],
     "v": [[0.0, 0.0, 4.0, 4.0]],
-    "speed_multipliers": [[1.0, 1.0, 1.0, 1.0]] # Currently a necessary input
+    "speed_multipliers": [[1.0, 1.0, 1.0, 1.0]] # Removes wind speed variations
 }
 
 def test_power():
@@ -244,3 +244,53 @@ def test_wake_models():
         # Confirm upstream power the same; downstream power increased
         assert np.allclose(P_without_het[0], P_with_het[0])
         assert P_with_het[1] > P_without_het[1]
+
+def test_speed_multipliers_option():
+    # Check that setting speed heterogeneity by u, v, works as expected
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(
+        heterogeneous_inflow_config={
+            "x": [0, 0, 1, 1],
+            "y": [0, 1, 0, 1],
+            "u": np.ones((1, 4)),
+            "v": np.ones((1, 4)),
+        },
+        wind_shear=0.0
+    )
+    assert (fmodel.core.flow_field.u_initial_sorted == np.sqrt(2)).all()
+
+    # Look at more realistic case
+    heterogeneous_wd_inflow_config_test = {
+        "x": [-1000, -1000, 1000, 1000],
+        "y": [-1000, 1000, -1000, 1000],
+        "u": [[8.0, 8.0, 8.0, 8.0]],
+        "v": [[0.0, 0.0, 4.0, 4.0]],
+        "speed_multipliers": [[1.0, 1.0, 1.0, 1.0]]
+    }
+
+    # First run with speed_multipliers specified
+    fmodel.set(
+        layout_x=layout_x,
+        layout_y=layout_y,
+        heterogeneous_inflow_config=heterogeneous_wd_inflow_config_test
+    )
+    fmodel.run()
+    P_with_sm = fmodel.get_turbine_powers()[0,:]
+
+    # Same speed at second turbine
+    assert (fmodel.core.flow_field.u_initial_sorted[0,1,:,:]
+            == fmodel.core.flow_field.u_initial_sorted[0,0,:,:]).all()
+
+    # Set without specified speed multipliers and rerun
+    # u, v will result in higher speeds at the back turbine
+    del heterogeneous_wd_inflow_config_test["speed_multipliers"]
+    fmodel.set(heterogeneous_inflow_config=heterogeneous_wd_inflow_config_test)
+    fmodel.run()
+    P_without_sm = fmodel.get_turbine_powers()[0,:]
+
+    # Higher speeds at second turbine
+    assert (fmodel.core.flow_field.u_initial_sorted[0,1,:,:]
+            > fmodel.core.flow_field.u_initial_sorted[0,0,:,:]).all()
+
+    # Also higher power than case without
+    assert P_without_sm[1] > P_with_sm[1]
