@@ -619,14 +619,17 @@ def update_model_args(
     Update the x_sorted, y_sorted, and z_sorted entries of the model_args dict.
     """
     # Check that new x, y, z are the same length as the old
-    if (x.shape != model_args["x"].shape or
-        y.shape != model_args["y"].shape or
-        z.shape != model_args["z"].shape):
+    if (("x" in model_args.keys() and x.shape != model_args["x"].shape) or \
+        ("y" in model_args.keys() and y.shape != model_args["y"].shape) or \
+        ("z" in model_args.keys() and z.shape != model_args["z"].shape)):
         raise ValueError("Size of new x,y,z arrays must match existing ones.")
 
     # Update the x, y, z values
-    model_args["x"] = x
-    model_args["y"] = y
-    model_args["z"] = z
+    if "x" in model_args.keys():
+        model_args["x"] = x
+    if "y" in model_args.keys():
+        model_args["y"] = y
+    if "z" in model_args.keys():
+        model_args["z"] = z
 
     return model_args

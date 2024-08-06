@@ -523,6 +523,20 @@ def cc_solver(
         z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
+        if grid.use_turbine_specific_layouts:
+            deficit_model_args = update_model_args(
+                deficit_model_args,
+                grid.x_sorted_per_turbine[:, :, :, :, i],
+                grid.y_sorted_per_turbine[:, :, :, :, i],
+                grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+            deflection_model_args = update_model_args(
+                deflection_model_args,
+                grid.x_sorted_per_turbine[:, :, :, :, i],
+                grid.y_sorted_per_turbine[:, :, :, :, i],
+                grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+
         rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
 
         mask2 = (
@@ -796,6 +810,20 @@ def full_flow_cc_solver(
         u_i = turbine_grid_flow_field.u_sorted[:, i:i+1]
         v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
 
+        if flow_field_grid.use_turbine_specific_layouts:
+            deficit_model_args = update_model_args(
+                deficit_model_args,
+                flow_field_grid.x_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.y_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+            deflection_model_args = update_model_args(
+                deflection_model_args,
+                flow_field_grid.x_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.y_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+
         turb_avg_vels = average_velocity(turbine_grid_flow_field.u_sorted)
         turb_Cts = thrust_coefficient(
             velocities=turb_avg_vels,
@@ -959,6 +987,20 @@ def turbopark_solver(
         y_i = y_i[:, :, None, None]
         z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
+
+        if grid.use_turbine_specific_layouts:
+            deficit_model_args = update_model_args(
+                deficit_model_args,
+                grid.x_sorted_per_turbine[:, :, :, :, i],
+                grid.y_sorted_per_turbine[:, :, :, :, i],
+                grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+            deflection_model_args = update_model_args(
+                deflection_model_args,
+                grid.x_sorted_per_turbine[:, :, :, :, i],
+                grid.y_sorted_per_turbine[:, :, :, :, i],
+                grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
 
         Cts = thrust_coefficient(
             velocities=flow_field.u_sorted,
@@ -1228,6 +1270,20 @@ def empirical_gauss_solver(
         z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3))
         z_i = z_i[:, :, None, None]
 
+        if grid.use_turbine_specific_layouts:
+            deficit_model_args = update_model_args(
+                deficit_model_args,
+                grid.x_sorted_per_turbine[:, :, :, :, i],
+                grid.y_sorted_per_turbine[:, :, :, :, i],
+                grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+            deflection_model_args = update_model_args(
+                deflection_model_args,
+                grid.x_sorted_per_turbine[:, :, :, :, i],
+                grid.y_sorted_per_turbine[:, :, :, :, i],
+                grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+
         ct_i = thrust_coefficient(
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
@@ -1451,6 +1507,20 @@ def full_flow_empirical_gauss_solver(
         y_i = y_i[:, :, None, None]
         z_i = np.mean(turbine_grid.z_sorted[:, i:i+1], axis=(2,3))
         z_i = z_i[:, :, None, None]
+
+        if flow_field_grid.use_turbine_specific_layouts:
+            deficit_model_args = update_model_args(
+                deficit_model_args,
+                flow_field_grid.x_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.y_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
+            deflection_model_args = update_model_args(
+                deflection_model_args,
+                flow_field_grid.x_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.y_sorted_per_turbine[:, :, :, :, i],
+                flow_field_grid.z_sorted_per_turbine[:, :, :, :, i],
+            )
 
         ct_i = thrust_coefficient(
             velocities=turbine_grid_flow_field.u_sorted,

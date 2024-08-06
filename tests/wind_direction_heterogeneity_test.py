@@ -205,3 +205,42 @@ def test_rotational_symmetry():
         P_new = fmodel.get_turbine_powers()
 
         assert np.allclose(P_base, P_new, rtol=1e-4)
+
+def test_wake_models():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel_dict = fmodel.core.as_dict()
+    velocity_models = fmodel_dict["wake"]["wake_velocity_parameters"].keys()
+
+    # Switch off secondary effects
+    fmodel_dict["wake"]["enable_secondary_steering"] = False
+    fmodel_dict["wake"]["enable_yaw_added_recovery"] = False
+    fmodel_dict["wake"]["enable_transverse_velocities"] = False
+
+    # Loop through velocity models
+    for m in velocity_models:
+        fmodel_dict["wake"]["model_strings"]["velocity_model"] = m
+        if m == "empirical_gauss":
+            fmodel_dict["wake"]["model_strings"]["turbulence_model"] = "wake_induced_mixing"
+            fmodel_dict["wake"]["model_strings"]["deflection_model"] = "empirical_gauss"
+        elif m == "jensen":
+            fmodel_dict["wake"]["model_strings"]["turbulence_model"] = "crespo_hernandez"
+            fmodel_dict["wake"]["model_strings"]["deflection_model"] = "jimenez"
+        else:
+            fmodel_dict["wake"]["model_strings"]["turbulence_model"] = "crespo_hernandez"
+            fmodel_dict["wake"]["model_strings"]["deflection_model"] = "gauss"
+
+        fmodel = FlorisModel(fmodel_dict)
+
+        # First run without heterogeneity
+        fmodel.set(layout_x=layout_x, layout_y=layout_y)
+        fmodel.run()
+        P_without_het = fmodel.get_turbine_powers()[0,:]
+
+        # Add wind direction heterogeneity and rerun
+        fmodel.set(heterogeneous_inflow_config=heterogeneous_wd_inflow_config_2D)
+        fmodel.run()
+        P_with_het = fmodel.get_turbine_powers()[0,:]
+
+        # Confirm upstream power the same; downstream power increased
+        assert np.allclose(P_without_het[0], P_with_het[0])
+        assert P_with_het[1] > P_without_het[1]
