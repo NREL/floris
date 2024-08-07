@@ -372,6 +372,7 @@ class HeterogeneousMap(LoggingManager):
         show_boundary: bool = True,
         show_wind_direction: bool = True,
         show_colorbar: bool = True,
+        show_points: bool = True,
     ):
         """
         Plot the speed multipliers as a heatmap.
@@ -394,6 +395,8 @@ class HeterogeneousMap(LoggingManager):
             show_wind_direction (bool, optional): Whether to show the wind direction as an arrow.
                 Default is True.
             show_colorbar (bool, optional): Whether to show the colorbar. Default is True.
+            show_points (bool, optional): Whether to show the points of the heterogeneous inflow
+                configuration. Default is True.
 
         Returns:
             matplotlib.axes.Axes: The axes on which the speed multipliers are plotted.
@@ -501,8 +504,8 @@ class HeterogeneousMap(LoggingManager):
         )
 
         # Plot the grid coordinates as a scatter plot
-        ax.scatter(x, y, color="gray", marker=".", label="Heterogeneity Coordinates")
-        ax.set_xlim
+        if show_points:
+            ax.scatter(x, y, color="gray", marker=".", label="Heterogeneity Coordinates")
 
         # Show the boundary
         if show_boundary:
