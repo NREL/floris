@@ -1041,15 +1041,13 @@ class FlorisModel(LoggingManager):
             heterogeneous_inflow_config = {
                 'x': self.core.flow_field.heterogeneous_inflow_config['x'],
                 'y': self.core.flow_field.heterogeneous_inflow_config['y'],
-                'speed_multipliers':
-                    self.core.flow_field.heterogeneous_inflow_config['speed_multipliers'][findex:findex+1],
             }
             for k in ["z"]: # Optional, independent of findex
                 if k in self.core.flow_field.heterogeneous_inflow_config:
                     heterogeneous_inflow_config[k] = (
                         self.core.flow_field.heterogeneous_inflow_config[k]
                     )
-            for k in ["u", "v", "w"]: # Optional, dependent on findex
+            for k in ["u", "v", "speed_multipliers"]: # Optional, dependent on findex
                 if k in self.core.flow_field.heterogeneous_inflow_config:
                     if self.core.flow_field.heterogeneous_inflow_config[k] is not None:
                         heterogeneous_inflow_config[k] = (

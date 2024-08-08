@@ -11,10 +11,11 @@ from typing import (
     Tuple,
 )
 
+import numexpr as ne
 import numpy as np
 import yaml
 from attrs import define, field
-from scipy.integrate import odeint
+from scipy.integrate import solve_ivp
 from scipy.interpolate import LinearNDInterpolator
 
 from floris.type_dec import floris_array_converter, NDArrayFloat
@@ -376,6 +377,7 @@ def apply_wind_direction_heterogeneity_warping(
     # TODO: Can I avoid any of these looping operations? Do I need to?
     for findex in range(n_findex):
         for tindex in range(n_turbines):
+            print("computing streamline for tindex", tindex)
             # 1. Compute the streamline
             streamline_start = np.array([
                 x_turbines[findex,tindex],
@@ -390,8 +392,11 @@ def apply_wind_direction_heterogeneity_warping(
             )
 
             # 2. Compute the point movements
-            x_shifted, y_shifted, z_shifted = shift_points_by_streamline(
-                streamline, x_points[findex,:,:,:], y_points[findex,:,:,:], z_points[findex,:,:,:]
+            x_shifted, y_shifted, z_shifted = shift_points_by_streamline2(
+                streamline,
+                x_points[findex,:,:,:],
+                y_points[findex,:,:,:],
+                z_points[findex,:,:,:],
             )
 
             # 3. Apply to per_turbine values
@@ -418,43 +423,55 @@ def compute_2D_streamline(x, y, u, v, xy_0, n_points=1000):
     uv = np.array([u,v]).T
 
     # Normalize
-    xy = (xy - offset) / scale
-    xy_0 = (xy_0 - offset) / scale
+    xy_normalized = (xy - offset) / scale
+    xy_0_normalized = (xy_0 - offset) / scale
     # TODO: Loop over findices! Maybe not necessary---can I compute all streamlines at once??
     # Would it help? Currently assuming a single findex.
 
-    interp = LinearNDInterpolator(xy, uv)
+    interp = LinearNDInterpolator(xy_normalized, uv, fill_value=0)
 
-    def velocity_field_interpolate_reg(xy_, s):
-        if (xy_ < -0.5).any() or (xy_ > 0.5).any():
-            return np.array([0, 0])
-        else:
-            return interp(xy_)[0]
+    def velocity_field_interpolate_reg(s, xy_):
+        # if (xy_ < -0.5).any() or (xy_ > 0.5).any():
+        #     return np.array([0.1, 0.1])*np.sign(xy_)
+        # else:
+        return interp(xy_)[0]
 
-    streamline = odeint(velocity_field_interpolate_reg, xy_0, s) # n_points x 2
+    ode_solution = solve_ivp(
+        velocity_field_interpolate_reg,
+        (0, 1),
+        xy_0_normalized,
+        t_eval=np.linspace(0,1,n_points)
+    )
+    # Handle the ODE solution
+    streamline = ode_solution.y.T
 
     # Determine point of exit from specified domain
     if (streamline < -0.5).any():
         low_exit = np.argwhere(streamline < -0.5)[0,0]
     else:
-        low_exit = 1000
+        low_exit = n_points
     if (streamline > 0.5).any():
         high_exit = np.argwhere(streamline > 0.5)[0,0]
     else:
-        high_exit = 1000
+        high_exit = n_points
     exit_index = np.minimum(low_exit, high_exit)
     if exit_index == 0:
         raise ValueError("Streamline could not be propagated inside the domain.")
-    if exit_index == 1000:
-        raise ValueError("Streamline did not reach the edge of the domain.")
+    if exit_index == n_points:
+        # TODO: recommend ensuring domain covers the buffer region
+        if (abs(streamline) > 0.8*0.5).any(): # 10% buffer given,
+            pass
+        else:
+            import ipdb; ipdb.set_trace()
+            raise ValueError("Streamline did not reach the edge of the domain.")
 
     # Copy points after exit
-    streamline[exit_index:] = streamline[exit_index-1]
+    #streamline[exit_index:] = streamline[exit_index-1]
 
     # Denormalize
-    streamline = streamline * scale + offset
+    streamline_denormalized = streamline * scale + offset
 
-    return streamline
+    return streamline_denormalized
 
 def shift_points_by_streamline(streamline, x, y, z):
     ## I think should be dist by turbine only (not each rotor point); and then
@@ -475,25 +492,85 @@ def shift_points_by_streamline(streamline, x, y, z):
 
     # TODO: for viz/solve for points, there are many more points than turbines.
     # It would be nice not to have a loop here.
-    for tindex in range(len(min_idx)):
-        streamline_diffs = np.diff(streamline[:min_idx[tindex], :], axis=0)
+    for i in range(len(min_idx)):
+        streamline_diffs = np.diff(streamline[:min_idx[i], :], axis=0)
         along_stream_dist = np.sum(np.linalg.norm(streamline_diffs, axis=1))
-        off_stream_dist = dists_to_streamline[min_idx[tindex], tindex]
-        off_stream_disp = disps_to_streamline[min_idx[tindex], :, tindex]
+        off_stream_dist = dists_to_streamline[min_idx[i], i]
+        off_stream_disp = disps_to_streamline[min_idx[i], :, i]
         disp_x = off_stream_disp[0]
         disp_y = off_stream_disp[1]
 
         theta = np.arctan2(disp_y, disp_x)
 
-        x_new[tindex,:,:] = streamline[0,0] + along_stream_dist
+        x_new[i,:,:] = streamline[0,0] + along_stream_dist
         # y_new[tindex,:,:] = streamline[0,1] + disp_x*np.sin(theta) + disp_y*np.cos(theta)\
         # + rotor_y[tindex,:,:]
-        y_new[tindex,:,:] = streamline[0,1] + np.sign(theta)*off_stream_dist + rotor_y[tindex,:,:]
+        y_new[i,:,:] = streamline[0,1] + np.sign(theta)*off_stream_dist + rotor_y[i,:,:]
         #y_new[tindex,:,:] = streamline[0,1] + off_stream_dist + rotor_y[tindex,:,:]
         #if tindex == 1:
-        #    import ipdb; ipdb.set_trace()
+    return x_new, y_new, z
+
+    #return x_new.reshape(x.shape), y_new.reshape(y.shape), z
+
+def shift_points_by_streamline2(streamline, x, y, z, rotor_points_only=True):
+    ## I think should be dist by turbine only (not each rotor point); and then
+    # shift all rotor points by the same amount.
+    # TODO: How will this work over findices? Need to work that out.
+
+    #xy = np.concatenate((x.mean(axis=(1,2))[None,:],y.mean(axis=(1,2))[None,:]), axis=0)
+    xy = np.concatenate((x.flatten()[None,:], y.flatten()[None,:]), axis=0)
+
+    #rotor_y = y - y.mean(axis=(1,2), keepdims=True) # TODO: still ok for viz solve?
+
+    # Storage for new points
+    # x_new = x.copy()
+    # y_new = y.copy()
+
+    disps_to_streamline = xy[None,:,:] - streamline[:, :,None]
+    # TODO: This line slow. What if norm is delayed?
+    dists_to_streamline = np.linalg.norm(disps_to_streamline, axis=1)
+    disps_x = disps_to_streamline[:, 0, :]
+    disps_y = disps_to_streamline[:, 1, :]
+    dists_to_streamline = ne.evaluate("sqrt(disps_x ** 2 + disps_y ** 2)")
+    min_idx = np.argmin(dists_to_streamline, axis=0)
+    #points = streamline[min_idx, :]
+
+    # TODO: for viz/solve for points, there are many more points than turbines.
+    # It would be nice not to have a loop here.
+    # x_new = np.zeros(len(min_idx))
+    # y_new = np.zeros(len(min_idx))
+
+    s_diffs = np.diff(streamline, axis=0)
+    as_dist_all = np.insert(np.cumsum(np.linalg.norm(s_diffs, axis=1)), 0, 0)
+    as_dists = as_dist_all[min_idx]
+
+    disps = disps_to_streamline[min_idx, :, np.arange(0, xy.shape[1], 1)]
+    theta = np.arctan2(disps[:,1], disps[:,0])
+    os_dists = dists_to_streamline[min_idx, np.arange(0, xy.shape[1], 1)]
+    # for i in range(len(min_idx)):
+    #     streamline_diffs = np.diff(streamline[:min_idx[i], :], axis=0)
+    #     along_stream_dist = np.sum(np.linalg.norm(streamline_diffs, axis=1))
+    #     off_stream_dist = dists_to_streamline[min_idx[i], i]
+    #     off_stream_disp = disps_to_streamline[min_idx[i], :, i]
+    #     disp_x = off_stream_disp[0]
+    #     disp_y = off_stream_disp[1]
+
+    #     theta = np.arctan2(disp_y, disp_x)
+
+    #     x_new[i] = streamline[0,0] + along_stream_dist
+    #     # y_new[tindex,:,:] = streamline[0,1] + disp_x*np.sin(theta) + disp_y*np.cos(theta)\
+    #     # + rotor_y[tindex,:,:]
+    #     y_new[i] = streamline[0,1] + np.sign(theta)*off_stream_dist
+    #     #y_new[tindex,:,:] = streamline[0,1] + off_stream_dist + rotor_y[tindex,:,:]
+    #     #if tindex == 1:
+    #     #    import ipdb; ipdb.set_trace()
+
+    x_new = (streamline[0,0] + as_dists).reshape(x.shape)
+    y_new = (streamline[0,1] + np.sign(theta)*os_dists).reshape(y.shape)
 
     return x_new, y_new, z
+
+    #return x_new.reshape(x.shape), y_new.reshape(y.shape), z
 
 class Loader(yaml.SafeLoader):
 

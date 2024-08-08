@@ -13,7 +13,7 @@ from floris import FlorisModel
 
 fmodel = FlorisModel("../inputs/gch.yaml")
 
-viz_by_sweep = True
+viz_by_sweep = False
 
 # # Some wake models may not yet have a visualization method included, for these cases can use
 # # a slower version which scans a turbine model to produce the horizontal flow
