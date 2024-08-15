@@ -18,7 +18,7 @@ viz_by_sweep = False
 # # Some wake models may not yet have a visualization method included, for these cases can use
 # # a slower version which scans a turbine model to produce the horizontal flow
 x = np.array([-100, 0, 100, 200, 300, 400, 500, 600])
-v = np.array([[0, 1, 2, 3, 4, 5, 6, 7]])
+v = -np.array([[0, 1, 2, 3, 4, 5, 6, 7]])
 
 het_inflow_config = {
     "x": np.repeat(x, 2),
