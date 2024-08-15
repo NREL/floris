@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -202,6 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -406,6 +407,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -937,9 +945,7 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    7    22    -1.214237E+00     1.013118E-01
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    8    24    -1.214237E+00     1.013095E-01
+    8    24    -1.214237E+00     1.013095E-01
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.2142370269715685
             Iterations: 8
@@ -1034,9 +1040,7 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    9    40    -1.046685E+00     2.824111E-06
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   10    42    -1.046685E+00     6.047025E-08
+   10    42    -1.046685E+00     6.047025E-08
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.0466852786523977
             Iterations: 10
@@ -1081,9 +1085,7 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    3    10    -1.000035E+00     5.322843E-04
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    4    12    -1.000035E+00     4.924128E-04
+    4    12    -1.000035E+00     4.924128E-04
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.0000354608371065
             Iterations: 4
@@ -1228,9 +1230,7 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    7    22    -1.214237E+00     1.013118E-01
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    8    24    -1.214237E+00     1.013095E-01
+    8    24    -1.214237E+00     1.013095E-01
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.2142370269715692
             Iterations: 8
@@ -1325,9 +1325,7 @@ Optimization terminated successfully    (Exit mode 0)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    9    40    -1.046685E+00     2.824112E-06
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   10    42    -1.046685E+00     6.047028E-08
+   10    42    -1.046685E+00     6.047028E-08
 Optimization terminated successfully    (Exit mode 0)
             Current function value: -1.0466852786523961
             Iterations: 10
@@ -1434,16 +1432,16 @@ Optimization terminated successfully    (Exit mode 0)
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Performing optimizations with Geometric Yaw...
 
  Time spent, Geometric Yaw: 0.19 s.
- Time spent, Serial Refine: 1.18 s.
- Time spent, SciPy (SLSQP): 57.69 s.
+ Time spent, Serial Refine: 1.07 s.
+ Time spent, SciPy (SLSQP): 51.71 s.
 </pre></div>
 </div>
-<img alt="../../_images/c7ece9b2adf40d4a97f9f3eb365522249227dc879bb9728ea374cea1318ffb1e.png" src="../../_images/c7ece9b2adf40d4a97f9f3eb365522249227dc879bb9728ea374cea1318ffb1e.png" />
-<img alt="../../_images/dc9797c5ca8e80d49d9754ea9ea2acddd62b09122b1a950cec9712085f7b8888.png" src="../../_images/dc9797c5ca8e80d49d9754ea9ea2acddd62b09122b1a950cec9712085f7b8888.png" />
-<img alt="../../_images/3bd476a95521a88bfad80fe8ac7dff7103054d89af61b505cff6382036ef2919.png" src="../../_images/3bd476a95521a88bfad80fe8ac7dff7103054d89af61b505cff6382036ef2919.png" />
-<img alt="../../_images/89cf5d1e98b89b6c3eda1ca211ff4d893fd4aa114bb18e96aea09954eb4467e3.png" src="../../_images/89cf5d1e98b89b6c3eda1ca211ff4d893fd4aa114bb18e96aea09954eb4467e3.png" />
-<img alt="../../_images/62358a26665fbd14a6b84e7be40758c702a139263e0534e033f64ba9b34e874b.png" src="../../_images/62358a26665fbd14a6b84e7be40758c702a139263e0534e033f64ba9b34e874b.png" />
-<img alt="../../_images/1c35920090ac4c1960de881ac922bd5b9238486ca3a60059ba6ec59d2d1af11b.png" src="../../_images/1c35920090ac4c1960de881ac922bd5b9238486ca3a60059ba6ec59d2d1af11b.png" />
+<img alt="../../_images/29d329e63e00d8d8126037e22de3ec655a5f66067daa003a5610bac8cb0efa89.png" src="../../_images/29d329e63e00d8d8126037e22de3ec655a5f66067daa003a5610bac8cb0efa89.png" />
+<img alt="../../_images/d9d21e0dbe0b44296c39110550809ac9b1cb8c5fff6669632fe90598274f1be7.png" src="../../_images/d9d21e0dbe0b44296c39110550809ac9b1cb8c5fff6669632fe90598274f1be7.png" />
+<img alt="../../_images/342f0e2205c34bc57ffe28103d20c5e7022bb56562d14db490e44e4cf1c84577.png" src="../../_images/342f0e2205c34bc57ffe28103d20c5e7022bb56562d14db490e44e4cf1c84577.png" />
+<img alt="../../_images/be867fe20e8fd6349cfd10272d674f4ca87c13a47b0eeaa3d7112805bc5a9ea5.png" src="../../_images/be867fe20e8fd6349cfd10272d674f4ca87c13a47b0eeaa3d7112805bc5a9ea5.png" />
+<img alt="../../_images/2613340f6ddfe11abe98d8cca7d914d6bc9d9f548e2512fd677c25346676f582.png" src="../../_images/2613340f6ddfe11abe98d8cca7d914d6bc9d9f548e2512fd677c25346676f582.png" />
+<img alt="../../_images/152400a6f57063f8705c397197ffb85dbe67678575bc67d3e3241ed7cb19644b.png" src="../../_images/152400a6f57063f8705c397197ffb85dbe67678575bc67d3e3241ed7cb19644b.png" />
 </div>
 </div>
 </section>

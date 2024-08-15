@@ -11,5 +11,6 @@
       TimeSeries
       WindDataBase
       WindRose
+      WindRoseWRG
       WindTIRose
    

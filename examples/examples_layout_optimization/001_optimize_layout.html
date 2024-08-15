@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -202,6 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -406,6 +407,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -846,91 +854,98 @@ Number of parameters to optimize =  8
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  NIT    FC           OBJFUN            GNORM
+    1    10    -1.177117E+00     7.500783E-01
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    1    10    -1.177119E+00     7.500783E-01
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    2    19    -1.159173E+00     5.490016E-01
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    2    19    -1.159168E+00     5.489821E-01
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    3    29    -1.219949E+00     3.415379E-01
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    3    29    -1.219934E+00     3.414254E-01
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    4    38    -1.228863E+00     2.197285E-01
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    4    38    -1.228834E+00     2.199018E-01
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    5    47    -1.237300E+00     2.748039E-01
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    5    47    -1.237306E+00     2.758014E-01
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    6    56    -1.251563E+00     2.651905E-01
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    6    56    -1.251576E+00     2.648966E-01
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    7    65    -1.252709E+00     1.048426E-01
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    7    65    -1.252713E+00     1.035908E-01
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    8    74    -1.252392E+00     4.818055E-02
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    8    74    -1.252421E+00     4.636724E-02
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    9    83    -1.252482E+00     7.784796E-02
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    9    83    -1.252490E+00     7.504106E-02
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   10    93    -1.252217E+00     7.527671E-02
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   11   112    -1.252099E+00     7.527708E-02
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   12   131    -1.225983E+00     7.527755E-02
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   10    93    -1.252233E+00     7.733065E-02
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Some velocities at the rotor are negative.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   13   150    -1.165104E+00     7.527797E-02
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   14   169    -1.250620E+00     7.527845E-02
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   15   188    -1.250636E+00     7.527869E-02
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   11   112    -1.246641E+00     7.733127E-02
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Some velocities at the rotor are negative.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   16   207    -1.172153E+00     7.527891E-02
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   12   131    -1.246692E+00     7.733173E-02
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Some velocities at the rotor are negative.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   17   226    -1.177128E+00     7.527924E-02
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   18   245    -1.252221E+00     7.527961E-02
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   13   150    -1.137010E+00     7.733210E-02
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Some velocities at the rotor are negative.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   19   264    -1.247531E+00     7.527995E-02
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   14   169    -1.160673E+00     7.733258E-02
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   20   282    -1.252450E+00     7.528016E-02
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Some velocities at the rotor are negative.</span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   15   188    -1.245428E+00     7.733298E-02
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   16   207    -1.251980E+00     7.733323E-02
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   17   226    -1.252082E+00     7.733350E-02
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Some velocities at the rotor are negative.</span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   18   245    -1.243072E+00     7.733381E-02
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Some velocities at the rotor are negative.</span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   19   264    -1.213373E+00     7.733405E-02
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   20   282    -1.252434E+00     7.733430E-02
 Iteration limit reached    (Exit mode 9)
-            Current function value: -1.2524496512996364
+            Current function value: -1.252433893445541
             Iterations: 20
             Function evaluations: 282
             Gradient evaluations: 20
 Optimization complete.
 ... calculating improvement in annual value production (AVP)
-Optimal layout: [[5.57339776368499e-15, 219.01389281709612, 494.03002619156433, 999.3413208041393], [150.6126954973122, 278.49926006641016, 226.25072481017156, 698.544275641859]]
-Optimal layout improves AVP by 25.2% from 1527164.8 dollars to 1912697.0 dollars
+Optimal layout: [[4.301762021859162e-14, 218.67991402794001, 494.13143187628657, 999.1956935198672], [150.02475670110869, 278.86866219604246, 225.796398400378, 698.0767990155646]]
+Optimal layout improves AVP by 25.2% from 1527164.8 dollars to 1912673.0 dollars
 </pre></div>
 </div>
-<img alt="../../_images/ed07c789ac51b458ebee03e4fe5d811b07031266786a124cdb999e9258842668.png" src="../../_images/ed07c789ac51b458ebee03e4fe5d811b07031266786a124cdb999e9258842668.png" />
-<img alt="../../_images/4c1430b82536c31104c0b51d69a67b2f4d01d4c8406a7a39b0f4abc3cf3bc598.png" src="../../_images/4c1430b82536c31104c0b51d69a67b2f4d01d4c8406a7a39b0f4abc3cf3bc598.png" />
+<img alt="../../_images/18db4987912bedaffe46617655ab60bea72c36ade314ae3eefc89e1a58242e49.png" src="../../_images/18db4987912bedaffe46617655ab60bea72c36ade314ae3eefc89e1a58242e49.png" />
+<img alt="../../_images/7f2e32dcaadd1ee89cb0b650682834d15d1bb53a77aee7168260811d9e9fffaa.png" src="../../_images/7f2e32dcaadd1ee89cb0b650682834d15d1bb53a77aee7168260811d9e9fffaa.png" />
 </div>
 </div>
 </section>

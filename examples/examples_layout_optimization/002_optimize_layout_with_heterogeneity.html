@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -202,6 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -406,6 +407,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -830,7 +838,7 @@ Optimal layout improves AEP by 124.7% from 6198.3 MWh to 13925.3 MWh
 Reoptimizing with geometric yaw enabled.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3507/179999374.py:109: MatplotlibDeprecationWarning: An artist whose label starts with an underscore was passed to legend(); such artists will no longer be ignored in the future.  To suppress this warning, explicitly filter out such artists, e.g. with `[art for art in artists if not art.get_label().startswith(&#39;_&#39;)]`.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3557/179999374.py:109: MatplotlibDeprecationWarning: An artist whose label starts with an underscore was passed to legend(); such artists will no longer be ignored in the future.  To suppress this warning, explicitly filter out such artists, e.g. with `[art for art in artists if not art.get_label().startswith(&#39;_&#39;)]`.
   ax.legend([&quot;_Optimization boundary&quot;, &quot;Initial layout&quot;, &quot;Optimized layout&quot; ])
 </pre></div>
 </div>
@@ -936,12 +944,12 @@ Optimal layout improves AEP by 166.3% from 6198.3 MWh to 16505.9 MWh
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Turbine geometric yaw angles for wind direction 270.00 and wind speed 8.00 m/s: [ 0.         25.45866005 25.6955238 ]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3507/179999374.py:147: MatplotlibDeprecationWarning: An artist whose label starts with an underscore was passed to legend(); such artists will no longer be ignored in the future.  To suppress this warning, explicitly filter out such artists, e.g. with `[art for art in artists if not art.get_label().startswith(&#39;_&#39;)]`.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3557/179999374.py:147: MatplotlibDeprecationWarning: An artist whose label starts with an underscore was passed to legend(); such artists will no longer be ignored in the future.  To suppress this warning, explicitly filter out such artists, e.g. with `[art for art in artists if not art.get_label().startswith(&#39;_&#39;)]`.
   ax.legend([&quot;_Optimization boundary&quot;, &quot;Initial layout&quot;, &quot;Optimized layout&quot;])
 </pre></div>
 </div>
-<img alt="../../_images/cab80dd993b39ed7766fa814d666bc5f88c2c4d97a9e193f6a433e477e6d861c.png" src="../../_images/cab80dd993b39ed7766fa814d666bc5f88c2c4d97a9e193f6a433e477e6d861c.png" />
-<img alt="../../_images/d1fed74f01a10a691e417ccaae8f439a4d698a1289147418387310638681fa7a.png" src="../../_images/d1fed74f01a10a691e417ccaae8f439a4d698a1289147418387310638681fa7a.png" />
+<img alt="../../_images/a82bfab2238b76d1b8327b392305efae9f6f8a695d8ced31ec5a8c71dd6d078f.png" src="../../_images/a82bfab2238b76d1b8327b392305efae9f6f8a695d8ced31ec5a8c71dd6d078f.png" />
+<img alt="../../_images/7605152268bb3d2b6cabae42ce315727cd4a28bf9910de13fe42147a09cb5cf9.png" src="../../_images/7605152268bb3d2b6cabae42ce315727cd4a28bf9910de13fe42147a09cb5cf9.png" />
 </div>
 </div>
 </section>

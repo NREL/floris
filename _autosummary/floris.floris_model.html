@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -202,6 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -406,6 +407,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -625,6 +633,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.run"><code class="docutils literal notranslate"><span class="pre">FlorisModel.run()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.run_no_wake"><code class="docutils literal notranslate"><span class="pre">FlorisModel.run_no_wake()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_turbine_powers"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_turbine_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_expected_turbine_powers"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_expected_turbine_powers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_farm_power"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_expected_farm_power"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_expected_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_farm_AEP"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_farm_AEP()</span></code></a></li>
@@ -857,6 +866,33 @@ reduce the power and thrust of the turbine to where they're applied.</p>
 <dd><p>Calculates the power at each turbine in the wind farm.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>NDArrayFloat: Powers at each turbine.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.floris_model.FlorisModel.get_expected_turbine_powers">
+<span class="sig-name descname"><span class="pre">get_expected_turbine_powers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/floris_model.html#FlorisModel.get_expected_turbine_powers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.floris_model.FlorisModel.get_expected_turbine_powers" title="Link to this definition">#</a></dt>
+<dd><p>Compute the expected (mean) power of each turbine.</p>
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>freq (NDArrayFloat): NumPy array with shape</dt><dd><p>with the frequencies of each wind direction and
+wind speed combination.  freq is either a 1D array,
+in which case the same frequencies are used for all
+turbines, or a 2D array with shape equal to
+(n_findex, n_turbines), in which case each turbine has a unique
+set of frequencies (this is the case for example using
+WindRoseByTurbine).</p>
+<blockquote>
+<div><p>These frequencies should typically sum across rows</p>
+</div></blockquote>
+<p>up to 1.0 and are used to weigh the wind farm power for every
+condition in calculating the wind farm's AEP. Defaults to None.
+If None and a WindData object was supplied, the WindData object's
+frequencies will be used. Otherwise, uniform frequencies are assumed
+(i.e., a simple mean over the findices is computed).</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -1632,6 +1668,7 @@ or general solver settings.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.run"><code class="docutils literal notranslate"><span class="pre">FlorisModel.run()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.run_no_wake"><code class="docutils literal notranslate"><span class="pre">FlorisModel.run_no_wake()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_turbine_powers"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_turbine_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_expected_turbine_powers"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_expected_turbine_powers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_farm_power"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_expected_farm_power"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_expected_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_farm_AEP"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_farm_AEP()</span></code></a></li>

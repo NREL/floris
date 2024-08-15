@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -202,6 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -406,6 +407,13 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -750,17 +758,17 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Computing AVP with uniform frequencies. Results results may not reflect annual operation.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 40.62 GWh
-AEP from WindRose 40.86 GWh
-AEP from WindTIRose 40.87 GWh
-Annual Value Production (AVP) from TimeSeries 1040323.40 dollars
-AVP from WindRose 1042388.26 dollars
-AVP from WindTIRose 1042886.91 dollars
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 37.28 GWh
+AEP from WindRose 37.61 GWh
+AEP from WindTIRose 37.60 GWh
+Annual Value Production (AVP) from TimeSeries 952378.67 dollars
+AVP from WindRose 962801.62 dollars
+AVP from WindTIRose 962574.63 dollars
 </pre></div>
 </div>
-<img alt="../../_images/e05132fe5c7712487cd4feded1f562343051e694d1a4d1f49c7bf2ddcffda3d7.png" src="../../_images/e05132fe5c7712487cd4feded1f562343051e694d1a4d1f49c7bf2ddcffda3d7.png" />
-<img alt="../../_images/dbb54eeaedb2e61d561c1e6fd706439352e4cc959bfb5c9e6660875d11bbf974.png" src="../../_images/dbb54eeaedb2e61d561c1e6fd706439352e4cc959bfb5c9e6660875d11bbf974.png" />
-<img alt="../../_images/abd8bb38d362cf8484664d5c5e11e15be645ee23c333d6a9cbc04fe7b49c9a64.png" src="../../_images/abd8bb38d362cf8484664d5c5e11e15be645ee23c333d6a9cbc04fe7b49c9a64.png" />
+<img alt="../../_images/3886295983ee7e20e5b037a978f350fc54d2679dfa5cffec2f50678dec724d4d.png" src="../../_images/3886295983ee7e20e5b037a978f350fc54d2679dfa5cffec2f50678dec724d4d.png" />
+<img alt="../../_images/4c690f5df0f7c7015382e27014f3808a1c80d41cb7d6d16c13e5ff63c0981d85.png" src="../../_images/4c690f5df0f7c7015382e27014f3808a1c80d41cb7d6d16c13e5ff63c0981d85.png" />
+<img alt="../../_images/0a5f48b619e75062ae2c88178d8ef1c9922c99e37d54af663e1b8116174be0d6.png" src="../../_images/0a5f48b619e75062ae2c88178d8ef1c9922c99e37d54af663e1b8116174be0d6.png" />
 </div>
 </div>
 </section>

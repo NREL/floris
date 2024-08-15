@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -202,6 +202,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
@@ -406,6 +407,13 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -808,7 +816,7 @@ space to get an idea of the overall form of our grid.</p>
  [800. 800. 800.]]
 </pre></div>
 </div>
-<img alt="_images/71fdc3662832fdfbd511e43fdfdc21afef6f55e8c1970e73d5d82cac7706dcea.png" src="_images/71fdc3662832fdfbd511e43fdfdc21afef6f55e8c1970e73d5d82cac7706dcea.png" />
+<img alt="_images/84e8b83eb6dc3afaa0a338d500da1abe4868450700891f2cd8933d993cbf67ee.png" src="_images/84e8b83eb6dc3afaa0a338d500da1abe4868450700891f2cd8933d993cbf67ee.png" />
 </div>
 </div>
 </section>
@@ -1053,7 +1061,7 @@ yaw settings included.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/2c14a768f1775e27ee2ea1cd47a6f8e3c0ba3995c19f8b8eb181e21db69e8a66.png" src="_images/2c14a768f1775e27ee2ea1cd47a6f8e3c0ba3995c19f8b8eb181e21db69e8a66.png" />
+<img alt="_images/caa3d8332f3e13483a4c709f00346e055ff6c8a0c08638818ea13fe371228351.png" src="_images/caa3d8332f3e13483a4c709f00346e055ff6c8a0c08638818ea13fe371228351.png" />
 </div>
 </div>
 <p>We can also plot the streamwise inflow velocities on the turbine rotor
@@ -1091,8 +1099,8 @@ simply plots any data given as the first argument, so in this case
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b4af7a00cd71979b023509b48b22098f46ee598a745e4836820cb7c5fd2702a4.png" src="_images/b4af7a00cd71979b023509b48b22098f46ee598a745e4836820cb7c5fd2702a4.png" />
-<img alt="_images/2e6c4f2b7bd7ffe2cbfc890aa569748d1c6a68f914f471e8fa7dbbe9e175b04e.png" src="_images/2e6c4f2b7bd7ffe2cbfc890aa569748d1c6a68f914f471e8fa7dbbe9e175b04e.png" />
+<img alt="_images/a257b41beba5dbe21598546d6307a5b12b6692ab7efb9b4474c3d0d6ceb59759.png" src="_images/a257b41beba5dbe21598546d6307a5b12b6692ab7efb9b4474c3d0d6ceb59759.png" />
+<img alt="_images/be5849372f301da32babf246bd992bd5b642f86a4576e4ce52db52fc6d02a1c4.png" src="_images/be5849372f301da32babf246bd992bd5b642f86a4576e4ce52db52fc6d02a1c4.png" />
 </div>
 </div>
 </section>
@@ -1136,7 +1144,7 @@ but retuning of some parameters might be required.</p>
   2 wd x 2 ws x 4 turbines x 3 x 3 grid points
 </pre></div>
 </div>
-<img alt="_images/8d72b89f5253825d9d068e41a58ff01fdaab609efe32a077efbbc43861635247.png" src="_images/8d72b89f5253825d9d068e41a58ff01fdaab609efe32a077efbbc43861635247.png" />
+<img alt="_images/fd2f860c1d2df58e8eec193d2d523252ce084106fc3034466a737febec864f5a.png" src="_images/fd2f860c1d2df58e8eec193d2d523252ce084106fc3034466a737febec864f5a.png" />
 </div>
 </div>
 </section>
@@ -1250,9 +1258,9 @@ Number of turbines = 25
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
-Jensen   661.838    0.703 
-GCH      683.869    2.738 
-CC       661.315    5.927 
+Jensen   661.838    0.653 
+GCH      683.869    2.699 
+CC       661.315    5.561 
 </pre></div>
 </div>
 </div>
@@ -1354,7 +1362,7 @@ CC       661.315    5.927
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=6 (92.9%)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 4.583 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 4.405 s
 </pre></div>
 </div>
 </div>
@@ -1377,7 +1385,7 @@ CC       661.315    5.927
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/dd74946b7d794639b9bd73216b1662beee57d73b8760e8ea4afebaafcb20c7e8.png" src="_images/dd74946b7d794639b9bd73216b1662beee57d73b8760e8ea4afebaafcb20c7e8.png" />
+<img alt="_images/603d6b45c834764d5aca0f65e5ee09cf43e63d77cc22a8cf6df1e60ee4dfaac6.png" src="_images/603d6b45c834764d5aca0f65e5ee09cf43e63d77cc22a8cf6df1e60ee4dfaac6.png" />
 </div>
 </div>
 </section>

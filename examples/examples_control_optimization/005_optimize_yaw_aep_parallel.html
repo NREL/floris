@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -202,6 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -406,6 +407,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -783,11 +791,11 @@ document.write(`
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>===============================================================================
-Total time spent for parallel calculation (16 workers): 11.248 s
+Total time spent for parallel calculation (16 workers): 10.867 s
   Time spent in parallel preprocessing: 0.003 s
-  Time spent in parallel loop execution: 11.242 s.
+  Time spent in parallel loop execution: 10.860 s.
   Time spent in parallel postprocessing: 0.003 s
-Optimization finished in 11.25 seconds.
+Optimization finished in 10.87 seconds.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
@@ -804,30 +812,6 @@ Optimization finished in 11.25 seconds.
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
@@ -838,26 +822,6 @@ Optimization finished in 11.25 seconds.
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
 </pre></div>
@@ -866,28 +830,8 @@ Optimization finished in 11.25 seconds.
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
@@ -906,6 +850,18 @@ Optimization finished in 11.25 seconds.
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 </pre></div>
@@ -918,12 +874,20 @@ Optimization finished in 11.25 seconds.
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
@@ -934,32 +898,12 @@ Optimization finished in 11.25 seconds.
   C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:498: RuntimeWarning: invalid value encountered in divide
@@ -970,8 +914,72 @@ Optimization finished in 11.25 seconds.
   C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
@@ -987,9 +995,9 @@ Optimization finished in 11.25 seconds.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>===============================================================================
-Total time spent for parallel calculation (16 workers): 2.608 s
+Total time spent for parallel calculation (16 workers): 2.270 s
   Time spent in parallel preprocessing: 0.025 s
-  Time spent in parallel loop execution: 2.582 s.
+  Time spent in parallel loop execution: 2.245 s.
   Time spent in parallel postprocessing: 0.000 s
 </pre></div>
 </div>
@@ -1013,88 +1021,12 @@ Total time spent for parallel calculation (16 workers): 2.608 s
   C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
   val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
-  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
@@ -1105,20 +1037,8 @@ Total time spent for parallel calculation (16 workers): 2.608 s
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
-  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
@@ -1127,6 +1047,14 @@ Total time spent for parallel calculation (16 workers): 2.608 s
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
@@ -1147,14 +1075,62 @@ Total time spent for parallel calculation (16 workers): 2.608 s
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:498: RuntimeWarning: invalid value encountered in divide
   I_total = np.sqrt((2 / 3) * k_total) / average_u_i
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
-  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
@@ -1163,6 +1139,22 @@ Total time spent for parallel calculation (16 workers): 2.608 s
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
   sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:328: RuntimeWarning: invalid value encountered in divide
+  val = 2 * (avg_v - v_core) / (v_top + v_bottom)
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
@@ -1175,6 +1167,22 @@ Total time spent for parallel calculation (16 workers): 2.608 s
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
   C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_deflection/gauss.py:163: RuntimeWarning: invalid value encountered in divide
+  C0 = 1 - u0 / freestream_velocity
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
+  sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/core/wake_velocity/gauss.py:80: RuntimeWarning: invalid value encountered in divide
@@ -1190,9 +1198,9 @@ Total time spent for parallel calculation (16 workers): 2.608 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>===============================================================================
-Total time spent for parallel calculation (16 workers): 2.453 s
+Total time spent for parallel calculation (16 workers): 2.319 s
   Time spent in parallel preprocessing: 0.025 s
-  Time spent in parallel loop execution: 2.428 s.
+  Time spent in parallel loop execution: 2.294 s.
   Time spent in parallel postprocessing: 0.000 s
 Baseline AEP: 75.48 GWh.
 Optimal AEP: 76.18 GWh.

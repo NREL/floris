@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
@@ -407,6 +408,13 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -1594,6 +1602,8 @@ document.write(`
       </ul></li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_expected_farm_value">get_expected_farm_value() (floris.floris_model.FlorisModel method)</a>
 </li>
+      <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_expected_turbine_powers">get_expected_turbine_powers() (floris.floris_model.FlorisModel method)</a>
+</li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_farm_AEP">get_farm_AEP() (floris.floris_model.FlorisModel method)</a>
 
       <ul>
@@ -1612,6 +1622,8 @@ document.write(`
         <li><a href="_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power">(floris.uncertain_floris_model.UncertainFlorisModel method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose">get_heterogeneous_wind_rose() (floris.wind_data.WindRoseWRG method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_operation_model">get_operation_model() (floris.floris_model.FlorisModel method)</a>
@@ -1643,6 +1655,8 @@ document.write(`
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_turbine_TIs">get_turbine_TIs() (floris.floris_model.FlorisModel method)</a>
 </li>
       <li><a href="_autosummary/floris.layout_visualization.html#floris.layout_visualization.get_wake_direction">get_wake_direction() (in module floris.layout_visualization)</a>
+</li>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.get_wind_rose_at_point">get_wind_rose_at_point() (floris.wind_data.WindRoseWRG method)</a>
 </li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.Grid">Grid (class in floris.core.grid)</a>
 </li>
@@ -2149,6 +2163,8 @@ document.write(`
       </ul></li>
       <li><a href="_autosummary/floris.layout_visualization.html#floris.layout_visualization.plot_waking_directions">plot_waking_directions() (in module floris.layout_visualization)</a>
 </li>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.plot_wind_roses">plot_wind_roses() (floris.wind_data.WindRoseWRG method)</a>
+</li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.PointsGrid.points_x">points_x (floris.core.grid.PointsGrid attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.PointsGrid.points_y">points_y (floris.core.grid.PointsGrid attribute)</a>
@@ -2255,6 +2271,8 @@ document.write(`
         <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindTIRose.read_csv_long">(floris.wind_data.WindTIRose static method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.read_wrg_file">read_wrg_file() (floris.wind_data.WindRoseWRG method)</a>
+</li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.ref_tilts">ref_tilts (floris.core.farm.Farm attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.ref_tilts_sorted">ref_tilts_sorted (floris.core.farm.Farm attribute)</a>
@@ -2293,10 +2311,10 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_diameter_dependencies">reset_rotor_diameter_dependencies() (floris.core.turbine.turbine.Turbine method)</a>
 </li>
-      <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_radius">reset_rotor_radius() (floris.core.turbine.turbine.Turbine method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_radius">reset_rotor_radius() (floris.core.turbine.turbine.Turbine method)</a>
+</li>
       <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.reverse_cut_plane_x_axis_in_plot">reverse_cut_plane_x_axis_in_plot() (in module floris.flow_visualization)</a>
 </li>
       <li><a href="_autosummary/floris.utilities.html#floris.utilities.reverse_rotate_coordinates_rel_west">reverse_rotate_coordinates_rel_west() (in module floris.utilities)</a>
@@ -2393,6 +2411,12 @@ document.write(`
         <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.TurbineGrid.set_grid">(floris.core.grid.TurbineGrid method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindDataBase.set_layout">set_layout() (floris.wind_data.WindDataBase method)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_layout">(floris.wind_data.WindRoseWRG method)</a>
+</li>
+      </ul></li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.set_operation">set_operation() (floris.floris_model.FlorisModel method)</a>
 </li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.set_operation_model">set_operation_model() (floris.floris_model.FlorisModel method)</a>
@@ -2405,12 +2429,18 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.set_power_setpoints_to_ref_power">set_power_setpoints_to_ref_power() (floris.core.farm.Farm method)</a>
 </li>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_ti_table">set_ti_table() (floris.wind_data.WindRoseWRG method)</a>
+</li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.set_tilt_to_ref_tilt">set_tilt_to_ref_tilt() (floris.core.farm.Farm method)</a>
 </li>
-      <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.set_xlim">set_xlim() (floris.flow_visualization.VelocityProfilesFigure method)</a>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_wd_step">set_wd_step() (floris.wind_data.WindRoseWRG method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_wind_speeds">set_wind_speeds() (floris.wind_data.WindRoseWRG method)</a>
+</li>
+      <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.set_xlim">set_xlim() (floris.flow_visualization.VelocityProfilesFigure method)</a>
+</li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.set_yaw_angles">set_yaw_angles() (floris.core.farm.Farm method)</a>
 </li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.set_yaw_angles_to_ref_yaw">set_yaw_angles_to_ref_yaw() (floris.core.farm.Farm method)</a>
@@ -2638,6 +2668,8 @@ document.write(`
 </li>
         <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRose.unpack">(floris.wind_data.WindRose method)</a>
 </li>
+        <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.unpack">(floris.wind_data.WindRoseWRG method)</a>
+</li>
         <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindTIRose.unpack">(floris.wind_data.WindTIRose method)</a>
 </li>
       </ul></li>
@@ -2774,6 +2806,8 @@ document.write(`
       <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindDataBase">WindDataBase (class in floris.wind_data)</a>
 </li>
       <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRose">WindRose (class in floris.wind_data)</a>
+</li>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG">WindRoseWRG (class in floris.wind_data)</a>
 </li>
       <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindTIRose">WindTIRose (class in floris.wind_data)</a>
 </li>

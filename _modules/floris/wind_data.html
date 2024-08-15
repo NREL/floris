@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -408,6 +409,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
+</ul>
 
     </div>
 </nav></div>
@@ -559,15 +567,21 @@ document.write(`
   <h1>Source code for floris.wind_data</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="kn">import</span> <span class="n">CategoricalDtype</span>
-<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">LinearNDInterpolator</span><span class="p">,</span> <span class="n">NearestNDInterpolator</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LinearNDInterpolator</span><span class="p">,</span>
+    <span class="n">NearestNDInterpolator</span><span class="p">,</span>
+    <span class="n">RegularGridInterpolator</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">floris.heterogeneous_map</span> <span class="kn">import</span> <span class="n">HeterogeneousMap</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
@@ -661,6 +675,24 @@ document.write(`
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;heterogeneous_inflow_config must contain a key &#39;x&#39;&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="s2">&quot;y&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">heterogeneous_inflow_config</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;heterogeneous_inflow_config must contain a key &#39;y&#39;&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WindDataBase.set_layout">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindDataBase.set_layout">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layout_y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Default implementation the explicitly does nothing.  Only WindData objects that depend</span>
+<span class="sd">        on layout need to implement this method.</span>
+
+<span class="sd">        Included so that FlorisModel can call this method on the WindData object when the layout</span>
+<span class="sd">        is updated.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            layout_x (list, optional): List of x-coordinates of the turbines. Defaults to None.</span>
+<span class="sd">            layout_y (list, optional): List of y-coordinates of the turbines. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># No operation performed</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 </div>
 
 
@@ -3347,6 +3379,707 @@ document.write(`
             <span class="n">freq_table</span><span class="p">,</span>
             <span class="n">value_table</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="WindRoseWRG">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG">[docs]</a>
+<span class="k">class</span> <span class="nc">WindRoseWRG</span><span class="p">(</span><span class="n">WindDataBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The WindRoseWRG class is a WindData object the represents a wind resource grid (WRG) file</span>
+<span class="sd">    to FLORIS.  As a WindData object it can be passed to the FlorisModel.set method.  A WRG file</span>
+<span class="sd">    represents a wind resource as a grid of points where each point has a separate wind rose define</span>
+<span class="sd">    by the frequency of each wind direction and the Weibull parameters for each wind direction.</span>
+
+<span class="sd">    WindRoseWRG objects are provided the layout of a wind farm and computes a wind rose at</span>
+<span class="sd">    each point in the layout.  The wind rose at each point is computed by interpolating the weibull</span>
+<span class="sd">    parameter in the WRG file to the point in the layout and using them to compute a WindRose</span>
+<span class="sd">    object.  Each WindRose object shares wind direction and wind speed, only the frequencies differ.</span>
+
+<span class="sd">    When running a FlorisModel with a WindRoseWRG object, most behaviors are the same</span>
+<span class="sd">    except functions which compute an expected value, use separate frequencies for each</span>
+<span class="sd">    turbine to weight the individual power bins.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): The name of the WRG file to read.</span>
+<span class="sd">        wd_step (float, optional): Step size to use resampling the wind directions given by the WRG</span>
+<span class="sd">            file. If None, wd_step and wind_directions are set by the number of</span>
+<span class="sd">            sectors in the WRG file.   Defaults to None.</span>
+<span class="sd">        wind_speeds (NDArrayFloat, optional): Wind speeds to use in the wind rose. Defaults to</span>
+<span class="sd">            np.arange(0.0, 26.0, 1.0).</span>
+<span class="sd">        ti_table (float, optional): Turbulence intensities table to use for each WindRose object.</span>
+<span class="sd">            As in the WindRose ti_table, this can be a single value or an array of values.  If an</span>
+<span class="sd">            array of values is provided, it must be (len(wind_directions) x len(wind_speeds)).</span>
+<span class="sd">            Defaults to 0.06.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">26.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">ti_table</span><span class="o">=</span><span class="mf">0.06</span>
+    <span class="p">):</span>
+        <span class="c1"># Read in the WRG file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_wrg_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># If wd_step is None, then use the wind directions in the WRG file</span>
+        <span class="k">if</span> <span class="n">wd_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wd_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="n">wd_step</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wd_step</span> <span class="o">=</span> <span class="n">wd_step</span>
+
+        <span class="c1"># Initialize the layouts which will need to be specified</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout_y</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Save the wind speeds and ti_table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">wind_speeds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ti_table</span> <span class="o">=</span> <span class="n">ti_table</span>
+
+        <span class="c1"># Initialize the flat arrays, these will depend on the specified wind speeds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wd_flat</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ws_flat</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_zero_freq_mask</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="WindRoseWRG.read_wrg_file">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.read_wrg_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_wrg_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read the contents of a WRG file and store the data in the object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): The name of the WRG file to read.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Read the file into data</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+        <span class="c1"># Read the header</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+
+        <span class="c1"># The grid of points is implied by the values above</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span>
+
+        <span class="c1"># The number of grid points (n_gid) is the product of the number of points in x and y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span>
+
+        <span class="c1"># Finally get the number of sectors from the first line after the header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">70</span><span class="p">:</span><span class="mi">72</span><span class="p">])</span>
+
+        <span class="c1"># The wind directions are implied by the number of sectors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="mf">360.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the data arrays which have the same number of</span>
+        <span class="c1"># elements as the number of grid points</span>
+        <span class="n">x_gid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">)</span>
+        <span class="n">y_gid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">)</span>
+        <span class="n">z_gid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">)</span>
+        <span class="n">h_gid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the data arrays which are n_gid x n_sectors</span>
+        <span class="n">sector_freq_gid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">))</span>
+        <span class="n">weibull_A_gid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">))</span>
+        <span class="n">weibull_k_gid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">))</span>
+
+        <span class="c1"># Loop through the data and extract the values</span>
+        <span class="k">for</span> <span class="n">gid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gid</span><span class="p">]</span>
+            <span class="n">x_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">])</span>
+            <span class="n">y_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">])</span>
+            <span class="n">z_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">38</span><span class="p">])</span>
+            <span class="n">h_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">38</span><span class="p">:</span><span class="mi">43</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">sector</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">):</span>
+                <span class="c1"># The frequency of the wind in this sector is in probablility * 1000</span>
+                <span class="n">sector_freq_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">,</span> <span class="n">sector</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">72</span> <span class="o">+</span> <span class="n">sector</span> <span class="o">*</span> <span class="mi">13</span> <span class="p">:</span> <span class="mi">76</span> <span class="o">+</span> <span class="n">sector</span> <span class="o">*</span> <span class="mi">13</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1000.0</span>
+                <span class="p">)</span>
+
+                <span class="c1"># The A and k parameters are in the next 10 characters, with A stored * 10</span>
+                <span class="c1"># and k stored * 100</span>
+                <span class="n">weibull_A_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">,</span> <span class="n">sector</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">76</span> <span class="o">+</span> <span class="n">sector</span> <span class="o">*</span> <span class="mi">13</span> <span class="p">:</span> <span class="mi">80</span> <span class="o">+</span> <span class="n">sector</span> <span class="o">*</span> <span class="mi">13</span><span class="p">])</span> <span class="o">/</span> <span class="mf">10.0</span>
+                <span class="n">weibull_k_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">,</span> <span class="n">sector</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">80</span> <span class="o">+</span> <span class="n">sector</span> <span class="o">*</span> <span class="mi">13</span> <span class="p">:</span> <span class="mi">85</span> <span class="o">+</span> <span class="n">sector</span> <span class="o">*</span> <span class="mi">13</span><span class="p">])</span> <span class="o">/</span> <span class="mf">100.0</span>
+                <span class="p">)</span>
+        <span class="c1"># Save the x_gid and y_gid form for iteration in het map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_gid</span> <span class="o">=</span> <span class="n">x_gid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_gid</span> <span class="o">=</span> <span class="n">y_gid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weibull_A_gid</span> <span class="o">=</span> <span class="n">weibull_A_gid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weibull_k_gid</span> <span class="o">=</span> <span class="n">weibull_k_gid</span>
+
+        <span class="c1"># Save a single value of z and h for the entire grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z_gid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h_gid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Index the by sector data by x and y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sector_freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weibull_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weibull_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">x_idx</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_array</span><span class="p">):</span>
+                <span class="c1"># Find the indices when x_gid and y_gid are equal to x and y</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">x_gid</span> <span class="o">==</span> <span class="n">x</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">y_gid</span> <span class="o">==</span> <span class="n">y</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="c1"># Assign the data to the correct location</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sector_freq</span><span class="p">[</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">sector_freq_gid</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">weibull_A</span><span class="p">[</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">weibull_A_gid</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">weibull_k</span><span class="p">[</span><span class="n">x_idx</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">weibull_k_gid</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># Build the interpolant function lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_sector_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_interpolant_function_list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sector_freq</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_weibull_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_interpolant_function_list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weibull_A</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_weibull_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_interpolant_function_list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weibull_k</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string representation of the WindRose object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;WindResourceGrid with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="si">}</span><span class="s2"> x </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="si">}</span><span class="s2"> grid points, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;min x: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="si">}</span><span class="s2">, min y: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="si">}</span><span class="s2">, grid size: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;z: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="si">}</span><span class="s2">, h: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="si">}</span><span class="s2"> sectors</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Wind directions in file: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Wind directions: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Wind speeds: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ti_table: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ti_table</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_build_interpolant_function_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">n_sectors</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a list of interpolant functions for the data.  It is assumed that the function</span>
+<span class="sd">        should return a list of interpolant functions, length n_sectors.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (np.array): The x values of the data, length nx.</span>
+<span class="sd">            y (np.array): The y values of the data, length ny.</span>
+<span class="sd">            n_sectors (int): The number of sectors.</span>
+<span class="sd">            data (np.array): The data to interpolate, shape (nx, ny, n_sectors).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of interpolant functions, length n_sectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">function_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">sector</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sectors</span><span class="p">):</span>
+            <span class="n">function_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">RegularGridInterpolator</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span>
+                    <span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">sector</span><span class="p">],</span>
+                    <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">function_list</span>
+
+    <span class="k">def</span> <span class="nf">_interpolate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">interpolant_function_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interpolate the data at a given x, y location using the interpolant function list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (float): The x location to interpolate.</span>
+<span class="sd">            y (float): The y location to interpolate.</span>
+<span class="sd">            interpolant_function_list (list): A list of interpolant functions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of interpolated data, length n_sectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Check if x and y are within the bounds of the self.x_array and self.y_array, if</span>
+        <span class="c1"># so use the nearest method, otherwise use the linear method of interpolation</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;nearest&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sector</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolant_function_list</span><span class="p">[</span><span class="n">sector</span><span class="p">]((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_weibull_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the Weibull cumulative distribution function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (np.array): The wind speed values.</span>
+<span class="sd">            a (np.array): The Weibull A parameter values.</span>
+<span class="sd">            k (np.array): The Weibull k parameter values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.array: The cumulative distribution function values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">exponent</span> <span class="o">=</span> <span class="o">-</span><span class="p">((</span><span class="n">x</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span>
+
+        <span class="c1"># Where x is less than 0, the result should be 0</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+        <span class="c1"># Original code from PJ Stanley</span>
+        <span class="c1"># if x &gt;= 0.0:</span>
+        <span class="c1">#     exponent = -(x / a) ** k</span>
+        <span class="c1">#     return 1.0 - np.exp(exponent)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     return 0.0</span>
+
+    <span class="k">def</span> <span class="nf">_generate_wind_speed_frequencies_from_weibull</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the wind speed frequencies from the Weibull parameters.  Use the</span>
+<span class="sd">        cumulative form of the function and calculate the probability of the wind speed</span>
+<span class="sd">        in a given bin via the difference in the cumulative function at the bin edges.</span>
+<span class="sd">        Args:</span>
+
+<span class="sd">            A (np.array): The Weibull A parameter.</span>
+<span class="sd">            k (np.array): The Weibull k parameter.</span>
+<span class="sd">            wind_speeds (np.array): The wind speeds to calculate the frequencies for.</span>
+<span class="sd">                If None, the frequencies are calculated for 0 to 25 m/s in 1 m/s increments.</span>
+<span class="sd">                Default is None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.array: The wind speed frequencies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">wind_speeds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wind_speeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span>
+        <span class="n">ws_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">ws_steps</span><span class="p">,</span> <span class="n">ws_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+           <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;wind_speeds must be equally spaced.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ws_step</span> <span class="o">=</span> <span class="n">ws_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Define the wind speed edges (not half-open interval in np.arange)</span>
+        <span class="n">wind_speed_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+            <span class="n">wind_speeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">ws_step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">ws_step</span><span class="p">,</span> <span class="n">ws_step</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get the cumulative distribution function at the edges</span>
+        <span class="n">cdf_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weibull_cumulative</span><span class="p">(</span><span class="n">wind_speed_edges</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+        <span class="c1"># The frequency is the difference in the cumulative distribution function</span>
+        <span class="c1"># at the edges</span>
+        <span class="c1"># NOTE: The probability mass associated to each discrete wind speed (ws) is taken as the</span>
+        <span class="c1"># cumulative mass under the continuous Weibull distribution from ws - ws_step/2 to</span>
+        <span class="c1"># ws + ws_step/2, where ws_step is the step between the provided wind_speeds.</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">cdf_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">cdf_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Normalize the frequency</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">/</span> <span class="n">freq</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">wind_speeds</span><span class="p">,</span> <span class="n">freq</span>
+
+<div class="viewcode-block" id="WindRoseWRG.get_wind_rose_at_point">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.get_wind_rose_at_point">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_wind_rose_at_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">wind_directions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ti_table</span><span class="o">=</span><span class="mf">0.06</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the wind rose at a given x, y location.  Interpolate the parameters to the point</span>
+<span class="sd">        and then generate the wind rose.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (float): The x location to interpolate.</span>
+<span class="sd">            y (float): The y location to interpolate.</span>
+<span class="sd">            wind_directions (np.array): The wind directions to calculate the frequencies for.</span>
+<span class="sd">                If None, use self.wind_directions.  Default is None.</span>
+<span class="sd">            wind_speeds (np.array): The wind speeds to calculate the frequencies for.</span>
+<span class="sd">                If None, use self.wind_speeds.  Default is None.</span>
+<span class="sd">            ti_table (float): The ti_table to use in the wind rose.</span>
+<span class="sd">                Default is 0.06.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">wind_speeds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wind_speeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span>
+
+        <span class="c1"># If wind directions is None, use the values stored</span>
+        <span class="k">if</span> <span class="n">wind_directions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wind_directions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span>
+            <span class="n">wd_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_step</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Calculate wd_step for these directions</span>
+            <span class="n">wd_step</span> <span class="o">=</span> <span class="n">wind_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wind_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Get the interpolated data</span>
+        <span class="n">sector_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolate_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_sector_freq</span><span class="p">)</span>
+        <span class="n">weibull_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolate_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_weibull_A</span><span class="p">)</span>
+        <span class="n">weibull_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolate_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_weibull_k</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the freq_table</span>
+        <span class="n">freq_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">wind_speeds</span><span class="p">)))</span>
+
+        <span class="c1"># First fill in the rows of the table using the weibull distributions,</span>
+        <span class="c1"># weighted by the sector freq</span>
+        <span class="k">for</span> <span class="n">sector</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">):</span>
+            <span class="n">wind_speeds</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_wind_speed_frequencies_from_weibull</span><span class="p">(</span>
+                <span class="n">weibull_A</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="n">weibull_k</span><span class="p">[</span><span class="n">sector</span><span class="p">],</span> <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span>
+            <span class="p">)</span>
+            <span class="n">freq_table</span><span class="p">[</span><span class="n">sector</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">sector_freq</span><span class="p">[</span><span class="n">sector</span><span class="p">]</span> <span class="o">*</span> <span class="n">freq</span>
+
+        <span class="c1"># Normalize the table</span>
+        <span class="n">freq_table</span> <span class="o">=</span> <span class="n">freq_table</span> <span class="o">/</span> <span class="n">freq_table</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="c1"># First build the wind rose using the wind directions in the wrg file</span>
+        <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">WindRose</span><span class="p">(</span>
+            <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span><span class="p">,</span>
+            <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+            <span class="n">freq_table</span><span class="o">=</span><span class="n">freq_table</span><span class="p">,</span>
+            <span class="n">ti_table</span><span class="o">=</span><span class="n">ti_table</span><span class="p">,</span>
+            <span class="n">compute_zero_freq_occurrence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Now upsample or downsample the wind rose to the specified wind directions</span>
+        <span class="k">if</span> <span class="n">wd_step</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="c1"># If the wind directions are the same, return the wind rose</span>
+            <span class="k">return</span> <span class="n">wind_rose</span>
+        <span class="k">elif</span> <span class="n">wd_step</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="c1"># If the wind directions are smaller, upsample</span>
+            <span class="k">return</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">upsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If the wind directions are larger, downsample</span>
+            <span class="k">return</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">downsample</span><span class="p">(</span><span class="n">wd_step</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WindRoseWRG.set_wd_step">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_wd_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_wd_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_step</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the wind directions for the WindRoseWRG object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            wind_directions (np.array): The wind directions to use for the wind roses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">,</span> <span class="n">wd_step</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wd_step</span> <span class="o">=</span> <span class="n">wd_step</span>
+
+        <span class="c1"># Update the wind roses if the layout has been set</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_wind_roses</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="WindRoseWRG.set_wind_speeds">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_wind_speeds">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_wind_speeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the wind speeds for the WindRoseWRG object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            wind_speeds (np.array): The wind speeds to use for the wind roses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">wind_speeds</span>
+
+        <span class="c1"># Update the wind roses if the layout has been set</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_wind_roses</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="WindRoseWRG.set_ti_table">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_ti_table">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_ti_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ti_table</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the fixed turbulence intensity value for the WindRoseWRG object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ti_table (float): The ti_table value to use in the wind roses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ti_table</span> <span class="o">=</span> <span class="n">ti_table</span>
+
+        <span class="c1"># Update the wind roses if the layout has been set</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_wind_roses</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="WindRoseWRG.set_layout">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_layout">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout_x</span><span class="p">,</span> <span class="n">layout_y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the layout for the WindRoseWRG object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            layout_x (np.array): The x coordinates of the layout.</span>
+<span class="sd">            layout_y (np.array): The y coordinates of the layout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Confirm that layout_x, layout_y, and wind_roses are the same length</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">layout_x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">layout_y</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;layout_x and layout_y must be the same length&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If the current layout is the same as the new layout, return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">layout_x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">layout_y</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_y</span>
+            <span class="p">):</span>
+                <span class="k">return</span>
+
+        <span class="c1"># Save the layouts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">layout_x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">layout_y</span><span class="p">)</span>
+
+        <span class="c1"># Update the wind roses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_wind_roses</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_update_wind_roses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Initialize the list of wind roses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Loop through the turbines and get the wind rose at each location</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span><span class="p">)):</span>
+            <span class="n">wind_rose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wind_rose_at_point</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">layout_y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+                <span class="n">wind_speeds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
+                <span class="n">ti_table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ti_table</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wind_rose</span><span class="p">)</span>
+
+        <span class="c1"># Save also the wd_flat and ws_flat from the first wind rose as this could be needed</span>
+        <span class="c1"># for unpacking and non_zero_freq_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wd_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wd_flat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ws_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ws_flat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_zero_freq_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">non_zero_freq_mask</span>
+
+<div class="viewcode-block" id="WindRoseWRG.unpack">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.unpack">[docs]</a>
+    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Implement the unpack method for WindRoseByTurbine by</span>
+<span class="sd">        calling the unpack method for each of the WindRose objects in wind_roses.</span>
+<span class="sd">        Mose of the variables can be passed as is but freq_table_unpack are combined</span>
+<span class="sd">        and stacked along the 1th axis</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple: Tuple containing the unpacked wind rose data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;WindRoseByTurbine must be initialized to a layout before unpacking&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Initialize freq_table_unpack</span>
+        <span class="n">freq_table_unpack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wd_flat</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span><span class="p">)))</span>
+
+        <span class="c1"># Loop over remaining wind roses and stack freq_table_unpack</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">wind_rose</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span><span class="p">):</span>
+            <span class="p">(</span>
+                <span class="n">wind_directions_unpack</span><span class="p">,</span>
+                <span class="n">wind_speeds_unpack</span><span class="p">,</span>
+                <span class="n">ti_table_unpack</span><span class="p">,</span>
+                <span class="n">freq_table_unpack_0</span><span class="p">,</span>
+                <span class="n">value_table_unpack</span><span class="p">,</span>
+                <span class="n">heterogeneous_inflow_config</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">unpack</span><span class="p">()</span>
+            <span class="n">freq_table_unpack</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq_table_unpack_0</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">wind_directions_unpack</span><span class="p">,</span>
+            <span class="n">wind_speeds_unpack</span><span class="p">,</span>
+            <span class="n">ti_table_unpack</span><span class="p">,</span>
+            <span class="n">freq_table_unpack</span><span class="p">,</span>
+            <span class="n">value_table_unpack</span><span class="p">,</span>
+            <span class="n">heterogeneous_inflow_config</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WindRoseWRG.plot_wind_roses">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.plot_wind_roses">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_wind_roses</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">axarr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the wind roses for each turbine in the WindRoseByTurbine object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            axarr (NDArrayAxes, optional): Array of axes to plot the wind roses on.</span>
+<span class="sd">                Defaults to None.  Must have length equal to the number of wind roses.</span>
+<span class="sd">            wd_step (float, optional): Step size for wind direction. Defaults to None.</span>
+<span class="sd">            ws_step (float, optional): Step size for wind speed. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;WindRoseByTurbine must be initialized to a layout before plotting&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If axarr is not defined, create a new figure</span>
+        <span class="k">if</span> <span class="n">axarr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">axarr</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span><span class="p">),</span> <span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;polar&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+        <span class="c1"># Test that axarr is the correct length</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">axarr</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;axarr must have the same length as the number of wind roses&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Plot the wind roses for each turbine</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">wind_rose</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wind_roses</span><span class="p">):</span>
+            <span class="n">wind_rose</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wd_step</span><span class="o">=</span><span class="n">wd_step</span><span class="p">,</span> <span class="n">ws_step</span><span class="o">=</span><span class="n">ws_step</span><span class="p">)</span>
+            <span class="n">axarr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Turbine </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">\n</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">layout_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">layout_y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WindRoseWRG.get_heterogeneous_wind_rose">
+<a class="viewcode-back" href="../../_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_heterogeneous_wind_rose</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fmodel</span><span class="p">,</span>
+        <span class="n">wind_speeds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">x_loc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">y_loc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">representative_wind_speed</span><span class="o">=</span><span class="mf">8.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the heterogeneous map at each location in the grid, with the speeds ups</span>
+<span class="sd">        defined relative the location indicated by gid_norm_index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fmodel (FlorisModel): The FlorisModel object to use to generate the power curve.</span>
+<span class="sd">            wind_speeds (np.array): The wind speeds to calculate the frequencies for.</span>
+<span class="sd">                Default is np.arange(0.0, 25.0, 1.0).</span>
+<span class="sd">            gid_norm_index (int): The index of the turbine to normalize the speed ups to.</span>
+<span class="sd">                Default is 0.</span>
+<span class="sd">            representative_wind_speed (float): The representative wind speed to use</span>
+<span class="sd">                in the power curve.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HeterogeneousMap: The heterogeneous map object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">############################</span>
+        <span class="c1"># Compute the power curve for combining the wind speeds</span>
+        <span class="c1">############################</span>
+
+        <span class="k">if</span> <span class="n">wind_speeds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wind_speeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span>
+
+        <span class="c1"># Get a local copy</span>
+        <span class="n">fm</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fmodel</span><span class="p">)</span>
+
+        <span class="c1"># Get the power curve for the turbine</span>
+        <span class="c1"># TODO: Maybe the power curve could be directly extracted</span>
+        <span class="n">fm</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">wind_data</span><span class="o">=</span><span class="n">TimeSeries</span><span class="p">(</span>
+                <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+                <span class="n">wind_directions</span><span class="o">=</span><span class="mf">270.0</span><span class="p">,</span>
+                <span class="n">turbulence_intensities</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">fm</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">turbine_power</span> <span class="o">=</span> <span class="n">fm</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="c1">############################</span>
+        <span class="c1"># Identify the point on the original wrg grid closest to the x_loc and y_loc</span>
+        <span class="c1">############################</span>
+
+        <span class="k">if</span> <span class="n">x_loc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">y_loc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Simply use the first point</span>
+            <span class="n">gid_reference</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Find the closest point</span>
+            <span class="n">gid_reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">x_gid</span> <span class="o">-</span> <span class="n">x_loc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_gid</span> <span class="o">-</span> <span class="n">y_loc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Assign x_loc and y_loc to this point</span>
+        <span class="n">x_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_gid</span><span class="p">[</span><span class="n">gid_reference</span><span class="p">]</span>
+        <span class="n">y_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_gid</span><span class="p">[</span><span class="n">gid_reference</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using point </span><span class="si">{</span><span class="n">gid_reference</span><span class="si">}</span><span class="s2"> at (</span><span class="si">{</span><span class="n">x_loc</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_loc</span><span class="si">}</span><span class="s2">) as reference location&quot;</span><span class="p">)</span>
+
+        <span class="c1">############################</span>
+        <span class="c1"># Get the wind rose at this point</span>
+        <span class="c1">############################</span>
+        <span class="n">wind_rose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wind_rose_at_point</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">x_loc</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">y_loc</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Subset to the representative wind speed</span>
+
+        <span class="c1"># Check the represenative_wind_speed is valid</span>
+        <span class="k">if</span> <span class="n">representative_wind_speed</span> <span class="ow">in</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">:</span>
+            <span class="n">ws_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">wind_rose</span><span class="o">.</span><span class="n">wind_speeds</span> <span class="o">==</span> <span class="n">representative_wind_speed</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;representative_wind_speed must be in original set&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create a new wind rose with only the specified wind speeds</span>
+        <span class="n">wind_rose</span> <span class="o">=</span> <span class="n">WindRose</span><span class="p">(</span>
+            <span class="n">wind_rose</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+            <span class="n">wind_rose</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">[</span><span class="n">ws_idx</span><span class="p">],</span>
+            <span class="n">wind_rose</span><span class="o">.</span><span class="n">ti_table</span><span class="p">[:,</span> <span class="n">ws_idx</span><span class="p">],</span>
+            <span class="n">wind_rose</span><span class="o">.</span><span class="n">freq_table</span><span class="p">[:,</span> <span class="n">ws_idx</span><span class="p">],</span>
+            <span class="n">wind_rose</span><span class="o">.</span><span class="n">value_table</span><span class="p">[:,</span> <span class="n">ws_idx</span><span class="p">]</span> <span class="k">if</span> <span class="n">wind_rose</span><span class="o">.</span><span class="n">value_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">wind_rose</span><span class="o">.</span><span class="n">compute_zero_freq_occurrence</span><span class="p">,</span>
+            <span class="n">wind_rose</span><span class="o">.</span><span class="n">heterogeneous_map</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1">############################</span>
+        <span class="c1"># Calculate speed multipliers</span>
+        <span class="c1">############################</span>
+
+        <span class="n">speed_multipliers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">direction_sector</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sectors</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">gid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gid</span><span class="p">):</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_wind_speed_frequencies_from_weibull</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">weibull_A_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">,</span> <span class="n">direction_sector</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">weibull_k_gid</span><span class="p">[</span><span class="n">gid</span><span class="p">,</span> <span class="n">direction_sector</span><span class="p">],</span>
+                    <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_speeds</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Record the expected power</span>
+                <span class="n">speed_multipliers</span><span class="p">[</span><span class="n">direction_sector</span><span class="p">,</span> <span class="n">gid</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_power</span> <span class="o">*</span> <span class="n">freq</span><span class="p">)</span>
+
+            <span class="c1"># Normalize the speed ups</span>
+            <span class="n">speed_multipliers</span><span class="p">[</span><span class="n">direction_sector</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">speed_multipliers</span><span class="p">[</span><span class="n">direction_sector</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="o">/</span> <span class="n">speed_multipliers</span><span class="p">[</span><span class="n">direction_sector</span><span class="p">,</span> <span class="n">gid_reference</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Take the cube root of the speed ups to place in the frame of wind speed ups</span>
+        <span class="n">speed_multipliers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">speed_multipliers</span><span class="p">)</span>
+
+        <span class="c1"># Create the heterogeneous map</span>
+        <span class="n">heterogeneous_map</span> <span class="o">=</span> <span class="n">HeterogeneousMap</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_gid</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_gid</span><span class="p">,</span>
+            <span class="n">wind_directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wind_directions_wrg_file</span><span class="p">,</span>
+            <span class="n">speed_multipliers</span><span class="o">=</span><span class="n">speed_multipliers</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Return the wind rose with the heterogeneous map</span>
+        <span class="k">return</span> <span class="n">WindRose</span><span class="p">(</span>
+            <span class="n">wind_directions</span><span class="o">=</span><span class="n">wind_rose</span><span class="o">.</span><span class="n">wind_directions</span><span class="p">,</span>
+            <span class="n">wind_speeds</span><span class="o">=</span><span class="n">wind_rose</span><span class="o">.</span><span class="n">wind_speeds</span><span class="p">,</span>
+            <span class="n">freq_table</span><span class="o">=</span><span class="n">wind_rose</span><span class="o">.</span><span class="n">freq_table</span><span class="p">,</span>
+            <span class="n">ti_table</span><span class="o">=</span><span class="n">wind_rose</span><span class="o">.</span><span class="n">ti_table</span><span class="p">,</span>
+            <span class="n">heterogeneous_map</span><span class="o">=</span><span class="n">heterogeneous_map</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 

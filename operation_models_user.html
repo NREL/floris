@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -204,6 +204,7 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
@@ -408,6 +409,13 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -710,8 +718,8 @@ We also describe the different parameters that must be specified in the turbine
 cosine-loss operation model powers [kW]:  [[1561.31837381  778.04338242  651.77709894]]
 </pre></div>
 </div>
-<img alt="_images/0102228fc4d1c29f42037e7f4db8a496b38ca35935712450fa759816c3c56400.png" src="_images/0102228fc4d1c29f42037e7f4db8a496b38ca35935712450fa759816c3c56400.png" />
-<img alt="_images/01fe275a1ad6d1c35be00e69f0e38273f4db4bffd5ede7fff84e614a02c9dc05.png" src="_images/01fe275a1ad6d1c35be00e69f0e38273f4db4bffd5ede7fff84e614a02c9dc05.png" />
+<img alt="_images/e3a49bb7b334d3b694beaf5445827141e52f1324328c447e1c5f244339685ece.png" src="_images/e3a49bb7b334d3b694beaf5445827141e52f1324328c447e1c5f244339685ece.png" />
+<img alt="_images/3925461dff180d822dcb033865231582920643308d4f4b57494e8fd7ef5da944.png" src="_images/3925461dff180d822dcb033865231582920643308d4f4b57494e8fd7ef5da944.png" />
 </div>
 </div>
 </section>
@@ -791,7 +799,7 @@ thus vary as a function of the turbine's yaw angle, set using the <code class="d
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/65d7fed50b42ef3500f140e3cbeddb2ce0dc97ddd63109046e6d2a4fd7ae764c.png" src="_images/65d7fed50b42ef3500f140e3cbeddb2ce0dc97ddd63109046e6d2a4fd7ae764c.png" />
+<img alt="_images/83276a797514af536addd8322b8c00878856f690c341347e80fe48fafee60d74.png" src="_images/83276a797514af536addd8322b8c00878856f690c341347e80fe48fafee60d74.png" />
 </div>
 </div>
 </section>
@@ -854,7 +862,7 @@ appropriate entries of <code class="docutils literal notranslate"><span class="p
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/a245154bc8cc03443670d7c3aae86f5c8667917b4bc80b732e355629a37b3dab.png" src="_images/a245154bc8cc03443670d7c3aae86f5c8667917b4bc80b732e355629a37b3dab.png" />
+<img alt="_images/49bc96f03a865d25f407cf894f18cd604e0b332739fe11b0b0c087a61b84aaf9.png" src="_images/49bc96f03a865d25f407cf894f18cd604e0b332739fe11b0b0c087a61b84aaf9.png" />
 </div>
 </div>
 </section>
@@ -1050,7 +1058,7 @@ i.e. the lesser solution to <span class="math notranslate nohighlight">\(C_T=4a(
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/26e4f58ad89b89f66e2e56f1f5fa5a7da87fb30ca2f72baaf6c616d78d277be0.png" src="_images/26e4f58ad89b89f66e2e56f1f5fa5a7da87fb30ca2f72baaf6c616d78d277be0.png" />
+<img alt="_images/52300d1b0d84a03aced2ad260642066d29a4842123967cc70280357fad4962c6.png" src="_images/52300d1b0d84a03aced2ad260642066d29a4842123967cc70280357fad4962c6.png" />
 </div>
 </div>
 </section>

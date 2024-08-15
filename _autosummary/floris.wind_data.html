@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -202,6 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -406,6 +407,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
 </ul>
 
     </div>
@@ -624,6 +632,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_freq"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_freq()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_value"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config"><code class="docutils literal notranslate"><span class="pre">WindDataBase.check_heterogeneous_inflow_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.set_layout"><code class="docutils literal notranslate"><span class="pre">WindDataBase.set_layout()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRose"><code class="docutils literal notranslate"><span class="pre">WindRose</span></code></a><ul class="nav section-nav flex-column">
@@ -666,6 +675,18 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.TimeSeries.to_WindTIRose"><code class="docutils literal notranslate"><span class="pre">TimeSeries.to_WindTIRose()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.read_wrg_file"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.read_wrg_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.get_wind_rose_at_point"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.get_wind_rose_at_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.set_wd_step"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.set_wd_step()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.set_wind_speeds"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.set_wind_speeds()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.set_ti_table"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.set_ti_table()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.set_layout"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.set_layout()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.unpack"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.unpack()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.plot_wind_roses"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.plot_wind_roses()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.get_heterogeneous_wind_rose()</span></code></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -691,7 +712,10 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#floris.wind_data.WindRose" title="floris.wind_data.WindRose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WindRose</span></code></a>(wind_directions, wind_speeds, ti_table)</p></td>
 <td><p>The WindRose class is used to drive FLORIS and optimization operations in which the inflow is characterized by the frequency of binned wind speed and wind direction values.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#floris.wind_data.WindTIRose" title="floris.wind_data.WindTIRose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WindTIRose</span></code></a>(wind_directions, wind_speeds, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.wind_data.WindRoseWRG" title="floris.wind_data.WindRoseWRG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WindRoseWRG</span></code></a>(filename[, wd_step, ...])</p></td>
+<td><p>The WindRoseWRG class is a WindData object the represents a wind resource grid (WRG) file to FLORIS.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.wind_data.WindTIRose" title="floris.wind_data.WindTIRose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WindTIRose</span></code></a>(wind_directions, wind_speeds, ...)</p></td>
 <td><p>WindTIRose is similar to the WindRose class, but contains turbulence intensity as an additional wind rose dimension instead of being defined as a function of wind direction and wind speed.</p></td>
 </tr>
 </tbody>
@@ -745,6 +769,20 @@ method.</p>
 </ul>
 </dd>
 </dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindDataBase.set_layout">
+<span class="sig-name descname"><span class="pre">set_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindDataBase.set_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindDataBase.set_layout" title="Link to this definition">#</a></dt>
+<dd><p>Default implementation the explicitly does nothing.  Only WindData objects that depend
+on layout need to implement this method.</p>
+<p>Included so that FlorisModel can call this method on the WindData object when the layout
+is updated.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>layout_x (list, optional): List of x-coordinates of the turbines. Defaults to None.
+layout_y (list, optional): List of y-coordinates of the turbines. Defaults to None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1664,6 +1702,163 @@ Defaults to None.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.wind_data.</span></span><span class="sig-name descname"><span class="pre">WindRoseWRG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">1.,</span> <span class="pre">2.,</span> <span class="pre">3.,</span> <span class="pre">4.,</span> <span class="pre">5.,</span> <span class="pre">6.,</span> <span class="pre">7.,</span> <span class="pre">8.,</span> <span class="pre">9.,</span> <span class="pre">10.,</span> <span class="pre">11.,</span> <span class="pre">12.,</span> <span class="pre">13.,</span> <span class="pre">14.,</span> <span class="pre">15.,</span> <span class="pre">16.,</span> <span class="pre">17.,</span> <span class="pre">18.,</span> <span class="pre">19.,</span> <span class="pre">20.,</span> <span class="pre">21.,</span> <span class="pre">22.,</span> <span class="pre">23.,</span> <span class="pre">24.,</span> <span class="pre">25.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ti_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG" title="Link to this definition">#</a></dt>
+<dd><p>The WindRoseWRG class is a WindData object the represents a wind resource grid (WRG) file
+to FLORIS.  As a WindData object it can be passed to the FlorisModel.set method.  A WRG file
+represents a wind resource as a grid of points where each point has a separate wind rose define
+by the frequency of each wind direction and the Weibull parameters for each wind direction.</p>
+<p>WindRoseWRG objects are provided the layout of a wind farm and computes a wind rose at
+each point in the layout.  The wind rose at each point is computed by interpolating the weibull
+parameter in the WRG file to the point in the layout and using them to compute a WindRose
+object.  Each WindRose object shares wind direction and wind speed, only the frequencies differ.</p>
+<p>When running a FlorisModel with a WindRoseWRG object, most behaviors are the same
+except functions which compute an expected value, use separate frequencies for each
+turbine to weight the individual power bins.</p>
+<dl>
+<dt>Args:</dt><dd><p>filename (str): The name of the WRG file to read.
+wd_step (float, optional): Step size to use resampling the wind directions given by the WRG</p>
+<blockquote>
+<div><p>file. If None, wd_step and wind_directions are set by the number of
+sectors in the WRG file.   Defaults to None.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>wind_speeds (NDArrayFloat, optional): Wind speeds to use in the wind rose. Defaults to</dt><dd><p>np.arange(0.0, 26.0, 1.0).</p>
+</dd>
+<dt>ti_table (float, optional): Turbulence intensities table to use for each WindRose object.</dt><dd><p>As in the WindRose ti_table, this can be a single value or an array of values.  If an
+array of values is provided, it must be (len(wind_directions) x len(wind_speeds)).
+Defaults to 0.06.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.read_wrg_file">
+<span class="sig-name descname"><span class="pre">read_wrg_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.read_wrg_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.read_wrg_file" title="Link to this definition">#</a></dt>
+<dd><p>Read the contents of a WRG file and store the data in the object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>filename (str): The name of the WRG file to read.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.get_wind_rose_at_point">
+<span class="sig-name descname"><span class="pre">get_wind_rose_at_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ti_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.get_wind_rose_at_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.get_wind_rose_at_point" title="Link to this definition">#</a></dt>
+<dd><p>Get the wind rose at a given x, y location.  Interpolate the parameters to the point
+and then generate the wind rose.</p>
+<dl>
+<dt>Args:</dt><dd><p>x (float): The x location to interpolate.
+y (float): The y location to interpolate.
+wind_directions (np.array): The wind directions to calculate the frequencies for.</p>
+<blockquote>
+<div><p>If None, use self.wind_directions.  Default is None.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>wind_speeds (np.array): The wind speeds to calculate the frequencies for.</dt><dd><p>If None, use self.wind_speeds.  Default is None.</p>
+</dd>
+<dt>ti_table (float): The ti_table to use in the wind rose.</dt><dd><p>Default is 0.06.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.set_wd_step">
+<span class="sig-name descname"><span class="pre">set_wd_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wd_step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.set_wd_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.set_wd_step" title="Link to this definition">#</a></dt>
+<dd><p>Set the wind directions for the WindRoseWRG object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>wind_directions (np.array): The wind directions to use for the wind roses.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.set_wind_speeds">
+<span class="sig-name descname"><span class="pre">set_wind_speeds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.set_wind_speeds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.set_wind_speeds" title="Link to this definition">#</a></dt>
+<dd><p>Set the wind speeds for the WindRoseWRG object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>wind_speeds (np.array): The wind speeds to use for the wind roses.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.set_ti_table">
+<span class="sig-name descname"><span class="pre">set_ti_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ti_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.set_ti_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.set_ti_table" title="Link to this definition">#</a></dt>
+<dd><p>Set the fixed turbulence intensity value for the WindRoseWRG object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ti_table (float): The ti_table value to use in the wind roses.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.set_layout">
+<span class="sig-name descname"><span class="pre">set_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.set_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.set_layout" title="Link to this definition">#</a></dt>
+<dd><p>Set the layout for the WindRoseWRG object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>layout_x (np.array): The x coordinates of the layout.
+layout_y (np.array): The y coordinates of the layout.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.unpack">
+<span class="sig-name descname"><span class="pre">unpack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.unpack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.unpack" title="Link to this definition">#</a></dt>
+<dd><p>Implement the unpack method for WindRoseByTurbine by
+calling the unpack method for each of the WindRose objects in wind_roses.
+Mose of the variables can be passed as is but freq_table_unpack are combined
+and stacked along the 1th axis</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Tuple: Tuple containing the unpacked wind rose data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.plot_wind_roses">
+<span class="sig-name descname"><span class="pre">plot_wind_roses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axarr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.plot_wind_roses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.plot_wind_roses" title="Link to this definition">#</a></dt>
+<dd><p>Plot the wind roses for each turbine in the WindRoseByTurbine object.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>axarr (NDArrayAxes, optional): Array of axes to plot the wind roses on.</dt><dd><p>Defaults to None.  Must have length equal to the number of wind roses.</p>
+</dd>
+</dl>
+<p>wd_step (float, optional): Step size for wind direction. Defaults to None.
+ws_step (float, optional): Step size for wind speed. Defaults to None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose">
+<span class="sig-name descname"><span class="pre">get_heterogeneous_wind_rose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmodel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">representative_wind_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/wind_data.html#WindRoseWRG.get_heterogeneous_wind_rose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose" title="Link to this definition">#</a></dt>
+<dd><p>Get the heterogeneous map at each location in the grid, with the speeds ups
+defined relative the location indicated by gid_norm_index.</p>
+<dl>
+<dt>Args:</dt><dd><p>fmodel (FlorisModel): The FlorisModel object to use to generate the power curve.
+wind_speeds (np.array): The wind speeds to calculate the frequencies for.</p>
+<blockquote>
+<div><p>Default is np.arange(0.0, 25.0, 1.0).</p>
+</div></blockquote>
+<dl class="simple">
+<dt>gid_norm_index (int): The index of the turbine to normalize the speed ups to.</dt><dd><p>Default is 0.</p>
+</dd>
+<dt>representative_wind_speed (float): The representative wind speed to use</dt><dd><p>in the power curve.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>HeterogeneousMap: The heterogeneous map object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
     <script type="text/x-thebe-config">
@@ -1736,6 +1931,7 @@ Defaults to None.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_freq"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_freq()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.unpack_value"><code class="docutils literal notranslate"><span class="pre">WindDataBase.unpack_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.check_heterogeneous_inflow_config"><code class="docutils literal notranslate"><span class="pre">WindDataBase.check_heterogeneous_inflow_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindDataBase.set_layout"><code class="docutils literal notranslate"><span class="pre">WindDataBase.set_layout()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRose"><code class="docutils literal notranslate"><span class="pre">WindRose</span></code></a><ul class="nav section-nav flex-column">
@@ -1776,6 +1972,18 @@ Defaults to None.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.TimeSeries.assign_value_piecewise_linear"><code class="docutils literal notranslate"><span class="pre">TimeSeries.assign_value_piecewise_linear()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.TimeSeries.to_WindRose"><code class="docutils literal notranslate"><span class="pre">TimeSeries.to_WindRose()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.TimeSeries.to_WindTIRose"><code class="docutils literal notranslate"><span class="pre">TimeSeries.to_WindTIRose()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.read_wrg_file"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.read_wrg_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.get_wind_rose_at_point"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.get_wind_rose_at_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.set_wd_step"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.set_wd_step()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.set_wind_speeds"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.set_wind_speeds()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.set_ti_table"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.set_ti_table()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.set_layout"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.set_layout()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.unpack"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.unpack()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.plot_wind_roses"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.plot_wind_roses()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose"><code class="docutils literal notranslate"><span class="pre">WindRoseWRG.get_heterogeneous_wind_rose()</span></code></a></li>
 </ul>
 </li>
 </ul>
