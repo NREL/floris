@@ -133,6 +133,26 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     with pytest.raises(ValueError):
         farm = Farm.from_dict(farm_data)
 
+    # Check that no error is raised, and the expected hub heights are seen,
+    # if turbine_type is correctly updated
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    external_library = Path(__file__).parent / "data"
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    turbine_def = load_yaml(external_library / "nrel_5MW_custom.yaml")
+    turbine_def_mod = deepcopy(turbine_def)
+    turbine_def_mod["hub_height"] = 100.0 # Change the hub height of the last turbine
+    turbine_def_mod["turbine_type"] = "nrel_5MW_custom_2"
+    farm_data["turbine_type"] = [turbine_def]*4 + [turbine_def_mod]
+    farm = Farm.from_dict(farm_data)
+    for i in range(4):
+        assert farm.turbine_definitions[i]["hub_height"] == turbine_def["hub_height"]
+    assert farm.turbine_definitions[-1]["hub_height"] == 100.0
+    farm.construct_turbine_map()
+    for i in range(4):
+        assert farm.turbine_map[i].hub_height == turbine_def["hub_height"]
+    assert farm.turbine_map[-1].hub_height == 100.0
+
     # Duplicate type found in external and internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
     external_library = Path(__file__).parent / "data"
