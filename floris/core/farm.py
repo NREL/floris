@@ -139,17 +139,12 @@ class Farm(BaseClass):
         # In other words, if the turbine type is already in the cache, skip that iteration of
         # the for-loop.
 
-        # TODO: How can we give each one a different name, to avoid the issue raised in #864?
         turbine_definition_cache = {}
-        # Is this loop slow if turbine_type is long?
         for t in self.turbine_type:
             # If a turbine type is a dict, then it was either preprocessed by the yaml
             # library to resolve the "!include" or it was set in a script as a dict. In either case,
             # add an entry to the cache
             if isinstance(t, dict):
-                # TODO: If this check was more robust, could avoid needing to change the name of
-                # each turbine. Would then need to update the name somehow to handle the case where
-                # the "turbine_type" key is the same
                 if t["turbine_type"] in turbine_definition_cache:
                     if turbine_definition_cache[t["turbine_type"]] == t:
                         continue # Skip t if already loaded
@@ -305,9 +300,6 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        # The line below is slow and often unnecessary. We should just be loading
-        # each different turbine type, _not_ each turbine.
-        #self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
         turbine_map_unique = {
             k: Turbine.from_dict(v) for k, v in self._turbine_definition_cache.items()
         }
