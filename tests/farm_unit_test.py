@@ -115,6 +115,24 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     assert len(farm.turbine_type) == 5
     assert len(farm.turbine_definitions) == 5
 
+    # Check that error is correctly raised if two turbines have the same name
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    external_library = Path(__file__).parent / "data"
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    turbine_def = load_yaml(external_library / "nrel_5MW_custom.yaml")
+    turbine_def_mod = deepcopy(turbine_def)
+    turbine_def_mod["hub_height"] = 100.0 # Change the hub height of the last turbine
+    farm_data["turbine_type"] = [turbine_def]*4 + [turbine_def_mod]
+    with pytest.raises(ValueError):
+        farm = Farm.from_dict(farm_data)
+    # Check this also raises an error in a nested level of the turbine definition
+    turbine_def_mod = deepcopy(turbine_def)
+    turbine_def_mod["power_thrust_table"]["wind_speed"][-1] = -100.0
+    farm_data["turbine_type"] = [turbine_def]*4 + [turbine_def_mod]
+    with pytest.raises(ValueError):
+        farm = Farm.from_dict(farm_data)
+
     # Duplicate type found in external and internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
     external_library = Path(__file__).parent / "data"

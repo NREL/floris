@@ -151,7 +151,14 @@ class Farm(BaseClass):
                 # each turbine. Would then need to update the name somehow to handle the case where
                 # the "turbine_type" key is the same
                 if t["turbine_type"] in turbine_definition_cache:
-                    continue # Skip t if already loaded
+                    if turbine_definition_cache[t["turbine_type"]] == t:
+                        continue # Skip t if already loaded
+                    else:
+                        raise ValueError(
+                            "Two different turbine definitions have the same name: "\
+                            f"'{t['turbine_type']}'. "\
+                            "Please specify a unique 'turbine_type' for each turbine definition."
+                        )
                 turbine_definition_cache[t["turbine_type"]] = t
 
             # If a turbine type is a string, then it is expected in the internal or external
