@@ -139,14 +139,14 @@ class Farm(BaseClass):
         # In other words, if the turbine type is already in the cache, skip that iteration of
         # the for-loop.
 
-        turbine_definition_cache = {}
+        self._turbine_definition_cache = {}
         for t in self.turbine_type:
             # If a turbine type is a dict, then it was either preprocessed by the yaml
             # library to resolve the "!include" or it was set in a script as a dict. In either case,
             # add an entry to the cache
             if isinstance(t, dict):
-                if t["turbine_type"] in turbine_definition_cache:
-                    if turbine_definition_cache[t["turbine_type"]] == t:
+                if t["turbine_type"] in self._turbine_definition_cache:
+                    if self._turbine_definition_cache[t["turbine_type"]] == t:
                         continue # Skip t if already loaded
                     else:
                         raise ValueError(
@@ -154,12 +154,12 @@ class Farm(BaseClass):
                             f"'{t['turbine_type']}'. "\
                             "Please specify a unique 'turbine_type' for each turbine definition."
                         )
-                turbine_definition_cache[t["turbine_type"]] = t
+                self._turbine_definition_cache[t["turbine_type"]] = t
 
             # If a turbine type is a string, then it is expected in the internal or external
             # turbine library
             if isinstance(t, str):
-                if t in turbine_definition_cache:
+                if t in self._turbine_definition_cache:
                     continue # Skip t if already loaded
 
                 # Check if the file exists in the internal and/or external library
@@ -186,7 +186,7 @@ class Farm(BaseClass):
                         f"The turbine type: {t} does not exist in either the internal or"
                         " external turbine library."
                     )
-                turbine_definition_cache[t] = load_yaml(full_path)
+                self._turbine_definition_cache[t] = load_yaml(full_path)
 
         # Convert any dict entries in the turbine_type list to the type string. Since the
         # definition is saved above, we can make the whole list consistent now to use it
@@ -207,16 +207,13 @@ class Farm(BaseClass):
             self._turbine_types *= self.n_turbines
 
         # Check that turbine definitions contain any v3 keys
-        for _, v in turbine_definition_cache.items():
+        for _, v in self._turbine_definition_cache.items():
             check_turbine_definition_for_v3_keys(v)
 
         # Map each turbine definition to its index in this list
         self.turbine_definitions = [
-            copy.deepcopy(turbine_definition_cache[t]) for t in self._turbine_types
+            copy.deepcopy(self._turbine_definition_cache[t]) for t in self._turbine_types
         ]
-
-        # Save the turbine_definition_cache for faster operation when generating the turbine_map
-        self._turbine_definition_cache = turbine_definition_cache
 
     @layout_x.validator
     def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
