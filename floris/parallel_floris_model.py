@@ -588,6 +588,22 @@ class ParallelFlorisModel(LoggingManager):
 
         return df_opt
 
+    def get_operation_model(self):
+        """Get the operation model of underlying fmodel.
+
+        Returns:
+            str: The operation_model.
+        """
+        return self.fmodel.get_operation_model()
+
+    def set_operation_model(self, operation_model):
+        """Set the operation model of underlying fmodel.
+
+        Args:
+            operation_model (str): The operation model to set.
+        """
+        self.fmodel.set_operation_model(operation_model)
+
     @property
     def layout_x(self):
         return self.fmodel.layout_x
