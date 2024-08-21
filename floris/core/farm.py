@@ -122,7 +122,7 @@ class Farm(BaseClass):
 
     # Private attributes
     _turbine_types: List = field(init=False, validator=iter_validator(list, str))
-    _turbine_definition_cache: dict = field(init=False)
+    _turbine_definition_cache: dict = field(init=False, factory=dict)
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
@@ -139,7 +139,6 @@ class Farm(BaseClass):
         # In other words, if the turbine type is already in the cache, skip that iteration of
         # the for-loop.
 
-        self._turbine_definition_cache = {}
         for t in self.turbine_type:
             # If a turbine type is a dict, then it was either preprocessed by the yaml
             # library to resolve the "!include" or it was set in a script as a dict. In either case,
