@@ -21,7 +21,7 @@ DEFLECTION_MODEL = "gauss"
 def test_parallel_turbine_powers(sample_inputs_fixture):
     """
     The parallel computing interface behaves like the floris interface, but distributes
-    calculations among available cores to speep up the necessary computations. This test compares
+    calculations among available cores to speed up the necessary computations. This test compares
     the individual turbine powers computed with the parallel interface to those computed with
     the serial floris interface. The expected result is that the turbine powers should be
     exactly the same.
