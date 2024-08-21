@@ -18,6 +18,12 @@ def _get_turbine_powers_serial(fmodel_information, yaw_angles=None):
     fmodel.run()
     return (fmodel.get_turbine_powers(), fmodel.core.flow_field)
 
+def _get_turbine_powers_serial_no_wake(fmodel_information, yaw_angles=None):
+    fmodel = FlorisModel(fmodel_information)
+    fmodel.set(yaw_angles=yaw_angles)
+    fmodel.run_no_wake()
+    return (fmodel.get_turbine_powers(), fmodel.core.flow_field)
+
 
 def _optimize_yaw_angles_serial(
     fmodel_information,
@@ -319,20 +325,26 @@ class ParallelFlorisModel(LoggingManager):
             "'get_turbine_powers' or 'get_farm_power' directly."
         )
 
-    def get_turbine_powers(self, yaw_angles=None):
+    def get_turbine_powers(self, yaw_angles=None, no_wake=False):
         # Retrieve multiargs: preprocessing
         t0 = timerpc()
         multiargs = self._preprocessing(yaw_angles)
         t_preparation = timerpc() - t0
 
+        # Set the function based on whether wake is disabled
+        if not no_wake:
+            turbine_power_function = _get_turbine_powers_serial
+        else:
+            turbine_power_function = _get_turbine_powers_serial_no_wake
+
         # Perform parallel calculation
         t1 = timerpc()
         with self._PoolExecutor(self.max_workers) as p:
             if (self.interface == "mpi4py") or (self.interface == "multiprocessing"):
-                out = p.starmap(_get_turbine_powers_serial, multiargs)
+                out = p.starmap(turbine_power_function, multiargs)
             else:
                 out = p.map(
-                    _get_turbine_powers_serial,
+                    turbine_power_function,
                     [j[0] for j in multiargs],
                     [j[1] for j in multiargs]
                 )
@@ -366,7 +378,7 @@ class ParallelFlorisModel(LoggingManager):
 
         return turbine_powers
 
-    def get_farm_power(self, yaw_angles=None, turbine_weights=None):
+    def get_farm_power(self, yaw_angles=None, turbine_weights=None, no_wake=False):
         if turbine_weights is None:
             # Default to equal weighing of all turbines when turbine_weights is None
             turbine_weights = np.ones(
@@ -388,7 +400,7 @@ class ParallelFlorisModel(LoggingManager):
             )
 
         # Calculate all turbine powers and apply weights
-        turbine_powers = self.get_turbine_powers(yaw_angles=yaw_angles)
+        turbine_powers = self.get_turbine_powers(yaw_angles=yaw_angles, no_wake=no_wake)
         turbine_powers = np.multiply(turbine_weights, turbine_powers)
 
         return np.sum(turbine_powers, axis=1)
@@ -442,16 +454,17 @@ class ParallelFlorisModel(LoggingManager):
                 watt-hours.
         """
 
-        # If no_wake==True, ignore parallelization because it's fast enough
-        if no_wake:
-            return self.fmodel.get_farm_AEP(
-                freq=freq,
-                cut_in_wind_speed=cut_in_wind_speed,
-                cut_out_wind_speed=cut_out_wind_speed,
-                yaw_angles=yaw_angles,
-                turbine_weights=turbine_weights,
-                no_wake=no_wake
-            )
+        # This code is out of date, let's just thread it through
+        # # If no_wake==True, ignore parallelization because it's fast enough
+        # if no_wake:
+        #     return self.fmodel.get_farm_AEP(
+        #         freq=freq,
+        #         cut_in_wind_speed=cut_in_wind_speed,
+        #         cut_out_wind_speed=cut_out_wind_speed,
+        #         yaw_angles=yaw_angles,
+        #         turbine_weights=turbine_weights,
+        #         no_wake=no_wake
+        #     )
 
         # Verify dimensions of the variable "freq"
         if ((self._is_uncertain and np.shape(freq)[0] != self._n_unexpanded) or
@@ -488,7 +501,9 @@ class ParallelFlorisModel(LoggingManager):
             )
 
         farm_power = (
-            self.get_farm_power(yaw_angles=yaw_angles, turbine_weights=turbine_weights)
+            self.get_farm_power(yaw_angles=yaw_angles,
+                                turbine_weights=turbine_weights,
+                                  no_wake=no_wake)
         )
 
         # Finally, calculate AEP in GWh
