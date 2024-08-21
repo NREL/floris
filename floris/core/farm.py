@@ -121,7 +121,7 @@ class Farm(BaseClass):
     internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
 
     # Private attributes
-    _turbine_types: List = field(init=False, validator=iter_validator(list, str))
+    _turbine_types: List = field(init=False, validator=iter_validator(list, str), factory=list)
     _turbine_definition_cache: dict = field(init=False, factory=dict)
 
     def __attrs_post_init__(self) -> None:
