@@ -604,6 +604,35 @@ class ParallelFlorisModel(LoggingManager):
         """
         self.fmodel.set_operation_model(operation_model)
 
+        #TODO: Based on set() function above, should we call __init__ here?
+
+    def get_param(self, param, param_idx=None):
+        """Get the parameter of underlying fmodel.
+
+        Args:
+            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            param_idx (Optional[int], optional): The index to get the value at. Defaults to None.
+                If None, the entire parameter is returned.
+
+        Returns:
+            Any: The value of the parameter.
+        """
+        return self.fmodel.get_param(param, param_idx)
+
+    def set_param(self, param, value, param_idx=None):
+        """Set the parameter of underlying fmodel.
+
+        Args:
+            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            value (Any): The value to set.
+            param_idx (Optional[int], optional): The index to set the value at. Defaults to None.
+        """
+        self.fmodel.set_param(param, value, param_idx)
+
+        #TODO: Based on set() function above, should we call __init__ here?
+
+
+
     @property
     def layout_x(self):
         return self.fmodel.layout_x
