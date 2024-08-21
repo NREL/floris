@@ -157,11 +157,52 @@ class ParallelFlorisModel(LoggingManager):
         layout_x=None,
         layout_y=None,
         turbine_type=None,
+        turbine_library_path=None,
         solver_settings=None,
+        heterogeneous_inflow_config=None,
+        wind_data=None,
+        yaw_angles=None,
+        power_setpoints=None,
+        awc_modes=None,
+        awc_amplitudes=None,
+        awc_frequencies=None,
+        disable_turbines=None,
     ):
         """Pass to the FlorisModel set function. To allow users
         to directly replace a FlorisModel object with this
-        UncertainFlorisModel object, this function is required."""
+        UncertainFlorisModel object, this function is required
+
+        Args:
+            wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.
+                Defaults to None.
+            wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each
+                findex. Defaults to None.
+            wind_shear (float | None, optional): Wind shear exponent. Defaults to None.
+            wind_veer (float | None, optional): Wind veer. Defaults to None.
+            reference_wind_height (float | None, optional): Reference wind height. Defaults to None.
+            turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence
+                intensities at each findex. Defaults to None.
+            air_density (float | None, optional): Air density. Defaults to None.
+            layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.
+                Defaults to None.
+            layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.
+                Defaults to None.
+            turbine_type (list | None, optional): Turbine type. Defaults to None.
+            turbine_library_path (str | Path | None, optional): Path to the turbine library.
+                Defaults to None.
+            solver_settings (dict | None, optional): Solver settings. Defaults to None.
+            heterogeneous_inflow_config (None, optional): heterogeneous inflow configuration.
+                Defaults to None.
+            wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
+            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.
+                Defaults to None.
+            power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):
+                Turbine power setpoints.
+            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions
+                n_findex x n_turbines. True values indicate the turbine is disabled at that findex
+                and the power setpoint at that position is set to 0. Defaults to None.
+
+        """
 
         if layout is not None:
             msg = "Use the `layout_x` and `layout_y` parameters in place of `layout` "
@@ -183,7 +224,16 @@ class ParallelFlorisModel(LoggingManager):
             layout_x=layout_x,
             layout_y=layout_y,
             turbine_type=turbine_type,
+            turbine_library_path=turbine_library_path,
             solver_settings=solver_settings,
+            heterogeneous_inflow_config=heterogeneous_inflow_config,
+            wind_data=wind_data,
+            yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
+            awc_modes=awc_modes,
+            awc_amplitudes=awc_amplitudes,
+            awc_frequencies=awc_frequencies,
+            disable_turbines=disable_turbines,
         )
 
         # Reinitialize settings
