@@ -6,6 +6,7 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import List
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -713,7 +714,7 @@ class WindRose(WindDataBase):
         color_map="viridis_r",
         wd_step=None,
         ws_step=None,
-        legend_kwargs={"title": "Wind speed [m/s]"},
+        legend_kwargs={"label": "Wind speed [m/s]"},
     ):
         """
         This method creates a wind rose plot showing the frequency of occurrence
@@ -759,6 +760,8 @@ class WindRose(WindDataBase):
 
         # Get a color array
         color_array = plt.get_cmap(color_map, len(ws_bins))
+        norm_ws = mpl.colors.Normalize(vmin=np.min(ws_bins), vmax=np.max(ws_bins))
+        sm_ws = mpl.cm.ScalarMappable(norm=norm_ws, cmap=color_array)
 
         for wd_idx, wd in enumerate(wd_bins):
             rects = []
@@ -776,7 +779,10 @@ class WindRose(WindDataBase):
                 )
 
         # Configure the plot
-        ax.legend(reversed(rects), ws_bins, **legend_kwargs)
+        # ax.legend(reversed(rects), ws_bins, **legend_kwargs)
+        cb_ws = ax.figure.colorbar(sm_ws, ax=ax, **legend_kwargs)
+        ax.figure.tight_layout()
+        cb_ws.outline.set_visible(False)
         ax.set_theta_direction(-1)
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
