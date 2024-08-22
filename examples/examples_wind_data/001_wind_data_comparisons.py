@@ -56,7 +56,7 @@ wind_rose = time_series.to_WindRose()
 
 # Plot the wind rose
 fig, ax = plt.subplots(subplot_kw={"polar": True})
-wind_rose.plot(ax=ax,legend_kwargs={"title": "WS"})
+wind_rose.plot(ax=ax,legend_kwargs={"label": "WS"})
 fig.suptitle("WindRose Plot")
 
 # Now build a wind rose with turbulence intensity
