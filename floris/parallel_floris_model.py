@@ -604,7 +604,15 @@ class ParallelFlorisModel(LoggingManager):
         """
         self.fmodel.set_operation_model(operation_model)
 
-        #TODO: Based on set() function above, should we call __init__ here?
+        # Reinitialize settings
+        self.__init__(
+            fmodel=self.fmodel,
+            max_workers=self._max_workers,
+            n_wind_condition_splits=self._n_wind_condition_splits,
+            interface=self.interface,
+            propagate_flowfield_from_workers=self.propagate_flowfield_from_workers,
+            print_timings=self.print_timings,
+        )
 
     def get_param(self, param, param_idx=None):
         """Get the parameter of underlying fmodel.
@@ -629,7 +637,15 @@ class ParallelFlorisModel(LoggingManager):
         """
         self.fmodel.set_param(param, value, param_idx)
 
-        #TODO: Based on set() function above, should we call __init__ here?
+        # Reinitialize settings
+        self.__init__(
+            fmodel=self.fmodel,
+            max_workers=self._max_workers,
+            n_wind_condition_splits=self._n_wind_condition_splits,
+            interface=self.interface,
+            propagate_flowfield_from_workers=self.propagate_flowfield_from_workers,
+            print_timings=self.print_timings,
+        )
 
 
 
@@ -660,8 +676,3 @@ class ParallelFlorisModel(LoggingManager):
     @property
     def n_turbines(self):
         return self.fmodel.n_turbines
-
-
-    # @property
-    # def floris(self):
-    #     return self.fmodel.core
