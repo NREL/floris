@@ -298,3 +298,11 @@ def test_approx_floris_model():
     power = afmodel.get_farm_power()
     np.testing.assert_almost_equal(power[0], power[1])
     assert not np.allclose(power[2], power[3])
+
+def test_get_and_set_param():
+    ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
+
+    # Test getting and setting a wake parameter on UncertainFlorisModel
+    ufmodel.set_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'], 0.1)
+    alpha = ufmodel.get_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'])
+    assert alpha == 0.1

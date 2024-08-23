@@ -1,6 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import (
+    Any,
+    List,
+    Optional,
+)
 
 import numpy as np
 
@@ -717,6 +722,40 @@ class UncertainFlorisModel(LoggingManager):
         weights = gaussian_values / np.sum(gaussian_values)
 
         return weights
+
+    def get_param(
+        self,
+        param: List[str],
+        param_idx: Optional[int] = None
+    ) -> Any:
+        """Get a parameter in underlying FlorisModel object.
+
+        Args:
+            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            param_idx (Optional[int], optional): The index to get the value at. Defaults to None.
+
+        Returns:
+            Any: The value of the parameter.
+        """
+        return self.fmodel_unexpanded.get_param(param, param_idx)
+
+    def set_param(
+        self,
+        param: List[str],
+        value: Any,
+        param_idx: Optional[int] = None
+    ):
+        """Set a parameter in underlying FlorisModel object.
+
+        Args:
+            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            value (Any): The value to set.
+            param_idx (Optional[int], optional): The index to set the value at. Defaults to None.
+        """
+        self.fmodel_unexpanded.set_param(param, value, param_idx)
+        self._set_uncertain()
+
+
 
     def copy(self):
         """Create an independent copy of the current UncertainFlorisModel object"""
