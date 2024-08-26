@@ -392,7 +392,7 @@ def apply_wind_direction_heterogeneity_warping(
             )
 
             # 2. Compute the point movements
-            x_shifted, y_shifted, z_shifted = shift_points_by_streamline2(
+            x_shifted, y_shifted, z_shifted = shift_points_by_streamline(
                 streamline,
                 x_points[findex,:,:,:],
                 y_points[findex,:,:,:],
