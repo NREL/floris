@@ -531,8 +531,10 @@ def shift_points_by_streamline2(streamline, x, y, z, rotor_points_only=True):
     dists_to_streamline = np.linalg.norm(disps_to_streamline, axis=1)
     disps_x = disps_to_streamline[:, 0, :]
     disps_y = disps_to_streamline[:, 1, :]
-    dists_to_streamline = ne.evaluate("sqrt(disps_x ** 2 + disps_y ** 2)")
-    min_idx = np.argmin(dists_to_streamline, axis=0)
+    #dists_to_streamline = ne.evaluate("sqrt(disps_x ** 2 + disps_y ** 2)")
+    #min_idx = np.argmin(dists_to_streamline, axis=0)
+    dists_to_streamline_sq = disps_x ** 2 + disps_y ** 2
+    min_idx = np.argmin(dists_to_streamline_sq, axis=0)
     #points = streamline[min_idx, :]
 
     # TODO: for viz/solve for points, there are many more points than turbines.
@@ -546,7 +548,8 @@ def shift_points_by_streamline2(streamline, x, y, z, rotor_points_only=True):
 
     disps = disps_to_streamline[min_idx, :, np.arange(0, xy.shape[1], 1)]
     theta = np.arctan2(disps[:,1], disps[:,0])
-    os_dists = dists_to_streamline[min_idx, np.arange(0, xy.shape[1], 1)]
+    #os_dists = dists_to_streamline[min_idx, np.arange(0, xy.shape[1], 1)]
+    os_dists = np.sqrt(dists_to_streamline_sq[min_idx, np.arange(0, xy.shape[1], 1)])
     # for i in range(len(min_idx)):
     #     streamline_diffs = np.diff(streamline[:min_idx[i], :], axis=0)
     #     along_stream_dist = np.sum(np.linalg.norm(streamline_diffs, axis=1))
