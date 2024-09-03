@@ -7,11 +7,10 @@ from typing import (
     Optional,
 )
 
-
 import numpy as np
 
-from floris.core import State
 from floris import FlorisModel
+from floris.core import State
 from floris.logging_manager import LoggingManager
 from floris.type_dec import (
     floris_array_converter,
@@ -19,16 +18,16 @@ from floris.type_dec import (
     NDArrayFloat,
 )
 from floris.utilities import (
-    wrap_180,
     nested_get,
     nested_set,
+    wrap_180,
 )
 from floris.wind_data import (
     TimeSeries,
     WindDataBase,
     WindRose,
-    WindTIRose,
     WindRoseWRG,
+    WindTIRose,
 )
 
 
