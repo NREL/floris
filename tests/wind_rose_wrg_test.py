@@ -4,13 +4,19 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from floris import WindRoseWRG
+from floris import (
+    FlorisModel,
+    UncertainFlorisModel,
+    WindRoseWRG,
+)
 
 
 WRG_FILE_FILE = (
     Path(__file__).resolve().parent / "../examples/examples_wind_resource_grid/wrg_example.wrg"
 )
 
+TEST_DATA = Path(__file__).resolve().parent / "data"
+YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 def test_load_wrg():
     WindRoseWRG(WRG_FILE_FILE)
@@ -198,3 +204,15 @@ def test_wind_rose_wrg_integration():
 
     # Show these are the same by compare the freq_table
     assert np.allclose(wind_rose.freq_table, wind_rose2.freq_table)
+
+def test_apply_wrg_to_floris_model():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
+    fmodel.set(wind_data=wind_rose_wrg)
+    fmodel.run()
+
+def test_apply_wrg_to_ufloris_model():
+    ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
+    wind_rose_wrg = WindRoseWRG(WRG_FILE_FILE)
+    ufmodel.set(wind_data=wind_rose_wrg)
+    ufmodel.run()
