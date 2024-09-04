@@ -1,7 +1,7 @@
 
 name: GCH
 description: Example of single floating turbine where the cp/ct is calculated with floating tilt included
-floris_version: v3.0.0
+floris_version: v4
 
 logging:
   console:
@@ -45,6 +45,7 @@ wake:
   enable_secondary_steering: true
   enable_yaw_added_recovery: true
   enable_transverse_velocities: true
+  enable_active_wake_mixing: false
 
   wake_deflection_parameters:
     gauss:

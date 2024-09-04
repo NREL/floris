@@ -1,6 +1,6 @@
 name: GCH
 description: Three turbines using Gauss Curl Hybrid model
-floris_version: v3.0.0
+floris_version: v4
 
 logging:
   console:
@@ -27,7 +27,7 @@ farm:
 
 flow_field:
   air_density: 1.225
-  heterogenous_inflow_config:
+  heterogeneous_inflow_config:
     speed_multipliers:
       - - 2.0
         - 1.0
@@ -62,6 +62,7 @@ wake:
   enable_secondary_steering: true
   enable_yaw_added_recovery: true
   enable_transverse_velocities: true
+  enable_active_wake_mixing: false
 
   wake_deflection_parameters:
     gauss:

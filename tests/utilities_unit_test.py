@@ -1,24 +1,16 @@
-# Copyright 2021 NREL
 
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
-
+from pathlib import Path
 
 import attr
 import numpy as np
 import pytest
 
 from floris.utilities import (
+    check_and_identify_step_size,
     cosd,
+    make_wind_directions_adjacent,
+    nested_get,
+    nested_set,
     reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
     sind,
@@ -32,6 +24,10 @@ from tests.conftest import (
     Y_COORDS,
     Z_COORDS,
 )
+
+
+TEST_DATA = Path(__file__).resolve().parent / "data"
+YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 
 def test_cosd():
@@ -82,6 +78,66 @@ def test_wind_delta():
     assert wind_delta(180.0) == 270.0
     assert wind_delta(-10.0) == 80.0
     assert wind_delta(-100.0) == 350.0
+
+def test_make_wind_directions_adjacent():
+
+    test_conditions = [
+        [[0.0, 10.0], [0.0, 10.0]],
+        [[0.0, 350.], [-10., 0.]],
+        [[20.0, 25., 30.], [20.0, 25., 30.]],
+        [[0.0, 350., 355., ], [-10., -5, 0]],
+        [[0 ,2, 358], [-2, 0, 2]],
+        [[0, 1, 359], [-1, 0, 1]],
+        [np.arange(0,360,1), np.arange(0,360,1)],
+        [sorted(np.arange(330,390,1)%360),np.arange(-30,30,1) ],
+    ]
+
+    for test_cond in test_conditions:
+        wind_directions = np.array(test_cond[0])
+        expected_wind_directions = np.array(test_cond[1])
+
+        wind_directions_adjacent, sort_indices = make_wind_directions_adjacent(wind_directions)
+        np.testing.assert_array_equal(wind_directions_adjacent, expected_wind_directions)
+        np.testing.assert_array_equal(wind_directions[sort_indices]%360.0,
+                                      wind_directions_adjacent%360.0)
+
+def test_check_and_identify_step_size():
+    # First set up a matrix of input directions, upsampling steps and expected ouputs
+    test_conditions = [
+        [[270.0, 280.0], 10.0],
+        [[0.0, 4.0], 4.0],
+        [[0.0, 358.0], 2.0],
+        [[0, 358], 2],
+        [[10, 20, 30], 10],
+        [[0, 10, 350], 10],
+        [[0,1,359],1.0],
+        [[0,356,358],2.0],
+        [[4, 8, 12, 16], 4],
+        [[0, 90, 180, 270], 90],
+        [[0, 5, 10,355], 5],
+        [np.arange(0,360,1), 1],
+        [sorted(np.arange(330,390,1)%360), 1],
+    ]
+
+    for test_cond in test_conditions:
+        wind_directions = np.array(test_cond[0])
+        expected_step = test_cond[1]
+
+        step_size = check_and_identify_step_size(wind_directions)
+        assert step_size == expected_step
+
+
+def test_check_and_identify_step_size_value_error():
+    # First set up a matrix of input directions, upsampling steps and expected ouputs
+    test_conditions = [
+        [1,3,7], # Inconsistent step size
+        [4, 3, 2], # Decreasing
+        [5, 10, 15, 45], #Inconsistent step not connected to a wrapping
+    ]
+
+    for wind_directions in test_conditions:
+        with pytest.raises(ValueError):
+            check_and_identify_step_size(wind_directions)
 
 
 def test_rotate_coordinates_rel_west():
@@ -168,3 +224,28 @@ def test_reverse_rotate_coordinates_rel_west():
     np.testing.assert_almost_equal(grid_x_reversed.squeeze(), coordinates[:,0].squeeze())
     np.testing.assert_almost_equal(grid_y_reversed.squeeze(), coordinates[:,1].squeeze())
     np.testing.assert_almost_equal(grid_z_reversed.squeeze(), coordinates[:,2].squeeze())
+
+
+def test_nested_get():
+    example_dict = {
+        'a': {
+            'b': {
+                'c': 10
+            }
+        }
+    }
+
+    assert nested_get(example_dict, ['a', 'b', 'c']) == 10
+
+
+def test_nested_set():
+    example_dict = {
+        'a': {
+            'b': {
+                'c': 10
+            }
+        }
+    }
+
+    nested_set(example_dict, ['a', 'b', 'c'], 20)
+    assert nested_get(example_dict, ['a', 'b', 'c']) == 20

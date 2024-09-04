@@ -1,16 +1,3 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
 
@@ -19,8 +6,8 @@ import copy
 import numpy as np
 import pytest
 
-from floris.simulation import (
-    Floris,
+from floris.core import (
+    Core,
     FlowField,
     FlowFieldGrid,
     PointsGrid,
@@ -109,6 +96,24 @@ WIND_SPEEDS = [
     10.0,
     11.0,
 ]
+TURBULENCE_INTENSITIES = [
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+]
 
 # FINDEX is the length of the number of conditions, so it can be
 # len(WIND_DIRECTIONS) or len(WIND_SPEEDS
@@ -132,7 +137,6 @@ Z_COORDS = [
 N_TURBINES = len(X_COORDS)
 ROTOR_DIAMETER = 126.0
 TURBINE_GRID_RESOLUTION = 2
-TIME_SERIES = False
 
 
 ## Unit test fixtures
@@ -151,7 +155,6 @@ def turbine_grid_fixture(sample_inputs_fixture) -> TurbineGrid:
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         grid_resolution=TURBINE_GRID_RESOLUTION,
-        time_series=TIME_SERIES
     )
 
 @pytest.fixture
@@ -177,7 +180,6 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
         turbine_diameters=rotor_diameters,
         wind_directions=np.array(WIND_DIRECTIONS),
         grid_resolution=None,
-        time_series=False,
         points_x=points_x,
         points_y=points_y,
         points_z=points_z,
@@ -186,7 +188,7 @@ def points_grid_fixture(sample_inputs_fixture) -> PointsGrid:
 @pytest.fixture
 def floris_fixture():
     sample_inputs = SampleInputs()
-    return Floris(sample_inputs.floris)
+    return Core(sample_inputs.core)
 
 @pytest.fixture
 def sample_inputs_fixture():
@@ -203,13 +205,19 @@ class SampleInputs:
             "turbine_type": "nrel_5mw",
             "rotor_diameter": 125.88,
             "hub_height": 90.0,
-            "generator_efficiency": 0.944,
-            "power_thrust_model": "cosine-loss",
+            "operation_model": "cosine-loss",
             "power_thrust_table": {
-                "pP": 1.88,
-                "pT": 1.88,
+                "cosine_loss_exponent_yaw": 1.88,
+                "cosine_loss_exponent_tilt": 1.88,
                 "ref_air_density": 1.225,
                 "ref_tilt": 5.0,
+                "helix_a": 1.802,
+                "helix_power_b": 4.568e-03,
+                "helix_power_c": 1.629e-10,
+                "helix_thrust_b": 1.027e-03,
+                "helix_thrust_c": 1.378e-06,
+                "peak_shaving_fraction": 0.2,
+                "peak_shaving_TI_threshold": 0.1,
                 "power": [
                     0.0,
                     0.0,
@@ -397,12 +405,20 @@ class SampleInputs:
         }
         self.turbine_floating["correct_cp_ct_for_tilt"] = True
 
-        self.turbine_multi_dim = copy.deepcopy(self.turbine)
-        del self.turbine_multi_dim['power_thrust_table']['power']
-        del self.turbine_multi_dim['power_thrust_table']['thrust_coefficient']
-        del self.turbine_multi_dim['power_thrust_table']['wind_speed']
-        self.turbine_multi_dim["multi_dimensional_cp_ct"] = True
-        self.turbine_multi_dim['power_thrust_table']["power_thrust_data_file"] = ""
+        self.turbine_multi_dim = {
+            "turbine_type": 'iea_15MW_multi_dim_cp_ct',
+            "hub_height": 150.0,
+            "rotor_diameter": 242.24,
+            "TSR": 8.0,
+            "multi_dimensional_cp_ct": True,
+            "power_thrust_table": {
+                "ref_air_density": 1.225,
+                "ref_tilt": 6.0,
+                "cosine_loss_exponent_yaw": 1.88,
+                "cosine_loss_exponent_tilt": 1.88,
+                "power_thrust_data_file": 'iea_15MW_multi_dim_Tp_Hs.csv',
+            }
+        }
 
         self.farm = {
             "layout_x": X_COORDS,
@@ -413,7 +429,7 @@ class SampleInputs:
         self.flow_field = {
             "wind_speeds": WIND_SPEEDS,
             "wind_directions": WIND_DIRECTIONS,
-            "turbulence_intensities": [0.1],
+            "turbulence_intensities": TURBULENCE_INTENSITIES,
             "wind_shear": 0.12,
             "wind_veer": 0.0,
             "air_density": 1.225,
@@ -445,7 +461,7 @@ class SampleInputs:
                 "empirical_gauss": {
                    "horizontal_deflection_gain_D": 3.0,
                    "vertical_deflection_gain_D": -1,
-                   "deflection_rate": 30,
+                   "deflection_rate": 22,
                    "mixing_gain_deflection": 0.0,
                    "yaw_added_mixing_gain": 0.0
                 },
@@ -474,12 +490,18 @@ class SampleInputs:
                     "A": 0.04,
                     "sigma_max_rel": 4.0
                 },
+                "turboparkgauss": {
+                    "A": 0.04,
+                    "include_mirror_wake": True
+                },
                 "empirical_gauss": {
                     "wake_expansion_rates": [0.023, 0.008],
                     "breakpoints_D": [10],
                     "sigma_0_D": 0.28,
                     "smoothing_length_D": 2.0,
-                    "mixing_gain_velocity": 2.0
+                    "mixing_gain_velocity": 2.0,
+                    "awc_wake_exp": 1.2,
+                    "awc_wake_denominator": 400
                 },
             },
             "wake_turbulence_parameters": {
@@ -495,10 +517,11 @@ class SampleInputs:
             },
             "enable_secondary_steering": False,
             "enable_yaw_added_recovery": False,
+            "enable_active_wake_mixing": False,
             "enable_transverse_velocities": False,
         }
 
-        self.floris = {
+        self.core = {
             "farm": self.farm,
             "flow_field": self.flow_field,
             "wake": self.wake,
@@ -512,7 +535,7 @@ class SampleInputs:
             },
             "name": "conftest",
             "description": "Inputs used for testing",
-            "floris_version": "v3.0.0",
+            "floris_version": "v4",
         }
 
         self.v3type_turbine = {
@@ -520,7 +543,7 @@ class SampleInputs:
             "rotor_diameter": 125.88,
             "hub_height": 90.0,
             "generator_efficiency": 0.944,
-            "power_thrust_model": "cosine-loss",
+            "operation_model": "cosine-loss",
             "pP": 1.88,
             "pT": 1.88,
             "ref_density_cp_ct": 1.225,

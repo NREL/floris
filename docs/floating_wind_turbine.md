@@ -2,7 +2,8 @@
 # Floating Wind Turbine Modeling
 
 The FLORIS wind turbine description includes a definition of the performance curves
-(Cp and Ct) as a function of wind speed, and this lookup table is used directly in
+(`power` and `thrust_coefficient`) as a function of wind speed, and this lookup table is used
+directly in
 the calculation of power production for a steady-state atmospheric condition
 (wind speed and wind direction). The power curve definition typically assumes a
 fixed-bottom wind turbine with no active or controllable tilt. However, floating
@@ -19,7 +20,5 @@ an additional input, `floating_tilt_table`, in the turbine definition which sets
 steady tilt angle of the turbine based on wind speed. An interpolation is created and
 the tilt angle is computed for each turbine based on effective velocity. Taking into
 account the turbine rotor's built-in tilt, the absolute tilt change can then be used
-to correct Cp and Ct. This tilt angle is then used directly in the selected wake models.
-
-**NOTE** No wake models currently use the tilt for vertical wake deflection,
-but it will be available with the inclusion of an upcoming wake model.
+to correct the power and thrust coefficient.
+This tilt angle is then used directly in the selected wake models.

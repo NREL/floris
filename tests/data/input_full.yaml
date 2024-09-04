@@ -1,7 +1,7 @@
 
 name: test_input
 description: Single turbine for testing
-floris_version: v3.0.0
+floris_version: v4
 
 logging:
   console:
@@ -44,6 +44,7 @@ wake:
 
   enable_secondary_steering: true
   enable_yaw_added_recovery: true
+  enable_active_wake_mixing: true
   enable_transverse_velocities: true
 
   wake_deflection_parameters:
@@ -77,6 +78,9 @@ wake:
       kb: 0.004
     jensen:
       we: 0.05
+    turboparkgauss:
+      A: 0.04
+      include_mirror_wake: True
 
   wake_turbulence_parameters:
     crespo_hernandez:

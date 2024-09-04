@@ -1,22 +1,15 @@
-# Copyright 2021 NREL
-
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not
-# use this file except in compliance with the License. You may obtain a copy of
-# the License at http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
-
-# See https://floris.readthedocs.io for documentation
 
 from __future__ import annotations
 
 import os
 from math import ceil
-from typing import Tuple
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+)
 
 import numpy as np
 import yaml
@@ -94,6 +87,107 @@ def wrap_360(x):
     """
 
     return x % 360.0
+
+def check_and_identify_step_size(wind_directions):
+    """
+    This function identifies the step size in a series of wind directions. The function will
+    return the step size if the wind directions are evenly spaced, otherwise it will raise an
+    error.
+
+    Args:
+        wind_directions (np.ndarray): Array of wind directions.
+
+    Returns:
+        float: The step size of the wind directions.
+    """
+
+    if len(wind_directions) < 2:
+        raise ValueError("Array must contain at least 2 elements")
+
+    # First compute the steps between each wind direction
+    steps = np.diff(wind_directions)
+
+    # Confirm that the steps are all positive
+    if not np.all(steps > 0):
+        raise ValueError("wind_directions must be monotonically increasing")
+
+    # Check the step from the last to the first element
+    last_step = wind_directions[0] - wind_directions[-1] + 360
+
+    # If len(window_directions) == 2, then return whichever step is smaller
+    if len(wind_directions) == 2:
+        return min(steps[0], last_step)
+
+    # If len(window_directions) == 3 make some checks
+    elif len(wind_directions) == 3:
+        if np.all(steps == steps[0]):
+            return steps[0]
+        elif steps[0] == last_step:
+            return steps[0]
+        elif steps[1] == last_step:
+            return steps[1]
+        else:
+            raise ValueError("wind_directions must be evenly spaced")
+
+    else:
+        if np.all(steps == steps[0]):
+            return steps[0]
+
+        # If all but one of the steps are the same
+        values, counts = np.unique(steps, return_counts=True)
+
+        # Check for the case where there are more than two different step sizes
+        if len(values) > 2:
+            raise ValueError("wind_directions must be evenly spaced")
+
+        # In the case there are only two step sizes, ensure that one only happens once
+        if np.min(counts) > 1:
+            raise ValueError("wind_directions must be evenly spaced")
+
+        # If the last step equals the most common step, return the most common step
+        if last_step == values[np.argmax(counts)]:
+            return values[np.argmax(counts)]
+
+        raise ValueError("wind_directions must be evenly spaced")
+
+def make_wind_directions_adjacent(wind_directions: NDArrayFloat) -> NDArrayFloat:
+    """
+    This function reorders the wind directions so that they are adjacent. The function will
+    return the reordered wind directions if the wind directions are not adjacent, otherwise it
+    will return the input wind directions
+
+    Args:
+        wind_directions (NDArrayFloat): Array of wind directions.
+
+    Returns:
+        NDArrayFloat: The reordered wind directions to be adjacent.
+    """
+
+    # Check the step size of the wind directions
+    step_size = check_and_identify_step_size(wind_directions)
+
+    # Get a list of steps
+    steps = np.diff(wind_directions)
+
+    # There will be at most one step with a size larger than the step size
+    # If there is one, find it
+    if np.any(steps > step_size):
+        idx = np.argmax(steps)
+
+        # Now change wind_directions such that for each direction after that index
+        # subtract 360 and move that block to the front
+        wind_directions = np.concatenate(
+            (wind_directions[idx+1:] - 360, wind_directions[:idx+1])
+        )
+
+        # Return the wind directions and indices to go from the original to the new
+        sort_indices = np.array(list(range(idx+1,len(wind_directions))) + list(range(idx+1)))
+
+        return wind_directions, sort_indices
+
+    else:
+
+        return wind_directions, np.arange(len(wind_directions))
 
 
 def wind_delta(wind_directions: NDArrayFloat | float):
@@ -279,3 +373,69 @@ def round_nearest(x: int | float, base: int = 5) -> int:
         int: The rounded number.
     """
     return base * ceil((x + 0.5) / base)
+
+
+def nested_get(
+    d: Dict[str, Any],
+    keys: List[str]
+) -> Any:
+    """Get a value from a nested dictionary using a list of keys.
+    Based on:
+    https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
+
+    Args:
+        d (Dict[str, Any]): The dictionary to get the value from.
+        keys (List[str]): A list of keys to traverse the dictionary.
+
+    Returns:
+        Any: The value at the end of the key traversal.
+    """
+    for key in keys:
+        d = d[key]
+    return d
+
+def nested_set(
+    d: Dict[str, Any],
+    keys: List[str],
+    value: Any,
+    idx: Optional[int] = None
+) -> None:
+    """Set a value in a nested dictionary using a list of keys.
+    Based on:
+    https://stackoverflow.com/questions/14692690/access-nested-dictionary-items-via-a-list-of-keys
+
+    Args:
+        dic (Dict[str, Any]): The dictionary to set the value in.
+        keys (List[str]): A list of keys to traverse the dictionary.
+        value (Any): The value to set.
+        idx (Optional[int], optional): If the value is an list, the index to change.
+            Defaults to None.
+    """
+    d_in = d.copy()
+
+    for key in keys[:-1]:
+        d = d.setdefault(key, {})
+    if idx is None:
+        # Parameter is a scalar, set directly
+        d[keys[-1]] = value
+    else:
+        # Parameter is a list, need to first get the list, change the values at idx
+
+        # # Get the underlying list
+        par_list = nested_get(d_in, keys)
+        par_list[idx] = value
+        d[keys[-1]] = par_list
+
+def print_nested_dict(dictionary: Dict[str, Any], indent: int = 0) -> None:
+    """Print a nested dictionary with indentation.
+
+    Args:
+        dictionary (Dict[str, Any]): The dictionary to print.
+        indent (int, optional): The number of spaces to indent. Defaults to 0.
+    """
+    for key, value in dictionary.items():
+        print(" " * indent + str(key))
+        if isinstance(value, dict):
+            print_nested_dict(value, indent + 4)
+        else:
+            print(" " * (indent + 4) + str(value))
