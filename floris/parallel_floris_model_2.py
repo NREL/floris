@@ -163,30 +163,3 @@ def _parallel_run(fmodel_dict, **set_kwargs) -> FlorisModel:
     fmodel.run()
     # Not sure that'll work---can't be serialized? That could be a problem.
     return fmodel
-
-if __name__ == "__main__":
-    pfmodel = ParallelFlorisModel(
-        "../examples/inputs/gch.yaml",
-        interface=None,
-    )
-    pfmodel.set(
-        wind_directions=np.linspace(0, 360, 100),
-        wind_speeds=8.0*np.ones(100),
-        turbulence_intensities=0.06*np.ones(100),
-    )
-    pfmodel.run()
-
-    turb_powers_nopara = pfmodel.get_turbine_powers()
-
-    pfmodel = ParallelFlorisModel(
-        "../examples/inputs/gch.yaml",
-        interface="multiprocessing",
-    )
-    pfmodel.set(
-        wind_directions=np.linspace(0, 360, 100),
-        wind_speeds=8.0*np.ones(100),
-        turbulence_intensities=0.06*np.ones(100),
-    )
-    pfmodel.run()
-
-    turb_powers_multiproc = pfmodel.get_turbine_powers()
