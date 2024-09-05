@@ -51,8 +51,8 @@ class LayoutOptimization(LoggingManager):
         b_depth = list_depth(boundaries)
 
         boundary_specification_error_msg = (
-            "boundaries should be a list of coordinates (specifed as (x,y) "+\
-            "tuples) or as a list of list of tuples (for seperable regions)."
+            "boundaries should be a list of coordinates (specified as (x,y) "+\
+            "tuples) or as a list of list of tuples (for separable regions)."
         )
 
         if b_depth == 1:

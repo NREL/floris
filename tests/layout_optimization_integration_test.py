@@ -78,7 +78,7 @@ def test_base_class(caplog):
 
 def test_LayoutOptimizationRandomSearch():
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    fmodel.set(layout_x=[0, 500], layout_y = [0, 0])
+    fmodel.set(layout_x=[0, 500], layout_y=[0, 0])
 
     layout_opt = LayoutOptimizationRandomSearch(
         fmodel=fmodel,
@@ -94,12 +94,14 @@ def test_LayoutOptimizationRandomSearch():
 
 def test_LayoutOptimizationGridded_initialization(caplog):
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    fmodel.set(layout_x=[0, 500], layout_y = [0, 0])
+    fmodel.set(layout_x=[0, 500], layout_y=[0, 0])
 
     with pytest.raises(ValueError):
         LayoutOptimizationGridded(
             fmodel=fmodel,
             boundaries=test_boundaries,
+            spacing=None,
+            spacing_D=None,
         ) # No spacing specified
     with pytest.raises(ValueError):
         LayoutOptimizationGridded(
@@ -118,9 +120,8 @@ def test_LayoutOptimizationGridded_initialization(caplog):
             spacing_D=5
         )
 
-def test_LayoutOptimizationGridded():
+def test_LayoutOptimizationGridded_default_grid():
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    fmodel.set(layout_x=[0, 500], layout_y = [0, 0])
 
     # Set up a sample boundary
     boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
@@ -128,5 +129,73 @@ def test_LayoutOptimizationGridded():
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=boundaries,
-        spacing=5,
+        spacing=50,
     )
+
+    # Test it worked...
+
+def test_LayoutOptimizationGridded_basic():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    spacing = 60
+
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=test_boundaries,
+        spacing=spacing,
+        rotation_step=5,
+        rotation_range=(0, 360),
+        translation_step=50,
+        hexagonal_packing=False,
+        enable_geometric_yaw=False,
+        use_value=False,
+    )
+
+    n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
+
+    # Check that the number of turbines is correct
+    assert n_turbs_opt == len(x_opt)
+
+
+    # Check all are indeed in bounds
+    assert (np.all(x_opt > 0.0) & np.all(x_opt < 1000.0)
+            & np.all(y_opt > 0.0) & np.all(y_opt < 1000.0))
+
+    # Check that the layout is at least as good as the basic rectangular fill
+    n_turbs_subopt = (1000 // spacing + 1) ** 2
+
+    assert n_turbs_opt >= n_turbs_subopt
+
+def test_LayoutOptimizationGridded_diagonal():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    turbine_spacing = 1000.0
+    corner = 2*turbine_spacing / np.sqrt(2)
+
+    # Create a "thin" boundary area at a 45 degree angle
+    boundaries_diag = [
+        (0.0, 0.0),
+        (0.0, 10.0),
+        (corner, corner+10),
+        (corner+10, corner+10),
+        (0.0, 0.0)
+    ]
+
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=boundaries_diag,
+        spacing=turbine_spacing,
+        rotation_step=5,
+        rotation_range=(0, 360),
+        translation_step=1,
+        hexagonal_packing=False,
+        enable_geometric_yaw=False,
+        use_value=False,
+    )
+
+    n_turbs_opt, _, _ = layout_opt.optimize()
+    assert n_turbs_opt == 3 # 3 should fit in the diagonal
+
+    # Also test a limited rotation; should be worse.
+    # Also test a very coarse rotation step; should be worse.
+    # Also test a very coarse translation step; should be worse.
