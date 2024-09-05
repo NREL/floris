@@ -254,3 +254,66 @@ def test_LayoutOptimizationGridded_diagonal():
     )
     n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
     assert n_turbs_opt < 3
+
+def test_LayoutOptimizationGridded_separate_boundaries():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    separate_boundaries = [
+        [(0.0, 0.0), (0.0, 100.0), (100.0, 100.0), (100.0, 0.0), (0.0, 0.0)],
+        [(1000.0, 0.0), (1000.0, 100.0), (1100.0, 100.0), (1100.0, 0.0), (1000.0, 0.0)]
+    ]
+
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=separate_boundaries,
+        spacing=150,
+        rotation_step=5,
+        rotation_range=(0, 360),
+        translation_step=50,
+        hexagonal_packing=False,
+        enable_geometric_yaw=False,
+        use_value=False,
+    )
+
+    n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
+    assert n_turbs_opt == 2 # One in each of the boundary areas
+
+    # Check they're inside as expected
+    assert ((0.0 <= y_opt) & (y_opt <= 100.0)).all()
+    assert (((0.0 <= x_opt) & (x_opt <= 100.0)) | ((1000.0 <= x_opt) & (x_opt <= 1100.0))).all()
+
+
+def test_LayoutOptimizationGridded_hexagonal():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    spacing = 200
+
+    # First, run a square layout
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=test_boundaries,
+        spacing=spacing,
+        rotation_step=5,
+        rotation_range=(0, 360),
+        translation_step=50,
+        hexagonal_packing=False,
+        enable_geometric_yaw=False,
+        use_value=False,
+    )
+    n_turbs_opt_square = layout_opt.optimize()[0]
+
+    # Now, run a hexagonal layout
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=test_boundaries,
+        spacing=spacing,
+        rotation_step=5,
+        rotation_range=(0, 360),
+        translation_step=50,
+        hexagonal_packing=True,
+        enable_geometric_yaw=False,
+        use_value=False,
+    )
+    n_turbs_opt_hex = layout_opt.optimize()[0]
+
+    # Check that the hexagonal layout is better
+    assert n_turbs_opt_hex >= n_turbs_opt_square
