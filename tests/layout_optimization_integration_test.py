@@ -12,14 +12,14 @@ from floris import (
 from floris.optimization.layout_optimization.layout_optimization_base import (
     LayoutOptimization,
 )
+from floris.optimization.layout_optimization.layout_optimization_gridded import (
+    LayoutOptimizationGridded,
+)
 from floris.optimization.layout_optimization.layout_optimization_random_search import (
     LayoutOptimizationRandomSearch,
 )
 from floris.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
-)
-from floris.optimization.layout_optimization.layout_optimization_gridded import (
-    LayoutOptimizationGridded,
 )
 from floris.wind_data import WindDataBase
 
@@ -110,7 +110,7 @@ def test_LayoutOptimizationGridded_initialization(caplog):
             spacing=500,
             spacing_D=5
         ) # Spacing specified in two ways
-    
+
     fmodel.core.farm.rotor_diameters[1] = 100.0
     caplog.clear()
     with caplog.at_level(logging.WARNING):
@@ -126,7 +126,7 @@ def test_LayoutOptimizationGridded_default_grid():
     # Set up a sample boundary
     boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
 
-    layout_opt = LayoutOptimizationGridded(
+    LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=boundaries,
         spacing=50,

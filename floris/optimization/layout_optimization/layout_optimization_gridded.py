@@ -12,6 +12,7 @@ from shapely.geometry import (
 from .layout_optimization_base import LayoutOptimization
 from .layout_optimization_random_search import test_point_in_bounds
 
+
 class LayoutOptimizationGridded(LayoutOptimization):
     def __init__(
         self,
@@ -61,7 +62,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
                 self.logger.warning((
                     "Found multiple turbine diameters. Using diameter of first turbine to set"
                     f" translation step to {translation_step}m ({translation_step_D} diameters)."
-                ))    
+                ))
 
         # Initialize the base class
         super().__init__(
