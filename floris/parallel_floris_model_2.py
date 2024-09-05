@@ -10,6 +10,7 @@ import pandas as pd
 
 from floris.floris_model import FlorisModel
 
+
 class ParallelFlorisModel(FlorisModel):
     """
     This class mimics the FlorisModel, but enables parallelization of the main
@@ -19,10 +20,10 @@ class ParallelFlorisModel(FlorisModel):
     def __init__(
         self,
         configuration: dict | str | Path,
-        interface: str | None="multiprocessing", # Options are 'multiprocessing', 'mpi4py' or 'concurrent'
-        max_workers: int=-1,
-        n_wind_condition_splits: int=1,
-        return_turbine_powers_only: bool=False,
+        interface: str | None = "multiprocessing",
+        max_workers: int = -1,
+        n_wind_condition_splits: int = 1,
+        return_turbine_powers_only: bool = False,
     ):
         """
         Initialize the ParallelFlorisModel object.
@@ -45,7 +46,7 @@ class ParallelFlorisModel(FlorisModel):
         """
         # Instantiate the underlying FlorisModel
         super().__init__(configuration)
-        
+
         # Save parallelization parameters
         if interface == "multiprocessing":
             import multiprocessing as mp
@@ -94,7 +95,7 @@ class ParallelFlorisModel(FlorisModel):
                 super().run()
             elif self.interface == "multiprocessing":
                 with self._PoolExecutor(self.max_workers) as p:
-                    out = p.starmap(_parallel_run, multiargs)
+                    p.starmap(_parallel_run, multiargs)
 
     def get_turbine_powers(self):
         """
@@ -107,7 +108,7 @@ class ParallelFlorisModel(FlorisModel):
             return self._stored_turbine_powers
         else:
             return super().get_turbine_powers()
-        
+
     def _preprocessing(self):
         # Split over the wind conditions
         n_wind_condition_splits = self.n_wind_condition_splits
@@ -140,7 +141,7 @@ class ParallelFlorisModel(FlorisModel):
 
             # Do I also need to hangle splitting the wind data object?
             # Perhaps not, not used in run() I think
-            
+
             fmodel_dict_split["flow_field"]["wind_directions"] = wind_directions
             fmodel_dict_split["flow_field"]["wind_speeds"] = wind_speeds
             fmodel_dict_split["flow_field"]["turbulence_intensities"] = turbulence_intensities
