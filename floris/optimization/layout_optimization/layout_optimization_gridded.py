@@ -17,14 +17,15 @@ class LayoutOptimizationGridded(LayoutOptimization):
         self,
         fmodel,
         boundaries,
-        spacing: float | None=None,
-        spacing_D: float | None=-1,
-        rotation_step: float=5.0,
-        rotation_range: tuple[float, float]=(0.0, 360.0),
-        translation_step: float | None=None,
-        translation_step_D: float | None=-1,
-        hexagonal_packing: bool=False,
-        enable_geometric_yaw: bool=False,
+        spacing: float | None = None,
+        spacing_D: float | None = -1,
+        rotation_step: float = 5.0,
+        rotation_range: tuple[float, float] = (0.0, 360.0),
+        translation_step: float | None = None,
+        translation_step_D: float | None = -1,
+        translation_range: tuple[float, float] | None = None,
+        hexagonal_packing: bool = False,
+        enable_geometric_yaw: bool = False,
         use_value: bool=False,
 
     ):
@@ -86,9 +87,13 @@ class LayoutOptimizationGridded(LayoutOptimization):
             y_locs = square_y.flatten()
             x_locs = x_locs - np.mean(x_locs) + 0.5*(self.xmax + self.xmin)
             y_locs = y_locs - np.mean(y_locs) + 0.5*(self.ymax + self.ymin)
-        
+
         # Trim to a circle to minimize wasted computation
-        x_locs_grid, y_locs_grid = self.trim_to_circle(x_locs, y_locs, d/2)
+        x_locs_grid, y_locs_grid = self.trim_to_circle(
+            x_locs,
+            y_locs,
+            (grid_1D.max()-grid_1D.min()+spacing)/2
+        )
         self.xy_grid = np.concatenate(
             [x_locs_grid.reshape(-1,1), y_locs_grid.reshape(-1,1)],
             axis=1
@@ -108,9 +113,14 @@ class LayoutOptimizationGridded(LayoutOptimization):
                 np.minimum(rotation_range[1], rotation_range[0]+90)
             )
 
+        # Deal with None translation_range
+        if translation_range is None:
+            translation_range = (0.0, spacing)
+
         # Create test rotations and translations
         self.rotations = np.arange(rotation_range[0], rotation_range[1], rotation_step)
-        self.translations = np.arange(0, spacing, translation_step)
+        self.translations = np.arange(translation_range[0], translation_range[1], translation_step)
+        self.translations = np.concatenate([-np.flip(self.translations), self.translations])
 
     def optimize(self):
 

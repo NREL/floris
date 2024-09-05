@@ -156,6 +156,12 @@ def test_LayoutOptimizationGridded_basic():
     # Check that the number of turbines is correct
     assert n_turbs_opt == len(x_opt)
 
+    # Check that spacing is respected
+    xx_diff = x_opt.reshape(-1,1) - x_opt.reshape(1,-1)
+    yy_diff = y_opt.reshape(-1,1) - y_opt.reshape(1,-1)
+    dists = np.sqrt(xx_diff**2 + yy_diff**2)
+    dists[np.arange(0, len(dists), 1), np.arange(0, len(dists), 1)] = np.inf
+    assert (dists > spacing - 1e-6).all()
 
     # Check all are indeed in bounds
     assert (np.all(x_opt > 0.0) & np.all(x_opt < 1000.0)
@@ -175,9 +181,9 @@ def test_LayoutOptimizationGridded_diagonal():
     # Create a "thin" boundary area at a 45 degree angle
     boundaries_diag = [
         (0.0, 0.0),
-        (0.0, 10.0),
-        (corner, corner+10),
-        (corner+10, corner+10),
+        (0.0, 100.0),
+        (corner, corner+100.0),
+        (corner+100.0, corner+100.0),
         (0.0, 0.0)
     ]
 
@@ -187,15 +193,64 @@ def test_LayoutOptimizationGridded_diagonal():
         spacing=turbine_spacing,
         rotation_step=5,
         rotation_range=(0, 360),
-        translation_step=1,
+        translation_step=20,
         hexagonal_packing=False,
         enable_geometric_yaw=False,
         use_value=False,
     )
 
-    n_turbs_opt, _, _ = layout_opt.optimize()
+    n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
+
+    # Confirm that spacing is respected
+    xx_diff = x_opt.reshape(-1,1) - x_opt.reshape(1,-1)
+    yy_diff = y_opt.reshape(-1,1) - y_opt.reshape(1,-1)
+    dists = np.sqrt(xx_diff**2 + yy_diff**2)
+    dists[np.arange(0, len(dists), 1), np.arange(0, len(dists), 1)] = np.inf
+    assert (dists > turbine_spacing - 1e-6).all()
+
     assert n_turbs_opt == 3 # 3 should fit in the diagonal
 
-    # Also test a limited rotation; should be worse.
-    # Also test a very coarse rotation step; should be worse.
-    # Also test a very coarse translation step; should be worse.
+    # Test a limited range of rotation
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=boundaries_diag,
+        spacing=turbine_spacing,
+        rotation_step=5,
+        rotation_range=(0, 10),
+        translation_step=20,
+        hexagonal_packing=False,
+        enable_geometric_yaw=False,
+        use_value=False,
+    )
+    n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
+    assert n_turbs_opt < 3
+
+    # Test a coarse rotation
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=boundaries_diag,
+        spacing=turbine_spacing,
+        rotation_step=60,
+        rotation_range=(0, 360),
+        translation_step=20,
+        hexagonal_packing=False,
+        enable_geometric_yaw=False,
+        use_value=False,
+    )
+    n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
+    assert n_turbs_opt < 3
+
+    # Test a coarse translation
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=boundaries_diag,
+        spacing=turbine_spacing,
+        rotation_step=5,
+        rotation_range=(0, 10),
+        translation_step=300,
+        hexagonal_packing=False,
+        enable_geometric_yaw=False,
+        use_value=False,
+    )
+    n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
+    assert n_turbs_opt < 3
