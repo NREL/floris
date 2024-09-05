@@ -78,15 +78,13 @@ class LayoutOptimizationGridded(LayoutOptimization):
         d = 1.1 * np.sqrt((self.xmax**2 - self.xmin**2) + (self.ymax**2 - self.ymin**2))
         grid_1D = np.arange(0, d+spacing, spacing)
         if hexagonal_packing:
-            raise NotImplementedError("Hexagonal packing not yet implemented.")
-            x_locs = []
-            y_locs = []
+            x_locs = np.tile(grid_1D.reshape(1,-1), (len(grid_1D), 1))
+            x_locs[np.arange(1, len(grid_1D), 2), :] += 0.5 * spacing
+            y_locs = np.tile(np.sqrt(3) / 2 * grid_1D.reshape(-1,1), (1, len(grid_1D)))
         else:
-            square_x, square_y = np.meshgrid(grid_1D, grid_1D)
-            x_locs = square_x.flatten()
-            y_locs = square_y.flatten()
-            x_locs = x_locs - np.mean(x_locs) + 0.5*(self.xmax + self.xmin)
-            y_locs = y_locs - np.mean(y_locs) + 0.5*(self.ymax + self.ymin)
+            x_locs, y_locs = np.meshgrid(grid_1D, grid_1D)
+        x_locs = x_locs.flatten() - np.mean(x_locs) + 0.5*(self.xmax + self.xmin)
+        y_locs = y_locs.flatten() - np.mean(y_locs) + 0.5*(self.ymax + self.ymin)
 
         # Trim to a circle to minimize wasted computation
         x_locs_grid, y_locs_grid = self.trim_to_circle(
