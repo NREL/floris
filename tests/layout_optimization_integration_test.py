@@ -18,19 +18,21 @@ from floris.optimization.layout_optimization.layout_optimization_random_search i
 from floris.optimization.layout_optimization.layout_optimization_scipy import (
     LayoutOptimizationScipy,
 )
+from floris.optimization.layout_optimization.layout_optimization_gridded import (
+    LayoutOptimizationGridded,
+)
 from floris.wind_data import WindDataBase
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
 YAML_INPUT = TEST_DATA / "input_full.yaml"
 
+test_boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
+
 
 def test_base_class(caplog):
     # Get a test fi
     fmodel = FlorisModel(configuration=YAML_INPUT)
-
-    # Set up a sample boundary
-    boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
 
     # Now initiate layout optimization with a frequency matrix passed in the 3rd position
     # (this should fail)
@@ -39,12 +41,12 @@ def test_base_class(caplog):
 
     # Check that warning is raised if fmodel does not contain wind_data
     with caplog.at_level(logging.WARNING):
-        LayoutOptimization(fmodel, boundaries, 5)
+        LayoutOptimization(fmodel, test_boundaries, 5)
     assert caplog.text != "" # Checking not empty
 
     caplog.clear()
     with caplog.at_level(logging.WARNING):
-        LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5,)
+        LayoutOptimization(fmodel=fmodel, boundaries=test_boundaries, min_dist=5,)
     assert caplog.text != "" # Checking not empty
 
     time_series = TimeSeries(
@@ -56,34 +58,31 @@ def test_base_class(caplog):
 
     caplog.clear()
     with caplog.at_level(logging.WARNING):
-        LayoutOptimization(fmodel, boundaries, 5)
+        LayoutOptimization(fmodel, test_boundaries, 5)
     assert caplog.text != "" # Not empty, because get_farm_AEP called on TimeSeries
 
     # Passing without keyword arguments should work, or with keyword arguments
-    LayoutOptimization(fmodel, boundaries, 5)
-    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)
+    LayoutOptimization(fmodel, test_boundaries, 5)
+    LayoutOptimization(fmodel=fmodel, boundaries=test_boundaries, min_dist=5)
 
     # Check with WindRose on fmodel
     fmodel.set(wind_data=time_series.to_WindRose())
 
     caplog.clear()
     with caplog.at_level(logging.WARNING):
-        LayoutOptimization(fmodel, boundaries, 5)
+        LayoutOptimization(fmodel, test_boundaries, 5)
     assert caplog.text == "" # Empty
 
-    LayoutOptimization(fmodel, boundaries, 5)
-    LayoutOptimization(fmodel=fmodel, boundaries=boundaries, min_dist=5)
+    LayoutOptimization(fmodel, test_boundaries, 5)
+    LayoutOptimization(fmodel=fmodel, boundaries=test_boundaries, min_dist=5)
 
 def test_LayoutOptimizationRandomSearch():
     fmodel = FlorisModel(configuration=YAML_INPUT)
     fmodel.set(layout_x=[0, 500], layout_y = [0, 0])
 
-    # Set up a sample boundary
-    boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
-
     layout_opt = LayoutOptimizationRandomSearch(
         fmodel=fmodel,
-        boundaries=boundaries,
+        boundaries=test_boundaries,
         min_dist_D=5,
         seconds_per_iteration=1,
         total_optimization_seconds=1,
@@ -92,3 +91,42 @@ def test_LayoutOptimizationRandomSearch():
 
     # Check that the optimization runs
     layout_opt.optimize()
+
+def test_LayoutOptimizationGridded_initialization(caplog):
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(layout_x=[0, 500], layout_y = [0, 0])
+
+    with pytest.raises(ValueError):
+        LayoutOptimizationGridded(
+            fmodel=fmodel,
+            boundaries=test_boundaries,
+        ) # No spacing specified
+    with pytest.raises(ValueError):
+        LayoutOptimizationGridded(
+            fmodel=fmodel,
+            boundaries=test_boundaries,
+            spacing=500,
+            spacing_D=5
+        ) # Spacing specified in two ways
+    
+    fmodel.core.farm.rotor_diameters[1] = 100.0
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        LayoutOptimizationGridded(
+            fmodel,
+            test_boundaries,
+            spacing_D=5
+        )
+
+def test_LayoutOptimizationGridded():
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(layout_x=[0, 500], layout_y = [0, 0])
+
+    # Set up a sample boundary
+    boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
+
+    layout_opt = LayoutOptimizationGridded(
+        fmodel=fmodel,
+        boundaries=boundaries,
+        spacing=5,
+    )
