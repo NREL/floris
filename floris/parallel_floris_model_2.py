@@ -8,6 +8,7 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
+from floris.core import State
 from floris.floris_model import FlorisModel
 
 
@@ -90,12 +91,15 @@ class ParallelFlorisModel(FlorisModel):
             # the splits, and return them somehow.
             self._stored_turbine_powers = None # Temporary
         else:
-            multiargs = self._preprocessing()
             if self.interface is None:
                 super().run()
             elif self.interface == "multiprocessing":
+                parallel_run_inputs = self._preprocessing()
                 with self._PoolExecutor(self.max_workers) as p:
-                    p.starmap(_parallel_run, multiargs)
+                    self._fmodels_split = p.starmap(_parallel_run, parallel_run_inputs)
+                self._postprocessing()
+                self.core.farm.finalize(self.core.grid.unsorted_indices)
+                self.core.state = State.USED
 
     def get_turbine_powers(self):
         """
@@ -151,7 +155,41 @@ class ParallelFlorisModel(FlorisModel):
 
         return multiargs
 
-def _parallel_run(fmodel_dict, **set_kwargs) -> FlorisModel:
+    def _postprocessing(self):
+        # Append the remaining flow_fields
+        # Could consider adding a merge method to the FlowField class
+        # to make this easier
+
+        # Ensure fields to set have correct dimensions
+        self.core.flow_field.u = self._fmodels_split[0].core.flow_field.u
+        self.core.flow_field.v = self._fmodels_split[0].core.flow_field.v
+        self.core.flow_field.w = self._fmodels_split[0].core.flow_field.w
+        self.core.flow_field.turbulence_intensity_field = \
+            self._fmodels_split[0].core.flow_field.turbulence_intensity_field
+
+        for fm in self._fmodels_split[1:]:
+            self.core.flow_field.u = np.append(
+                self.core.flow_field.u,
+                fm.core.flow_field.u,
+                axis=0
+            )
+            self.core.flow_field.v = np.append(
+                self.core.flow_field.v,
+                fm.core.flow_field.v,
+                axis=0
+            )
+            self.core.flow_field.w = np.append(
+                self.core.flow_field.w,
+                fm.core.flow_field.w,
+                axis=0
+            )
+            self.core.flow_field.turbulence_intensity_field = np.append(
+                self.core.flow_field.turbulence_intensity_field,
+                fm.core.flow_field.turbulence_intensity_field,
+                axis=0
+            )
+
+def _parallel_run(fmodel_dict, set_kwargs) -> FlorisModel:
     """
     Run the FLORIS model in parallel.
 
