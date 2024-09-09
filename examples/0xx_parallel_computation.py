@@ -11,7 +11,8 @@ from floris import (
     WindRose,
 )
 from floris.parallel_floris_model import ParallelFlorisModel as ParallelFlorisModel_orig
-from floris.parallel_floris_model_2 import ParallelFlorisModel as ParallelFlorisModel_new 
+from floris.parallel_floris_model_2 import ParallelFlorisModel as ParallelFlorisModel_new
+
 
 if __name__ == "__main__":
     # Parallelization parameters
@@ -90,9 +91,15 @@ if __name__ == "__main__":
     t_pfmodel_new_p = timerpc() - t0
 
     print("FlorisModel AEP calculation took {:.2f} seconds.".format(t_fmodel))
-    print("Original ParallelFlorisModel AEP calculation took {:.2f} seconds.".format(t_pfmodel_orig))
+    print("Original ParallelFlorisModel AEP calculation took {:.2f} seconds.".format(
+            t_pfmodel_orig
+        )
+    )
     print("New ParallelFlorisModel AEP calculation took {:.2f} seconds.".format(t_pfmodel_new))
-    print("New ParallelFlorisModel (powers only) AEP calculation took {:.2f} seconds.".format(t_pfmodel_new_p))
+    print("New ParallelFlorisModel (powers only) AEP calculation took {:.2f} seconds.".format(
+            t_pfmodel_new_p
+        )
+    )
 
     print("\n")
     print("FlorisModel AEP: {:.2f} GWh.".format(aep_fmodel/1E9))
