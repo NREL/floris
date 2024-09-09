@@ -65,6 +65,30 @@ def test_multiprocessing_interface(sample_inputs_fixture):
 
     assert np.allclose(f_turb_powers, pf_turb_powers)
 
+def test_return_turbine_powers_only(sample_inputs_fixture):
+    """
+    With return_turbine_powers_only=True, the ParallelFlorisModel should return only the
+    turbine powers, not the full results.
+    """
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+
+    fmodel = FlorisModel(sample_inputs_fixture.core)
+    pfmodel = ParallelFlorisModel(
+        sample_inputs_fixture.core,
+        interface="multiprocessing",
+        n_wind_condition_splits=2,
+        return_turbine_powers_only=True
+    )
+
+    fmodel.run()
+    pfmodel.run()
+
+    f_turb_powers = fmodel.get_turbine_powers()
+    pf_turb_powers = pfmodel.get_turbine_powers()
+
+    assert np.allclose(f_turb_powers, pf_turb_powers)
+
 def test_run_error(sample_inputs_fixture, caplog):
     """
     Check that an error is raised if an output is requested before calling run().
