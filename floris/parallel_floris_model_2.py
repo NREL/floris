@@ -21,7 +21,7 @@ class ParallelFlorisModel(FlorisModel):
 
     def __init__(
         self,
-        configuration: dict | str | Path,
+        configuration: dict | str | Path | FlorisModel,
         interface: str | None = "multiprocessing",
         max_workers: int = -1,
         n_wind_condition_splits: int = 1,
@@ -49,6 +49,13 @@ class ParallelFlorisModel(FlorisModel):
             print_timings (bool): Print the computation time to the console. Defaults to False.
         """
         # Instantiate the underlying FlorisModel
+        if isinstance(configuration, FlorisModel):
+            self.logger.warning(
+                "Received an instantiated FlorisModel, when expected a dictionary or path"
+                " to a FLORIS input file. Converting to dictionary to instantiate "
+                " the ParallelFlorisModel."
+            )
+            configuration = configuration.core.as_dict()
         super().__init__(configuration)
 
         # Save parallelization parameters
@@ -233,6 +240,18 @@ class ParallelFlorisModel(FlorisModel):
             return self._stored_turbine_powers
         else:
             return super()._get_turbine_powers()
+
+    @property
+    def fmodel(self):
+        """
+        Raise deprecation warning.
+        """
+        self.logger.warning(
+            "ParallelFlorisModel no longer contains `fmodel` as an attribute "
+            "and now directly inherits from FlorisModel. Please use the "
+            "attributes and methods of FlorisModel directly."
+        )
+
 
 def _parallel_run(fmodel_dict, set_kwargs) -> FlorisModel:
     """

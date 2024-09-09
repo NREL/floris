@@ -111,3 +111,30 @@ def test_run_error(sample_inputs_fixture, caplog):
     # For now, only a warning is raised for backwards compatibility
     with caplog.at_level(logging.WARNING):
         pfmodel.get_turbine_powers()
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+
+def test_configuration_compatibility(sample_inputs_fixture, caplog):
+    """
+    Check that the ParallelFlorisModel is compatible with FlorisModel and
+    UncertainFlorisModel configurations.
+    """
+
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+
+    fmodel = FlorisModel(sample_inputs_fixture.core)
+
+    with caplog.at_level(logging.WARNING):
+        ParallelFlorisModel(fmodel)
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+
+    pfmodel = ParallelFlorisModel(sample_inputs_fixture.core)
+    with caplog.at_level(logging.WARNING):
+        pfmodel.fmodel
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+
+    with pytest.raises(AttributeError):
+        pfmodel.fmodel.core
