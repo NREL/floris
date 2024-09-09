@@ -10,6 +10,7 @@ import pandas as pd
 
 from floris.core import State
 from floris.floris_model import FlorisModel
+from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 class ParallelFlorisModel(FlorisModel):
@@ -25,6 +26,7 @@ class ParallelFlorisModel(FlorisModel):
         max_workers: int = -1,
         n_wind_condition_splits: int = 1,
         return_turbine_powers_only: bool = False,
+        print_timings: bool = False
     ):
         """
         Initialize the ParallelFlorisModel object.
@@ -44,6 +46,7 @@ class ParallelFlorisModel(FlorisModel):
             n_wind_condition_splits: The number of wind conditions to split the simulation over.
                Defaults to the same as max_workers.
             return_turbine_powers_only: Whether to return only the turbine powers.
+            print_timings (bool): Print the computation time to the console. Defaults to False.
         """
         # Instantiate the underlying FlorisModel
         super().__init__(configuration)
@@ -60,9 +63,13 @@ class ParallelFlorisModel(FlorisModel):
                 f"Parallelization interface {interface} not yet supported."
             )
         elif interface is None:
-            warnings.warn(
+            self.logger.warning(
                 "No parallelization interface specified. Running in serial mode."
             )
+            if return_turbine_powers_only:
+                self.logger.warn(
+                    "return_turbine_powers_only is not supported in serial mode."
+                )
         else:
             raise ValueError(
                 f"Invalid parallelization interface {interface}. "
@@ -76,6 +83,7 @@ class ParallelFlorisModel(FlorisModel):
         else:
             self.n_wind_condition_splits = n_wind_condition_splits
         self.return_turbine_powers_only = return_turbine_powers_only
+        self.print_timings = print_timings
 
     def run(self) -> None:
         """
@@ -90,16 +98,40 @@ class ParallelFlorisModel(FlorisModel):
             # This version will call super().get_turbine_powers() on each of
             # the splits, and return them somehow.
             self._stored_turbine_powers = None # Temporary
-        else:
-            if self.interface is None:
-                super().run()
-            elif self.interface == "multiprocessing":
-                parallel_run_inputs = self._preprocessing()
+        if self.interface is None:
+            t0 = timerpc()
+            super().run()
+            t1 = timerpc()
+        elif self.interface == "multiprocessing":
+            t0 = timerpc()
+            parallel_run_inputs = self._preprocessing()
+            t1 = timerpc()
+            if self.return_turbine_powers_only:
+                with self._PoolExecutor(self.max_workers) as p:
+                    self._turbine_powers_split = p.starmap(
+                        _parallel_run_powers_only,
+                        parallel_run_inputs
+                    )
+            else:
                 with self._PoolExecutor(self.max_workers) as p:
                     self._fmodels_split = p.starmap(_parallel_run, parallel_run_inputs)
-                self._postprocessing()
-                self.core.farm.finalize(self.core.grid.unsorted_indices)
-                self.core.state = State.USED
+            t2 = timerpc()
+            self._postprocessing()
+            self.core.farm.finalize(self.core.grid.unsorted_indices)
+            self.core.state = State.USED
+            t3 = timerpc()
+        if self.print_timings:
+            print("===============================================================================")
+            if self.interface is None:
+                print(f"Total time spent for serial calculation (interface=None): {t1 - t0:.3f} s")
+            else:
+                print(
+                    "Total time spent for parallel calculation "
+                    f"({self.max_workers} workers): {t3-t0:.3f} s"
+                )
+                print(f"  Time spent in parallel preprocessing: {t1-t0:.3f} s")
+                print(f"  Time spent in parallel loop execution: {t2-t1:.3f} s.")
+                print(f"  Time spent in parallel postprocessing: {t3-t2:.3f} s")
 
     def _preprocessing(self):
         # Split over the wind conditions
@@ -148,34 +180,37 @@ class ParallelFlorisModel(FlorisModel):
         # Could consider adding a merge method to the FlowField class
         # to make this easier
 
-        # Ensure fields to set have correct dimensions
-        self.core.flow_field.u = self._fmodels_split[0].core.flow_field.u
-        self.core.flow_field.v = self._fmodels_split[0].core.flow_field.v
-        self.core.flow_field.w = self._fmodels_split[0].core.flow_field.w
-        self.core.flow_field.turbulence_intensity_field = \
-            self._fmodels_split[0].core.flow_field.turbulence_intensity_field
+        if self.return_turbine_powers_only:
+            self._stored_turbine_powers = np.vstack(self._turbine_powers_split)
+        else:
+            # Ensure fields to set have correct dimensions
+            self.core.flow_field.u = self._fmodels_split[0].core.flow_field.u
+            self.core.flow_field.v = self._fmodels_split[0].core.flow_field.v
+            self.core.flow_field.w = self._fmodels_split[0].core.flow_field.w
+            self.core.flow_field.turbulence_intensity_field = \
+                self._fmodels_split[0].core.flow_field.turbulence_intensity_field
 
-        for fm in self._fmodels_split[1:]:
-            self.core.flow_field.u = np.append(
-                self.core.flow_field.u,
-                fm.core.flow_field.u,
-                axis=0
-            )
-            self.core.flow_field.v = np.append(
-                self.core.flow_field.v,
-                fm.core.flow_field.v,
-                axis=0
-            )
-            self.core.flow_field.w = np.append(
-                self.core.flow_field.w,
-                fm.core.flow_field.w,
-                axis=0
-            )
-            self.core.flow_field.turbulence_intensity_field = np.append(
-                self.core.flow_field.turbulence_intensity_field,
-                fm.core.flow_field.turbulence_intensity_field,
-                axis=0
-            )
+            for fm in self._fmodels_split[1:]:
+                self.core.flow_field.u = np.append(
+                    self.core.flow_field.u,
+                    fm.core.flow_field.u,
+                    axis=0
+                )
+                self.core.flow_field.v = np.append(
+                    self.core.flow_field.v,
+                    fm.core.flow_field.v,
+                    axis=0
+                )
+                self.core.flow_field.w = np.append(
+                    self.core.flow_field.w,
+                    fm.core.flow_field.w,
+                    axis=0
+                )
+                self.core.flow_field.turbulence_intensity_field = np.append(
+                    self.core.flow_field.turbulence_intensity_field,
+                    fm.core.flow_field.turbulence_intensity_field,
+                    axis=0
+                )
 
     def _get_turbine_powers(self):
         """
@@ -187,6 +222,13 @@ class ParallelFlorisModel(FlorisModel):
         Returns:
             NDArrayFloat: Powers at each turbine.
         """
+        if self.core.state is not State.USED:
+            self.logger.warning(
+                f"Please call `{self.__class__.__name__}.run` before computing"
+                " turbine powers. In future versions, an explicit run() call will"
+                "be required."
+            )
+            self.run()
         if self.return_turbine_powers_only:
             return self._stored_turbine_powers
         else:
@@ -204,3 +246,45 @@ def _parallel_run(fmodel_dict, set_kwargs) -> FlorisModel:
     fmodel.set(**set_kwargs)
     fmodel.run()
     return fmodel
+
+def _parallel_run_powers_only(fmodel_dict, set_kwargs) -> np.ndarray:
+    """
+    Run the FLORIS model in parallel, returning only the turbine powers.
+
+    Args:
+        fmodel: The FLORIS model to run.
+        set_kwargs: Additional keyword arguments to pass to fmodel.set().
+    """
+    fmodel = FlorisModel(fmodel_dict)
+    fmodel.set(**set_kwargs)
+    fmodel.run()
+    return fmodel.get_turbine_powers()
+
+def _optimize_yaw_angles_serial(
+    fmodel_information,
+    minimum_yaw_angle,
+    maximum_yaw_angle,
+    yaw_angles_baseline,
+    x0,
+    Ny_passes,
+    turbine_weights,
+    exclude_downstream_turbines,
+    verify_convergence,
+    print_progress,
+):
+    fmodel_opt = FlorisModel(fmodel_information)
+    yaw_opt = YawOptimizationSR(
+        fmodel=fmodel_opt,
+        minimum_yaw_angle=minimum_yaw_angle,
+        maximum_yaw_angle=maximum_yaw_angle,
+        yaw_angles_baseline=yaw_angles_baseline,
+        x0=x0,
+        Ny_passes=Ny_passes,
+        turbine_weights=turbine_weights,
+        exclude_downstream_turbines=exclude_downstream_turbines,
+        verify_convergence=verify_convergence,
+    )
+
+    # Perform optimization but silence print statements to avoid cluttering
+    df_opt = yaw_opt.optimize(print_progress=print_progress)
+    return df_opt

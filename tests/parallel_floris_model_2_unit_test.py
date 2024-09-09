@@ -1,7 +1,9 @@
 
 import copy
 
+import logging
 import numpy as np
+import pytest
 
 from floris import (
     FlorisModel,
@@ -62,3 +64,26 @@ def test_multiprocessing_interface(sample_inputs_fixture):
     pf_turb_powers = pfmodel.get_turbine_powers()
 
     assert np.allclose(f_turb_powers, pf_turb_powers)
+
+def test_run_error(sample_inputs_fixture, caplog):
+    """
+    Check that an error is raised if an output is requested before calling run().
+    """
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+
+    pfmodel = ParallelFlorisModel(
+        sample_inputs_fixture.core,
+        interface="multiprocessing",
+        n_wind_condition_splits=2
+    )
+
+    # In future versions, error will be raised
+    # with pytest.raises(RuntimeError):
+    #     pfmodel.get_turbine_powers()
+    # with pytest.raises(RuntimeError):
+    #     pfmodel.get_farm_AEP()
+
+    # For now, only a warning is raised for backwards compatibility
+    with caplog.at_level(logging.WARNING):
+        pfmodel.get_turbine_powers()
