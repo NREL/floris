@@ -86,6 +86,11 @@ if __name__ == "__main__":
     t_pfmodel_new = timerpc() - t0
 
     t0 = timerpc()
+    pfmodel_new.run()
+    aep_pfmodel_new = pfmodel_new.get_farm_AEP()
+    t_pfmodel_new2 = timerpc() - t0
+
+    t0 = timerpc()
     pfmodel_new_p.run()
     aep_pfmodel_new_p = pfmodel_new_p.get_farm_AEP()
     t_pfmodel_new_p = timerpc() - t0
@@ -96,6 +101,10 @@ if __name__ == "__main__":
         )
     )
     print("New ParallelFlorisModel AEP calculation took {:.2f} seconds.".format(t_pfmodel_new))
+    print("New ParallelFlorisModel AEP calculation took {:.2f} seconds the second time.".format(
+            t_pfmodel_new2
+        )
+    )
     print("New ParallelFlorisModel (powers only) AEP calculation took {:.2f} seconds.".format(
             t_pfmodel_new_p
         )
