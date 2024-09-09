@@ -170,9 +170,6 @@ class ParallelFlorisModel(FlorisModel):
                 "awc_frequencies": self.core.farm.awc_frequencies[wc_id_split, :],
             }
 
-            # Do I also need to hangle splitting the wind data object?
-            # Perhaps not, not used in run() I think
-
             fmodel_dict_split["flow_field"]["wind_directions"] = wind_directions
             fmodel_dict_split["flow_field"]["wind_speeds"] = wind_speeds
             fmodel_dict_split["flow_field"]["turbulence_intensities"] = turbulence_intensities
