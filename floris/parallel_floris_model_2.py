@@ -101,18 +101,6 @@ class ParallelFlorisModel(FlorisModel):
                 self.core.farm.finalize(self.core.grid.unsorted_indices)
                 self.core.state = State.USED
 
-    def get_turbine_powers(self):
-        """
-        Calculates the power at each turbine in the wind farm.
-
-        Returns:
-            NDArrayFloat: Powers at each turbine.
-        """
-        if self.return_turbine_powers_only:
-            return self._stored_turbine_powers
-        else:
-            return super().get_turbine_powers()
-
     def _preprocessing(self):
         # Split over the wind conditions
         n_wind_condition_splits = self.n_wind_condition_splits
@@ -189,16 +177,30 @@ class ParallelFlorisModel(FlorisModel):
                 axis=0
             )
 
+    def _get_turbine_powers(self):
+        """
+        Calculates the power at each turbine in the wind farm.
+        This override will only be necessary if we want to be able to
+        use the return_turbine_powers_only option. Need to check if that
+        makes a significant speed difference.
+
+        Returns:
+            NDArrayFloat: Powers at each turbine.
+        """
+        if self.return_turbine_powers_only:
+            return self._stored_turbine_powers
+        else:
+            return super()._get_turbine_powers()
+
 def _parallel_run(fmodel_dict, set_kwargs) -> FlorisModel:
     """
     Run the FLORIS model in parallel.
 
     Args:
         fmodel: The FLORIS model to run.
-        kwargs: Additional keyword arguments to pass to the model.
+        set_kwargs: Additional keyword arguments to pass to fmodel.set().
     """
     fmodel = FlorisModel(fmodel_dict)
     fmodel.set(**set_kwargs)
     fmodel.run()
-    # Not sure that'll work---can't be serialized? That could be a problem.
     return fmodel
