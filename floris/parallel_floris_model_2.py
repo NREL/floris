@@ -111,6 +111,7 @@ class ParallelFlorisModel(FlorisModel):
             t1 = timerpc()
         elif self.interface == "multiprocessing":
             t0 = timerpc()
+            self.core.initialize_domain()
             parallel_run_inputs = self._preprocessing()
             t1 = timerpc()
             if self.return_turbine_powers_only:
@@ -169,7 +170,6 @@ class ParallelFlorisModel(FlorisModel):
                 "awc_amplitudes": self.core.farm.awc_amplitudes[wc_id_split, :],
                 "awc_frequencies": self.core.farm.awc_frequencies[wc_id_split, :],
             }
-
             fmodel_dict_split["flow_field"]["wind_directions"] = wind_directions
             fmodel_dict_split["flow_field"]["wind_speeds"] = wind_speeds
             fmodel_dict_split["flow_field"]["turbulence_intensities"] = turbulence_intensities

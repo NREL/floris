@@ -146,7 +146,7 @@ def test_wind_data_objects(sample_inputs_fixture):
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
-    pfmodel = ParallelFlorisModel(sample_inputs_fixture.core)
+    pfmodel = ParallelFlorisModel(sample_inputs_fixture.core, max_workers=2)
 
     # Create a wind rose and set onto both models
     wind_speeds = np.array([8.0, 10.0, 12.0, 8.0, 10.0, 12.0])
@@ -188,3 +188,28 @@ def test_wind_data_objects(sample_inputs_fixture):
 
     assert powers_fmodel_ts.shape == powers_pfmodel_ts.shape
     assert np.allclose(powers_fmodel_ts, powers_pfmodel_ts)
+
+def test_control_setpoints(sample_inputs_fixture):
+    """
+    Check that the ParallelFlorisModel is compatible with yaw angles.
+    """
+
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+
+    fmodel = FlorisModel(sample_inputs_fixture.core)
+    pfmodel = ParallelFlorisModel(sample_inputs_fixture.core, max_workers=2)
+
+    # Set yaw angles
+    yaw_angles = np.tile(np.array([[10.0, 20.0, 30.0]]), (fmodel.n_findex,1))
+    fmodel.set(yaw_angles=yaw_angles)
+    pfmodel.set(yaw_angles=yaw_angles)
+
+    # Run; get turbine powers; compare results
+    fmodel.run()
+    powers_fmodel = fmodel.get_turbine_powers()
+    pfmodel.run()
+    powers_pfmodel = pfmodel.get_turbine_powers()
+
+    assert powers_fmodel.shape == powers_pfmodel.shape
+    assert np.allclose(powers_fmodel, powers_pfmodel)
