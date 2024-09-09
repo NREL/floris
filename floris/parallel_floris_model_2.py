@@ -21,10 +21,10 @@ class ParallelFlorisModel(FlorisModel):
 
     def __init__(
         self,
-        configuration: dict | str | Path | FlorisModel,
+        configuration: dict | str | Path,
         interface: str | None = "multiprocessing",
         max_workers: int = -1,
-        n_wind_condition_splits: int = 1,
+        n_wind_condition_splits: int = -1,
         return_turbine_powers_only: bool = False,
         print_timings: bool = False
     ):
@@ -278,32 +278,3 @@ def _parallel_run_powers_only(fmodel_dict, set_kwargs) -> np.ndarray:
     fmodel.set(**set_kwargs)
     fmodel.run()
     return fmodel.get_turbine_powers()
-
-def _optimize_yaw_angles_serial(
-    fmodel_information,
-    minimum_yaw_angle,
-    maximum_yaw_angle,
-    yaw_angles_baseline,
-    x0,
-    Ny_passes,
-    turbine_weights,
-    exclude_downstream_turbines,
-    verify_convergence,
-    print_progress,
-):
-    fmodel_opt = FlorisModel(fmodel_information)
-    yaw_opt = YawOptimizationSR(
-        fmodel=fmodel_opt,
-        minimum_yaw_angle=minimum_yaw_angle,
-        maximum_yaw_angle=maximum_yaw_angle,
-        yaw_angles_baseline=yaw_angles_baseline,
-        x0=x0,
-        Ny_passes=Ny_passes,
-        turbine_weights=turbine_weights,
-        exclude_downstream_turbines=exclude_downstream_turbines,
-        verify_convergence=verify_convergence,
-    )
-
-    # Perform optimization but silence print statements to avoid cluttering
-    df_opt = yaw_opt.optimize(print_progress=print_progress)
-    return df_opt
