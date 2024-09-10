@@ -174,7 +174,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
         self.x_opt = x_opt_all[mask_in_bounds]
         self.y_opt = y_opt_all[mask_in_bounds]
         return self.n_turbines_max, self.x_opt, self.y_opt
-    
+
     def _get_initial_and_final_locs(self):
         return self.x0, self.y0, self.x_opt, self.y_opt
 
