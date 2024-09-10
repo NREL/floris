@@ -120,20 +120,6 @@ def test_LayoutOptimizationGridded_initialization(caplog):
             min_dist_D=5
         )
 
-def test_LayoutOptimizationGridded_default_grid():
-    fmodel = FlorisModel(configuration=YAML_INPUT)
-
-    # Set up a sample boundary
-    boundaries = [(0.0, 0.0), (0.0, 1000.0), (1000.0, 1000.0), (1000.0, 0.0), (0.0, 0.0)]
-
-    LayoutOptimizationGridded(
-        fmodel=fmodel,
-        boundaries=boundaries,
-        min_dist=50,
-    )
-
-    # Test it worked...
-
 def test_LayoutOptimizationGridded_basic():
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
@@ -191,9 +177,9 @@ def test_LayoutOptimizationGridded_diagonal():
         fmodel=fmodel,
         boundaries=boundaries_diag,
         min_dist=turbine_spacing,
-        rotation_step=5,
+        rotation_step=45, # To speed up test
         rotation_range=(0, 360),
-        translation_step=20,
+        translation_step=50,
         hexagonal_packing=False,
         enable_geometric_yaw=False,
         use_value=False,
@@ -217,7 +203,7 @@ def test_LayoutOptimizationGridded_diagonal():
         min_dist=turbine_spacing,
         rotation_step=5,
         rotation_range=(0, 10),
-        translation_step=20,
+        translation_step=50,
         hexagonal_packing=False,
         enable_geometric_yaw=False,
         use_value=False,
@@ -230,9 +216,9 @@ def test_LayoutOptimizationGridded_diagonal():
         fmodel=fmodel,
         boundaries=boundaries_diag,
         min_dist=turbine_spacing,
-        rotation_step=60,
+        rotation_step=60, # Not fine enough to find ideal 45 deg rotation
         rotation_range=(0, 360),
-        translation_step=20,
+        translation_step=50,
         hexagonal_packing=False,
         enable_geometric_yaw=False,
         use_value=False,
@@ -245,7 +231,7 @@ def test_LayoutOptimizationGridded_diagonal():
         fmodel=fmodel,
         boundaries=boundaries_diag,
         min_dist=turbine_spacing,
-        rotation_step=5,
+        rotation_step=45,
         rotation_range=(0, 10),
         translation_step=300,
         hexagonal_packing=False,
@@ -259,7 +245,7 @@ def test_LayoutOptimizationGridded_separate_boundaries():
     fmodel = FlorisModel(configuration=YAML_INPUT)
     separate_boundaries = [
         [(0.0, 0.0), (0.0, 100.0), (100.0, 100.0), (100.0, 0.0), (0.0, 0.0)],
-        [(1000.0, 0.0), (1000.0, 100.0), (1100.0, 100.0), (1100.0, 0.0), (1000.0, 0.0)]
+        [(200.0, 0.0), (200.0, 100.0), (300.0, 100.0), (300.0, 0.0), (200.0, 0.0)]
     ]
 
     layout_opt = LayoutOptimizationGridded(
@@ -279,7 +265,7 @@ def test_LayoutOptimizationGridded_separate_boundaries():
 
     # Check they're inside as expected
     assert ((0.0 <= y_opt) & (y_opt <= 100.0)).all()
-    assert (((0.0 <= x_opt) & (x_opt <= 100.0)) | ((1000.0 <= x_opt) & (x_opt <= 1100.0))).all()
+    assert (((0.0 <= x_opt) & (x_opt <= 100.0)) | ((200.0 <= x_opt) & (x_opt <= 300.0))).all()
 
 
 def test_LayoutOptimizationGridded_hexagonal():

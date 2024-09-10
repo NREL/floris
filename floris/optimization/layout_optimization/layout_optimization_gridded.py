@@ -1,13 +1,6 @@
 from __future__ import annotations
 
-import matplotlib.pyplot as plt
 import numpy as np
-from scipy.spatial.distance import cdist
-from shapely.geometry import (
-    LineString,
-    Point,
-    Polygon,
-)
 
 from .layout_optimization_base import LayoutOptimization
 from .layout_optimization_random_search import test_point_in_bounds
@@ -161,7 +154,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
                 [test_point_in_bounds(xy[0], xy[1], self._boundary_polygon) for
                  xy in candidate_layouts[i, :, :]]
             )
-        idx_max = np.argmax(turbines_in_bounds) # FIRST maximizing index returned
+        idx_max = np.argmax(turbines_in_bounds) # First maximizing index returned
 
         # Get the best layout
         x_opt_all = candidate_layouts[idx_max, :, 0]
