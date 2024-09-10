@@ -73,6 +73,11 @@ class LayoutOptimizationGridded(LayoutOptimization):
             use_value=use_value,
         )
 
+        # Initial locations not used for optimization, but may be useful
+        # for comparison
+        self.x0 = fmodel.layout_x
+        self.y0 = fmodel.layout_y
+
         # Create the default grid
 
         # use min_dist, hexagonal packing, and boundaries to create a grid.
@@ -164,8 +169,14 @@ class LayoutOptimizationGridded(LayoutOptimization):
         mask_in_bounds = [test_point_in_bounds(x, y, self._boundary_polygon) for
                           x, y in zip(x_opt_all, y_opt_all)]
 
-        # Return the best layout, along with the number of turbines in bounds
-        return turbines_in_bounds[idx_max], x_opt_all[mask_in_bounds], y_opt_all[mask_in_bounds]
+        # Save best layout, along with the number of turbines in bounds, and return
+        self.n_turbines_max = turbines_in_bounds[idx_max]
+        self.x_opt = x_opt_all[mask_in_bounds]
+        self.y_opt = y_opt_all[mask_in_bounds]
+        return self.n_turbines_max, self.x_opt, self.y_opt
+    
+    def _get_initial_and_final_locs(self):
+        return self.x0, self.y0, self.x_opt, self.y_opt
 
     @staticmethod
     def trim_to_circle(x_locs, y_locs, radius):
