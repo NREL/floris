@@ -18,8 +18,8 @@ class LayoutOptimizationGridded(LayoutOptimization):
         self,
         fmodel,
         boundaries,
-        spacing: float | None = None,
-        spacing_D: float | None = -1,
+        min_dist: float | None = None,
+        min_dist_D: float | None = -1,
         rotation_step: float = 5.0,
         rotation_range: tuple[float, float] = (0.0, 360.0),
         translation_step: float | None = None,
@@ -32,18 +32,18 @@ class LayoutOptimizationGridded(LayoutOptimization):
     ):
         # Save boundaries
         # Handle spacing information
-        if spacing is not None and spacing_D is not None and spacing_D >= 0:
-            raise ValueError("Only one of spacing and spacing_D can be defined.")
-        if spacing is None and spacing_D is None:
-            raise ValueError("Either spacing or spacing_D must be defined.")
-        if spacing_D is not None and spacing is None:
-            if spacing_D < 0: # Default to 5D
-                spacing_D = 5.0
-            spacing = spacing_D * fmodel.core.farm.rotor_diameters[0]
+        if min_dist is not None and min_dist_D is not None and min_dist_D >= 0:
+            raise ValueError("Only one of min_dist and min_dist_D can be defined.")
+        if min_dist is None and min_dist_D is None:
+            raise ValueError("Either min_dist or min_dist_D must be defined.")
+        if min_dist_D is not None and min_dist is None:
+            if min_dist_D < 0: # Default to 5D
+                min_dist_D = 5.0
+            min_dist = min_dist_D * fmodel.core.farm.rotor_diameters[0]
             if len(np.unique(fmodel.core.farm.rotor_diameters)) > 1:
                 self.logger.warning((
                     "Found multiple turbine diameters. Using diameter of first turbine to set"
-                    f" spacing to {spacing}m ({spacing_D} diameters)."
+                    f" min_dist to {min_dist}m ({min_dist_D} diameters)."
                 ))
 
         # Similar for translation step
@@ -68,19 +68,19 @@ class LayoutOptimizationGridded(LayoutOptimization):
         super().__init__(
             fmodel,
             boundaries,
-            min_dist=spacing,
+            min_dist=min_dist,
             enable_geometric_yaw=enable_geometric_yaw,
             use_value=use_value,
         )
 
         # Create the default grid
 
-        # use spacing, hexagonal packing, and boundaries to create a grid.
+        # use min_dist, hexagonal packing, and boundaries to create a grid.
         d = 1.1 * np.sqrt((self.xmax**2 - self.xmin**2) + (self.ymax**2 - self.ymin**2))
-        grid_1D = np.arange(0, d+spacing, spacing)
+        grid_1D = np.arange(0, d+min_dist, min_dist)
         if hexagonal_packing:
             x_locs = np.tile(grid_1D.reshape(1,-1), (len(grid_1D), 1))
-            x_locs[np.arange(1, len(grid_1D), 2), :] += 0.5 * spacing
+            x_locs[np.arange(1, len(grid_1D), 2), :] += 0.5 * min_dist
             y_locs = np.tile(np.sqrt(3) / 2 * grid_1D.reshape(-1,1), (1, len(grid_1D)))
         else:
             x_locs, y_locs = np.meshgrid(grid_1D, grid_1D)
@@ -91,7 +91,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
         x_locs_grid, y_locs_grid = self.trim_to_circle(
             x_locs,
             y_locs,
-            (grid_1D.max()-grid_1D.min()+spacing)/2
+            (grid_1D.max()-grid_1D.min()+min_dist)/2
         )
         self.xy_grid = np.concatenate(
             [x_locs_grid.reshape(-1,1), y_locs_grid.reshape(-1,1)],
@@ -114,7 +114,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
 
         # Deal with None translation_range
         if translation_range is None:
-            translation_range = (0.0, spacing)
+            translation_range = (0.0, min_dist)
 
         # Create test rotations and translations
         self.rotations = np.arange(rotation_range[0], rotation_range[1], rotation_step)

@@ -100,16 +100,16 @@ def test_LayoutOptimizationGridded_initialization(caplog):
         LayoutOptimizationGridded(
             fmodel=fmodel,
             boundaries=test_boundaries,
-            spacing=None,
-            spacing_D=None,
-        ) # No spacing specified
+            min_dist=None,
+            min_dist_D=None,
+        ) # No min_dist specified
     with pytest.raises(ValueError):
         LayoutOptimizationGridded(
             fmodel=fmodel,
             boundaries=test_boundaries,
-            spacing=500,
-            spacing_D=5
-        ) # Spacing specified in two ways
+            min_dist=500,
+            min_dist_D=5
+        ) # min_dist specified in two ways
 
     fmodel.core.farm.rotor_diameters[1] = 100.0
     caplog.clear()
@@ -117,7 +117,7 @@ def test_LayoutOptimizationGridded_initialization(caplog):
         LayoutOptimizationGridded(
             fmodel,
             test_boundaries,
-            spacing_D=5
+            min_dist_D=5
         )
 
 def test_LayoutOptimizationGridded_default_grid():
@@ -129,7 +129,7 @@ def test_LayoutOptimizationGridded_default_grid():
     LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=boundaries,
-        spacing=50,
+        min_dist=50,
     )
 
     # Test it worked...
@@ -137,12 +137,12 @@ def test_LayoutOptimizationGridded_default_grid():
 def test_LayoutOptimizationGridded_basic():
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
-    spacing = 60
+    min_dist = 60
 
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=test_boundaries,
-        spacing=spacing,
+        min_dist=min_dist,
         rotation_step=5,
         rotation_range=(0, 360),
         translation_step=50,
@@ -156,19 +156,19 @@ def test_LayoutOptimizationGridded_basic():
     # Check that the number of turbines is correct
     assert n_turbs_opt == len(x_opt)
 
-    # Check that spacing is respected
+    # Check that min_dist is respected
     xx_diff = x_opt.reshape(-1,1) - x_opt.reshape(1,-1)
     yy_diff = y_opt.reshape(-1,1) - y_opt.reshape(1,-1)
     dists = np.sqrt(xx_diff**2 + yy_diff**2)
     dists[np.arange(0, len(dists), 1), np.arange(0, len(dists), 1)] = np.inf
-    assert (dists > spacing - 1e-6).all()
+    assert (dists > min_dist - 1e-6).all()
 
     # Check all are indeed in bounds
     assert (np.all(x_opt > 0.0) & np.all(x_opt < 1000.0)
             & np.all(y_opt > 0.0) & np.all(y_opt < 1000.0))
 
     # Check that the layout is at least as good as the basic rectangular fill
-    n_turbs_subopt = (1000 // spacing + 1) ** 2
+    n_turbs_subopt = (1000 // min_dist + 1) ** 2
 
     assert n_turbs_opt >= n_turbs_subopt
 
@@ -190,7 +190,7 @@ def test_LayoutOptimizationGridded_diagonal():
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=boundaries_diag,
-        spacing=turbine_spacing,
+        min_dist=turbine_spacing,
         rotation_step=5,
         rotation_range=(0, 360),
         translation_step=20,
@@ -214,7 +214,7 @@ def test_LayoutOptimizationGridded_diagonal():
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=boundaries_diag,
-        spacing=turbine_spacing,
+        min_dist=turbine_spacing,
         rotation_step=5,
         rotation_range=(0, 10),
         translation_step=20,
@@ -229,7 +229,7 @@ def test_LayoutOptimizationGridded_diagonal():
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=boundaries_diag,
-        spacing=turbine_spacing,
+        min_dist=turbine_spacing,
         rotation_step=60,
         rotation_range=(0, 360),
         translation_step=20,
@@ -244,7 +244,7 @@ def test_LayoutOptimizationGridded_diagonal():
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=boundaries_diag,
-        spacing=turbine_spacing,
+        min_dist=turbine_spacing,
         rotation_step=5,
         rotation_range=(0, 10),
         translation_step=300,
@@ -265,7 +265,7 @@ def test_LayoutOptimizationGridded_separate_boundaries():
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=separate_boundaries,
-        spacing=150,
+        min_dist=150,
         rotation_step=5,
         rotation_range=(0, 360),
         translation_step=50,
@@ -291,7 +291,7 @@ def test_LayoutOptimizationGridded_hexagonal():
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=test_boundaries,
-        spacing=spacing,
+        min_dist=spacing,
         rotation_step=5,
         rotation_range=(0, 360),
         translation_step=50,
@@ -305,7 +305,7 @@ def test_LayoutOptimizationGridded_hexagonal():
     layout_opt = LayoutOptimizationGridded(
         fmodel=fmodel,
         boundaries=test_boundaries,
-        spacing=spacing,
+        min_dist=spacing,
         rotation_step=5,
         rotation_range=(0, 360),
         translation_step=50,
