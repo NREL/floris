@@ -133,8 +133,6 @@ def test_LayoutOptimizationGridded_basic():
         rotation_range=(0, 360),
         translation_step=50,
         hexagonal_packing=False,
-        enable_geometric_yaw=False,
-        use_value=False,
     )
 
     n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
@@ -181,8 +179,6 @@ def test_LayoutOptimizationGridded_diagonal():
         rotation_range=(0, 360),
         translation_step=50,
         hexagonal_packing=False,
-        enable_geometric_yaw=False,
-        use_value=False,
     )
 
     n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
@@ -205,8 +201,6 @@ def test_LayoutOptimizationGridded_diagonal():
         rotation_range=(0, 10),
         translation_step=50,
         hexagonal_packing=False,
-        enable_geometric_yaw=False,
-        use_value=False,
     )
     n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
     assert n_turbs_opt < 3
@@ -220,8 +214,6 @@ def test_LayoutOptimizationGridded_diagonal():
         rotation_range=(0, 360),
         translation_step=50,
         hexagonal_packing=False,
-        enable_geometric_yaw=False,
-        use_value=False,
     )
     n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
     assert n_turbs_opt < 3
@@ -235,8 +227,6 @@ def test_LayoutOptimizationGridded_diagonal():
         rotation_range=(0, 10),
         translation_step=300,
         hexagonal_packing=False,
-        enable_geometric_yaw=False,
-        use_value=False,
     )
     n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
     assert n_turbs_opt < 3
@@ -256,8 +246,6 @@ def test_LayoutOptimizationGridded_separate_boundaries():
         rotation_range=(0, 360),
         translation_step=50,
         hexagonal_packing=False,
-        enable_geometric_yaw=False,
-        use_value=False,
     )
 
     n_turbs_opt, x_opt, y_opt = layout_opt.optimize()
@@ -282,8 +270,6 @@ def test_LayoutOptimizationGridded_hexagonal():
         rotation_range=(0, 360),
         translation_step=50,
         hexagonal_packing=False,
-        enable_geometric_yaw=False,
-        use_value=False,
     )
     n_turbs_opt_square = layout_opt.optimize()[0]
 
@@ -296,8 +282,6 @@ def test_LayoutOptimizationGridded_hexagonal():
         rotation_range=(0, 360),
         translation_step=50,
         hexagonal_packing=True,
-        enable_geometric_yaw=False,
-        use_value=False,
     )
     n_turbs_opt_hex = layout_opt.optimize()[0]
 

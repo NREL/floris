@@ -2,15 +2,26 @@ from __future__ import annotations
 
 import numpy as np
 
+from floris import FlorisModel
+
 from .layout_optimization_base import LayoutOptimization
 from .layout_optimization_random_search import test_point_in_bounds
 
 
 class LayoutOptimizationGridded(LayoutOptimization):
+    """
+    Generates layouts that fit the most turbines arranged in a gridded
+    pattern into the given boundaries. The grid can be square (default)
+    or hexagonal. The layout is optimized by rotating and translating
+    the grid to maximize the number of turbines that fit within the
+    boundaries. Note that no wake or AEP calculations are performed in
+    determining the maximum number of turbines that fit within the 
+    boundary.
+    """
     def __init__(
         self,
-        fmodel,
-        boundaries,
+        fmodel: FlorisModel,
+        boundaries: list[tuple[float, float] | list[tuple[float, float]]],
         min_dist: float | None = None,
         min_dist_D: float | None = -1,
         rotation_step: float = 5.0,
@@ -19,11 +30,33 @@ class LayoutOptimizationGridded(LayoutOptimization):
         translation_step_D: float | None = -1,
         translation_range: tuple[float, float] | None = None,
         hexagonal_packing: bool = False,
-        enable_geometric_yaw: bool = False,
-        use_value: bool=False,
-
     ):
-        # Save boundaries
+        """
+        Initialize the LayoutOptimizationGridded object.
+
+        Args:
+            fmodel: FlorisModel, mostly used to obtain rotor diameter for spacing
+            boundaries: List of boundary vertices. Specified as a list of two-tuples (x,y),
+                or a list of lists of two-tuples if there are multiple separate boundary areas.
+            min_dist: Minimum distance between turbines in meters. Defaults to None, which results
+                in 5D spacing if min_dist_D is not defined.
+            min_dist_D: Minimum distance between turbines in terms of rotor diameters. If specified
+                as a negative number, will result in 5D spacing using the first turbine diameter
+                found on the fmodel. Defaults to -1, which results in 5D spacing if min_dist is not
+                defined. 
+            rotation_step: Step size for grid rotations in degrees. Defaults to 5.0.
+            rotation_range: Range of possible rotation in degrees. Defaults to (0.0, 360.0).
+            translation_step: Step size for translation in meters. Defaults to None, which results
+                in 1D translations if translation_step_D is not defined.
+            translation_step_D: Step size for translation in terms of rotor diameters. If specified
+                as a negative number, will result in 1D translation steps using the first turbine
+                diameter found on the fmodel. Defaults to -1, which results in 1D steps if
+                translation_step is not defined. 
+            translation_range: Range of translation in meters. Defaults to None, which results in
+                a range of (0, min_dist).
+            hexagonal_packing: Use hexagonal packing instead of square grid. Defaults to False.
+        """
+
         # Handle spacing information
         if min_dist is not None and min_dist_D is not None and min_dist_D >= 0:
             raise ValueError("Only one of min_dist and min_dist_D can be defined.")
@@ -62,8 +95,8 @@ class LayoutOptimizationGridded(LayoutOptimization):
             fmodel,
             boundaries,
             min_dist=min_dist,
-            enable_geometric_yaw=enable_geometric_yaw,
-            use_value=use_value,
+            enable_geometric_yaw=False,
+            use_value=False,
         )
 
         # Initial locations not used for optimization, but may be useful
@@ -85,7 +118,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
         x_locs = x_locs.flatten() - np.mean(x_locs) + 0.5*(self.xmax + self.xmin)
         y_locs = y_locs.flatten() - np.mean(y_locs) + 0.5*(self.ymax + self.ymin)
 
-        # Trim to a circle to minimize wasted computation
+        # Trim to a circle to avoid wasted computation
         x_locs_grid, y_locs_grid = self.trim_to_circle(
             x_locs,
             y_locs,
