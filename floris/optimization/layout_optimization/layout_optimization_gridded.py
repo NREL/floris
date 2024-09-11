@@ -15,7 +15,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
     or hexagonal. The layout is optimized by rotating and translating
     the grid to maximize the number of turbines that fit within the
     boundaries. Note that no wake or AEP calculations are performed in
-    determining the maximum number of turbines that fit within the 
+    determining the maximum number of turbines that fit within the
     boundary.
     """
     def __init__(
@@ -43,7 +43,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
             min_dist_D: Minimum distance between turbines in terms of rotor diameters. If specified
                 as a negative number, will result in 5D spacing using the first turbine diameter
                 found on the fmodel. Defaults to -1, which results in 5D spacing if min_dist is not
-                defined. 
+                defined.
             rotation_step: Step size for grid rotations in degrees. Defaults to 5.0.
             rotation_range: Range of possible rotation in degrees. Defaults to (0.0, 360.0).
             translation_step: Step size for translation in meters. Defaults to None, which results
@@ -51,7 +51,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
             translation_step_D: Step size for translation in terms of rotor diameters. If specified
                 as a negative number, will result in 1D translation steps using the first turbine
                 diameter found on the fmodel. Defaults to -1, which results in 1D steps if
-                translation_step is not defined. 
+                translation_step is not defined.
             translation_range: Range of translation in meters. Defaults to None, which results in
                 a range of (0, min_dist).
             hexagonal_packing: Use hexagonal packing instead of square grid. Defaults to False.
