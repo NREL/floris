@@ -240,6 +240,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -374,6 +375,8 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -1321,8 +1324,6 @@ document.write(`
         <li><a href="_autosummary/floris.layout_visualization.html#module-floris.layout_visualization">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     floris.logging_manager
 
@@ -1330,6 +1331,8 @@ document.write(`
         <li><a href="_autosummary/floris.logging_manager.html#module-floris.logging_manager">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     floris.optimization
 
@@ -1356,6 +1359,13 @@ document.write(`
 
       <ul>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html#module-floris.optimization.layout_optimization.layout_optimization_boundary_grid">module</a>
+</li>
+      </ul></li>
+      <li>
+    floris.optimization.layout_optimization.layout_optimization_gridded
+
+      <ul>
+        <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html#module-floris.optimization.layout_optimization.layout_optimization_gridded">module</a>
 </li>
       </ul></li>
       <li>
@@ -1624,14 +1634,22 @@ document.write(`
       </ul></li>
       <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose">get_heterogeneous_wind_rose() (floris.wind_data.WindRoseWRG method)</a>
 </li>
+      <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_operation_model">get_operation_model() (floris.floris_model.FlorisModel method)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_operation_model">(floris.parallel_floris_model.ParallelFlorisModel method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_operation_model">get_operation_model() (floris.floris_model.FlorisModel method)</a>
-</li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html#floris.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.get_optimized_locs">get_optimized_locs() (floris.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse method)</a>
 </li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_param">get_param() (floris.floris_model.FlorisModel method)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_param">(floris.parallel_floris_model.ParallelFlorisModel method)</a>
 </li>
+      </ul></li>
       <li><a href="_autosummary/floris.cut_plane.html#floris.cut_plane.get_plane_from_flow_data">get_plane_from_flow_data() (in module floris.cut_plane)</a>
 </li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_plane_of_points">get_plane_of_points() (floris.floris_model.FlorisModel method)</a>
@@ -1794,6 +1812,8 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html#floris.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid">LayoutOptimizationBoundaryGrid (class in floris.optimization.layout_optimization.layout_optimization_boundary_grid)</a>
 </li>
+      <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html#floris.optimization.layout_optimization.layout_optimization_gridded.LayoutOptimizationGridded">LayoutOptimizationGridded (class in floris.optimization.layout_optimization.layout_optimization_gridded)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html#floris.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse">LayoutOptimizationPyOptSparse (class in floris.optimization.layout_optimization.layout_optimization_pyoptsparse)</a>
@@ -1948,6 +1968,8 @@ document.write(`
 </li>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html#module-floris.optimization.layout_optimization.layout_optimization_boundary_grid">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a>
 </li>
+        <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html#module-floris.optimization.layout_optimization.layout_optimization_gridded">floris.optimization.layout_optimization.layout_optimization_gridded</a>
+</li>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html#module-floris.optimization.layout_optimization.layout_optimization_pyoptsparse">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a>
 </li>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html#module-floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a>
@@ -2062,6 +2084,8 @@ document.write(`
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html#floris.optimization.layout_optimization.layout_optimization_base.LayoutOptimization.optimize">optimize() (floris.optimization.layout_optimization.layout_optimization_base.LayoutOptimization method)</a>
 
       <ul>
+        <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html#floris.optimization.layout_optimization.layout_optimization_gridded.LayoutOptimizationGridded.optimize">(floris.optimization.layout_optimization.layout_optimization_gridded.LayoutOptimizationGridded method)</a>
+</li>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html#floris.optimization.layout_optimization.layout_optimization_random_search.LayoutOptimizationRandomSearch.optimize">(floris.optimization.layout_optimization.layout_optimization_random_search.LayoutOptimizationRandomSearch method)</a>
 </li>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html#floris.optimization.layout_optimization.layout_optimization_scipy.LayoutOptimizationScipy.optimize">(floris.optimization.layout_optimization.layout_optimization_scipy.LayoutOptimizationScipy method)</a>
@@ -2420,11 +2444,19 @@ document.write(`
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.set_operation">set_operation() (floris.floris_model.FlorisModel method)</a>
 </li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.set_operation_model">set_operation_model() (floris.floris_model.FlorisModel method)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.set_operation_model">(floris.parallel_floris_model.ParallelFlorisModel method)</a>
 </li>
+      </ul></li>
       <li><a href="_autosummary/floris.cut_plane.html#floris.cut_plane.set_origin">set_origin() (in module floris.cut_plane)</a>
 </li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.set_param">set_param() (floris.floris_model.FlorisModel method)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.set_param">(floris.parallel_floris_model.ParallelFlorisModel method)</a>
 </li>
+      </ul></li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.set_power_setpoints">set_power_setpoints() (floris.core.farm.Farm method)</a>
 </li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.set_power_setpoints_to_ref_power">set_power_setpoints_to_ref_power() (floris.core.farm.Farm method)</a>
@@ -2433,10 +2465,10 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.set_tilt_to_ref_tilt">set_tilt_to_ref_tilt() (floris.core.farm.Farm method)</a>
 </li>
-      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_wd_step">set_wd_step() (floris.wind_data.WindRoseWRG method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_wd_step">set_wd_step() (floris.wind_data.WindRoseWRG method)</a>
+</li>
       <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.set_wind_speeds">set_wind_speeds() (floris.wind_data.WindRoseWRG method)</a>
 </li>
       <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.set_xlim">set_xlim() (floris.flow_visualization.VelocityProfilesFigure method)</a>
@@ -2556,6 +2588,8 @@ document.write(`
       <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.TimeSeries.to_WindTIRose">to_WindTIRose() (floris.wind_data.TimeSeries method)</a>
 </li>
       <li><a href="_autosummary/floris.logging_manager.html#floris.logging_manager.TracebackInfoFilter">TracebackInfoFilter (class in floris.logging_manager)</a>
+</li>
+      <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html#floris.optimization.layout_optimization.layout_optimization_gridded.LayoutOptimizationGridded.trim_to_circle">trim_to_circle() (floris.optimization.layout_optimization.layout_optimization_gridded.LayoutOptimizationGridded static method)</a>
 </li>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.TSR">TSR (floris.core.turbine.turbine.Turbine attribute)</a>
 </li>

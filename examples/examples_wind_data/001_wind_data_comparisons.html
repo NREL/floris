@@ -239,6 +239,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -373,6 +374,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -758,17 +761,17 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Computing AVP with uniform frequencies. Results results may not reflect annual operation.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 37.28 GWh
-AEP from WindRose 37.61 GWh
-AEP from WindTIRose 37.60 GWh
-Annual Value Production (AVP) from TimeSeries 952378.67 dollars
-AVP from WindRose 962801.62 dollars
-AVP from WindTIRose 962574.63 dollars
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 39.31 GWh
+AEP from WindRose 39.59 GWh
+AEP from WindTIRose 39.59 GWh
+Annual Value Production (AVP) from TimeSeries 973817.15 dollars
+AVP from WindRose 976532.76 dollars
+AVP from WindTIRose 976581.38 dollars
 </pre></div>
 </div>
-<img alt="../../_images/3886295983ee7e20e5b037a978f350fc54d2679dfa5cffec2f50678dec724d4d.png" src="../../_images/3886295983ee7e20e5b037a978f350fc54d2679dfa5cffec2f50678dec724d4d.png" />
-<img alt="../../_images/4c690f5df0f7c7015382e27014f3808a1c80d41cb7d6d16c13e5ff63c0981d85.png" src="../../_images/4c690f5df0f7c7015382e27014f3808a1c80d41cb7d6d16c13e5ff63c0981d85.png" />
-<img alt="../../_images/0a5f48b619e75062ae2c88178d8ef1c9922c99e37d54af663e1b8116174be0d6.png" src="../../_images/0a5f48b619e75062ae2c88178d8ef1c9922c99e37d54af663e1b8116174be0d6.png" />
+<img alt="../../_images/f77a6447c281f9c4d3c26a561053827b1b4fca7a53fa4b04c5935715c3102fe5.png" src="../../_images/f77a6447c281f9c4d3c26a561053827b1b4fca7a53fa4b04c5935715c3102fe5.png" />
+<img alt="../../_images/731d24949bbd5988e8c315ff7e20a36e9ac174596a27f85e4d4750a9678bf279.png" src="../../_images/731d24949bbd5988e8c315ff7e20a36e9ac174596a27f85e4d4750a9678bf279.png" />
+<img alt="../../_images/b47913cfb18924af59911ed9c327e0a3bd0d0ccc723231acb212046dd7ea4c7b.png" src="../../_images/b47913cfb18924af59911ed9c327e0a3bd0d0ccc723231acb212046dd7ea4c7b.png" />
 </div>
 </div>
 </section>

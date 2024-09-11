@@ -240,6 +240,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -374,6 +375,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -585,6 +588,12 @@ document.write(`
     <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">(),</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">_get_turbine_powers_serial_no_wake</span><span class="p">(</span><span class="n">fmodel_information</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">fmodel_information</span><span class="p">)</span>
+    <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
+    <span class="n">fmodel</span><span class="o">.</span><span class="n">run_no_wake</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">(),</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">_optimize_yaw_angles_serial</span><span class="p">(</span>
     <span class="n">fmodel_information</span><span class="p">,</span>
@@ -731,11 +740,52 @@ document.write(`
         <span class="n">layout_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">layout_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">turbine_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">turbine_library_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">solver_settings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">heterogeneous_inflow_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wind_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">power_setpoints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">awc_modes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">awc_amplitudes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">awc_frequencies</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">disable_turbines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Pass to the FlorisModel set function. To allow users</span>
 <span class="sd">        to directly replace a FlorisModel object with this</span>
-<span class="sd">        UncertainFlorisModel object, this function is required.&quot;&quot;&quot;</span>
+<span class="sd">        UncertainFlorisModel object, this function is required</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each</span>
+<span class="sd">                findex. Defaults to None.</span>
+<span class="sd">            wind_shear (float | None, optional): Wind shear exponent. Defaults to None.</span>
+<span class="sd">            wind_veer (float | None, optional): Wind veer. Defaults to None.</span>
+<span class="sd">            reference_wind_height (float | None, optional): Reference wind height. Defaults to None.</span>
+<span class="sd">            turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence</span>
+<span class="sd">                intensities at each findex. Defaults to None.</span>
+<span class="sd">            air_density (float | None, optional): Air density. Defaults to None.</span>
+<span class="sd">            layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            turbine_type (list | None, optional): Turbine type. Defaults to None.</span>
+<span class="sd">            turbine_library_path (str | Path | None, optional): Path to the turbine library.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            solver_settings (dict | None, optional): Solver settings. Defaults to None.</span>
+<span class="sd">            heterogeneous_inflow_config (None, optional): heterogeneous inflow configuration.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.</span>
+<span class="sd">            yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):</span>
+<span class="sd">                Turbine power setpoints.</span>
+<span class="sd">            disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions</span>
+<span class="sd">                n_findex x n_turbines. True values indicate the turbine is disabled at that findex</span>
+<span class="sd">                and the power setpoint at that position is set to 0. Defaults to None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Use the `layout_x` and `layout_y` parameters in place of `layout` &quot;</span>
@@ -757,7 +807,16 @@ document.write(`
             <span class="n">layout_x</span><span class="o">=</span><span class="n">layout_x</span><span class="p">,</span>
             <span class="n">layout_y</span><span class="o">=</span><span class="n">layout_y</span><span class="p">,</span>
             <span class="n">turbine_type</span><span class="o">=</span><span class="n">turbine_type</span><span class="p">,</span>
+            <span class="n">turbine_library_path</span><span class="o">=</span><span class="n">turbine_library_path</span><span class="p">,</span>
             <span class="n">solver_settings</span><span class="o">=</span><span class="n">solver_settings</span><span class="p">,</span>
+            <span class="n">heterogeneous_inflow_config</span><span class="o">=</span><span class="n">heterogeneous_inflow_config</span><span class="p">,</span>
+            <span class="n">wind_data</span><span class="o">=</span><span class="n">wind_data</span><span class="p">,</span>
+            <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">,</span>
+            <span class="n">power_setpoints</span><span class="o">=</span><span class="n">power_setpoints</span><span class="p">,</span>
+            <span class="n">awc_modes</span><span class="o">=</span><span class="n">awc_modes</span><span class="p">,</span>
+            <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">awc_amplitudes</span><span class="p">,</span>
+            <span class="n">awc_frequencies</span><span class="o">=</span><span class="n">awc_frequencies</span><span class="p">,</span>
+            <span class="n">disable_turbines</span><span class="o">=</span><span class="n">disable_turbines</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Reinitialize settings</span>
@@ -849,20 +908,26 @@ document.write(`
 
 <div class="viewcode-block" id="ParallelFlorisModel.get_turbine_powers">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_turbine_powers">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_wake</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># Retrieve multiargs: preprocessing</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
         <span class="n">multiargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocessing</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
         <span class="n">t_preparation</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
 
+        <span class="c1"># Set the function based on whether wake is disabled</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">no_wake</span><span class="p">:</span>
+            <span class="n">turbine_power_function</span> <span class="o">=</span> <span class="n">_get_turbine_powers_serial</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">turbine_power_function</span> <span class="o">=</span> <span class="n">_get_turbine_powers_serial_no_wake</span>
+
         <span class="c1"># Perform parallel calculation</span>
         <span class="n">t1</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;mpi4py&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;multiprocessing&quot;</span><span class="p">):</span>
-                <span class="n">out</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">_get_turbine_powers_serial</span><span class="p">,</span> <span class="n">multiargs</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">turbine_power_function</span><span class="p">,</span> <span class="n">multiargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
-                    <span class="n">_get_turbine_powers_serial</span><span class="p">,</span>
+                    <span class="n">turbine_power_function</span><span class="p">,</span>
                     <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">],</span>
                     <span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">multiargs</span><span class="p">]</span>
                 <span class="p">)</span>
@@ -899,7 +964,7 @@ document.write(`
 
 <div class="viewcode-block" id="ParallelFlorisModel.get_farm_power">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_farm_power">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_wake</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">turbine_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Default to equal weighing of all turbines when turbine_weights is None</span>
             <span class="n">turbine_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
@@ -921,7 +986,7 @@ document.write(`
             <span class="p">)</span>
 
         <span class="c1"># Calculate all turbine powers and apply weights</span>
-        <span class="n">turbine_powers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
+        <span class="n">turbine_powers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">no_wake</span><span class="o">=</span><span class="n">no_wake</span><span class="p">)</span>
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">turbine_weights</span><span class="p">,</span> <span class="n">turbine_powers</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_powers</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
@@ -978,16 +1043,17 @@ document.write(`
 <span class="sd">                watt-hours.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># If no_wake==True, ignore parallelization because it&#39;s fast enough</span>
-        <span class="k">if</span> <span class="n">no_wake</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">get_farm_AEP</span><span class="p">(</span>
-                <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
-                <span class="n">cut_in_wind_speed</span><span class="o">=</span><span class="n">cut_in_wind_speed</span><span class="p">,</span>
-                <span class="n">cut_out_wind_speed</span><span class="o">=</span><span class="n">cut_out_wind_speed</span><span class="p">,</span>
-                <span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">,</span>
-                <span class="n">turbine_weights</span><span class="o">=</span><span class="n">turbine_weights</span><span class="p">,</span>
-                <span class="n">no_wake</span><span class="o">=</span><span class="n">no_wake</span>
-            <span class="p">)</span>
+        <span class="c1"># This code is out of date, let&#39;s just thread it through</span>
+        <span class="c1"># # If no_wake==True, ignore parallelization because it&#39;s fast enough</span>
+        <span class="c1"># if no_wake:</span>
+        <span class="c1">#     return self.fmodel.get_farm_AEP(</span>
+        <span class="c1">#         freq=freq,</span>
+        <span class="c1">#         cut_in_wind_speed=cut_in_wind_speed,</span>
+        <span class="c1">#         cut_out_wind_speed=cut_out_wind_speed,</span>
+        <span class="c1">#         yaw_angles=yaw_angles,</span>
+        <span class="c1">#         turbine_weights=turbine_weights,</span>
+        <span class="c1">#         no_wake=no_wake</span>
+        <span class="c1">#     )</span>
 
         <span class="c1"># Verify dimensions of the variable &quot;freq&quot;</span>
         <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_uncertain</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">freq</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_unexpanded</span><span class="p">)</span> <span class="ow">or</span>
@@ -1024,7 +1090,9 @@ document.write(`
             <span class="p">)</span>
 
         <span class="n">farm_power</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">get_farm_power</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">turbine_weights</span><span class="o">=</span><span class="n">turbine_weights</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_farm_power</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">,</span>
+                                <span class="n">turbine_weights</span><span class="o">=</span><span class="n">turbine_weights</span><span class="p">,</span>
+                                  <span class="n">no_wake</span><span class="o">=</span><span class="n">no_wake</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># Finally, calculate AEP in GWh</span>
@@ -1113,6 +1181,79 @@ document.write(`
         <span class="k">return</span> <span class="n">df_opt</span></div>
 
 
+<div class="viewcode-block" id="ParallelFlorisModel.get_operation_model">
+<a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_operation_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the operation model of underlying fmodel.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The operation_model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">get_operation_model</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ParallelFlorisModel.set_operation_model">
+<a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.set_operation_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the operation model of underlying fmodel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            operation_model (str): The operation model to set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">set_operation_model</span><span class="p">(</span><span class="n">operation_model</span><span class="p">)</span>
+
+        <span class="c1"># Reinitialize settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">fmodel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="p">,</span>
+            <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">,</span>
+            <span class="n">n_wind_condition_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_wind_condition_splits</span><span class="p">,</span>
+            <span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span>
+            <span class="n">propagate_flowfield_from_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">propagate_flowfield_from_workers</span><span class="p">,</span>
+            <span class="n">print_timings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">print_timings</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ParallelFlorisModel.get_param">
+<a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_param">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">param_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the parameter of underlying fmodel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param (List[str]): A list of keys to traverse the FlorisModel dictionary.</span>
+<span class="sd">            param_idx (Optional[int], optional): The index to get the value at. Defaults to None.</span>
+<span class="sd">                If None, the entire parameter is returned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: The value of the parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">param_idx</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ParallelFlorisModel.set_param">
+<a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.set_param">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">param_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the parameter of underlying fmodel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param (List[str]): A list of keys to traverse the FlorisModel dictionary.</span>
+<span class="sd">            value (Any): The value to set.</span>
+<span class="sd">            param_idx (Optional[int], optional): The index to set the value at. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">set_param</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">param_idx</span><span class="p">)</span>
+
+        <span class="c1"># Reinitialize settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">fmodel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="p">,</span>
+            <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">,</span>
+            <span class="n">n_wind_condition_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_wind_condition_splits</span><span class="p">,</span>
+            <span class="n">interface</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span>
+            <span class="n">propagate_flowfield_from_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">propagate_flowfield_from_workers</span><span class="p">,</span>
+            <span class="n">print_timings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">print_timings</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">layout_x</span>
@@ -1141,11 +1282,6 @@ document.write(`
     <span class="k">def</span> <span class="nf">n_turbines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_turbines</span></div>
 
-
-
-    <span class="c1"># @property</span>
-    <span class="c1"># def floris(self):</span>
-    <span class="c1">#     return self.fmodel.core</span>
 </pre></div>
 
                 </article>

@@ -241,6 +241,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -375,6 +376,8 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -631,6 +634,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scipy-layout-optimization">Scipy layout optimization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#genetic-random-search-layout-optimization">Genetic random search layout optimization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gridded-layout-optimization">Gridded layout optimization</a></li>
 </ul>
             </nav>
         </div>
@@ -718,6 +722,29 @@ higher wind speed). The progress of each of the genetic individuals in the optim
 shown in the right-hand plot.
 <img alt="" src="_images/plot_complex_docs.png" /></p>
 </section>
+<section id="gridded-layout-optimization">
+<h2>Gridded layout optimization<a class="headerlink" href="#gridded-layout-optimization" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">LayoutOptimizationGridded</span></code> class allows users to quickly find a layout that fits the most
+turbines possible into the specified boundary area, given that the turbines are arranged in a
+gridded layout.
+To do so, a range of different rotations and translations of a generic gridded arrangement are
+tried, and the one that fits the most turbines into the boundary area is selected. No AEP
+evaluations are performed; rather, the cost function <span class="math notranslate nohighlight">\(f\)</span> to be maximized is simply <span class="math notranslate nohighlight">\(N\)</span>, the number
+of turbines, and there is an additional constraint that the turbines are arranged in a gridded
+fashion. Note that in other layout optimizers, <span class="math notranslate nohighlight">\(N\)</span> is fixed.</p>
+<p>We envisage that this will be useful for users that want to quickly generate a layout to
+&quot;fill&quot; a boundary region in a gridded manner. By default, the gridded arrangement is a square grid
+with spacing of <code class="docutils literal notranslate"><span class="pre">min_dist</span></code> (or <code class="docutils literal notranslate"><span class="pre">min_dist_D</span></code>); however, instantiating with the <code class="docutils literal notranslate"><span class="pre">hexagonal_packing</span></code>
+keyword argument set to <code class="docutils literal notranslate"><span class="pre">True</span></code> will provide a grid that offsets the rows to enable tighter packing
+of turbines while still satisfying the <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>.</p>
+<p>As with the <code class="docutils literal notranslate"><span class="pre">LayoutOptimizationRandomSearch</span></code> class, the boundaries specified can be complex (and
+may contain separate areas).
+User settings include <code class="docutils literal notranslate"><span class="pre">rotation_step</span></code>, which specifies the step size for rotating the grid
+(in degrees); <code class="docutils literal notranslate"><span class="pre">rotation_range</span></code>, which specifies the range of rotation angles; <code class="docutils literal notranslate"><span class="pre">translation_step</span></code> or
+<code class="docutils literal notranslate"><span class="pre">translation_step_D</span></code>, which specifies the step size for translating the grid in meters or rotor
+diameters, respectively; and <code class="docutils literal notranslate"><span class="pre">translation_range</span></code>, which specifies the range of possible
+translations. All come with default values, which we expect to be suitable for many or most users.</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -787,6 +814,7 @@ shown in the right-hand plot.
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scipy-layout-optimization">Scipy layout optimization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#genetic-random-search-layout-optimization">Genetic random search layout optimization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gridded-layout-optimization">Gridded layout optimization</a></li>
 </ul>
   </nav></div>
 

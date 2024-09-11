@@ -239,6 +239,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -373,6 +374,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -677,6 +680,7 @@ document.write(`
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">turbines</span><span class="p">:</span>
     <span class="c1"># Set t as the turbine</span>
     <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">turbine_type</span><span class="o">=</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+    <span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span> <span class="c1"># Remove any previously applied yaw angles</span>
 
     <span class="c1"># Since we are changing the turbine type, make a matching change to the reference wind height</span>
     <span class="n">fmodel</span><span class="o">.</span><span class="n">assign_hub_height_to_ref_height</span><span class="p">()</span>
@@ -714,6 +718,7 @@ document.write(`
             <span class="n">wind_directions</span><span class="o">=</span><span class="n">wd_array</span><span class="p">,</span>
             <span class="n">turbulence_intensities</span><span class="o">=</span><span class="n">turbulence_intensities</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span> <span class="c1"># Remove any previously applied yaw angles</span>
         <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="n">turbine_powers</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1e3</span>
         <span class="k">if</span> <span class="n">density</span> <span class="o">==</span> <span class="mf">1.225</span><span class="p">:</span>
@@ -761,9 +766,9 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <img alt="../../_images/6d6e49d5ab98f6e5755a9cbc5587e1a3913bfb30a7d3354361705f5710b77762.png" src="../../_images/6d6e49d5ab98f6e5755a9cbc5587e1a3913bfb30a7d3354361705f5710b77762.png" />
-<img alt="../../_images/edf933cafbc0e05ad7b5f3613e9a9a03b73d5dec09668d05bb84465d702c36e4.png" src="../../_images/edf933cafbc0e05ad7b5f3613e9a9a03b73d5dec09668d05bb84465d702c36e4.png" />
-<img alt="../../_images/b6defe5e809f9734a8da258d94dbfa7f901f2c86f9586f7763369d6ee64556df.png" src="../../_images/b6defe5e809f9734a8da258d94dbfa7f901f2c86f9586f7763369d6ee64556df.png" />
-<img alt="../../_images/3e739d47b813dde4c2484f58f85c5a6400b6e2f0fc99af288e595b03dce8d15c.png" src="../../_images/3e739d47b813dde4c2484f58f85c5a6400b6e2f0fc99af288e595b03dce8d15c.png" />
+<img alt="../../_images/72a20c1139a00f62ab378f91e8f221bbc7ed2eef52a5eca17f1b597a0fca1b96.png" src="../../_images/72a20c1139a00f62ab378f91e8f221bbc7ed2eef52a5eca17f1b597a0fca1b96.png" />
+<img alt="../../_images/54ca10647f14ef63b47e4a822229204fa623bd7eed2df988851844cf73900b34.png" src="../../_images/54ca10647f14ef63b47e4a822229204fa623bd7eed2df988851844cf73900b34.png" />
+<img alt="../../_images/8f1266b67212917045c70836f6bbb820b009f485a570257b75d593d05e9c744b.png" src="../../_images/8f1266b67212917045c70836f6bbb820b009f485a570257b75d593d05e9c744b.png" />
 </div>
 </div>
 </section>

@@ -74,7 +74,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Example: Multi-dimensional Cp/Ct with 2 Hs values" href="002_multi_dimensional_cp_ct_2Hs.html" />
-    <link rel="prev" title="Example: Layout optimization with genetic random search" href="../examples_layout_optimization/003_genetic_random_search.html" />
+    <link rel="prev" title="Example: Separated boundaries layout optimization" href="../examples_layout_optimization/005_layout_optimization_complex_boundary.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   </head>
@@ -239,6 +239,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -373,6 +374,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="current nav bd-sidenav">
@@ -746,28 +749,28 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The current model does not account for vertical wake deflection due to tilt. Corrections to power and thrust coefficient can be included, but no vertical wake deflection will occur.</span>
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The current model does not account for vertical wake deflection due to tilt. Corrections to power and thrust coefficient can be included, but no vertical wake deflection will occur.</span>
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>========================= Single Wind Direction and Wind Speed =========================
 The turbine power matrix should be of dimensions 1 findex X 2 Turbines
 [[3142.42549368 1232.93523471]]
 Shape:  (1, 2)
 
 ========================= Single Wind Direction and Multiple Wind Speeds ===============
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The current model does not account for vertical wake deflection due to tilt. Corrections to power and thrust coefficient can be included, but no vertical wake deflection will occur.</span>
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The current model does not account for vertical wake deflection due to tilt. Corrections to power and thrust coefficient can be included, but no vertical wake deflection will occur.</span>
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The turbine power matrix should be of dimensions 3 findex X 2 Turbines
+The turbine power matrix should be of dimensions 3 findex X 2 Turbines
 [[3142.42549368 1232.93523471]
  [4472.21685867 1797.15330492]
  [6105.9702431  2487.76236629]]
 Shape:  (3, 2)
 
 ========================= Multiple Wind Directions and Multiple Wind Speeds ============
-The turbine power matrix should be of dimensions 9 WD/WS X 2 Turbines
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.logging_manager.LoggingManager</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">The current model does not account for vertical wake deflection due to tilt. Corrections to power and thrust coefficient can be included, but no vertical wake deflection will occur.</span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The turbine power matrix should be of dimensions 9 WD/WS X 2 Turbines
 [[3142.42549368 1962.74466975]
  [4472.21685867 2815.91982043]
  [6105.9702431  3874.67666825]
@@ -815,12 +818,12 @@ Shape:  (9, 2)
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../examples_layout_optimization/003_genetic_random_search.html"
+       href="../examples_layout_optimization/005_layout_optimization_complex_boundary.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Example: Layout optimization with genetic random search</p>
+        <p class="prev-next-title">Example: Separated boundaries layout optimization</p>
       </div>
     </a>
     <a class="right-next"

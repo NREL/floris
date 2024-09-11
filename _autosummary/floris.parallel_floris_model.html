@@ -239,6 +239,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -373,6 +374,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -634,6 +637,10 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.get_farm_power"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.get_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.get_farm_AEP"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.get_farm_AEP()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.optimize_yaw_angles"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.optimize_yaw_angles()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.get_operation_model"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.get_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.set_operation_model"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.set_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.get_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.set_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.layout_y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.wind_speeds"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.wind_speeds</span></code></a></li>
@@ -675,10 +682,57 @@ document.write(`
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.set">
-<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_shear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.set" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_shear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_veer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbulence_intensities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_library_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heterogeneous_inflow_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_setpoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awc_modes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awc_amplitudes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awc_frequencies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_turbines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.set" title="Link to this definition">#</a></dt>
 <dd><p>Pass to the FlorisModel set function. To allow users
 to directly replace a FlorisModel object with this
-UncertainFlorisModel object, this function is required.</p>
+UncertainFlorisModel object, this function is required</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>wind_speeds (NDArrayFloat | list[float] | None, optional): Wind speeds at each findex.</dt><dd><p>Defaults to None.</p>
+</dd>
+<dt>wind_directions (NDArrayFloat | list[float] | None, optional): Wind directions at each</dt><dd><p>findex. Defaults to None.</p>
+</dd>
+</dl>
+<p>wind_shear (float | None, optional): Wind shear exponent. Defaults to None.
+wind_veer (float | None, optional): Wind veer. Defaults to None.
+reference_wind_height (float | None, optional): Reference wind height. Defaults to None.
+turbulence_intensities (NDArrayFloat | list[float] | None, optional): Turbulence</p>
+<blockquote>
+<div><p>intensities at each findex. Defaults to None.</p>
+</div></blockquote>
+<p>air_density (float | None, optional): Air density. Defaults to None.
+layout_x (NDArrayFloat | list[float] | None, optional): X-coordinates of the turbines.</p>
+<blockquote>
+<div><p>Defaults to None.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>layout_y (NDArrayFloat | list[float] | None, optional): Y-coordinates of the turbines.</dt><dd><p>Defaults to None.</p>
+</dd>
+</dl>
+<p>turbine_type (list | None, optional): Turbine type. Defaults to None.
+turbine_library_path (str | Path | None, optional): Path to the turbine library.</p>
+<blockquote>
+<div><p>Defaults to None.</p>
+</div></blockquote>
+<p>solver_settings (dict | None, optional): Solver settings. Defaults to None.
+heterogeneous_inflow_config (None, optional): heterogeneous inflow configuration.</p>
+<blockquote>
+<div><p>Defaults to None.</p>
+</div></blockquote>
+<p>wind_data (type[WindDataBase] | None, optional): Wind data. Defaults to None.
+yaw_angles (NDArrayFloat | list[float] | None, optional): Turbine yaw angles.</p>
+<blockquote>
+<div><p>Defaults to None.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>power_setpoints (NDArrayFloat | list[float] | list[float, None] | None, optional):</dt><dd><p>Turbine power setpoints.</p>
+</dd>
+<dt>disable_turbines (NDArrayBool | list[bool] | None, optional): NDArray with dimensions</dt><dd><p>n_findex x n_turbines. True values indicate the turbine is disabled at that findex
+and the power setpoint at that position is set to 0. Defaults to None.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -688,12 +742,12 @@ UncertainFlorisModel object, this function is required.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.get_turbine_powers">
-<span class="sig-name descname"><span class="pre">get_turbine_powers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.get_turbine_powers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.get_turbine_powers" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_turbine_powers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_wake</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.get_turbine_powers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.get_turbine_powers" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.get_farm_power">
-<span class="sig-name descname"><span class="pre">get_farm_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.get_farm_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.get_farm_power" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_farm_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_wake</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.get_farm_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.get_farm_power" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -755,6 +809,54 @@ watt-hours.</p>
 <dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.optimize_yaw_angles">
 <span class="sig-name descname"><span class="pre">optimize_yaw_angles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimum_yaw_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-25.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum_yaw_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles_baseline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ny_passes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[5,</span> <span class="pre">4]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_downstream_turbines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_convergence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_worker_progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.optimize_yaw_angles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.optimize_yaw_angles" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.get_operation_model">
+<span class="sig-name descname"><span class="pre">get_operation_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.get_operation_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.get_operation_model" title="Link to this definition">#</a></dt>
+<dd><p>Get the operation model of underlying fmodel.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>str: The operation_model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.set_operation_model">
+<span class="sig-name descname"><span class="pre">set_operation_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.set_operation_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.set_operation_model" title="Link to this definition">#</a></dt>
+<dd><p>Set the operation model of underlying fmodel.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>operation_model (str): The operation model to set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.get_param">
+<span class="sig-name descname"><span class="pre">get_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.get_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.get_param" title="Link to this definition">#</a></dt>
+<dd><p>Get the parameter of underlying fmodel.</p>
+<dl>
+<dt>Args:</dt><dd><p>param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+param_idx (Optional[int], optional): The index to get the value at. Defaults to None.</p>
+<blockquote>
+<div><p>If None, the entire parameter is returned.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>Any: The value of the parameter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.set_param">
+<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/parallel_floris_model.html#ParallelFlorisModel.set_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.parallel_floris_model.ParallelFlorisModel.set_param" title="Link to this definition">#</a></dt>
+<dd><p>Set the parameter of underlying fmodel.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+value (Any): The value to set.
+param_idx (Optional[int], optional): The index to set the value at. Defaults to None.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="floris.parallel_floris_model.ParallelFlorisModel.layout_x">
@@ -867,6 +969,10 @@ watt-hours.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.get_farm_power"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.get_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.get_farm_AEP"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.get_farm_AEP()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.optimize_yaw_angles"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.optimize_yaw_angles()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.get_operation_model"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.get_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.set_operation_model"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.set_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.get_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.set_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.layout_y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.parallel_floris_model.ParallelFlorisModel.wind_speeds"><code class="docutils literal notranslate"><span class="pre">ParallelFlorisModel.wind_speeds</span></code></a></li>

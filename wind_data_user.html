@@ -239,6 +239,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -373,6 +374,8 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -923,7 +926,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/389170843ebb12c82318d33fb0be4cb30d4f9d4b242fe28f6716baa23604aff0.png" src="_images/389170843ebb12c82318d33fb0be4cb30d4f9d4b242fe28f6716baa23604aff0.png" />
+<img alt="_images/78be423aea1fa73ae78716e5a669876df34e79d80a34915b89ab37fdc42262bd.png" src="_images/78be423aea1fa73ae78716e5a669876df34e79d80a34915b89ab37fdc42262bd.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -939,7 +942,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/b448f3d2303d934bebe309d90fcd989c0ba0e8371af7409e179d1568060e1846.png" src="_images/b448f3d2303d934bebe309d90fcd989c0ba0e8371af7409e179d1568060e1846.png" />
+<img alt="_images/d0fa3e392d5c6f9906bded076ee0f367200139f3804f9d544fdd030affdc0c4e.png" src="_images/d0fa3e392d5c6f9906bded076ee0f367200139f3804f9d544fdd030affdc0c4e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -955,7 +958,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/460eaa3cdd111d7596b0fed940fab8345eba22e020dc83857eb04cfeda0f541c.png" src="_images/460eaa3cdd111d7596b0fed940fab8345eba22e020dc83857eb04cfeda0f541c.png" />
+<img alt="_images/fefaf4f67cd0d00e94561514aa9e05bf0973a8a24fe543371efdbf00cf141543.png" src="_images/fefaf4f67cd0d00e94561514aa9e05bf0973a8a24fe543371efdbf00cf141543.png" />
 </div>
 </div>
 </section>
@@ -989,8 +992,8 @@ wind_rose.value_table
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/46e5940861ac33f5bb96ee5d63323cae30d2f2505b02daee8e5a287a7ef95556.png" src="_images/46e5940861ac33f5bb96ee5d63323cae30d2f2505b02daee8e5a287a7ef95556.png" />
-<img alt="_images/2d06414437fb08531e5bf2c5f4c11e57e40bb4831c16bf2cc1da545ef6fad387.png" src="_images/2d06414437fb08531e5bf2c5f4c11e57e40bb4831c16bf2cc1da545ef6fad387.png" />
+<img alt="_images/9455ff98699fbc0af23dc249bb1f5fc6c70109207f35af8b145a3323cab34144.png" src="_images/9455ff98699fbc0af23dc249bb1f5fc6c70109207f35af8b145a3323cab34144.png" />
+<img alt="_images/5efae733cccf80617d0a1a0183afff2113a79f84ee5cb27a4428dc3bf26b6baf.png" src="_images/5efae733cccf80617d0a1a0183afff2113a79f84ee5cb27a4428dc3bf26b6baf.png" />
 <img alt="_images/007675c1df9c13b7b9914e6b539dd9f515b2ea064b76c3f5d2551b9f2b36bc9d.png" src="_images/007675c1df9c13b7b9914e6b539dd9f515b2ea064b76c3f5d2551b9f2b36bc9d.png" />
 <img alt="_images/851a0f93d69661a9762267d0201d0e0bdbdc04dee6584c43f3317aa774d50c67.png" src="_images/851a0f93d69661a9762267d0201d0e0bdbdc04dee6584c43f3317aa774d50c67.png" />
 </div>

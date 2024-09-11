@@ -240,6 +240,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -374,6 +375,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -689,6 +692,10 @@ document.write(`
 
     <span class="n">internal_turbine_library</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default_turbine_library_path</span><span class="p">)</span>
 
+    <span class="c1"># Private attributes</span>
+    <span class="n">_turbine_types</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">iter_validator</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">_turbine_definition_cache</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Turbine definitions can be supplied in three ways:</span>
         <span class="c1"># - A string selecting a turbine in the floris turbine library</span>
@@ -703,21 +710,28 @@ document.write(`
         <span class="c1"># This allows to read the yaml input files once rather than every time they&#39;re given.</span>
         <span class="c1"># In other words, if the turbine type is already in the cache, skip that iteration of</span>
         <span class="c1"># the for-loop.</span>
-        <span class="n">turbine_definition_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type</span><span class="p">:</span>
             <span class="c1"># If a turbine type is a dict, then it was either preprocessed by the yaml</span>
             <span class="c1"># library to resolve the &quot;!include&quot; or it was set in a script as a dict. In either case,</span>
             <span class="c1"># add an entry to the cache</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">turbine_definition_cache</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="n">turbine_definition_cache</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">t</span>
+                <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_definition_cache</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_definition_cache</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]]</span> <span class="o">==</span> <span class="n">t</span><span class="p">:</span>
+                        <span class="k">continue</span> <span class="c1"># Skip t if already loaded</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="s2">&quot;Two different turbine definitions have the same name: &quot;</span>\
+                            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;turbine_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>\
+                            <span class="s2">&quot;Please specify a unique &#39;turbine_type&#39; for each turbine definition.&quot;</span>
+                        <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_definition_cache</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">t</span>
 
             <span class="c1"># If a turbine type is a string, then it is expected in the internal or external</span>
             <span class="c1"># turbine library</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">turbine_definition_cache</span><span class="p">:</span>
-                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_definition_cache</span><span class="p">:</span>
+                    <span class="k">continue</span> <span class="c1"># Skip t if already loaded</span>
 
                 <span class="c1"># Check if the file exists in the internal and/or external library</span>
                 <span class="n">internal_fn</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_turbine_library</span> <span class="o">/</span> <span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">)</span>
@@ -743,7 +757,7 @@ document.write(`
                         <span class="sa">f</span><span class="s2">&quot;The turbine type: </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> does not exist in either the internal or&quot;</span>
                         <span class="s2">&quot; external turbine library.&quot;</span>
                     <span class="p">)</span>
-                <span class="n">turbine_definition_cache</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_definition_cache</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
 
         <span class="c1"># Convert any dict entries in the turbine_type list to the type string. Since the</span>
         <span class="c1"># definition is saved above, we can make the whole list consistent now to use it</span>
@@ -753,23 +767,23 @@ document.write(`
         <span class="c1"># types must be used. If we modify that directly and change its shape, recreating this</span>
         <span class="c1"># class with a different layout but not a new self.turbine_type could cause the data</span>
         <span class="c1"># to be out of sync.</span>
-        <span class="n">_turbine_types</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_types</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;turbine_type&quot;</span><span class="p">])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">t</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_type</span>
         <span class="p">]</span>
 
         <span class="c1"># If 1 turbine definition is given, expand to N turbines; this covers a 1-turbine</span>
         <span class="c1"># farm and 1 definition for multiple turbines</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_turbine_types</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">_turbine_types</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_turbines</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_turbine_types</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_types</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_turbines</span>
 
         <span class="c1"># Check that turbine definitions contain any v3 keys</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">_turbine_types</span><span class="p">:</span>
-            <span class="n">check_turbine_definition_for_v3_keys</span><span class="p">(</span><span class="n">turbine_definition_cache</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_definition_cache</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">check_turbine_definition_for_v3_keys</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
         <span class="c1"># Map each turbine definition to its index in this list</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">turbine_definition_cache</span><span class="p">[</span><span class="n">t</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">_turbine_types</span>
+            <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_turbine_definition_cache</span><span class="p">[</span><span class="n">t</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_types</span>
         <span class="p">]</span>
 
 <div class="viewcode-block" id="Farm.check_x">
@@ -886,7 +900,10 @@ document.write(`
 <div class="viewcode-block" id="Farm.construct_turbine_map">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.farm.html#floris.core.farm.Farm.construct_turbine_map">[docs]</a>
     <span class="k">def</span> <span class="nf">construct_turbine_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">Turbine</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">turb</span><span class="p">)</span> <span class="k">for</span> <span class="n">turb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">turbine_definitions</span><span class="p">]</span></div>
+        <span class="n">turbine_map_unique</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">Turbine</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_definition_cache</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">turbine_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">turbine_map_unique</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turbine_types</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Farm.construct_turbine_thrust_coefficient_functions">

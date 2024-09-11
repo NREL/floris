@@ -239,6 +239,7 @@
 <li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">floris.optimization.layout_optimization</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -373,6 +374,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -639,16 +642,19 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_boundary_grid.html#module-floris.optimization.layout_optimization.layout_optimization_boundary_grid" title="floris.optimization.layout_optimization.layout_optimization_boundary_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_boundary_grid</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html#module-floris.optimization.layout_optimization.layout_optimization_pyoptsparse" title="floris.optimization.layout_optimization.layout_optimization_pyoptsparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_pyoptsparse</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_gridded.html#module-floris.optimization.layout_optimization.layout_optimization_gridded" title="floris.optimization.layout_optimization.layout_optimization_gridded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_gridded</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html#module-floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread" title="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_pyoptsparse_spread</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html#module-floris.optimization.layout_optimization.layout_optimization_pyoptsparse" title="floris.optimization.layout_optimization.layout_optimization_pyoptsparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_pyoptsparse</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_random_search.html#module-floris.optimization.layout_optimization.layout_optimization_random_search" title="floris.optimization.layout_optimization.layout_optimization_random_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_random_search</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html#module-floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread" title="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_pyoptsparse_spread</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_scipy.html#module-floris.optimization.layout_optimization.layout_optimization_scipy" title="floris.optimization.layout_optimization.layout_optimization_scipy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_scipy</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_random_search.html#module-floris.optimization.layout_optimization.layout_optimization_random_search" title="floris.optimization.layout_optimization.layout_optimization_random_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_random_search</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_scipy.html#module-floris.optimization.layout_optimization.layout_optimization_scipy" title="floris.optimization.layout_optimization.layout_optimization_scipy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout_optimization_scipy</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>

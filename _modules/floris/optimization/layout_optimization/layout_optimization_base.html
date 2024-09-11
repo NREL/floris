@@ -240,6 +240,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
@@ -374,6 +375,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -620,8 +623,8 @@ document.write(`
         <span class="n">b_depth</span> <span class="o">=</span> <span class="n">list_depth</span><span class="p">(</span><span class="n">boundaries</span><span class="p">)</span>
 
         <span class="n">boundary_specification_error_msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;boundaries should be a list of coordinates (specifed as (x,y) &quot;</span><span class="o">+</span>\
-            <span class="s2">&quot;tuples) or as a list of list of tuples (for seperable regions).&quot;</span>
+            <span class="s2">&quot;boundaries should be a list of coordinates (specified as (x,y) &quot;</span><span class="o">+</span>\
+            <span class="s2">&quot;tuples) or as a list of list of tuples (for separable regions).&quot;</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">b_depth</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -704,7 +707,14 @@ document.write(`
 
 <div class="viewcode-block" id="LayoutOptimization.plot_layout_opt_results">
 <a class="viewcode-back" href="../../../../_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html#floris.optimization.layout_optimization.layout_optimization_base.LayoutOptimization.plot_layout_opt_results">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot_layout_opt_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_boundary_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot_layout_opt_results</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">plot_boundary_dict</span><span class="o">=</span><span class="p">{},</span>
+            <span class="n">initial_locs_plotting_dict</span><span class="o">=</span><span class="p">{},</span>
+            <span class="n">final_locs_plotting_dict</span><span class="o">=</span><span class="p">{},</span>
+            <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span>
+        <span class="p">):</span>
 
         <span class="n">x_initial</span><span class="p">,</span> <span class="n">y_initial</span><span class="p">,</span> <span class="n">x_opt</span><span class="p">,</span> <span class="n">y_opt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_initial_and_final_locs</span><span class="p">()</span>
 
@@ -714,6 +724,7 @@ document.write(`
             <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
 
+        <span class="c1"># Handle default boundary plotting</span>
         <span class="n">default_plot_boundary_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;color&quot;</span><span class="p">:</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
             <span class="s2">&quot;alpha&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
@@ -722,9 +733,30 @@ document.write(`
         <span class="p">}</span>
         <span class="n">plot_boundary_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_plot_boundary_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_boundary_dict</span><span class="p">}</span>
 
+        <span class="c1"># Handle default initial location plotting</span>
+        <span class="n">default_initial_locs_plotting_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;marker&quot;</span><span class="p">:</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;color&quot;</span><span class="p">:</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;linestyle&quot;</span><span class="p">:</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span><span class="s2">&quot;Initial locations&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">initial_locs_plotting_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">**</span><span class="n">default_initial_locs_plotting_dict</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">initial_locs_plotting_dict</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Handle default final location plotting</span>
+        <span class="n">default_final_locs_plotting_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;marker&quot;</span><span class="p">:</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;color&quot;</span><span class="p">:</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;linestyle&quot;</span><span class="p">:</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span><span class="s2">&quot;New locations&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">final_locs_plotting_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_final_locs_plotting_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">final_locs_plotting_dict</span><span class="p">}</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_layout_opt_boundary</span><span class="p">(</span><span class="n">plot_boundary_dict</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_initial</span><span class="p">,</span> <span class="n">y_initial</span><span class="p">,</span> <span class="s2">&quot;ob&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Initial locations&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_opt</span><span class="p">,</span> <span class="n">y_opt</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;New locations&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_initial</span><span class="p">,</span> <span class="n">y_initial</span><span class="p">,</span> <span class="o">**</span><span class="n">initial_locs_plotting_dict</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_opt</span><span class="p">,</span> <span class="n">y_opt</span><span class="p">,</span> <span class="o">**</span><span class="n">final_locs_plotting_dict</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x (m)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y (m)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
