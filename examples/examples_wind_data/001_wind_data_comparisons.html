@@ -693,7 +693,7 @@ document.write(`
 
 <span class="c1"># Plot the wind rose</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;polar&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-<span class="n">wind_rose</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;WS&quot;</span><span class="p">})</span>
+<span class="n">wind_rose</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;WS&quot;</span><span class="p">})</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;WindRose Plot&quot;</span><span class="p">)</span>
 
 <span class="c1"># Now build a wind rose with turbulence intensity</span>
@@ -701,9 +701,9 @@ document.write(`
 
 <span class="c1"># Plot the wind rose with TI</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;polar&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-<span class="n">wind_ti_rose</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wind_rose_var</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">,</span><span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;WS&quot;</span><span class="p">})</span>
+<span class="n">wind_ti_rose</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wind_rose_var</span><span class="o">=</span><span class="s2">&quot;ws&quot;</span><span class="p">,</span><span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;WS&quot;</span><span class="p">})</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Wind Direction and Wind Speed Frequencies&quot;</span><span class="p">)</span>
-<span class="n">wind_ti_rose</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wind_rose_var</span><span class="o">=</span><span class="s2">&quot;ti&quot;</span><span class="p">,</span><span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;TI&quot;</span><span class="p">})</span>
+<span class="n">wind_ti_rose</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wind_rose_var</span><span class="o">=</span><span class="s2">&quot;ti&quot;</span><span class="p">,</span><span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;TI&quot;</span><span class="p">})</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Wind Direction and Turbulence Intensity Frequencies&quot;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;WindTIRose Plots&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
@@ -761,17 +761,17 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Computing AVP with uniform frequencies. Results results may not reflect annual operation.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 39.31 GWh
-AEP from WindRose 39.59 GWh
-AEP from WindTIRose 39.59 GWh
-Annual Value Production (AVP) from TimeSeries 973817.15 dollars
-AVP from WindRose 976532.76 dollars
-AVP from WindTIRose 976581.38 dollars
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 38.86 GWh
+AEP from WindRose 39.08 GWh
+AEP from WindTIRose 39.09 GWh
+Annual Value Production (AVP) from TimeSeries 964077.77 dollars
+AVP from WindRose 969429.92 dollars
+AVP from WindTIRose 969835.14 dollars
 </pre></div>
 </div>
-<img alt="../../_images/f77a6447c281f9c4d3c26a561053827b1b4fca7a53fa4b04c5935715c3102fe5.png" src="../../_images/f77a6447c281f9c4d3c26a561053827b1b4fca7a53fa4b04c5935715c3102fe5.png" />
-<img alt="../../_images/731d24949bbd5988e8c315ff7e20a36e9ac174596a27f85e4d4750a9678bf279.png" src="../../_images/731d24949bbd5988e8c315ff7e20a36e9ac174596a27f85e4d4750a9678bf279.png" />
-<img alt="../../_images/b47913cfb18924af59911ed9c327e0a3bd0d0ccc723231acb212046dd7ea4c7b.png" src="../../_images/b47913cfb18924af59911ed9c327e0a3bd0d0ccc723231acb212046dd7ea4c7b.png" />
+<img alt="../../_images/3f8f0ea9807ad10371db0b6c8ff974cde75d49c45d7f38cb7c1e084c94d67aa7.png" src="../../_images/3f8f0ea9807ad10371db0b6c8ff974cde75d49c45d7f38cb7c1e084c94d67aa7.png" />
+<img alt="../../_images/b5f0721557c1f5c7aa89156c65c34a4ead03c10762f78665cd8a89f0466f736f.png" src="../../_images/b5f0721557c1f5c7aa89156c65c34a4ead03c10762f78665cd8a89f0466f736f.png" />
+<img alt="../../_images/ecc6b0596bd063780cfe9fd0da2815a2686afecd643aeedaefda24eeff96f3f5.png" src="../../_images/ecc6b0596bd063780cfe9fd0da2815a2686afecd643aeedaefda24eeff96f3f5.png" />
 </div>
 </div>
 </section>

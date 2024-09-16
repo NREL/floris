@@ -635,10 +635,17 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.run"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.run()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.run_no_wake"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.run_no_wake()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_turbine_powers"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_turbine_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_turbine_powers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_power"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AEP"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_AEP()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_farm_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_AVP()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_operation_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_directions"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.wind_directions</span></code></a></li>
@@ -785,6 +792,33 @@ direction.  Defaults to False.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers">
+<span class="sig-name descname"><span class="pre">get_expected_turbine_powers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_expected_turbine_powers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers" title="Link to this definition">#</a></dt>
+<dd><p>Compute the expected (mean) power of each turbine.</p>
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>freq (NDArrayFloat): NumPy array with shape</dt><dd><p>with the frequencies of each wind direction and
+wind speed combination.  freq is either a 1D array,
+in which case the same frequencies are used for all
+turbines, or a 2D array with shape equal to
+(n_findex, n_turbines), in which case each turbine has a unique
+set of frequencies (this is the case for example using
+WindRoseByTurbine).</p>
+<blockquote>
+<div><p>These frequencies should typically sum across rows</p>
+</div></blockquote>
+<p>up to 1.0 and are used to weigh the wind farm power for every
+condition in calculating the wind farm's AEP. Defaults to None.
+If None and a WindData object was supplied, the WindData object's
+frequencies will be used. Otherwise, uniform frequencies are assumed
+(i.e., a simple mean over the findices is computed).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power">
 <span class="sig-name descname"><span class="pre">get_farm_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_turbulence_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_farm_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power" title="Link to this definition">#</a></dt>
 <dd><p>Report wind plant power from instance of floris. Optionally includes
@@ -899,9 +933,195 @@ watt-hours.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value">
+<span class="sig-name descname"><span class="pre">get_expected_farm_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_expected_farm_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value" title="Link to this definition">#</a></dt>
+<dd><p>Compute the expected (mean) value produced by the wind farm. This is
+computed by multiplying the wind farm power for each wind condition by
+the corresponding value of the power generated (e.g., electricity
+market price per unit of energy), then weighting by frequency and
+summing over all conditions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>freq (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the frequencies of each wind condition combination.
+These frequencies should typically sum up to 1.0 and are used
+to weigh the wind farm value for every condition in calculating
+the wind farm's expected value. Defaults to None. If None and a
+WindData object is supplied, the WindData object's frequencies
+will be used. Otherwise, uniform frequencies are assumed (i.e.,
+a simple mean over the findices is computed).</p>
+</dd>
+<dt>values (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the values corresponding to the power generated for each
+wind condition combination. The wind farm power is multiplied
+by the value for every condition in calculating the wind farm's
+expected value. Defaults to None. If None and a WindData object
+is supplied, the WindData object's values will be used.
+Otherwise, a value of 1 for all conditions is assumed (i.e.,
+the expected farm value will be equivalent to the expected farm
+power).</p>
+</dd>
+<dt>turbine_weights (NDArrayFloat | list[float] | None, optional):</dt><dd><p>weighing terms that allow the user to emphasize power at
+particular turbines and/or completely ignore the power
+from other turbines. This is useful when, for example, you are
+modeling multiple wind farms in a single floris object. If you
+only want to calculate the value production for one of those
+farms and include the wake effects of the neighboring farms,
+you can set the turbine_weights for the neighboring farms'
+turbines to 0.0. The array of turbine powers from floris
+is multiplied with this array in the calculation of the
+expected value. If None, this is an array with all values 1.0
+and with shape equal to (n_findex, n_turbines). Defaults to None.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>float:</dt><dd><p>The expected value produced by the wind farm in units of value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP">
+<span class="sig-name descname"><span class="pre">get_farm_AVP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hours_per_year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8760</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_farm_AVP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP" title="Link to this definition">#</a></dt>
+<dd><p>Estimate annual value production (AVP) for distribution of wind
+conditions, frequencies of occurrence, and corresponding values of
+power generated (e.g., electricity price per unit of energy).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>freq (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the frequencies of each wind condition combination.
+These frequencies should typically sum up to 1.0 and are used
+to weigh the wind farm value for every condition in calculating
+the wind farm's AVP. Defaults to None. If None and a
+WindData object is supplied, the WindData object's frequencies
+will be used. Otherwise, uniform frequencies are assumed (i.e.,
+a simple mean over the findices is computed).</p>
+</dd>
+<dt>values (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the values corresponding to the power generated for each
+wind condition combination. The wind farm power is multiplied
+by the value for every condition in calculating the wind farm's
+AVP. Defaults to None. If None and a WindData object is
+supplied, the WindData object's values will be used. Otherwise,
+a value of 1 for all conditions is assumed (i.e., the AVP will
+be equivalent to the AEP).</p>
+</dd>
+<dt>turbine_weights (NDArrayFloat | list[float] | None, optional):</dt><dd><p>weighing terms that allow the user to emphasize power at
+particular turbines and/or completely ignore the power
+from other turbines. This is useful when, for example, you are
+modeling multiple wind farms in a single floris object. If you
+only want to calculate the value production for one of those
+farms and include the wake effects of the neighboring farms,
+you can set the turbine_weights for the neighboring farms'
+turbines to 0.0. The array of turbine powers from floris is
+multiplied with this array in the calculation of the AVP. If
+None, this is an array with all values 1.0 and with shape equal
+to (n_findex, n_turbines). Defaults to None.</p>
+</dd>
+<dt>hours_per_year (float, optional): Number of hours in a year.</dt><dd><p>Defaults to 365 * 24.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>float:</dt><dd><p>The Annual Value Production (AVP) for the wind farm in units
+of value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model">
+<span class="sig-name descname"><span class="pre">get_operation_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_operation_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model" title="Link to this definition">#</a></dt>
+<dd><p>Get the operation model of a FlorisModel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>str: The operation_model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model">
+<span class="sig-name descname"><span class="pre">set_operation_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.set_operation_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model" title="Link to this definition">#</a></dt>
+<dd><p>Set the turbine operation model(s).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>operation_model (str): The operation model to set.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>operation_model</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy" title="Link to this definition">#</a></dt>
 <dd><p>Create an independent copy of the current UncertainFlorisModel object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_param">
+<span class="sig-name descname"><span class="pre">get_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_param" title="Link to this definition">#</a></dt>
+<dd><p>Get a parameter from a FlorisModel object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>param</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>param_idx</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Args:</dt><dd><p>param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+param_idx (Optional[int], optional): The index to get the value at. Defaults to None.</p>
+<blockquote>
+<div><p>If None, the entire parameter is returned.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>Any: The value of the parameter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.set_param">
+<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.set_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_param" title="Link to this definition">#</a></dt>
+<dd><p>Set a parameter in a FlorisModel object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+value (Any): The value to set.
+param_idx (Optional[int], optional): The index to set the value at. Defaults to None.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>param_idx</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1096,10 +1316,17 @@ result computed</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.run"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.run()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.run_no_wake"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.run_no_wake()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_turbine_powers"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_turbine_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_turbine_powers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_power"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_farm_power()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AEP"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_AEP()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_farm_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_AVP()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_operation_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_directions"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.wind_directions</span></code></a></li>

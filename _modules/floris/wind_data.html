@@ -576,6 +576,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -1323,7 +1324,7 @@ document.write(`
         <span class="n">color_map</span><span class="o">=</span><span class="s2">&quot;viridis_r&quot;</span><span class="p">,</span>
         <span class="n">wd_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">ws_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Wind speed [m/s]&quot;</span><span class="p">},</span>
+        <span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Wind speed [m/s]&quot;</span><span class="p">},</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method creates a wind rose plot showing the frequency of occurrence</span>
@@ -1342,7 +1343,7 @@ document.write(`
 <span class="sd">            ws_step: Step size for wind speed (float, optional).</span>
 <span class="sd">                the current step size will be used. Defaults to None.</span>
 <span class="sd">            legend_kwargs (dict, optional): Keyword arguments to be passed to</span>
-<span class="sd">                ax.legend(). Defaults to {&quot;title&quot;: &quot;Wind speed [m/s]&quot;}.</span>
+<span class="sd">                ax.legend(). Defaults to {&quot;label&quot;: &quot;Wind speed [m/s]&quot;}.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing</span>
@@ -1369,6 +1370,8 @@ document.write(`
 
         <span class="c1"># Get a color array</span>
         <span class="n">color_array</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">color_map</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws_bins</span><span class="p">))</span>
+        <span class="n">norm_ws</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ws_bins</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ws_bins</span><span class="p">))</span>
+        <span class="n">sm_ws</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm_ws</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">color_array</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">wd_idx</span><span class="p">,</span> <span class="n">wd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">wd_bins</span><span class="p">):</span>
             <span class="n">rects</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1386,7 +1389,8 @@ document.write(`
                 <span class="p">)</span>
 
         <span class="c1"># Configure the plot</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">rects</span><span class="p">),</span> <span class="n">ws_bins</span><span class="p">,</span> <span class="o">**</span><span class="n">legend_kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sm_ws</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">legend_kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_direction</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_offset</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
@@ -2390,7 +2394,7 @@ document.write(`
         <span class="n">color_map</span><span class="o">=</span><span class="s2">&quot;viridis_r&quot;</span><span class="p">,</span>
         <span class="n">wd_step</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
         <span class="n">wind_rose_var_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Wind speed [m/s]&quot;</span><span class="p">},</span>
+        <span class="n">legend_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Wind speed [m/s]&quot;</span><span class="p">},</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method creates a wind rose plot showing the frequency of occurrence</span>
@@ -2417,7 +2421,7 @@ document.write(`
 <span class="sd">                will be used if wind_rose_var = &quot;ws&quot;, and a value of 4% will be</span>
 <span class="sd">                used if wind_rose_var = &quot;ti&quot;.</span>
 <span class="sd">            legend_kwargs (dict, optional): Keyword arguments to be passed to</span>
-<span class="sd">                ax.legend(). Defaults to {&quot;title&quot;: &quot;Wind speed [m/s]&quot;}.</span>
+<span class="sd">                ax.legend(). Defaults to {&quot;label&quot;: &quot;Wind speed [m/s]&quot;}.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            :py:class:`matplotlib.pyplot.axes`: A figure axes object containing</span>
@@ -2451,6 +2455,8 @@ document.write(`
 
         <span class="c1"># Get a color array</span>
         <span class="n">color_array</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">color_map</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_bins</span><span class="p">))</span>
+        <span class="n">norm_wv</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">var_bins</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">var_bins</span><span class="p">))</span>
+        <span class="n">sm_wv</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm_wv</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">color_array</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">wd_idx</span><span class="p">,</span> <span class="n">wd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">wd_bins</span><span class="p">):</span>
             <span class="n">rects</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2468,7 +2474,8 @@ document.write(`
                 <span class="p">)</span>
 
         <span class="c1"># Configure the plot</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">rects</span><span class="p">),</span> <span class="n">var_bins</span><span class="p">,</span> <span class="o">**</span><span class="n">legend_kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sm_wv</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">legend_kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_direction</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_offset</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
