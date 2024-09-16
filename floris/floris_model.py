@@ -619,8 +619,8 @@ class FlorisModel(LoggingManager):
         # Confirm run() has been run
         if self.core.state is not State.USED:
             raise RuntimeError(
-                "Can't run function `FlorisModel.get_farm_power` without "
-                "first running `FlorisModel.run`."
+                f"Can't run function `{self.__class__.__name__}.get_farm_power` without "
+                f"first running `{self.__class__.__name__}.run`."
             )
 
         if turbine_weights is None:
