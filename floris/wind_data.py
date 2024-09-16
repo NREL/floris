@@ -733,7 +733,7 @@ class WindRose(WindDataBase):
             ws_step: Step size for wind speed (float, optional).
                 the current step size will be used. Defaults to None.
             legend_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.legend(). Defaults to {"title": "Wind speed [m/s]"}.
+                ax.legend(). Defaults to {"label": "Wind speed [m/s]"}.
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
@@ -779,10 +779,8 @@ class WindRose(WindDataBase):
                 )
 
         # Configure the plot
-        # ax.legend(reversed(rects), ws_bins, **legend_kwargs)
-        cb_ws = ax.figure.colorbar(sm_ws, ax=ax, **legend_kwargs)
+        ax.figure.colorbar(sm_ws, ax=ax, **legend_kwargs)
         ax.figure.tight_layout()
-        cb_ws.outline.set_visible(False)
         ax.set_theta_direction(-1)
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
@@ -1744,7 +1742,7 @@ class WindTIRose(WindDataBase):
         color_map="viridis_r",
         wd_step=15.0,
         wind_rose_var_step=None,
-        legend_kwargs={"title": "Wind speed [m/s]"},
+        legend_kwargs={"label": "Wind speed [m/s]"},
     ):
         """
         This method creates a wind rose plot showing the frequency of occurrence
@@ -1771,7 +1769,7 @@ class WindTIRose(WindDataBase):
                 will be used if wind_rose_var = "ws", and a value of 4% will be
                 used if wind_rose_var = "ti".
             legend_kwargs (dict, optional): Keyword arguments to be passed to
-                ax.legend(). Defaults to {"title": "Wind speed [m/s]"}.
+                ax.legend(). Defaults to {"label": "Wind speed [m/s]"}.
 
         Returns:
             :py:class:`matplotlib.pyplot.axes`: A figure axes object containing
@@ -1805,6 +1803,8 @@ class WindTIRose(WindDataBase):
 
         # Get a color array
         color_array = plt.get_cmap(color_map, len(var_bins))
+        norm_wv = mpl.colors.Normalize(vmin=np.min(var_bins), vmax=np.max(var_bins))
+        sm_wv = mpl.cm.ScalarMappable(norm=norm_wv, cmap=color_array)
 
         for wd_idx, wd in enumerate(wd_bins):
             rects = []
@@ -1822,7 +1822,8 @@ class WindTIRose(WindDataBase):
                 )
 
         # Configure the plot
-        ax.legend(reversed(rects), var_bins, **legend_kwargs)
+        ax.figure.colorbar(sm_wv, ax=ax, **legend_kwargs)
+        ax.figure.tight_layout()
         ax.set_theta_direction(-1)
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
