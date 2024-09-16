@@ -702,10 +702,10 @@ class UncertainFlorisModel(LoggingManager):
                 of value.
         """
         if (
-            freq is None
-            and not isinstance(self.fmodel_unexpanded.wind_data, WindRose)
-            and not isinstance(self.fmodel_unexpanded.wind_data, WindRoseWRG)
-            and not isinstance(self.fmodel_unexpanded.wind_data, WindTIRose)
+            freq is None and not isinstance(
+                self.fmodel_unexpanded.wind_data,
+                (WindRose, WindRoseWRG, WindTIRose)
+            )
         ):
             self.logger.warning(
                 "Computing AVP with uniform frequencies. Results results may not reflect annual "
