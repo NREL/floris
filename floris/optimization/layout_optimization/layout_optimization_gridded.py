@@ -65,7 +65,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
         if min_dist_D is not None and min_dist is None:
             if min_dist_D < 0: # Default to 5D
                 min_dist_D = 5.0
-            min_dist = min_dist_D * fmodel.core.farm.rotor_diameters[0]
+            min_dist = min_dist_D * fmodel.core.farm.rotor_diameters.flat[0]
             if len(np.unique(fmodel.core.farm.rotor_diameters)) > 1:
                 self.logger.warning((
                     "Found multiple turbine diameters. Using diameter of first turbine to set"
@@ -83,7 +83,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
         if translation_step_D is not None and translation_step is None:
             if translation_step_D < 0: # Default to 1D
                 translation_step_D = 1.0
-            translation_step = translation_step_D * fmodel.core.farm.rotor_diameters[0]
+            translation_step = translation_step_D * fmodel.core.farm.rotor_diameters.flat[0]
             if len(np.unique(fmodel.core.farm.rotor_diameters)) > 1:
                 self.logger.warning((
                     "Found multiple turbine diameters. Using diameter of first turbine to set"
@@ -107,7 +107,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
         # Create the default grid
 
         # use min_dist, hexagonal packing, and boundaries to create a grid.
-        d = 1.1 * np.sqrt((self.xmax**2 - self.xmin**2) + (self.ymax**2 - self.ymin**2))
+        d = 1.1 * np.sqrt((self.xmax - self.xmin)**2 + (self.ymax - self.ymin)**2)
         grid_1D = np.arange(0, d+min_dist, min_dist)
         if hexagonal_packing:
             x_locs = np.tile(grid_1D.reshape(1,-1), (len(grid_1D), 1))
@@ -196,7 +196,7 @@ class LayoutOptimizationGridded(LayoutOptimization):
                           x, y in zip(x_opt_all, y_opt_all)]
 
         # Save best layout, along with the number of turbines in bounds, and return
-        self.n_turbines_max = turbines_in_bounds[idx_max]
+        self.n_turbines_max = round(turbines_in_bounds[idx_max])
         self.x_opt = x_opt_all[mask_in_bounds]
         self.y_opt = y_opt_all[mask_in_bounds]
         return self.n_turbines_max, self.x_opt, self.y_opt
