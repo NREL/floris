@@ -11,9 +11,12 @@ from typing import (
     Tuple,
 )
 
+import numexpr as ne
 import numpy as np
 import yaml
 from attrs import define, field
+from scipy.integrate import solve_ivp
+from scipy.interpolate import LinearNDInterpolator
 
 from floris.type_dec import floris_array_converter, NDArrayFloat
 
@@ -240,7 +243,7 @@ def rotate_coordinates_rel_west(
 
     # Calculate the difference in given wind direction from 270 / West
     wind_deviation_from_west = wind_delta(wind_directions)
-    wind_deviation_from_west = np.reshape(wind_deviation_from_west, (len(wind_directions), 1))
+    wind_deviation_from_west = np.expand_dims(wind_deviation_from_west, axis=-1)
 
     # Construct the arrays storing the turbine locations
     x_coordinates, y_coordinates, z_coordinates = coordinates.T
@@ -325,6 +328,252 @@ def reverse_rotate_coordinates_rel_west(
 
     return grid_x_reversed, grid_y_reversed, grid_z_reversed
 
+def apply_wind_direction_heterogeneity_warping(
+        x_turbines,
+        y_turbines,
+        z_turbines,
+        x_points,
+        y_points,
+        z_points,
+        wind_direction_x_points,
+        wind_direction_y_points,
+        wind_direction_u_values,
+        wind_direction_v_values,
+    ):
+    """
+    Args:
+        x_turbines (np.ndarray): x-coordinates of the turbines (n_findex x n_turbines).
+        y_turbines (np.ndarray): y-coordinates of the turbines (n_findex x n_turbines).
+        z_turbines (np.ndarray): z-coordinates of the turbines (n_findex x n_turbines).
+        x_points (np.ndarray): x-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
+        y_points (np.ndarray): y-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
+        z_points (np.ndarray): z-coordinates to be warped (n_findex x n_turbines x n_grid x n_grid).
+        wind_direction_x_points (np.ndarray): x-coordinates of the specified flow points
+            (n_findex x n_points).
+        wind_direction_y_points (np.ndarray): y-coordinates of the specified flow points
+            (n_findex x n_points).
+        wind_direction_u_values (np.ndarray): u-velocity values at the specified flow points
+            (n_findex x n_points).
+        wind_direction_v_values (np.ndarray): v-velocity values at the specified flow points
+            (n_findex x n_points).
+        wind_direction_w_values (np.ndarray): w-velocity values at the specified flow points
+            (n_findex x n_points).
+    """
+
+    # TODO: create switch that uses 3D versions, possible, based on whether
+    # wind_direction_z_points is None
+    n_findex, n_turbines = x_turbines.shape
+
+    # Initialize storage
+    x_points_per_turbine = np.repeat(x_points[:,:,:,:,None], n_turbines, axis=4)
+    y_points_per_turbine = np.repeat(y_points[:,:,:,:,None], n_turbines, axis=4)
+    z_points_per_turbine = np.repeat(z_points[:,:,:,:,None], n_turbines, axis=4)
+
+    # Ensure all needed elements are arrays
+    wind_direction_u_values = np.array(wind_direction_u_values)
+    wind_direction_v_values = np.array(wind_direction_v_values)
+
+    # Compute new relative locations
+    # TODO: Can I avoid any of these looping operations? Do I need to?
+    for findex in range(n_findex):
+        for tindex in range(n_turbines):
+            print("computing streamline for tindex", tindex)
+            # 1. Compute the streamline
+            streamline_start = np.array([
+                x_turbines[findex,tindex],
+                y_turbines[findex,tindex]
+            ])
+            streamline = compute_2D_streamline(
+                wind_direction_x_points[findex,:],
+                wind_direction_y_points[findex,:],
+                wind_direction_u_values[findex,:],
+                wind_direction_v_values[findex,:],
+                streamline_start
+            )
+
+            # 2. Compute the point movements
+            x_shifted, y_shifted, z_shifted = shift_points_by_streamline(
+                streamline,
+                x_points[findex,:,:,:],
+                y_points[findex,:,:,:],
+                z_points[findex,:,:,:],
+            )
+
+            # 3. Apply to per_turbine values
+            x_points_per_turbine[findex,:,:,:,tindex] = x_shifted
+            y_points_per_turbine[findex,:,:,:,tindex] = y_shifted
+            z_points_per_turbine[findex,:,:,:,tindex] = z_shifted
+
+    # Return full set of locations
+    return x_points_per_turbine, y_points_per_turbine, z_points_per_turbine
+
+def compute_2D_streamline(x, y, u, v, xy_0, n_points=1000):
+    """
+    Compute 2D streamline (in x-y plane) starting at xy_0, according to (u,v)
+    velocity field.
+    """
+    s = np.linspace(0, 1, n_points) # parametric variable
+
+    scale = np.array([x.max() - x.min(), y.max() - y.min()])
+    offset = np.array([(x.max() + x.min())/2, (y.max() + y.min())/2])
+    # Need to compute the offset too
+
+    # Collect
+    xy = np.array([x, y]).T
+    uv = np.array([u,v]).T
+
+    # Normalize
+    xy_normalized = (xy - offset) / scale
+    xy_0_normalized = (xy_0 - offset) / scale
+    # TODO: Loop over findices! Maybe not necessary---can I compute all streamlines at once??
+    # Would it help? Currently assuming a single findex.
+
+    interp = LinearNDInterpolator(xy_normalized, uv, fill_value=0)
+
+    def velocity_field_interpolate_reg(s, xy_):
+        # if (xy_ < -0.5).any() or (xy_ > 0.5).any():
+        #     return np.array([0.1, 0.1])*np.sign(xy_)
+        # else:
+        return interp(xy_)[0]
+
+    ode_solution = solve_ivp(
+        velocity_field_interpolate_reg,
+        (0, 1),
+        xy_0_normalized,
+        t_eval=np.linspace(0,1,n_points)
+    )
+    # Handle the ODE solution
+    streamline = ode_solution.y.T
+
+    # Determine point of exit from specified domain
+    if (streamline < -0.5).any():
+        low_exit = np.argwhere(streamline < -0.5)[0,0]
+    else:
+        low_exit = n_points
+    if (streamline > 0.5).any():
+        high_exit = np.argwhere(streamline > 0.5)[0,0]
+    else:
+        high_exit = n_points
+    exit_index = np.minimum(low_exit, high_exit)
+    if exit_index == 0:
+        raise ValueError("Streamline could not be propagated inside the domain.")
+    if exit_index == n_points:
+        # TODO: recommend ensuring domain covers the buffer region
+        if (abs(streamline) > 0.8*0.5).any(): # 10% buffer given,
+            pass
+        else:
+            import ipdb; ipdb.set_trace()
+            raise ValueError("Streamline did not reach the edge of the domain.")
+
+    # Copy points after exit
+    #streamline[exit_index:] = streamline[exit_index-1]
+
+    # Denormalize
+    streamline_denormalized = streamline * scale + offset
+
+    return streamline_denormalized
+
+def shift_points_by_streamline(streamline, x, y, z):
+    ## I think should be dist by turbine only (not each rotor point); and then
+    # shift all rotor points by the same amount.
+    # TODO: How will this work over findices? Need to work that out.
+    xy = np.concatenate((x.mean(axis=(1,2))[None,:],y.mean(axis=(1,2))[None,:]), axis=0)
+
+    rotor_y = y - y.mean(axis=(1,2), keepdims=True) # TODO: still ok for viz solve?
+
+    # Storage for new points
+    x_new = x.copy()
+    y_new = y.copy()
+
+    disps_to_streamline = xy[None,:,:] - streamline[:, :,None]
+    dists_to_streamline = np.linalg.norm(disps_to_streamline, axis=1)
+    min_idx = np.argmin(dists_to_streamline, axis=0)
+    #points = streamline[min_idx, :]
+
+    # TODO: for viz/solve for points, there are many more points than turbines.
+    # It would be nice not to have a loop here.
+    for i in range(len(min_idx)):
+        streamline_diffs = np.diff(streamline[:min_idx[i], :], axis=0)
+        along_stream_dist = np.sum(np.linalg.norm(streamline_diffs, axis=1))
+        off_stream_dist = dists_to_streamline[min_idx[i], i]
+        off_stream_disp = disps_to_streamline[min_idx[i], :, i]
+        disp_x = off_stream_disp[0]
+        disp_y = off_stream_disp[1]
+
+        theta = np.arctan2(disp_y, disp_x)
+
+        x_new[i,:,:] = streamline[0,0] + along_stream_dist
+        # y_new[tindex,:,:] = streamline[0,1] + disp_x*np.sin(theta) + disp_y*np.cos(theta)\
+        # + rotor_y[tindex,:,:]
+        y_new[i,:,:] = streamline[0,1] + np.sign(theta)*off_stream_dist + rotor_y[i,:,:]
+        #y_new[tindex,:,:] = streamline[0,1] + off_stream_dist + rotor_y[tindex,:,:]
+        #if tindex == 1:
+    return x_new, y_new, z
+
+    #return x_new.reshape(x.shape), y_new.reshape(y.shape), z
+
+def shift_points_by_streamline2(streamline, x, y, z, rotor_points_only=True):
+    ## I think should be dist by turbine only (not each rotor point); and then
+    # shift all rotor points by the same amount.
+    # TODO: How will this work over findices? Need to work that out.
+
+    #xy = np.concatenate((x.mean(axis=(1,2))[None,:],y.mean(axis=(1,2))[None,:]), axis=0)
+    xy = np.concatenate((x.flatten()[None,:], y.flatten()[None,:]), axis=0)
+
+    #rotor_y = y - y.mean(axis=(1,2), keepdims=True) # TODO: still ok for viz solve?
+
+    # Storage for new points
+    # x_new = x.copy()
+    # y_new = y.copy()
+
+    disps_to_streamline = xy[None,:,:] - streamline[:, :,None]
+    # TODO: This line slow. What if norm is delayed?
+    dists_to_streamline = np.linalg.norm(disps_to_streamline, axis=1)
+    disps_x = disps_to_streamline[:, 0, :]
+    disps_y = disps_to_streamline[:, 1, :]
+    #dists_to_streamline = ne.evaluate("sqrt(disps_x ** 2 + disps_y ** 2)")
+    #min_idx = np.argmin(dists_to_streamline, axis=0)
+    dists_to_streamline_sq = disps_x ** 2 + disps_y ** 2
+    min_idx = np.argmin(dists_to_streamline_sq, axis=0)
+    #points = streamline[min_idx, :]
+
+    # TODO: for viz/solve for points, there are many more points than turbines.
+    # It would be nice not to have a loop here.
+    # x_new = np.zeros(len(min_idx))
+    # y_new = np.zeros(len(min_idx))
+
+    s_diffs = np.diff(streamline, axis=0)
+    as_dist_all = np.insert(np.cumsum(np.linalg.norm(s_diffs, axis=1)), 0, 0)
+    as_dists = as_dist_all[min_idx]
+
+    disps = disps_to_streamline[min_idx, :, np.arange(0, xy.shape[1], 1)]
+    theta = np.arctan2(disps[:,1], disps[:,0])
+    #os_dists = dists_to_streamline[min_idx, np.arange(0, xy.shape[1], 1)]
+    os_dists = np.sqrt(dists_to_streamline_sq[min_idx, np.arange(0, xy.shape[1], 1)])
+    # for i in range(len(min_idx)):
+    #     streamline_diffs = np.diff(streamline[:min_idx[i], :], axis=0)
+    #     along_stream_dist = np.sum(np.linalg.norm(streamline_diffs, axis=1))
+    #     off_stream_dist = dists_to_streamline[min_idx[i], i]
+    #     off_stream_disp = disps_to_streamline[min_idx[i], :, i]
+    #     disp_x = off_stream_disp[0]
+    #     disp_y = off_stream_disp[1]
+
+    #     theta = np.arctan2(disp_y, disp_x)
+
+    #     x_new[i] = streamline[0,0] + along_stream_dist
+    #     # y_new[tindex,:,:] = streamline[0,1] + disp_x*np.sin(theta) + disp_y*np.cos(theta)\
+    #     # + rotor_y[tindex,:,:]
+    #     y_new[i] = streamline[0,1] + np.sign(theta)*off_stream_dist
+    #     #y_new[tindex,:,:] = streamline[0,1] + off_stream_dist + rotor_y[tindex,:,:]
+    #     #if tindex == 1:
+    #     #    import ipdb; ipdb.set_trace()
+
+    x_new = (streamline[0,0] + as_dists).reshape(x.shape)
+    y_new = (streamline[0,1] + np.sign(theta)*os_dists).reshape(y.shape)
+
+    return x_new, y_new, z
+
+    #return x_new.reshape(x.shape), y_new.reshape(y.shape), z
 
 class Loader(yaml.SafeLoader):
 
@@ -439,3 +688,28 @@ def print_nested_dict(dictionary: Dict[str, Any], indent: int = 0) -> None:
             print_nested_dict(value, indent + 4)
         else:
             print(" " * (indent + 4) + str(value))
+
+def update_model_args(
+        model_args: Dict[str, Any],
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray
+    ):
+    """
+    Update the x_sorted, y_sorted, and z_sorted entries of the model_args dict.
+    """
+    # Check that new x, y, z are the same length as the old
+    if (("x" in model_args.keys() and x.shape != model_args["x"].shape) or \
+        ("y" in model_args.keys() and y.shape != model_args["y"].shape) or \
+        ("z" in model_args.keys() and z.shape != model_args["z"].shape)):
+        raise ValueError("Size of new x,y,z arrays must match existing ones.")
+
+    # Update the x, y, z values
+    if "x" in model_args.keys():
+        model_args["x"] = x
+    if "y" in model_args.keys():
+        model_args["y"] = y
+    if "z" in model_args.keys():
+        model_args["z"] = z
+
+    return model_args
