@@ -10,7 +10,7 @@ from floris.core import State
 from floris.floris_model import FlorisModel
 
 
-class ParallelFlorisModel(FlorisModel):
+class ParFlorisModel(FlorisModel):
     """
     This class mimics the FlorisModel, but enables parallelization of the main
     computational effort.
@@ -18,7 +18,7 @@ class ParallelFlorisModel(FlorisModel):
 
     def __init__(
         self,
-        configuration: dict | str | Path,
+        configuration: dict | str | Path | FlorisModel,
         interface: str | None = "multiprocessing",
         max_workers: int = -1,
         n_wind_condition_splits: int = -1,
@@ -26,11 +26,11 @@ class ParallelFlorisModel(FlorisModel):
         print_timings: bool = False
     ):
         """
-        Initialize the ParallelFlorisModel object.
+        Initialize the ParFlorisModel object.
 
         Args:
-            configuration: The Floris configuration dictionary or YAML file.
-            The configuration should have the following inputs specified.
+            configuration: The Floris configuration dictionary or YAML file, or an instantiated
+                FlorisModel object. The configuration should have the following inputs specified.
                 - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.
                 - **farm**: See `floris.simulation.farm.Farm` for more details.
                 - **turbine**: See `floris.simulation.turbine.Turbine` for more details.
@@ -47,11 +47,6 @@ class ParallelFlorisModel(FlorisModel):
         """
         # Instantiate the underlying FlorisModel
         if isinstance(configuration, FlorisModel):
-            self.logger.warning(
-                "Received an instantiated FlorisModel, when expected a dictionary or path"
-                " to a FLORIS input file. Converting to dictionary to instantiate "
-                " the ParallelFlorisModel."
-            )
             configuration = configuration.core.as_dict()
         super().__init__(configuration)
 
@@ -296,7 +291,7 @@ class ParallelFlorisModel(FlorisModel):
         Raise deprecation warning.
         """
         self.logger.warning(
-            "ParallelFlorisModel no longer contains `fmodel` as an attribute "
+            "ParFlorisModel no longer contains `fmodel` as an attribute "
             "and now directly inherits from FlorisModel. Please use the "
             "attributes and methods of FlorisModel directly."
         )

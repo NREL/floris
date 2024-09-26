@@ -22,7 +22,7 @@ from floris import (
     TimeSeries,
 )
 from floris.parallel_floris_model import ParallelFlorisModel as ParallelFlorisModel_orig
-from floris.parallel_floris_model_2 import ParallelFlorisModel as ParallelFlorisModel_new
+from floris.par_floris_model import ParFlorisModel
 
 
 DEBUG = True
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     # Set up new parallel Floris model
     print("Beginning multiprocessing test")
     t0 = timerpc()
-    pfmodel_mp = ParallelFlorisModel_new(
+    pfmodel_mp = ParFlorisModel(
         "../inputs/gch.yaml",
         max_workers=-1,
         n_wind_condition_splits=-1,
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # When is the worker pool released, though??
     print("Beginning pathos test")
     t0 = timerpc()
-    pfmodel_pathos = ParallelFlorisModel_new(
+    pfmodel_pathos = ParFlorisModel(
         "../inputs/gch.yaml",
         max_workers=-1,
         n_wind_condition_splits=-1,

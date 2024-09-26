@@ -22,7 +22,7 @@ from floris import (
     TimeSeries,
 )
 from floris.parallel_floris_model import ParallelFlorisModel as ParallelFlorisModel_orig
-from floris.parallel_floris_model_2 import ParallelFlorisModel as ParallelFlorisModel_new
+from floris.par_floris_model import ParFlorisModel
 
 
 DEBUG = True
@@ -70,7 +70,7 @@ if __name__ == "__main__":
         )
 
         # Set up new parallel Floris model
-        pfmodel_new = ParallelFlorisModel_new(
+        pfmodel_new = ParFlorisModel(
             "../inputs/gch.yaml",
             max_workers=max_workers,
             n_wind_condition_splits=max_workers,
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         )
 
         # Set up new parallel Floris model using only powers
-        pfmodel_new_p = ParallelFlorisModel_new(
+        pfmodel_new_p = ParFlorisModel(
             "../inputs/gch.yaml",
             max_workers=max_workers,
             n_wind_condition_splits=max_workers,
