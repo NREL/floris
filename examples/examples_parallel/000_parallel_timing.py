@@ -24,6 +24,7 @@ from floris import (
 from floris.parallel_floris_model import ParallelFlorisModel as ParallelFlorisModel_orig
 from floris.parallel_floris_model_2 import ParallelFlorisModel as ParallelFlorisModel_new
 
+
 DEBUG = True
 
 if __name__ == "__main__":
@@ -73,7 +74,7 @@ if __name__ == "__main__":
             "../inputs/gch.yaml",
             max_workers=max_workers,
             n_wind_condition_splits=max_workers,
-            interface=parallel_interface,
+            interface="pathos",
             print_timings=True,
         )
 
@@ -119,7 +120,8 @@ if __name__ == "__main__":
 
         # Save the data
         df = pd.DataFrame({
-            "model": ["FlorisModel", "ParallelFlorisModel_orig", "ParallelFlorisModel_new", "ParallelFlorisModel_new_poweronly"],
+            "model": ["FlorisModel", "ParallelFlorisModel_orig", "ParallelFlorisModel_new",
+                      "ParallelFlorisModel_new_poweronly"],
             "AEP": [aep_fmodel, aep_pfmodel_orig, aep_pfmodel_new, aep_pfmodel_new_p],
             "time": [t_fmodel, t_pfmodel_orig, t_pfmodel_new, t_pfmodel_new_p],
         })
