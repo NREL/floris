@@ -37,7 +37,7 @@ class ParallelFlorisModel(FlorisModel):
                 - **wake**: See `floris.simulation.wake.WakeManager` for more details.
                 - **logging**: See `floris.simulation.core.Core` for more details.
             interface: The parallelization interface to use. Options are "multiprocessing",
-               "pathos", and "concurrent, with possible future support for "mpi4py"
+               "pathos", and "concurrent", with possible future support for "mpi4py"
             max_workers: The maximum number of workers to use. Defaults to -1, which then
                takes the number of CPUs available.
             n_wind_condition_splits: The number of wind conditions to split the simulation over.
@@ -88,7 +88,7 @@ class ParallelFlorisModel(FlorisModel):
         else:
             raise ValueError(
                 f"Invalid parallelization interface {interface}. "
-                "Options are 'multiprocessing' or 'pathos'."
+                "Options are 'multiprocessing', 'pathos', or 'concurrent'."
             )
 
         self._interface = interface
