@@ -89,6 +89,11 @@ class ParallelFlorisModel(LoggingManager):
         print_timings (bool): Print the computation time to the console. Defaults to False.
         """
 
+        self.logger.warning((
+            "ParallelFlorisModel is deprecated and will be removed in a future version. "
+            "Please switch to ParFlorisModel instead."
+        ))
+
         # Set defaults for backward compatibility
         if use_mpi4py is not None:
             warnings.warn(
