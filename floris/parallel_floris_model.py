@@ -117,6 +117,14 @@ class ParallelFlorisModel(LoggingManager):
                 "Please use 'concurrent', 'multiprocessing' or 'mpi4py'."
             )
 
+        # Raise error if uncertain model is passed in and refer to new parallel_floris_model_2
+        if isinstance(fmodel, UncertainFlorisModel):
+            raise UserWarning(
+                "UncertainFlorisModel is not supported in this version of ParallelFlorisModel. "
+                "Please use the new version of ParallelFlorisModel (parallel_floris_model_2) "
+                "for UncertainFlorisModel."
+            )
+
         # Initialize floris object and copy common properties
         if isinstance(fmodel, FlorisModel):
             self.fmodel = fmodel.copy()
