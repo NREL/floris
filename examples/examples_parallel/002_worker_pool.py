@@ -1,15 +1,7 @@
 """Example: Timing tests for parallel computation interfaces.
 
 Tests:
-- max_workers specified, small.
-- max_workers specified, large.
-- max_workers unspecified.
-
-- various n_findex
-- various n_turbines
-
-- return_turbine_powers_only=True
-- return_turbine_powers_only=False
+- "multiprocessing" vs "pathos" interfaces.
 """
 
 from time import perf_counter as timerpc

@@ -1,4 +1,4 @@
-"""Example: Timing tests for parallel computation interfaces.
+"""Example: Timing tests for parallel computation scaling.
 
 Tests:
 - max_workers specified, small.
@@ -158,4 +158,3 @@ if __name__ == "__main__":
         set_up_and_run_models(
             n_turbs=n_turbs, n_findex=nf, max_workers=max_workers
         )
-

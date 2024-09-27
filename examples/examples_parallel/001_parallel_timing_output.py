@@ -1,15 +1,4 @@
-"""Example: Timing tests for parallel computation interfaces.
-
-Tests:
-- max_workers specified, small.
-- max_workers specified, large.
-- max_workers unspecified.
-
-- various n_findex
-- various n_turbines
-
-- return_turbine_powers_only=True
-- return_turbine_powers_only=False
+"""Example: View output from parallel_timing example.
 """
 
 from time import perf_counter as timerpc
@@ -148,4 +137,3 @@ plt.show()
     #     set_up_and_run_models(
     #         n_turbs=n_turbs, n_findex=nf, max_workers=max_workers
     #     )
-
