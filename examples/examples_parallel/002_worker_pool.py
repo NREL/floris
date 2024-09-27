@@ -23,6 +23,7 @@ from floris import (
 )
 from floris.par_floris_model import ParFlorisModel
 
+
 DEBUG = True
 
 if __name__ == "__main__":

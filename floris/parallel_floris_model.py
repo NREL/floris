@@ -116,14 +116,14 @@ class ParallelFlorisModel(LoggingManager):
             from concurrent.futures import ProcessPoolExecutor
             self._PoolExecutor = ProcessPoolExecutor
         else:
-            raise UserWarning(
+            raise ValueError(
                 f"Interface '{interface}' not recognized. "
                 "Please use 'concurrent', 'multiprocessing' or 'mpi4py'."
             )
 
         # Raise error if uncertain model is passed in and refer to new parallel_floris_model_2
         if isinstance(fmodel, UncertainFlorisModel):
-            raise UserWarning(
+            raise ValueError(
                 "UncertainFlorisModel is not supported in this version of ParallelFlorisModel. "
                 "Please use the new version ParFlorisModel (par_floris_model) "
                 "for UncertainFlorisModel compatibility."

@@ -195,9 +195,10 @@ def test_configuration_compatibility(sample_inputs_fixture, caplog):
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
 
+    # Allowed to instantiate ParFlorisModel using fmodel
     with caplog.at_level(logging.WARNING):
         ParFlorisModel(fmodel)
-    assert caplog.text != "" # Checking not empty
+    assert caplog.text == "" # Checking empty
     caplog.clear()
 
     pfmodel = ParFlorisModel(sample_inputs_fixture.core)
@@ -285,3 +286,5 @@ def test_control_setpoints(sample_inputs_fixture):
 
     assert powers_fmodel.shape == powers_pfmodel.shape
     assert np.allclose(powers_fmodel, powers_pfmodel)
+
+# TODO: Add tests for compatibility with UncertainFlorisModel

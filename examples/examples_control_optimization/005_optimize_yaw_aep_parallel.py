@@ -22,6 +22,7 @@ from floris import (
 )
 from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
+
 # When using parallel optimization it is importat the "root" script include this
 # if __name__ == "__main__": block to avoid problems
 if __name__ == "__main__":
