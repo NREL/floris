@@ -286,5 +286,3 @@ def test_control_setpoints(sample_inputs_fixture):
 
     assert powers_fmodel.shape == powers_pfmodel.shape
     assert np.allclose(powers_fmodel, powers_pfmodel)
-
-# TODO: Add tests for compatibility with UncertainFlorisModel

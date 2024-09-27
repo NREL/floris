@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 import yaml
 
-from floris import FlorisModel, TimeSeries
+from floris import (
+    FlorisModel,
+    ParFlorisModel,
+    TimeSeries,
+)
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.uncertain_floris_model import (
     ApproxFlorisModel,
@@ -452,3 +456,16 @@ def test_set_operation_model():
     ufmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     with pytest.raises(ValueError):
         ufmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+
+def test_parallel_uncertain_model():
+
+    ufmodel = UncertainFlorisModel(FlorisModel(configuration=YAML_INPUT))
+    pufmodel = UncertainFlorisModel(ParFlorisModel(configuration=YAML_INPUT))
+
+    # Run the models and compare outputs
+    ufmodel.run()
+    pufmodel.run()
+    powers_unc = ufmodel.get_turbine_powers()
+    powers_punc = pufmodel.get_turbine_powers()
+
+    assert np.allclose(powers_unc, powers_punc)
