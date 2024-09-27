@@ -12,7 +12,7 @@ import numpy as np
 from floris import FlorisModel
 from floris.core import State
 from floris.logging_manager import LoggingManager
-from floris.parallel_floris_model_2 import ParallelFlorisModel
+from floris.par_floris_model import ParFlorisModel
 from floris.type_dec import (
     floris_array_converter,
     NDArrayBool,
@@ -47,10 +47,10 @@ class UncertainFlorisModel(LoggingManager):
     conditions from within the expanded set of conditions are run.
 
     Args:
-        configuration (dict | str | Path | FlorisModel | ParallelFlorisModel):  The configuration
+        configuration (dict | str | Path | FlorisModel | ParFlorisModel):  The configuration
             for the wind farm.  This can be a dictionary, a path to a yaml file, or a FlorisModel
-            or ParallelFlorisModel object.  If dict, str or Path, a new FlorisModel object is
-            created.  If a FlorisModel or ParallelFlorisModel object a copy of the object is made.
+            or ParFlorisModel object.  If dict, str or Path, a new FlorisModel object is
+            created.  If a FlorisModel or ParFlorisModel object a copy of the object is made.
         wd_resolution (float, optional): The resolution of wind direction for generating
             gaussian blends, in degrees.  Defaults to 1.0.
         ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
@@ -73,7 +73,7 @@ class UncertainFlorisModel(LoggingManager):
 
     def __init__(
         self,
-        configuration: dict | str | Path | FlorisModel | ParallelFlorisModel,
+        configuration: dict | str | Path | FlorisModel | ParFlorisModel,
         wd_resolution=1.0,  # Degree
         ws_resolution=1.0,  # m/s
         ti_resolution=0.01,
@@ -107,13 +107,13 @@ class UncertainFlorisModel(LoggingManager):
         self.weights = self._get_weights(self.wd_std, self.wd_sample_points)
 
         # Instantiate the un-expanded FlorisModel
-        if isinstance(configuration, (FlorisModel, ParallelFlorisModel)):
+        if isinstance(configuration, (FlorisModel, ParFlorisModel)):
             self.fmodel_unexpanded = configuration.copy()
         elif isinstance(configuration, (dict, str, Path)):
             self.fmodel_unexpanded = FlorisModel(configuration)
         else:
             raise ValueError(
-                "configuration must be a FlorisModel, ParallelFlorisModel, dict, str, or Path"
+                "configuration must be a FlorisModel, ParFlorisModel, dict, str, or Path"
             )
 
         # Call set at this point with no arguments so ready to run

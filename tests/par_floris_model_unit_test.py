@@ -10,7 +10,7 @@ from floris import (
     TimeSeries,
     WindRose,
 )
-from floris.parallel_floris_model_2 import ParallelFlorisModel
+from floris.par_floris_model import ParFlorisModel
 
 
 DEBUG = False
@@ -19,14 +19,14 @@ DEFLECTION_MODEL = "gauss"
 
 def test_None_interface(sample_inputs_fixture):
     """
-    With interface=None, the ParallelFlorisModel should behave exactly like the FlorisModel.
-    (ParallelFlorisModel.run() simply calls the parent FlorisModel.run()).
+    With interface=None, the ParFlorisModel should behave exactly like the FlorisModel.
+    (ParFlorisModel.run() simply calls the parent FlorisModel.run()).
     """
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
-    pfmodel = ParallelFlorisModel(
+    pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
         interface=None,
         n_wind_condition_splits=2 # Not used when interface=None
@@ -42,14 +42,14 @@ def test_None_interface(sample_inputs_fixture):
 
 def test_multiprocessing_interface(sample_inputs_fixture):
     """
-    With interface="multiprocessing", the ParallelFlorisModel should return the same powers
+    With interface="multiprocessing", the ParFlorisModel should return the same powers
     as the FlorisModel.
     """
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
-    pfmodel = ParallelFlorisModel(
+    pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
         interface="multiprocessing",
         n_wind_condition_splits=2
@@ -65,14 +65,14 @@ def test_multiprocessing_interface(sample_inputs_fixture):
 
 def test_pathos_interface(sample_inputs_fixture):
     """
-    With interface="pathos", the ParallelFlorisModel should return the same powers
+    With interface="pathos", the ParFlorisModel should return the same powers
     as the FlorisModel.
     """
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
-    pfmodel = ParallelFlorisModel(
+    pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
         interface="pathos",
         n_wind_condition_splits=2
@@ -87,7 +87,7 @@ def test_pathos_interface(sample_inputs_fixture):
     assert np.allclose(f_turb_powers, pf_turb_powers)
 
     # Run in powers_only mode
-    pfmodel = ParallelFlorisModel(
+    pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
         interface="pathos",
         n_wind_condition_splits=2,
@@ -101,14 +101,14 @@ def test_pathos_interface(sample_inputs_fixture):
 
 def test_concurrent_interface(sample_inputs_fixture):
     """
-    With interface="concurrent", the ParallelFlorisModel should return the same powers
+    With interface="concurrent", the ParFlorisModel should return the same powers
     as the FlorisModel.
     """
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
-    pfmodel = ParallelFlorisModel(
+    pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
         interface="concurrent",
         n_wind_condition_splits=2,
@@ -123,7 +123,7 @@ def test_concurrent_interface(sample_inputs_fixture):
     assert np.allclose(f_turb_powers, pf_turb_powers)
 
     # Run in powers_only mode
-    pfmodel = ParallelFlorisModel(
+    pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
         interface="concurrent",
         n_wind_condition_splits=2,
@@ -137,14 +137,14 @@ def test_concurrent_interface(sample_inputs_fixture):
 
 def test_return_turbine_powers_only(sample_inputs_fixture):
     """
-    With return_turbine_powers_only=True, the ParallelFlorisModel should return only the
+    With return_turbine_powers_only=True, the ParFlorisModel should return only the
     turbine powers, not the full results.
     """
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
-    pfmodel = ParallelFlorisModel(
+    pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
         interface="multiprocessing",
         n_wind_condition_splits=2,
@@ -166,7 +166,7 @@ def test_run_error(sample_inputs_fixture, caplog):
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
-    pfmodel = ParallelFlorisModel(
+    pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
         interface="multiprocessing",
         n_wind_condition_splits=2
@@ -186,7 +186,7 @@ def test_run_error(sample_inputs_fixture, caplog):
 
 def test_configuration_compatibility(sample_inputs_fixture, caplog):
     """
-    Check that the ParallelFlorisModel is compatible with FlorisModel and
+    Check that the ParFlorisModel is compatible with FlorisModel and
     UncertainFlorisModel configurations.
     """
 
@@ -195,12 +195,13 @@ def test_configuration_compatibility(sample_inputs_fixture, caplog):
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
 
+    # Allowed to instantiate ParFlorisModel using fmodel
     with caplog.at_level(logging.WARNING):
-        ParallelFlorisModel(fmodel)
-    assert caplog.text != "" # Checking not empty
+        ParFlorisModel(fmodel)
+    assert caplog.text == "" # Checking empty
     caplog.clear()
 
-    pfmodel = ParallelFlorisModel(sample_inputs_fixture.core)
+    pfmodel = ParFlorisModel(sample_inputs_fixture.core)
     with caplog.at_level(logging.WARNING):
         pfmodel.fmodel
     assert caplog.text != "" # Checking not empty
@@ -211,14 +212,14 @@ def test_configuration_compatibility(sample_inputs_fixture, caplog):
 
 def test_wind_data_objects(sample_inputs_fixture):
     """
-    Check that the ParallelFlorisModel is compatible with WindData objects.
+    Check that the ParFlorisModel is compatible with WindData objects.
     """
 
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
-    pfmodel = ParallelFlorisModel(sample_inputs_fixture.core, max_workers=2)
+    pfmodel = ParFlorisModel(sample_inputs_fixture.core, max_workers=2)
 
     # Create a wind rose and set onto both models
     wind_speeds = np.array([8.0, 10.0, 12.0, 8.0, 10.0, 12.0])
@@ -263,14 +264,14 @@ def test_wind_data_objects(sample_inputs_fixture):
 
 def test_control_setpoints(sample_inputs_fixture):
     """
-    Check that the ParallelFlorisModel is compatible with yaw angles.
+    Check that the ParFlorisModel is compatible with yaw angles.
     """
 
     sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
     sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
-    pfmodel = ParallelFlorisModel(sample_inputs_fixture.core, max_workers=2)
+    pfmodel = ParFlorisModel(sample_inputs_fixture.core, max_workers=2)
 
     # Set yaw angles
     yaw_angles = np.tile(np.array([[10.0, 20.0, 30.0]]), (fmodel.n_findex,1))

@@ -70,9 +70,8 @@ class ParallelFlorisModel(LoggingManager):
         parallel computing to common FlorisModel properties.
 
         Args:
-        fmodel (FlorisModel or UncertainFlorisModel object): Interactive FLORIS object used to
-            perform the wake and turbine calculations. Can either be a regular FlorisModel
-            object or can be an UncertainFlorisModel object.
+        fmodel (FlorisModel object): Interactive FLORIS object used to
+            perform the wake and turbine calculations.
         max_workers (int): Number of parallel workers, typically equal to the number of cores
             you have on your system or HPC.
         n_wind_condition_splits (int): Number of sectors to split the wind findex array over.
@@ -88,6 +87,11 @@ class ParallelFlorisModel(LoggingManager):
             to False.
         print_timings (bool): Print the computation time to the console. Defaults to False.
         """
+
+        self.logger.warning((
+            "ParallelFlorisModel is deprecated and will be removed in a future version. "
+            "Please switch to ParFlorisModel instead."
+        ))
 
         # Set defaults for backward compatibility
         if use_mpi4py is not None:
@@ -112,17 +116,17 @@ class ParallelFlorisModel(LoggingManager):
             from concurrent.futures import ProcessPoolExecutor
             self._PoolExecutor = ProcessPoolExecutor
         else:
-            raise UserWarning(
+            raise ValueError(
                 f"Interface '{interface}' not recognized. "
                 "Please use 'concurrent', 'multiprocessing' or 'mpi4py'."
             )
 
         # Raise error if uncertain model is passed in and refer to new parallel_floris_model_2
         if isinstance(fmodel, UncertainFlorisModel):
-            raise UserWarning(
+            raise ValueError(
                 "UncertainFlorisModel is not supported in this version of ParallelFlorisModel. "
-                "Please use the new version of ParallelFlorisModel (parallel_floris_model_2) "
-                "for UncertainFlorisModel."
+                "Please use the new version ParFlorisModel (par_floris_model) "
+                "for UncertainFlorisModel compatibility."
             )
 
         # Initialize floris object and copy common properties

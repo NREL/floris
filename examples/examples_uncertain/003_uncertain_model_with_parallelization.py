@@ -11,18 +11,18 @@ from floris import (
     TimeSeries,
     UncertainFlorisModel,
 )
-from floris.parallel_floris_model_2 import ParallelFlorisModel
+from floris.par_floris_model import ParFlorisModel
 
 
-# Following the refactoring of ParallelFlorisModel, the UncertainFlorisModel can be
-# parallelized by passing the ParallelFlorisModel as the model to be run.  This example
+# Following the refactoring of ParFlorisModel, the UncertainFlorisModel can be
+# parallelized by passing the ParFlorisModel as the model to be run.  This example
 # demonstrates the usage.  Demonstrating the result obtained from the UncertainFlorisModel
-# with and without parallelization is the same.  The results are compared to the nomimal
+# with and without parallelization is the same.  The results are compared to the nominal
 # results.
 
 # Instantiate a FlorisModel and ParallelFlorisModel using the GCH model
 fmodel = FlorisModel("../inputs/gch.yaml")
-pfmodel = ParallelFlorisModel("../inputs/gch.yaml")
+pfmodel = ParFlorisModel("../inputs/gch.yaml")
 
 # Use the above model to declare a serial and parallel UncertainFlorisModel
 ufmodel = UncertainFlorisModel(fmodel)
