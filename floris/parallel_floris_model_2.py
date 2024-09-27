@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 import copy
-import warnings
 from pathlib import Path
 from time import perf_counter as timerpc
 
 import numpy as np
-import pandas as pd
 
 from floris.core import State
 from floris.floris_model import FlorisModel
-from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
 class ParallelFlorisModel(FlorisModel):
@@ -40,7 +37,7 @@ class ParallelFlorisModel(FlorisModel):
                 - **wake**: See `floris.simulation.wake.WakeManager` for more details.
                 - **logging**: See `floris.simulation.core.Core` for more details.
             interface: The parallelization interface to use. Options are "multiprocessing",
-               with possible future support for "mpi4py" and "concurrent"
+               "pathos", and "concurrent", with possible future support for "mpi4py"
             max_workers: The maximum number of workers to use. Defaults to -1, which then
                takes the number of CPUs available.
             n_wind_condition_splits: The number of wind conditions to split the simulation over.
@@ -65,7 +62,18 @@ class ParallelFlorisModel(FlorisModel):
             if max_workers == -1:
                 max_workers = mp.cpu_count()
             # TODO: test spinning up the worker pool at this point
-        elif interface in ["mpi4py", "concurrent"]:
+        elif interface == "pathos":
+            import pathos
+            if max_workers == -1:
+                max_workers = pathos.helpers.cpu_count()
+            self.pathos_pool = pathos.pools.ProcessPool(nodes=max_workers)
+        elif interface == "concurrent":
+            from concurrent.futures import ProcessPoolExecutor
+            if max_workers == -1:
+                from multiprocessing import cpu_count
+                max_workers = cpu_count()
+            self._PoolExecutor = ProcessPoolExecutor
+        elif interface in ["mpi4py"]:
             raise NotImplementedError(
                 f"Parallelization interface {interface} not yet supported."
             )
@@ -80,10 +88,10 @@ class ParallelFlorisModel(FlorisModel):
         else:
             raise ValueError(
                 f"Invalid parallelization interface {interface}. "
-                "Options are 'multiprocessing', 'mpi4py' or 'concurrent'."
+                "Options are 'multiprocessing', 'pathos', or 'concurrent'."
             )
 
-        self.interface = interface
+        self._interface = interface
         self.max_workers = max_workers
         if n_wind_condition_splits == -1:
             self.n_wind_condition_splits = max_workers
@@ -123,6 +131,50 @@ class ParallelFlorisModel(FlorisModel):
             else:
                 with self._PoolExecutor(self.max_workers) as p:
                     self._fmodels_split = p.starmap(_parallel_run, parallel_run_inputs)
+            t2 = timerpc()
+            self._postprocessing()
+            self.core.farm.finalize(self.core.grid.unsorted_indices)
+            self.core.state = State.USED
+            t3 = timerpc()
+        elif self.interface == "pathos":
+            t0 = timerpc()
+            self.core.initialize_domain()
+            parallel_run_inputs = self._preprocessing()
+            t1 = timerpc()
+            if self.return_turbine_powers_only:
+                self._turbine_powers_split = self.pathos_pool.map(
+                    _parallel_run_powers_only_map,
+                    parallel_run_inputs
+                )
+            else:
+                self._fmodels_split = self.pathos_pool.map(
+                    _parallel_run_map,
+                    parallel_run_inputs
+                )
+            t2 = timerpc()
+            self._postprocessing()
+            self.core.farm.finalize(self.core.grid.unsorted_indices)
+            self.core.state = State.USED
+            t3 = timerpc()
+        elif self.interface == "concurrent":
+            t0 = timerpc()
+            self.core.initialize_domain()
+            parallel_run_inputs = self._preprocessing()
+            t1 = timerpc()
+            if self.return_turbine_powers_only:
+                with self._PoolExecutor(self.max_workers) as p:
+                    self._turbine_powers_split = p.map(
+                        _parallel_run_powers_only_map,
+                        parallel_run_inputs
+                    )
+                    self._turbine_powers_split = list(self._turbine_powers_split)
+            else:
+                with self._PoolExecutor(self.max_workers) as p:
+                    self._fmodels_split = p.map(
+                        _parallel_run_map,
+                        parallel_run_inputs
+                    )
+                    self._fmodels_split = list(self._fmodels_split)
             t2 = timerpc()
             self._postprocessing()
             self.core.farm.finalize(self.core.grid.unsorted_indices)
@@ -249,6 +301,21 @@ class ParallelFlorisModel(FlorisModel):
             "attributes and methods of FlorisModel directly."
         )
 
+    @property
+    def interface(self):
+        """
+        The parallelization interface used.
+        """
+        return self._interface
+
+    @interface.setter
+    def interface(self, value):
+        """
+        Raise error regarding setting the interface.
+        """
+        raise AttributeError(
+            "The parallelization interface cannot be changed after instantiation."
+        )
 
 def _parallel_run(fmodel_dict, set_kwargs) -> FlorisModel:
     """
@@ -275,3 +342,15 @@ def _parallel_run_powers_only(fmodel_dict, set_kwargs) -> np.ndarray:
     fmodel.set(**set_kwargs)
     fmodel.run()
     return fmodel.get_turbine_powers()
+
+def _parallel_run_map(x):
+    """
+    Wrapper for unpacking inputs to _parallel_run() for use with map().
+    """
+    return _parallel_run(*x)
+
+def _parallel_run_powers_only_map(x):
+    """
+    Wrapper for unpacking inputs to _parallel_run_powers_only() for use with map().
+    """
+    return _parallel_run_powers_only(*x)
