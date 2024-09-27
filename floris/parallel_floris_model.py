@@ -70,9 +70,8 @@ class ParallelFlorisModel(LoggingManager):
         parallel computing to common FlorisModel properties.
 
         Args:
-        fmodel (FlorisModel or UncertainFlorisModel object): Interactive FLORIS object used to
-            perform the wake and turbine calculations. Can either be a regular FlorisModel
-            object or can be an UncertainFlorisModel object.
+        fmodel (FlorisModel object): Interactive FLORIS object used to
+            perform the wake and turbine calculations.
         max_workers (int): Number of parallel workers, typically equal to the number of cores
             you have on your system or HPC.
         n_wind_condition_splits (int): Number of sectors to split the wind findex array over.
@@ -120,6 +119,14 @@ class ParallelFlorisModel(LoggingManager):
             raise UserWarning(
                 f"Interface '{interface}' not recognized. "
                 "Please use 'concurrent', 'multiprocessing' or 'mpi4py'."
+            )
+
+        # Raise error if uncertain model is passed in and refer to new parallel_floris_model_2
+        if isinstance(fmodel, UncertainFlorisModel):
+            raise UserWarning(
+                "UncertainFlorisModel is not supported in this version of ParallelFlorisModel. "
+                "Please use the new version ParFlorisModel (par_floris_model) "
+                "for UncertainFlorisModel compatibility."
             )
 
         # Initialize floris object and copy common properties

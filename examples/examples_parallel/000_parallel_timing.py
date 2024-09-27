@@ -22,7 +22,7 @@ from floris import (
     TimeSeries,
 )
 from floris.par_floris_model import ParFlorisModel
-from floris.parallel_floris_model import ParallelFlorisModel as ParallelFlorisModel_orig
+from floris.parallel_floris_model import ParallelFlorisModel
 
 
 DEBUG = True
@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
         # Set up original parallel Floris model
         parallel_interface = "multiprocessing"
-        pfmodel_orig = ParallelFlorisModel_orig(
+        pfmodel_orig = ParallelFlorisModel(
             fmodel=fmodel,
             max_workers=100 if max_workers < 0 else max_workers,
             n_wind_condition_splits=100 if max_workers < 0 else max_workers,

@@ -22,8 +22,6 @@ from floris import (
     TimeSeries,
 )
 from floris.par_floris_model import ParFlorisModel
-from floris.parallel_floris_model import ParallelFlorisModel as ParallelFlorisModel_orig
-
 
 DEBUG = True
 
