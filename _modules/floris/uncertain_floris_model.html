@@ -201,9 +201,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -326,7 +327,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -397,6 +399,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -582,6 +585,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
 <span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="n">State</span>
 <span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggingManager</span>
+<span class="kn">from</span> <span class="nn">floris.par_floris_model</span> <span class="kn">import</span> <span class="n">ParFlorisModel</span>
 <span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">floris_array_converter</span><span class="p">,</span>
     <span class="n">NDArrayBool</span><span class="p">,</span>
@@ -618,13 +622,10 @@ document.write(`
 <span class="sd">    conditions from within the expanded set of conditions are run.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        configuration (:py:obj:`dict`): The Floris configuration dictionary or YAML file.</span>
-<span class="sd">            The configuration should have the following inputs specified.</span>
-<span class="sd">                - **flow_field**: See `floris.simulation.flow_field.FlowField` for more details.</span>
-<span class="sd">                - **farm**: See `floris.simulation.farm.Farm` for more details.</span>
-<span class="sd">                - **turbine**: See `floris.simulation.turbine.Turbine` for more details.</span>
-<span class="sd">                - **wake**: See `floris.simulation.wake.WakeManager` for more details.</span>
-<span class="sd">                - **logging**: See `floris.simulation.core.Core` for more details.</span>
+<span class="sd">        configuration (dict | str | Path | FlorisModel | ParFlorisModel):  The configuration</span>
+<span class="sd">            for the wind farm.  This can be a dictionary, a path to a yaml file, or a FlorisModel</span>
+<span class="sd">            or ParFlorisModel object.  If dict, str or Path, a new FlorisModel object is</span>
+<span class="sd">            created.  If a FlorisModel or ParFlorisModel object a copy of the object is made.</span>
 <span class="sd">        wd_resolution (float, optional): The resolution of wind direction for generating</span>
 <span class="sd">            gaussian blends, in degrees.  Defaults to 1.0.</span>
 <span class="sd">        ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.</span>
@@ -647,7 +648,7 @@ document.write(`
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">FlorisModel</span> <span class="o">|</span> <span class="n">ParFlorisModel</span><span class="p">,</span>
         <span class="n">wd_resolution</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Degree</span>
         <span class="n">ws_resolution</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># m/s</span>
         <span class="n">ti_resolution</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
@@ -681,13 +682,18 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_weights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wd_std</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wd_sample_points</span><span class="p">)</span>
 
         <span class="c1"># Instantiate the un-expanded FlorisModel</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="p">(</span><span class="n">FlorisModel</span><span class="p">,</span> <span class="n">ParFlorisModel</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;configuration must be a FlorisModel, ParFlorisModel, dict, str, or Path&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Call set at this point with no arguments so ready to run</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 
-        <span class="c1"># Instantiate the expanded FlorisModel</span>
-        <span class="c1"># self.core_interface = FlorisModel(configuration)</span>
 
 <div class="viewcode-block" id="UncertainFlorisModel.set">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.set">[docs]</a>

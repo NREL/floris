@@ -200,9 +200,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -325,7 +326,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -396,6 +398,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -706,16 +709,9 @@ yaw angles, and power setpoints are rounded to specified resolutions.  Only uniq
 conditions from within the expanded set of conditions are run.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
-<dt>configuration (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>): The Floris configuration dictionary or YAML file.</dt><dd><dl class="simple">
-<dt>The configuration should have the following inputs specified.</dt><dd><ul class="simple">
-<li><p><strong>flow_field</strong>: See <cite>floris.simulation.flow_field.FlowField</cite> for more details.</p></li>
-<li><p><strong>farm</strong>: See <cite>floris.simulation.farm.Farm</cite> for more details.</p></li>
-<li><p><strong>turbine</strong>: See <cite>floris.simulation.turbine.Turbine</cite> for more details.</p></li>
-<li><p><strong>wake</strong>: See <cite>floris.simulation.wake.WakeManager</cite> for more details.</p></li>
-<li><p><strong>logging</strong>: See <cite>floris.simulation.core.Core</cite> for more details.</p></li>
-</ul>
-</dd>
-</dl>
+<dt>configuration (dict | str | Path | FlorisModel | ParFlorisModel):  The configuration</dt><dd><p>for the wind farm.  This can be a dictionary, a path to a yaml file, or a FlorisModel
+or ParFlorisModel object.  If dict, str or Path, a new FlorisModel object is
+created.  If a FlorisModel or ParFlorisModel object a copy of the object is made.</p>
 </dd>
 <dt>wd_resolution (float, optional): The resolution of wind direction for generating</dt><dd><p>gaussian blends, in degrees.  Defaults to 1.0.</p>
 </dd>
@@ -748,7 +744,7 @@ direction.  Defaults to False.</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>configuration</strong> (<em>dict</em><em> | </em><em>str</em><em> | </em><em>Path</em>)</p>
+<dd class="field-odd"><p><strong>configuration</strong> (<em>dict</em><em> | </em><em>str</em><em> | </em><em>Path</em><em> | </em><a class="reference internal" href="floris.floris_model.html#floris.floris_model.FlorisModel" title="floris.floris_model.FlorisModel"><em>FlorisModel</em></a><em> | </em><em>ParFlorisModel</em>)</p>
 </dd>
 </dl>
 <dl class="py method">

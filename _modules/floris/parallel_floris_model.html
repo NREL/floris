@@ -201,9 +201,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -326,7 +327,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -397,6 +399,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -642,9 +645,8 @@ document.write(`
 <span class="sd">        parallel computing to common FlorisModel properties.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        fmodel (FlorisModel or UncertainFlorisModel object): Interactive FLORIS object used to</span>
-<span class="sd">            perform the wake and turbine calculations. Can either be a regular FlorisModel</span>
-<span class="sd">            object or can be an UncertainFlorisModel object.</span>
+<span class="sd">        fmodel (FlorisModel object): Interactive FLORIS object used to</span>
+<span class="sd">            perform the wake and turbine calculations.</span>
 <span class="sd">        max_workers (int): Number of parallel workers, typically equal to the number of cores</span>
 <span class="sd">            you have on your system or HPC.</span>
 <span class="sd">        n_wind_condition_splits (int): Number of sectors to split the wind findex array over.</span>
@@ -660,6 +662,11 @@ document.write(`
 <span class="sd">            to False.</span>
 <span class="sd">        print_timings (bool): Print the computation time to the console. Defaults to False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">((</span>
+            <span class="s2">&quot;ParallelFlorisModel is deprecated and will be removed in a future version. &quot;</span>
+            <span class="s2">&quot;Please switch to ParFlorisModel instead.&quot;</span>
+        <span class="p">))</span>
 
         <span class="c1"># Set defaults for backward compatibility</span>
         <span class="k">if</span> <span class="n">use_mpi4py</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -684,9 +691,17 @@ document.write(`
             <span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">ProcessPoolExecutor</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Interface &#39;</span><span class="si">{</span><span class="n">interface</span><span class="si">}</span><span class="s2">&#39; not recognized. &quot;</span>
                 <span class="s2">&quot;Please use &#39;concurrent&#39;, &#39;multiprocessing&#39; or &#39;mpi4py&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Raise error if uncertain model is passed in and refer to new parallel_floris_model_2</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmodel</span><span class="p">,</span> <span class="n">UncertainFlorisModel</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;UncertainFlorisModel is not supported in this version of ParallelFlorisModel. &quot;</span>
+                <span class="s2">&quot;Please use the new version ParFlorisModel (par_floris_model) &quot;</span>
+                <span class="s2">&quot;for UncertainFlorisModel compatibility.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Initialize floris object and copy common properties</span>

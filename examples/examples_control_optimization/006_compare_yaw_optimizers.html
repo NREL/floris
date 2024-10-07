@@ -200,9 +200,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -325,7 +326,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="current nav bd-sidenav">
@@ -396,6 +398,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -1379,9 +1382,9 @@ Optimization terminated successfully    (Exit mode 0)
 Performing optimizations with Geometric Yaw...
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Time spent, Geometric Yaw: 0.13 s.
- Time spent, Serial Refine: 0.77 s.
- Time spent, SciPy (SLSQP): 32.62 s.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Time spent, Geometric Yaw: 0.12 s.
+ Time spent, Serial Refine: 0.76 s.
+ Time spent, SciPy (SLSQP): 31.75 s.
 </pre></div>
 </div>
 <img alt="../../_images/29d329e63e00d8d8126037e22de3ec655a5f66067daa003a5610bac8cb0efa89.png" src="../../_images/29d329e63e00d8d8126037e22de3ec655a5f66067daa003a5610bac8cb0efa89.png" />
@@ -1389,7 +1392,7 @@ Performing optimizations with Geometric Yaw...
 <img alt="../../_images/342f0e2205c34bc57ffe28103d20c5e7022bb56562d14db490e44e4cf1c84577.png" src="../../_images/342f0e2205c34bc57ffe28103d20c5e7022bb56562d14db490e44e4cf1c84577.png" />
 <img alt="../../_images/be867fe20e8fd6349cfd10272d674f4ca87c13a47b0eeaa3d7112805bc5a9ea5.png" src="../../_images/be867fe20e8fd6349cfd10272d674f4ca87c13a47b0eeaa3d7112805bc5a9ea5.png" />
 <img alt="../../_images/2613340f6ddfe11abe98d8cca7d914d6bc9d9f548e2512fd677c25346676f582.png" src="../../_images/2613340f6ddfe11abe98d8cca7d914d6bc9d9f548e2512fd677c25346676f582.png" />
-<img alt="../../_images/82c95ffd9165774b14973935d9f529136fb1cee75021d76a9b19609bbfd37095.png" src="../../_images/82c95ffd9165774b14973935d9f529136fb1cee75021d76a9b19609bbfd37095.png" />
+<img alt="../../_images/ae392e548d87a5be937cdd22105118c16f3285d512f61811e8b289b3e1908801.png" src="../../_images/ae392e548d87a5be937cdd22105118c16f3285d512f61811e8b289b3e1908801.png" />
 </div>
 </div>
 </section>

@@ -200,9 +200,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -325,7 +326,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -396,6 +398,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -841,7 +844,7 @@ Optimal layout improves AEP by 124.7% from 6198.3 MWh to 13925.3 MWh
 Reoptimizing with geometric yaw enabled.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3447/179999374.py:109: MatplotlibDeprecationWarning: An artist whose label starts with an underscore was passed to legend(); such artists will no longer be ignored in the future.  To suppress this warning, explicitly filter out such artists, e.g. with `[art for art in artists if not art.get_label().startswith(&#39;_&#39;)]`.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3713/179999374.py:109: MatplotlibDeprecationWarning: An artist whose label starts with an underscore was passed to legend(); such artists will no longer be ignored in the future.  To suppress this warning, explicitly filter out such artists, e.g. with `[art for art in artists if not art.get_label().startswith(&#39;_&#39;)]`.
   ax.legend([&quot;_Optimization boundary&quot;, &quot;Initial layout&quot;, &quot;Optimized layout&quot; ])
 </pre></div>
 </div>
@@ -942,12 +945,10 @@ Optimization complete.
 ... calcuating improvement in AEP
 Optimal layout: [[1511.9079128589733, 583.9817992590079, 1060.368359659844], [0.0022997713634362762, 0.04549239944748475, 0.07327580901618738]]
 Optimal layout improves AEP by 166.3% from 6198.3 MWh to 16505.9 MWh
+Turbine geometric yaw angles for wind direction 270.00 and wind speed 8.00 m/s: [ 0.         25.45866005 25.6955238 ]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Turbine geometric yaw angles for wind direction 270.00 and wind speed 8.00 m/s: [ 0.         25.45866005 25.6955238 ]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3447/179999374.py:147: MatplotlibDeprecationWarning: An artist whose label starts with an underscore was passed to legend(); such artists will no longer be ignored in the future.  To suppress this warning, explicitly filter out such artists, e.g. with `[art for art in artists if not art.get_label().startswith(&#39;_&#39;)]`.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3713/179999374.py:147: MatplotlibDeprecationWarning: An artist whose label starts with an underscore was passed to legend(); such artists will no longer be ignored in the future.  To suppress this warning, explicitly filter out such artists, e.g. with `[art for art in artists if not art.get_label().startswith(&#39;_&#39;)]`.
   ax.legend([&quot;_Optimization boundary&quot;, &quot;Initial layout&quot;, &quot;Optimized layout&quot;])
 </pre></div>
 </div>

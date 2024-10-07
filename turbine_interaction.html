@@ -200,9 +200,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Turbine Library Interface</a></li>
@@ -325,7 +326,8 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -396,6 +398,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -791,9 +794,9 @@ are going to be compared.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW_multi_dim_cp_ct
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>nrel_5MW
+iea_15MW_multi_dim_cp_ct
 iea_15MW_floating
-nrel_5MW
 iea_10MW
 </pre></div>
 </div>
@@ -814,9 +817,9 @@ arguments.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW_multi_dim_cp_ct
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>nrel_5MW
+iea_15MW_multi_dim_cp_ct
 iea_15MW_floating
-nrel_5MW
 iea_10MW
 iea_15MW
 </pre></div>
@@ -845,7 +848,7 @@ a multi-dimensional turbine in relation to the standard 15 MW example.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0cb07904e1607fd57a69fe8f4f0a63db59a5f547be56c8c8bae8fd57f1e5c7ae.png" src="_images/0cb07904e1607fd57a69fe8f4f0a63db59a5f547be56c8c8bae8fd57f1e5c7ae.png" />
+<img alt="_images/71ae9bcc6210ffd9ea07c35a5c79f871dfd17746db6b9fd64d5d441ef9430688.png" src="_images/71ae9bcc6210ffd9ea07c35a5c79f871dfd17746db6b9fd64d5d441ef9430688.png" />
 </div>
 </div>
 <p>Alternatively, these can all be ploted individually with:</p>
@@ -886,9 +889,9 @@ a multi-dimensional turbine in relation to the standard 15 MW example.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                  Turbine | Rotor Diameter (m) | Hub Height (m) |    TSR | Air Density (ρ) | Tilt (º)
 -----------------------------------------------------------------------------------------------------
+                 nrel_5MW |             125.88 |           90.0 |    8.0 |           1.225 |    5.000
  iea_15MW_multi_dim_cp_ct |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
         iea_15MW_floating |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
-                 nrel_5MW |             125.88 |           90.0 |    8.0 |           1.225 |    5.000
                  iea_10MW |             198.00 |          119.0 |    8.0 |           1.225 |    6.000
                  iea_15MW |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
 </pre></div>

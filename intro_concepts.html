@@ -73,7 +73,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'intro_concepts';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Advanced Concepts" href="advanced_concepts.html" />
+    <link rel="next" title="Wind Data Objects" href="wind_data_user.html" />
     <link rel="prev" title="Switching from FLORIS v3 to v4" href="v3_to_v4.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
@@ -200,9 +200,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
@@ -325,7 +326,8 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -396,6 +398,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -651,7 +654,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="introductory-concepts">
-<span id="concepts-intro"></span><h1>Introductory Concepts<a class="headerlink" href="#introductory-concepts" title="Link to this heading">#</a></h1>
+<span id="intro-concepts"></span><h1>Introductory Concepts<a class="headerlink" href="#introductory-concepts" title="Link to this heading">#</a></h1>
 <p>FLORIS is a Python-based software library for calculating wind farm performance considering
 the effect of turbine-turbine interactions through their wakes.
 There are two primary packages to understand when using FLORIS:</p>
@@ -1261,9 +1264,9 @@ Number of turbines = 25
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model    AEP (GWh)  Compute Time (s)
-Jensen   661.838    0.694 
-GCH      683.869    2.761 
-CC       661.315    5.708 
+Jensen   661.838    0.658 
+GCH      683.869    2.700 
+CC       661.315    5.593 
 </pre></div>
 </div>
 </div>
@@ -1345,27 +1348,19 @@ CC       661.315    5.708
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=0 (50.0%)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=1 (57.1%)
+[Serial Refine] Processing pass=1, turbine_depth=1 (57.1%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=2 (64.3%)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=3 (71.4%)
+[Serial Refine] Processing pass=1, turbine_depth=3 (71.4%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=4 (78.6%)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=5 (85.7%)
+[Serial Refine] Processing pass=1, turbine_depth=5 (85.7%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=6 (92.9%)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization wall time: 3.073 s
+Optimization wall time: 3.010 s
 </pre></div>
 </div>
 </div>
@@ -1434,11 +1429,11 @@ CC       661.315    5.708
       </div>
     </a>
     <a class="right-next"
-       href="advanced_concepts.html"
+       href="wind_data_user.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Advanced Concepts</p>
+        <p class="prev-next-title">Wind Data Objects</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

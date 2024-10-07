@@ -200,9 +200,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -325,7 +326,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -396,6 +398,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -761,17 +764,17 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Computing AVP with uniform frequencies. Results results may not reflect annual operation.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 38.86 GWh
-AEP from WindRose 39.08 GWh
-AEP from WindTIRose 39.09 GWh
-Annual Value Production (AVP) from TimeSeries 964077.77 dollars
-AVP from WindRose 969429.92 dollars
-AVP from WindTIRose 969835.14 dollars
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 40.53 GWh
+AEP from WindRose 40.39 GWh
+AEP from WindTIRose 40.41 GWh
+Annual Value Production (AVP) from TimeSeries 1037520.32 dollars
+AVP from WindRose 1033339.92 dollars
+AVP from WindTIRose 1034204.43 dollars
 </pre></div>
 </div>
-<img alt="../../_images/3f8f0ea9807ad10371db0b6c8ff974cde75d49c45d7f38cb7c1e084c94d67aa7.png" src="../../_images/3f8f0ea9807ad10371db0b6c8ff974cde75d49c45d7f38cb7c1e084c94d67aa7.png" />
-<img alt="../../_images/b5f0721557c1f5c7aa89156c65c34a4ead03c10762f78665cd8a89f0466f736f.png" src="../../_images/b5f0721557c1f5c7aa89156c65c34a4ead03c10762f78665cd8a89f0466f736f.png" />
-<img alt="../../_images/ecc6b0596bd063780cfe9fd0da2815a2686afecd643aeedaefda24eeff96f3f5.png" src="../../_images/ecc6b0596bd063780cfe9fd0da2815a2686afecd643aeedaefda24eeff96f3f5.png" />
+<img alt="../../_images/165be8b604fa28368ac54338fb08afc3b2f0cb900eda48161e1f79b0f1ee33cf.png" src="../../_images/165be8b604fa28368ac54338fb08afc3b2f0cb900eda48161e1f79b0f1ee33cf.png" />
+<img alt="../../_images/0bf9e637dc170617761f04c6d9fd44653e8c356875b8e6f80e5d639ec493120d.png" src="../../_images/0bf9e637dc170617761f04c6d9fd44653e8c356875b8e6f80e5d639ec493120d.png" />
+<img alt="../../_images/d6378054e9fc21dba23b785811a05cb475797f2883028a7307465f5a4d49db37.png" src="../../_images/d6378054e9fc21dba23b785811a05cb475797f2883028a7307465f5a4d49db37.png" />
 </div>
 </div>
 </section>

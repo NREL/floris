@@ -73,7 +73,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/examples_uncertain/002_approx_floris_model';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Example: Layout Visualizations" href="../examples_visualizations/001_layout_visualizations.html" />
+    <link rel="next" title="Example: Uncertain Model With Parallelization" href="003_uncertain_model_with_parallelization.html" />
     <link rel="prev" title="Example: Uncertain Model Parameters" href="001_uncertain_model_params.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
@@ -200,9 +200,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wind_data_user.html">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../turbine_interaction.html">Turbine Library Interface</a></li>
@@ -325,7 +326,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -396,6 +398,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -714,15 +717,15 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>FlorisModel run time: 8.91290871000001 s
-ApproxFlorisModel run time: 0.18292359600002328 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>FlorisModel run time: 8.607524229000092 s
+ApproxFlorisModel run time: 0.18640595600004417 s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Expected power from FlorisModel: 46.82 MW
-Expected power from ApproxFlorisModel: 46.86 MW
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Expected power from FlorisModel: 57.64 MW
+Expected power from ApproxFlorisModel: 57.68 MW
 </pre></div>
 </div>
-<img alt="../../_images/31ebc26f86b33e274c4e5c3e8fecc134373db36daad594a55de08d88d850cf31.png" src="../../_images/31ebc26f86b33e274c4e5c3e8fecc134373db36daad594a55de08d88d850cf31.png" />
+<img alt="../../_images/a4569efa5ebbacea26b8bdafeebe39eb0458968565273afe432d99f4724b9d16.png" src="../../_images/a4569efa5ebbacea26b8bdafeebe39eb0458968565273afe432d99f4724b9d16.png" />
 </div>
 </div>
 </section>
@@ -767,11 +770,11 @@ Expected power from ApproxFlorisModel: 46.86 MW
       </div>
     </a>
     <a class="right-next"
-       href="../examples_visualizations/001_layout_visualizations.html"
+       href="003_uncertain_model_with_parallelization.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Example: Layout Visualizations</p>
+        <p class="prev-next-title">Example: Uncertain Model With Parallelization</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

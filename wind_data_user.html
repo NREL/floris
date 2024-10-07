@@ -73,8 +73,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'wind_data_user';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Heterogeneous Map" href="heterogeneous_map.html" />
-    <link rel="prev" title="Advanced Concepts" href="advanced_concepts.html" />
+    <link rel="next" title="FLORIS Models" href="floris_models.html" />
+    <link rel="prev" title="Introductory Concepts" href="intro_concepts.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
   </head>
@@ -200,9 +200,10 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="intro_concepts.html">Introductory Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Wind Data Objects</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_concepts.html">Advanced Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="heterogeneous_map.html">Heterogeneous Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="turbine_interaction.html">Turbine Library Interface</a></li>
@@ -325,7 +326,8 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/009_compare_farm_power_with_neighbor.html">Example 9: Compare farm power with neighboring farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
 <ul class="nav bd-sidenav">
@@ -396,6 +398,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
 <ul class="nav bd-sidenav">
@@ -926,7 +929,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/868f538a242bbecd70c00929686cf2e678d7610446831da222d03e54b85bd811.png" src="_images/868f538a242bbecd70c00929686cf2e678d7610446831da222d03e54b85bd811.png" />
+<img alt="_images/7de598c58875777dca0548100047ab24a548d03e341d9d8c6f1b2d580d78ace9.png" src="_images/7de598c58875777dca0548100047ab24a548d03e341d9d8c6f1b2d580d78ace9.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -942,7 +945,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/bf90435843282447060dcfff02c2bbe7423c97c8ca7358864bf4588595af9a15.png" src="_images/bf90435843282447060dcfff02c2bbe7423c97c8ca7358864bf4588595af9a15.png" />
+<img alt="_images/7c485a9702ebf71be348d5f1f69ec830fcf366424721529bda91c54044a811c3.png" src="_images/7c485a9702ebf71be348d5f1f69ec830fcf366424721529bda91c54044a811c3.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -958,7 +961,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/71280c41435cd35e11017369ca4b2bfec415677db169c1f0882982ce3114284c.png" src="_images/71280c41435cd35e11017369ca4b2bfec415677db169c1f0882982ce3114284c.png" />
+<img alt="_images/240005a8b1cdca686bf29ad398ecb703fa8e0e8eff368913c1eb3e941a843b92.png" src="_images/240005a8b1cdca686bf29ad398ecb703fa8e0e8eff368913c1eb3e941a843b92.png" />
 </div>
 </div>
 </section>
@@ -992,8 +995,8 @@ wind_rose.value_table
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5c2b146463920a4cf4939e42ff191c602eff5fe95c7e977c653b5fa2c980d0a3.png" src="_images/5c2b146463920a4cf4939e42ff191c602eff5fe95c7e977c653b5fa2c980d0a3.png" />
-<img alt="_images/c30aacafa8a47b33e09457172620b0670b6c81bde787cdb94d1b0b297ccb72b1.png" src="_images/c30aacafa8a47b33e09457172620b0670b6c81bde787cdb94d1b0b297ccb72b1.png" />
+<img alt="_images/f465a579430a69a16074f28c3b73a6d45e8c24013c8aca0125fbe5976a6beb71.png" src="_images/f465a579430a69a16074f28c3b73a6d45e8c24013c8aca0125fbe5976a6beb71.png" />
+<img alt="_images/0efd1d7aa67d2900c472be195119d81a2ef114a65b26440642cc07c0ced4fd6d.png" src="_images/0efd1d7aa67d2900c472be195119d81a2ef114a65b26440642cc07c0ced4fd6d.png" />
 <img alt="_images/007675c1df9c13b7b9914e6b539dd9f515b2ea064b76c3f5d2551b9f2b36bc9d.png" src="_images/007675c1df9c13b7b9914e6b539dd9f515b2ea064b76c3f5d2551b9f2b36bc9d.png" />
 <img alt="_images/851a0f93d69661a9762267d0201d0e0bdbdc04dee6584c43f3317aa774d50c67.png" src="_images/851a0f93d69661a9762267d0201d0e0bdbdc04dee6584c43f3317aa774d50c67.png" />
 </div>
@@ -1419,20 +1422,20 @@ ti_table: 0.06
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="advanced_concepts.html"
+       href="intro_concepts.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Advanced Concepts</p>
+        <p class="prev-next-title">Introductory Concepts</p>
       </div>
     </a>
     <a class="right-next"
-       href="heterogeneous_map.html"
+       href="floris_models.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Heterogeneous Map</p>
+        <p class="prev-next-title">FLORIS Models</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
