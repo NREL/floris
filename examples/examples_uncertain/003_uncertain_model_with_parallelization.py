@@ -16,7 +16,7 @@ from floris.par_floris_model import ParFlorisModel
 
 # Following the refactoring of ParFlorisModel, the UncertainFlorisModel can be
 # parallelized by passing the ParFlorisModel as the model to be run.  This example
-# demonstrates the usage.  Demonstrating the result obtained from the UncertainFlorisModel
+# demonstrates the usage and shows that the result obtained from the UncertainFlorisModel
 # with and without parallelization is the same.  The results are compared to the nominal
 # results.
 
