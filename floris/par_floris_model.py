@@ -189,6 +189,10 @@ class ParFlorisModel(FlorisModel):
                 print(f"  Time spent in parallel postprocessing: {t3-t2:.3f} s")
 
     def _preprocessing(self):
+        """
+        Prepare the input arguments for parallel execution.
+        """
+
         # Split over the wind conditions
         n_wind_condition_splits = self.n_wind_condition_splits
         n_wind_condition_splits = np.min(
