@@ -47,8 +47,19 @@ class ParFlorisModel(FlorisModel):
         """
         # Instantiate the underlying FlorisModel
         if isinstance(configuration, FlorisModel):
-            configuration = configuration.core.as_dict()
-        super().__init__(configuration)
+            configuration_dict = configuration.core.as_dict()
+            super().__init__(configuration_dict)
+            # Copy over any control setpoints, wind data, if not already done.
+            self.set(
+                yaw_angles=configuration.core.farm.yaw_angles,
+                power_setpoints=configuration.core.farm.power_setpoints,
+                awc_modes=configuration.core.farm.awc_modes,
+                awc_amplitudes=configuration.core.farm.awc_amplitudes,
+                awc_frequencies=configuration.core.farm.awc_frequencies,
+                wind_data=configuration.wind_data,
+            )
+        else:
+            super().__init__(configuration)
 
         # Save parallelization parameters
         if interface == "multiprocessing":
