@@ -133,6 +133,7 @@ class FlorisModel(LoggingManager):
         solver_settings: dict | None = None,
         heterogeneous_inflow_config=None,
         wind_data: type[WindDataBase] | None = None,
+        multidim_conditions: dict | None = None,
     ):
         """
         Instantiate a new Floris object with updated conditions set by arguments. Any parameters
@@ -245,6 +246,8 @@ class FlorisModel(LoggingManager):
 
             flow_field_dict["heterogeneous_inflow_config"] = heterogeneous_inflow_config
 
+        if multidim_conditions is not None:
+            flow_field_dict["multidim_conditions"] = multidim_conditions
 
 
         if solver_settings is not None:
@@ -382,6 +385,7 @@ class FlorisModel(LoggingManager):
         awc_amplitudes: NDArrayFloat | list[float] | list[float, None] | None = None,
         awc_frequencies: NDArrayFloat | list[float] | list[float, None] | None = None,
         disable_turbines: NDArrayBool | list[bool] | None = None,
+        multidim_conditions: dict | None = None,
     ):
         """
         Set the wind conditions and operation setpoints for the wind farm.
@@ -437,6 +441,7 @@ class FlorisModel(LoggingManager):
             solver_settings=solver_settings,
             heterogeneous_inflow_config=heterogeneous_inflow_config,
             wind_data=wind_data,
+            multidim_conditions=multidim_conditions,
         )
 
         # If the yaw angles or power setpoints are not the default, set them back to the
