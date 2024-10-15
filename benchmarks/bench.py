@@ -15,7 +15,6 @@ YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 N = 100
 
-
 def test_benchmark_set(benchmark):
     fmodel = FlorisModel(configuration=YAML_INPUT)
     wind_directions = np.linspace(0, 360, N)
