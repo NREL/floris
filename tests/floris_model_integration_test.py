@@ -789,11 +789,11 @@ def test_reference_wind_height_methods(caplog):
     # Check that if the turbine type is changed, a warning is raised/not raised regarding the
     # reference wind height
     with caplog.at_level(logging.WARNING):
-        fmodel.set(turbine_type=["iea_15mw"])
+        fmodel.set(turbine_type=["iea_15MW"])
     assert caplog.text != "" # Checking not empty
     caplog.clear()
     with caplog.at_level(logging.WARNING):
-        fmodel.set(turbine_type=["iea_15mw"], reference_wind_height=100.0)
+        fmodel.set(turbine_type=["iea_15MW"], reference_wind_height=100.0)
     assert caplog.text == "" # Checking empty
 
     # Check that assigning the reference wind height to the turbine hub height works
@@ -805,6 +805,6 @@ def test_reference_wind_height_methods(caplog):
         fmodel.set(
             layout_x = [0.0, 0.0],
             layout_y = [0.0, 1000.0],
-            turbine_type=["nrel_5mw", "iea_15mw"]
+            turbine_type=["nrel_5MW", "iea_15MW"]
         )
         fmodel.assign_hub_height_to_ref_height() # Shouldn't allow due to multiple turbine types
