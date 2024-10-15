@@ -46,6 +46,7 @@ EXTRAS = {
     },
     "develop": {
         "pytest",
+        "pytest-benchmark"
         "pre-commit",
         "ruff",
         "isort",
