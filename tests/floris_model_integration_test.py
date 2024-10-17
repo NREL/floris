@@ -782,3 +782,29 @@ def test_set_operation():
     with pytest.raises(ValueError):
         fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0], [25.0, 0.0]]))
         fmodel.run()
+
+def test_reference_wind_height_methods(caplog):
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    # Check that if the turbine type is changed, a warning is raised/not raised regarding the
+    # reference wind height
+    with caplog.at_level(logging.WARNING):
+        fmodel.set(turbine_type=["iea_15MW"])
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.set(turbine_type=["iea_15MW"], reference_wind_height=100.0)
+    assert caplog.text == "" # Checking empty
+
+    # Check that assigning the reference wind height to the turbine hub height works
+    assert fmodel.core.flow_field.reference_wind_height == 100.0 # Set in line above
+    fmodel.assign_hub_height_to_ref_height()
+    assert fmodel.core.flow_field.reference_wind_height == 150.0 # 150m is HH for IEA 15MW
+
+    with pytest.raises(ValueError):
+        fmodel.set(
+            layout_x = [0.0, 0.0],
+            layout_y = [0.0, 1000.0],
+            turbine_type=["nrel_5MW", "iea_15MW"]
+        )
+        fmodel.assign_hub_height_to_ref_height() # Shouldn't allow due to multiple turbine types
