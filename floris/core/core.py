@@ -154,7 +154,7 @@ class Core(BaseClass):
 
         vel_model = self.wake.model_strings["velocity_model"]
 
-        if vel_model in ["gauss", "cc", "turbopark", "jensen"] and \
+        if vel_model not in ["empirical_gauss"] and \
             self.farm.correct_cp_ct_for_tilt.any():
             self.logger.warning(
                 "The current model does not account for vertical wake deflection due to " +
@@ -181,6 +181,10 @@ class Core(BaseClass):
                 self.wake
             )
         elif vel_model=="turbopark":
+            self.logger.warning(
+                "The turbopark model has been superseded by the turboparkgauss model. We " +
+                "recommend using `velocity_model: turboparkgauss` instead."
+            )
             turbopark_solver(
                 self.farm,
                 self.flow_field,
@@ -251,7 +255,7 @@ class Core(BaseClass):
         if vel_model == "cc" or vel_model == "turbopark":
             raise NotImplementedError(
                 "solve_for_points is currently only available with the "+\
-                "gauss, jensen, and empirical_guass models."
+                "gauss, jensen, and empirical_gauss models."
             )
         elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)

@@ -28,6 +28,7 @@ REQUIRED = [
 
     # utilities
     "coloredlogs~=15.0",
+    "pathos~=0.3",
 ]
 
 # What packages are optional?

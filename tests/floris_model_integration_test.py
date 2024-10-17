@@ -5,7 +5,11 @@ import numpy as np
 import pytest
 import yaml
 
-from floris import FlorisModel, WindRose
+from floris import (
+    FlorisModel,
+    TimeSeries,
+    WindRose,
+)
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 
 
@@ -390,6 +394,84 @@ def test_get_farm_aep(caplog):
     expected_farm_power = fmodel.get_expected_farm_power(freq=freq)
     np.testing.assert_allclose(expected_farm_power, aep / (365 * 24))
 
+def test_expected_farm_power_regression():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 8.0, 8.0])
+    wind_directions = np.array([270.0, 270.0, 270.0])
+    turbulence_intensities = np.array([0.06, 0.06, 0.06])
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=layout_x,
+        layout_y=layout_y,
+    )
+
+    fmodel.run()
+
+    expected_farm_power = fmodel.get_expected_farm_power()
+
+    # Assert the expected farm power has not inadvetently changed
+    np.testing.assert_allclose(expected_farm_power, 3507908.918358342, atol=1e-1)
+
+def test_expected_farm_power_equals_sum_of_expected_turbine_powers():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 8.0, 8.0])
+    wind_directions = np.array([270.0, 270.0, 270.0])
+    turbulence_intensities = np.array([0.06, 0.06, 0.06])
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=layout_x,
+        layout_y=layout_y,
+    )
+
+    fmodel.run()
+
+    expected_farm_power = fmodel.get_expected_farm_power()
+    expected_turbine_powers = fmodel.get_expected_turbine_powers()
+
+    # Assert the expected farm power is the sum of the expected turbine powers
+    np.testing.assert_allclose(expected_farm_power, np.sum(expected_turbine_powers))
+
+def test_expected_farm_value_regression():
+
+    # Ensure this calculation hasn't changed unintentionally
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 8.0, 9.0])
+    wind_directions = np.array([270.0, 270.0, 270.0])
+    values = np.array([30.0, 20.0, 10.0])
+    time_series = TimeSeries(
+        wind_directions=wind_directions,
+        wind_speeds=wind_speeds,
+        turbulence_intensities=0.06,
+        values=values,
+    )
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+    fmodel.set(layout_x=layout_x, layout_y=layout_y, wind_data=time_series)
+    fmodel.run()
+
+    expected_farm_value = fmodel.get_expected_farm_value()
+    assert np.allclose(expected_farm_value,75108001.05154414 , atol=1e-1)
+
+
 def test_get_farm_avp(caplog):
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
@@ -700,3 +782,29 @@ def test_set_operation():
     with pytest.raises(ValueError):
         fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0], [25.0, 0.0]]))
         fmodel.run()
+
+def test_reference_wind_height_methods(caplog):
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    # Check that if the turbine type is changed, a warning is raised/not raised regarding the
+    # reference wind height
+    with caplog.at_level(logging.WARNING):
+        fmodel.set(turbine_type=["iea_15MW"])
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.set(turbine_type=["iea_15MW"], reference_wind_height=100.0)
+    assert caplog.text == "" # Checking empty
+
+    # Check that assigning the reference wind height to the turbine hub height works
+    assert fmodel.core.flow_field.reference_wind_height == 100.0 # Set in line above
+    fmodel.assign_hub_height_to_ref_height()
+    assert fmodel.core.flow_field.reference_wind_height == 150.0 # 150m is HH for IEA 15MW
+
+    with pytest.raises(ValueError):
+        fmodel.set(
+            layout_x = [0.0, 0.0],
+            layout_y = [0.0, 1000.0],
+            turbine_type=["nrel_5MW", "iea_15MW"]
+        )
+        fmodel.assign_hub_height_to_ref_height() # Shouldn't allow due to multiple turbine types

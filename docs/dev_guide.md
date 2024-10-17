@@ -41,8 +41,8 @@ developer's guide, so please read on to learn more about each of these steps.
 
 ## Git and GitHub Workflows
 
-The majority of the collaboration and development for FLORIS takes place
-in the [GitHub repository](http://github.com/nrel/floris). There,
+The majority of the collaboration and development for FLORIS takes place in
+the [GitHub repository](http://github.com/nrel/floris). There,
 [issues](http://github.com/nrel/floris/issues) and
 [pull requests](http://github.com/nrel/floris/pulls) are managed,
 questions and ideas are [discussed](https://github.com/NREL/floris/discussions),
