@@ -12,8 +12,9 @@ parts:
   - caption: User Reference
     chapters:
     - file: intro_concepts
-    - file: advanced_concepts
     - file: wind_data_user
+    - file: floris_models
+    - file: advanced_concepts
     - file: heterogeneous_map
     - file: floating_wind_turbine
     - file: turbine_interaction

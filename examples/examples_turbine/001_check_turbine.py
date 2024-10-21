@@ -43,6 +43,7 @@ fig_pow_ct, axarr_pow_ct = plt.subplots(2, 1, sharex=True, figsize=(10, 10))
 for t in turbines:
     # Set t as the turbine
     fmodel.set(turbine_type=[t])
+    fmodel.reset_operation() # Remove any previously applied yaw angles
 
     # Since we are changing the turbine type, make a matching change to the reference wind height
     fmodel.assign_hub_height_to_ref_height()
@@ -80,6 +81,7 @@ for t in turbines:
             wind_directions=wd_array,
             turbulence_intensities=turbulence_intensities,
         )
+        fmodel.reset_operation() # Remove any previously applied yaw angles
         fmodel.run()
         turbine_powers = fmodel.get_turbine_powers().flatten() / 1e3
         if density == 1.225:
