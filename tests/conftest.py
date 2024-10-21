@@ -503,6 +503,17 @@ class SampleInputs:
                     "awc_wake_exp": 1.2,
                     "awc_wake_denominator": 400
                 },
+                "eddy_viscosity": {
+                    "i_const_1": 0.05,
+                    "i_const_2": 16,
+                    "i_const_3": 0.5,
+                    "i_const_4": 10,
+                    "c_0": 2.0,
+                    "c_1": 1.5,
+                    "k_l": 0.0283,
+                    "k_a": 0.5,
+                    "von_Karman_constant": 0.4
+                }
             },
             "wake_turbulence_parameters": {
                 "crespo_hernandez": {
