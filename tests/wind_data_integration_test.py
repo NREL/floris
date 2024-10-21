@@ -1109,3 +1109,69 @@ def test_read_csv_long_ti():
 
     expected_result = np.array([0.06, 0.07])
     np.testing.assert_allclose(wind_ti_rose.turbulence_intensities, expected_result)
+
+
+def test_wind_rose_nan_values():
+    wind_directions = np.array([0.0, 90.0, 180.0, 270.0])
+    wind_speeds = np.array([5.0, 10.0, 15.0])
+
+    WindRose(wind_directions, wind_speeds, ti_table=0.06)
+
+    # Introduce NaN values
+    wind_directions[1] = np.nan
+    with pytest.raises(ValueError):
+        WindRose(wind_directions, wind_speeds, ti_table=0.06)
+
+    wind_directions[1] = 90  # Reset
+    wind_speeds[1] = np.nan
+    with pytest.raises(ValueError):
+        WindRose(wind_directions, wind_speeds, ti_table=0.06)
+
+
+def test_wind_ti_rose_nan_values():
+    wind_directions = np.array([0.0, 90.0, 180.0, 270.0])
+    wind_speeds = np.array([5.0, 10.0, 15.0])
+    turbulence_intensities = np.array([0.1, 0.2, 0.3])
+
+    WindTIRose(wind_directions, wind_speeds, turbulence_intensities)
+
+    # Introduce NaN values
+    wind_directions[1] = np.nan
+    with pytest.raises(ValueError):
+        WindTIRose(wind_directions, wind_speeds, turbulence_intensities)
+
+    wind_directions[1] = 90  # Reset
+    wind_speeds[1] = np.nan
+    with pytest.raises(ValueError):
+        WindTIRose(wind_directions, wind_speeds, turbulence_intensities)
+
+    wind_speeds[1] = 10  # Reset
+    turbulence_intensities[1] = np.nan
+    with pytest.raises(ValueError):
+        WindTIRose(wind_directions, wind_speeds, turbulence_intensities)
+
+
+def test_time_series_nan_values():
+    wind_directions = np.array([0.0, 90.0, 180.0, 270.0])
+    wind_speeds = np.array([5.0, 10.0, 15.0])
+    turbulence_intensities = np.array([0.1, 0.2, 0.3, 0.4])
+    values = np.array([1.0, 2.0, 3.0, 4.0])
+
+    # Introduce NaN values
+    wind_directions[1] = np.nan
+    with pytest.raises(ValueError):
+        TimeSeries(wind_directions, wind_speeds, turbulence_intensities, values)
+
+    wind_directions[1] = 90  # Reset
+    wind_speeds[1] = np.nan
+    with pytest.raises(ValueError):
+        TimeSeries(wind_directions, wind_speeds, turbulence_intensities, values)
+
+    wind_speeds[1] = 10  # Reset
+    turbulence_intensities[1] = np.nan
+    with pytest.raises(ValueError):
+        TimeSeries(wind_directions, wind_speeds, turbulence_intensities, values)
+
+    values[1] = np.nan
+    with pytest.raises(ValueError):
+        TimeSeries(wind_directions, wind_speeds, turbulence_intensities, values)
