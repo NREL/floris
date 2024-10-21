@@ -8,9 +8,9 @@ Use the serial-refine method to optimize the yaw angles for a 3-turbine wind far
 import matplotlib.pyplot as plt
 import numpy as np
 
-from floris import FlorisModel, TimeSeries
 import floris.flow_visualization as flowviz
 import floris.layout_visualization as layoutviz
+from floris import FlorisModel, TimeSeries
 from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
 
