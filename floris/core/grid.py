@@ -16,6 +16,7 @@ from floris.type_dec import (
     NDArrayInt,
 )
 from floris.utilities import (
+    apply_wind_direction_heterogeneity_warping,
     reverse_rotate_coordinates_rel_west,
     rotate_coordinates_rel_west,
 )
@@ -52,6 +53,7 @@ class Grid(ABC, BaseClass):
     turbine_diameters: NDArrayFloat = field(converter=floris_array_converter)
     wind_directions: NDArrayFloat = field(converter=floris_array_converter)
     grid_resolution: int | Iterable = field()
+    heterogeneous_inflow_config: dict | None = field(init=True, default=None)
 
     n_turbines: int = field(init=False)
     n_findex: int = field(init=False)
@@ -62,6 +64,11 @@ class Grid(ABC, BaseClass):
     y_sorted_inertial_frame: NDArrayFloat = field(init=False)
     z_sorted_inertial_frame: NDArrayFloat = field(init=False)
     cubature_weights: NDArrayFloat = field(init=False, default=None)
+
+    use_turbine_specific_layouts: NDArrayFloat = field(init=False, default=False)
+    x_sorted_per_turbine: NDArrayFloat = field(init=False, default=None)
+    y_sorted_per_turbine: NDArrayFloat = field(init=False, default=None)
+    z_sorted_per_turbine: NDArrayFloat = field(init=False, default=None)
 
     @turbine_coordinates.validator
     def check_coordinates(self, instance: attrs.Attribute, value: np.ndarray) -> None:
@@ -104,7 +111,7 @@ class Grid(ABC, BaseClass):
     def set_grid(self) -> None:
         raise NotImplementedError("Grid.set_grid")
 
-@define
+@define(kw_only=True)
 class TurbineGrid(Grid):
     """See `Grid` for more details.
 
@@ -245,6 +252,40 @@ class TurbineGrid(Grid):
         self.y_sorted = np.take_along_axis(_y, self.sorted_indices, axis=1)
         self.z_sorted = np.take_along_axis(_z, self.sorted_indices, axis=1)
 
+        if (self.heterogeneous_inflow_config is not None
+            and "u" in self.heterogeneous_inflow_config):
+            self.use_turbine_specific_layouts = True
+
+            # Rotate the input x, y, z to match the wind direction
+            het_coords = np.concatenate(
+                (
+                    np.array(self.heterogeneous_inflow_config["x"])[:, None],
+                    np.array(self.heterogeneous_inflow_config["y"])[:, None],
+                    np.zeros((len(self.heterogeneous_inflow_config["x"]), 1))
+                ),
+                axis=1
+            )
+            x_het, y_het, _, _, _ = rotate_coordinates_rel_west(
+                self.wind_directions,
+                het_coords,
+                x_center_of_rotation=self.x_center_of_rotation,
+                y_center_of_rotation=self.y_center_of_rotation
+            )
+
+            self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
+                apply_wind_direction_heterogeneity_warping(
+                    self.x_sorted.mean(axis=(2,3)),
+                    self.y_sorted.mean(axis=(2,3)),
+                    self.z_sorted.mean(axis=(2,3)),
+                    self.x_sorted,
+                    self.y_sorted,
+                    self.z_sorted,
+                    x_het,
+                    y_het,
+                    self.heterogeneous_inflow_config["u"],
+                    self.heterogeneous_inflow_config["v"],
+                )
+
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \
             reverse_rotate_coordinates_rel_west(
@@ -256,7 +297,7 @@ class TurbineGrid(Grid):
                 y_center_of_rotation=self.y_center_of_rotation,
             )
 
-@define
+@define(kw_only=True)
 class TurbineCubatureGrid(Grid):
     """
     This grid type arranges points throughout the swept area of the rotor based on the cubature
@@ -437,7 +478,7 @@ class TurbineCubatureGrid(Grid):
             "B": np.pi/N,
         }
 
-@define
+@define(kw_only=True)
 class FlowFieldGrid(Grid):
     """
     Args:
@@ -506,7 +547,7 @@ class FlowFieldGrid(Grid):
                 y_center_of_rotation=self.y_center_of_rotation,
             )
 
-@define
+@define(kw_only=True)
 class FlowFieldPlanarGrid(Grid):
     """
     Args:
@@ -569,10 +610,6 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
-            self.x_sorted = x_points[None, :, :, :]
-            self.y_sorted = y_points[None, :, :, :]
-            self.z_sorted = z_points[None, :, :, :]
-
         elif self.normal_vector == "x":  # Rules of thumb for cross plane
             if self.x1_bounds is None:
                 self.x1_bounds = (np.min(y) - 2 * max_diameter, np.max(y) + 2 * max_diameter)
@@ -586,10 +623,6 @@ class FlowFieldPlanarGrid(Grid):
                 np.linspace(self.x2_bounds[0], self.x2_bounds[1], int(self.grid_resolution[1])),
                 indexing="ij"
             )
-
-            self.x_sorted = x_points[None, :, :, :]
-            self.y_sorted = y_points[None, :, :, :]
-            self.z_sorted = z_points[None, :, :, :]
 
         elif self.normal_vector == "y":  # Rules of thumb for y plane
             if self.x1_bounds is None:
@@ -605,10 +638,44 @@ class FlowFieldPlanarGrid(Grid):
                 indexing="ij"
             )
 
-            self.x_sorted = x_points[None, :, :, :]
-            self.y_sorted = y_points[None, :, :, :]
-            self.z_sorted = z_points[None, :, :, :]
+        self.x_sorted = x_points[None, :, :, :]
+        self.y_sorted = y_points[None, :, :, :]
+        self.z_sorted = z_points[None, :, :, :]
 
+        if (self.heterogeneous_inflow_config is not None
+            and "u" in self.heterogeneous_inflow_config):
+            self.use_turbine_specific_layouts = True
+
+            # Rotate the input x, y, z to match the wind direction
+            het_coords = np.concatenate(
+                (
+                    np.array(self.heterogeneous_inflow_config["x"])[:, None],
+                    np.array(self.heterogeneous_inflow_config["y"])[:, None],
+                    np.zeros((len(self.heterogeneous_inflow_config["x"]), 1))
+                ),
+                axis=1
+            )
+            x_het, y_het, _, _, _ = rotate_coordinates_rel_west(
+                self.wind_directions,
+                het_coords,
+                x_center_of_rotation=self.x_center_of_rotation,
+                y_center_of_rotation=self.y_center_of_rotation
+            )
+
+            # Apply wind direction heterogeneity to generate turbine-specific layouts
+            self.x_sorted_per_turbine, self.y_sorted_per_turbine, self.z_sorted_per_turbine = \
+                apply_wind_direction_heterogeneity_warping(
+                    np.take_along_axis(x, x.argsort(axis=1), axis=1),
+                    np.take_along_axis(y, x.argsort(axis=1), axis=1),
+                    np.take_along_axis(z, x.argsort(axis=1), axis=1),
+                    self.x_sorted,
+                    self.y_sorted,
+                    self.z_sorted,
+                    x_het,
+                    y_het,
+                    self.heterogeneous_inflow_config["u"],
+                    self.heterogeneous_inflow_config["v"],
+                )
         # Now calculate grid coordinates in original frame (from 270 deg perspective)
         self.x_sorted_inertial_frame, self.y_sorted_inertial_frame, self.z_sorted_inertial_frame = \
             reverse_rotate_coordinates_rel_west(
@@ -620,13 +687,13 @@ class FlowFieldPlanarGrid(Grid):
                 y_center_of_rotation=self.y_center_of_rotation,
             )
 
-@define
+@define(kw_only=True)
 class PointsGrid(Grid):
     """
     Args:
         turbine_coordinates (:py:obj:`NDArrayFloat`): Not used for PointsGrid, but
             required for the `Grid` super-class.
-        turbine_diameters (:py:obj:`NDArrayFloat`):  Not used for PointsGrid, but
+        turbine_diameters (:py:obj:`NDArrayFloat`): Not used for PointsGrid, but
             required for the `Grid` super-class.
         wind_directions (:py:obj:`NDArrayFloat`): Wind directions supplied by the user.
         grid_resolution (:py:obj:`int` | :py:obj:`Iterable(int,)`): Not used for PointsGrid, but
