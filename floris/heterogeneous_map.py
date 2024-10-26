@@ -3,6 +3,7 @@ from __future__ import annotations
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import scipy.spatial._qhull
 from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from scipy.spatial import ConvexHull
@@ -154,10 +155,20 @@ class HeterogeneousMap(LoggingManager):
         else:
             num_dim = 3
 
+        # Make a pandas dataframe of the data
+        df = pd.DataFrame(
+            data=self.speed_multipliers,
+            index=self.wind_directions,
+            columns=list(range(len(self.x)))
+        )
+
         return (
             f"HeterogeneousMap with {num_dim} dimensions\n"
             f"Speeds-up defined for {len(self.x)} points and\n"
             f"{self.speed_multipliers.shape[0]} wind conditions"
+
+            f"\n\n{df}"
+
         )
 
     def get_heterogeneous_inflow_config(
@@ -361,6 +372,7 @@ class HeterogeneousMap(LoggingManager):
         show_boundary: bool = True,
         show_wind_direction: bool = True,
         show_colorbar: bool = True,
+        show_points: bool = True,
     ):
         """
         Plot the speed multipliers as a heatmap.
@@ -383,6 +395,8 @@ class HeterogeneousMap(LoggingManager):
             show_wind_direction (bool, optional): Whether to show the wind direction as an arrow.
                 Default is True.
             show_colorbar (bool, optional): Whether to show the colorbar. Default is True.
+            show_points (bool, optional): Whether to show the points of the heterogeneous inflow
+                configuration. Default is True.
 
         Returns:
             matplotlib.axes.Axes: The axes on which the speed multipliers are plotted.
@@ -490,8 +504,8 @@ class HeterogeneousMap(LoggingManager):
         )
 
         # Plot the grid coordinates as a scatter plot
-        ax.scatter(x, y, color="gray", marker=".", label="Heterogeneity Coordinates")
-        ax.set_xlim
+        if show_points:
+            ax.scatter(x, y, color="gray", marker=".", label="Heterogeneity Coordinates")
 
         # Show the boundary
         if show_boundary:
