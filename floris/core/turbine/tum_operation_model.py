@@ -102,10 +102,6 @@ class TUMLossTurbine(BaseOperationModel):
             air_density,
             R,
             shear,
-            sigma,
-            cd,
-            cl_alfa,
-            beta,
             power_setpoints,
             power_thrust_table
         )
@@ -290,10 +286,6 @@ class TUMLossTurbine(BaseOperationModel):
             air_density,
             R,
             shear,
-            sigma,
-            cd,
-            cl_alfa,
-            beta,
             power_setpoints,
             power_thrust_table
         )
@@ -441,10 +433,6 @@ class TUMLossTurbine(BaseOperationModel):
             air_density,
             R,
             shear,
-            sigma,
-            cd,
-            cl_alfa,
-            beta,
             power_setpoints,
             power_thrust_table
         ):
@@ -454,6 +442,13 @@ class TUMLossTurbine(BaseOperationModel):
         region 2-1/2 is considered. In the future, different control strategies could be included,
         even user-defined.
         """
+        # Unpack parameters from power_thrust_table
+        beta = power_thrust_table["beta"]
+        cd = power_thrust_table["cd"]
+        cl_alfa = power_thrust_table["cl_alfa"]
+        sigma = power_thrust_table["rotor_solidity"]
+        
+        # Compute power demanded
         if power_setpoints is None:
             power_demanded = (
                 np.ones_like(tilt_angles)*power_thrust_table["rated_power"]
@@ -461,7 +456,6 @@ class TUMLossTurbine(BaseOperationModel):
             )
         else:
             power_demanded = power_setpoints/power_thrust_table["generator_efficiency"]
-
 
         ## Define function to get tip speed ratio
         def get_tsr(x,*data):
@@ -475,6 +469,7 @@ class TUMLossTurbine(BaseOperationModel):
 
             torque_nm = np.interp(omega,omega_lut_torque,torque_lut_omega)
 
+            # Yawed case
             mu    = np.arccos(np.cos(np.deg2rad(gamma))*np.cos(np.deg2rad(tilt)))
             data  = (sigma,cd,cl_alfa,gamma,tilt,shear,np.cos(mu),np.sin(mu),x,
                         np.deg2rad(pitch_in)+np.deg2rad(beta),mu)
@@ -495,6 +490,7 @@ class TUMLossTurbine(BaseOperationModel):
                 ct
             )
 
+            # Unyawed case
             mu    = np.arccos(np.cos(np.deg2rad(0))*np.cos(np.deg2rad(tilt)))
             data  = (sigma,cd,cl_alfa,0,tilt,shear,np.cos(mu),np.sin(mu),x,
                         np.deg2rad(pitch_in)+np.deg2rad(beta),mu)
@@ -515,6 +511,7 @@ class TUMLossTurbine(BaseOperationModel):
                 ct
             )
 
+            # Ratio
             eta_p = cp/cp0
 
             interp   = RegularGridInterpolator((np.squeeze((tsr_i)),
@@ -540,6 +537,7 @@ class TUMLossTurbine(BaseOperationModel):
             pitch_in = np.deg2rad(x)
             torque_nm = np.interp(omega_rpm,omega_lut_torque*30/np.pi,torque_lut_omega)
 
+            # Yawed case
             mu    = np.arccos(np.cos(np.deg2rad(gamma))*np.cos(np.deg2rad(tilt)))
             data  = (sigma,cd,cl_alfa,gamma,tilt,shear,np.cos(mu),np.sin(mu),tsr,
                         (pitch_in)+np.deg2rad(beta),mu)
@@ -560,6 +558,7 @@ class TUMLossTurbine(BaseOperationModel):
                 ct
             )
 
+            # Unyawed case
             mu    = np.arccos(np.cos(np.deg2rad(0))*np.cos(np.deg2rad(tilt)))
             data  = (sigma,cd,cl_alfa,0,tilt,shear,np.cos(mu),np.sin(mu),tsr,
                         (pitch_in)+np.deg2rad(beta),mu)
@@ -580,9 +579,10 @@ class TUMLossTurbine(BaseOperationModel):
                 ct
             )
 
+            # Ratio yawed / unyawed
             eta_p = cp/cp0
 
-            interp   = RegularGridInterpolator(
+            interp = RegularGridInterpolator(
                 (np.squeeze((tsr_i)), np.squeeze((pitch_i))),
                 cp_i,
                 bounds_error=False,
@@ -590,7 +590,7 @@ class TUMLossTurbine(BaseOperationModel):
             )
 
             Cp_now = interp((tsr,x),method='cubic')
-            cp_g1 =  Cp_now*eta_p
+            cp_g1 = Cp_now*eta_p
             aero_pow = 0.5*air_density*(np.pi*R**2)*(u)**3*cp_g1
             electric_pow = torque_nm*(omega_rpm*np.pi/30)
 
