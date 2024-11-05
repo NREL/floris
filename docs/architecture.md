@@ -7,9 +7,10 @@ be violated, and ongoing work should strive to meet these ideas and expand on th
 as possible.
 
 - Modularity in wake model formulation:
-    - New mathematical formulation should be straightforward to incorporate.
-    - Requisite solver and grid data structures should not conflict with other existing
-        wake models.
+    - New mathematical formulation should be straightforward to incorporate by non-expert
+        software developers.
+    - Solver and grid data structures for one wake model should not conflict with the data
+        structures for other wake models.
 - Any new feature or work should not affect an existing feature:
     - Low level code should be reused as much as possible, but high level code should rarely
         be repurposed.
@@ -31,12 +32,12 @@ packages. The internal structure and hierarchy is described below.
 ```{mermaid}
 classDiagram
 
-    class tools {
-        +FlorisInterface
+    class core["floris.core"] {
+        +Core
     }
 
-    class simulation {
-        +Floris
+    class floris["floris"] {
+        +FlorisModel
     }
 
     class logging_manager
@@ -45,84 +46,89 @@ classDiagram
 
     tools <-- logging_manager
     simulation <-- logging_manager
-    tools <-- type_dec
     simulation <-- type_dec
-    tools <-- utilities
     simulation <-- utilities
     tools <-- simulation
 ```
 
-## floris.tools
+## floris
 
-This is the user interface. Most operations at the user level will happen through `floris.tools`.
+This is the user interface. Most operations at the user level will happen through `floris`.
 This package contains a wide variety of functionality including but not limited to:
 
-- Initializing and driving a simulation with `tools.floris_interface`
-- Wake field visualization through `tools.visualization`
-- Yaw and layout optimization in `tools.optimization`
-- Parallelizing work load with `tools.parallel_computing_interface`
+- Initializing and driving a simulation with `floris_model`
+- Wake field visualization through `flow_visualization`
+- Yaw and layout optimization in `optimization`
+- Wind data handling in `wind_data`
 
-## floris.simulation
+## floris.core
 
-This is the core simulation package. This should primarily be used within `floris.simulation` and
-`floris.tools`, and user scripts generally won't interact directly with this package.
+This is the core simulation package. This should primarily be used within `floris.core` and
+`floris`, and user scripts generally won't interact directly with this package.
 
 ```{mermaid}
 classDiagram
 
-    class Floris
+    class Core
 
     class Farm
 
     class FlowField {
-        array u
-        array v
-        array w
+        u: NDArrayFloat
+        v: NDArrayFloat
+        w: NDArrayFloat
     }
 
     class Grid {
         <<interface>>
+        x: NDArrayFloat
+        y: NDArrayFloat
+        z: NDArrayFloat
     }
     class TurbineGrid
+    class TurbineCubatureGrid
     class FlowFieldPlanarGrid
+    class PointsGrid
 
     class WakeModelManager {
         <<interface>>
     }
     class WakeCombination {
-        dict parameters
+        parameters: dict
         function()
     }
     class WakeDeflection {
-        dict parameters
+        parameters: dict
         function()
     }
     class WakeTurbulence {
-        dict parameters
+        parameters: dict
         function()
     }
     class WakeVelocity {
-        dict parameters
+        parameters: dict
         function()
     }
 
     class Solver {
         <<interface>>
-        dict parameters
+        parameters: dict
     }
 
-    Floris o-- Farm
-    Floris o-- FlowField
-    Floris o-- Grid
-    Floris o-- WakeModelManager
-    Floris *-- Solver
-    WakeModelManager o-- WakeCombination
-    WakeModelManager o-- WakeDeflection
-    WakeModelManager o-- WakeTurbulence
-    WakeModelManager o-- WakeVelocity
+    Core *-- Farm
+    Core *-- FlowField
+    Core *-- Grid
+    Core *-- WakeModelManager
+    Core --> Solver
+    WakeModelManager *-- WakeCombination
+    WakeModelManager *-- WakeDeflection
+    WakeModelManager *-- WakeTurbulence
+    WakeModelManager *-- WakeVelocity
 
     Grid <|-- TurbineGrid
+    Grid <|-- TurbineCubatureGrid
     Grid <|-- FlowFieldPlanarGrid
+    Grid <|-- PointsGrid
 
     Solver --> Farm
     Solver --> FlowField

@@ -7,10 +7,24 @@ turbine_type: 'iea_15MW'
 hub_height: 150.0
 rotor_diameter: 242.24
 TSR: 8.0
-power_thrust_model: 'tum-loss'
+operation_model: cosine-loss
 power_thrust_table:
+  # General parameters
   ref_air_density: 1.225
-  
+  ref_tilt: 6.0
+
+  # Parameters for 'cosine-loss' operation model
+  cosine_loss_exponent_yaw: 1.88
+  cosine_loss_exponent_tilt: 1.88
+
+  # Parameters for 'awc' operation model
+  helix_a: 1.809
+  helix_power_b: 4.828e-03
+  helix_power_c: 4.017e-11
+  helix_thrust_b: 1.390e-03
+  helix_thrust_c: 5.084e-04
+
+  # Parameters for 'tum-loss' operation model
   rotor_solidity: 0.031018237027995298
   rated_rpm: 7.55
   generator_efficiency: 0.95756
@@ -20,9 +34,7 @@ power_thrust_table:
   cd:  0.004426686198054057
   cl_alfa: 4.546410770937916
   
-  ref_tilt: 6.0
-  cosine_loss_exponent_yaw: 1.88
-  cosine_loss_exponent_tilt: 1.88
+  # Power and thrust curves
   power:
     - 0.000000
     - 0.000000

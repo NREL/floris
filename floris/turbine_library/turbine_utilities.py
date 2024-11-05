@@ -158,7 +158,7 @@ def build_cosine_loss_turbine_dict(
         "hub_height": hub_height,
         "rotor_diameter": rotor_diameter,
         "TSR": TSR,
-        "power_thrust_model": "cosine-loss",
+        "operation_model": "cosine-loss",
         "power_thrust_table": power_thrust_dict
     }
 

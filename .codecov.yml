@@ -10,7 +10,10 @@ coverage:
         project:
             default:
                 # allow coverage to drop by this amount and still post success
-                threshold: 10%
+                threshold: 10
+        patch:
+            default:
+                threshold: 10
 
 ignore:
     - "setup.py"

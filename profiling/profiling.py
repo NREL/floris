@@ -9,12 +9,12 @@ import copy
 
 from conftest import SampleInputs
 
-from floris.simulation import Floris
+from floris.core import Core
 
 
 def run_floris():
-    floris = Floris.from_file("examples/example_input.yaml")
-    return floris
+    core = Core.from_file("examples/example_input.yaml")
+    return core
 
 if __name__=="__main__":
     # if len(sys.argv) > 1:
@@ -30,24 +30,25 @@ if __name__=="__main__":
 
     sample_inputs = SampleInputs()
 
-    sample_inputs.floris["wake"]["model_strings"]["velocity_model"] = "gauss"
-    sample_inputs.floris["wake"]["model_strings"]["deflection_model"] = "gauss"
-    sample_inputs.floris["wake"]["enable_secondary_steering"] = True
-    sample_inputs.floris["wake"]["enable_yaw_added_recovery"] = True
-    sample_inputs.floris["wake"]["enable_transverse_velocities"] = True
+    sample_inputs.core["wake"]["model_strings"]["velocity_model"] = "gauss"
+    sample_inputs.core["wake"]["model_strings"]["deflection_model"] = "gauss"
+    sample_inputs.core["wake"]["enable_secondary_steering"] = True
+    sample_inputs.core["wake"]["enable_yaw_added_recovery"] = True
+    sample_inputs.core["wake"]["enable_transverse_velocities"] = True
 
     N_TURBINES = 100
     N_FINDEX = 72 * 25  # Size of a characteristic wind rose
 
-    TURBINE_DIAMETER = sample_inputs.floris["farm"]["turbine_type"][0]["rotor_diameter"]
-    sample_inputs.floris["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * i for i in range(N_TURBINES)]
-    sample_inputs.floris["farm"]["layout_y"] = [0.0 for i in range(N_TURBINES)]
+    TURBINE_DIAMETER = sample_inputs.core["farm"]["turbine_type"][0]["rotor_diameter"]
+    sample_inputs.core["farm"]["layout_x"] = [5 * TURBINE_DIAMETER * i for i in range(N_TURBINES)]
+    sample_inputs.core["farm"]["layout_y"] = [0.0 for i in range(N_TURBINES)]
 
-    sample_inputs.floris["flow_field"]["wind_directions"] = N_FINDEX * [270.0]
-    sample_inputs.floris["flow_field"]["wind_speeds"] = N_FINDEX * [8.0]
+    sample_inputs.core["flow_field"]["wind_directions"] = N_FINDEX * [270.0]
+    sample_inputs.core["flow_field"]["wind_speeds"] = N_FINDEX * [8.0]
+    sample_inputs.core["flow_field"]["turbulence_intensities"] = N_FINDEX * [0.06]
 
     N = 1
     for i in range(N):
-        floris = Floris.from_dict(copy.deepcopy(sample_inputs.floris))
-        floris.initialize_domain()
-        floris.steady_state_atmospheric_condition()
+        core = Core.from_dict(copy.deepcopy(sample_inputs.core))
+        core.initialize_domain()
+        core.steady_state_atmospheric_condition()

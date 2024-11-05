@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from floris.simulation import Farm
+from floris.core import Farm
 from floris.utilities import load_yaml
 from tests.conftest import (
     N_FINDEX,
@@ -50,6 +50,9 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
     farm.set_tilt_to_ref_tilt(N_FINDEX)
     farm.set_power_setpoints_to_ref_power(N_FINDEX)
+    farm.set_awc_modes_to_ref_mode(N_FINDEX)
+    farm.set_awc_amplitudes_to_ref_amp(N_FINDEX)
+    farm.set_awc_frequencies_to_ref_freq(N_FINDEX)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
@@ -58,6 +61,9 @@ def test_asdict(sample_inputs_fixture: SampleInputs):
     new_farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
     new_farm.set_tilt_to_ref_tilt(N_FINDEX)
     new_farm.set_power_setpoints_to_ref_power(N_FINDEX)
+    new_farm.set_awc_modes_to_ref_mode(N_FINDEX)
+    new_farm.set_awc_amplitudes_to_ref_amp(N_FINDEX)
+    new_farm.set_awc_frequencies_to_ref_freq(N_FINDEX)
     dict2 = new_farm.as_dict()
 
     assert dict1 == dict2
@@ -108,6 +114,44 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     Farm.from_dict(farm_data)
     assert len(farm.turbine_type) == 5
     assert len(farm.turbine_definitions) == 5
+
+    # Check that error is correctly raised if two turbines have the same name
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    external_library = Path(__file__).parent / "data"
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    turbine_def = load_yaml(external_library / "nrel_5MW_custom.yaml")
+    turbine_def_mod = deepcopy(turbine_def)
+    turbine_def_mod["hub_height"] = 100.0 # Change the hub height of the last turbine
+    farm_data["turbine_type"] = [turbine_def]*4 + [turbine_def_mod]
+    with pytest.raises(ValueError):
+        farm = Farm.from_dict(farm_data)
+    # Check this also raises an error in a nested level of the turbine definition
+    turbine_def_mod = deepcopy(turbine_def)
+    turbine_def_mod["power_thrust_table"]["wind_speed"][-1] = -100.0
+    farm_data["turbine_type"] = [turbine_def]*4 + [turbine_def_mod]
+    with pytest.raises(ValueError):
+        farm = Farm.from_dict(farm_data)
+
+    # Check that no error is raised, and the expected hub heights are seen,
+    # if turbine_type is correctly updated
+    farm_data = deepcopy(sample_inputs_fixture.farm)
+    external_library = Path(__file__).parent / "data"
+    farm_data["layout_x"] = np.arange(0, 500, 100)
+    farm_data["layout_y"] = np.zeros(5)
+    turbine_def = load_yaml(external_library / "nrel_5MW_custom.yaml")
+    turbine_def_mod = deepcopy(turbine_def)
+    turbine_def_mod["hub_height"] = 100.0 # Change the hub height of the last turbine
+    turbine_def_mod["turbine_type"] = "nrel_5MW_custom_2"
+    farm_data["turbine_type"] = [turbine_def]*4 + [turbine_def_mod]
+    farm = Farm.from_dict(farm_data)
+    for i in range(4):
+        assert farm.turbine_definitions[i]["hub_height"] == turbine_def["hub_height"]
+    assert farm.turbine_definitions[-1]["hub_height"] == 100.0
+    farm.construct_turbine_map()
+    for i in range(4):
+        assert farm.turbine_map[i].hub_height == turbine_def["hub_height"]
+    assert farm.turbine_map[-1].hub_height == 100.0
 
     # Duplicate type found in external and internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)

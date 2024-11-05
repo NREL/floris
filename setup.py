@@ -27,7 +27,8 @@ REQUIRED = [
     "shapely~=2.0",
 
     # utilities
-    "coloredlogs~=10.0",
+    "coloredlogs~=15.0",
+    "pathos~=0.3",
 ]
 
 # What packages are optional?
@@ -37,8 +38,8 @@ REQUIRED = [
 #   pip install "floris[develop]"       installs developer packages in non-editable install
 EXTRAS = {
     "docs": {
-        "jupyter-book==0.14",
-        "sphinx-book-theme==0.4.0rc1",
+        "jupyter-book",
+        "sphinx-book-theme",
         "sphinx-autodoc-typehints",
         "sphinxcontrib-autoyaml",
         "sphinxcontrib.mermaid",
@@ -67,7 +68,7 @@ setup(
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     package_data={
-        'floris': ['turbine_library/*.yaml', 'simulation/wake_velocity/turbopark_lookup_table.mat']
+        'floris': ['turbine_library/*.yaml', 'core/wake_velocity/turbopark_lookup_table.mat']
     },
     install_requires=REQUIRED,
     extras_require=EXTRAS,

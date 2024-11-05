@@ -5,11 +5,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from floris.simulation import (
+from floris.core import (
     Turbine,
 )
-from floris.simulation.turbine.operation_models import POWER_SETPOINT_DEFAULT
-from floris.simulation.turbine.turbine import (
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.core.turbine.turbine import (
     axial_induction,
     power,
     thrust_coefficient,
@@ -82,10 +82,13 @@ def test_ct():
     wind_speed = 10.0
     thrust = thrust_coefficient(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=None,
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
-        power_setpoints=np.ones((1, 1)) * POWER_SETPOINT_DEFAULT,
+        power_setpoints=np.ones((1, 1)) * POWER_SETPOINT_DEFAULT,\
+        awc_modes=np.array([["baseline"]*N_TURBINES]*1),
+        awc_amplitudes=np.zeros((1, 1)),
         thrust_coefficient_functions={turbine.turbine_type: turbine.thrust_coefficient_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
@@ -100,10 +103,16 @@ def test_ct():
     # 4 turbines with 3 x 3 grid arrays
     thrusts = thrust_coefficient(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
+        turbulence_intensities=(
+            0.06 * np.ones((N_TURBINES, 3, 3))
+            * np.ones_like(WIND_CONDITION_BROADCAST)
+        ),
         air_density=None,
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
         power_setpoints=np.ones((1, N_TURBINES)) * POWER_SETPOINT_DEFAULT,
+        awc_modes=np.array([["baseline"]*N_TURBINES]*1),
+        awc_amplitudes=np.zeros((1, N_TURBINES)),
         thrust_coefficient_functions={turbine.turbine_type: turbine.thrust_coefficient_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),
@@ -151,11 +160,14 @@ def test_power():
     wind_speed = 10.0
     p = power(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=AIR_DENSITY,
         power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, 1)), # 1 findex, 1 turbine
         tilt_angles=turbine.power_thrust_table[condition]["ref_tilt"] * np.ones((1, 1)),
         power_setpoints=np.ones((1, 1)) * POWER_SETPOINT_DEFAULT,
+        awc_modes=np.array([["baseline"]*N_TURBINES]*1),
+        awc_amplitudes=np.zeros((1, 1)),
         tilt_interps={turbine.turbine_type: turbine.tilt_interp},
         turbine_type_map=turbine_type_map[:,0],
         turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
@@ -170,11 +182,17 @@ def test_power():
     velocities = np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST
     p = power(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
+        turbulence_intensities=(
+            0.06 * np.ones((N_TURBINES, 3, 3))
+            * np.ones_like(WIND_CONDITION_BROADCAST)
+        ),
         air_density=AIR_DENSITY,
         power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
         power_setpoints=np.ones((1, N_TURBINES)) * POWER_SETPOINT_DEFAULT,
+        awc_modes=np.array([["baseline"]*N_TURBINES]*1),
+        awc_amplitudes=np.zeros((1, N_TURBINES)),
         tilt_interps={turbine.turbine_type: turbine.tilt_interp},
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,
@@ -210,10 +228,13 @@ def test_axial_induction():
     wind_speed = 10.0
     ai = axial_induction(
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
+        turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=None,
         yaw_angles=np.zeros((1, 1)),
         tilt_angles=np.ones((1, 1)) * 5.0,
         power_setpoints = np.ones((1, 1)) * POWER_SETPOINT_DEFAULT,
+        awc_modes=np.array([["baseline"]*N_TURBINES]*1),
+        awc_amplitudes=np.zeros((1, 1)),
         axial_induction_functions={turbine.turbine_type: turbine.axial_induction_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False]]),
@@ -226,10 +247,16 @@ def test_axial_induction():
     # Multiple turbines with ix filter
     ai = axial_induction(
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
+        turbulence_intensities=(
+            0.06 * np.ones((N_TURBINES, 3, 3))
+            * np.ones_like(WIND_CONDITION_BROADCAST)
+        ),
         air_density=None,
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
         power_setpoints=np.ones((1, N_TURBINES)) * POWER_SETPOINT_DEFAULT,
+        awc_modes=np.array([["baseline"]*N_TURBINES]*1),
+        awc_amplitudes=np.zeros((1, N_TURBINES)),
         axial_induction_functions={turbine.turbine_type: turbine.axial_induction_function},
         tilt_interps={turbine.turbine_type: None},
         correct_cp_ct_for_tilt=np.array([[False] * N_TURBINES]),

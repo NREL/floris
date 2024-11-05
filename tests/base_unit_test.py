@@ -3,7 +3,7 @@ import pytest
 from attr import define, field
 from attrs.exceptions import FrozenAttributeError
 
-from floris.simulation import BaseClass, BaseModel
+from floris.core import BaseClass, BaseModel
 
 
 @define

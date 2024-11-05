@@ -6,7 +6,7 @@ import warnings
 import numpy as np
 from linux_perf import perf
 
-from floris.simulation import Floris
+from floris.core import Core
 
 
 wd_grid, ws_grid = np.meshgrid(
@@ -16,6 +16,7 @@ wd_grid, ws_grid = np.meshgrid(
 )
 WIND_DIRECTIONS = wd_grid.flatten()
 WIND_SPEEDS = ws_grid.flatten()
+TURBULENCE_INTENSITIES = np.ones_like(WIND_DIRECTIONS) * 0.1
 N_FINDEX = len(WIND_DIRECTIONS)
 
 N_TURBINES = 3
@@ -32,9 +33,9 @@ N_ITERATIONS = 20
 def run_floris(input_dict):
     try:
         start = time.perf_counter()
-        floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
-        floris.initialize_domain()
-        floris.steady_state_atmospheric_condition()
+        core = Core.from_dict(copy.deepcopy(input_dict.core))
+        core.initialize_domain()
+        core.steady_state_atmospheric_condition()
         end = time.perf_counter()
         return end - start
     except KeyError:
@@ -56,43 +57,43 @@ def time_profile(input_dict):
 
 
 def test_time_jensen_jimenez(sample_inputs_fixture):
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = "jensen"
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = "jimenez"
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "jensen"
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "jimenez"
     return time_profile(sample_inputs_fixture)
 
 
 def test_time_gauss(sample_inputs_fixture):
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = "gauss"
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = "gauss"
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "gauss"
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "gauss"
     return time_profile(sample_inputs_fixture)
 
 
 def test_time_gch(sample_inputs_fixture):
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = "gauss"
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = "gauss"
-    sample_inputs_fixture.floris["wake"]["enable_transverse_velocities"] = True
-    sample_inputs_fixture.floris["wake"]["enable_secondary_steering"] = True
-    sample_inputs_fixture.floris["wake"]["enable_yaw_added_recovery"] = True
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "gauss"
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "gauss"
+    sample_inputs_fixture.core["wake"]["enable_transverse_velocities"] = True
+    sample_inputs_fixture.core["wake"]["enable_secondary_steering"] = True
+    sample_inputs_fixture.core["wake"]["enable_yaw_added_recovery"] = True
     return time_profile(sample_inputs_fixture)
 
 
 def test_time_cumulative(sample_inputs_fixture):
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = "cc"
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = "gauss"
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "cc"
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "gauss"
     return time_profile(sample_inputs_fixture)
 
 
 def memory_profile(input_dict):
     # Run once to initialize Python and memory
-    floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
-    floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    core = Core.from_dict(copy.deepcopy(input_dict.core))
+    core.initialize_domain()
+    core.steady_state_atmospheric_condition()
 
     with perf():
         for i in range(N_ITERATIONS):
-            floris = Floris.from_dict(copy.deepcopy(input_dict.floris))
-            floris.initialize_domain()
-            floris.steady_state_atmospheric_condition()
+            core = Core.from_dict(copy.deepcopy(input_dict.core))
+            core.initialize_domain()
+            core.steady_state_atmospheric_condition()
 
     print(
         "Size of one data array: "
@@ -101,8 +102,8 @@ def memory_profile(input_dict):
 
 
 def test_mem_jensen_jimenez(sample_inputs_fixture):
-    sample_inputs_fixture.floris["wake"]["model_strings"]["velocity_model"] = "jensen"
-    sample_inputs_fixture.floris["wake"]["model_strings"]["deflection_model"] = "jimenez"
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "jensen"
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "jimenez"
     memory_profile(sample_inputs_fixture)
 
 
@@ -112,10 +113,11 @@ if __name__=="__main__":
     from conftest import SampleInputs
     sample_inputs = SampleInputs()
 
-    sample_inputs.floris["farm"]["layout_x"] = X_COORDS
-    sample_inputs.floris["farm"]["layout_y"] = Y_COORDS
-    sample_inputs.floris["flow_field"]["wind_directions"] = WIND_DIRECTIONS
-    sample_inputs.floris["flow_field"]["wind_speeds"] = WIND_SPEEDS
+    sample_inputs.core["farm"]["layout_x"] = X_COORDS
+    sample_inputs.core["farm"]["layout_y"] = Y_COORDS
+    sample_inputs.core["flow_field"]["wind_directions"] = WIND_DIRECTIONS
+    sample_inputs.core["flow_field"]["wind_speeds"] = WIND_SPEEDS
+    sample_inputs.core["flow_field"]["turbulence_intensities"] = TURBULENCE_INTENSITIES
 
     print()
     print("### Memory profiling")

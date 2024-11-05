@@ -41,8 +41,8 @@ developer's guide, so please read on to learn more about each of these steps.
 
 ## Git and GitHub Workflows
 
-The majority of the collaboration and development for FLORIS takes place
-in the [GitHub repository](http://github.com/nrel/floris). There,
+The majority of the collaboration and development for FLORIS takes place in
+the [GitHub repository](http://github.com/nrel/floris). There,
 [issues](http://github.com/nrel/floris/issues) and
 [pull requests](http://github.com/nrel/floris/pulls) are managed,
 questions and ideas are [discussed](https://github.com/NREL/floris/discussions),
@@ -293,3 +293,119 @@ Be sure to complete each step in the sequence as described.
 Generally, only NREL developers will have appropriate permissions to deploy
 FLORIS updates. When the time comes, here is a great reference on doing it
 is available [here](https://medium.freecodecamp.org/how-to-publish-a-pyton-package-on-pypi-a89e9522ce24).
+
+## Extending the models
+
+The FLORIS architecture is designed to support adding new wake models relatively easily.
+Each of the following components have a general API that support plugging in to the rest of the
+FLORIS framework:
+- Velocity deficit
+- Wake deflection
+- Added turbulence due to the turbine wake
+- Wake combination
+- Solver algorithm
+- Grid-points
+
+Initially, it's recommended to copy an existing model as a starting point, and the
+[Jensen](https://github.com/NREL/floris/blob/main/floris/simulation/wake_velocity/jensen.py) and
+[Jimenez](https://github.com/NREL/floris/blob/main/floris/simulation/wake_deflection/jimenez.py)
+models are good choices due to their simplicity.
+New models must be registered in
+[Wake.model_map](https://github.com/NREL/floris/blob/main/floris/simulation/wake.py#L45)
+so that they can be enabled via the input dictionary.
+
+```{mermaid}
+classDiagram
+
+    class Floris
+
+    class Farm
+
+    class FlowField {
+        u: NDArrayFloat
+        v: NDArrayFloat
+        w: NDArrayFloat
+    }
+
+    class Grid {
+        <<interface>>
+        x: NDArrayFloat
+        y: NDArrayFloat
+        z: NDArrayFloat
+    }
+
+    class WakeModelManager {
+        <<interface>>
+        combination_model: BaseModel
+        deflection_model: BaseModel
+        velocity_model: BaseModel
+        turbulence_model: BaseModel
+    }
+
+    class Solver {
+        <<interface>>
+        parameters: dict
+    }
+
+    class BaseModel {
+        prepare_function() dict
+        function() None
+    }
+
+    Floris *-- Farm
+    Floris *-- FlowField
+    Floris *-- Grid
+    Floris *-- WakeModelManager
+    Floris --> Solver
+
+    Solver --> Farm
+    Solver --> FlowField
+    Solver --> Grid
+    Solver --> WakeModelManager
+
+    WakeModelManager -- BaseModel
+
+    style Grid stroke:#FF496B, stroke-width:2px
+    style WakeModelManager stroke:#FF496B, stroke-width:2px
+    style Solver stroke:#FF496B, stroke-width:2px
+```
+
+All of the models have a `prepare_function` and a `function` method.
+The `prepare_function` allows the model classes to extract any information from the `Grid` and
+`FlowField` data structures, and this is generally used for sizing the data arrays.
+The `prepare_function` should return a dictionary that will ultimately be passed to the
+`function`.
+The `function` method is where the actual calculation is performed.
+The API is dependent on the type of model, but generally it requires some indicationg of
+the location of the current turbine in the solve step and some other information about the
+atmospheric conditions and operation of the turbine.
+Note the `*` in the function signature, which is a Python feature that allows
+any number of arguments to be passed to the function after the `*` as keyword arguments.
+Typically, these arguments are the ones returned from the `prepare_function`.
+
+```python
+def prepare_function(self, grid: Grid, flow_field: FlowField) -> Dict[str, Any]
+
+def function(
+    self,
+    x_i: np.ndarray,
+    y_i: np.ndarray,
+    z_i: np.ndarray,
+    axial_induction_i: np.ndarray,
+    deflection_field_i: np.ndarray,
+    yaw_angle_i: np.ndarray,
+    turbulence_intensity_i: np.ndarray,
+    ct_i: np.ndarray,
+    hub_height_i: np.ndarray,
+    rotor_diameter_i: np.ndarray,
+    *,
+    variables_from_prepare_function: dict
+) -> None:
+```
+
+Some models require a special grid and/or solver, and that mapping happens in
+[floris.simulation.Floris](https://github.com/NREL/floris/blob/main/floris/simulation/floris.py#L145).
+Generally, a specific kind of solver requires one or a number of specific grid-types.
+For example, `full_flow_sequential_solver` requires either `FlowFieldGrid` or
+`FlowFieldPlanarGrid`.
+So, it is often the case that adding a new solver will require adding a new grid type, as well.

@@ -5,10 +5,24 @@ turbine_type: 'iea_10MW'
 hub_height: 119.0
 rotor_diameter: 198.0
 TSR: 8.0
-power_thrust_model: 'tum-loss'
+operation_model: cosine-loss
 power_thrust_table:
+  # General parameters
   ref_air_density: 1.225
+  ref_tilt: 6.0
 
+  # Parameters for 'cosine-loss' operation model
+  cosine_loss_exponent_yaw: 1.88
+  cosine_loss_exponent_tilt: 1.88
+
+  # Parameters for 'awc' operation model
+  helix_a: 1.719
+  helix_power_b: 4.823e-03
+  helix_power_c: 2.314e-10
+  helix_thrust_b: 1.157e-03
+  helix_thrust_c: 1.167e-04
+
+  # Parameters for 'tum-loss' operation model
   rotor_solidity: 0.03500415472147307
   rated_rpm:  8.6
   generator_efficiency: 0.944
@@ -17,10 +31,8 @@ power_thrust_table:
   beta: -3.8233819218614817
   cd:  0.004612981322772105
   cl_alfa: 4.602140680380394
-  
-  ref_tilt: 6.0
-  cosine_loss_exponent_yaw: 1.88
-  cosine_loss_exponent_tilt: 1.88
+
+  # Power and thrust curves
   power:
     - 0.0
     - 0.0
