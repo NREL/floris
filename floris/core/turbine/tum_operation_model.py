@@ -48,6 +48,10 @@ class TUMLossTurbine(BaseOperationModel):
     """
 
     def compute_local_vertical_shear(velocities,avg_velocities):
+        """
+        Called to evaluate the vertical (linear) shear that each rotor experience, based on the
+        inflow velocity. This allows to make the power curve asymmetric w.r.t. yaw misalignment.
+        """
         num_rows, num_cols = avg_velocities.shape
         shear = np.zeros_like(avg_velocities)
         for i in np.arange(num_rows):
@@ -81,6 +85,12 @@ class TUMLossTurbine(BaseOperationModel):
             power_setpoints,
             power_thrust_table
         ):
+        """
+        Determines the tip-speed-ratio and pitch angles that occur in operation. This routine
+        assumes a standard region 2 control approach (i.e. k*rpm^2) and a region 3. Also
+        region 2-1/2 is considered. In the future, different control strategies could be included,
+        even user-defined.
+        """
         if power_setpoints is None:
             power_demanded = (
                 np.ones_like(tilt_angles)*power_thrust_table["rated_power"]
@@ -88,64 +98,6 @@ class TUMLossTurbine(BaseOperationModel):
             )
         else:
             power_demanded = power_setpoints/power_thrust_table["generator_efficiency"]
-
-        def find_cp(sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,MU,ct):
-            #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:
-                MU = 1e-6
-                sinMu = np.sin(MU)
-                cosMu = np.cos(MU)
-            a = 1-((1+np.sqrt(1-ct-1/16*sinMu**2*ct**2))/(2*(1+1/16*ct*sinMu**2)))
-            SG = np.sin(np.deg2rad(gamma))
-            CG = np.cos(np.deg2rad(gamma))
-            SD = np.sin(np.deg2rad(delta))
-            CD = np.cos(np.deg2rad(delta))
-            k_1s = -1*(15*np.pi/32*np.tan((MU+sinMu*(ct/2))/2))
-
-            p = sigma*((np.pi*cosMu**2*tsr*cl_alfa*(a - 1)**2
-                         - (tsr*cd*np.pi*(
-                                CD**2*CG**2*SD**2*k**2
-                                + 3*CD**2*SG**2*k**2
-                                - 8*CD*tsr*SG*k + 8*tsr**2
-                            ))/16
-                         - (np.pi*tsr*sinMu**2*cd)/2 - (2*np.pi*cosMu*tsr**2*cl_alfa*theta)/3
-                         + (np.pi*cosMu**2*k_1s**2*tsr*a**2*cl_alfa)/4
-                         + (2*np.pi*cosMu*tsr**2*a*cl_alfa*theta)/3
-                         + (2*np.pi*CD*cosMu*tsr*SG*cl_alfa*k*theta)/3
-                         + ((CD**2*cosMu**2*tsr*cl_alfa*k**2*np.pi*(a - 1)**2*(CG**2*SD**2 + SG**2))
-                            /(4*sinMu**2))
-                         - (2*np.pi*CD*cosMu*tsr*SG*a*cl_alfa*k*theta)/3
-                         + ((CD**2*cosMu**2*k_1s**2*tsr*a**2*cl_alfa*k**2*np.pi
-                             *(3*CG**2*SD**2 + SG**2))
-                            /(24*sinMu**2))
-                         - (np.pi*CD*CG*cosMu**2*k_1s*tsr*SD*a*cl_alfa*k)/sinMu
-                         + (np.pi*CD*CG*cosMu**2*k_1s*tsr*SD*a**2*cl_alfa*k)/sinMu
-                         + (np.pi*CD*CG*cosMu*k_1s*tsr**2*SD*a*cl_alfa*k*theta)/(5*sinMu)
-                         - (np.pi*CD**2*CG*cosMu*k_1s*tsr*SD*SG*a*cl_alfa*k**2*theta)/(10*sinMu)
-                         )/(2*np.pi))
-            return p
-
-
-        def get_ct(x,*data):
-            sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,MU = data
-            #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:
-                MU = 1e-6
-                sinMu = np.sin(MU)
-                cosMu = np.cos(MU)
-            CD = np.cos(np.deg2rad(delta))
-            CG = np.cos(np.deg2rad(gamma))
-            SD = np.sin(np.deg2rad(delta))
-            SG = np.sin(np.deg2rad(gamma))
-            a = (1- ( (1+np.sqrt(1-x-1/16*x**2*sinMu**2))/(2*(1+1/16*x*sinMu**2))) )
-            k_1s = -1*(15*np.pi/32*np.tan((MU+sinMu*(x/2))/2))
-            I1 = -(np.pi*cosMu*(tsr - CD*SG*k)*(a - 1)
-                   + (CD*CG*cosMu*k_1s*SD*a*k*np.pi*(2*tsr - CD*SG*k))/(8*sinMu))/(2*np.pi)
-            I2 = (np.pi*sinMu**2 + (np.pi*(CD**2*CG**2*SD**2*k**2
-                                           + 3*CD**2*SG**2*k**2 - 8*CD*tsr*SG*k
-                                           + 8*tsr**2))/12)/(2*np.pi)
-
-            return (sigma*(cd+cl_alfa)*(I1) - sigma*cl_alfa*theta*(I2)) - x
 
 
         ## Define function to get tip speed ratio
@@ -282,9 +234,10 @@ class TUMLossTurbine(BaseOperationModel):
             y = aero_pow - electric_pow
             return y
 
+        # TODO: generalize .npz file loading
         pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
         lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
-        LUT         = np.load(lut_file)
+        LUT = np.load(lut_file)
         cp_i = LUT['cp_lut']
         pitch_i = LUT['pitch_lut']
         tsr_i = LUT['tsr_lut']
@@ -294,12 +247,13 @@ class TUMLossTurbine(BaseOperationModel):
         pitch_opt = pitch_i[idx[1]]
         max_cp    = cp_i[idx[0],idx[1]]
 
-        omega_cut_in = 0     # RPM
-        omega_max    = power_thrust_table["rated_rpm"] # RPM
-        rated_power_aero  = (
-            power_thrust_table["rated_power"]/power_thrust_table["generator_efficiency"]  # MW
+        omega_cut_in = 0 # RPM
+        omega_max = power_thrust_table["rated_rpm"] # RPM
+        rated_power_aero = (
+            power_thrust_table["rated_power"]/power_thrust_table["generator_efficiency"] # MW
         )
-        #%% Compute torque-rpm relation and check for region 2-and-a-half
+
+        # Compute torque-rpm relation and check for region 2-and-a-half
         Region2andAhalf = False
 
         omega_array = np.linspace(omega_cut_in,omega_max,161)*np.pi/30 # rad/s
@@ -307,10 +261,11 @@ class TUMLossTurbine(BaseOperationModel):
 
         Paero_array = Q*omega_array
 
-        if Paero_array[-1] < rated_power_aero: # then we have region 2and1/2
+        if Paero_array[-1] < rated_power_aero: # then we have region 2-and-a-half
             Region2andAhalf = True
             Q_extra = rated_power_aero/(omega_max*np.pi/30)
             Q = np.append(Q,Q_extra)
+            # TODO: Expression below is not assigned to anything. Should this be removed?
             (Paero_array[-1]/(0.5*air_density*np.pi*R**2*max_cp))**(1/3)
             omega_array = np.append(omega_array,omega_array[-1])
             Paero_array = np.append(Paero_array,rated_power_aero)
@@ -388,7 +343,8 @@ class TUMLossTurbine(BaseOperationModel):
                     if pitch_out_soluzione < pitch_opt:
                         pitch_out_soluzione = pitch_opt
                     pitch_out0 = pitch_out_soluzione
-                #%% COMPUTE CP AND CT GIVEN THE PITCH AND TSR FOUND ABOVE
+                
+                # COMPUTE CP AND CT GIVEN THE PITCH AND TSR FOUND ABOVE
                 pitch_out[i,j]         = np.squeeze(pitch_out0)
                 tsr_out[i,j]           = tsr_outO
 
@@ -407,15 +363,8 @@ class TUMLossTurbine(BaseOperationModel):
         correct_cp_ct_for_tilt: bool = False,
         **_ # <- Allows other models to accept other keyword arguments
     ):
-        # # Construct power interpolant
-        # power_interpolator = interp1d(
-        #     power_thrust_table["wind_speed"],
-        #     power_thrust_table["power"],
-        #     fill_value=0.0,
-        #     bounds_error=False,
-        # )
 
-        # sign convention. in the tum model, negative tilt creates tower clearance
+        # Sign convention: in the tum model, negative tilt creates tower clearance
         tilt_angles = -tilt_angles
 
         # Compute the power-effective wind speed across the rotor
@@ -432,65 +381,11 @@ class TUMLossTurbine(BaseOperationModel):
         )
 
         # Compute power
-        def get_ct(x,*data):
-            sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,R,MU = data
-            #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:
-                MU = 1e-6
-                sinMu = np.sin(MU)
-                cosMu = np.cos(MU)
-            CD = np.cos(np.deg2rad(delta))
-            CG = np.cos(np.deg2rad(gamma))
-            SD = np.sin(np.deg2rad(delta))
-            SG = np.sin(np.deg2rad(gamma))
-            a = (1- ( (1+np.sqrt(1-x-1/16*x**2*sinMu**2))/(2*(1+1/16*x*sinMu**2))) )
-            k_1s = -1*(15*np.pi/32*np.tan((MU+sinMu*(x/2))/2))
-            I1 = -(np.pi*cosMu*(tsr - CD*SG*k)*(a - 1)
-                   + (CD*CG*cosMu*k_1s*SD*a*k*np.pi*(2*tsr - CD*SG*k))/(8*sinMu))/(2*np.pi)
-            I2 = (np.pi*sinMu**2 + (np.pi*(CD**2*CG**2*SD**2*k**2
-                                           + 3*CD**2*SG**2*k**2 - 8*CD*tsr*SG*k
-                                           + 8*tsr**2))/12)/(2*np.pi)
-
-            return (sigma*(cd+cl_alfa)*(I1) - sigma*cl_alfa*theta*(I2)) - x
-
-        def find_cp(sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,R,MU,ct):
-            #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:
-                MU = 1e-6
-                sinMu = np.sin(MU)
-                cosMu = np.cos(MU)
-            a = 1-((1+np.sqrt(1-ct-1/16*sinMu**2*ct**2))/(2*(1+1/16*ct*sinMu**2)))
-            SG = np.sin(np.deg2rad(gamma))
-            CG = np.cos(np.deg2rad(gamma))
-            SD = np.sin(np.deg2rad(delta))
-            CD = np.cos(np.deg2rad(delta))
-            k_1s = -1*(15*np.pi/32*np.tan((MU+sinMu*(ct/2))/2))
-
-            p = sigma*((np.pi*cosMu**2*tsr*cl_alfa*(a - 1)**2
-                         - (tsr*cd*np.pi*(CD**2*CG**2*SD**2*k**2 + 3*CD**2*SG**2*k**2
-                            - 8*CD*tsr*SG*k + 8*tsr**2))/16
-                         - (np.pi*tsr*sinMu**2*cd)/2 - (2*np.pi*cosMu*tsr**2*cl_alfa*theta)/3
-                         + (np.pi*cosMu**2*k_1s**2*tsr*a**2*cl_alfa)/4
-                         + (2*np.pi*cosMu*tsr**2*a*cl_alfa*theta)/3
-                         + (2*np.pi*CD*cosMu*tsr*SG*cl_alfa*k*theta)/3
-                         + ((CD**2*cosMu**2*tsr*cl_alfa*k**2*np.pi*(a - 1)**2*(CG**2*SD**2 + SG**2))
-                            /(4*sinMu**2))
-                         - (2*np.pi*CD*cosMu*tsr*SG*a*cl_alfa*k*theta)/3
-                         + ((CD**2*cosMu**2*k_1s**2*tsr*a**2*cl_alfa*k**2*np.pi*(3*CG**2*SD**2
-                             + SG**2))
-                            /(24*sinMu**2))
-                         - (np.pi*CD*CG*cosMu**2*k_1s*tsr*SD*a*cl_alfa*k)/sinMu
-                         + (np.pi*CD*CG*cosMu**2*k_1s*tsr*SD*a**2*cl_alfa*k)/sinMu
-                         + (np.pi*CD*CG*cosMu*k_1s*tsr**2*SD*a*cl_alfa*k*theta)/(5*sinMu)
-                         - (np.pi*CD**2*CG*cosMu*k_1s*tsr*SD*SG*a*cl_alfa*k**2*theta)/(10*sinMu)
-                        )/(2*np.pi)
-                      )
-            return p
 
         num_rows, num_cols = tilt_angles.shape
         (average_velocity(velocities))
 
-        shear = TUMLossTurbine.compute_local_vertical_shear(velocities,average_velocity(velocities))
+        shear = TUMLossTurbine.compute_local_vertical_shear(velocities, average_velocity(velocities))
 
         beta = power_thrust_table["beta"]
         cd = power_thrust_table["cd"]
@@ -534,7 +429,7 @@ class TUMLossTurbine(BaseOperationModel):
             sMu  = sinMu[i,:]
             Mu   = MU[i,:]
             for j in np.arange(num_cols):
-                # Break below command over multiple lines
+                # Create data tuple for fsolve
                 data = (
                     sigma,
                     cd,
@@ -546,10 +441,9 @@ class TUMLossTurbine(BaseOperationModel):
                     sMu[j],
                     (tsr_array[i,j]),
                     (theta_array[i,j]),
-                    R,
                     Mu[j]
                 )
-                ct, info, ier, msg = fsolve(get_ct, x0,args=data,full_output=True)
+                ct, info, ier, msg = fsolve(get_ct, x0, args=data, full_output=True)
                 if ier == 1:
                     p[i,j] = np.squeeze(find_cp(
                         sigma,
@@ -562,7 +456,6 @@ class TUMLossTurbine(BaseOperationModel):
                         sMu[j],
                         (tsr_array[i,j]),
                         (theta_array[i,j]),
-                        R,
                         Mu[j],
                         ct
                     ))
@@ -587,7 +480,7 @@ class TUMLossTurbine(BaseOperationModel):
             Mu   = MU[i,:]
             for j in np.arange(num_cols):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],k[j],cMu[j],sMu[j],(tsr_array[i,j]),
-                        (theta_array[i,j]),R,Mu[j])
+                        (theta_array[i,j]),Mu[j])
                 ct, info, ier, msg = fsolve(get_ct, x0,args=data,full_output=True)
                 if ier == 1:
                     p0[i,j] = np.squeeze(find_cp(
@@ -601,7 +494,6 @@ class TUMLossTurbine(BaseOperationModel):
                         sMu[j],
                         (tsr_array[i,j]),
                         (theta_array[i,j]),
-                        R,
                         Mu[j],
                         ct
                     ))
@@ -676,27 +568,6 @@ class TUMLossTurbine(BaseOperationModel):
         # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
         tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angles)
 
-        def get_ct(x,*data):
-            sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,R,MU = data
-            #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:
-                MU = 1e-6
-                sinMu = np.sin(MU)
-                cosMu = np.cos(MU)
-            CD = np.cos(np.deg2rad(delta))
-            CG = np.cos(np.deg2rad(gamma))
-            SD = np.sin(np.deg2rad(delta))
-            SG = np.sin(np.deg2rad(gamma))
-            a = (1- ( (1+np.sqrt(1-x-1/16*x**2*sinMu**2))/(2*(1+1/16*x*sinMu**2))) )
-            k_1s = -1*(15*np.pi/32*np.tan((MU+sinMu*(x/2))/2))
-            I1 = -(np.pi*cosMu*(tsr - CD*SG*k)*(a - 1)
-                   + (CD*CG*cosMu*k_1s*SD*a*k*np.pi*(2*tsr - CD*SG*k))/(8*sinMu))/(2*np.pi)
-            I2 = (np.pi*sinMu**2 + (np.pi*(CD**2*CG**2*SD**2*k**2
-                                           + 3*CD**2*SG**2*k**2 - 8*CD*tsr*SG*k
-                                           + 8*tsr**2))/12)/(2*np.pi)
-
-            return (sigma*(cd+cl_alfa)*(I1) - sigma*cl_alfa*theta*(I2)) - x
-
         beta = power_thrust_table["beta"]
         cd = power_thrust_table["cd"]
         cl_alfa = power_thrust_table["cl_alfa"]
@@ -750,8 +621,8 @@ class TUMLossTurbine(BaseOperationModel):
             Mu   = MU[i,:]
             for j in np.arange(num_cols):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
-                        (theta_array[i,j]),R,Mu[j])
-                ct = fsolve(get_ct, x0,args=data)
+                        (theta_array[i,j]),Mu[j])
+                ct = fsolve(get_ct, x0, args=data)
                 thrust_coefficient1[i,j] = np.squeeze(np.clip(ct, 0.0001, 0.9999))
 
 
@@ -770,8 +641,8 @@ class TUMLossTurbine(BaseOperationModel):
             Mu   = MU[i,:]
             for j in np.arange(num_cols):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
-                        (theta_array[i,j]),R,Mu[j])
-                ct = fsolve(get_ct, x0,args=data)
+                        (theta_array[i,j]),Mu[j])
+                ct = fsolve(get_ct, x0, args=data)
                 thrust_coefficient0[i,j] = np.squeeze(ct) #np.clip(ct, 0.0001, 0.9999)
 
         ############################################################################
@@ -836,27 +707,6 @@ class TUMLossTurbine(BaseOperationModel):
         # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
         tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angles)
 
-        def get_ct(x,*data):
-            sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,R,MU = data
-            #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:
-                MU = 1e-6
-                sinMu = np.sin(MU)
-                cosMu = np.cos(MU)
-            CD = np.cos(np.deg2rad(delta))
-            CG = np.cos(np.deg2rad(gamma))
-            SD = np.sin(np.deg2rad(delta))
-            SG = np.sin(np.deg2rad(gamma))
-            a = (1- ( (1+np.sqrt(1-x-1/16*x**2*sinMu**2))/(2*(1+1/16*x*sinMu**2))) )
-            k_1s = -1*(15*np.pi/32*np.tan((MU+sinMu*(x/2))/2))
-            I1 = -(np.pi*cosMu*(tsr - CD*SG*k)*(a - 1)
-                   + (CD*CG*cosMu*k_1s*SD*a*k*np.pi*(2*tsr - CD*SG*k))/(8*sinMu))/(2*np.pi)
-            I2 = (np.pi*sinMu**2 + (np.pi*(CD**2*CG**2*SD**2*k**2
-                                           + 3*CD**2*SG**2*k**2 - 8*CD*tsr*SG*k
-                                           + 8*tsr**2))/12)/(2*np.pi)
-
-            return (sigma*(cd+cl_alfa)*(I1) - sigma*cl_alfa*theta*(I2)) - x
-
         beta = power_thrust_table["beta"]
         cd = power_thrust_table["cd"]
         cl_alfa = power_thrust_table["cl_alfa"]
@@ -910,7 +760,7 @@ class TUMLossTurbine(BaseOperationModel):
             Mu   = MU[i,:]
             for j in np.arange(num_cols):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
-                        (theta_array[i,j]),R,Mu[j])
+                        (theta_array[i,j]),Mu[j])
                 ct = fsolve(get_ct, x0,args=data)
                 thrust_coefficient1[i,j] = np.squeeze(np.clip(ct, 0.0001, 0.9999))
 
@@ -930,8 +780,8 @@ class TUMLossTurbine(BaseOperationModel):
             Mu   = MU[i,:]
             for j in np.arange(num_cols):
                 data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
-                        (theta_array[i,j]),R,Mu[j])
-                ct = fsolve(get_ct, x0,args=data)
+                        (theta_array[i,j]),Mu[j])
+                ct = fsolve(get_ct, x0, args=data)
                 thrust_coefficient0[i,j] = np.squeeze(ct) #np.clip(ct, 0.0001, 0.9999)
 
         ############################################################################
@@ -961,3 +811,60 @@ class TUMLossTurbine(BaseOperationModel):
                 axial_induction[i,j] = np.squeeze(np.clip(a, 0.0001, 0.9999))
 
         return axial_induction
+    
+def find_cp(sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,MU,ct):
+    #add a small misalignment in case MU = 0 to avoid division by 0
+    if MU == 0:
+        MU = 1e-6
+        sinMu = np.sin(MU)
+        cosMu = np.cos(MU)
+    a = 1-((1+np.sqrt(1-ct-1/16*sinMu**2*ct**2))/(2*(1+1/16*ct*sinMu**2)))
+    SG = np.sin(np.deg2rad(gamma))
+    CG = np.cos(np.deg2rad(gamma))
+    SD = np.sin(np.deg2rad(delta))
+    CD = np.cos(np.deg2rad(delta))
+    k_1s = -1*(15*np.pi/32*np.tan((MU+sinMu*(ct/2))/2))
+
+    p = sigma*((np.pi*cosMu**2*tsr*cl_alfa*(a - 1)**2
+                    - (tsr*cd*np.pi*(
+                        CD**2*CG**2*SD**2*k**2
+                        + 3*CD**2*SG**2*k**2
+                        - 8*CD*tsr*SG*k + 8*tsr**2
+                    ))/16
+                    - (np.pi*tsr*sinMu**2*cd)/2 - (2*np.pi*cosMu*tsr**2*cl_alfa*theta)/3
+                    + (np.pi*cosMu**2*k_1s**2*tsr*a**2*cl_alfa)/4
+                    + (2*np.pi*cosMu*tsr**2*a*cl_alfa*theta)/3
+                    + (2*np.pi*CD*cosMu*tsr*SG*cl_alfa*k*theta)/3
+                    + ((CD**2*cosMu**2*tsr*cl_alfa*k**2*np.pi*(a - 1)**2*(CG**2*SD**2 + SG**2))
+                    /(4*sinMu**2))
+                    - (2*np.pi*CD*cosMu*tsr*SG*a*cl_alfa*k*theta)/3
+                    + ((CD**2*cosMu**2*k_1s**2*tsr*a**2*cl_alfa*k**2*np.pi
+                        *(3*CG**2*SD**2 + SG**2))
+                    /(24*sinMu**2))
+                    - (np.pi*CD*CG*cosMu**2*k_1s*tsr*SD*a*cl_alfa*k)/sinMu
+                    + (np.pi*CD*CG*cosMu**2*k_1s*tsr*SD*a**2*cl_alfa*k)/sinMu
+                    + (np.pi*CD*CG*cosMu*k_1s*tsr**2*SD*a*cl_alfa*k*theta)/(5*sinMu)
+                    - (np.pi*CD**2*CG*cosMu*k_1s*tsr*SD*SG*a*cl_alfa*k**2*theta)/(10*sinMu)
+                    )/(2*np.pi))
+    return p
+
+def get_ct(x,*data):
+    sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,MU = data
+    #add a small misalignment in case MU = 0 to avoid division by 0
+    if MU == 0:
+        MU = 1e-6
+        sinMu = np.sin(MU)
+        cosMu = np.cos(MU)
+    CD = np.cos(np.deg2rad(delta))
+    CG = np.cos(np.deg2rad(gamma))
+    SD = np.sin(np.deg2rad(delta))
+    SG = np.sin(np.deg2rad(gamma))
+    a = (1- ( (1+np.sqrt(1-x-1/16*x**2*sinMu**2))/(2*(1+1/16*x*sinMu**2))) )
+    k_1s = -1*(15*np.pi/32*np.tan((MU+sinMu*(x/2))/2))
+    I1 = -(np.pi*cosMu*(tsr - CD*SG*k)*(a - 1)
+            + (CD*CG*cosMu*k_1s*SD*a*k*np.pi*(2*tsr - CD*SG*k))/(8*sinMu))/(2*np.pi)
+    I2 = (np.pi*sinMu**2 + (np.pi*(CD**2*CG**2*SD**2*k**2
+                                    + 3*CD**2*SG**2*k**2 - 8*CD*tsr*SG*k
+                                    + 8*tsr**2))/12)/(2*np.pi)
+
+    return (sigma*(cd+cl_alfa)*(I1) - sigma*cl_alfa*theta*(I2)) - x
