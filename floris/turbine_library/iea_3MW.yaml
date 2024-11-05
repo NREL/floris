@@ -36,6 +36,7 @@ power_thrust_table:
   generator_efficiency: 0.925
   rated_power: 3300.0
   rotor_diameter: 130
+  cp_ct_data_file: "LUT_iea15MW.npz"
   beta: -3.11
   cd:  0.0051
   cl_alfa: 4.75

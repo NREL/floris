@@ -204,9 +204,8 @@ class TUMLossTurbine(BaseOperationModel):
         ratio = p / p0
 
         # Load Cp surface data and construct interpolator
-        # TODO: remove hardcoding
         pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
+        lut_file = pkgroot / "turbine_library" / power_thrust_table["cp_ct_data_file"]
         LUT = np.load(lut_file)
         cp_i = LUT["cp_lut"]
         pitch_i = LUT["pitch_lut"]
@@ -376,7 +375,7 @@ class TUMLossTurbine(BaseOperationModel):
         # Load Ct surface data and construct interpolator
         # TODO: remove hardcoding
         pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
+        lut_file = pkgroot / "turbine_library" / power_thrust_table["cp_ct_data_file"]
         LUT = np.load(lut_file)
         ct_i = LUT["ct_lut"]
         pitch_i = LUT["pitch_lut"]
@@ -734,7 +733,7 @@ class TUMLossTurbine(BaseOperationModel):
 
         # TODO: generalize .npz file loading
         pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
+        lut_file = pkgroot / "turbine_library" / power_thrust_table["cp_ct_data_file"]
         LUT = np.load(lut_file)
         cp_i = LUT["cp_lut"]
         pitch_i = LUT["pitch_lut"]

@@ -401,6 +401,7 @@ class SampleInputs:
             "beta": -0.45891,
             "cd": 0.0040638,
             "cl_alfa": 4.275049,
+            "cp_ct_data_file": "LUT_iea15MW.npz"
         }
 
         self.turbine_floating = copy.deepcopy(self.turbine)

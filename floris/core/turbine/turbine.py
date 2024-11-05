@@ -510,7 +510,10 @@ class Turbine(BaseClass):
         if self.multi_dimensional_cp_ct:
             self._initialize_multidim_power_thrust_table()
         else:
-            self.power_thrust_table = floris_numeric_dict_converter(self.power_thrust_table)
+            self.power_thrust_table = floris_numeric_dict_converter(
+                self.power_thrust_table,
+                allow_strings=True
+            )
 
     def _initialize_power_thrust_functions(self) -> None:
         turbine_function_model = TURBINE_MODEL_MAP["operation_model"][self.operation_model]
