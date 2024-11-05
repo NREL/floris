@@ -5,14 +5,9 @@ yaw compared to the standard cosine loss model.
 
 import matplotlib.pyplot as plt
 import numpy as np
-import yaml
 
 from floris import FlorisModel
 
-
-"""
-Test alternative models of loss to yawing
-"""
 
 # Parameters
 N  = 101 # How many steps to cover yaw range in
@@ -35,7 +30,7 @@ fmodel.set(
     yaw_angles=yaw_angles,
 )
 
-# Now loop over the operational models to compare
+# Loop over the operational models to compare
 op_models = ["cosine-loss", "tum-loss"]
 results = {}
 
@@ -44,16 +39,11 @@ for op_model in op_models:
     print(f"Evaluating model: {op_model}")
     fmodel.set_operation_model(op_model)
 
-    # Calculate the power
     fmodel.run()
-    turbine_power = fmodel.get_turbine_powers().squeeze()
-
-    # Save the results
-    results[op_model] = turbine_power
+    results[op_model] = fmodel.get_turbine_powers().squeeze()
 
 # Plot the results
 fig, ax = plt.subplots()
-
 colors = ["C0", "k", "r"]
 linestyles = ["solid", "dashed", "dotted"]
 for key, c, ls in zip(results, colors, linestyles):

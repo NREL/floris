@@ -367,7 +367,7 @@ class TUMLossTurbine(BaseOperationModel):
 
         def find_cp(sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,MU,ct):
             #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:  
+            if MU == 0:
                 MU = 1e-6
                 sinMu = np.sin(MU)
                 cosMu = np.cos(MU)
@@ -405,7 +405,7 @@ class TUMLossTurbine(BaseOperationModel):
         def get_ct(x,*data):
             sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,MU = data
             #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:  
+            if MU == 0:
                 MU = 1e-6
                 sinMu = np.sin(MU)
                 cosMu = np.cos(MU)
@@ -571,8 +571,10 @@ class TUMLossTurbine(BaseOperationModel):
         max_cp    = cp_i[idx[0],idx[1]]
 
         omega_cut_in = 0     # RPM
-        omega_max    = power_thrust_table["rated_rpm"] # RPM 
-        rated_power_aero  = power_thrust_table["rated_power"]/power_thrust_table["generator_efficiency"]  # MW
+        omega_max    = power_thrust_table["rated_rpm"] # RPM
+        rated_power_aero  = (
+            power_thrust_table["rated_power"]/power_thrust_table["generator_efficiency"]  # MW
+        )
         #%% Compute torque-rpm relation and check for region 2-and-a-half
         Region2andAhalf = False
 
@@ -709,7 +711,7 @@ class TUMLossTurbine(BaseOperationModel):
         def get_ct(x,*data):
             sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,R,MU = data
             #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:  
+            if MU == 0:
                 MU = 1e-6
                 sinMu = np.sin(MU)
                 cosMu = np.cos(MU)
@@ -729,7 +731,7 @@ class TUMLossTurbine(BaseOperationModel):
 
         def find_cp(sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,R,MU,ct):
             #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:  
+            if MU == 0:
                 MU = 1e-6
                 sinMu = np.sin(MU)
                 cosMu = np.cos(MU)
@@ -953,7 +955,7 @@ class TUMLossTurbine(BaseOperationModel):
         def get_ct(x,*data):
             sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,R,MU = data
             #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:  
+            if MU == 0:
                 MU = 1e-6
                 sinMu = np.sin(MU)
                 cosMu = np.cos(MU)
@@ -1113,7 +1115,7 @@ class TUMLossTurbine(BaseOperationModel):
         def get_ct(x,*data):
             sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,R,MU = data
             #add a small misalignment in case MU = 0 to avoid division by 0
-            if MU == 0:  
+            if MU == 0:
                 MU = 1e-6
                 sinMu = np.sin(MU)
                 cosMu = np.cos(MU)
@@ -1141,13 +1143,13 @@ class TUMLossTurbine(BaseOperationModel):
         shear = TUMLossTurbine.compute_local_vertical_shear(velocities,average_velocity(velocities))
 
         air_density = power_thrust_table["ref_air_density"] # CHANGE
-        
+
         rotor_effective_velocities = rotor_velocity_air_density_correction(
             velocities=rotor_average_velocities,
             air_density=air_density,
             ref_air_density=power_thrust_table["ref_air_density"]
         )
-        
+
         pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
             rotor_effective_velocities,
             yaw_angles,

@@ -392,6 +392,8 @@ class SampleInputs:
 
         self.tum_loss_turbine_power_thrust_table = {
             "ref_air_density": 1.225,
+            "ref_tilt": 5.0,
+            "rated_rpm": 12.1,
             "rotor_solidity": 0.05132,
             "generator_efficiency": 0.944,
             "rated_power": 5.0e6,
@@ -399,7 +401,6 @@ class SampleInputs:
             "beta": -0.45891,
             "cd": 0.0040638,
             "cl_alfa": 4.275049,
-            "ref_tilt": 5.0,
         }
 
         self.turbine_floating = copy.deepcopy(self.turbine)
