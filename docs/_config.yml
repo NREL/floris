@@ -3,7 +3,7 @@
 
 title: FLORIS
 author: National Renewable Energy Laboratory
-logo: gch.gif
+logo: docs_image.png
 copyright: '2023'
 only_build_toc_files: false
 
@@ -11,7 +11,7 @@ only_build_toc_files: false
 # See https://jupyterbook.org/content/execute.html
 execute:
   execute_notebooks: auto
-  timeout: 360 # Give each notebook cell 6 minutes to execute
+  timeout: 420 # Give each notebook cell 7 minutes to execute
 
 # Define the name of the latex output file for PDF builds
 latex:
