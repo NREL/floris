@@ -47,7 +47,370 @@ class TUMLossTurbine(BaseOperationModel):
     TODO: Should the turbine submodels each implement axial_induction()?
     """
 
-    def compute_local_vertical_shear(velocities,avg_velocities):
+    def power(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        air_density: float,
+        yaw_angles: NDArrayFloat,
+        tilt_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        tilt_interp: NDArrayObject,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        correct_cp_ct_for_tilt: bool = False,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+
+        # Sign convention: in the tum model, negative tilt creates tower clearance
+        tilt_angles = -tilt_angles
+
+        # Compute the power-effective wind speed across the rotor
+        rotor_average_velocities = average_velocity(
+            velocities=velocities,
+            method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=power_thrust_table["ref_air_density"]
+        )
+
+        # Compute power
+
+        num_rows, num_cols = tilt_angles.shape
+
+        shear = TUMLossTurbine.compute_local_vertical_shear(
+            velocities,
+            average_velocity(velocities)
+        )
+
+        beta = power_thrust_table["beta"]
+        cd = power_thrust_table["cd"]
+        cl_alfa = power_thrust_table["cl_alfa"]
+
+        sigma = power_thrust_table["rotor_solidity"]
+        R = power_thrust_table["rotor_diameter"]/2
+
+        air_density = power_thrust_table["ref_air_density"]
+
+        pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
+            rotor_effective_velocities,
+            yaw_angles,
+            tilt_angles,
+            air_density,
+            R,
+            shear,
+            sigma,
+            cd,
+            cl_alfa,
+            beta,
+            power_setpoints,
+            power_thrust_table
+        )
+
+        tsr_array = (tsr_out)
+        theta_array = (np.deg2rad(pitch_out+beta))
+        x0 = 0.2
+
+        # Compute power in yawed conditions
+        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
+        cosMu = (np.cos(MU))
+        sinMu = (np.sin(MU))
+        p = np.zeros_like(average_velocity(velocities))
+        for i in np.arange(num_rows):
+            yaw  = yaw_angles[i,:]
+            tilt = tilt_angles[i,:]
+            k = shear[i,:]
+            cMu  = cosMu[i,:]
+            sMu  = sinMu[i,:]
+            Mu   = MU[i,:]
+            for j in np.arange(num_cols):
+                # Create data tuple for fsolve
+                data = (
+                    sigma,
+                    cd,
+                    cl_alfa,
+                    yaw[j],
+                    tilt[j],
+                    k[j],
+                    cMu[j],
+                    sMu[j],
+                    (tsr_array[i,j]),
+                    (theta_array[i,j]),
+                    Mu[j]
+                )
+                ct, info, ier, msg = fsolve(get_ct, x0, args=data, full_output=True)
+                if ier == 1:
+                    p[i,j] = np.squeeze(find_cp(
+                        sigma,
+                        cd,
+                        cl_alfa,
+                        yaw[j],
+                        tilt[j],
+                        k[j],
+                        cMu[j],
+                        sMu[j],
+                        (tsr_array[i,j]),
+                        (theta_array[i,j]),
+                        Mu[j],
+                        ct
+                    ))
+                else:
+                    p[i,j] = -1e3
+
+        # Recompute power in non-yawed conditions
+        yaw_angles = np.zeros_like(yaw_angles)
+        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
+        cosMu = (np.cos(MU))
+        sinMu = (np.sin(MU))
+
+        p0 = np.zeros_like((average_velocity(velocities)))
+
+        for i in np.arange(num_rows):
+            yaw  = yaw_angles[i,:]
+            tilt = tilt_angles[i,:]
+            k = shear[i,:]
+            cMu  = cosMu[i,:]
+            sMu  = sinMu[i,:]
+            Mu   = MU[i,:]
+            for j in np.arange(num_cols):
+                data = (sigma,cd,cl_alfa,yaw[j],tilt[j],k[j],cMu[j],sMu[j],(tsr_array[i,j]),
+                        (theta_array[i,j]),Mu[j])
+                ct, info, ier, msg = fsolve(get_ct, x0,args=data,full_output=True)
+                if ier == 1:
+                    p0[i,j] = np.squeeze(find_cp(
+                        sigma,
+                        cd,
+                        cl_alfa,
+                        yaw[j],
+                        tilt[j],
+                        k[j],
+                        cMu[j],
+                        sMu[j],
+                        (tsr_array[i,j]),
+                        (theta_array[i,j]),
+                        Mu[j],
+                        ct
+                    ))
+                else:
+                    p0[i,j] = -1e3
+
+        # ratio of yawed to unyawed thrust coefficients
+        ratio = p/p0
+
+        # Load Cp surface data and construct interpolator
+        # TODO: remove hardcoding
+        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
+        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
+        LUT         = np.load(lut_file)
+        cp_i = LUT['cp_lut']
+        pitch_i = LUT['pitch_lut']
+        tsr_i = LUT['tsr_lut']
+        interp_lut = RegularGridInterpolator(
+            (tsr_i,pitch_i),
+            cp_i,
+            bounds_error=False,
+            fill_value=None
+        )
+
+        power_coefficient = np.zeros_like(average_velocity(velocities))
+        for i in np.arange(num_rows):
+            for j in np.arange(num_cols):
+                cp_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
+                power_coefficient[i,j] = np.squeeze(cp_interp*ratio[i,j])
+
+        # TODO: make printout optional?
+        if False:
+            print('Tip speed ratio' + str(tsr_array))
+            print('Pitch out: ' + str(pitch_out))
+        power = (
+            0.5*air_density*(rotor_effective_velocities)**3*np.pi*R**2
+            *(power_coefficient)*power_thrust_table["generator_efficiency"]
+        )
+        return power
+
+    def thrust_coefficient(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        yaw_angles: NDArrayFloat,
+        tilt_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        tilt_interp: NDArrayObject,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        correct_cp_ct_for_tilt: bool = False,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+
+        # sign convention. in the tum model, negative tilt creates tower clearance
+        tilt_angles = -tilt_angles
+
+        # Compute the effective wind speed across the rotor
+        rotor_average_velocities = average_velocity(
+            velocities=velocities,
+            method=average_method,
+            cubature_weights=cubature_weights,
+        )
+
+
+        # Apply tilt and yaw corrections
+        # Compute the tilt, if using floating turbines
+        old_tilt_angles = copy.deepcopy(tilt_angles)
+        tilt_angles = compute_tilt_angles_for_floating_turbines(
+            tilt_angles=tilt_angles,
+            tilt_interp=tilt_interp,
+            rotor_effective_velocities=rotor_average_velocities,
+        )
+        # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
+        tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angles)
+
+        beta = power_thrust_table["beta"]
+        cd = power_thrust_table["cd"]
+        cl_alfa = power_thrust_table["cl_alfa"]
+
+        sigma = power_thrust_table["rotor_solidity"]
+        R = power_thrust_table["rotor_diameter"]/2
+
+        shear = TUMLossTurbine.compute_local_vertical_shear(velocities,average_velocity(velocities))
+
+        air_density = power_thrust_table["ref_air_density"] # CHANGE
+
+        rotor_effective_velocities = rotor_velocity_air_density_correction(
+            velocities=rotor_average_velocities,
+            air_density=air_density,
+            ref_air_density=power_thrust_table["ref_air_density"]
+        )
+
+        pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
+            rotor_effective_velocities,
+            yaw_angles,
+            tilt_angles,
+            air_density,
+            R,
+            shear,
+            sigma,
+            cd,
+            cl_alfa,
+            beta,
+            power_setpoints,
+            power_thrust_table
+        )
+
+        num_rows, num_cols = tilt_angles.shape
+
+
+        # u = np.squeeze(u)
+        theta_array = (np.deg2rad(pitch_out+beta))
+        tsr_array = (tsr_out)
+        x0 = 0.2
+
+        # Compute thrust coefficient in yawed conditions
+        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
+        cosMu = (np.cos(MU))
+        sinMu = (np.sin(MU))
+        thrust_coefficient1 = np.zeros_like(average_velocity(velocities))
+        for i in np.arange(num_rows):
+            yaw  = yaw_angles[i,:]
+            tilt = tilt_angles[i,:]
+            cMu  = cosMu[i,:]
+            sMu  = sinMu[i,:]
+            Mu   = MU[i,:]
+            for j in np.arange(num_cols):
+                data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
+                        (theta_array[i,j]),Mu[j])
+                ct = fsolve(get_ct, x0, args=data)
+                thrust_coefficient1[i,j] = np.squeeze(np.clip(ct, 0.0001, 0.9999))
+
+        # Recompute thrust coefficient in non-yawed conditions
+        yaw_angles = np.zeros_like(yaw_angles)
+        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
+        cosMu = (np.cos(MU))
+        sinMu = (np.sin(MU))
+
+        thrust_coefficient0 = np.zeros_like(average_velocity(velocities))
+
+        for i in np.arange(num_rows):
+            yaw  = yaw_angles[i,:]
+            tilt = tilt_angles[i,:]
+            cMu  = cosMu[i,:]
+            sMu  = sinMu[i,:]
+            Mu   = MU[i,:]
+            for j in np.arange(num_cols):
+                data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
+                        (theta_array[i,j]),Mu[j])
+                ct = fsolve(get_ct, x0, args=data)
+                thrust_coefficient0[i,j] = np.squeeze(ct) #np.clip(ct, 0.0001, 0.9999)
+
+        # Compute ratio of yawed to unyawed thrust coefficients
+        ratio = thrust_coefficient1/thrust_coefficient0
+
+        # Load Ct surface data and construct interpolator
+        # TODO: remove hardcoding
+        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
+        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
+        LUT = np.load(lut_file)
+        ct_i = LUT['ct_lut']
+        pitch_i = LUT['pitch_lut']
+        tsr_i = LUT['tsr_lut']
+        interp_lut = RegularGridInterpolator(
+            (tsr_i,pitch_i),
+            ct_i,
+            bounds_error=False,
+            fill_value=None
+        )#*0.9722085500886761)
+
+
+        # Interpolate and apply ratio to determine thrust coefficient
+        thrust_coefficient = np.zeros_like(average_velocity(velocities))
+        for i in np.arange(num_rows):
+            for j in np.arange(num_cols):
+                ct_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
+                thrust_coefficient[i,j] = np.squeeze(ct_interp*ratio[i,j])
+
+        return thrust_coefficient
+
+    def axial_induction(
+        power_thrust_table: dict,
+        velocities: NDArrayFloat,
+        yaw_angles: NDArrayFloat,
+        tilt_angles: NDArrayFloat,
+        power_setpoints: NDArrayFloat,
+        tilt_interp: NDArrayObject,
+        average_method: str = "cubic-mean",
+        cubature_weights: NDArrayFloat | None = None,
+        correct_cp_ct_for_tilt: bool = False,
+        **_ # <- Allows other models to accept other keyword arguments
+    ):
+        num_rows, num_cols = tilt_angles.shape
+        thrust_coefficients = TUMLossTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=velocities,
+            yaw_angles=yaw_angles,
+            tilt_angles=tilt_angles,
+            power_setpoints=power_setpoints,
+            tilt_interp=tilt_interp,
+            average_method=average_method,
+            cubature_weights=cubature_weights,
+            correct_cp_ct_for_tilt=correct_cp_ct_for_tilt,
+        )
+
+        yaw_angles = np.zeros_like(yaw_angles)
+        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
+        sinMu = (np.sin(MU))
+        sMu = sinMu[-1,:]
+
+        axial_induction = np.zeros((num_rows, num_cols))
+        for i in np.arange(num_rows):
+            for j in np.arange(num_cols):
+                ct = thrust_coefficients[i,j]
+                a  = (1- ( (1+np.sqrt(1-ct-1/16*ct**2*sMu[j]**2))/(2*(1+1/16*ct*sMu[j]**2))) )
+                axial_induction[i,j] = np.squeeze(np.clip(a, 0.0001, 0.9999))
+
+        return axial_induction
+    
+    def compute_local_vertical_shear(velocities, avg_velocities):
         """
         Called to evaluate the vertical (linear) shear that each rotor experience, based on the
         inflow velocity. This allows to make the power curve asymmetric w.r.t. yaw misalignment.
@@ -63,8 +426,8 @@ class TUMLossTurbine(BaseOperationModel):
                     u_u_hh     = (
                         mean_speed
                         /(mean_speed[int((len(mean_speed)/2))]
-                          +mean_speed[int((len(mean_speed)/2))-1]
-                          )/2
+                            +mean_speed[int((len(mean_speed)/2))-1]
+                            )/2
                     )
                 zg_R = np.linspace(-1,1,len(mean_speed)+2)
                 polifit_k  = np.polyfit(zg_R[1:-1],1-u_u_hh,1)
@@ -103,7 +466,7 @@ class TUMLossTurbine(BaseOperationModel):
         ## Define function to get tip speed ratio
         def get_tsr(x,*data):
             (air_density,R,sigma,shear,cd,cl_alfa,beta,gamma,tilt,u,pitch_in,omega_lut_pow,
-             torque_lut_omega,cp_i,pitch_i,tsr_i) = data
+                torque_lut_omega,cp_i,pitch_i,tsr_i) = data
 
             omega_lut_torque = omega_lut_pow*np.pi/30
 
@@ -114,7 +477,7 @@ class TUMLossTurbine(BaseOperationModel):
 
             mu    = np.arccos(np.cos(np.deg2rad(gamma))*np.cos(np.deg2rad(tilt)))
             data  = (sigma,cd,cl_alfa,gamma,tilt,shear,np.cos(mu),np.sin(mu),x,
-                     np.deg2rad(pitch_in)+np.deg2rad(beta),mu)
+                        np.deg2rad(pitch_in)+np.deg2rad(beta),mu)
             x0    = 0.1
             [ct,infodict,ier,mesg] = fsolve(get_ct, x0,args=data,full_output=True,factor=0.1)
             cp = find_cp(
@@ -134,7 +497,7 @@ class TUMLossTurbine(BaseOperationModel):
 
             mu    = np.arccos(np.cos(np.deg2rad(0))*np.cos(np.deg2rad(tilt)))
             data  = (sigma,cd,cl_alfa,0,tilt,shear,np.cos(mu),np.sin(mu),x,
-                     np.deg2rad(pitch_in)+np.deg2rad(beta),mu)
+                        np.deg2rad(pitch_in)+np.deg2rad(beta),mu)
             x0    = 0.1
             [ct,infodict,ier,mesg] = fsolve(get_ct, x0,args=data,full_output=True,factor=0.1)
             cp0 = find_cp(
@@ -156,7 +519,7 @@ class TUMLossTurbine(BaseOperationModel):
 
             interp   = RegularGridInterpolator((np.squeeze((tsr_i)),
                                 np.squeeze((pitch_i))), cp_i,
-                                               bounds_error=False, fill_value=None)
+                                                bounds_error=False, fill_value=None)
 
             Cp_now = interp((x,pitch_in),method='cubic')
             cp_g1 =  Cp_now*eta_p
@@ -169,7 +532,7 @@ class TUMLossTurbine(BaseOperationModel):
         ## Define function to get pitch angle
         def get_pitch(x,*data):
             (air_density,R,sigma,shear,cd,cl_alfa,beta,gamma,tilt,u,omega_rated,omega_lut_torque,
-             torque_lut_omega,cp_i,pitch_i,tsr_i) = data
+                torque_lut_omega,cp_i,pitch_i,tsr_i) = data
 
             omega_rpm   = omega_rated*30/np.pi
             tsr     = omega_rated*R/(u)
@@ -179,7 +542,7 @@ class TUMLossTurbine(BaseOperationModel):
 
             mu    = np.arccos(np.cos(np.deg2rad(gamma))*np.cos(np.deg2rad(tilt)))
             data  = (sigma,cd,cl_alfa,gamma,tilt,shear,np.cos(mu),np.sin(mu),tsr,
-                     (pitch_in)+np.deg2rad(beta),mu)
+                        (pitch_in)+np.deg2rad(beta),mu)
             x0    = 0.1
             [ct,infodict,ier,mesg] = fsolve(get_ct, x0,args=data,full_output=True,factor=0.1)
             cp = find_cp(
@@ -199,7 +562,7 @@ class TUMLossTurbine(BaseOperationModel):
 
             mu    = np.arccos(np.cos(np.deg2rad(0))*np.cos(np.deg2rad(tilt)))
             data  = (sigma,cd,cl_alfa,0,tilt,shear,np.cos(mu),np.sin(mu),tsr,
-                     (pitch_in)+np.deg2rad(beta),mu)
+                        (pitch_in)+np.deg2rad(beta),mu)
             x0    = 0.1
             [ct,infodict,ier,mesg] = fsolve(get_ct, x0,args=data,full_output=True,factor=0.1)
             cp0 = find_cp(
@@ -349,370 +712,6 @@ class TUMLossTurbine(BaseOperationModel):
                 tsr_out[i,j]           = tsr_outO
 
         return pitch_out, tsr_out
-
-    def power(
-        power_thrust_table: dict,
-        velocities: NDArrayFloat,
-        air_density: float,
-        yaw_angles: NDArrayFloat,
-        tilt_angles: NDArrayFloat,
-        power_setpoints: NDArrayFloat,
-        tilt_interp: NDArrayObject,
-        average_method: str = "cubic-mean",
-        cubature_weights: NDArrayFloat | None = None,
-        correct_cp_ct_for_tilt: bool = False,
-        **_ # <- Allows other models to accept other keyword arguments
-    ):
-
-        # Sign convention: in the tum model, negative tilt creates tower clearance
-        tilt_angles = -tilt_angles
-
-        # Compute the power-effective wind speed across the rotor
-        rotor_average_velocities = average_velocity(
-            velocities=velocities,
-            method=average_method,
-            cubature_weights=cubature_weights,
-        )
-
-        rotor_effective_velocities = rotor_velocity_air_density_correction(
-            velocities=rotor_average_velocities,
-            air_density=air_density,
-            ref_air_density=power_thrust_table["ref_air_density"]
-        )
-
-        # Compute power
-
-        num_rows, num_cols = tilt_angles.shape
-        (average_velocity(velocities))
-
-        shear = TUMLossTurbine.compute_local_vertical_shear(
-            velocities,
-            average_velocity(velocities)
-        )
-
-        beta = power_thrust_table["beta"]
-        cd = power_thrust_table["cd"]
-        cl_alfa = power_thrust_table["cl_alfa"]
-
-        sigma = power_thrust_table["rotor_solidity"]
-        R = power_thrust_table["rotor_diameter"]/2
-
-        air_density = power_thrust_table["ref_air_density"]
-
-        pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
-            rotor_effective_velocities,
-            yaw_angles,
-            tilt_angles,
-            air_density,
-            R,
-            shear,
-            sigma,
-            cd,
-            cl_alfa,
-            beta,
-            power_setpoints,
-            power_thrust_table
-        )
-
-        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
-        cosMu = (np.cos(MU))
-        sinMu = (np.sin(MU))
-        tsr_array = (tsr_out)
-        theta_array = (np.deg2rad(pitch_out+beta))
-
-        x0 = 0.2
-
-        p = np.zeros_like(average_velocity(velocities))
-
-        for i in np.arange(num_rows):
-            yaw  = yaw_angles[i,:]
-            tilt = tilt_angles[i,:]
-            k = shear[i,:]
-            cMu  = cosMu[i,:]
-            sMu  = sinMu[i,:]
-            Mu   = MU[i,:]
-            for j in np.arange(num_cols):
-                # Create data tuple for fsolve
-                data = (
-                    sigma,
-                    cd,
-                    cl_alfa,
-                    yaw[j],
-                    tilt[j],
-                    k[j],
-                    cMu[j],
-                    sMu[j],
-                    (tsr_array[i,j]),
-                    (theta_array[i,j]),
-                    Mu[j]
-                )
-                ct, info, ier, msg = fsolve(get_ct, x0, args=data, full_output=True)
-                if ier == 1:
-                    p[i,j] = np.squeeze(find_cp(
-                        sigma,
-                        cd,
-                        cl_alfa,
-                        yaw[j],
-                        tilt[j],
-                        k[j],
-                        cMu[j],
-                        sMu[j],
-                        (tsr_array[i,j]),
-                        (theta_array[i,j]),
-                        Mu[j],
-                        ct
-                    ))
-                else:
-                    p[i,j] = -1e3
-
-    ############################################################################
-
-        yaw_angles = np.zeros_like(yaw_angles)
-        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
-        cosMu = (np.cos(MU))
-        sinMu = (np.sin(MU))
-
-        p0 = np.zeros_like((average_velocity(velocities)))
-
-        for i in np.arange(num_rows):
-            yaw  = yaw_angles[i,:]
-            tilt = tilt_angles[i,:]
-            k = shear[i,:]
-            cMu  = cosMu[i,:]
-            sMu  = sinMu[i,:]
-            Mu   = MU[i,:]
-            for j in np.arange(num_cols):
-                data = (sigma,cd,cl_alfa,yaw[j],tilt[j],k[j],cMu[j],sMu[j],(tsr_array[i,j]),
-                        (theta_array[i,j]),Mu[j])
-                ct, info, ier, msg = fsolve(get_ct, x0,args=data,full_output=True)
-                if ier == 1:
-                    p0[i,j] = np.squeeze(find_cp(
-                        sigma,
-                        cd,
-                        cl_alfa,
-                        yaw[j],
-                        tilt[j],
-                        k[j],
-                        cMu[j],
-                        sMu[j],
-                        (tsr_array[i,j]),
-                        (theta_array[i,j]),
-                        Mu[j],
-                        ct
-                    ))
-                else:
-                    p0[i,j] = -1e3
-
-        ratio = p/p0
-
-    ############################################################################
-
-        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
-        LUT         = np.load(lut_file)
-        cp_i = LUT['cp_lut']
-        pitch_i = LUT['pitch_lut']
-        tsr_i = LUT['tsr_lut']
-        interp_lut = RegularGridInterpolator(
-            (tsr_i,pitch_i),
-            cp_i,
-            bounds_error=False,
-            fill_value=None
-        )
-
-        power_coefficient = np.zeros_like(average_velocity(velocities))
-        for i in np.arange(num_rows):
-            for j in np.arange(num_cols):
-                cp_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
-                power_coefficient[i,j] = np.squeeze(cp_interp*ratio[i,j])
-
-        # TODO: make printout optional?
-        if False:
-            print('Tip speed ratio' + str(tsr_array))
-            print('Pitch out: ' + str(pitch_out))
-        power = (
-            0.5*air_density*(rotor_effective_velocities)**3*np.pi*R**2
-            *(power_coefficient)*power_thrust_table["generator_efficiency"]
-        )
-        return power
-
-    def thrust_coefficient(
-        power_thrust_table: dict,
-        velocities: NDArrayFloat,
-        yaw_angles: NDArrayFloat,
-        tilt_angles: NDArrayFloat,
-        power_setpoints: NDArrayFloat,
-        tilt_interp: NDArrayObject,
-        average_method: str = "cubic-mean",
-        cubature_weights: NDArrayFloat | None = None,
-        correct_cp_ct_for_tilt: bool = False,
-        **_ # <- Allows other models to accept other keyword arguments
-    ):
-
-        # sign convention. in the tum model, negative tilt creates tower clearance
-        tilt_angles = -tilt_angles
-
-        # Compute the effective wind speed across the rotor
-        rotor_average_velocities = average_velocity(
-            velocities=velocities,
-            method=average_method,
-            cubature_weights=cubature_weights,
-        )
-
-
-        # Apply tilt and yaw corrections
-        # Compute the tilt, if using floating turbines
-        old_tilt_angles = copy.deepcopy(tilt_angles)
-        tilt_angles = compute_tilt_angles_for_floating_turbines(
-            tilt_angles=tilt_angles,
-            tilt_interp=tilt_interp,
-            rotor_effective_velocities=rotor_average_velocities,
-        )
-        # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
-        tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angles)
-
-        beta = power_thrust_table["beta"]
-        cd = power_thrust_table["cd"]
-        cl_alfa = power_thrust_table["cl_alfa"]
-
-        sigma = power_thrust_table["rotor_solidity"]
-        R = power_thrust_table["rotor_diameter"]/2
-
-        shear = TUMLossTurbine.compute_local_vertical_shear(velocities,average_velocity(velocities))
-
-        air_density = power_thrust_table["ref_air_density"] # CHANGE
-
-        rotor_effective_velocities = rotor_velocity_air_density_correction(
-            velocities=rotor_average_velocities,
-            air_density=air_density,
-            ref_air_density=power_thrust_table["ref_air_density"]
-        )
-
-        pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
-            rotor_effective_velocities,
-            yaw_angles,
-            tilt_angles,
-            air_density,
-            R,
-            shear,
-            sigma,
-            cd,
-            cl_alfa,
-            beta,
-            power_setpoints,
-            power_thrust_table
-        )
-
-        num_rows, num_cols = tilt_angles.shape
-
-        (average_velocity(velocities))
-        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
-        cosMu = (np.cos(MU))
-        sinMu = (np.sin(MU))
-        # u = np.squeeze(u)
-        theta_array = (np.deg2rad(pitch_out+beta))
-        tsr_array = (tsr_out)
-
-        x0 = 0.2
-
-        thrust_coefficient1 = np.zeros_like(average_velocity(velocities))
-        for i in np.arange(num_rows):
-            yaw  = yaw_angles[i,:]
-            tilt = tilt_angles[i,:]
-            cMu  = cosMu[i,:]
-            sMu  = sinMu[i,:]
-            Mu   = MU[i,:]
-            for j in np.arange(num_cols):
-                data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
-                        (theta_array[i,j]),Mu[j])
-                ct = fsolve(get_ct, x0, args=data)
-                thrust_coefficient1[i,j] = np.squeeze(np.clip(ct, 0.0001, 0.9999))
-
-
-        yaw_angles = np.zeros_like(yaw_angles)
-        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
-        cosMu = (np.cos(MU))
-        sinMu = (np.sin(MU))
-
-        thrust_coefficient0 = np.zeros_like(average_velocity(velocities))
-
-        for i in np.arange(num_rows):
-            yaw  = yaw_angles[i,:]
-            tilt = tilt_angles[i,:]
-            cMu  = cosMu[i,:]
-            sMu  = sinMu[i,:]
-            Mu   = MU[i,:]
-            for j in np.arange(num_cols):
-                data = (sigma,cd,cl_alfa,yaw[j],tilt[j],shear[i,j],cMu[j],sMu[j],(tsr_array[i,j]),
-                        (theta_array[i,j]),Mu[j])
-                ct = fsolve(get_ct, x0, args=data)
-                thrust_coefficient0[i,j] = np.squeeze(ct) #np.clip(ct, 0.0001, 0.9999)
-
-        ############################################################################
-
-        ratio = thrust_coefficient1/thrust_coefficient0
-
-        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / "LUT_iea15MW.npz"
-        LUT         = np.load(lut_file)
-        ct_i = LUT['ct_lut']
-        pitch_i = LUT['pitch_lut']
-        tsr_i = LUT['tsr_lut']
-        interp_lut = RegularGridInterpolator(
-            (tsr_i,pitch_i),
-            ct_i,
-            bounds_error=False,
-            fill_value=None
-        )#*0.9722085500886761)
-
-
-        thrust_coefficient = np.zeros_like(average_velocity(velocities))
-
-        for i in np.arange(num_rows):
-            for j in np.arange(num_cols):
-                ct_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
-                thrust_coefficient[i,j] = np.squeeze(ct_interp*ratio[i,j])
-
-        return thrust_coefficient
-
-    def axial_induction(
-        power_thrust_table: dict,
-        velocities: NDArrayFloat,
-        yaw_angles: NDArrayFloat,
-        tilt_angles: NDArrayFloat,
-        power_setpoints: NDArrayFloat,
-        tilt_interp: NDArrayObject,
-        average_method: str = "cubic-mean",
-        cubature_weights: NDArrayFloat | None = None,
-        correct_cp_ct_for_tilt: bool = False,
-        **_ # <- Allows other models to accept other keyword arguments
-    ):
-        num_rows, num_cols = tilt_angles.shape
-        thrust_coefficients = TUMLossTurbine.thrust_coefficient(
-            power_thrust_table=power_thrust_table,
-            velocities=velocities,
-            yaw_angles=yaw_angles,
-            tilt_angles=tilt_angles,
-            power_setpoints=power_setpoints,
-            tilt_interp=tilt_interp,
-            average_method=average_method,
-            cubature_weights=cubature_weights,
-            correct_cp_ct_for_tilt=correct_cp_ct_for_tilt,
-        )
-
-        yaw_angles = np.zeros_like(yaw_angles)
-        MU = np.arccos(np.cos(np.deg2rad((yaw_angles)))*np.cos(np.deg2rad((tilt_angles))))
-        sinMu = (np.sin(MU))
-        sMu = sinMu[-1,:]
-
-        axial_induction = np.zeros((num_rows, num_cols))
-        for i in np.arange(num_rows):
-            for j in np.arange(num_cols):
-                ct = thrust_coefficients[i,j]
-                a  = (1- ( (1+np.sqrt(1-ct-1/16*ct**2*sMu[j]**2))/(2*(1+1/16*ct*sMu[j]**2))) )
-                axial_induction[i,j] = np.squeeze(np.clip(a, 0.0001, 0.9999))
-
-        return axial_induction
 
 def find_cp(sigma,cd,cl_alfa,gamma,delta,k,cosMu,sinMu,tsr,theta,MU,ct):
     #add a small misalignment in case MU = 0 to avoid division by 0
