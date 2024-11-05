@@ -905,8 +905,10 @@ class TUMLossTurbine(BaseOperationModel):
                 cp_interp = interp_lut(np.array([(tsr_array[i,j]),(pitch_out[i,j])]),method='cubic')
                 power_coefficient[i,j] = np.squeeze(cp_interp*ratio[i,j])
 
-        print('Tip speed ratio' + str(tsr_array))
-        print('Pitch out: ' + str(pitch_out))
+        # TODO: make printout optional?
+        if False:
+            print('Tip speed ratio' + str(tsr_array))
+            print('Pitch out: ' + str(pitch_out))
         power = (
             0.5*air_density*(rotor_effective_velocities)**3*np.pi*R**2
             *(power_coefficient)*power_thrust_table["generator_efficiency"]
