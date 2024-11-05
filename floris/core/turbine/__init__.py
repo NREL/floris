@@ -6,5 +6,5 @@ from floris.core.turbine.operation_models import (
     PeakShavingTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
-    TUMLossTurbine,
 )
+from floris.core.turbine.tum_operation_model import TUMLossTurbine
