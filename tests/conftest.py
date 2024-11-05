@@ -396,7 +396,7 @@ class SampleInputs:
             "rated_rpm": 12.1,
             "rotor_solidity": 0.05132,
             "generator_efficiency": 0.944,
-            "rated_power": 5.0e6,
+            "rated_power": 5000.0,
             "rotor_diameter": 126,
             "beta": -0.45891,
             "cd": 0.0040638,

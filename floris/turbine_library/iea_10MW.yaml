@@ -26,7 +26,7 @@ power_thrust_table:
   rotor_solidity: 0.03500415472147307
   rated_rpm:  8.6
   generator_efficiency: 0.944
-  rated_power: 10.0e6
+  rated_power: 10000.0
   rotor_diameter: 198
   beta: -3.8233819218614817
   cd:  0.004612981322772105
