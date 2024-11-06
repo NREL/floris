@@ -1,28 +1,25 @@
 
-from scipy.interpolate import interp1d
-
-from floris.core.turbine.operation_models import BaseOperationModel
-from floris.type_dec import (
-    NDArrayFloat,
-    NDArrayObject,
-)
-from floris.core.rotor_velocity import (
-    average_velocity,
-    # compute_tilt_angles_for_floating_turbines,
-    rotor_velocity_air_density_correction,
-)
-
-import numpy as np
-
 from dataclasses import dataclass
-from typing import Any, Callable, List, Protocol, Tuple
+from typing import (
+    Any,
+    Callable,
+    List,
+    Optional,
+    Protocol,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 from numpy.typing import ArrayLike
+from scipy.interpolate import interp1d
 
-
-from dataclasses import dataclass
-from typing import Optional, Union
+from floris.core.rotor_velocity import (
+    average_velocity,
+    rotor_velocity_air_density_correction,
+)
+from floris.core.turbine.operation_models import BaseOperationModel
+from floris.type_dec import NDArrayFloat
 
 
 def mit_rotor_axial_induction(Cts: NDArrayFloat, yaw_angles: NDArrayFloat)-> NDArrayFloat:
@@ -42,8 +39,6 @@ def mit_rotor_axial_induction(Cts: NDArrayFloat, yaw_angles: NDArrayFloat)-> NDA
     sol = Heck()(Ctprime, np.deg2rad(yaw_angles))
 
     return sol.an
-
-
 
 def mit_rotor_velocity_yaw_correction(
     Cts: NDArrayFloat,
@@ -66,11 +61,9 @@ def mit_rotor_velocity_yaw_correction(
     Returns: NDArrayFloat: corrected rotor effective wind speed(s) of the yawed rotor.
     """
     Ctprime = - 4 * (Cts + 2 * np.sqrt(1 - Cts) - 2) / Cts
-
     ratio = (1 + 0.25 * Ctprime) * (1 - axial_inductions) * np.cos(np.deg2rad(yaw_angles))
 
     return ratio * rotor_effective_velocities
-
 
 class MITTurbine(BaseOperationModel):
     """
@@ -95,7 +88,6 @@ class MITTurbine(BaseOperationModel):
         )
 
         # Compute the power-effective wind speed across the rotor
-        # Raf: what makes this "power-effective"?
         rotor_average_velocities = average_velocity(
             velocities=velocities,
             method=average_method,
@@ -134,7 +126,6 @@ class MITTurbine(BaseOperationModel):
 
         return power
 
-
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -154,7 +145,6 @@ class MITTurbine(BaseOperationModel):
         )
 
         # Compute the power-effective wind speed across the rotor
-        # Raf: what makes this "power-effective"?
         rotor_average_velocities = average_velocity(
             velocities=velocities,
             method=average_method,
@@ -181,7 +171,9 @@ class MITTurbine(BaseOperationModel):
         # TODO: Tilt correction?
 
         # Compute thrust coefficient
-        yawed_thrust_coefficients = thrust_coefficient_interpolator(corrected_rotor_effective_velocities) 
+        yawed_thrust_coefficients = thrust_coefficient_interpolator(
+            corrected_rotor_effective_velocities
+        )
 
         return yawed_thrust_coefficients
 
@@ -204,7 +196,6 @@ class MITTurbine(BaseOperationModel):
         )
 
         # Compute the power-effective wind speed across the rotor
-        # Raf: what makes this "power-effective"?
         rotor_average_velocities = average_velocity(
             velocities=velocities,
             method=average_method,
@@ -222,8 +213,6 @@ class MITTurbine(BaseOperationModel):
         axial_inductions = mit_rotor_axial_induction(thrust_coefficients, yaw_angles)
 
         return axial_inductions
-
-
 
 @dataclass
 class MomentumSolution:
@@ -251,7 +240,6 @@ class MomentumSolution:
         """Returns the power coefficient Cp."""
         return self.Ctprime * ((1 - self.an) * np.cos(self.yaw)) ** 3
 
-
 class LimitedHeck():
     """
     Solves the limiting case when v_4 << u_4. (Eq. 2.19, 2.20). Also takes Numpy
@@ -277,7 +265,6 @@ class LimitedHeck():
         dp = np.zeros_like(a)
         x0 = np.inf * np.ones_like(a)
         return MomentumSolution(Ctprime, yaw, a, u4, v4, x0, dp)
-
 
 @fixedpointiteration(max_iter=500, tolerance=0.00001, relaxation=0.1)
 class Heck():
