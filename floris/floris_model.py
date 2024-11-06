@@ -1542,10 +1542,7 @@ class FlorisModel(LoggingManager):
                 # Set a single one here, then, and return
                 turbine_type = self.core.farm.turbine_definitions[0]
                 turbine_type["operation_model"] = operation_model
-                self.set(
-                    turbine_type=[turbine_type],
-                    reference_wind_height=self.core.flow_field.reference_wind_height
-                )
+                self.set(turbine_type=[turbine_type])
                 return
             else:
                 operation_model = [operation_model]*self.core.farm.n_turbines
@@ -1564,10 +1561,7 @@ class FlorisModel(LoggingManager):
             )
             turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
 
-        self.set(
-            turbine_type=turbine_type_list,
-            reference_wind_height=self.core.flow_field.reference_wind_height
-        )
+        self.set(turbine_type=turbine_type_list)
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object"""
