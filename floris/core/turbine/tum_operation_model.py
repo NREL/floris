@@ -445,6 +445,14 @@ class TUMLossTurbine(BaseOperationModel):
         Called to evaluate the vertical (linear) shear that each rotor experience, based on the
         inflow velocity. This allows to make the power curve asymmetric w.r.t. yaw misalignment.
         """
+        # Check that there is a vertical profile to compute a shear profile for. If not,
+        # raise an error.
+        if velocities.shape[3] == 1:
+            raise ValueError((
+                "The TUMLossModel compute a local shear based on inflow wind speeds across the "
+                "rotor. The provided velocities does not contain a vertical profile."
+                " This can occur if n_grid is set to 1 in the FLORIS input yaml."
+            ))
         num_rows, num_cols = velocities.shape[:2]
         shear = np.zeros((num_rows, num_cols))
         for i in np.arange(num_rows):
@@ -890,7 +898,7 @@ class TUMLossTurbine(BaseOperationModel):
 
                 # pitch and tsr will be used to compute Cp and Ct
                 pitch_out[i, j] = np.squeeze(pitch_out0)
-                tsr_out[i, j] = tsr_outO
+                tsr_out[i, j] = np.squeeze(tsr_outO)
 
         return pitch_out, tsr_out
 

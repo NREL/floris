@@ -252,3 +252,109 @@ def test_TUMLossTurbine_regression():
     assert np.allclose(power, power_base)
     assert np.allclose(thrust_coefficient, thrust_coefficient_base)
     assert np.allclose(axial_induction, axial_induction_base)
+
+def test_TUMLossTurbine_integration():
+    """
+    Test the TUMLossTurbine model with a range of wind speeds, and then
+    whether it works regardless of number of grid points.
+    """
+
+    n_turbines = 1
+    turbine_data = SampleInputs().turbine
+    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+
+    N_test = 20
+    tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
+    power_setpoints_nom = POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines))
+
+    # Check runs over a range of wind speeds
+    wind_speeds = np.linspace(1, 30, N_test)
+    wind_speeds = np.tile(wind_speeds[:,None,None,None], (1, 1, 3, 3))
+
+    power0 = TUMLossTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=0 * np.ones((N_test, n_turbines)),
+        power_setpoints=power_setpoints_nom,
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    ).squeeze()
+
+    power20 = TUMLossTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=20 * np.ones((N_test, n_turbines)),
+        power_setpoints=power_setpoints_nom,
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    ).squeeze()
+
+    assert (power0 - power20 >= -1e6).all()
+
+    # Won't compare; just checking runs as expected
+    TUMLossTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=0 * np.ones((N_test, n_turbines)),
+        power_setpoints=power_setpoints_nom,
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    ).squeeze()
+
+    TUMLossTurbine.thrust_coefficient(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=20 * np.ones((N_test, n_turbines)),
+        power_setpoints=power_setpoints_nom,
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    ).squeeze()
+
+    # Try a set of wind speeds for 5 grid points; then 2; then a single grid point
+    # without any shear
+    N_test = 1
+    n_turbines = 1
+    tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
+    power_setpoints_nom = POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines))
+
+
+    wind_speeds = 10.0 * np.ones((N_test, n_turbines, 5, 5))
+    power5gp = TUMLossTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=0 * np.ones((N_test, n_turbines)),
+        power_setpoints=power_setpoints_nom,
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    ).squeeze()
+
+    wind_speeds = 10.0 * np.ones((N_test, n_turbines, 2, 2))
+    power2gp = TUMLossTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=0 * np.ones((N_test, n_turbines)),
+        power_setpoints=power_setpoints_nom,
+        tilt_angles=tilt_angles_nom,
+        tilt_interp=None
+    ).squeeze()
+
+    assert np.allclose(power5gp, power2gp)
+
+    # No shear information for the TUM model to use
+    wind_speeds = 10.0 * np.ones((N_test, n_turbines, 1, 1))
+    with pytest.raises(ValueError):
+        TUMLossTurbine.power(
+            power_thrust_table=turbine_data["power_thrust_table"],
+            velocities=wind_speeds,
+            air_density=1.1,
+            yaw_angles=0 * np.ones((N_test, n_turbines)),
+            power_setpoints=power_setpoints_nom,
+            tilt_angles=tilt_angles_nom,
+            tilt_interp=None
+        )
