@@ -44,8 +44,8 @@ for op_model in op_models:
 
 # Plot the results
 fig, ax = plt.subplots()
-colors = ["C0", "k", "r"]
-linestyles = ["solid", "dashed", "dotted"]
+colors = ["C0", "k"]
+linestyles = ["solid", "dashed"]
 for key, c, ls in zip(results, colors, linestyles):
     central_power = results[key][yaw_angles.squeeze() == 0]
     ax.plot(yaw_angles.squeeze(), results[key]/central_power, label=key, color=c, linestyle=ls)
