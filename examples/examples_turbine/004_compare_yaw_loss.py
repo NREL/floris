@@ -20,7 +20,7 @@ yaw_max = 30  # Maximum yaw angle to test
 # Set up the yaw angle sweep
 yaw_angles = np.zeros((N, 1))
 yaw_angles[:, 0] = np.linspace(-yaw_max, yaw_max, N)
-print(yaw_angles.shape)
+# print(yaw_angles.shape)
 
 
 def evaluate_yawed_power(wsp: float, op_model: str) -> float:

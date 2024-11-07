@@ -59,8 +59,9 @@ def mit_rotor_velocity_yaw_correction(
     Args
         Cts (NDArrayFloat): Yaw-aligned thrust coefficient(s).
         yaw_angles (NDArrayFloat): Rotor yaw angle(s) in degrees.
-        axial_induction (NDArrayFloat): Rotor axial induction(s).
-        rotor_effective_velocities (NDArrayFloat) rotor effective wind speed(s) at the rotor. .
+        axial_induction (NDArrayFloat): Rotor axial induction(s); this should follow the MIT model
+            yaw dependent derivation and probably gotten from `mit_rotor_axial_induction`.
+        rotor_effective_velocities (NDArrayFloat) rotor effective wind speed(s) at the rotor.
 
     Returns: NDArrayFloat: corrected rotor effective wind speed(s) of the yawed rotor.
     """
