@@ -9,8 +9,8 @@ from floris.core.turbine.operation_models import (
     POWER_SETPOINT_DEFAULT,
     SimpleDeratingTurbine,
     SimpleTurbine,
-    MITTurbine
 )
+from floris.core.turbine.mit_turbine import MITTurbine
 from floris.utilities import cosd
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
