@@ -206,13 +206,10 @@ class TUMLossTurbine(BaseOperationModel):
         )
 
         power_coefficient = np.zeros_like(average_velocity(velocities))
-        # TODO: see if this can be vectorized
-        for i in np.arange(n_findex):
-            for j in np.arange(n_turbines):
-                cp_interp = interp_lut(
-                    np.array([(tsr_array[i, j]), (pitch_out[i, j])]), method="cubic"
-                )
-                power_coefficient[i, j] = np.squeeze(cp_interp * ratio[i, j])
+        cp_interp = interp_lut(
+            np.concatenate((tsr_array[:,:,None], pitch_out[:,:,None]), axis=2), method="cubic"
+        )
+        power_coefficient = cp_interp * ratio
 
         # TODO: make printout optional?
         if False:
@@ -224,7 +221,7 @@ class TUMLossTurbine(BaseOperationModel):
             * (rotor_effective_velocities)**3
             * np.pi
             * R**2
-            * (power_coefficient)
+            * power_coefficient
             * power_thrust_table["generator_efficiency"]
         )
         return power
@@ -369,14 +366,10 @@ class TUMLossTurbine(BaseOperationModel):
         )  # *0.9722085500886761)
 
         # Interpolate and apply ratio to determine thrust coefficient
-        # TODO: see if this can be vectorized
-        thrust_coefficient = np.zeros_like(average_velocity(velocities))
-        for i in np.arange(n_findex):
-            for j in np.arange(n_turbines):
-                ct_interp = interp_lut(
-                    np.array([(tsr_array[i, j]), (pitch_out[i, j])]), method="cubic"
-                )
-                thrust_coefficient[i, j] = np.squeeze(ct_interp * ratio[i, j])
+        ct_interp = interp_lut(
+            np.concatenate((tsr_array[:,:,None], pitch_out[:,:,None]), axis=2), method="cubic"
+        )
+        thrust_coefficient = ct_interp * ratio
 
         return thrust_coefficient
 
@@ -411,20 +404,14 @@ class TUMLossTurbine(BaseOperationModel):
         MU = np.arccos(
             np.cos(np.deg2rad((yaw_angles))) * np.cos(np.deg2rad((tilt_angles)))
         )
-        sinMu = np.sin(MU)
-        sMu = sinMu[-1, :] # all the same in this case anyway (since yaw zero)
+        sinMu = np.sin(MU) # all the same in this case anyway (since yaw zero)
 
-        # TODO: see if this can be vectorized
-        axial_induction = np.zeros((n_findex, n_turbines))
-        for i in np.arange(n_findex):
-            for j in np.arange(n_turbines):
-                ct = thrust_coefficients[i, j]
-                # Eq. (25a) from Tamaro et al.
-                a = 1 - (
-                    (1 + np.sqrt(1 - ct - 1 / 16 * ct**2 * sMu[j] ** 2))
-                    / (2 * (1 + 1 / 16 * ct * sMu[j] ** 2))
-                )
-                axial_induction[i, j] = np.squeeze(np.clip(a, 0.0001, 0.9999))
+        # Eq. (25a) from Tamaro et al.
+        a = 1 - (
+            (1 + np.sqrt(1 - thrust_coefficients - 1 / 16 * thrust_coefficients**2 * sinMu ** 2))
+            / (2 * (1 + 1 / 16 * thrust_coefficients * sinMu ** 2))
+        )
+        axial_induction = np.clip(a, 0.0001, 0.9999)
 
         return axial_induction
 
@@ -784,20 +771,8 @@ class TUMLossTurbine(BaseOperationModel):
 
         n_findex, n_turbines = tilt_angles.shape
 
-        # TODO: can this be vectorized?
-        omega_rated = np.zeros_like(rotor_average_velocities)
-        u_rated = np.zeros_like(rotor_average_velocities)
-        for i in np.arange(n_findex):
-            for j in np.arange(n_turbines):
-                omega_rated[i, j] = (
-                    np.interp(power_demanded[i, j], pow_lut_omega, omega_lut_pow)
-                    * np.pi
-                    / 30  # rad/s
-                )
-                u_rated[i, j] = (
-                    (power_demanded[i, j] / (0.5 * air_density * np.pi * R**2 * max_cp))
-                    ** (1 / 3)
-                )
+        omega_rated = np.interp(power_demanded, pow_lut_omega, omega_lut_pow) * np.pi / 30  # rad/s
+        u_rated = (power_demanded / (0.5 * air_density * np.pi * R**2 * max_cp)) ** (1 / 3)
 
         pitch_out = np.zeros_like(rotor_average_velocities)
         tsr_out = np.zeros_like(rotor_average_velocities)
@@ -981,9 +956,9 @@ def get_ct(x, *data):
         (1 + np.sqrt(1 - x - 1 / 16 * x**2 * sinMu**2))
         / (2 * (1 + 1 / 16 * x * sinMu**2))
     )
-    
+
     k_1s = -1 * (15 * np.pi / 32 * np.tan((MU + sinMu * (x / 2)) / 2))
-    
+
     I1 = -(
         np.pi
         * cosMu
@@ -992,7 +967,7 @@ def get_ct(x, *data):
         + (CD * CG * cosMu * k_1s * SD * a * k * np.pi * (2 * tsr - CD * SG * k))
         / (8 * sinMu)
     ) / (2 * np.pi)
-    
+
     I2 = (
         np.pi
         * sinMu**2
