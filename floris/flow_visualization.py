@@ -759,8 +759,9 @@ class VelocityProfilesFigure():
                 'color': 'k',
                 'linewidth': 1.1
         }
-        kwargs = default_params | kwargs
+        params = copy.deepcopy(default_params)
+        params.update(kwargs)
 
         for ax in self.axs[row]:
             for coordinate in ref_lines_D:
-                ax.plot([0.0, 1.0], [coordinate, coordinate], **kwargs)
+                ax.plot([0.0, 1.0], [coordinate, coordinate], **params)
