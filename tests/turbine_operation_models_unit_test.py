@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from floris.core.turbine.mit_turbine import MITTurbine
 from floris.core.turbine.operation_models import (
     AWCTurbine,
     CosineLossTurbine,
@@ -10,7 +11,6 @@ from floris.core.turbine.operation_models import (
     SimpleDeratingTurbine,
     SimpleTurbine,
 )
-from floris.core.turbine.mit_turbine import MITTurbine
 from floris.utilities import cosd
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
@@ -715,4 +715,3 @@ def test_MITTurbine():
         tilt_interp=None
     )
     assert test_power < baseline_power
-
