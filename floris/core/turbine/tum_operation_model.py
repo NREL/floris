@@ -19,6 +19,7 @@ from floris.type_dec import (
     NDArrayFloat,
     NDArrayObject,
 )
+from floris.utilities import cosd, sind
 
 
 @define
@@ -100,9 +101,7 @@ class TUMLossTurbine(BaseOperationModel):
 
         ### Solve for the power in yawed conditions
         # Compute overall misalignment (eq. (1) in Tamaro et al.)
-        MU = np.arccos(
-            np.cos(np.deg2rad((yaw_angles))) * np.cos(np.deg2rad((tilt_angles)))
-        )
+        MU = np.arccos(cosd(yaw_angles) * cosd(tilt_angles))
         cosMu = np.cos(MU)
         sinMu = np.sin(MU)
         p = np.zeros_like(average_velocity(velocities))
@@ -147,9 +146,7 @@ class TUMLossTurbine(BaseOperationModel):
         ### Solve for the power in non-yawed conditions
         yaw_angles = np.zeros_like(yaw_angles)
         # Compute overall misalignment (eq. (1) in Tamaro et al.)
-        MU = np.arccos(
-            np.cos(np.deg2rad((yaw_angles))) * np.cos(np.deg2rad((tilt_angles)))
-        )
+        MU = np.arccos(cosd(yaw_angles) * cosd(tilt_angles))
         cosMu = np.cos(MU)
         sinMu = np.sin(MU)
 
@@ -298,9 +295,7 @@ class TUMLossTurbine(BaseOperationModel):
 
         ### Solve for the thrust coefficient in yawed conditions
         # Compute overall misalignment (eq. (1) in Tamaro et al.)
-        MU = np.arccos(
-            np.cos(np.deg2rad((yaw_angles))) * np.cos(np.deg2rad((tilt_angles)))
-        )
+        MU = np.arccos(cosd(yaw_angles) * cosd(tilt_angles))
         cosMu = np.cos(MU)
         sinMu = np.sin(MU)
         thrust_coefficient1 = np.zeros_like(average_velocity(velocities))
@@ -325,9 +320,7 @@ class TUMLossTurbine(BaseOperationModel):
 
         ### Resolve thrust coefficient in non-yawed conditions
         yaw_angles = np.zeros_like(yaw_angles)
-        MU = np.arccos(
-            np.cos(np.deg2rad((yaw_angles))) * np.cos(np.deg2rad((tilt_angles)))
-        )
+        MU = np.arccos(cosd(yaw_angles) * cosd(tilt_angles))
         cosMu = np.cos(MU)
         sinMu = np.sin(MU)
 
@@ -401,9 +394,7 @@ class TUMLossTurbine(BaseOperationModel):
         # TODO: should the axial induction calculation be based on MU for zero yaw (as it is
         # currently) or should this be the actual yaw angle?
         yaw_angles = np.zeros_like(yaw_angles)
-        MU = np.arccos(
-            np.cos(np.deg2rad((yaw_angles))) * np.cos(np.deg2rad((tilt_angles)))
-        )
+        MU = np.arccos(cosd(yaw_angles) * cosd(tilt_angles))
         sinMu = np.sin(MU) # all the same in this case anyway (since yaw zero)
 
         # Eq. (25a) from Tamaro et al.
@@ -515,7 +506,7 @@ class TUMLossTurbine(BaseOperationModel):
             torque_nm = np.interp(omega, omega_lut_torque, torque_lut_omega)
 
             # Yawed case
-            mu = np.arccos(np.cos(np.deg2rad(gamma)) * np.cos(np.deg2rad(tilt)))
+            mu = np.arccos(cosd(gamma) * cosd(tilt))
             data = (
                 sigma,
                 cd,
@@ -549,7 +540,7 @@ class TUMLossTurbine(BaseOperationModel):
             )
 
             # Unyawed case
-            mu = np.arccos(np.cos(np.deg2rad(0)) * np.cos(np.deg2rad(tilt)))
+            mu = np.arccos(cosd(0) * cosd(tilt))
             data = (
                 sigma,
                 cd,
@@ -630,7 +621,7 @@ class TUMLossTurbine(BaseOperationModel):
             )
 
             # Yawed case
-            mu = np.arccos(np.cos(np.deg2rad(gamma)) * np.cos(np.deg2rad(tilt)))
+            mu = np.arccos(cosd(gamma) * cosd(tilt))
             data = (
                 sigma,
                 cd,
@@ -664,7 +655,7 @@ class TUMLossTurbine(BaseOperationModel):
             )
 
             # Unyawed case
-            mu = np.arccos(np.cos(np.deg2rad(0)) * np.cos(np.deg2rad(tilt)))
+            mu = np.arccos(cosd(0) * cosd(tilt))
             data = (
                 sigma,
                 cd,
@@ -783,10 +774,10 @@ class TUMLossTurbine(BaseOperationModel):
                 u_v = rotor_average_velocities[i, j]
                 if u_v > u_rated[i, j]:
                     tsr_v = (
-                        omega_rated[i, j] * R / u_v * np.cos(np.deg2rad(yaw_angles[i, j])) ** 0.5
+                        omega_rated[i, j] * R / u_v * cosd(yaw_angles[i, j]) ** 0.5
                     )
                 else:
-                    tsr_v = tsr_opt * np.cos(np.deg2rad(yaw_angles[i, j]))
+                    tsr_v = tsr_opt * cosd(yaw_angles[i, j])
                 if Region2andAhalf:  # fix for interpolation
                     omega_lut_torque[-1] = omega_lut_torque[-1] + 1e-2
                     omega_lut_pow[-1] = omega_lut_pow[-1] + 1e-2
@@ -876,10 +867,10 @@ class TUMLossTurbine(BaseOperationModel):
             (1 + np.sqrt(1 - ct - 1 / 16 * sinMu**2 * ct**2))
             / (2 * (1 + 1 / 16 * ct * sinMu**2))
         )
-        SG = np.sin(np.deg2rad(gamma))
-        CG = np.cos(np.deg2rad(gamma))
-        SD = np.sin(np.deg2rad(delta))
-        CD = np.cos(np.deg2rad(delta))
+        SG = sind(gamma)
+        CG = cosd(gamma)
+        SD = sind(delta)
+        CD = cosd(delta)
         k_1s = -1 * (15 * np.pi / 32 * np.tan((MU + sinMu * (ct / 2)) / 2))
 
         p = sigma * (
@@ -946,10 +937,10 @@ class TUMLossTurbine(BaseOperationModel):
             MU = 1e-6
             sinMu = np.sin(MU)
             cosMu = np.cos(MU)
-        CD = np.cos(np.deg2rad(delta))
-        CG = np.cos(np.deg2rad(gamma))
-        SD = np.sin(np.deg2rad(delta))
-        SG = np.sin(np.deg2rad(gamma))
+        CD = cosd(delta)
+        CG = cosd(gamma)
+        SD = sind(delta)
+        SG = sind(gamma)
 
         # Axial induction
         a = 1 - (
