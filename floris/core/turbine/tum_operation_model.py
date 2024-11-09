@@ -123,10 +123,10 @@ class TUMLossTurbine(BaseOperationModel):
                     (theta_array[i, j]),
                     MU[i, j],
                 )
-                ct, info, ier, msg = fsolve(get_ct, x0, args=data, full_output=True)
+                ct, info, ier, msg = fsolve(TUMLossTurbine.get_ct, x0, args=data, full_output=True)
                 if ier == 1:
                     p[i, j] = np.squeeze(
-                        find_cp(
+                        TUMLossTurbine.find_cp(
                             sigma,
                             cd,
                             cl_alfa,
@@ -170,10 +170,10 @@ class TUMLossTurbine(BaseOperationModel):
                     (theta_array[i, j]),
                     MU[i, j],
                 )
-                ct, info, ier, msg = fsolve(get_ct, x0, args=data, full_output=True)
+                ct, info, ier, msg = fsolve(TUMLossTurbine.get_ct, x0, args=data, full_output=True)
                 if ier == 1:
                     p0[i, j] = np.squeeze(
-                        find_cp(
+                        TUMLossTurbine.find_cp(
                             sigma,
                             cd,
                             cl_alfa,
@@ -320,7 +320,7 @@ class TUMLossTurbine(BaseOperationModel):
                     (theta_array[i, j]),
                     MU[i, j],
                 )
-                ct = fsolve(get_ct, x0, args=data) # Solves eq. (25) from Tamaro et al.
+                ct = fsolve(TUMLossTurbine.get_ct, x0, args=data) # Solves eq. (25)
                 thrust_coefficient1[i, j] = np.squeeze(np.clip(ct, 0.0001, 0.9999))
 
         ### Resolve thrust coefficient in non-yawed conditions
@@ -348,7 +348,7 @@ class TUMLossTurbine(BaseOperationModel):
                     (theta_array[i, j]),
                     MU[i, j],
                 )
-                ct = fsolve(get_ct, x0, args=data) # Solves eq. (25) from Tamaro et al.
+                ct = fsolve(TUMLossTurbine.get_ct, x0, args=data) # Solves eq. (25)
                 thrust_coefficient0[i, j] = np.squeeze(ct)  # np.clip(ct, 0.0001, 0.9999)
 
         # Compute ratio of yawed to unyawed thrust coefficients
@@ -373,6 +373,7 @@ class TUMLossTurbine(BaseOperationModel):
 
         return thrust_coefficient
 
+    @staticmethod
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -385,7 +386,6 @@ class TUMLossTurbine(BaseOperationModel):
         correct_cp_ct_for_tilt: bool = False,
         **_,  # <- Allows other models to accept other keyword arguments
     ):
-        n_findex, n_turbines = tilt_angles.shape
         thrust_coefficients = TUMLossTurbine.thrust_coefficient(
             power_thrust_table=power_thrust_table,
             velocities=velocities,
@@ -531,9 +531,9 @@ class TUMLossTurbine(BaseOperationModel):
             )
             x0 = 0.1
             [ct, infodict, ier, mesg] = fsolve(
-                get_ct, x0, args=data, full_output=True, factor=0.1
+                TUMLossTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
             )
-            cp = find_cp(
+            cp = TUMLossTurbine.find_cp(
                 sigma,
                 cd,
                 cl_alfa,
@@ -565,9 +565,9 @@ class TUMLossTurbine(BaseOperationModel):
             )
             x0 = 0.1
             [ct, infodict, ier, mesg] = fsolve(
-                get_ct, x0, args=data, full_output=True, factor=0.1
+                TUMLossTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
             )
-            cp0 = find_cp(
+            cp0 = TUMLossTurbine.find_cp(
                 sigma,
                 cd,
                 cl_alfa,
@@ -646,9 +646,9 @@ class TUMLossTurbine(BaseOperationModel):
             )
             x0 = 0.1
             [ct, infodict, ier, mesg] = fsolve(
-                get_ct, x0, args=data, full_output=True, factor=0.1
+                TUMLossTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
             )
-            cp = find_cp(
+            cp = TUMLossTurbine.find_cp(
                 sigma,
                 cd,
                 cl_alfa,
@@ -680,9 +680,9 @@ class TUMLossTurbine(BaseOperationModel):
             )
             x0 = 0.1
             [ct, infodict, ier, mesg] = fsolve(
-                get_ct, x0, args=data, full_output=True, factor=0.1
+                TUMLossTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
             )
-            cp0 = find_cp(
+            cp0 = TUMLossTurbine.find_cp(
                 sigma,
                 cd,
                 cl_alfa,
@@ -865,34 +865,114 @@ class TUMLossTurbine(BaseOperationModel):
 
         return pitch_out, tsr_out
 
+    @staticmethod
+    def find_cp(sigma, cd, cl_alfa, gamma, delta, k, cosMu, sinMu, tsr, theta, MU, ct):
+        # add a small misalignment in case MU = 0 to avoid division by 0
+        if MU == 0:
+            MU = 1e-6
+            sinMu = np.sin(MU)
+            cosMu = np.cos(MU)
+        a = 1 - (
+            (1 + np.sqrt(1 - ct - 1 / 16 * sinMu**2 * ct**2))
+            / (2 * (1 + 1 / 16 * ct * sinMu**2))
+        )
+        SG = np.sin(np.deg2rad(gamma))
+        CG = np.cos(np.deg2rad(gamma))
+        SD = np.sin(np.deg2rad(delta))
+        CD = np.cos(np.deg2rad(delta))
+        k_1s = -1 * (15 * np.pi / 32 * np.tan((MU + sinMu * (ct / 2)) / 2))
 
-def find_cp(sigma, cd, cl_alfa, gamma, delta, k, cosMu, sinMu, tsr, theta, MU, ct):
-    # add a small misalignment in case MU = 0 to avoid division by 0
-    if MU == 0:
-        MU = 1e-6
-        sinMu = np.sin(MU)
-        cosMu = np.cos(MU)
-    a = 1 - (
-        (1 + np.sqrt(1 - ct - 1 / 16 * sinMu**2 * ct**2))
-        / (2 * (1 + 1 / 16 * ct * sinMu**2))
-    )
-    SG = np.sin(np.deg2rad(gamma))
-    CG = np.cos(np.deg2rad(gamma))
-    SD = np.sin(np.deg2rad(delta))
-    CD = np.cos(np.deg2rad(delta))
-    k_1s = -1 * (15 * np.pi / 32 * np.tan((MU + sinMu * (ct / 2)) / 2))
+        p = sigma * (
+            (
+                np.pi
+                * cosMu**2
+                * tsr
+                * cl_alfa
+                * (a - 1) ** 2
+                - (
+                    tsr
+                    * cd
+                    * np.pi
+                    * (
+                        CD**2 * CG**2 * SD**2 * k**2
+                        + 3 * CD**2 * SG**2 * k**2
+                        - 8 * CD * tsr * SG * k
+                        + 8 * tsr**2
+                    )
+                )
+                / 16
+                - (np.pi * tsr * sinMu**2 * cd) / 2
+                - (2 * np.pi * cosMu * tsr**2 * cl_alfa * theta) / 3
+                + (np.pi * cosMu**2 * k_1s**2 * tsr * a**2 * cl_alfa) / 4
+                + (2 * np.pi * cosMu * tsr**2 * a * cl_alfa * theta) / 3
+                + (2 * np.pi * CD * cosMu * tsr * SG * cl_alfa * k * theta) / 3
+                + (
+                    (
+                        CD**2 * cosMu**2 * tsr * cl_alfa * k**2 * np.pi * (a - 1)**2
+                        * (CG**2 * SD**2 + SG**2)
+                    )
+                    / (4 * sinMu**2)
+                )
+                - (2 * np.pi * CD * cosMu * tsr * SG * a * cl_alfa * k * theta) / 3
+                + (
+                    (
+                        CD**2 * cosMu**2 * k_1s**2 * tsr * a**2 * cl_alfa * k**2 * np.pi
+                        * (3 * CG**2 * SD**2 + SG**2)
+                    )
+                    / (24 * sinMu**2)
+                )
+                - (np.pi * CD * CG * cosMu**2 * k_1s * tsr * SD * a * cl_alfa * k) / sinMu
+                + (np.pi * CD * CG * cosMu**2 * k_1s * tsr * SD * a**2 * cl_alfa * k)
+                / sinMu
+                + (np.pi * CD * CG * cosMu * k_1s * tsr**2 * SD * a * cl_alfa * k * theta)
+                / (5 * sinMu)
+                - (np.pi * CD**2 * CG * cosMu * k_1s * tsr * SD * SG * a * cl_alfa * k**2 * theta)
+                / (10 * sinMu)
+            )
+            / (2 * np.pi)
+        )
+        return p
 
-    p = sigma * (
-        (
+    @staticmethod
+    def get_ct(x, *data):
+        """
+        System of equations for Ct, as represented in Eq. (25) of Tamaro et al.
+        x is a stand-in variable for Ct, which a numerical solver will solve for.
+        data is a tuple of input parameters to the system of equations to solve.
+        """
+        sigma, cd, cl_alfa, gamma, delta, k, cosMu, sinMu, tsr, theta, MU = data
+        # Add a small misalignment in case MU = 0 to avoid division by 0
+        if MU == 0:
+            MU = 1e-6
+            sinMu = np.sin(MU)
+            cosMu = np.cos(MU)
+        CD = np.cos(np.deg2rad(delta))
+        CG = np.cos(np.deg2rad(gamma))
+        SD = np.sin(np.deg2rad(delta))
+        SG = np.sin(np.deg2rad(gamma))
+
+        # Axial induction
+        a = 1 - (
+            (1 + np.sqrt(1 - x - 1 / 16 * x**2 * sinMu**2))
+            / (2 * (1 + 1 / 16 * x * sinMu**2))
+        )
+
+        k_1s = -1 * (15 * np.pi / 32 * np.tan((MU + sinMu * (x / 2)) / 2))
+
+        I1 = -(
             np.pi
-            * cosMu**2
-            * tsr
-            * cl_alfa
-            * (a - 1) ** 2
-            - (
-                tsr
-                * cd
-                * np.pi
+            * cosMu
+            * (tsr - CD * SG * k)
+            * (a - 1)
+            + (CD * CG * cosMu * k_1s * SD * a * k * np.pi * (2 * tsr - CD * SG * k))
+            / (8 * sinMu)
+        ) / (2 * np.pi)
+
+        I2 = (
+            np.pi
+            * sinMu**2
+            + (
+                np.pi
                 * (
                     CD**2 * CG**2 * SD**2 * k**2
                     + 3 * CD**2 * SG**2 * k**2
@@ -900,87 +980,7 @@ def find_cp(sigma, cd, cl_alfa, gamma, delta, k, cosMu, sinMu, tsr, theta, MU, c
                     + 8 * tsr**2
                 )
             )
-            / 16
-            - (np.pi * tsr * sinMu**2 * cd) / 2
-            - (2 * np.pi * cosMu * tsr**2 * cl_alfa * theta) / 3
-            + (np.pi * cosMu**2 * k_1s**2 * tsr * a**2 * cl_alfa) / 4
-            + (2 * np.pi * cosMu * tsr**2 * a * cl_alfa * theta) / 3
-            + (2 * np.pi * CD * cosMu * tsr * SG * cl_alfa * k * theta) / 3
-            + (
-                (
-                    CD**2 * cosMu**2 * tsr * cl_alfa * k**2 * np.pi * (a - 1)**2
-                    * (CG**2 * SD**2 + SG**2)
-                )
-                / (4 * sinMu**2)
-            )
-            - (2 * np.pi * CD * cosMu * tsr * SG * a * cl_alfa * k * theta) / 3
-            + (
-                (
-                    CD**2 * cosMu**2 * k_1s**2 * tsr * a**2 * cl_alfa * k**2 * np.pi
-                    * (3 * CG**2 * SD**2 + SG**2)
-                )
-                / (24 * sinMu**2)
-            )
-            - (np.pi * CD * CG * cosMu**2 * k_1s * tsr * SD * a * cl_alfa * k) / sinMu
-            + (np.pi * CD * CG * cosMu**2 * k_1s * tsr * SD * a**2 * cl_alfa * k)
-            / sinMu
-            + (np.pi * CD * CG * cosMu * k_1s * tsr**2 * SD * a * cl_alfa * k * theta)
-            / (5 * sinMu)
-            - (np.pi * CD**2 * CG * cosMu * k_1s * tsr * SD * SG * a * cl_alfa * k**2 * theta)
-            / (10 * sinMu)
-        )
-        / (2 * np.pi)
-    )
-    return p
+            / 12
+        ) / (2 * np.pi)
 
-
-def get_ct(x, *data):
-    """
-    System of equations for Ct, as represented in Eq. (25) of Tamaro et al.
-    x is a stand-in variable for Ct, which a numerical solver will solve for.
-    data is a tuple of input parameters to the system of equations to solve.
-    """
-    sigma, cd, cl_alfa, gamma, delta, k, cosMu, sinMu, tsr, theta, MU = data
-    # Add a small misalignment in case MU = 0 to avoid division by 0
-    if MU == 0:
-        MU = 1e-6
-        sinMu = np.sin(MU)
-        cosMu = np.cos(MU)
-    CD = np.cos(np.deg2rad(delta))
-    CG = np.cos(np.deg2rad(gamma))
-    SD = np.sin(np.deg2rad(delta))
-    SG = np.sin(np.deg2rad(gamma))
-
-    # Axial induction
-    a = 1 - (
-        (1 + np.sqrt(1 - x - 1 / 16 * x**2 * sinMu**2))
-        / (2 * (1 + 1 / 16 * x * sinMu**2))
-    )
-
-    k_1s = -1 * (15 * np.pi / 32 * np.tan((MU + sinMu * (x / 2)) / 2))
-
-    I1 = -(
-        np.pi
-        * cosMu
-        * (tsr - CD * SG * k)
-        * (a - 1)
-        + (CD * CG * cosMu * k_1s * SD * a * k * np.pi * (2 * tsr - CD * SG * k))
-        / (8 * sinMu)
-    ) / (2 * np.pi)
-
-    I2 = (
-        np.pi
-        * sinMu**2
-        + (
-            np.pi
-            * (
-                CD**2 * CG**2 * SD**2 * k**2
-                + 3 * CD**2 * SG**2 * k**2
-                - 8 * CD * tsr * SG * k
-                + 8 * tsr**2
-            )
-        )
-        / 12
-    ) / (2 * np.pi)
-
-    return (sigma * (cd + cl_alfa) * (I1) - sigma * cl_alfa * theta * (I2)) - x
+        return (sigma * (cd + cl_alfa) * (I1) - sigma * cl_alfa * theta * (I2)) - x
