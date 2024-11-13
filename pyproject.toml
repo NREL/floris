@@ -7,7 +7,7 @@ name = "floris"
 version = "4.2"
 description = "A controls-oriented engineering wake model."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 authors = [
     { name = "Rafael Mudafort", email = "rafael.mudafort@nrel.gov" },
     { name = "Paul Fleming", email = "paul.fleming@nrel.gov" },
