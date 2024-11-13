@@ -29,7 +29,11 @@ class HeterogeneousMap(LoggingManager):
             (degrees). Optional.
         wind_speeds (NDArrayFloat, optional): A 1D NumPy array (size num_ws) of wind speeds (m/s).
             Optional.
-
+    	interp_method (str, optional): Interpolation method used to calculate the heterogeneous
+            wind speeds at various locations in the wind farm. Options are 'linear' and 'nn',
+            representing linear interpolation and nearest-neighbor interpolation respectively.
+            Linear interpolation is accurate, nearest-neighbor interpolation is very fast but
+            inaccurate. Defaults to 'linear'. Optional.
 
     Notes:
         * If wind_directions and wind_speeds are both defined, then they must be the same length
