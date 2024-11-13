@@ -3,7 +3,7 @@ from importlib.metadata import version
 from pathlib import Path
 
 
-__version__ = version("flasc")
+__version__ = version("floris")
 
 
 from .floris_model import FlorisModel
