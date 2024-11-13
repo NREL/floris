@@ -294,7 +294,7 @@ class FlowField(BaseClass):
             F = self.interpolate_multiplier_xyz(x, y, z, speed_multipliers[0], fill_value=1.0)
             in_region = []
             for multiplier in speed_multipliers:
-                F.values = multiplier
+                F.values = multiplier[:, None]
                 in_region.append(copy.deepcopy(F))
 
         else:
@@ -304,7 +304,7 @@ class FlowField(BaseClass):
             self.interpolate_multiplier_xy(x, y, multiplier, fill_value=1.0)
             in_region = []
             for multiplier in speed_multipliers:
-                F.values = multiplier
+                F.values = multiplier[:, None]
                 in_region.append(copy.deepcopy(F))
 
         self.het_map = in_region
