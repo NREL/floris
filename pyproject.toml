@@ -13,6 +13,7 @@ authors = [
     { name = "Paul Fleming", email = "paul.fleming@nrel.gov" },
     { name = "Michael (Misha) Sinner", email = "Michael.Sinner@nrel.gov" },
     { name = "Eric Simley", email = "Eric.Simley@nrel.gov" },
+    { name = "Christopher Bay", email = "Christopher.Bay@nrel.gov" },
 ]
 license = { file = "LICENSE.txt" }
 keywords = ["floris"]
