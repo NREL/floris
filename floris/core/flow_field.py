@@ -290,18 +290,21 @@ class FlowField(BaseClass):
             # Compute the 3-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
-            in_region = [
-                self.interpolate_multiplier_xyz(x, y, z, multiplier, fill_value=1.0)
-                for multiplier in speed_multipliers
-            ]
+            F = self.interpolate_multiplier_xyz(x, y, z, speed_multipliers[0], fill_value=1.0)
+            in_region = []
+            for multiplier in speed_multipliers:
+                F.values = multiplier
+                in_region.append(copy.deepcopy(F))
+
         else:
             # Compute the 2-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
-            in_region = [
-                self.interpolate_multiplier_xy(x, y, multiplier, fill_value=1.0)
-                for multiplier in speed_multipliers
-            ]
+            self.interpolate_multiplier_xy(x, y, multiplier, fill_value=1.0)
+            in_region = []
+            for multiplier in speed_multipliers:
+                F.values = multiplier
+                in_region.append(copy.deepcopy(F))
 
         self.het_map = in_region
 
