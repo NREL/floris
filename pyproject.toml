@@ -58,6 +58,12 @@ develop = [
 [tool.setuptools.packages.find]
 include = ["floris*"]
 
+[tool.setuptools.package-data]
+floris = [
+    "turbine_library/*.yaml",
+    "core/wake_velocity/turbopark_lookup_table.mat"
+]
+
 [project.urls]
 Homepage = "https://github.com/NREL/floris"
 Documentation = "https://nrel.github.io/floris/"
