@@ -45,6 +45,7 @@ class HeterogeneousMap(LoggingManager):
         z: NDArrayFloat = None,
         wind_directions: NDArrayFloat = None,
         wind_speeds: NDArrayFloat = None,
+        interp_method: str = "linear",
     ):
         # Check that x, y and speed_multipliers are lists or numpy arrays
         if not isinstance(x, (list, np.ndarray)):
@@ -62,6 +63,7 @@ class HeterogeneousMap(LoggingManager):
         self.x = np.array(x)
         self.y = np.array(y)
         self.speed_multipliers = np.array(speed_multipliers)
+        self.interp_method = str(interp_method)
 
         # If z is provided, save it as an np array
         if z is not None:
@@ -251,6 +253,7 @@ class HeterogeneousMap(LoggingManager):
                 "x": self.x,
                 "y": self.y,
                 "speed_multipliers": speed_multipliers_by_findex,
+                "interp_method": self.interp_method,
             }
         else:
             return {
@@ -258,6 +261,7 @@ class HeterogeneousMap(LoggingManager):
                 "y": self.y,
                 "z": self.z,
                 "speed_multipliers": speed_multipliers_by_findex,
+                "interp_method": self.interp_method,
             }
 
     def get_heterogeneous_map_2d(self, z: float):
@@ -287,6 +291,7 @@ class HeterogeneousMap(LoggingManager):
             speed_multipliers=speed_multipliers,
             wind_directions=self.wind_directions,
             wind_speeds=self.wind_speeds,
+            interp_method=self.interp_method,
         )
 
     @staticmethod

@@ -6,7 +6,7 @@ import copy
 import matplotlib.path as mpltPath
 import numpy as np
 from attrs import define, field
-from scipy.interpolate import LinearNDInterpolator
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from scipy.spatial import ConvexHull
 from shapely.geometry import Polygon
 
@@ -287,24 +287,35 @@ class FlowField(BaseClass):
         y = self.heterogeneous_inflow_config['y']
         z = self.heterogeneous_inflow_config['z']
 
+        if "interp_method" in self.heterogeneous_inflow_config.keys():
+            interp_method = self.heterogeneous_inflow_config["interp_method"]
+        else:
+            interp_method = "linear"
+
         if z is not None:
             # Compute the 3-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
-            F = self.interpolate_multiplier_xyz(x, y, z, speed_multipliers[0], fill_value=1.0)
+            F = self.interpolate_multiplier_xyz(x, y, z, speed_multipliers[0], fill_value=1.0, interp_method=interp_method)
             in_region = []
             for multiplier in speed_multipliers:
-                F.values = multiplier[:, None]
+                if interp_method == "linear":
+                    F.values = multiplier[:, None]  # Linear
+                else: 
+                    F.values = multiplier  # NN
                 in_region.append(copy.deepcopy(F))
 
         else:
             # Compute the 2-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
-            self.interpolate_multiplier_xy(x, y, multiplier, fill_value=1.0)
+            self.interpolate_multiplier_xy(x, y, multiplier, fill_value=1.0, interp_method=interp_method)
             in_region = []
             for multiplier in speed_multipliers:
-                F.values = multiplier[:, None]
+                if interp_method == "linear":
+                    F.values = multiplier[:, None]  # Linear
+                else: 
+                    F.values = multiplier  # NN
                 in_region.append(copy.deepcopy(F))
 
         self.het_map = in_region
@@ -313,7 +324,8 @@ class FlowField(BaseClass):
     def interpolate_multiplier_xy(x: NDArrayFloat,
                                   y: NDArrayFloat,
                                   multiplier: NDArrayFloat,
-                                  fill_value: float = 1.0):
+                                  fill_value: float = 1.0,
+                                  interp_method: str = "linear"):
         """Return an interpolant for a 2D multiplier field.
 
         Args:
@@ -325,8 +337,12 @@ class FlowField(BaseClass):
         Returns:
             LinearNDInterpolator: interpolant
         """
-
-        return LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=fill_value)
+        if interp_method == "linear":
+            return LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=fill_value)
+        elif interp_method == "nn":
+            return NearestNDInterpolator(list(zip(x, y)), multiplier)
+        else:
+            raise UserWarning("Incompatible interpolation method specified.")
 
 
     @staticmethod
@@ -334,7 +350,8 @@ class FlowField(BaseClass):
                                    y: NDArrayFloat,
                                    z: NDArrayFloat,
                                    multiplier: NDArrayFloat,
-                                   fill_value: float = 1.0):
+                                   fill_value: float = 1.0,
+                                   interp_method: str = "linear"):
         """Return an interpolant for a 3D multiplier field.
 
         Args:
@@ -348,4 +365,9 @@ class FlowField(BaseClass):
             LinearNDInterpolator: interpolant
         """
 
-        return LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=fill_value)
+        if interp_method == "linear":
+            return LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=fill_value)
+        elif interp_method == "nn":
+            return NearestNDInterpolator(list(zip(x, y, z)), multiplier)
+        else:
+            raise UserWarning("Incompatible interpolation method specified.")
