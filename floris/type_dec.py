@@ -158,6 +158,7 @@ def convert_to_path(fn: str | Path) -> Path:
     print("inspect.stack()[0] ", inspect.stack()[0])
     print("inspect.stack()[1] ", inspect.stack()[1])
     print("inspect.stack()[-1] ", inspect.stack()[-1])
+    print("inspect.stack() ", inspect.stack())
     base_fn_script = Path(inspect.stack()[-1].filename).resolve().parent
     base_fn_sys = Path(inspect.stack()[1].filename).resolve().parent
 
