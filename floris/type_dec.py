@@ -160,7 +160,10 @@ def convert_to_path(fn: str | Path) -> Path:
 
     print("base_fn_script ", base_fn_script)
     print("base_fn_sys ", base_fn_sys)
-    
+    print("inspect.stack()[0] ", inspect.stack()[0])
+    print("inspect.stack()[1] ", inspect.stack()[1])
+    print("inspect.stack()[-1] ", inspect.stack()[-1])
+
     if isinstance(fn, Path):
         absolute_fn = fn.resolve()
         relative_fn_script = (base_fn_script / fn).resolve()
