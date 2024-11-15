@@ -145,8 +145,8 @@ class YawOptimizationSR(YawOptimization, LoggingManager):
                 ti_array=ti_array_subset[~idx],
                 turbine_weights=turbine_weights_subset[~idx, :],
                 yaw_angles=yaw_angles_subset[~idx, :],
+                heterogeneous_speed_multipliers=het_sm,
                 power_setpoints=power_setpoints_subset[~idx, :],
-                heterogeneous_speed_multipliers=het_sm
             )
             self.time_spent_in_floris += (timerpc() - start_time)
 
