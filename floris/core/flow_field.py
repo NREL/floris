@@ -1,8 +1,9 @@
 
 from __future__ import annotations
 
-import attrs
 import copy
+
+import attrs
 import matplotlib.path as mpltPath
 import numpy as np
 from attrs import define, field
