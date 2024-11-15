@@ -489,7 +489,7 @@ class MixedOperationTurbine(BaseOperationModel):
         """
         # If any turbines are disabled, set their yaw angles to zero
         yaw_angles[power_setpoints <= POWER_SETPOINT_DISABLED] = 0.0
-        
+
         # Create masks for whether yaw angles and power setpoints are set
         yaw_angles_mask = yaw_angles != 0.0
         power_setpoints_mask = power_setpoints < POWER_SETPOINT_DEFAULT
@@ -502,7 +502,7 @@ class MixedOperationTurbine(BaseOperationModel):
                 "If yaw_angles entry is nonzero, power_setpoints must be greater than"
                 " or equal to {0}.".format(POWER_SETPOINT_DEFAULT)
             ))
-        
+
         # Return updated setpoints as well as masks
         return yaw_angles, power_setpoints, yaw_angles_mask, power_setpoints_mask, neither_mask
 
