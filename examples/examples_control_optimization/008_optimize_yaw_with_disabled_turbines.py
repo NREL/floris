@@ -11,11 +11,21 @@ from floris import FlorisModel
 from floris.optimization.yaw_optimization.yaw_optimizer_geometric import YawOptimizationGeometric
 from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
+
 # Load a 3-turbine model
 fmodel = FlorisModel("../inputs/gch.yaml")
 
 # Set wind conditions to be the same for two cases
 fmodel.set(wind_directions=[270.]*2, wind_speeds=[8.]*2, turbulence_intensities=[.06]*2)
+
+# First run the case where all turbines are active and print results
+yaw_opt = YawOptimizationSR(fmodel)
+df_opt = yaw_opt.optimize()
+print("Serial Refine optimized yaw angles (all turbines active) [deg]:\n", df_opt.yaw_angles_opt)
+
+yaw_opt = YawOptimizationGeometric(fmodel)
+df_opt = yaw_opt.optimize()
+print("\nGeometric optimized yaw angles (all turbines active) [deg]:\n", df_opt.yaw_angles_opt)
 
 # Disable turbines (different pattern for each of the two cases)
 # First case: disable the middle turbine
@@ -23,11 +33,16 @@ fmodel.set(wind_directions=[270.]*2, wind_speeds=[8.]*2, turbulence_intensities=
 fmodel.set_operation_model('mixed')
 fmodel.set(disable_turbines=np.array([[False, True, False], [True, False, False]]))
 
-# Run optimizations and print results
+# Rerun optimizations and print results
 yaw_opt = YawOptimizationSR(fmodel)
 df_opt = yaw_opt.optimize()
-print("Serial Refine optimized yaw angles [deg]:\n", df_opt.yaw_angles_opt)
+print(
+    "\nSerial Refine optimized yaw angles (some turbines disabled) [deg]:\n",
+    df_opt.yaw_angles_opt
+)
+# Note that disabled turbines may not have a zero yaw angle, because a disabled turbine's
+# yaw angle does not affect the total power output.
 
 yaw_opt = YawOptimizationGeometric(fmodel)
 df_opt = yaw_opt.optimize()
-print("\nGeometric optimized yaw angles [deg]:\n", df_opt.yaw_angles_opt)
+print("\nGeometric optimized yaw angles (some turbines disabled) [deg]:\n", df_opt.yaw_angles_opt)
