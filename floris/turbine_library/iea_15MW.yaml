@@ -33,7 +33,7 @@ power_thrust_table:
   beta: -3.098605491003358
   cd:  0.004426686198054057
   cl_alfa: 4.546410770937916
-  cp_ct_data_file: "LUT_iea15MW.npz"
+  cp_ct_data_file: "iea_15MW_cp_ct_surface.npz"
 
   # Power and thrust curves
   power:
