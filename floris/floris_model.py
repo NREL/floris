@@ -453,7 +453,10 @@ class FlorisModel(LoggingManager):
         # previous setting
         if not (_yaw_angles == 0).all():
             self.core.farm.set_yaw_angles(_yaw_angles)
-        if not (_power_setpoints == POWER_SETPOINT_DEFAULT).all():
+        if not (
+            (_power_setpoints == POWER_SETPOINT_DEFAULT)
+            | (_power_setpoints == POWER_SETPOINT_DISABLED)
+        ).all():
             self.core.farm.set_power_setpoints(_power_setpoints)
         if _awc_modes is not None:
             self.core.farm.set_awc_modes(_awc_modes)
