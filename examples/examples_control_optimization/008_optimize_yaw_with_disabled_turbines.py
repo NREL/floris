@@ -40,8 +40,8 @@ print(
     "\nSerial Refine optimized yaw angles (some turbines disabled) [deg]:\n",
     df_opt.yaw_angles_opt
 )
-# Note that disabled turbines may not have a zero yaw angle, because a disabled turbine's
-# yaw angle does not affect the total power output.
+# Note that disabled turbines are assigned a zero yaw angle, but their yaw angle is arbitrary as it
+# does not affect the total power output.
 
 yaw_opt = YawOptimizationGeometric(fmodel)
 df_opt = yaw_opt.optimize()
