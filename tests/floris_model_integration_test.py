@@ -10,7 +10,7 @@ from floris import (
     TimeSeries,
     WindRose,
 )
-from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
@@ -44,7 +44,24 @@ def test_assign_setpoints():
 
     # power_setpoints and disable_turbines (disable_turbines overrides power_setpoints)
     fmodel.set(power_setpoints=[[1e6, 2e6]], disable_turbines=[[True, False]])
-    assert np.allclose(fmodel.core.farm.power_setpoints, np.array([[0.001, 2e6]]))
+    assert np.allclose(fmodel.core.farm.power_setpoints, np.array([[POWER_SETPOINT_DISABLED, 2e6]]))
+
+    # Setting sequentially is equivalent to setting together
+    fmodel.reset_operation()
+    fmodel.set(disable_turbines=[[True, False]])
+    fmodel.set(yaw_angles=[[0, 30]])
+    assert np.allclose(
+        fmodel.core.farm.power_setpoints,
+        np.array([[POWER_SETPOINT_DISABLED, POWER_SETPOINT_DEFAULT]])
+    )
+    assert np.allclose(fmodel.core.farm.yaw_angles, np.array([[0, 30]]))
+
+    fmodel.set(disable_turbines=[[True, False]], yaw_angles=[[0, 30]])
+    assert np.allclose(
+        fmodel.core.farm.power_setpoints,
+        np.array([[POWER_SETPOINT_DISABLED, POWER_SETPOINT_DEFAULT]])
+    )
+    assert np.allclose(fmodel.core.farm.yaw_angles, np.array([[0, 30]]))
 
 def test_set_run():
     """
