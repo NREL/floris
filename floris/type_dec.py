@@ -59,7 +59,7 @@ def floris_array_converter(data: Iterable) -> np.ndarray:
         raise TypeError(e.args[0] + f". Data given: {data}")
     return a
 
-def floris_numeric_dict_converter(data: dict, allow_strings=False) -> dict:
+def floris_numeric_dict_converter(data: dict) -> dict:
     """
     For the given dictionary, convert all the values to a numeric type. If a value is a scalar, it
     will be converted to a float. If a value is an iterable, it will be converted to a Numpy
@@ -79,11 +79,9 @@ def floris_numeric_dict_converter(data: dict, allow_strings=False) -> dict:
         except TypeError:
             # Not iterable so try to cast to float
             converted_dict[k] = float(v)
-        else: # Iterable so convert to Numpy array
-            if allow_strings and isinstance(v, str):
-                converted_dict[k] = v
-            else:
-                converted_dict[k] = floris_array_converter(v)
+        else:
+            # Iterable so convert to Numpy array
+            converted_dict[k] = floris_array_converter(v)
     return converted_dict
 
 # def array_field(**kwargs) -> Callable:

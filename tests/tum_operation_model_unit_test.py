@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -22,6 +25,10 @@ def test_TUMLossTurbine():
     wind_speed = 10.0
     turbine_data = SampleInputs().turbine
     turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
+    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
+        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
+    )
 
     yaw_angles_nom = 0 * np.ones((1, n_turbines))
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((1, n_turbines))
@@ -138,6 +145,10 @@ def test_TUMLossTurbine_regression():
     wind_speed = 10.0
     turbine_data = SampleInputs().turbine
     turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
+    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
+        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
+    )
 
     N_test = 20
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
@@ -262,6 +273,10 @@ def test_TUMLossTurbine_integration():
     n_turbines = 1
     turbine_data = SampleInputs().turbine
     turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
+    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
+        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
+    )
 
     N_test = 20
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import copy
-import os
-from pathlib import Path
 
 import numpy as np
 from attrs import define
@@ -191,13 +189,10 @@ class TUMLossTurbine(BaseOperationModel):
         # ratio of yawed to unyawed thrust coefficients
         ratio = p / p0
 
-        # Load Cp surface data and construct interpolator
-        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / power_thrust_table["cp_ct_data_file"]
-        LUT = np.load(lut_file)
-        cp_i = LUT["cp_lut"]
-        pitch_i = LUT["pitch_lut"]
-        tsr_i = LUT["tsr_lut"]
+        # Extract data from lookup table and construct interpolator
+        cp_i = power_thrust_table["cp_ct_data"]["cp_lut"]
+        pitch_i = power_thrust_table["cp_ct_data"]["pitch_lut"]
+        tsr_i = power_thrust_table["cp_ct_data"]["tsr_lut"]
         interp_lut = RegularGridInterpolator(
             (tsr_i, pitch_i), cp_i, bounds_error=False, fill_value=None
         )
@@ -343,13 +338,10 @@ class TUMLossTurbine(BaseOperationModel):
         # Compute ratio of yawed to unyawed thrust coefficients
         ratio = thrust_coefficient1 / thrust_coefficient0 # See above eq. (29)
 
-        # Load Ct surface data and construct interpolator
-        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / power_thrust_table["cp_ct_data_file"]
-        LUT = np.load(lut_file)
-        ct_i = LUT["ct_lut"]
-        pitch_i = LUT["pitch_lut"]
-        tsr_i = LUT["tsr_lut"]
+        # Extract data from lookup table and construct interpolator
+        ct_i = power_thrust_table["cp_ct_data"]["ct_lut"]
+        pitch_i = power_thrust_table["cp_ct_data"]["pitch_lut"]
+        tsr_i = power_thrust_table["cp_ct_data"]["tsr_lut"]
         interp_lut = RegularGridInterpolator(
             (tsr_i, pitch_i), ct_i, bounds_error=False, fill_value=None
         )  # *0.9722085500886761)
@@ -702,13 +694,10 @@ class TUMLossTurbine(BaseOperationModel):
             y = aero_pow - electric_pow
             return y
 
-        # Load Cp/Ct data
-        pkgroot = Path(os.path.dirname(os.path.abspath(__file__))).resolve().parents[1]
-        lut_file = pkgroot / "turbine_library" / power_thrust_table["cp_ct_data_file"]
-        LUT = np.load(lut_file)
-        cp_i = LUT["cp_lut"]
-        pitch_i = LUT["pitch_lut"]
-        tsr_i = LUT["tsr_lut"]
+        # Extract data from lookup table
+        cp_i = power_thrust_table["cp_ct_data"]["cp_lut"]
+        pitch_i = power_thrust_table["cp_ct_data"]["pitch_lut"]
+        tsr_i = power_thrust_table["cp_ct_data"]["tsr_lut"]
         idx = np.squeeze(np.where(cp_i == np.max(cp_i)))
 
         tsr_opt = tsr_i[idx[0]]

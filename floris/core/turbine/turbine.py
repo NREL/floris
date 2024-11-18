@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import os
 from collections.abc import Callable, Iterable
 from pathlib import Path
 
@@ -476,10 +477,6 @@ class Turbine(BaseClass):
     correct_cp_ct_for_tilt: bool = field(default=False)
     floating_tilt_table: dict[str, NDArrayFloat] | None = field(default=None)
 
-    # Even though this Turbine class does not support the multidimensional features as they
-    # are implemented in TurbineMultiDim, providing the following two attributes here allows
-    # the turbine data inputs to keep the multidimensional Cp and Ct curve but switch them off
-    # with multi_dimensional_cp_ct = False
     multi_dimensional_cp_ct: bool = field(default=False)
 
     # Initialized in the post_init function
@@ -507,13 +504,21 @@ class Turbine(BaseClass):
 
     def __post_init__(self) -> None:
         self._initialize_tilt_interpolation()
+
+        bypass_numeric_converter = False
         if self.multi_dimensional_cp_ct:
             self._initialize_multidim_power_thrust_table()
-        else:
-            self.power_thrust_table = floris_numeric_dict_converter(
-                self.power_thrust_table,
-                allow_strings=True
-            )
+            bypass_numeric_converter = True
+
+        # Check for whether a cp_ct_data_file is specified, and load it if so.
+        if "cp_ct_data_file" in self.power_thrust_table:
+            floris_root = Path(__file__).resolve().parents[2]
+            file_path = floris_root / "turbine_library" / self.power_thrust_table["cp_ct_data_file"]
+            self.power_thrust_table["cp_ct_data"] = np.load(file_path)
+            bypass_numeric_converter = True
+
+        if not bypass_numeric_converter:
+            self.power_thrust_table = floris_numeric_dict_converter(self.power_thrust_table)
 
     def _initialize_power_thrust_functions(self) -> None:
         turbine_function_model = TURBINE_MODEL_MAP["operation_model"][self.operation_model]
