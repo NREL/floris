@@ -5,6 +5,7 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
+from floris.core.turbine.operation_models import POWER_SETPOINT_DISABLED
 from floris.logging_manager import LoggingManager
 
 from .yaw_optimization_tools import derive_downstream_turbines
@@ -130,6 +131,11 @@ class YawOptimization(LoggingManager):
         # Set optimization bounds
         self.minimum_yaw_angle = self._unpack_variable(minimum_yaw_angle)
         self.maximum_yaw_angle = self._unpack_variable(maximum_yaw_angle)
+
+        # Limit yaw angles to zero for disabled turbines
+        active_turbines = fmodel.core.farm.power_setpoints > POWER_SETPOINT_DISABLED
+        self.minimum_yaw_angle[~active_turbines] = 0.0
+        self.maximum_yaw_angle[~active_turbines] = 0.0
 
         # Set initial condition for optimization
         if x0 is not None:
