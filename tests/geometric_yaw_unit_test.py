@@ -37,7 +37,11 @@ def test_basic_optimization(sample_inputs_fixture):
     )
     fmodel.set_operation_model("cosine-loss")
 
-    yaw_opt = YawOptimizationGeometric(fmodel, minimum_yaw_angle=0.0, maximum_yaw_angle=MAXIMUM_YAW_ANGLE)
+    yaw_opt = YawOptimizationGeometric(
+        fmodel,
+        minimum_yaw_angle=0.0,
+        maximum_yaw_angle=MAXIMUM_YAW_ANGLE
+    )
     df_opt = yaw_opt.optimize()
 
     # Unaligned conditions
@@ -82,7 +86,11 @@ def test_disabled_turbines(sample_inputs_fixture):
 
     # Disable the middle turbine in all wind conditions, run optimization, and extract results
     fmodel.set(disable_turbines=[[False, True, False]]*4)
-    yaw_opt = YawOptimizationGeometric(fmodel, minimum_yaw_angle=0.0, maximum_yaw_angle=MAXIMUM_YAW_ANGLE)
+    yaw_opt = YawOptimizationGeometric(
+        fmodel,
+        minimum_yaw_angle=0.0,
+        maximum_yaw_angle=MAXIMUM_YAW_ANGLE
+    )
     df_opt = yaw_opt.optimize()
     yaw_angles_opt_disabled = df_opt.loc[3, "yaw_angles_opt"]
 
@@ -96,7 +104,11 @@ def test_disabled_turbines(sample_inputs_fixture):
         turbulence_intensities=TURBULENCE_INTENSITIES
     )
     fmodel.set_operation_model("cosine-loss")
-    yaw_opt = YawOptimizationGeometric(fmodel, minimum_yaw_angle=0.0, maximum_yaw_angle=MAXIMUM_YAW_ANGLE)
+    yaw_opt = YawOptimizationGeometric(
+        fmodel,
+        minimum_yaw_angle=0.0,
+        maximum_yaw_angle=MAXIMUM_YAW_ANGLE
+    )
     df_opt = yaw_opt.optimize()
     yaw_angles_opt_removed = df_opt.loc[3, "yaw_angles_opt"]
 
