@@ -208,10 +208,6 @@ class TUMLossTurbine(BaseOperationModel):
         )
         power_coefficient = cp_interp * ratio
 
-        # TODO: make printout optional?
-        if False:
-            print("Tip speed ratio" + str(tsr_array))
-            print("Pitch out: " + str(pitch_out))
         power = (
             0.5
             * air_density
