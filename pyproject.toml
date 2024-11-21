@@ -45,7 +45,7 @@ docs = [
     "jupyter-book",
     "sphinx-book-theme",
     "sphinx-autodoc-typehints",
-    "sphinxcontrib-autoyaml",
+    "sphinxcontrib-autoyaml==1.1.1",
     "sphinxcontrib.mermaid",
 ]
 develop = [
