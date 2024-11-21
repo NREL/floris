@@ -42,17 +42,17 @@ dependencies = [
 
 [project.optional-dependencies]
 docs = [
-    "jupyter-book",
-    "sphinx-book-theme",
-    "sphinx-autodoc-typehints",
-    "sphinxcontrib-autoyaml==1.1.1",
-    "sphinxcontrib.mermaid",
+    "jupyter-book~=1.0",
+    "sphinx-book-theme~=1.0",
+    "sphinx-autodoc-typehints~=2.0",
+    "sphinxcontrib-autoyaml~=1.0",
+    "sphinxcontrib.mermaid~=1.0",
 ]
 develop = [
-    "pytest",
-    "pre-commit",
-    "ruff",
-    "isort"
+    "pytest~=8.0",
+    "pre-commit~=4.0",
+    "ruff~=0.7",
+    "isort~=5.0"
 ]
 
 [tool.setuptools.packages.find]
