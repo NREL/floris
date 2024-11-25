@@ -65,7 +65,7 @@ power_thrust_table:
   beta: -0.45891
   cd:  0.0040638
   cl_alfa: 4.275049
-  cp_ct_data_file: "iea_15MW_cp_ct_surface.npz"
+  cp_ct_data_file: "nrel_5MW_cp_ct_surface.npz"
 
   ### Power thrust table data
   # wind speeds for look-up tables of power and thrust_coefficient
