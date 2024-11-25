@@ -514,7 +514,8 @@ class Turbine(BaseClass):
         if "cp_ct_data_file" in self.power_thrust_table:
             floris_root = Path(__file__).resolve().parents[2]
             file_path = floris_root / "turbine_library" / self.power_thrust_table["cp_ct_data_file"]
-            self.power_thrust_table["cp_ct_data"] = np.load(file_path)
+            npz_data = dict(np.load(file_path))
+            self.power_thrust_table["cp_ct_data"] = {k: v.tolist() for k, v in npz_data.items()}
             bypass_numeric_converter = True
 
         if not bypass_numeric_converter:
