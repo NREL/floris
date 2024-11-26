@@ -25,6 +25,7 @@ from floris.core.turbine.turbine import (
     thrust_coefficient,
 )
 from floris.cut_plane import CutPlane
+from floris.default_inputs import default_inputs
 from floris.logging_manager import LoggingManager
 from floris.type_dec import (
     floris_array_converter,
@@ -63,7 +64,15 @@ class FlorisModel(LoggingManager):
                 - **logging**: See `floris.simulation.core.Core` for more details.
     """
 
+    @staticmethod
+    def get_defaults() -> dict:
+        return copy.deepcopy(default_inputs)
+
     def __init__(self, configuration: dict | str | Path):
+
+        if configuration == "defaults":
+            configuration = FlorisModel.get_defaults()
+
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
