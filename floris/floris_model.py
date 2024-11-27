@@ -453,10 +453,7 @@ class FlorisModel(LoggingManager):
         # previous setting
         if not (_yaw_angles == 0).all():
             self.core.farm.set_yaw_angles(_yaw_angles)
-        if not (
-            (_power_setpoints == POWER_SETPOINT_DEFAULT)
-            | (_power_setpoints == POWER_SETPOINT_DISABLED)
-        ).all():
+        if not (_power_setpoints == POWER_SETPOINT_DEFAULT).all():
             self.core.farm.set_power_setpoints(_power_setpoints)
         if _awc_modes is not None:
             self.core.farm.set_awc_modes(_awc_modes)
@@ -1542,7 +1539,10 @@ class FlorisModel(LoggingManager):
                 # Set a single one here, then, and return
                 turbine_type = self.core.farm.turbine_definitions[0]
                 turbine_type["operation_model"] = operation_model
-                self.set(turbine_type=[turbine_type])
+                self.set(
+                    turbine_type=[turbine_type],
+                    reference_wind_height=self.reference_wind_height
+                )
                 return
             else:
                 operation_model = [operation_model]*self.core.farm.n_turbines
@@ -1561,7 +1561,10 @@ class FlorisModel(LoggingManager):
             )
             turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
 
-        self.set(turbine_type=turbine_type_list)
+        self.set(
+            turbine_type=turbine_type_list,
+            reference_wind_height=self.reference_wind_height
+        )
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object"""
@@ -1701,6 +1704,16 @@ class FlorisModel(LoggingManager):
             int: Number of turbines.
         """
         return self.core.farm.n_turbines
+
+    @property
+    def reference_wind_height(self):
+        """
+        Reference wind height.
+
+        Returns:
+            float: Reference wind height.
+        """
+        return self.core.flow_field.reference_wind_height
 
     @property
     def turbine_average_velocities(self) -> NDArrayFloat:

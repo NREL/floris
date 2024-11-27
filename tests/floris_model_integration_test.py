@@ -10,7 +10,7 @@ from floris import (
     TimeSeries,
     WindRose,
 )
-from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
@@ -44,7 +44,24 @@ def test_assign_setpoints():
 
     # power_setpoints and disable_turbines (disable_turbines overrides power_setpoints)
     fmodel.set(power_setpoints=[[1e6, 2e6]], disable_turbines=[[True, False]])
-    assert np.allclose(fmodel.core.farm.power_setpoints, np.array([[0.001, 2e6]]))
+    assert np.allclose(fmodel.core.farm.power_setpoints, np.array([[POWER_SETPOINT_DISABLED, 2e6]]))
+
+    # Setting sequentially is equivalent to setting together
+    fmodel.reset_operation()
+    fmodel.set(disable_turbines=[[True, False]])
+    fmodel.set(yaw_angles=[[0, 30]])
+    assert np.allclose(
+        fmodel.core.farm.power_setpoints,
+        np.array([[POWER_SETPOINT_DISABLED, POWER_SETPOINT_DEFAULT]])
+    )
+    assert np.allclose(fmodel.core.farm.yaw_angles, np.array([[0, 30]]))
+
+    fmodel.set(disable_turbines=[[True, False]], yaw_angles=[[0, 30]])
+    assert np.allclose(
+        fmodel.core.farm.power_setpoints,
+        np.array([[POWER_SETPOINT_DISABLED, POWER_SETPOINT_DEFAULT]])
+    )
+    assert np.allclose(fmodel.core.farm.yaw_angles, np.array([[0, 30]]))
 
 def test_set_run():
     """
@@ -720,6 +737,8 @@ def test_set_operation_model():
     fmodel.set_operation_model("simple-derating")
     assert fmodel.get_operation_model() == "simple-derating"
 
+    reference_wind_height = fmodel.reference_wind_height
+
     # Check multiple turbine types works
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
@@ -727,26 +746,26 @@ def test_set_operation_model():
 
     # Check that setting a single turbine type, and then altering the operation model works
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     assert fmodel.get_operation_model() == "simple-derating"
 
     # Check that setting over mutliple turbine types works
-    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     assert fmodel.get_operation_model() == "simple-derating"
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
     assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
 
     # Check setting over single turbine type; then updating layout works
-    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
     assert fmodel.get_operation_model() == "simple-derating"
 
     # Check that setting for multiple turbine types and then updating layout breaks
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
     assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
     with pytest.raises(ValueError):
@@ -754,7 +773,7 @@ def test_set_operation_model():
 
     # Check one more variation
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     with pytest.raises(ValueError):
