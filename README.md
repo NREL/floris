@@ -13,6 +13,9 @@ the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussi
 
 ## Installation
 
+**WARNING:**
+Support for python version 3.8 will be dropped in FLORIS v4.3. See [Installation documentation](https://nrel.github.io/floris/installation.html#installation) for details.
+
 **If upgrading from a previous version, it is recommended to install FLORIS v4 into a new virtual environment**.
 If you intend to use [pyOptSparse](https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/) with FLORIS,
 it is recommended to install that package first before installing FLORIS.
