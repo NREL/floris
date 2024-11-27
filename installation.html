@@ -640,10 +640,15 @@
 The following sections detail how download and install FLORIS for each use case.</p>
 <section id="requirements">
 <span id="id2"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">#</a></h2>
-<p>FLORIS is intended to be used with Python 3.8 and up, and it is highly recommended that users
+<p>FLORIS is a python package. FLORIS is intended to work with all <a class="reference external" href="https://devguide.python.org/versions/">active versions of python</a>. Support will drop for python versions once they reach end-of-life.
+It is highly recommended that users
 work within a virtual environment for both working with and working on FLORIS, to maintain a clean
 and sandboxed environment. The simplest way to get started with virtual environments is through
 <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">conda</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Support for python version 3.8 will be dropped in FLORIS v4.3.</p>
+</div>
 <p>Installing into a Python environment that contains a previous version of FLORIS may cause conflicts.
 If you intend to use <a class="reference external" href="https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/">pyOptSparse</a>
 with FLORIS, it is recommended to install that package first before installing FLORIS.</p>
