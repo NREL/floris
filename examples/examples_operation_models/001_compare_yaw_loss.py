@@ -1,6 +1,6 @@
 """Example: Compare yaw loss
-This example shows demonstrates how the TUM operation model alters how a turbine loses power to
-yaw compared to the standard cosine loss model.
+This example shows demonstrates how the Controller-dependent operation model (developed at TUM)
+alters how a turbine loses power to yaw compared to the standard cosine loss model.
 """
 
 import matplotlib.pyplot as plt
@@ -31,7 +31,7 @@ fmodel.set(
 )
 
 # Loop over the operational models to compare
-op_models = ["cosine-loss", "tum-loss"]
+op_models = ["cosine-loss", "controller-dependent"]
 results = {}
 
 for op_model in op_models:

@@ -56,7 +56,7 @@ power_thrust_table:
   # Threshold turbulence intensity above which to apply peak shaving
   peak_shaving_TI_threshold: 0.1
 
-  ### Parameters for the 'tum-loss' operation model
+  ### Parameters for the 'controller-dependenter-dependent' operation model
   rated_rpm: 12.1
   rotor_solidity: 0.05132
   generator_efficiency: 0.944

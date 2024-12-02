@@ -15,12 +15,12 @@ from scipy.interpolate import interp1d
 from floris.core import BaseClass
 from floris.core.turbine import (
     AWCTurbine,
+    ControllerDependentTurbine,
     CosineLossTurbine,
     MixedOperationTurbine,
     PeakShavingTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
-    TUMLossTurbine,
 )
 from floris.type_dec import (
     convert_to_path,
@@ -39,7 +39,7 @@ TURBINE_MODEL_MAP = {
     "operation_model": {
         "simple": SimpleTurbine,
         "cosine-loss": CosineLossTurbine,
-        "tum-loss": TUMLossTurbine,
+        "controller-dependent": ControllerDependentTurbine,
         "simple-derating": SimpleDeratingTurbine,
         "mixed": MixedOperationTurbine,
         "awc": AWCTurbine,

@@ -5,26 +5,28 @@ import numpy as np
 import pytest
 
 from floris import FlorisModel
+from floris.core.turbine.controller_dependent_operation_model import ControllerDependentTurbine
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT, SimpleTurbine
-from floris.core.turbine.tum_operation_model import TUMLossTurbine
 from floris.utilities import cosd
 from tests.conftest import SampleInputs, WIND_SPEEDS
 
 
 def test_submodel_attributes():
 
-    assert hasattr(TUMLossTurbine, "power")
-    assert hasattr(TUMLossTurbine, "thrust_coefficient")
-    assert hasattr(TUMLossTurbine, "axial_induction")
+    assert hasattr(ControllerDependentTurbine, "power")
+    assert hasattr(ControllerDependentTurbine, "thrust_coefficient")
+    assert hasattr(ControllerDependentTurbine, "axial_induction")
 
-def test_TUMLossTurbine_power_curve():
+def test_ControllerDependentTurbine_power_curve():
     """
     Test that the power curve is correctly loaded and interpolated.
     """
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    turbine_data["power_thrust_table"] = (
+        SampleInputs().controller_dependent_turbine_power_thrust_table
+    )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
     turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
         data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
@@ -36,7 +38,7 @@ def test_TUMLossTurbine_power_curve():
         (1, n_turbines, 3, 3)
     )
 
-    power_test = TUMLossTurbine.power(
+    power_test = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -53,16 +55,18 @@ def test_TUMLossTurbine_power_curve():
     assert power_test[0, 0] == 0
 
     # Check power is monotonically increasing, and also that it is flat above rated
-    # NOTE: no cut-out defined for the TUMLossTurbine
+    # NOTE: no cut-out defined for the ControllerDependentTurbine
     assert (np.diff(power_test.squeeze()) >= -1e4).all()
     assert (power_test[wind_speeds.mean(axis=(2,3)) > 12.0] == 5e6).all()
 
 
-def test_TUMLossTurbine_derating():
+def test_ControllerDependentTurbine_derating():
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    turbine_data["power_thrust_table"] = (
+        SampleInputs().controller_dependent_turbine_power_thrust_table
+    )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
     turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
         data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
@@ -77,7 +81,7 @@ def test_TUMLossTurbine_derating():
     wind_speeds = 15.0 * np.ones((N_test, n_turbines, 2, 2))
 
     # First run without sending the power setpoints
-    power_baseline = TUMLossTurbine.power(
+    power_baseline = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -87,7 +91,7 @@ def test_TUMLossTurbine_derating():
     ).squeeze()
 
     # Now with power setpoints
-    power_test = TUMLossTurbine.power(
+    power_test = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -101,11 +105,13 @@ def test_TUMLossTurbine_derating():
     assert (power_test <= power_baseline).all()
     assert np.allclose(power_test, power_setpoints, rtol=1e-4)
 
-def test_TUMLossTurbine_yawing():
+def test_ControllerDependentTurbine_yawing():
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    turbine_data["power_thrust_table"] = (
+        SampleInputs().controller_dependent_turbine_power_thrust_table
+    )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
     turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
         data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
@@ -119,7 +125,7 @@ def test_TUMLossTurbine_yawing():
     wind_speeds = ws_above_rated * np.ones((N_test, n_turbines, 2, 2))
     yaw_angle_array = np.linspace(-30,0,N_test)
 
-    power_test = TUMLossTurbine.power(
+    power_test = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -135,11 +141,13 @@ def test_TUMLossTurbine_yawing():
     # increases from -30 to 0
     assert (np.diff(power_test.squeeze()) >= -1e4).all()
 
-def test_TUMLossTurbine_shear():
+def test_ControllerDependentTurbine_shear():
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    turbine_data["power_thrust_table"] = (
+        SampleInputs().controller_dependent_turbine_power_thrust_table
+    )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
     turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
         data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
@@ -160,7 +168,7 @@ def test_TUMLossTurbine_shear():
     yaw_max = 30 # Maximum yaw to test
     yaw_angles_test = np.linspace(-yaw_max, yaw_max, N_test).reshape(-1,1)
 
-    power_test = TUMLossTurbine.power(
+    power_test = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds_test,
         air_density=1.1,
@@ -186,7 +194,7 @@ def test_TUMLossTurbine_shear():
     assert (power_ratio_no_shear[idx_mid+1:] <= power_ratio_mid_shear[idx_mid+1:]).all()
     assert (power_ratio_mid_shear[idx_mid+1:] <= power_ratio_most_shear[idx_mid+1:]).all()
 
-def test_TUMLossTurbine_regression():
+def test_ControllerDependentTurbine_regression():
     """
     Adding a regression test so that we can work with the model and stay confident that results
     are not changing.
@@ -195,7 +203,9 @@ def test_TUMLossTurbine_regression():
     n_turbines = 1
     wind_speed = 10.0
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    turbine_data["power_thrust_table"] = (
+        SampleInputs().controller_dependent_turbine_power_thrust_table
+    )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
     turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
         data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
@@ -277,7 +287,7 @@ def test_TUMLossTurbine_regression():
         0.20864674,
     ])
 
-    power = TUMLossTurbine.power(
+    power = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((N_test, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1,
@@ -287,7 +297,7 @@ def test_TUMLossTurbine_regression():
         tilt_interp=None
     ).squeeze()
 
-    thrust_coefficient = TUMLossTurbine.thrust_coefficient(
+    thrust_coefficient = ControllerDependentTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((N_test, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1,
@@ -297,7 +307,7 @@ def test_TUMLossTurbine_regression():
         tilt_interp=None
     ).squeeze()
 
-    axial_induction = TUMLossTurbine.axial_induction(
+    axial_induction = ControllerDependentTurbine.axial_induction(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((N_test, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1,
@@ -315,15 +325,17 @@ def test_TUMLossTurbine_regression():
     assert np.allclose(thrust_coefficient, thrust_coefficient_base)
     assert np.allclose(axial_induction, axial_induction_base)
 
-def test_TUMLossTurbine_integration():
+def test_ControllerDependentTurbine_integration():
     """
-    Test the TUMLossTurbine model with a range of wind speeds, and then
+    Test the ControllerDependentTurbine model with a range of wind speeds, and then
     whether it works regardless of number of grid points.
     """
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    turbine_data["power_thrust_table"] = (
+        SampleInputs().controller_dependent_turbine_power_thrust_table
+    )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
     turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
         data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
@@ -337,7 +349,7 @@ def test_TUMLossTurbine_integration():
     wind_speeds = np.linspace(1, 30, N_test)
     wind_speeds = np.tile(wind_speeds[:,None,None,None], (1, 1, 3, 3))
 
-    power0 = TUMLossTurbine.power(
+    power0 = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -347,7 +359,7 @@ def test_TUMLossTurbine_integration():
         tilt_interp=None
     ).squeeze()
 
-    power20 = TUMLossTurbine.power(
+    power20 = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -360,7 +372,7 @@ def test_TUMLossTurbine_integration():
     assert (power0 - power20 >= -1e6).all()
 
     # Won't compare; just checking runs as expected
-    TUMLossTurbine.thrust_coefficient(
+    ControllerDependentTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -370,7 +382,7 @@ def test_TUMLossTurbine_integration():
         tilt_interp=None
     ).squeeze()
 
-    TUMLossTurbine.thrust_coefficient(
+    ControllerDependentTurbine.thrust_coefficient(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -389,7 +401,7 @@ def test_TUMLossTurbine_integration():
 
 
     wind_speeds = 10.0 * np.ones((N_test, n_turbines, 5, 5))
-    power5gp = TUMLossTurbine.power(
+    power5gp = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -400,7 +412,7 @@ def test_TUMLossTurbine_integration():
     ).squeeze()
 
     wind_speeds = 10.0 * np.ones((N_test, n_turbines, 2, 2))
-    power2gp = TUMLossTurbine.power(
+    power2gp = ControllerDependentTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speeds,
         air_density=1.1,
@@ -415,7 +427,7 @@ def test_TUMLossTurbine_integration():
     # No shear information for the TUM model to use
     wind_speeds = 10.0 * np.ones((N_test, n_turbines, 1, 1))
     with pytest.raises(ValueError):
-        TUMLossTurbine.power(
+        ControllerDependentTurbine.power(
             power_thrust_table=turbine_data["power_thrust_table"],
             velocities=wind_speeds,
             air_density=1.1,
@@ -425,7 +437,7 @@ def test_TUMLossTurbine_integration():
             tilt_interp=None
         )
 
-def test_TUMLossTurbine_data():
+def test_ControllerDependentTurbine_data():
     """
     Test that the Cp/Ct data is consistent, within reason, with the "normal" data.
     """
@@ -454,7 +466,7 @@ def test_TUMLossTurbine_data():
             air_density=1.1,
         ).squeeze()
 
-        power_test = TUMLossTurbine.power(
+        power_test = ControllerDependentTurbine.power(
             power_thrust_table=power_thrust_table,
             velocities=wind_speeds,
             air_density=1.1,
@@ -469,7 +481,7 @@ def test_TUMLossTurbine_data():
             air_density=1.1,
         ).squeeze()
 
-        thrust_coefficient_test = TUMLossTurbine.thrust_coefficient(
+        thrust_coefficient_test = ControllerDependentTurbine.thrust_coefficient(
             power_thrust_table=power_thrust_table,
             velocities=wind_speeds,
             air_density=1.1,
@@ -485,7 +497,7 @@ def test_TUMLossTurbine_data():
             air_density=1.1,
         ).squeeze()
 
-        axial_induction_test = TUMLossTurbine.axial_induction(
+        axial_induction_test = ControllerDependentTurbine.axial_induction(
             power_thrust_table=power_thrust_table,
             velocities=wind_speeds,
             air_density=1.1,

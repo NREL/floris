@@ -22,7 +22,7 @@ power_thrust_table:
   helix_thrust_b: 1.157e-03
   helix_thrust_c: 1.167e-04
 
-  # Parameters for 'tum-loss' operation model
+  # Parameters for 'controller-dependent' operation model
   rotor_solidity: 0.03500415472147307
   rated_rpm:  8.6
   generator_efficiency: 0.944

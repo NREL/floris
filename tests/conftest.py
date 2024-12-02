@@ -390,7 +390,7 @@ class SampleInputs:
             "TSR": 8.0
         }
 
-        self.tum_loss_turbine_power_thrust_table = {
+        self.controller_dependent_turbine_power_thrust_table = {
             "ref_air_density": 1.225,
             "ref_tilt": 5.0,
             "rated_rpm": 12.1,

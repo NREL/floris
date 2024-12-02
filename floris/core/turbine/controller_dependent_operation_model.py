@@ -21,7 +21,7 @@ from floris.utilities import cosd, sind
 
 
 @define
-class TUMLossTurbine(BaseOperationModel):
+class ControllerDependentTurbine(BaseOperationModel):
     """
     Static class defining a wind turbine model that may be misaligned with the flow.
     Nonzero tilt and yaw angles are handled via the model presented in
@@ -52,7 +52,7 @@ class TUMLossTurbine(BaseOperationModel):
         cubature_weights: NDArrayFloat | None = None,
         **_,  # <- Allows other models to accept other keyword arguments
     ):
-        # Sign convention: in the tum model, negative tilt creates tower clearance
+        # Sign convention: in the TUM model, negative tilt creates tower clearance
         tilt_angles = -tilt_angles
 
         # Compute the power-effective wind speed across the rotor
@@ -71,7 +71,7 @@ class TUMLossTurbine(BaseOperationModel):
         # Compute power
         n_findex, n_turbines = tilt_angles.shape
 
-        shear = TUMLossTurbine.compute_local_vertical_shear(velocities)
+        shear = ControllerDependentTurbine.compute_local_vertical_shear(velocities)
 
         beta = power_thrust_table["beta"]
         cd = power_thrust_table["cd"]
@@ -82,7 +82,7 @@ class TUMLossTurbine(BaseOperationModel):
 
         air_density = power_thrust_table["ref_air_density"]
 
-        pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
+        pitch_out, tsr_out = ControllerDependentTurbine.control_trajectory(
             rotor_effective_velocities,
             yaw_angles,
             tilt_angles,
@@ -120,10 +120,15 @@ class TUMLossTurbine(BaseOperationModel):
                     (theta_array[i, j]),
                     MU[i, j],
                 )
-                ct, info, ier, msg = fsolve(TUMLossTurbine.get_ct, x0, args=data, full_output=True)
+                ct, info, ier, msg = fsolve(
+                    ControllerDependentTurbine.get_ct,
+                    x0,
+                    args=data,
+                    full_output=True
+                )
                 if ier == 1:
                     p[i, j] = np.squeeze(
-                        TUMLossTurbine.find_cp(
+                        ControllerDependentTurbine.find_cp(
                             sigma,
                             cd,
                             cl_alfa,
@@ -165,10 +170,15 @@ class TUMLossTurbine(BaseOperationModel):
                     (theta_array[i, j]),
                     MU[i, j],
                 )
-                ct, info, ier, msg = fsolve(TUMLossTurbine.get_ct, x0, args=data, full_output=True)
+                ct, info, ier, msg = fsolve(
+                    ControllerDependentTurbine.get_ct,
+                    x0,
+                    args=data,
+                    full_output=True
+                )
                 if ier == 1:
                     p0[i, j] = np.squeeze(
-                        TUMLossTurbine.find_cp(
+                        ControllerDependentTurbine.find_cp(
                             sigma,
                             cd,
                             cl_alfa,
@@ -231,7 +241,7 @@ class TUMLossTurbine(BaseOperationModel):
         correct_cp_ct_for_tilt: bool = False,
         **_,  # <- Allows other models to accept other keyword arguments
     ):
-        # sign convention. in the tum model, negative tilt creates tower clearance
+        # sign convention. in the TUM model, negative tilt creates tower clearance
         tilt_angles = -tilt_angles
 
         # Compute the effective wind speed across the rotor
@@ -259,7 +269,7 @@ class TUMLossTurbine(BaseOperationModel):
         sigma = power_thrust_table["rotor_solidity"]
         R = power_thrust_table["rotor_diameter"] / 2
 
-        shear = TUMLossTurbine.compute_local_vertical_shear(velocities)
+        shear = ControllerDependentTurbine.compute_local_vertical_shear(velocities)
 
         air_density = power_thrust_table["ref_air_density"]  # CHANGE
 
@@ -270,7 +280,7 @@ class TUMLossTurbine(BaseOperationModel):
         )
 
         # Apply standard control trajectory to determine pitch and TSR
-        pitch_out, tsr_out = TUMLossTurbine.control_trajectory(
+        pitch_out, tsr_out = ControllerDependentTurbine.control_trajectory(
             rotor_effective_velocities,
             yaw_angles,
             tilt_angles,
@@ -310,7 +320,7 @@ class TUMLossTurbine(BaseOperationModel):
                     (theta_array[i, j]),
                     MU[i, j],
                 )
-                ct = fsolve(TUMLossTurbine.get_ct, x0, args=data) # Solves eq. (25)
+                ct = fsolve(ControllerDependentTurbine.get_ct, x0, args=data) # Solves eq. (25)
                 thrust_coefficient1[i, j] = np.squeeze(np.clip(ct, 0.0001, 0.9999))
 
         ### Resolve thrust coefficient in non-yawed conditions
@@ -336,7 +346,7 @@ class TUMLossTurbine(BaseOperationModel):
                     (theta_array[i, j]),
                     MU[i, j],
                 )
-                ct = fsolve(TUMLossTurbine.get_ct, x0, args=data) # Solves eq. (25)
+                ct = fsolve(ControllerDependentTurbine.get_ct, x0, args=data) # Solves eq. (25)
                 thrust_coefficient0[i, j] = np.squeeze(ct)  # np.clip(ct, 0.0001, 0.9999)
 
         # Compute ratio of yawed to unyawed thrust coefficients
@@ -371,7 +381,7 @@ class TUMLossTurbine(BaseOperationModel):
         correct_cp_ct_for_tilt: bool = False,
         **_,  # <- Allows other models to accept other keyword arguments
     ):
-        thrust_coefficients = TUMLossTurbine.thrust_coefficient(
+        thrust_coefficients = ControllerDependentTurbine.thrust_coefficient(
             power_thrust_table=power_thrust_table,
             velocities=velocities,
             yaw_angles=yaw_angles,
@@ -408,9 +418,9 @@ class TUMLossTurbine(BaseOperationModel):
         # raise an error.
         if velocities.shape[3] == 1:
             raise ValueError((
-                "The TUMLossModel compute a local shear based on inflow wind speeds across the "
-                "rotor. The provided velocities does not contain a vertical profile."
-                " This can occur if n_grid is set to 1 in the FLORIS input yaml."
+                "The ControllerDependentTurbine computes a local shear based on inflow wind speeds "
+                "across the rotor. The provided velocities does not contain a vertical profile. "
+                "This can occur if n_grid is set to 1 in the FLORIS input yaml."
             ))
         n_findex, n_turbines = velocities.shape[:2]
         shear = np.zeros((n_findex, n_turbines))
@@ -514,9 +524,9 @@ class TUMLossTurbine(BaseOperationModel):
             )
             x0 = 0.1
             [ct, infodict, ier, mesg] = fsolve(
-                TUMLossTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
+                ControllerDependentTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
             )
-            cp = TUMLossTurbine.find_cp(
+            cp = ControllerDependentTurbine.find_cp(
                 sigma,
                 cd,
                 cl_alfa,
@@ -548,9 +558,9 @@ class TUMLossTurbine(BaseOperationModel):
             )
             x0 = 0.1
             [ct, infodict, ier, mesg] = fsolve(
-                TUMLossTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
+                ControllerDependentTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
             )
-            cp0 = TUMLossTurbine.find_cp(
+            cp0 = ControllerDependentTurbine.find_cp(
                 sigma,
                 cd,
                 cl_alfa,
@@ -629,9 +639,9 @@ class TUMLossTurbine(BaseOperationModel):
             )
             x0 = 0.1
             [ct, infodict, ier, mesg] = fsolve(
-                TUMLossTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
+                ControllerDependentTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
             )
-            cp = TUMLossTurbine.find_cp(
+            cp = ControllerDependentTurbine.find_cp(
                 sigma,
                 cd,
                 cl_alfa,
@@ -663,9 +673,9 @@ class TUMLossTurbine(BaseOperationModel):
             )
             x0 = 0.1
             [ct, infodict, ier, mesg] = fsolve(
-                TUMLossTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
+                ControllerDependentTurbine.get_ct, x0, args=data, full_output=True, factor=0.1
             )
-            cp0 = TUMLossTurbine.find_cp(
+            cp0 = ControllerDependentTurbine.find_cp(
                 sigma,
                 cd,
                 cl_alfa,
