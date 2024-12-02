@@ -190,9 +190,9 @@ class TUMLossTurbine(BaseOperationModel):
         ratio = p / p0
 
         # Extract data from lookup table and construct interpolator
-        cp_i = power_thrust_table["cp_ct_data"]["cp_lut"]
-        pitch_i = power_thrust_table["cp_ct_data"]["pitch_lut"]
-        tsr_i = power_thrust_table["cp_ct_data"]["tsr_lut"]
+        cp_i = np.array(power_thrust_table["cp_ct_data"]["cp_lut"])
+        pitch_i = np.array(power_thrust_table["cp_ct_data"]["pitch_lut"])
+        tsr_i = np.array(power_thrust_table["cp_ct_data"]["tsr_lut"])
         interp_lut = RegularGridInterpolator(
             (tsr_i, pitch_i), cp_i, bounds_error=False, fill_value=None
         )
@@ -212,6 +212,10 @@ class TUMLossTurbine(BaseOperationModel):
             * power_coefficient
             * power_thrust_table["generator_efficiency"]
         )
+
+        if power.max() > power_thrust_table["rated_power"] * 1e3 * 1.01:
+            print("Powers more than 1% above rated detected. Consider checking Cp-Ct data.")
+        power = np.clip(power, 0, power_thrust_table["rated_power"] * 1e3)
         return power
 
     @staticmethod
@@ -339,9 +343,9 @@ class TUMLossTurbine(BaseOperationModel):
         ratio = thrust_coefficient1 / thrust_coefficient0 # See above eq. (29)
 
         # Extract data from lookup table and construct interpolator
-        ct_i = power_thrust_table["cp_ct_data"]["ct_lut"]
-        pitch_i = power_thrust_table["cp_ct_data"]["pitch_lut"]
-        tsr_i = power_thrust_table["cp_ct_data"]["tsr_lut"]
+        ct_i = np.array(power_thrust_table["cp_ct_data"]["ct_lut"])
+        pitch_i = np.array(power_thrust_table["cp_ct_data"]["pitch_lut"])
+        tsr_i = np.array(power_thrust_table["cp_ct_data"]["tsr_lut"])
         interp_lut = RegularGridInterpolator(
             (tsr_i, pitch_i), ct_i, bounds_error=False, fill_value=None
         )  # *0.9722085500886761)
@@ -695,9 +699,9 @@ class TUMLossTurbine(BaseOperationModel):
             return y
 
         # Extract data from lookup table
-        cp_i = power_thrust_table["cp_ct_data"]["cp_lut"]
-        pitch_i = power_thrust_table["cp_ct_data"]["pitch_lut"]
-        tsr_i = power_thrust_table["cp_ct_data"]["tsr_lut"]
+        cp_i = np.array(power_thrust_table["cp_ct_data"]["cp_lut"])
+        pitch_i = np.array(power_thrust_table["cp_ct_data"]["pitch_lut"])
+        tsr_i = np.array(power_thrust_table["cp_ct_data"]["tsr_lut"])
         idx = np.squeeze(np.where(cp_i == np.max(cp_i)))
 
         tsr_opt = tsr_i[idx[0]]
