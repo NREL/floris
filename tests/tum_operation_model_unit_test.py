@@ -4,7 +4,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris import FlorisModel
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT, SimpleTurbine
 from floris.core.turbine.tum_operation_model import TUMLossTurbine
 from floris.utilities import cosd
 from tests.conftest import SampleInputs, WIND_SPEEDS
@@ -16,13 +17,12 @@ def test_submodel_attributes():
     assert hasattr(TUMLossTurbine, "thrust_coefficient")
     assert hasattr(TUMLossTurbine, "axial_induction")
 
-def test_TUMLossTurbine():
-
-    # NOTE: These tests should be updated to reflect actual expected behavior
-    # of the TUMLossTurbine model. Currently, match the CosineLossTurbine model.
+def test_TUMLossTurbine_power_curve():
+    """
+    Test that the power curve is correctly loaded and interpolated.
+    """
 
     n_turbines = 1
-    wind_speed = 10.0
     turbine_data = SampleInputs().turbine
     turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
@@ -30,110 +30,161 @@ def test_TUMLossTurbine():
         data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
     )
 
-    yaw_angles_nom = 0 * np.ones((1, n_turbines))
-    tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((1, n_turbines))
-    power_setpoints_nom = POWER_SETPOINT_DEFAULT * np.ones((1, n_turbines))
-    yaw_angles_test = 20 * np.ones((1, n_turbines))
-    tilt_angles_test = 0 * np.ones((1, n_turbines))
-
-
-    # Check that power works as expected
-    TUMLossTurbine.power(
-        power_thrust_table=turbine_data["power_thrust_table"],
-        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        air_density=turbine_data["power_thrust_table"]["ref_air_density"], # Matches ref_air_density
-        yaw_angles=yaw_angles_nom,
-        power_setpoints=power_setpoints_nom,
-        tilt_angles=tilt_angles_nom,
-        tilt_interp=None
+    N_test = 20
+    wind_speeds = np.tile(
+        np.linspace(0, 30, N_test)[:, None, None, None],
+        (1, n_turbines, 3, 3)
     )
-    # truth_index = turbine_data["power_thrust_table"]["wind_speed"].index(wind_speed)
-    # baseline_power = turbine_data["power_thrust_table"]["power"][truth_index] * 1000
-    # assert np.allclose(baseline_power, test_power)
 
-    # Check that yaw and tilt angle have an effect
-    TUMLossTurbine.power(
+    power_test = TUMLossTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
-        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        air_density=turbine_data["power_thrust_table"]["ref_air_density"], # Matches ref_air_density
-        yaw_angles=yaw_angles_test,
-        power_setpoints=power_setpoints_nom,
-        tilt_angles=tilt_angles_test,
-        tilt_interp=None
-    )
-    #assert test_power < baseline_power
-
-    # Check that a lower air density decreases power appropriately
-    TUMLossTurbine.power(
-        power_thrust_table=turbine_data["power_thrust_table"],
-        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
+        velocities=wind_speeds,
         air_density=1.1,
-        yaw_angles=yaw_angles_nom,
-        power_setpoints=power_setpoints_nom,
+        yaw_angles=np.zeros((N_test, n_turbines)),
+        tilt_angles=turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines)),
+        power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines))
+    )
+
+    # Check that the powers all between 0 and rated
+    assert (power_test >= 0).all()
+    assert (power_test <= 5e6).all()
+
+    # Check that zero power is produced at zero wind speed
+    assert power_test[0, 0] == 0
+
+    # Check power is monotonically increasing, and also that it is flat above rated
+    # NOTE: no cut-out defined for the TUMLossTurbine
+    assert (np.diff(power_test.squeeze()) >= -1e4).all()
+    assert (power_test[wind_speeds.mean(axis=(2,3)) > 12.0] == 5e6).all()
+
+
+def test_TUMLossTurbine_derating():
+
+    n_turbines = 1
+    turbine_data = SampleInputs().turbine
+    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
+    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
+        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
+    )
+
+    N_test = 20
+    tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
+    # define power set points
+    power_setpoints = np.linspace(1e6,5e6,N_test).reshape(N_test,1) * np.ones((N_test, n_turbines))
+
+    # Set wind speed to above rated
+    wind_speeds = 15.0 * np.ones((N_test, n_turbines, 2, 2))
+
+    # First run without sending the power setpoints
+    power_baseline = TUMLossTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=25 * np.ones((N_test, n_turbines)),
+        tilt_angles=tilt_angles_nom,
+        power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines))
+    ).squeeze()
+
+    # Now with power setpoints
+    power_test = TUMLossTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=25 * np.ones((N_test, n_turbines)),
+        tilt_angles=tilt_angles_nom,
+        power_setpoints=power_setpoints
+    )
+
+    # Check that power produced does not exceed baseline available power,
+    # and that power produced matches setpoints to within 0.1%
+    assert (power_test <= power_baseline).all()
+    assert np.allclose(power_test, power_setpoints, rtol=1e-4)
+
+def test_TUMLossTurbine_yawing():
+
+    n_turbines = 1
+    turbine_data = SampleInputs().turbine
+    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
+    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
+        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
+    )
+
+    N_test = 20
+    tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
+
+    # Choose a wind speed near rated for NREL 5MW
+    ws_above_rated = 12.0
+    wind_speeds = ws_above_rated * np.ones((N_test, n_turbines, 2, 2))
+    yaw_angle_array = np.linspace(-30,0,N_test)
+
+    power_test = TUMLossTurbine.power(
+        power_thrust_table=turbine_data["power_thrust_table"],
+        velocities=wind_speeds,
+        air_density=1.1,
+        yaw_angles=yaw_angle_array.reshape(N_test,1) * np.ones((N_test, n_turbines)),
+        power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines)),
         tilt_angles=tilt_angles_nom,
         tilt_interp=None
     )
-    #assert test_power < baseline_power
 
+    # Check that for small yaw angles, we still produce rated power
+    assert np.allclose(power_test[-3:-1,0], 5e6)
+    # Check that power is (non-strictly) monotonically increasing as yaw angle
+    # increases from -30 to 0
+    assert (np.diff(power_test.squeeze()) >= -1e4).all()
 
-    # Check that thrust coefficient works as expected
-    TUMLossTurbine.thrust_coefficient(
+def test_TUMLossTurbine_shear():
+
+    n_turbines = 1
+    turbine_data = SampleInputs().turbine
+    turbine_data["power_thrust_table"] = SampleInputs().tum_loss_turbine_power_thrust_table
+    data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
+    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
+        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
+    )
+
+    N_test = 31
+    tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
+
+    # Create array of shear (3 values: 0, 0.15 0.3) (ws multiplier at top/bottom of rotor)
+    shear_array = np.linspace(0, 0.3, 3)
+    shear_points = 1 + shear_array[:, None] * np.linspace(-1, 1, 5)[None, :]
+
+    # Define wind speed array with n_grid = 5 (free stream wind speed 8.0 m/s)
+    wind_speeds_no_shear = 8.0 * np.ones((1, n_turbines, 5, 5))
+    wind_speeds_shear = wind_speeds_no_shear * shear_points[:, None, None, :]
+    wind_speeds_test = np.repeat(wind_speeds_shear, N_test, axis=0)
+
+    yaw_max = 30 # Maximum yaw to test
+    yaw_angles_test = np.linspace(-yaw_max, yaw_max, N_test).reshape(-1,1)
+
+    power_test = TUMLossTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
-        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        air_density=1.1, # Unused
-        yaw_angles=yaw_angles_nom,
-        power_setpoints=power_setpoints_nom,
-        tilt_angles=tilt_angles_nom,
+        velocities=wind_speeds_test,
+        air_density=1.1,
+        yaw_angles=np.tile(yaw_angles_test, (3,1)),
+        power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((N_test*3, n_turbines)),
+        tilt_angles=np.tile(tilt_angles_nom, (3,1)),
         tilt_interp=None
-    )
-    #baseline_Ct = turbine_data["power_thrust_table"]["thrust_coefficient"][truth_index]
-    #assert np.allclose(baseline_Ct, test_Ct)
+    ).squeeze()
 
-    # Check that yaw and tilt angle have the expected effect
-    TUMLossTurbine.thrust_coefficient(
-        power_thrust_table=turbine_data["power_thrust_table"],
-        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        air_density=1.1, # Unused
-        yaw_angles=yaw_angles_test,
-        power_setpoints=power_setpoints_nom,
-        tilt_angles=tilt_angles_test,
-        tilt_interp=None
-    )
-    #absolute_tilt = tilt_angles_test - turbine_data["power_thrust_table"]["ref_tilt"]
-    #assert test_Ct == baseline_Ct * cosd(yaw_angles_test) * cosd(absolute_tilt)
+    idx_mid = round((N_test-1)/2)
+    power_ratio_no_shear = power_test[:N_test] / power_test[idx_mid]
+    power_ratio_mid_shear = power_test[N_test:2*N_test] / power_test[idx_mid+N_test]
+    power_ratio_most_shear = power_test[2*N_test:] / power_test[idx_mid+2*N_test]
 
+    # Check symmetry of zero shear case
+    assert np.allclose(power_ratio_no_shear, power_ratio_no_shear[::-1])
 
-    # Check that thrust coefficient works as expected
-    TUMLossTurbine.axial_induction(
-        power_thrust_table=turbine_data["power_thrust_table"],
-        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        air_density=1.1, # Unused
-        yaw_angles=yaw_angles_nom,
-        power_setpoints=power_setpoints_nom,
-        tilt_angles=tilt_angles_nom,
-        tilt_interp=None
-    )
-    (
-        cosd(yaw_angles_nom)
-        * cosd(tilt_angles_nom - turbine_data["power_thrust_table"]["ref_tilt"])
-    )
-    # baseline_ai = (
-    #     1 - np.sqrt(1 - turbine_data["power_thrust_table"]["thrust_coefficient"][truth_index])
-    # ) / 2 / baseline_misalignment_loss
-    # assert np.allclose(baseline_ai, test_ai)
+    # Check that shear ordering correct on the left
+    assert (power_ratio_no_shear[:idx_mid] >= power_ratio_mid_shear[:idx_mid]).all()
+    assert (power_ratio_mid_shear[:idx_mid] >= power_ratio_most_shear[:idx_mid]).all()
 
-    # Check that yaw and tilt angle have the expected effect
-    TUMLossTurbine.axial_induction(
-        power_thrust_table=turbine_data["power_thrust_table"],
-        velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
-        air_density=1.1, # Unused
-        yaw_angles=yaw_angles_test,
-        power_setpoints=power_setpoints_nom,
-        tilt_angles=tilt_angles_test,
-        tilt_interp=None
-    )
-    tilt_angles_test - turbine_data["power_thrust_table"]["ref_tilt"]
-    #assert test_Ct == baseline_Ct * cosd(yaw_angles_test) * cosd(absolute_tilt)
+    # And inverted on the right
+    assert (power_ratio_no_shear[idx_mid+1:] <= power_ratio_mid_shear[idx_mid+1:]).all()
+    assert (power_ratio_mid_shear[idx_mid+1:] <= power_ratio_most_shear[idx_mid+1:]).all()
 
 def test_TUMLossTurbine_regression():
     """
@@ -372,4 +423,90 @@ def test_TUMLossTurbine_integration():
             power_setpoints=power_setpoints_nom,
             tilt_angles=tilt_angles_nom,
             tilt_interp=None
+        )
+
+def test_TUMLossTurbine_data():
+    """
+    Test that the Cp/Ct data is consistent, within reason, with the "normal" data.
+    """
+
+    n_turbines = 1
+    N_test = 50
+
+    wind_speeds = np.tile(
+        np.linspace(0, 30, N_test)[:, None, None, None],
+        (1, n_turbines, 3, 3)
+    )
+
+    # Check power, thrust, and axial induction for IEA 15MW, IEA 10MW, and NREL 5MW
+    for turbine in ["iea_15mw", "iea_10mw", "nrel_5mw"]:
+        # Get the turbine_data
+        yaml_file = Path(__file__).resolve().parent / "data" / "input_full.yaml"
+        fmodel = FlorisModel(configuration=yaml_file)
+        fmodel.set(turbine_type=[turbine])
+        power_thrust_table = fmodel.core.farm.turbine_map[0].power_thrust_table
+
+        tilt_angles_nom = power_thrust_table["ref_tilt"] * np.ones((N_test, n_turbines))
+
+        power_base = SimpleTurbine.power(
+            power_thrust_table=power_thrust_table,
+            velocities=wind_speeds,
+            air_density=1.1,
+        ).squeeze()
+
+        power_test = TUMLossTurbine.power(
+            power_thrust_table=power_thrust_table,
+            velocities=wind_speeds,
+            air_density=1.1,
+            yaw_angles=np.zeros((N_test, n_turbines)),
+            tilt_angles=tilt_angles_nom,
+            power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines))
+        ).squeeze()
+
+        thrust_coefficient_base = SimpleTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=wind_speeds,
+            air_density=1.1,
+        ).squeeze()
+
+        thrust_coefficient_test = TUMLossTurbine.thrust_coefficient(
+            power_thrust_table=power_thrust_table,
+            velocities=wind_speeds,
+            air_density=1.1,
+            yaw_angles=np.zeros((N_test, n_turbines)),
+            tilt_angles=tilt_angles_nom,
+            tilt_interp=None,
+            power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines))
+        ).squeeze()
+
+        axial_induction_base = SimpleTurbine.axial_induction(
+            power_thrust_table=power_thrust_table,
+            velocities=wind_speeds,
+            air_density=1.1,
+        ).squeeze()
+
+        axial_induction_test = TUMLossTurbine.axial_induction(
+            power_thrust_table=power_thrust_table,
+            velocities=wind_speeds,
+            air_density=1.1,
+            yaw_angles=np.zeros((N_test, n_turbines)),
+            tilt_angles=tilt_angles_nom,
+            tilt_interp=None,
+            power_setpoints=POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines))
+        ).squeeze()
+
+        # Don't match below cut-in or above cut-out; this is known. Mask those out.
+        nonzero_power = power_base > 0
+
+        # Check within 5% of the base data
+        assert np.allclose(power_base[nonzero_power], power_test[nonzero_power], rtol=5e-2)
+        assert np.allclose(
+            thrust_coefficient_base[nonzero_power],
+            thrust_coefficient_test[nonzero_power],
+            rtol=5e-2
+        )
+        assert np.allclose(
+            axial_induction_base[nonzero_power],
+            axial_induction_test[nonzero_power],
+            rtol=5e-2
         )
