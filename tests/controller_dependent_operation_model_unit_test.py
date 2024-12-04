@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import numpy as np
@@ -7,8 +6,7 @@ import pytest
 from floris import FlorisModel
 from floris.core.turbine.controller_dependent_operation_model import ControllerDependentTurbine
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT, SimpleTurbine
-from floris.utilities import cosd
-from tests.conftest import SampleInputs, WIND_SPEEDS
+from tests.conftest import SampleInputs
 
 
 def test_submodel_attributes():
@@ -451,7 +449,7 @@ def test_ControllerDependentTurbine_data():
     )
 
     # Check power, thrust, and axial induction for IEA 15MW, IEA 10MW, and NREL 5MW
-    for turbine in ["iea_15mw", "iea_10mw", "nrel_5mw"]:
+    for turbine in ["iea_15MW", "iea_10MW", "nrel_5MW"]:
         # Get the turbine_data
         yaml_file = Path(__file__).resolve().parent / "data" / "input_full.yaml"
         fmodel = FlorisModel(configuration=yaml_file)
