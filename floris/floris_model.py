@@ -1745,9 +1745,16 @@ class FlorisModel(LoggingManager):
 
     @staticmethod
     def merge_floris_models(fmodel_list, reference_wind_height=None):
-        """Merge a list of FlorisModel objects into a single FlorisModel object. Note that it uses
-        the very first object specified in fmodel_list to build upon,
+        """Merge a list of FlorisModel objects into a single FlorisModel object.
+        Note that it uses the first object specified in fmodel_list to build upon,
         so it uses those wake model parameters, air density, and so on.
+        Currently, this function supports merging the following components of the FLORIS inputs:
+            - farm
+                - layout_x
+                - layout_y
+                - turbine_type
+            - flow_field
+                - reference_wind_height
 
         Args:
             fmodel_list (list): Array-like of FlorisModel objects.
