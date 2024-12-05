@@ -1771,8 +1771,8 @@ class FlorisModel(LoggingManager):
                 or general solver settings.
         """
 
-        if not isinstance(fmodel_list[0], FlorisModel):
-            raise ValueError(
+        if not all( type(fm) == FlorisModel for fm in fmodel_list ):
+            raise TypeError(
                 "Incompatible input specified. fmodel_list must be a list of FlorisModel objects."
             )
 
