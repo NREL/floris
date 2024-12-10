@@ -1,7 +1,7 @@
 
 default_inputs = {
     "name": "FLORIS defaults",
-    "description": "Gauss-Curl hybrid model (GCH), 1 turbine, 8 m/s, 270 deg, 10% TI",
+    "description": "Gauss-Curl hybrid model (GCH) default inputs",
     "floris_version": "v4",
 
     "logging": {
@@ -29,15 +29,11 @@ default_inputs = {
     "flow_field": {
         "air_density": 1.225,
         "reference_wind_height": -1,
-        "turbulence_intensities": [0.06],
-        "wind_directions": [270.0],
+        "turbulence_intensities": [],
+        "wind_directions": [],
         "wind_shear": 0.12,
-        "wind_speeds": [8.0],
+        "wind_speeds": [],
         "wind_veer": 0.0,
-        "multidim_conditions": {
-            "Tp": 2.5,
-            "Hs": 3.01
-        }
     },
 
     "wake": {
