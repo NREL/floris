@@ -6,11 +6,11 @@ default_inputs = {
 
     "logging": {
         "console": {
-            "enable": "true",
+            "enable": True,
             "level": "WARNING"
         },
         "file": {
-            "enable": "false",
+            "enable": False,
             "level": "WARNING"
         },
     },
