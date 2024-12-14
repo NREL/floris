@@ -17,19 +17,18 @@ from floris.type_dec import (
 from floris.utilities import cosd
 
 
-def rotor_velocity_yaw_correction(
+def rotor_velocity_yaw_cosine_correction(
     cosine_loss_exponent_yaw: float,
     yaw_angles: NDArrayFloat,
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Compute the rotor effective velocity adjusting for yaw settings
     pW = cosine_loss_exponent_yaw / 3.0  # Convert from cosine_loss_exponent_yaw to w
-    # TODO: cosine loss hard coded
     rotor_effective_velocities = rotor_effective_velocities * cosd(yaw_angles) ** pW
 
     return rotor_effective_velocities
 
-def rotor_velocity_tilt_correction(
+def rotor_velocity_tilt_cosine_correction(
     tilt_angles: NDArrayFloat,
     ref_tilt: NDArrayFloat,
     cosine_loss_exponent_tilt: float,
@@ -48,7 +47,6 @@ def rotor_velocity_tilt_correction(
     tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angle)
 
     # Compute the rotor effective velocity adjusting for tilt
-    # TODO: cosine loss hard coded
     relative_tilt = tilt_angles - ref_tilt
     rotor_effective_velocities = (
         rotor_effective_velocities
@@ -214,14 +212,14 @@ def rotor_effective_velocity(
     rotor_effective_velocities = (air_density/ref_air_density)**(1/3) * average_velocities
 
     # Compute the rotor effective velocity adjusting for yaw settings
-    rotor_effective_velocities = rotor_velocity_yaw_correction(
+    rotor_effective_velocities = rotor_velocity_yaw_cosine_correction(
         cosine_loss_exponent_yaw,
         yaw_angle,
         rotor_effective_velocities
     )
 
     # Compute the tilt, if using floating turbines
-    rotor_effective_velocities = rotor_velocity_tilt_correction(
+    rotor_effective_velocities = rotor_velocity_tilt_cosine_correction(
         turbine_type_map,
         tilt_angle,
         ref_tilt,
@@ -232,3 +230,12 @@ def rotor_effective_velocity(
     )
 
     return rotor_effective_velocities
+
+def rotor_velocity_air_density_correction(
+    velocities: NDArrayFloat,
+    air_density: float,
+    ref_air_density: float,
+) -> NDArrayFloat:
+    # Produce equivalent velocities at the reference air density
+
+    return (air_density/ref_air_density)**(1/3) * velocities

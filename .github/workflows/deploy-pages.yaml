@@ -18,11 +18,30 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.13"
 
     - name: Install dependencies
       run: |
         pip install -e ".[docs]"
+
+    # Make a copy of the examples folder within the docs folder
+    - name: Copy examples to docs
+      working-directory: ${{runner.workspace}}/floris/
+      run: |
+        rsync -av examples/ docs/examples
+        ls docs/examples
+
+    # Run the script examples/_convert_examples_to_notebooks.py
+    - name: Convert examples to notebooks
+      working-directory: ${{runner.workspace}}/floris/docs/examples/
+      run: |
+        # Print the working directory
+        pwd
+
+        # Show the contents
+        ls
+
+        python _convert_examples_to_notebooks.py
 
     # Build the book
     - name: Build the book

@@ -19,6 +19,7 @@ from floris import FlorisModel
 from floris.core import Core
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.cut_plane import CutPlane
+from floris.heterogeneous_map import HeterogeneousMap
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,
@@ -124,7 +125,7 @@ def visualize_cut_plane(
         **kwargs: Additional parameters to pass to line contour plot.
 
     Returns:
-        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
     """
 
     if not ax:
@@ -240,92 +241,31 @@ def visualize_heterogeneous_cut_plane(
         **kwargs: Additional parameters to pass to line contour plot.
 
     Returns:
-        im (:py:class:`matplotlib.plt.pcolormesh`): Image handle.
+        ax (:py:class:`matplotlib.pyplot.axes`): Figure axes.
     """
 
-    if not ax:
-        fig, ax = plt.subplots()
-    if vel_component=='u':
-        # vel_mesh = cut_plane.df.u.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if min_speed is None:
-            min_speed = cut_plane.df.u.min()
-        if max_speed is None:
-            max_speed = cut_plane.df.u.max()
-    elif vel_component=='v':
-        # vel_mesh = cut_plane.df.v.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if min_speed is None:
-            min_speed = cut_plane.df.v.min()
-        if max_speed is None:
-            max_speed = cut_plane.df.v.max()
-    elif vel_component=='w':
-        # vel_mesh = cut_plane.df.w.values.reshape(cut_plane.resolution[1], cut_plane.resolution[0])
-        if min_speed is None:
-            min_speed = cut_plane.df.w.min()
-        if max_speed is None:
-            max_speed = cut_plane.df.w.max()
-
-    # Allow separate number of levels for tricontourf and for line_contour
-    if clevels is None:
-        clevels = levels
-
-    # Plot the cut-through
-    im = ax.tricontourf(
-        cut_plane.df.x1,
-        cut_plane.df.x2,
-        cut_plane.df.u,
-        vmin=min_speed,
-        vmax=max_speed,
-        levels=clevels,
-        cmap=cmap,
-        extend="both",
-    )
-
-    # Add line contour
-    line_contour_cut_plane(
-        cut_plane,
+    ax = visualize_cut_plane(
+        cut_plane=cut_plane,
         ax=ax,
+        vel_component=vel_component,
+        min_speed=min_speed,
+        max_speed=max_speed,
+        cmap=cmap,
         levels=levels,
-        colors="b",
+        clevels=clevels,
+        color_bar=color_bar,
         label_contours=label_contours,
-        linewidths=0.8,
-        alpha=0.3,
+        title=title,
         **kwargs
     )
 
-    # Plot the user-defined heterogeneous flow area
     if plot_het_bounds:
-        points = np.array(
-            list(
-                zip(
-                    fmodel.core.flow_field.heterogenous_inflow_config['x'],
-                    fmodel.core.flow_field.heterogenous_inflow_config['y'],
-                )
-            )
+        HeterogeneousMap.plot_heterogeneous_boundary(
+            fmodel.core.flow_field.heterogeneous_inflow_config['x'],
+            fmodel.core.flow_field.heterogeneous_inflow_config['y'],
+            ax=ax
         )
-        hull = ConvexHull(points)
-        h = ax.plot(
-            points[np.append(hull.vertices, hull.vertices[0]),0],
-            points[np.append(hull.vertices, hull.vertices[0]), 1],
-            'k--',
-            lw=2,
-        )
-        ax.plot(points[hull.vertices,0], points[hull.vertices,1], 'ko')
-        ax.legend(h, ["defined heterogeneous bounds"], loc=1)
-
-    if cut_plane.normal_vector == "x":
-        ax.invert_xaxis()
-
-    if color_bar:
-        cbar = plt.colorbar(im, ax=ax)
-        cbar.set_label('m/s')
-
-    # Set the title
-    ax.set_title(title)
-
-    # Make equal axis
-    ax.set_aspect("equal")
-
-    return im
+    return ax
 
 
 def visualize_quiver(cut_plane, ax=None, min_speed=None, max_speed=None, downSamp=1, **kwargs):
@@ -429,7 +369,7 @@ def plot_rotor_values(
         plot_rotor_values(floris.flow_field.w, findex=0, n_rows=1, ncols=4, show=True)
     """
 
-    cmap = plt.cm.get_cmap(name=cmap)
+    cmap = plt.get_cmap(name=cmap)
 
     if t_range is None:
         t_range = range(values.shape[1])
@@ -442,7 +382,7 @@ def plot_rotor_values(
     if n_rows == 1 and n_cols == 1:
         axes = np.array([axes])
 
-    titles = np.array([f"T{i}" for i in t_range])
+    titles = np.array([f"tindex: {i}" for i in t_range])
 
     for ax, t, i in zip(axes.flatten(), titles, t_range):
 
@@ -472,17 +412,12 @@ def plot_rotor_values(
         plt.show()
 
 def calculate_horizontal_plane_with_turbines(
-    fmodel_in,
+    fmodel,
     x_resolution=200,
     y_resolution=200,
     x_bounds=None,
     y_bounds=None,
-    wd=None,
-    ws=None,
-    ti=None,
-    yaw_angles=None,
-    power_setpoints=None,
-    disable_turbines=None,
+    findex_for_viz=None,
 ) -> CutPlane:
         """
         This function creates a :py:class:`~.tools.cut_plane.CutPlane` by
@@ -498,51 +433,41 @@ def calculate_horizontal_plane_with_turbines(
         for models where the visualization capability is not yet available.
 
         Args:
-            fmodel_in (:py:class:`floris.floris_model.FlorisModel`):
+            fmodel (:py:class:`floris.floris_model.FlorisModel`):
                 Preinitialized FlorisModel object.
             x_resolution (float, optional): Output array resolution. Defaults to 200 points.
             y_resolution (float, optional): Output array resolution. Defaults to 200 points.
             x_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
             y_bounds (tuple, optional): Limits of output array (in m). Defaults to None.
-            wd (float, optional): Wind direction setting. Defaults to None.
-            ws (float, optional): Wind speed setting. Defaults to None.
-            ti (float, optional): Turbulence intensity. Defaults to None.
-            yaw_angles (np.ndarray, optional): Yaw angles settings. Defaults to None.
-            power_setpoints (np.ndarray, optional): Power setpoints settings. Defaults to None.
-            disable_turbines (np.ndarray, optional): Disable turbines settings. Defaults to None.
+            findex_for_viz (int, optional): Index of the condition to visualize.
 
         Returns:
             :py:class:`~.tools.cut_plane.CutPlane`: containing values of x, y, u, v, w
         """
+        if fmodel.core.flow_field.n_findex > 1 and findex_for_viz is None:
+            print(
+                "Multiple findices detected. Using first findex for visualization."
+            )
+        if findex_for_viz is None:
+            findex_for_viz = 0
 
         # Make a local copy of fmodel to avoid editing passed in fmodel
-        fmodel = copy.deepcopy(fmodel_in)
-
-        # If wd/ws not provided, use what is set in fmodel
-        if wd is None:
-            wd = fmodel.core.flow_field.wind_directions
-        if ws is None:
-            ws = fmodel.core.flow_field.wind_speeds
-        if ti is None:
-            ti = fmodel.core.flow_field.turbulence_intensities
-        fmodel.check_wind_condition_for_viz(wd=wd, ws=ws, ti=ti)
+        fmodel_viz = copy.deepcopy(fmodel)
 
         # Set the ws and wd
-        fmodel.set(
-            wind_directions=wd,
-            wind_speeds=ws,
-            yaw_angles=yaw_angles,
-            power_setpoints=power_setpoints,
-            disable_turbines=disable_turbines
-        )
-        yaw_angles = fmodel.core.farm.yaw_angles
-        power_setpoints = fmodel.core.farm.power_setpoints
+        fmodel_viz.set_for_viz(findex_for_viz, None)
+
+        yaw_angles = fmodel_viz.core.farm.yaw_angles
+        power_setpoints = fmodel_viz.core.farm.power_setpoints
+        awc_modes = fmodel_viz.core.farm.awc_modes
+        awc_amplitudes = fmodel_viz.core.farm.awc_amplitudes
+        awc_frequencies = fmodel_viz.core.farm.awc_frequencies
 
         # Grab the turbine layout
-        layout_x = copy.deepcopy(fmodel.layout_x)
-        layout_y = copy.deepcopy(fmodel.layout_y)
-        turbine_types = copy.deepcopy(fmodel.core.farm.turbine_type)
-        D = fmodel.core.farm.rotor_diameters_sorted[0, 0]
+        layout_x = copy.deepcopy(fmodel_viz.layout_x)
+        layout_y = copy.deepcopy(fmodel_viz.layout_y)
+        turbine_types = copy.deepcopy(fmodel_viz.core.farm.turbine_type)
+        D = fmodel_viz.core.farm.rotor_diameters_sorted[0, 0]
 
         # Declare a new layout array with an extra turbine
         layout_x_test = np.append(layout_x,[0])
@@ -554,10 +479,29 @@ def calculate_horizontal_plane_with_turbines(
             turbine_types_test = [turbine_types[0] for i in range(len(layout_x))] + ['nrel_5MW']
         else:
             turbine_types_test = np.append(turbine_types, 'nrel_5MW').tolist()
-        yaw_angles = np.append(yaw_angles, np.zeros([fmodel.core.flow_field.n_findex, 1]), axis=1)
+        yaw_angles = np.append(
+            yaw_angles,
+            np.zeros([fmodel_viz.core.flow_field.n_findex, 1]),
+            axis=1
+        )
         power_setpoints = np.append(
             power_setpoints,
-            POWER_SETPOINT_DEFAULT * np.ones([fmodel.core.flow_field.n_findex, 1]),
+            POWER_SETPOINT_DEFAULT * np.ones([fmodel_viz.core.flow_field.n_findex, 1]),
+            axis=1
+        )
+        awc_modes = np.append(
+            awc_modes,
+            np.full((fmodel_viz.core.flow_field.n_findex, 1), "baseline"),
+            axis=1
+        )
+        awc_amplitudes = np.append(
+            awc_amplitudes,
+            np.zeros([fmodel_viz.core.flow_field.n_findex, 1]),
+            axis=1
+        )
+        awc_frequencies = np.append(
+            awc_frequencies,
+            np.zeros([fmodel_viz.core.flow_field.n_findex, 1]),
             axis=1
         )
 
@@ -591,19 +535,22 @@ def calculate_horizontal_plane_with_turbines(
                 # Place the test turbine at this location and calculate wake
                 layout_x_test[-1] = x
                 layout_y_test[-1] = y
-                fmodel.set(
+                fmodel_viz.set(
                     layout_x=layout_x_test,
                     layout_y=layout_y_test,
                     yaw_angles=yaw_angles,
                     power_setpoints=power_setpoints,
-                    disable_turbines=disable_turbines,
-                    turbine_type=turbine_types_test
+                    awc_modes=awc_modes,
+                    awc_amplitudes=awc_amplitudes,
+                    awc_frequencies=awc_frequencies,
+                    turbine_type=turbine_types_test,
+                    reference_wind_height=fmodel_viz.reference_wind_height
                 )
-                fmodel.run()
+                fmodel_viz.run()
 
                 # Get the velocity of that test turbines central point
-                center_point = int(np.floor(fmodel.core.flow_field.u[0,-1].shape[0] / 2.0))
-                u_results[idx] = fmodel.core.flow_field.u[0,-1,center_point,center_point]
+                center_point = int(np.floor(fmodel_viz.core.flow_field.u[0,-1].shape[0] / 2.0))
+                u_results[idx] = fmodel_viz.core.flow_field.u[0,-1,center_point,center_point]
 
                 # Increment index
                 idx = idx + 1
@@ -813,8 +760,9 @@ class VelocityProfilesFigure():
                 'color': 'k',
                 'linewidth': 1.1
         }
-        kwargs = default_params | kwargs
+        params = copy.deepcopy(default_params)
+        params.update(kwargs)
 
         for ax in self.axs[row]:
             for coordinate in ref_lines_D:
-                ax.plot([0.0, 1.0], [coordinate, coordinate], **kwargs)
+                ax.plot([0.0, 1.0], [coordinate, coordinate], **params)

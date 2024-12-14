@@ -8,30 +8,38 @@ is highly encouraged. If you are interested in using FLORIS to conduct studies
 of a wind farm or extending FLORIS to include your own wake model, please join
 the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/)!
 
+```{note}
+Support for python version 3.8 will be dropped in FLORIS v4.3. See {ref}`installation` for details.
+```
+
 ## Quick Start
 
 FLORIS is a Python package run on the command line typically by providing
 an input file with an initial configuration. It can be installed with
 ```pip install floris``` (see {ref}`installation`). The typical entry point is
-{py:class}`.FlorisInterface` which accepts the path to the
+{py:class}`.FlorisModel` which accepts the path to the
 input file as an argument. From there, changes can be made to the initial
-configuration through the {py:meth}`.FlorisInterface.reinitialize`
+configuration through the {py:meth}`.FlorisModel.set`
 routine, and the simulation is executed with
-{py:meth}`.FlorisInterface.calculate_wake`.
+{py:meth}`.FlorisModel.run`.
 
 ```python
-from floris.tools import FlorisInterface
-fi = FlorisInterface("path/to/input.yaml")
-fi.reinitialize(wind_directions=[i for i in range(10)])
-fi.calculate_wake()
+from floris import FlorisModel
+fmodel = FlorisModel("path/to/input.yaml")
+fmodel.set(
+    wind_directions=[i for i in range(10)],
+    wind_speeds=[8.0]*10,
+    turbulence_intensities=[0.06]*10
+)
+fmodel.run()
 ```
 
-Finally, results can be analyzed via post-processing functions avilable within
-{py:class}`.FlorisInterface` such as
-{py:meth}`.FlorisInterface.get_turbine_layout`,
-{py:meth}`.FlorisInterface.get_turbine_powers` and
-{py:meth}`.FlorisInterface.get_farm_AEP`, and
-a visualization package is available in {py:mod}`floris.tools.visualization`.
+Finally, results can be analyzed via post-processing functions available within
+{py:class}`.FlorisModel` such as
+{py:meth}`.FlorisModel.get_turbine_layout`,
+{py:meth}`.FlorisModel.get_turbine_powers` and
+{py:meth}`.FlorisModel.get_farm_AEP`, and
+a visualization package is available in {py:mod}`floris.flow_visualization`.
 A collection of examples are included in the [repository](https://github.com/NREL/floris/tree/main/examples)
 and described in detail in {ref}`examples`.
 

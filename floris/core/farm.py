@@ -28,6 +28,7 @@ from floris.type_dec import (
     iter_validator,
     NDArrayFloat,
     NDArrayObject,
+    NDArrayStr,
 )
 from floris.utilities import load_yaml
 
@@ -38,7 +39,7 @@ default_turbine_library_path = Path(__file__).parents[1] / "turbine_library"
 @define
 class Farm(BaseClass):
     """Farm is where wind power plants should be instantiated from a YAML configuration
-    file. The Farm will create a heterogenous set of turbines that compose a wind farm,
+    file. The Farm will create a heterogeneous set of turbines that compose a wind farm,
     validate the inputs, and then create a vectorized representation of the the turbine
     data.
 
@@ -85,6 +86,15 @@ class Farm(BaseClass):
     power_setpoints: NDArrayFloat = field(init=False)
     power_setpoints_sorted: NDArrayFloat = field(init=False)
 
+    awc_modes: NDArrayStr = field(init=False)
+    awc_modes_sorted: NDArrayStr = field(init=False)
+
+    awc_amplitudes: NDArrayFloat = field(init=False)
+    awc_amplitudes_sorted: NDArrayFloat = field(init=False)
+
+    awc_frequencies: NDArrayFloat = field(init=False)
+    awc_frequencies_sorted: NDArrayFloat = field(init=False)
+
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
 
@@ -110,6 +120,10 @@ class Farm(BaseClass):
 
     internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
 
+    # Private attributes
+    _turbine_types: List = field(init=False, validator=iter_validator(list, str), factory=list)
+    _turbine_definition_cache: dict = field(init=False, factory=dict)
+
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
         # - A string selecting a turbine in the floris turbine library
@@ -124,21 +138,28 @@ class Farm(BaseClass):
         # This allows to read the yaml input files once rather than every time they're given.
         # In other words, if the turbine type is already in the cache, skip that iteration of
         # the for-loop.
-        turbine_definition_cache = {}
+
         for t in self.turbine_type:
             # If a turbine type is a dict, then it was either preprocessed by the yaml
             # library to resolve the "!include" or it was set in a script as a dict. In either case,
             # add an entry to the cache
             if isinstance(t, dict):
-                if t["turbine_type"] in turbine_definition_cache:
-                    continue
-                turbine_definition_cache[t["turbine_type"]] = t
+                if t["turbine_type"] in self._turbine_definition_cache:
+                    if self._turbine_definition_cache[t["turbine_type"]] == t:
+                        continue # Skip t if already loaded
+                    else:
+                        raise ValueError(
+                            "Two different turbine definitions have the same name: "\
+                            f"'{t['turbine_type']}'. "\
+                            "Please specify a unique 'turbine_type' for each turbine definition."
+                        )
+                self._turbine_definition_cache[t["turbine_type"]] = t
 
             # If a turbine type is a string, then it is expected in the internal or external
             # turbine library
             if isinstance(t, str):
-                if t in turbine_definition_cache:
-                    continue
+                if t in self._turbine_definition_cache:
+                    continue # Skip t if already loaded
 
                 # Check if the file exists in the internal and/or external library
                 internal_fn = (self.internal_turbine_library / t).with_suffix(".yaml")
@@ -164,7 +185,7 @@ class Farm(BaseClass):
                         f"The turbine type: {t} does not exist in either the internal or"
                         " external turbine library."
                     )
-                turbine_definition_cache[t] = load_yaml(full_path)
+                self._turbine_definition_cache[t] = load_yaml(full_path)
 
         # Convert any dict entries in the turbine_type list to the type string. Since the
         # definition is saved above, we can make the whole list consistent now to use it
@@ -174,23 +195,23 @@ class Farm(BaseClass):
         # types must be used. If we modify that directly and change its shape, recreating this
         # class with a different layout but not a new self.turbine_type could cause the data
         # to be out of sync.
-        _turbine_types = [
+        self._turbine_types = [
             copy.deepcopy(t["turbine_type"]) if isinstance(t, dict) else t
             for t in self.turbine_type
         ]
 
         # If 1 turbine definition is given, expand to N turbines; this covers a 1-turbine
         # farm and 1 definition for multiple turbines
-        if len(_turbine_types) == 1:
-            _turbine_types *= self.n_turbines
+        if len(self._turbine_types) == 1:
+            self._turbine_types *= self.n_turbines
 
         # Check that turbine definitions contain any v3 keys
-        for t in _turbine_types:
-            check_turbine_definition_for_v3_keys(turbine_definition_cache[t])
+        for _, v in self._turbine_definition_cache.items():
+            check_turbine_definition_for_v3_keys(v)
 
         # Map each turbine definition to its index in this list
         self.turbine_definitions = [
-            copy.deepcopy(turbine_definition_cache[t]) for t in _turbine_types
+            copy.deepcopy(self._turbine_definition_cache[t]) for t in self._turbine_types
         ]
 
     @layout_x.validator
@@ -209,7 +230,8 @@ class Farm(BaseClass):
         if len(value) != 1 and len(value) != self.n_turbines:
             raise ValueError(
                 "turbine_type must have the same number of entries as layout_x/layout_y or have "
-                "a single turbine_type value."
+                "a single turbine_type value. This error can arise if you set the turbine_type or "
+                "alter the operation model before setting the layout."
             )
 
     @turbine_library_path.validator
@@ -232,6 +254,21 @@ class Farm(BaseClass):
         )
         self.power_setpoints_sorted = np.take_along_axis(
             self.power_setpoints,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
+        self.awc_modes_sorted = np.take_along_axis(
+            self.awc_modes,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
+        self.awc_amplitudes_sorted = np.take_along_axis(
+            self.awc_amplitudes,
+            sorted_indices[:, :, 0, 0],
+            axis=1,
+        )
+        self.awc_frequencies_sorted = np.take_along_axis(
+            self.awc_frequencies,
             sorted_indices[:, :, 0, 0],
             axis=1,
         )
@@ -259,7 +296,10 @@ class Farm(BaseClass):
         )
 
     def construct_turbine_map(self):
-        self.turbine_map = [Turbine.from_dict(turb) for turb in self.turbine_definitions]
+        turbine_map_unique = {
+            k: Turbine.from_dict(v) for k, v in self._turbine_definition_cache.items()
+        }
+        self.turbine_map = [turbine_map_unique[k] for k in self._turbine_types]
 
     def construct_turbine_thrust_coefficient_functions(self):
         self.turbine_thrust_coefficient_functions = {
@@ -355,6 +395,32 @@ class Farm(BaseClass):
         self.set_power_setpoints(power_setpoints)
         self.power_setpoints_sorted = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
 
+    def set_awc_modes(self, awc_modes: NDArrayStr):
+        self.awc_modes = np.array(awc_modes)
+
+    def set_awc_modes_to_ref_mode(self, n_findex: int):
+        # awc_modes = np.empty((n_findex, self.n_turbines))\
+        awc_modes = np.array([["baseline"]*self.n_turbines]*n_findex)
+        self.set_awc_modes(awc_modes)
+        # self.awc_modes_sorted = np.empty((n_findex, self.n_turbines))
+        self.awc_modes_sorted = np.array([["baseline"]*self.n_turbines]*n_findex)
+
+    def set_awc_amplitudes(self, awc_amplitudes: NDArrayFloat):
+        self.awc_amplitudes = np.array(awc_amplitudes)
+
+    def set_awc_amplitudes_to_ref_amp(self, n_findex: int):
+        awc_amplitudes = np.zeros((n_findex, self.n_turbines))
+        self.set_awc_amplitudes(awc_amplitudes)
+        self.awc_amplitudes_sorted = np.zeros((n_findex, self.n_turbines))
+
+    def set_awc_frequencies(self, awc_frequencies: NDArrayFloat):
+        self.awc_frequencies = np.array(awc_frequencies)
+
+    def set_awc_frequencies_to_ref_freq(self, n_findex: int):
+        awc_frequencies = np.zeros((n_findex, self.n_turbines))
+        self.set_awc_frequencies(awc_frequencies)
+        self.awc_frequencies_sorted = np.zeros((n_findex, self.n_turbines))
+
     def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
         tilt_angles = compute_tilt_angles_for_floating_turbines_map(
             self.turbine_type_map_sorted,
@@ -410,7 +476,11 @@ class Farm(BaseClass):
     @property
     def coordinates(self):
         return np.array([
-            np.array([x, y, z]) for x, y, z in zip(self.layout_x, self.layout_y, self.hub_heights)
+            np.array([x, y, z]) for x, y, z in zip(
+                self.layout_x,
+                self.layout_y,
+                self.hub_heights if len(self.hub_heights.shape) == 1 else self.hub_heights[0]
+            )
         ])
 
     @property
@@ -422,7 +492,7 @@ def check_turbine_definition_for_v3_keys(turbine_definition: dict):
     v3_deprecation_msg = (
         "Consider using the convert_turbine_v3_to_v4.py utility in floris/tools "
         + "to convert from a FLORIS v3 turbine definition to FLORIS v4. "
-        + "See https://nrel.github.io/floris/upgrade_guides/v3_to_v4.html for more information."
+        + "See https://nrel.github.io/floris/v3_to_v4.html for more information."
     )
     if "generator_efficiency" in turbine_definition:
         raise ValueError(

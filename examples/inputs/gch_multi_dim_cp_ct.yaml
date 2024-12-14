@@ -1,7 +1,7 @@
 
 name: GCH multi dimensional Cp/Ct
 description: Three turbines using GCH model
-floris_version: v3.0.0
+floris_version: v4
 
 logging:
   console:
@@ -52,6 +52,7 @@ wake:
   enable_secondary_steering: true
   enable_yaw_added_recovery: true
   enable_transverse_velocities: true
+  enable_active_wake_mixing: false
 
   wake_deflection_parameters:
     gauss:
@@ -69,7 +70,7 @@ wake:
     empirical_gauss:
       horizontal_deflection_gain_D: 3.0
       vertical_deflection_gain_D: -1
-      deflection_rate: 30
+      deflection_rate: 22
       mixing_gain_deflection: 0.0
       yaw_added_mixing_gain: 0.0
 

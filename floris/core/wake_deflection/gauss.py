@@ -119,7 +119,12 @@ class GaussVelocityDeflection(BaseModel):
         for details on the methods used.
 
         Args:
-            # TODO
+            x_i (np.array): x-coordinates of turbine i.
+            y_i (np.array): y-coordinates of turbine i.
+            yaw_i (np.array): Yaw angle of turbine i.
+            turbulence_intensity_i (np.array): Turbulence intensity at turbine i.
+            ct_i (np.array): Thrust coefficient of turbine i.
+            rotor_diameter_i (float): Rotor diameter of turbine i.
 
         Returns:
             np.array: Deflection field for the wake.

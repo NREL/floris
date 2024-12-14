@@ -30,6 +30,12 @@ class YawOptimizationScipy(YawOptimization):
         Instantiate YawOptimizationScipy object with a FlorisModel object
         and assign parameter values.
         """
+        valid_op_models = ["cosine-loss"]
+        if fmodel.get_operation_model() not in valid_op_models:
+            raise ValueError(
+                "YawOptimizationScipy is currently limited to the following operation models: "
+                + ", ".join(valid_op_models)
+            )
         if opt_options is None:
             # Default SciPy parameters
             opt_options = {
@@ -98,10 +104,10 @@ class YawOptimizationScipy(YawOptimization):
             turbine_weights = np.tile(turbine_weights, (1, 1))
 
             # Handle heterogeneous inflow, if there is one
-            if (hasattr(self.fmodel.core.flow_field, 'heterogenous_inflow_config') and
-                self.fmodel.core.flow_field.heterogenous_inflow_config is not None):
+            if (hasattr(self.fmodel.core.flow_field, 'heterogeneous_inflow_config') and
+                self.fmodel.core.flow_field.heterogeneous_inflow_config is not None):
                 het_sm_orig = np.array(
-                    self.fmodel.core.flow_field.heterogenous_inflow_config['speed_multipliers']
+                    self.fmodel.core.flow_field.heterogeneous_inflow_config['speed_multipliers']
                 )
                 het_sm = het_sm_orig[i, :].reshape(1, -1)
             else:
