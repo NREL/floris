@@ -173,9 +173,13 @@ turbine_power_emg_ti = fmodel_emg_ti.get_turbine_powers()
 
 # Currently the matrices have n_t * n_col columns, each corresponding to a turbine
 # average the columns according to the column, this means averaging every n_t columns
-turbine_power_emg = turbine_power_emg.reshape(turbine_power_emg.shape[0], -1, n_t)
+turbine_power_emg = turbine_power_emg.reshape(
+    turbine_power_emg.shape[0]*turbine_power_emg.shape[1], -1, n_t
+)
 turbine_power_emg = np.mean(turbine_power_emg, axis=2)
-turbine_power_emg_ti = turbine_power_emg_ti.reshape(turbine_power_emg_ti.shape[0], -1, n_t)
+turbine_power_emg_ti = turbine_power_emg_ti.reshape(
+    turbine_power_emg_ti.shape[0]*turbine_power_emg_ti.shape[1], -1, n_t
+)
 turbine_power_emg_ti = np.mean(turbine_power_emg_ti, axis=2)
 
 
