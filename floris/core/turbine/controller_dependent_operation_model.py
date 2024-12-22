@@ -29,7 +29,7 @@ class ControllerDependentTurbine(BaseOperationModel):
 
     The method requires C_P, C_T look-up tables as functions of tip speed ratio and blade pitch
     angle, available here:
-    "floris/turbine_library/iea_15MW_cp_ct_surface.npz" for the IEA 15MW reference turbine.
+    "floris/turbine_library/iea_15MW_demo_cp_ct_surface.npz" for the IEA 15MW reference turbine.
     As with all turbine submodules, implements only static power() and thrust_coefficient() methods,
     which are called by power() and thrust_coefficient() on turbine.py, respectively.
     There are also two new functions, i.e. compute_local_vertical_shear() and control_trajectory().

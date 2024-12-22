@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import copy
 import os
+import logging
 from collections.abc import Callable, Iterable
 from pathlib import Path
 
@@ -517,6 +518,17 @@ class Turbine(BaseClass):
             npz_data = dict(np.load(file_path))
             self.power_thrust_table["cp_ct_data"] = {k: v.tolist() for k, v in npz_data.items()}
             bypass_numeric_converter = True
+
+        # Raise warning if "demo" in the cp_ct data file name
+        if (
+            self.operation_model in ["controller-dependent"]
+            and "demo" in self.power_thrust_table["cp_ct_data_file"]
+        ):
+            self.logger.warning(
+                "Cp/Ct data provided with FLORIS is for demonstration purposes only,"
+                " and may not accurately reflect the actual Cp/Ct surfaces of reference wind"
+                " turbines."
+            )
 
         if not bypass_numeric_converter:
             self.power_thrust_table = floris_numeric_dict_converter(self.power_thrust_table)
