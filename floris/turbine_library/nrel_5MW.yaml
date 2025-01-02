@@ -29,28 +29,27 @@ operation_model: 'cosine-loss'
 ###
 # Parameters needed to evaluate the power and thrust produced by the turbine.
 power_thrust_table:
-  ### General parameters
+  ### Power thrust table parameters
   # The air density at which the power and thrust_coefficient curves are defined.
   ref_air_density: 1.225
+  ###
   # The tilt angle at which the Cp and Ct curves are defined. This is used to capture
   # the effects of a floating platform on a turbine's power and wake.
   ref_tilt: 5.0
-
-  ### Parameters for 'cosine-loss' operation model
+  ###
   # Cosine exponent for power loss due to tilt.
   cosine_loss_exponent_tilt: 1.88
+  ###
   # Cosine exponent for power loss due to yaw misalignment.
   cosine_loss_exponent_yaw: 1.88
-
-  ### Parameters for the 'awc' operation model
+  ###
   # Helix parameters
   helix_a: 1.802
   helix_power_b: 4.568e-03
   helix_power_c: 1.629e-10
   helix_thrust_b: 1.027e-03
   helix_thrust_c: 1.378e-06
-
-  ### Parameters for the 'peak-shaving' operation model
+  ### Peak shaving parameters
   # Fraction of peak thrust by which to reduce
   peak_shaving_fraction: 0.2
   # Threshold turbulence intensity above which to apply peak shaving
