@@ -529,7 +529,7 @@ def test_CpCt_data_consistency():
 def test_CpCt_warning(caplog):
     yaml_file = Path(__file__).resolve().parent / "data" / "input_full.yaml"
     fmodel = FlorisModel(configuration=yaml_file)
-    
+
     with caplog.at_level(logging.WARNING):
         fmodel.set_operation_model("controller-dependent")
     assert "demonstration purposes only" in caplog.text
