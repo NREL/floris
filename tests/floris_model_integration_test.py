@@ -193,6 +193,37 @@ def test_run_no_wake():
     power_no_wake = fmodel.get_turbine_powers()
     assert len(np.unique(power_no_wake)) == 1
 
+def test_get_turbine_load_h():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 8.0, 8.0])
+    wind_directions = np.array([270.0, 270.0, 280.0])
+    turbulence_intensities = np.array([0.06, 0.06, 0.06])
+    n_findex = len(wind_directions)
+
+    layout_x = np.array([0, 1000])
+    layout_y = np.array([0, 1])
+    n_turbines = len(layout_x)
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=layout_x,
+        layout_y=layout_y,
+    )
+
+    fmodel.run()
+
+    load_h = fmodel._get_turbine_load_h()
+
+    assert load_h.shape[0] == n_findex
+    assert load_h.shape[1] == n_turbines
+    assert load_h[0, 0] == load_h[1, 0]
+
+
+
 def test_get_turbine_powers():
     # Get turbine powers should return n_findex x n_turbine powers
     # Apply the same wind speed and direction multiple times and confirm all equal
