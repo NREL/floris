@@ -36,6 +36,7 @@ from floris.utilities import (
     nested_get,
     nested_set,
     print_nested_dict,
+    rotate_coordinates_rel_west,
 )
 from floris.wind_data import (
     TimeSeries,
@@ -503,8 +504,112 @@ class FlorisModel(LoggingManager):
         self.core.finalize()
 
 
-    ### Methods for extracting turbine performance after running
+    #TODO: This could probably be moved elsewhere
+    #TODO: load_h is a stand-in term for "load heuristic" until something better comes to mind
+    def _get_turbine_load_h(self) -> NDArrayFloat:
 
+        #TODO: Probably these should be function input parameters
+        wake_slope = 0.3
+        max_dist_D = 10.0
+        weight_ws = 1.0
+        weight_ct = 1.0
+        weight_ti = 1.0
+
+        # This one I'm not sure, maybe it will be ambient ti, maybe a 1D TD load_ambient_ti
+        load_ambient_ti = 0.10
+
+        # Store for convenience
+        n_turbines = self.n_turbines
+        n_findex = self.n_findex
+
+        # TODO for now assume the first one
+        D = self.core.farm.rotor_diameters[0,0]
+
+        # Get the wind direction rotated farm layouts with wind flowing left to right
+        coord_rotate = rotate_coordinates_rel_west(self.wind_directions,
+                                                    self.core.grid.turbine_coordinates)
+        x_rot = coord_rotate[0]
+        y_rot = coord_rotate[1]
+
+        # Get all turbine thrust coefficients
+        cts = self.get_turbine_thrust_coefficients()
+
+        # Get ws, was originally thinking to use the actual rotor wind speeds (commented first line)
+        # but think more consistent with load methods to use ambient here since those ambient flows
+        # will surround the wake somehow for load inducing purposes
+        # ws = np.mean(self.core.flow_field.u, axis=(2,3))
+        ws = self.wind_speeds
+        # Make the same for every turbine
+        ws = np.tile(ws[:, np.newaxis], (1, n_turbines))
+
+        # Initialize the load_ti to the load_ambient_ti
+        load_ti = np.ones((n_findex, n_turbines)) * load_ambient_ti
+
+        # For each findex and turbine, compute the "load turbulence"
+        for findex in range(n_findex):
+
+            # t_i is the index of the "current" turbine whose "load_ti" we want to compute
+            for t_i in range(n_turbines):
+                nearest_t_dist = 1 + np.max(x_rot) - np.min(x_rot) # Initialize to the max + 1
+
+                # t_j is the index of the turbine who is proposed to be waking t_i
+                for t_j in range(n_turbines):
+
+                    # If the same turbine skip
+                    if t_i == t_j:
+                        continue
+
+                    # Compute the distance from proposed waking to turbine to the current turbine
+                    # with the distance positive if the current turbine is downstream
+                    x_diff = x_rot[findex, t_i] - x_rot[findex, t_j]
+
+                    # If the proposed waking turbine is downstream skip
+                    if x_diff<=0:
+                        continue
+
+                    # If the distance between the turbines is more than the max skip
+                    if x_diff >= max_dist_D * D:
+                        continue
+
+                    # If this is not closer than previouly found wakes skip
+                    if x_diff >= nearest_t_dist:
+                        continue
+
+                    # Compute the cross-stream distance
+                    y_diff_abs = np.abs(y_rot[findex, t_i] - y_rot[findex, t_j])
+
+                    # If the t_i turbine is above the wake cone of the
+                    # proposed waking turbine skip
+                    if y_diff_abs > D + x_diff * wake_slope:
+                        continue
+
+                    # Set nearest_t_dist to the current value
+                    nearest_t_dist = x_diff
+
+                    # Get the c_t of the proposed waking turbine
+                    c_t_j = cts[findex, t_j]
+
+                    # Get the ambient ws (note all turbines same value
+                    #  but might as well use the current turbine)
+                    ambient_ws = ws[findex,t_i]
+
+                    # Compute the added turbulence
+                    ti_add = ambient_ws / (1.5 + 0.8 * (x_diff/D) / np.sqrt(c_t_j) )
+
+                    # Update the ti_term
+                    load_ti[findex, t_i] = (
+
+                        np.sqrt(ti_add**2 + (load_ambient_ti * ambient_ws)**2) / ambient_ws
+
+                    )
+
+
+
+        # Compute load_h
+        return weight_ws * ws + weight_ct * cts + weight_ti * load_ti
+
+
+    ### Methods for extracting turbine performance after running
     def _get_turbine_powers(self) -> NDArrayFloat:
         """Calculates the power at each turbine in the wind farm.
 
