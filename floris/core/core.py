@@ -262,7 +262,6 @@ class Core(BaseClass):
             full_flow_cc_solver(self.farm, self.flow_field, field_grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
-        # TODO: check---is this OK if the turbine grid is a cubature?
 
         return self.flow_field.u_sorted[:,:,0,0] # Remove turbine grid dimensions
 
