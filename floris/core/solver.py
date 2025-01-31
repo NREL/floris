@@ -809,7 +809,7 @@ def full_flow_cc_solver(
         axial_induction_i = axial_induction_i[:, :, None, None]
 
         turbulence_intensity_i = \
-            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]
+            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1, None, None]
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i:i+1, None, None]
         hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i:i+1, None, None]
         rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i:i+1, None, None]
@@ -841,7 +841,7 @@ def full_flow_cc_solver(
             x_i,
             y_i,
             effective_yaw_i,
-            turbulence_intensity_i[:, :, None, None],
+            turbulence_intensity_i,
             turb_Cts[:, i:i+1],
             rotor_diameter_i,
             **deflection_model_args,
