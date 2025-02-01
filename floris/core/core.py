@@ -20,11 +20,13 @@ from floris.core import (
     full_flow_cc_solver,
     full_flow_empirical_gauss_solver,
     full_flow_sequential_solver,
+    full_flow_streamtube_expansion_solver,
     full_flow_turbopark_solver,
     Grid,
     PointsGrid,
     sequential_solver,
     State,
+    streamtube_expansion_solver,
     TurbineCubatureGrid,
     TurbineGrid,
     turbopark_solver,
@@ -198,6 +200,13 @@ class Core(BaseClass):
                 self.grid,
                 self.wake
             )
+        elif vel_model=="eddy_viscosity":
+            streamtube_expansion_solver(
+                self.farm,
+                self.flow_field,
+                self.grid,
+                self.wake
+            )
         else:
             sequential_solver(
                 self.farm,
@@ -225,6 +234,8 @@ class Core(BaseClass):
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="eddy_viscosity":
+            full_flow_streamtube_expansion_solver(self.farm, self.flow_field, self.grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 
@@ -255,10 +266,12 @@ class Core(BaseClass):
         if vel_model == "cc" or vel_model == "turbopark":
             raise NotImplementedError(
                 "solve_for_points is currently only available with the "+\
-                "gauss, jensen, and empirical_gauss models."
+                "gauss, jensen, empirical_gauss, and eddy_viscosity models."
             )
         elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
+        elif vel_model=="eddy_viscosity":
+            full_flow_streamtube_expansion_solver(self.farm, self.flow_field, field_grid, self.wake)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
