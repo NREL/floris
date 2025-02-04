@@ -11,6 +11,7 @@ on:
       - develop
   workflow_dispatch:  # Allows manual triggering of the workflow
 
+
 permissions:
   # deployments permission to deploy GitHub pages website
   deployments: write
