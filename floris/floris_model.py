@@ -25,7 +25,6 @@ from floris.core.turbine.turbine import (
     thrust_coefficient,
 )
 from floris.cut_plane import CutPlane
-from floris.default_inputs import default_inputs
 from floris.logging_manager import LoggingManager
 from floris.type_dec import (
     floris_array_converter,
@@ -34,6 +33,7 @@ from floris.type_dec import (
     NDArrayStr,
 )
 from floris.utilities import (
+    load_yaml,
     nested_get,
     nested_set,
     print_nested_dict,
@@ -66,7 +66,7 @@ class FlorisModel(LoggingManager):
 
     @staticmethod
     def get_defaults() -> dict:
-        return copy.deepcopy(default_inputs)
+        return copy.deepcopy(load_yaml(Path(__file__).parent / "default_inputs.yaml"))
 
     def __init__(self, configuration: dict | str | Path):
 
