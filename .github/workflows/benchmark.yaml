@@ -1,14 +1,14 @@
 name: Floris Benchmark
-on:
-  schedule:
-    - cron: '0 3 * * *'  # Runs daily at 3am UTC
 # on:
-#   push:
-#     branches:
-#       - develop
-#   pull_request:
-#     branches:
-#       - develop
+#   schedule:
+#     - cron: '0 3 * * *'  # Runs daily at 3am UTC
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 permissions:
