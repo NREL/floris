@@ -126,72 +126,54 @@ class ParFlorisModel(FlorisModel):
             t0 = timerpc()
             super().run()
             t1 = timerpc()
-            t2 = None
-            t3 = None
-        elif self.interface == "multiprocessing":
+            self._print_timings(t0, t1, None, None)
+        else:
             t0 = timerpc()
             self.core.initialize_domain()
             parallel_run_inputs = self._preprocessing()
             t1 = timerpc()
-            if self.return_turbine_powers_only:
-                with self._PoolExecutor(self.max_workers) as p:
-                    self._turbine_powers_split = p.starmap(
-                        _parallel_run_powers_only,
-                        parallel_run_inputs
-                    )
-            else:
-                with self._PoolExecutor(self.max_workers) as p:
-                    self._fmodels_split = p.starmap(_parallel_run, parallel_run_inputs)
-            t2 = timerpc()
-            self._postprocessing()
-            self.core.farm.finalize(self.core.grid.unsorted_indices)
-            self.core.state = State.USED
-            t3 = timerpc()
-        elif self.interface == "pathos":
-            t0 = timerpc()
-            self.core.initialize_domain()
-            parallel_run_inputs = self._preprocessing()
-            t1 = timerpc()
-            if self.return_turbine_powers_only:
-                self._turbine_powers_split = self.pathos_pool.map(
-                    _parallel_run_powers_only_map,
-                    parallel_run_inputs
-                )
-            else:
-                self._fmodels_split = self.pathos_pool.map(
-                    _parallel_run_map,
-                    parallel_run_inputs
-                )
-            t2 = timerpc()
-            self._postprocessing()
-            self.core.farm.finalize(self.core.grid.unsorted_indices)
-            self.core.state = State.USED
-            t3 = timerpc()
-        elif self.interface == "concurrent":
-            t0 = timerpc()
-            self.core.initialize_domain()
-            parallel_run_inputs = self._preprocessing()
-            t1 = timerpc()
-            if self.return_turbine_powers_only:
-                with self._PoolExecutor(self.max_workers) as p:
-                    self._turbine_powers_split = p.map(
+            if self.interface == "multiprocessing":
+                if self.return_turbine_powers_only:
+                    with self._PoolExecutor(self.max_workers) as p:
+                        self._turbine_powers_split = p.starmap(
+                            _parallel_run_powers_only,
+                            parallel_run_inputs
+                        )
+                else:
+                    with self._PoolExecutor(self.max_workers) as p:
+                        self._fmodels_split = p.starmap(_parallel_run, parallel_run_inputs)
+            elif self.interface == "pathos":
+                if self.return_turbine_powers_only:
+                    self._turbine_powers_split = self.pathos_pool.map(
                         _parallel_run_powers_only_map,
                         parallel_run_inputs
                     )
-                    self._turbine_powers_split = list(self._turbine_powers_split)
-            else:
-                with self._PoolExecutor(self.max_workers) as p:
-                    self._fmodels_split = p.map(
+                else:
+                    self._fmodels_split = self.pathos_pool.map(
                         _parallel_run_map,
                         parallel_run_inputs
                     )
-                    self._fmodels_split = list(self._fmodels_split)
+            elif self.interface == "concurrent":
+                if self.return_turbine_powers_only:
+                    with self._PoolExecutor(self.max_workers) as p:
+                        self._turbine_powers_split = p.map(
+                            _parallel_run_powers_only_map,
+                            parallel_run_inputs
+                        )
+                        self._turbine_powers_split = list(self._turbine_powers_split)
+                else:
+                    with self._PoolExecutor(self.max_workers) as p:
+                        self._fmodels_split = p.map(
+                            _parallel_run_map,
+                            parallel_run_inputs
+                        )
+                        self._fmodels_split = list(self._fmodels_split)
             t2 = timerpc()
             self._postprocessing()
             self.core.farm.finalize(self.core.grid.unsorted_indices)
             self.core.state = State.USED
             t3 = timerpc()
-        self._print_timings(t0, t1, t2, t3)
+            self._print_timings(t0, t1, t2, t3)
 
     def sample_flow_at_points(self, x: NDArrayFloat, y: NDArrayFloat, z: NDArrayFloat):
         """
