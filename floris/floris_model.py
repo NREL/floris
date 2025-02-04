@@ -505,15 +505,14 @@ class FlorisModel(LoggingManager):
 
 
     #TODO: This could probably be moved elsewhere
-    #TODO: load_h is a stand-in term for "load heuristic" until something better comes to mind
-    def _get_turbine_load_h(self) -> NDArrayFloat:
+    def _get_turbine_voc(self) -> NDArrayFloat:
+
+        # Set to constant for now
+        A = 1.0
 
         #TODO: Probably these should be function input parameters
         wake_slope = 0.3
         max_dist_D = 10.0
-        weight_ws = 1.0
-        weight_ct = 1.0
-        weight_ti = 1.0
 
         # This one I'm not sure, maybe it will be ambient ti, maybe a 1D TD load_ambient_ti
         load_ambient_ti = 0.10
@@ -603,10 +602,16 @@ class FlorisModel(LoggingManager):
 
                     )
 
+        # Compute wind speed standard deviation
+        ws_std = ws * load_ti
+
+        # Compute the thrust in absolute terms
+        area = np.pi * (D/2)**2
+        thrust = 0.5 * self.core.flow_field.air_density * area * cts * ws**2
 
 
-        # Compute load_h
-        return weight_ws * ws + weight_ct * cts + weight_ti * load_ti
+        # Compute voc
+        return A * ws_std * thrust
 
 
     ### Methods for extracting turbine performance after running
