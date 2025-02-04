@@ -9,8 +9,10 @@ on:
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 permissions:
-  contents: write
+  # deployments permission to deploy GitHub pages website
   deployments: write
+  # contents permission to update benchmark contents in gh-pages branch
+  contents: write
 
 jobs:
   benchmark:
@@ -18,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11]  # Or whichever versions you support
+        python-version: ["3.13"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         with:
           python-version: ${{ matrix.python-version }}
