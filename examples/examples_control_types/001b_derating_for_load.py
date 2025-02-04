@@ -6,7 +6,9 @@ TBD.
 import matplotlib.pyplot as plt
 import numpy as np
 
+import floris.layout_visualization as layoutviz
 from floris import FlorisModel
+from floris.flow_visualization import visualize_cut_plane
 
 
 fmodel = FlorisModel("../inputs/gch.yaml")
@@ -16,7 +18,7 @@ fmodel = FlorisModel("../inputs/gch.yaml")
 fmodel.set_operation_model("simple-derating")
 
 # Convert to a simple two turbine layout with derating turbines
-fmodel.set(layout_x=[0, 126.0 * 5], layout_y=[0.0, 0.0])
+fmodel.set(layout_x=[0, 126.0 * 7], layout_y=[0.0, 0.0])
 
 
 # Set the wind directions and speeds to be constant over n_findex = N time steps
@@ -33,7 +35,7 @@ turbine_powers_orig = fmodel.get_turbine_powers()
 nom_pow = turbine_powers_orig[0,0]
 
 # # Derate the front turbine from full power to 75 %
-power_setpoints_front = np.linspace(nom_pow,nom_pow *.75,N)
+power_setpoints_front = np.linspace(nom_pow,nom_pow *.7,N)
 full_rating = np.ones_like(power_setpoints_front) * 5E6
 
 # Only derate the front turbine
@@ -43,48 +45,100 @@ fmodel.run()
 turbine_powers_derated = fmodel.get_turbine_powers()
 
 # Compute the mean power
-power_mean = np.mean(turbine_powers_derated,axis=1)
+power_sum = np.sum(turbine_powers_derated,axis=1)
 
 # Define de-rating as percent reduction
 de_rating = 100 * (nom_pow - power_setpoints_front) / nom_pow
 
 # Grab the load heuristic
-load_h = fmodel._get_turbine_load_h()
+voc = fmodel._get_turbine_voc()
 
 # Compute mean load
-load_h_mean = np.mean(load_h,axis=1)
+voc_sum = np.sum(voc,axis=1)
 
 # Plot the results
-fig, axarr = plt.subplots(2,3,sharex=True, sharey='row',figsize=(12,8))
+fig, axarr = plt.subplots(2,2,sharex=True, sharey='row',figsize=(12,8))
 
 ax = axarr[0,0]
 ax.plot(de_rating, turbine_powers_derated[:,0]/turbine_powers_derated[0,0],'k')
-ax.set_title('Turbine 0')
-ax.set_ylabel('Power (ratio to nomimal)')
+ax.set_title('Upstream Turbine')
+ax.set_ylabel('Power (ratio to upstream full power)')
+
+# Add a rounded green text box to the subplot stating energy lost to derating
+textstr = 'Energy lost to derating'
+props = {'boxstyle':'round', 'facecolor':'r', 'alpha':0.5}
+ax.text(0.05, 0.15, textstr, transform=ax.transAxes, fontsize=14,
+        verticalalignment='bottom', bbox=props)
+
 
 ax = axarr[0,1]
-ax.plot(de_rating, turbine_powers_derated[:,1]/turbine_powers_derated[0,1],'k')
-ax.set_title('Turbine 1')
+ax.plot(de_rating, turbine_powers_derated[:,1]/turbine_powers_derated[0,0],'k')
+ax.set_title('Downstream Turbine')
+textstr = 'Energy gained to reduced waking'
+props = {'boxstyle':'round', 'facecolor':'g', 'alpha':0.5}
+ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
 
-ax = axarr[0,2]
-ax.plot(de_rating, power_mean/power_mean[0],'k')
-ax.set_title('Mean')
 
 ax = axarr[1,0]
-ax.plot(de_rating, load_h[:,0]/load_h[0,0],'k')
-ax.set_ylabel('Load H (ratio to nomimal)')
+ax.plot(de_rating, voc[:,0]/voc[0,0],'k')
+ax.set_ylabel('VOC (ratio to upstream full power)')
 ax.set_xlabel('Front De-Rating %')
+textstr = 'Lower VOC via lower thrust'
+props = {'boxstyle':'round', 'facecolor':'g', 'alpha':0.5}
+ax.text(0.15, 0.95, textstr, transform=ax.transAxes, fontsize=14,
+        verticalalignment='top', bbox=props)
+
 
 ax = axarr[1,1]
-ax.plot(de_rating, load_h[:,1]/load_h[0,1],'k')
+ax.plot(de_rating, voc[:,1]/voc[0,0],'k')
 ax.set_xlabel('Front De-Rating %')
+textstr = 'Lower VOC via lower waking'
+props = {'boxstyle':'round', 'facecolor':'g', 'alpha':0.5}
+ax.text(0.15, 0.15, textstr, transform=ax.transAxes, fontsize=14,
+        verticalalignment='bottom', bbox=props)
 
-ax = axarr[1,2]
-ax.plot(de_rating, load_h_mean/load_h_mean[0],'k')
-ax.set_xlabel('Front De-Rating %')
 
 for ax in axarr.flatten():
     ax.grid(True)
 
+# Save the figure
+fig.savefig('derating_grid.png', bbox_inches='tight', dpi=300)
+
+# Calculate the revenue and cost
+# Force cost to be equal to 1.1* power at 1.0 energy value
+cost = 0.95 * voc_sum * (power_sum[0] / voc_sum[0])
+
+fig, ax = plt.subplots()
+for elecpric in [2.0, 1.0, 0.5]:
+    revenue = elecpric * power_sum
+    profit = revenue - cost
+    ax.plot(de_rating, profit-profit[0],label=f'Electricity Price {elecpric}')
+ax.set_xlabel('Front De-Rating %')
+ax.set_ylabel('Profit (ratio to not derated)')
+ax.axhline(0,color='k',linestyle='--')
+ax.grid()
+# Remove numeric labels on yaxis
+ax.set_yticklabels([])
+ax.legend()
+fig.savefig('elec.png', bbox_inches='tight', dpi=300)
+
+
+
+
+
+
+# Visualize the farm
+fig, ax = plt.subplots()
+horizontal_plane = fmodel.calculate_horizontal_plane(height=90.0)
+visualize_cut_plane(
+    horizontal_plane,
+    ax=ax,
+    min_speed=3,
+    max_speed=9,
+)
+layoutviz.plot_waking_directions(fmodel, ax=ax)
+layoutviz.plot_turbine_rotors(fmodel, ax=ax)
+fig.savefig('layout.png', bbox_inches='tight', dpi=300)
 
 plt.show()
