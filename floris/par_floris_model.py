@@ -215,9 +215,8 @@ class ParFlorisModel(FlorisModel):
             t0 = timerpc()
             sampled_wind_speeds = super().sample_flow_at_points(x, y, z)
             t1 = timerpc()
-            t2 = None
-            t3 = None
-        elif self.interface == "multiprocessing":
+            self._print_timings(t0, t1, None, None)
+        else:
             t0 = timerpc()
             self.core.initialize_domain()
             parallel_run_inputs = self._preprocessing()
@@ -226,49 +225,28 @@ class ParFlorisModel(FlorisModel):
                 for fmodel_dict, control_setpoints in parallel_run_inputs
             ]
             t1 = timerpc()
-            with self._PoolExecutor(self.max_workers) as p:
-                sampled_wind_speeds_p = p.starmap(
-                    _parallel_sample_flow_at_points,
-                    parallel_sample_flow_at_points_inputs
-                )
-            t2 = timerpc()
-            sampled_wind_speeds = np.concatenate(sampled_wind_speeds_p, axis=0)
-            t3 = timerpc()
-        elif self.interface == "pathos":
-            t0 = timerpc()
-            self.core.initialize_domain()
-            parallel_run_inputs = self._preprocessing()
-            parallel_sample_flow_at_points_inputs = [
-                (fmodel_dict, control_setpoints, x, y, z)
-                for fmodel_dict, control_setpoints in parallel_run_inputs
-            ]
-            t1 = timerpc()
-            sampled_wind_speeds_p = self.pathos_pool.map(
-                _parallel_sample_flow_at_points_map,
-                parallel_sample_flow_at_points_inputs
-            )
-            t2 = timerpc()
-            sampled_wind_speeds = np.concatenate(sampled_wind_speeds_p, axis=0)
-            t3 = timerpc()
-        elif self.interface == "concurrent":
-            t0 = timerpc()
-            self.core.initialize_domain()
-            parallel_run_inputs = self._preprocessing()
-            parallel_sample_flow_at_points_inputs = [
-                (fmodel_dict, control_setpoints, x, y, z)
-                for fmodel_dict, control_setpoints in parallel_run_inputs
-            ]
-            t1 = timerpc()
-            with self._PoolExecutor(self.max_workers) as p:
-                sampled_wind_speeds_p = p.map(
+            if self.interface == "multiprocessing":
+                with self._PoolExecutor(self.max_workers) as p:
+                    sampled_wind_speeds_p = p.starmap(
+                        _parallel_sample_flow_at_points,
+                        parallel_sample_flow_at_points_inputs
+                    )
+            elif self.interface == "pathos":
+                sampled_wind_speeds_p = self.pathos_pool.map(
                     _parallel_sample_flow_at_points_map,
                     parallel_sample_flow_at_points_inputs
                 )
-                sampled_wind_speeds_p = list(sampled_wind_speeds_p)
+            elif self.interface == "concurrent":
+                with self._PoolExecutor(self.max_workers) as p:
+                    sampled_wind_speeds_p = p.map(
+                        _parallel_sample_flow_at_points_map,
+                        parallel_sample_flow_at_points_inputs
+                    )
+                    sampled_wind_speeds_p = list(sampled_wind_speeds_p)
             t2 = timerpc()
             sampled_wind_speeds = np.concatenate(sampled_wind_speeds_p, axis=0)
             t3 = timerpc()
-        self._print_timings(t0, t1, t2, t3)
+            self._print_timings(t0, t1, t2, t3)
 
         return sampled_wind_speeds
 
