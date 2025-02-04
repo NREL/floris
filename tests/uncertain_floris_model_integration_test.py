@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 import yaml
 
-from floris import FlorisModel, TimeSeries
+from floris import (
+    FlorisModel,
+    ParFlorisModel,
+    TimeSeries,
+)
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.uncertain_floris_model import (
     ApproxFlorisModel,
@@ -406,9 +410,14 @@ def test_get_operation_model():
 
 
 def test_set_operation_model():
+    # Define a reference wind height for cases when there are changes to
+    # turbine_type
+
     ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
     ufmodel.set_operation_model("simple-derating")
     assert ufmodel.get_operation_model() == "simple-derating"
+
+    reference_wind_height = ufmodel.reference_wind_height
 
     # Check multiple turbine types works
     ufmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
@@ -420,26 +429,26 @@ def test_set_operation_model():
 
     # Check that setting a single turbine type, and then altering the operation model works
     ufmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    ufmodel.set(turbine_type=["nrel_5MW"])
+    ufmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     ufmodel.set_operation_model("simple-derating")
     assert ufmodel.get_operation_model() == "simple-derating"
 
     # Check that setting over mutliple turbine types works
-    ufmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    ufmodel.set(turbine_type=["nrel_5MW", "iea_15MW"], reference_wind_height=reference_wind_height)
     ufmodel.set_operation_model("simple-derating")
     assert ufmodel.get_operation_model() == "simple-derating"
     ufmodel.set_operation_model(["simple-derating", "cosine-loss"])
     assert ufmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
 
     # Check setting over single turbine type; then updating layout works
-    ufmodel.set(turbine_type=["nrel_5MW"])
+    ufmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     ufmodel.set_operation_model("simple-derating")
     ufmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
     assert ufmodel.get_operation_model() == "simple-derating"
 
     # Check that setting for multiple turbine types and then updating layout breaks
     ufmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    ufmodel.set(turbine_type=["nrel_5MW"])
+    ufmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     ufmodel.set_operation_model(["simple-derating", "cosine-loss"])
     assert ufmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
     with pytest.raises(ValueError):
@@ -447,8 +456,21 @@ def test_set_operation_model():
 
     # Check one more variation
     ufmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    ufmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    ufmodel.set(turbine_type=["nrel_5MW", "iea_15MW"], reference_wind_height=reference_wind_height)
     ufmodel.set_operation_model("simple-derating")
     ufmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     with pytest.raises(ValueError):
         ufmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
+
+def test_parallel_uncertain_model():
+
+    ufmodel = UncertainFlorisModel(FlorisModel(configuration=YAML_INPUT))
+    pufmodel = UncertainFlorisModel(ParFlorisModel(configuration=YAML_INPUT))
+
+    # Run the models and compare outputs
+    ufmodel.run()
+    pufmodel.run()
+    powers_unc = ufmodel.get_turbine_powers()
+    powers_punc = pufmodel.get_turbine_powers()
+
+    assert np.allclose(powers_unc, powers_punc)

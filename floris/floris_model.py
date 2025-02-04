@@ -175,6 +175,16 @@ class FlorisModel(LoggingManager):
         if layout_y is not None:
             farm_dict["layout_y"] = layout_y
         if turbine_type is not None:
+            if reference_wind_height is None:
+                self.logger.warning(
+                    "turbine_type has been changed without specifying a new "
+                    +"reference_wind_height. reference_wind_height remains {0:.2f} m.".format(
+                        flow_field_dict["reference_wind_height"]
+                    )
+                    +f" Consider calling `{self.__class__.__name__}."
+                    +"assign_hub_height_to_ref_height` to update the reference wind height to the "
+                    +"turbine hub height."
+                )
             farm_dict["turbine_type"] = turbine_type
         if turbine_library_path is not None:
             farm_dict["turbine_library_path"] = turbine_library_path
@@ -443,10 +453,7 @@ class FlorisModel(LoggingManager):
         # previous setting
         if not (_yaw_angles == 0).all():
             self.core.farm.set_yaw_angles(_yaw_angles)
-        if not (
-            (_power_setpoints == POWER_SETPOINT_DEFAULT)
-            | (_power_setpoints == POWER_SETPOINT_DISABLED)
-        ).all():
+        if not (_power_setpoints == POWER_SETPOINT_DEFAULT).all():
             self.core.farm.set_power_setpoints(_power_setpoints)
         if _awc_modes is not None:
             self.core.farm.set_awc_modes(_awc_modes)
@@ -619,8 +626,8 @@ class FlorisModel(LoggingManager):
         # Confirm run() has been run
         if self.core.state is not State.USED:
             raise RuntimeError(
-                "Can't run function `FlorisModel.get_farm_power` without "
-                "first running `FlorisModel.run`."
+                f"Can't run function `{self.__class__.__name__}.get_farm_power` without "
+                f"first running `{self.__class__.__name__}.run`."
             )
 
         if turbine_weights is None:
@@ -1532,7 +1539,10 @@ class FlorisModel(LoggingManager):
                 # Set a single one here, then, and return
                 turbine_type = self.core.farm.turbine_definitions[0]
                 turbine_type["operation_model"] = operation_model
-                self.set(turbine_type=[turbine_type])
+                self.set(
+                    turbine_type=[turbine_type],
+                    reference_wind_height=self.reference_wind_height
+                )
                 return
             else:
                 operation_model = [operation_model]*self.core.farm.n_turbines
@@ -1551,7 +1561,10 @@ class FlorisModel(LoggingManager):
             )
             turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
 
-        self.set(turbine_type=turbine_type_list)
+        self.set(
+            turbine_type=turbine_type_list,
+            reference_wind_height=self.reference_wind_height
+        )
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object"""
@@ -1693,6 +1706,16 @@ class FlorisModel(LoggingManager):
         return self.core.farm.n_turbines
 
     @property
+    def reference_wind_height(self):
+        """
+        Reference wind height.
+
+        Returns:
+            float: Reference wind height.
+        """
+        return self.core.flow_field.reference_wind_height
+
+    @property
     def turbine_average_velocities(self) -> NDArrayFloat:
         return average_velocity(
             velocities=self.core.flow_field.u,
@@ -1722,9 +1745,16 @@ class FlorisModel(LoggingManager):
 
     @staticmethod
     def merge_floris_models(fmodel_list, reference_wind_height=None):
-        """Merge a list of FlorisModel objects into a single FlorisModel object. Note that it uses
-        the very first object specified in fmodel_list to build upon,
+        """Merge a list of FlorisModel objects into a single FlorisModel object.
+        Note that it uses the first object specified in fmodel_list to build upon,
         so it uses those wake model parameters, air density, and so on.
+        Currently, this function supports merging the following components of the FLORIS inputs:
+            - farm
+                - layout_x
+                - layout_y
+                - turbine_type
+            - flow_field
+                - reference_wind_height
 
         Args:
             fmodel_list (list): Array-like of FlorisModel objects.
@@ -1741,8 +1771,8 @@ class FlorisModel(LoggingManager):
                 or general solver settings.
         """
 
-        if not isinstance(fmodel_list[0], FlorisModel):
-            raise ValueError(
+        if not all( type(fm) == FlorisModel for fm in fmodel_list ):
+            raise TypeError(
                 "Incompatible input specified. fmodel_list must be a list of FlorisModel objects."
             )
 

@@ -5,6 +5,7 @@ from time import perf_counter as timerpc
 import numpy as np
 import pandas as pd
 
+from floris.core.turbine.operation_models import POWER_SETPOINT_DISABLED
 from floris.logging_manager import LoggingManager
 
 from .yaw_optimization_tools import derive_downstream_turbines
@@ -99,7 +100,7 @@ class YawOptimization(LoggingManager):
         """
 
         # Save turbine object to self
-        self.fmodel = fmodel.copy()
+        self.fmodel = copy.deepcopy(fmodel)
         self.nturbs = len(self.fmodel.layout_x)
 
         # # Check floris options
@@ -130,6 +131,11 @@ class YawOptimization(LoggingManager):
         # Set optimization bounds
         self.minimum_yaw_angle = self._unpack_variable(minimum_yaw_angle)
         self.maximum_yaw_angle = self._unpack_variable(maximum_yaw_angle)
+
+        # Limit yaw angles to zero for disabled turbines
+        active_turbines = fmodel.core.farm.power_setpoints > POWER_SETPOINT_DISABLED
+        self.minimum_yaw_angle[~active_turbines] = 0.0
+        self.maximum_yaw_angle[~active_turbines] = 0.0
 
         # Set initial condition for optimization
         if x0 is not None:
@@ -224,7 +230,8 @@ class YawOptimization(LoggingManager):
         self.turbs_to_opt = (self.maximum_yaw_angle - self.minimum_yaw_angle >= 0.001)
 
         # Initialize subset variables as full set
-        self.fmodel_subset = self.fmodel.copy()
+        self.fmodel_subset = copy.deepcopy(self.fmodel)
+        self.fmodel_subset._wind_data = None # Accessing private attribute!
         n_findex_subset = copy.deepcopy(self.fmodel.core.flow_field.n_findex)
         minimum_yaw_angle_subset = copy.deepcopy(self.minimum_yaw_angle)
         maximum_yaw_angle_subset = copy.deepcopy(self.maximum_yaw_angle)
@@ -301,6 +308,7 @@ class YawOptimization(LoggingManager):
             ti_array=None,
             turbine_weights=None,
             heterogeneous_speed_multipliers=None,
+            power_setpoints=None,
         ):
         """
         Calculate the wind farm power production assuming the predefined
@@ -353,6 +361,7 @@ class YawOptimization(LoggingManager):
             wind_speeds=ws_array,
             turbulence_intensities=ti_array,
             yaw_angles=yaw_angles,
+            power_setpoints=power_setpoints,
         )
         fmodel_subset.run()
         turbine_power = fmodel_subset.get_turbine_powers()

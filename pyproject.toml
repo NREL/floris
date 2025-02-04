@@ -2,6 +2,73 @@
 requires = ["setuptools >= 40.6.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "floris"
+version = "4.2.2"
+description = "A controls-oriented engineering wake model."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Rafael Mudafort", email = "rafael.mudafort@nrel.gov" },
+    { name = "Paul Fleming", email = "paul.fleming@nrel.gov" },
+    { name = "Michael (Misha) Sinner", email = "Michael.Sinner@nrel.gov" },
+    { name = "Eric Simley", email = "Eric.Simley@nrel.gov" },
+    { name = "Christopher Bay", email = "Christopher.Bay@nrel.gov" },
+]
+license = { file = "LICENSE.txt" }
+keywords = ["floris"]
+classifiers = [
+        "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Programming Language :: Python :: Implementation :: PyPy"
+]
+dependencies = [
+    "attrs",
+    "pyyaml~=6.0",
+    "numexpr~=2.0",
+    "numpy~=1.20",
+    "scipy~=1.1",
+    "matplotlib~=3.0",
+    "pandas~=2.0",
+    "shapely~=2.0",
+    "coloredlogs~=15.0",
+    "pathos~=0.3",
+]
+
+[project.optional-dependencies]
+docs = [
+    "jupyter-book~=1.0",
+    "sphinx-book-theme~=1.0",
+    "sphinx-autodoc-typehints~=2.0",
+    "sphinxcontrib-autoyaml~=1.0",
+    "sphinxcontrib.mermaid~=1.0",
+]
+develop = [
+    "pytest~=8.0",
+    "pre-commit~=4.0",
+    "ruff~=0.7",
+    "isort~=5.0"
+]
+
+[tool.setuptools.packages.find]
+include = ["floris*"]
+
+[tool.setuptools.package-data]
+floris = [
+    "turbine_library/*.yaml",
+    "core/wake_velocity/turbopark_lookup_table.mat"
+]
+
+[project.urls]
+Homepage = "https://github.com/NREL/floris"
+Documentation = "https://nrel.github.io/floris/"
 
 [coverage.run]
 # Coverage.py configuration file
