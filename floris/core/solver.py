@@ -694,7 +694,7 @@ def cc_solver(
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
         turbine_turbulence_intensity,
         axis=(2,3)
-    )
+    )[:, :, None, None]
 
 
 def full_flow_cc_solver(
@@ -809,7 +809,7 @@ def full_flow_cc_solver(
         axial_induction_i = axial_induction_i[:, :, None, None]
 
         turbulence_intensity_i = \
-            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1, None, None]
+            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]
         yaw_angle_i = turbine_grid_farm.yaw_angles_sorted[:, i:i+1, None, None]
         hub_height_i = turbine_grid_farm.hub_heights_sorted[:, i:i+1, None, None]
         rotor_diameter_i = turbine_grid_farm.rotor_diameters_sorted[:, i:i+1, None, None]
@@ -874,7 +874,7 @@ def full_flow_cc_solver(
             u_i,
             deflection_field,
             yaw_angle_i,
-            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, :, None, None],
+            turbine_grid_flow_field.turbulence_intensity_field_sorted_avg,
             turb_Cts,
             turbine_grid_farm.rotor_diameters_sorted[:, :, None, None],
             turb_u_wake,
@@ -1122,7 +1122,7 @@ def turbopark_solver(
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
         turbine_turbulence_intensity,
         axis=(2, 3)
-    )
+    )[:, :, None, None]
 
 
 def full_flow_turbopark_solver(
