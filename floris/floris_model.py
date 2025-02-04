@@ -1636,10 +1636,20 @@ class FlorisModel(LoggingManager):
         else:
             return xcoords, ycoords
 
-    def print_dict(self) -> None:
+    def show_config(self, full=False) -> None:
         """Print the FlorisModel dictionary.
         """
-        print_nested_dict(self.core.as_dict())
+        config_dict = self.core.as_dict()
+        if not full:
+            del config_dict["logging"]
+            del config_dict["wake"]["enable_secondary_steering"]
+            del config_dict["wake"]["enable_yaw_added_recovery"]
+            del config_dict["wake"]["enable_transverse_velocities"]
+            del config_dict["wake"]["enable_active_wake_mixing"]
+            del config_dict["wake"]["wake_deflection_parameters"]
+            del config_dict["wake"]["wake_velocity_parameters"]
+            del config_dict["wake"]["wake_turbulence_parameters"]
+        print_nested_dict(config_dict)
 
 
     ### Properties
