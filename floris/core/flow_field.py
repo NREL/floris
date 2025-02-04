@@ -302,7 +302,7 @@ class FlowField(BaseClass):
             # Compute the 2-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
-            self.interpolate_multiplier_xy(x, y, multiplier, fill_value=1.0)
+            F = self.interpolate_multiplier_xy(x, y, speed_multipliers[0], fill_value=1.0)
             in_region = []
             for multiplier in speed_multipliers:
                 F.values = multiplier[:, None]
