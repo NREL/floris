@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -634,10 +639,10 @@
 <span class="sd">method.  Finally, the wind roses are upsampled to 5 degree wind direction bins and plotted.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">WindRoseWRG</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindRoseWRG</span>
 
 
 <span class="c1"># Read the WRG file</span>
@@ -697,7 +702,7 @@
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Wind roses with upsampling to 5-deg bins&#39;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -717,21 +722,17 @@ ti_table: 0.06
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:2960: RuntimeWarning: invalid value encountered in power
   exponent = -((x / a) ** k)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:2960: RuntimeWarning: invalid value encountered in power
+/home/runner/work/floris/floris/floris/wind_data.py:2960: RuntimeWarning: invalid value encountered in power
   exponent = -((x / a) ** k)
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:2960: RuntimeWarning: invalid value encountered in power
   exponent = -((x / a) ** k)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/floris/floris/floris/wind_data.py:2960: RuntimeWarning: invalid value encountered in power
+/home/runner/work/floris/floris/floris/wind_data.py:2960: RuntimeWarning: invalid value encountered in power
   exponent = -((x / a) ** k)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_7265/3152068732.py:44: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_7453/3152068732.py:44: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
   ax.legend().set_visible(False)
 /home/runner/work/floris/floris/floris/wind_data.py:2960: RuntimeWarning: invalid value encountered in power
   exponent = -((x / a) ** k)
@@ -753,12 +754,12 @@ ti_table: 0.06
   exponent = -((x / a) ** k)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_7265/3152068732.py:73: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_7453/3152068732.py:73: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
   ax.legend().set_visible(False)
 </pre></div>
 </div>
-<img alt="../../_images/57df50880732fc2cd274636b07543eec527a2ae3706f01524bd86ae9048af290.png" src="../../_images/57df50880732fc2cd274636b07543eec527a2ae3706f01524bd86ae9048af290.png" />
-<img alt="../../_images/b305a2913e8c3ff88af1bd1acf71706a19ca8b224ec570f936af7b5f96d015c0.png" src="../../_images/b305a2913e8c3ff88af1bd1acf71706a19ca8b224ec570f936af7b5f96d015c0.png" />
+<img alt="../../_images/61be007a223d41d247f8c7122123d8e0b4f20a7bf558d81467fba697e158c139.png" src="../../_images/61be007a223d41d247f8c7122123d8e0b4f20a7bf558d81467fba697e158c139.png" />
+<img alt="../../_images/7bf2514ef9ecf43f0075f4652275b6514cce5b2c93a324232ef87ad419a73369.png" src="../../_images/7bf2514ef9ecf43f0075f4652275b6514cce5b2c93a324232ef87ad419a73369.png" />
 </div>
 </div>
 </section>
@@ -861,8 +862,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

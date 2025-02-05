@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,17 +565,17 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.core.core</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">logging_manager</span>
-<span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging_manager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseClass</span><span class="p">,</span>
     <span class="n">cc_solver</span><span class="p">,</span>
     <span class="n">empirical_gauss_solver</span><span class="p">,</span>
@@ -591,8 +596,8 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">turbopark_solver</span><span class="p">,</span>
     <span class="n">WakeModelManager</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.type_dec</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArrayFloat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">load_yaml</span><span class="p">,</span>
     <span class="n">reverse_rotate_coordinates_rel_west</span><span class="p">,</span>
 <span class="p">)</span>
@@ -601,7 +606,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="Core">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">Core</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Core</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Top-level class that describes a Floris model and initializes the</span>
 <span class="sd">    simulation. Use the :py:class:`~.simulation.farm.Farm` attribute to</span>
@@ -622,7 +627,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="c1"># Configure logging</span>
         <span class="n">logging_manager</span><span class="o">.</span><span class="n">configure_console_log</span><span class="p">(</span>
@@ -700,7 +705,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Core.initialize_domain">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.initialize_domain">[docs]</a>
-    <span class="k">def</span> <span class="nf">initialize_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize solution space prior to wake calculations&quot;&quot;&quot;</span>
 
         <span class="c1"># Initialize field quantities; doing this immediately prior to doing</span>
@@ -716,7 +721,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Core.steady_state_atmospheric_condition">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.steady_state_atmospheric_condition">[docs]</a>
-    <span class="k">def</span> <span class="nf">steady_state_atmospheric_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">steady_state_atmospheric_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the steady-state wind farm wake calculations. Note that</span>
 <span class="sd">        initialize_domain() is required to be called before this function.&quot;&quot;&quot;</span>
 
@@ -779,7 +784,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Core.solve_for_viz">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.solve_for_viz">[docs]</a>
-    <span class="k">def</span> <span class="nf">solve_for_viz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_for_viz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Do the calculation with the TurbineGrid for a single wind speed</span>
         <span class="c1"># and wind direction and 1 point on the grid. Then, use the result</span>
         <span class="c1"># to construct the full flow field grid.</span>
@@ -802,7 +807,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Core.solve_for_points">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.solve_for_points">[docs]</a>
-    <span class="k">def</span> <span class="nf">solve_for_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_for_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
         <span class="c1"># Do the calculation with the TurbineGrid for a single wind speed</span>
         <span class="c1"># and wind direction and a 3x3 rotor grid. Then, use the result</span>
         <span class="c1"># to construct the full flow field grid.</span>
@@ -841,7 +846,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Core.solve_for_velocity_deficit_profiles">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.solve_for_velocity_deficit_profiles">[docs]</a>
-    <span class="k">def</span> <span class="nf">solve_for_velocity_deficit_profiles</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_for_velocity_deficit_profiles</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">downstream_dists</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">|</span> <span class="nb">list</span><span class="p">,</span>
@@ -919,7 +924,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Core.finalize">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.finalize">[docs]</a>
-    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Once the wake calculation is finished, unsort the values to match</span>
         <span class="c1"># the user-supplied order of things.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">finalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">unsorted_indices</span><span class="p">)</span>
@@ -932,7 +937,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="Core.from_file">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Core</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Core</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a `Floris` instance from an input file. Must be filetype YAML.</span>
 
 <span class="sd">        Args:</span>
@@ -949,7 +954,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Core.to_file">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.Core.to_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts the `Floris` object to an input-ready YAML file at `output_file_path`.</span>
 
 <span class="sd">        Args:</span>
@@ -967,7 +972,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="check_input_file_for_v3_keys">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.core.html#floris.core.core.check_input_file_for_v3_keys">[docs]</a>
-<span class="k">def</span> <span class="nf">check_input_file_for_v3_keys</span><span class="p">(</span><span class="n">input_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_input_file_for_v3_keys</span><span class="p">(</span><span class="n">input_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks if any FLORIS v3 keys are present in the input file and raises special errors if</span>
 <span class="sd">    the extra keys belong to a v3 definition of the input_dct.</span>
@@ -1062,8 +1067,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,21 +565,21 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.core.flow_field</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">attrs</span>
-<span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpltPath</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">LinearNDInterpolator</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">ConvexHull</span>
-<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">attrs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpltPath</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearNDInterpolator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvexHull</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
 
-<span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseClass</span><span class="p">,</span>
     <span class="n">Grid</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.type_dec</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">floris_array_converter</span><span class="p">,</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
 <span class="p">)</span>
@@ -583,7 +588,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FlowField">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">FlowField</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FlowField</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
     <span class="n">wind_speeds</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">floris_array_converter</span><span class="p">)</span>
     <span class="n">wind_directions</span><span class="p">:</span> <span class="n">NDArrayFloat</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">floris_array_converter</span><span class="p">)</span>
     <span class="n">wind_veer</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -618,7 +623,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FlowField.turbulence_intensities_validator">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.turbulence_intensities_validator">[docs]</a>
     <span class="nd">@turbulence_intensities</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">turbulence_intensities_validator</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">turbulence_intensities_validator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">NDArrayFloat</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -638,7 +643,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FlowField.wind_directions_validator">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.wind_directions_validator">[docs]</a>
     <span class="nd">@wind_directions</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">wind_directions_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wind_directions_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Check that the array is 1-dimensional</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_directions</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -652,7 +657,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FlowField.wind_speeds_validator">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.wind_speeds_validator">[docs]</a>
     <span class="nd">@wind_speeds</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">wind_speeds_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wind_speeds_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="c1"># Check that the array is 1-dimensional</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_speeds</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
@@ -671,7 +676,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FlowField.heterogeneous_config_validator">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.heterogeneous_config_validator">[docs]</a>
     <span class="nd">@heterogeneous_inflow_config</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">heterogeneous_config_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">heterogeneous_config_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Using the validator method to check that the heterogeneous_inflow_config dictionary has</span>
 <span class="sd">        the correct key-value pairs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -693,7 +698,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FlowField.het_map_validator">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.het_map_validator">[docs]</a>
     <span class="nd">@het_map</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">het_map_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">het_map_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Using this validator to make sure that the het_map has an interpolant defined for</span>
 <span class="sd">        each findex.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -707,14 +712,14 @@ window.addEventListener("load", () => mermaid.run());
 
 
 
-    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">heterogeneous_inflow_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">generate_heterogeneous_wind_map</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="FlowField.initialize_velocity_field">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.initialize_velocity_field">[docs]</a>
-    <span class="k">def</span> <span class="nf">initialize_velocity_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_velocity_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="c1"># Create an initial wind profile as a function of height. The values here will</span>
         <span class="c1"># be multiplied with the wind speeds to give the initial wind field.</span>
@@ -814,7 +819,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FlowField.finalize">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.finalize">[docs]</a>
-    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_sorted</span><span class="p">,</span> <span class="n">unsorted_indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -831,7 +836,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FlowField.calculate_speed_ups">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.calculate_speed_ups">[docs]</a>
-    <span class="k">def</span> <span class="nf">calculate_speed_ups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">het_map</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_speed_ups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">het_map</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Calculate the 3-dimensional speed ups; squeeze is needed as the generator</span>
             <span class="c1"># adds an extra dimension</span>
@@ -853,7 +858,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FlowField.generate_heterogeneous_wind_map">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.generate_heterogeneous_wind_map">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_heterogeneous_wind_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_heterogeneous_wind_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function creates the heterogeneous interpolant used to calculate heterogeneous</span>
 <span class="sd">        inflows. The interpolant is for computing wind speed based on an x and y location in the</span>
 <span class="sd">        flow field. This is computed using SciPy&#39;s LinearNDInterpolator and uses a fill value</span>
@@ -898,7 +903,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FlowField.interpolate_multiplier_xy">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.interpolate_multiplier_xy">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">interpolate_multiplier_xy</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interpolate_multiplier_xy</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
                                   <span class="n">y</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
                                   <span class="n">multiplier</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
                                   <span class="n">fill_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
@@ -921,7 +926,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FlowField.interpolate_multiplier_xyz">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.interpolate_multiplier_xyz">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">interpolate_multiplier_xyz</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interpolate_multiplier_xyz</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
                                    <span class="n">y</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
                                    <span class="n">z</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
                                    <span class="n">multiplier</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
@@ -1004,8 +1009,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

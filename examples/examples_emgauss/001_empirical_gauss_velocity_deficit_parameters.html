@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -625,13 +630,13 @@
 <span class="sd">velocity deficit model and their effects on the wind turbine wake.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
-<span class="kn">from</span> <span class="nn">floris.flow_visualization</span> <span class="kn">import</span> <span class="n">visualize_cut_plane</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.flow_visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">visualize_cut_plane</span>
 
 
 <span class="c1"># Options</span>
@@ -639,7 +644,7 @@
 <span class="n">num_in_row</span> <span class="o">=</span> <span class="mi">5</span>
 
 <span class="c1"># Define function for visualizing wakes</span>
-<span class="k">def</span> <span class="nf">generate_wake_visualization</span><span class="p">(</span><span class="n">fmodel</span><span class="p">:</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_wake_visualization</span><span class="p">(</span><span class="n">fmodel</span><span class="p">:</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># Using the FlorisModel functions, get 2D slices.</span>
     <span class="n">x_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">3000</span><span class="p">]</span>
     <span class="n">y_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">250</span><span class="p">,</span> <span class="mi">250</span><span class="p">]</span>
@@ -819,17 +824,17 @@
 <span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Power [MW]&quot;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/d764a0b891d1c055b09da71098f99fdceeae3889311fd8ddd558bee25c642bc8.png" src="../../_images/d764a0b891d1c055b09da71098f99fdceeae3889311fd8ddd558bee25c642bc8.png" />
-<img alt="../../_images/875f7f79e6bf98a3e577a75a477b36c32be49c11ac9fe88a320cf910ad4d551f.png" src="../../_images/875f7f79e6bf98a3e577a75a477b36c32be49c11ac9fe88a320cf910ad4d551f.png" />
-<img alt="../../_images/5403040e6a7f0ce9fc1c669c6d65ab458f8db86f6003218d2b766ba72d099f1f.png" src="../../_images/5403040e6a7f0ce9fc1c669c6d65ab458f8db86f6003218d2b766ba72d099f1f.png" />
-<img alt="../../_images/5a905cbec0907e2ed0a3cef050a13cf01567e9774c789097d3cee9be9a551448.png" src="../../_images/5a905cbec0907e2ed0a3cef050a13cf01567e9774c789097d3cee9be9a551448.png" />
-<img alt="../../_images/9e131caf40878427550068942c3e54e1ee17880943f516a5a83454825f37a471.png" src="../../_images/9e131caf40878427550068942c3e54e1ee17880943f516a5a83454825f37a471.png" />
+<img alt="../../_images/a13807b1af5647ab9ef3b4ccbd9bf3d9b13e676c1249cb66c071068cc51e2eaa.png" src="../../_images/a13807b1af5647ab9ef3b4ccbd9bf3d9b13e676c1249cb66c071068cc51e2eaa.png" />
+<img alt="../../_images/da36ea2274e2908b11f67737ee0bb331b7ab3dd4244f7abf2a09a96b08831c03.png" src="../../_images/da36ea2274e2908b11f67737ee0bb331b7ab3dd4244f7abf2a09a96b08831c03.png" />
+<img alt="../../_images/f294d2de7f8a22910388014e12b0f2cdc1c5d5394d79df85dfa6fbe09c45c5d7.png" src="../../_images/f294d2de7f8a22910388014e12b0f2cdc1c5d5394d79df85dfa6fbe09c45c5d7.png" />
+<img alt="../../_images/625d190fcd49d8f1aabaa2faf6bd37970b3a60b626ad17fde8c5387fc6e46491.png" src="../../_images/625d190fcd49d8f1aabaa2faf6bd37970b3a60b626ad17fde8c5387fc6e46491.png" />
+<img alt="../../_images/1cc3c6e1644fef8b931f9b42ea729768475bca67f21143a56c3373de98f3da27.png" src="../../_images/1cc3c6e1644fef8b931f9b42ea729768475bca67f21143a56c3373de98f3da27.png" />
 </div>
 </div>
 </section>
@@ -932,8 +937,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

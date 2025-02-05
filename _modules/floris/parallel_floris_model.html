@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,33 +565,33 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.parallel_floris_model</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2022 Shell</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">perf_counter</span> <span class="k">as</span> <span class="n">timerpc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">perf_counter</span> <span class="k">as</span> <span class="n">timerpc</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">floris.floris_model</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
-<span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggingManager</span>
-<span class="kn">from</span> <span class="nn">floris.optimization.yaw_optimization.yaw_optimizer_sr</span> <span class="kn">import</span> <span class="n">YawOptimizationSR</span>
-<span class="kn">from</span> <span class="nn">floris.uncertain_floris_model</span> <span class="kn">import</span> <span class="n">map_turbine_powers_uncertain</span><span class="p">,</span> <span class="n">UncertainFlorisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.floris_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.logging_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggingManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.optimization.yaw_optimization.yaw_optimizer_sr</span><span class="w"> </span><span class="kn">import</span> <span class="n">YawOptimizationSR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.uncertain_floris_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">map_turbine_powers_uncertain</span><span class="p">,</span> <span class="n">UncertainFlorisModel</span>
 
 
-<span class="k">def</span> <span class="nf">_get_turbine_powers_serial</span><span class="p">(</span><span class="n">fmodel_information</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_turbine_powers_serial</span><span class="p">(</span><span class="n">fmodel_information</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">fmodel_information</span><span class="p">)</span>
     <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
     <span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">(),</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_get_turbine_powers_serial_no_wake</span><span class="p">(</span><span class="n">fmodel_information</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_turbine_powers_serial_no_wake</span><span class="p">(</span><span class="n">fmodel_information</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="n">fmodel_information</span><span class="p">)</span>
     <span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">yaw_angles</span><span class="p">)</span>
     <span class="n">fmodel</span><span class="o">.</span><span class="n">run_no_wake</span><span class="p">()</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">(),</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_optimize_yaw_angles_serial</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_optimize_yaw_angles_serial</span><span class="p">(</span>
     <span class="n">fmodel_information</span><span class="p">,</span>
     <span class="n">minimum_yaw_angle</span><span class="p">,</span>
     <span class="n">maximum_yaw_angle</span><span class="p">,</span>
@@ -618,8 +623,8 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel">[docs]</a>
-<span class="k">class</span> <span class="nc">ParallelFlorisModel</span><span class="p">(</span><span class="n">LoggingManager</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParallelFlorisModel</span><span class="p">(</span><span class="n">LoggingManager</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">fmodel</span><span class="p">,</span>
         <span class="n">max_workers</span><span class="p">,</span>
@@ -668,15 +673,15 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">interface</span> <span class="o">=</span> <span class="s2">&quot;multiprocessing&quot;</span>
 
         <span class="k">if</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;mpi4py&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">mpi4py.futures</span> <span class="k">as</span> <span class="nn">mp</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">mpi4py.futures</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">MPIPoolExecutor</span>
         <span class="k">elif</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;multiprocessing&quot;</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span>
             <span class="k">if</span> <span class="n">max_workers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">max_workers</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">interface</span> <span class="o">==</span> <span class="s2">&quot;concurrent&quot;</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_PoolExecutor</span> <span class="o">=</span> <span class="n">ProcessPoolExecutor</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -721,7 +726,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.copy">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.copy">[docs]</a>
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Make an independent copy</span>
         <span class="n">self_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">self_copy</span><span class="o">.</span><span class="n">fmodel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -730,7 +735,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.set">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.set">[docs]</a>
-    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">wind_speeds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">wind_directions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -833,7 +838,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_preprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_preprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Format yaw angles</span>
         <span class="k">if</span> <span class="n">yaw_angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span>
@@ -871,12 +876,12 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">multiargs</span>
 
     <span class="c1"># Function to merge subsets in dictionaries</span>
-    <span class="k">def</span> <span class="nf">_merge_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">subset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">subset</span><span class="p">):</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
         <span class="n">subset_reshape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
         <span class="k">return</span> <span class="p">[</span><span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;f.</span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">subset_reshape</span><span class="p">)]</span>
 
-    <span class="k">def</span> <span class="nf">_postprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_postprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="c1"># Split results</span>
         <span class="n">power_subsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]</span>
         <span class="n">flowfield_subsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]</span>
@@ -902,7 +907,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.run">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
             <span class="s2">&quot;&#39;run&#39; not supported on ParallelFlorisModel. Please use &quot;</span>
             <span class="s2">&quot;&#39;get_turbine_powers&#39; or &#39;get_farm_power&#39; directly.&quot;</span>
@@ -911,7 +916,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.get_turbine_powers">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_turbine_powers">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_wake</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_wake</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># Retrieve multiargs: preprocessing</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">timerpc</span><span class="p">()</span>
         <span class="n">multiargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocessing</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">)</span>
@@ -967,7 +972,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.get_farm_power">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_farm_power">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_wake</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_wake</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">turbine_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Default to equal weighing of all turbines when turbine_weights is None</span>
             <span class="n">turbine_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
@@ -997,7 +1002,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.get_farm_AEP">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_farm_AEP">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_farm_AEP</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_farm_AEP</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">freq</span><span class="p">,</span>
         <span class="n">cut_in_wind_speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1113,7 +1118,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.optimize_yaw_angles">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.optimize_yaw_angles">[docs]</a>
-    <span class="k">def</span> <span class="nf">optimize_yaw_angles</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">optimize_yaw_angles</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">minimum_yaw_angle</span><span class="o">=-</span><span class="mf">25.0</span><span class="p">,</span>
         <span class="n">maximum_yaw_angle</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span>
@@ -1186,7 +1191,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.get_operation_model">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_operation_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the operation model of underlying fmodel.</span>
 
 <span class="sd">        Returns:</span>
@@ -1197,7 +1202,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.set_operation_model">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.set_operation_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_model</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_model</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the operation model of underlying fmodel.</span>
 
 <span class="sd">        Args:</span>
@@ -1218,7 +1223,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.get_param">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.get_param">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">param_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">param_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the parameter of underlying fmodel.</span>
 
 <span class="sd">        Args:</span>
@@ -1234,7 +1239,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParallelFlorisModel.set_param">
 <a class="viewcode-back" href="../../_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.set_param">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">param_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">param_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the parameter of underlying fmodel.</span>
 
 <span class="sd">        Args:</span>
@@ -1258,31 +1263,31 @@ window.addEventListener("load", () => mermaid.run());
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">layout_x</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">layout_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layout_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">layout_y</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">wind_speeds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wind_speeds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">wind_speeds</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">wind_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wind_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">wind_directions</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">turbulence_intensities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">turbulence_intensities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">turbulence_intensities</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_findex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_findex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_findex</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_turbines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_turbines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">n_turbines</span></div>
 
 </pre></div>
@@ -1347,8 +1352,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -636,15 +641,15 @@
 
 
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">FlorisModel</span><span class="p">,</span>
     <span class="n">TimeSeries</span><span class="p">,</span>
     <span class="n">WindRose</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">wrap_360</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrap_360</span>
 
 
 <span class="c1"># Generate a random time series of wind speeds, wind directions, turbulence</span>
@@ -734,7 +739,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AVP from WindTIRose </span><span class="si">{</span><span class="n">wind_ti_rose_avp</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> dollars&quot;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -746,17 +751,17 @@
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Computing AVP with uniform frequencies. Results results may not reflect annual operation.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 37.17 GWh
-AEP from WindRose 37.39 GWh
-AEP from WindTIRose 37.40 GWh
-Annual Value Production (AVP) from TimeSeries 942606.13 dollars
-AVP from WindRose 947166.71 dollars
-AVP from WindTIRose 947341.15 dollars
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 39.04 GWh
+AEP from WindRose 39.13 GWh
+AEP from WindTIRose 39.12 GWh
+Annual Value Production (AVP) from TimeSeries 965172.41 dollars
+AVP from WindRose 967036.71 dollars
+AVP from WindTIRose 966899.89 dollars
 </pre></div>
 </div>
-<img alt="../../_images/d9d445b855e9902d7339b49ab557abd082169805eaf759e8f911b157fb9c2082.png" src="../../_images/d9d445b855e9902d7339b49ab557abd082169805eaf759e8f911b157fb9c2082.png" />
-<img alt="../../_images/e76bca7769861b9e91dc98606a380c043222f4d3f75177a9e9d9aaa1fa018320.png" src="../../_images/e76bca7769861b9e91dc98606a380c043222f4d3f75177a9e9d9aaa1fa018320.png" />
-<img alt="../../_images/611a5298a47a6f4b6abf1f2fe1b861df57278d067d88b42e8ab6a160ec73c1ba.png" src="../../_images/611a5298a47a6f4b6abf1f2fe1b861df57278d067d88b42e8ab6a160ec73c1ba.png" />
+<img alt="../../_images/18ec97bd39de31c5fcbbb04927a46a2ec059022b3ff1ac9df29dbaa53ac90cf5.png" src="../../_images/18ec97bd39de31c5fcbbb04927a46a2ec059022b3ff1ac9df29dbaa53ac90cf5.png" />
+<img alt="../../_images/a3277d549181bce9271d0f55c71f7d1600d97e697245cc638a0ea039f219f820.png" src="../../_images/a3277d549181bce9271d0f55c71f7d1600d97e697245cc638a0ea039f219f820.png" />
+<img alt="../../_images/bf9401392268843dd240ed27980def58bcf7a2adc9d8e20cd18eb8ad972cd613.png" src="../../_images/bf9401392268843dd240ed27980def58bcf7a2adc9d8e20cd18eb8ad972cd613.png" />
 </div>
 </div>
 </section>
@@ -859,8 +864,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

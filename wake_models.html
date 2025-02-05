@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -428,9 +428,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -689,15 +694,15 @@ below use the typical combinations except where indicated. The specific settings
 in the corresponding input files found in the source code dropdowns.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
-<span class="kn">import</span> <span class="nn">floris.flow_visualization</span> <span class="k">as</span> <span class="nn">flowviz</span>
-<span class="kn">import</span> <span class="nn">floris.layout_visualization</span> <span class="k">as</span> <span class="nn">layoutviz</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">floris.flow_visualization</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">flowviz</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">floris.layout_visualization</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">layoutviz</span>
 
 <span class="n">NREL5MW_D</span> <span class="o">=</span> <span class="mf">126.0</span>
 
-<span class="k">def</span> <span class="nf">model_plot</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">include_wake_deflection</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_plot</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">include_wake_deflection</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
     <span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">include_wake_deflection</span><span class="p">:</span>
@@ -729,7 +734,7 @@ wake boundary line. The slope of the wake boundary line, or wake expansion, is a
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8a890e24b2c9c4fe4c230e3d4448ce60b3278b387c93007339b2927b75bec30f.png" src="_images/8a890e24b2c9c4fe4c230e3d4448ce60b3278b387c93007339b2927b75bec30f.png" />
+<img alt="_images/4c1358a12cbfb20d632f0ccecfa2fee82d31d20b7247c69da7283edb5126afd7.png" src="_images/4c1358a12cbfb20d632f0ccecfa2fee82d31d20b7247c69da7283edb5126afd7.png" />
 </div>
 </div>
 </section>
@@ -750,7 +755,7 @@ the deflection field in turbine wakes.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/30961f3a113041623bfcf8ee8758b49bb3a2f479ac763fb9731c2b926e5fe03e.png" src="_images/30961f3a113041623bfcf8ee8758b49bb3a2f479ac763fb9731c2b926e5fe03e.png" />
+<img alt="_images/4486887629a7f8a706d0eb13c75e56030acd6b165142f5e46e83eb5b52c03189.png" src="_images/4486887629a7f8a706d0eb13c75e56030acd6b165142f5e46e83eb5b52c03189.png" />
 </div>
 </div>
 </section>
@@ -767,7 +772,7 @@ simpler tuning and data fitting.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/10bb408ac7e3b931570a77b627abf89eba3cf40bf4b82ee1b71c5802078d96ac.png" src="_images/10bb408ac7e3b931570a77b627abf89eba3cf40bf4b82ee1b71c5802078d96ac.png" />
+<img alt="_images/9fa853349e339fcac819611b5eb97d18bfe9f7920bbb5a54894a0cfb5f354a5f.png" src="_images/9fa853349e339fcac819611b5eb97d18bfe9f7920bbb5a54894a0cfb5f354a5f.png" />
 </div>
 </div>
 </section>
@@ -782,7 +787,7 @@ which itself is based on the cumulative model of <span id="id8">Bastankhah <em>e
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/fb56405c8e82c5494fee9f4fccba8eed57941db99ec856146d1a17bc9f5c27b8.png" src="_images/fb56405c8e82c5494fee9f4fccba8eed57941db99ec856146d1a17bc9f5c27b8.png" />
+<img alt="_images/01f063cdce61e9b865346627ef0672cab34f649c2a12ca995d4aa9995000a09c.png" src="_images/01f063cdce61e9b865346627ef0672cab34f649c2a12ca995d4aa9995000a09c.png" />
 </div>
 </div>
 </section>
@@ -800,7 +805,7 @@ which itself is based on the cumulative model of <span id="id8">Bastankhah <em>e
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/76a66c6d35245474561c6fcc3d68de8e8b7a146678fcb3a6e06b40999699a82a.png" src="_images/76a66c6d35245474561c6fcc3d68de8e8b7a146678fcb3a6e06b40999699a82a.png" />
+<img alt="_images/9cfcb3f2c12bc98b577f907ac8ff110803d13241b247b20c62a180772eb345ac.png" src="_images/9cfcb3f2c12bc98b577f907ac8ff110803d13241b247b20c62a180772eb345ac.png" />
 </div>
 </div>
 </section>
@@ -826,7 +831,7 @@ The upper plots show the turbine wakes individually to give a reference for the 
 The lower plots show both turbines along with their wakes combined with the chosen model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">combination_plot</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">combination_plot</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">X_UPSTREAM</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="n">X_DOWNSTREAM</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="mf">126.0</span>
     <span class="n">X0_BOUND</span> <span class="o">=</span> <span class="o">-</span><span class="mi">200</span>
@@ -894,8 +899,8 @@ flow field.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/72d47b8a3ecbb3dea60ddf09f4a654b4770d33d44590c2b099c2942ddf6c6293.png" src="_images/72d47b8a3ecbb3dea60ddf09f4a654b4770d33d44590c2b099c2942ddf6c6293.png" />
-<img alt="_images/9823e6376841368a37675cd6f741feebf55f6304b8a3d8f0d3ad1450400d9c36.png" src="_images/9823e6376841368a37675cd6f741feebf55f6304b8a3d8f0d3ad1450400d9c36.png" />
+<img alt="_images/43a584f1ee3d65bd312f82ff127bbe46c814464d90d242467691123d157ec569.png" src="_images/43a584f1ee3d65bd312f82ff127bbe46c814464d90d242467691123d157ec569.png" />
+<img alt="_images/02871e5144e97df1e3b1d0ce50df3d76455012548377022a6339682254978577.png" src="_images/02871e5144e97df1e3b1d0ce50df3d76455012548377022a6339682254978577.png" />
 </div>
 </div>
 </section>
@@ -910,8 +915,8 @@ maximum of the two for each point. For more information, refer to <span id="id13
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/72d47b8a3ecbb3dea60ddf09f4a654b4770d33d44590c2b099c2942ddf6c6293.png" src="_images/72d47b8a3ecbb3dea60ddf09f4a654b4770d33d44590c2b099c2942ddf6c6293.png" />
-<img alt="_images/601b80f9d8822cc3523696cec8859715d678ace298001f2fb887b716cb77a25d.png" src="_images/601b80f9d8822cc3523696cec8859715d678ace298001f2fb887b716cb77a25d.png" />
+<img alt="_images/43a584f1ee3d65bd312f82ff127bbe46c814464d90d242467691123d157ec569.png" src="_images/43a584f1ee3d65bd312f82ff127bbe46c814464d90d242467691123d157ec569.png" />
+<img alt="_images/32deeb7bb23d6aa1d053577b9a5d6724555532a3bedbd4310182c42811fb6fb2.png" src="_images/32deeb7bb23d6aa1d053577b9a5d6724555532a3bedbd4310182c42811fb6fb2.png" />
 </div>
 </div>
 </section>
@@ -926,8 +931,8 @@ flow field.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/72d47b8a3ecbb3dea60ddf09f4a654b4770d33d44590c2b099c2942ddf6c6293.png" src="_images/72d47b8a3ecbb3dea60ddf09f4a654b4770d33d44590c2b099c2942ddf6c6293.png" />
-<img alt="_images/eb2285189fe4cca480807e5ae86c69f1cc53c513df62cb0db7c828570e688e86.png" src="_images/eb2285189fe4cca480807e5ae86c69f1cc53c513df62cb0db7c828570e688e86.png" />
+<img alt="_images/43a584f1ee3d65bd312f82ff127bbe46c814464d90d242467691123d157ec569.png" src="_images/43a584f1ee3d65bd312f82ff127bbe46c814464d90d242467691123d157ec569.png" />
+<img alt="_images/e175886bd5a1b0895eee1a3aa00625bc48d6d931efd93483272ea69b1c0cf56d.png" src="_images/e175886bd5a1b0895eee1a3aa00625bc48d6d931efd93483272ea69b1c0cf56d.png" />
 </div>
 </div>
 </section>
@@ -1064,8 +1069,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

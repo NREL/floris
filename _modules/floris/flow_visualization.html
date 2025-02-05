@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,37 +565,37 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.flow_visualization</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">attrs</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mplcolors</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">ConvexHull</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">attrs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mplcolors</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">rcParams</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvexHull</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
-<span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="n">Core</span>
-<span class="kn">from</span> <span class="nn">floris.core.turbine.operation_models</span> <span class="kn">import</span> <span class="n">POWER_SETPOINT_DEFAULT</span>
-<span class="kn">from</span> <span class="nn">floris.cut_plane</span> <span class="kn">import</span> <span class="n">CutPlane</span>
-<span class="kn">from</span> <span class="nn">floris.heterogeneous_map</span> <span class="kn">import</span> <span class="n">HeterogeneousMap</span>
-<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.turbine.operation_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">POWER_SETPOINT_DEFAULT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.cut_plane</span><span class="w"> </span><span class="kn">import</span> <span class="n">CutPlane</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.heterogeneous_map</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeterogeneousMap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.type_dec</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">floris_array_converter</span><span class="p">,</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">,</span> <span class="n">wind_delta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">rotate_coordinates_rel_west</span><span class="p">,</span> <span class="n">wind_delta</span>
 
 
 <div class="viewcode-block" id="show">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.show">[docs]</a>
-<span class="k">def</span> <span class="nf">show</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Display all open figures.  This is a wrapper for `plt.show()`.</span>
 <span class="sd">    This function is useful if the user doesn&#39;t wish to import `matplotlib.pyplot`</span>
@@ -602,7 +607,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="line_contour_cut_plane">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.line_contour_cut_plane">[docs]</a>
-<span class="k">def</span> <span class="nf">line_contour_cut_plane</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">line_contour_cut_plane</span><span class="p">(</span>
     <span class="n">cut_plane</span><span class="p">,</span>
     <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -652,7 +657,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="visualize_cut_plane">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.visualize_cut_plane">[docs]</a>
-<span class="k">def</span> <span class="nf">visualize_cut_plane</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">visualize_cut_plane</span><span class="p">(</span>
     <span class="n">cut_plane</span><span class="p">,</span>
     <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">vel_component</span><span class="o">=</span><span class="s1">&#39;u&#39;</span><span class="p">,</span>
@@ -766,7 +771,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="visualize_heterogeneous_cut_plane">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.visualize_heterogeneous_cut_plane">[docs]</a>
-<span class="k">def</span> <span class="nf">visualize_heterogeneous_cut_plane</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">visualize_heterogeneous_cut_plane</span><span class="p">(</span>
     <span class="n">cut_plane</span><span class="p">,</span>
     <span class="n">fmodel</span><span class="p">,</span>
     <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -843,7 +848,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="visualize_quiver">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.visualize_quiver">[docs]</a>
-<span class="k">def</span> <span class="nf">visualize_quiver</span><span class="p">(</span><span class="n">cut_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">downSamp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">visualize_quiver</span><span class="p">(</span><span class="n">cut_plane</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">downSamp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Visualize the in-plane flows in a cut_plane using quiver.</span>
 
@@ -892,7 +897,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="reverse_cut_plane_x_axis_in_plot">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.reverse_cut_plane_x_axis_in_plot">[docs]</a>
-<span class="k">def</span> <span class="nf">reverse_cut_plane_x_axis_in_plot</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reverse_cut_plane_x_axis_in_plot</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Shortcut method to reverse direction of x-axis.</span>
 
@@ -905,7 +910,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="plot_rotor_values">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.plot_rotor_values">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_rotor_values</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rotor_values</span><span class="p">(</span>
     <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">findex</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">n_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -995,7 +1000,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="calculate_horizontal_plane_with_turbines">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.calculate_horizontal_plane_with_turbines">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_horizontal_plane_with_turbines</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_horizontal_plane_with_turbines</span><span class="p">(</span>
     <span class="n">fmodel</span><span class="p">,</span>
     <span class="n">x_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
     <span class="n">y_resolution</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
@@ -1158,7 +1163,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="VelocityProfilesFigure">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">VelocityProfilesFigure</span><span class="p">():</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VelocityProfilesFigure</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a figure which displays velocity deficit profiles at several downstream</span>
 <span class="sd">    locations of a turbine.</span>
@@ -1188,7 +1193,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">axs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">deficit_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">downstream_dists_D</span><span class="p">)</span>
         <span class="n">figsize</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cols</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_height</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_rows</span><span class="p">]</span>
@@ -1220,7 +1225,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="VelocityProfilesFigure.layout_validator">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.layout_validator">[docs]</a>
     <span class="nd">@layout</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span> <span class="nf">layout_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span> <span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layout_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span> <span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">allowed_layouts</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">[</span><span class="s1">&#39;cross-stream&#39;</span><span class="p">],</span>
             <span class="p">[</span><span class="s1">&#39;vertical&#39;</span><span class="p">],</span>
@@ -1233,7 +1238,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="VelocityProfilesFigure.add_profiles">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.add_profiles">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_profiles</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_profiles</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">velocity_deficit_profiles</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
         <span class="o">**</span><span class="n">kwargs</span>
@@ -1254,7 +1259,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="VelocityProfilesFigure.match_profile_to_axes">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.match_profile_to_axes">[docs]</a>
-    <span class="k">def</span> <span class="nf">match_profile_to_axes</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_profile_to_axes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -1298,7 +1303,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="VelocityProfilesFigure.set_xlim">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.set_xlim">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_xlim</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_xlim</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">xlim</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1308,7 +1313,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="VelocityProfilesFigure.add_ref_lines_x2">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.add_ref_lines_x2">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_ref_lines_x2</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ref_lines_x2</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ref_lines_x2_D</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
@@ -1332,7 +1337,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="VelocityProfilesFigure.add_ref_lines_x3">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.add_ref_lines_x3">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_ref_lines_x3</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ref_lines_x3</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ref_lines_x3_D</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
@@ -1356,7 +1361,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="VelocityProfilesFigure.add_ref_lines">
 <a class="viewcode-back" href="../../_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.add_ref_lines">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_ref_lines</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ref_lines</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ref_lines_D</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1437,8 +1442,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

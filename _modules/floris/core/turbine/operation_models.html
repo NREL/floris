@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,33 +565,33 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.core.turbine.operation_models</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Dict</span><span class="p">,</span>
     <span class="n">Final</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
 
-<span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="n">BaseClass</span>
-<span class="kn">from</span> <span class="nn">floris.core.rotor_velocity</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.rotor_velocity</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">average_velocity</span><span class="p">,</span>
     <span class="n">compute_tilt_angles_for_floating_turbines</span><span class="p">,</span>
     <span class="n">rotor_velocity_air_density_correction</span><span class="p">,</span>
     <span class="n">rotor_velocity_tilt_cosine_correction</span><span class="p">,</span>
     <span class="n">rotor_velocity_yaw_cosine_correction</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.type_dec</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
     <span class="n">NDArrayObject</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">cosd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosd</span>
 
 
 <span class="n">POWER_SETPOINT_DEFAULT</span> <span class="o">=</span> <span class="mf">1e12</span>
@@ -596,7 +601,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="BaseOperationModel">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.BaseOperationModel">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">BaseOperationModel</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseOperationModel</span><span class="p">(</span><span class="n">BaseClass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for turbine operation models. All turbine operation models must implement static</span>
 <span class="sd">    power(), thrust_coefficient(), and axial_induction() methods, which are called by power() and</span>
@@ -613,7 +618,7 @@ window.addEventListener("load", () => mermaid.run());
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.BaseOperationModel.power">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">power</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;BaseOperationModel.power&quot;</span><span class="p">)</span></div>
 
 
@@ -621,7 +626,7 @@ window.addEventListener("load", () => mermaid.run());
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.BaseOperationModel.thrust_coefficient">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thrust_coefficient</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;BaseOperationModel.thrust_coefficient&quot;</span><span class="p">)</span></div>
 
 
@@ -629,7 +634,7 @@ window.addEventListener("load", () => mermaid.run());
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.BaseOperationModel.axial_induction">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">axial_induction</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">axial_induction</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># TODO: Consider whether we can make a generic axial_induction method</span>
         <span class="c1"># based purely on thrust_coefficient so that we don&#39;t need to implement</span>
         <span class="c1"># axial_induciton() in individual operation models.</span>
@@ -640,7 +645,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="SimpleTurbine">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleTurbine">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">SimpleTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Static class defining an actuator disk turbine model that is fully aligned with the flow. No</span>
 <span class="sd">    handling for yaw or tilt angles.</span>
@@ -652,7 +657,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SimpleTurbine.power">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleTurbine.power">[docs]</a>
-    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -689,7 +694,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SimpleTurbine.thrust_coefficient">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleTurbine.thrust_coefficient">[docs]</a>
-    <span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thrust_coefficient</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
@@ -721,7 +726,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SimpleTurbine.axial_induction">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleTurbine.axial_induction">[docs]</a>
-    <span class="k">def</span> <span class="nf">axial_induction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">axial_induction</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">average_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cubic-mean&quot;</span><span class="p">,</span>
@@ -744,7 +749,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="CosineLossTurbine">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.CosineLossTurbine">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">CosineLossTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CosineLossTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Static class defining an actuator disk turbine model that may be misaligned with the flow.</span>
 <span class="sd">    Nonzero tilt and yaw angles are handled via cosine relationships, with the power lost to yawing</span>
@@ -758,7 +763,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="CosineLossTurbine.power">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.CosineLossTurbine.power">[docs]</a>
-    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -814,7 +819,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="CosineLossTurbine.thrust_coefficient">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.CosineLossTurbine.thrust_coefficient">[docs]</a>
-    <span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thrust_coefficient</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
@@ -866,7 +871,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="CosineLossTurbine.axial_induction">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.CosineLossTurbine.axial_induction">[docs]</a>
-    <span class="k">def</span> <span class="nf">axial_induction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">axial_induction</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
@@ -897,7 +902,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="SimpleDeratingTurbine">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleDeratingTurbine">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">SimpleDeratingTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleDeratingTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    power_thrust_table is a dictionary (normally defined on the turbine input yaml)</span>
 <span class="sd">    that contains the parameters necessary to evaluate power(), thrust(), and axial_induction().</span>
@@ -908,7 +913,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="SimpleDeratingTurbine.power">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleDeratingTurbine.power">[docs]</a>
-    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -935,7 +940,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SimpleDeratingTurbine.thrust_coefficient">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleDeratingTurbine.thrust_coefficient">[docs]</a>
-    <span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thrust_coefficient</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -966,7 +971,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SimpleDeratingTurbine.axial_induction">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleDeratingTurbine.axial_induction">[docs]</a>
-    <span class="k">def</span> <span class="nf">axial_induction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">axial_induction</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -991,12 +996,12 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="MixedOperationTurbine">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.MixedOperationTurbine">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">MixedOperationTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MixedOperationTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
 
 <div class="viewcode-block" id="MixedOperationTurbine.power">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.MixedOperationTurbine.power">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span>
         <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">power_setpoints</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
@@ -1031,7 +1036,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="MixedOperationTurbine.thrust_coefficient">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.MixedOperationTurbine.thrust_coefficient">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thrust_coefficient</span><span class="p">(</span>
         <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">power_setpoints</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
@@ -1066,7 +1071,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="MixedOperationTurbine.axial_induction">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.MixedOperationTurbine.axial_induction">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">axial_induction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">axial_induction</span><span class="p">(</span>
         <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">power_setpoints</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
@@ -1099,7 +1104,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_handle_mixed_operation_setpoints</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_mixed_operation_setpoints</span><span class="p">(</span>
         <span class="n">yaw_angles</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">power_setpoints</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
     <span class="p">):</span>
@@ -1130,7 +1135,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="AWCTurbine">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">AWCTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AWCTurbine</span><span class="p">(</span><span class="n">BaseOperationModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    power_thrust_table is a dictionary (normally defined on the turbine input yaml)</span>
 <span class="sd">    that contains the parameters necessary to evaluate power(), thrust(), and axial_induction().</span>
@@ -1144,7 +1149,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AWCTurbine.power">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.power">[docs]</a>
-    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">air_density</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1190,7 +1195,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AWCTurbine.thrust_coefficient">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.thrust_coefficient">[docs]</a>
-    <span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thrust_coefficient</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">awc_modes</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1223,7 +1228,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AWCTurbine.axial_induction">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.axial_induction">[docs]</a>
-    <span class="k">def</span> <span class="nf">axial_induction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">axial_induction</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">awc_modes</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1248,11 +1253,11 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="PeakShavingTurbine">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.PeakShavingTurbine">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">PeakShavingTurbine</span><span class="p">():</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PeakShavingTurbine</span><span class="p">():</span>
 
 <div class="viewcode-block" id="PeakShavingTurbine.power">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.PeakShavingTurbine.power">[docs]</a>
-    <span class="k">def</span> <span class="nf">power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">turbulence_intensities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
@@ -1302,7 +1307,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="PeakShavingTurbine.thrust_coefficient">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.PeakShavingTurbine.thrust_coefficient">[docs]</a>
-    <span class="k">def</span> <span class="nf">thrust_coefficient</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thrust_coefficient</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">turbulence_intensities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
@@ -1353,7 +1358,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="PeakShavingTurbine.axial_induction">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.PeakShavingTurbine.axial_induction">[docs]</a>
-    <span class="k">def</span> <span class="nf">axial_induction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">axial_induction</span><span class="p">(</span>
         <span class="n">power_thrust_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">velocities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
         <span class="n">turbulence_intensities</span><span class="p">:</span> <span class="n">NDArrayFloat</span><span class="p">,</span>
@@ -1435,8 +1440,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

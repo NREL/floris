@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,28 +565,28 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.optimization.yaw_optimization.yaw_optimization_base</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">perf_counter</span> <span class="k">as</span> <span class="n">timerpc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">perf_counter</span> <span class="k">as</span> <span class="n">timerpc</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">floris.core.turbine.operation_models</span> <span class="kn">import</span> <span class="n">POWER_SETPOINT_DISABLED</span>
-<span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggingManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.turbine.operation_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">POWER_SETPOINT_DISABLED</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.logging_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggingManager</span>
 
-<span class="kn">from</span> <span class="nn">.yaw_optimization_tools</span> <span class="kn">import</span> <span class="n">derive_downstream_turbines</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.yaw_optimization_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">derive_downstream_turbines</span>
 
 
 <div class="viewcode-block" id="YawOptimization">
 <a class="viewcode-back" href="../../../../_autosummary/floris.optimization.yaw_optimization.yaw_optimization_base.html#floris.optimization.yaw_optimization.yaw_optimization_base.YawOptimization">[docs]</a>
-<span class="k">class</span> <span class="nc">YawOptimization</span><span class="p">(</span><span class="n">LoggingManager</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">YawOptimization</span><span class="p">(</span><span class="n">LoggingManager</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    YawOptimization is a subclass of :py:class:`floris.optimization.scipy.</span>
 <span class="sd">    Optimization` that is used to optimize the yaw angles of all turbines in a Floris</span>
 <span class="sd">    Farm for a single set of inflow conditions using the SciPy optimize package.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">fmodel</span><span class="p">,</span>
         <span class="n">minimum_yaw_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
@@ -745,7 +750,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="c1"># Private methods</span>
 
-    <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Reduce optimization problem as much as possible</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reduce_control_problem</span><span class="p">()</span>
 
@@ -753,7 +758,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_variables</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_control_problem</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_unpack_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_unpack_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Take a variable, can be either a float, a list equal in</span>
 <span class="sd">        length to the number of turbines, or an ndarray. It then</span>
 <span class="sd">        upsamples this value so that it always matches the dimensions</span>
@@ -780,7 +785,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">return</span> <span class="n">variable</span>
 
-    <span class="k">def</span> <span class="nf">_reduce_control_problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reduce_control_problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function reduces the control problem by eliminating turbines</span>
 <span class="sd">        of which the yaw angles need not be optimized, either because of a</span>
@@ -794,6 +799,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="c1"># Initialize subset variables as full set</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_subset</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_subset</span><span class="o">.</span><span class="n">_wind_data</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Accessing private attribute!</span>
         <span class="n">n_findex_subset</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fmodel</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span><span class="p">)</span>
         <span class="n">minimum_yaw_angle_subset</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimum_yaw_angle</span><span class="p">)</span>
         <span class="n">maximum_yaw_angle_subset</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maximum_yaw_angle</span><span class="p">)</span>
@@ -842,7 +848,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_yaw_angles_template_subset</span> <span class="o">=</span> <span class="n">yaw_angles_template_subset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_yaw_angles_baseline_subset</span> <span class="o">=</span> <span class="n">yaw_angles_baseline_subset</span>
 
-    <span class="k">def</span> <span class="nf">_normalize_control_problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_control_problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This private function normalizes variables for the optimization</span>
 <span class="sd">        problem, specifically the initial condition x0 and the bounds.</span>
@@ -862,7 +868,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_length</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_calculate_farm_power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_farm_power</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">yaw_angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">wd_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -933,7 +939,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">farm_power_weighted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">turbine_power_weighted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">farm_power_weighted</span>
 
-    <span class="k">def</span> <span class="nf">_calculate_baseline_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_baseline_farm_power</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the weighted wind farm power under the baseline turbine yaw</span>
 <span class="sd">        angles.</span>
@@ -946,7 +952,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="bp">self</span><span class="o">.</span><span class="n">_farm_power_baseline_subset</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">farm_power_baseline</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">farm_power_opt_subset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yaw_angles_opt_subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">farm_power_opt_subset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yaw_angles_opt_subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Process final solutions</span>
         <span class="k">if</span> <span class="n">farm_power_opt_subset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">farm_power_opt_subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_farm_power_opt_subset</span>
@@ -988,7 +994,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">return</span> <span class="n">df_opt</span>
 
-    <span class="k">def</span> <span class="nf">_verify_solutions_for_convergence</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_verify_solutions_for_convergence</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">farm_power_opt_subset</span><span class="p">,</span>
         <span class="n">yaw_angles_opt_subset</span><span class="p">,</span>
@@ -1161,7 +1167,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">yaw_angles_opt_subset</span><span class="p">,</span> <span class="n">farm_power_opt_subset</span>
 
     <span class="c1"># Supporting functions</span>
-    <span class="k">def</span> <span class="nf">_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Normalize a variable to a value range.</span>
 
@@ -1175,7 +1181,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">val</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_unnorm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_norm</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_unnorm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_norm</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unnormalize a variable to a value range.</span>
 
@@ -1251,8 +1257,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

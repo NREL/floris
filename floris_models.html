@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -654,9 +659,9 @@ have an interface that is the same as <code class="docutils literal notranslate"
 <p>The <code class="docutils literal notranslate"><span class="pre">ParFlorisModel</span></code> class can be instantiated in the same way as the <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> class, or else it can be instantiated by passing a <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> object to the constructor.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">ParFlorisModel</span><span class="p">,</span> <span class="n">TimeSeries</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">ParFlorisModel</span><span class="p">,</span> <span class="n">TimeSeries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
 
@@ -739,7 +744,7 @@ Defaults to the same as max_workers.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b323b428cd1defbccc112237b1110db70ff02f695ab647b8f3bf9ed81553659d.png" src="_images/b323b428cd1defbccc112237b1110db70ff02f695ab647b8f3bf9ed81553659d.png" />
+<img alt="_images/e8fb15a666b464aeef58dfbbe47e5a139ac9098d8a3b08bca7a15f773662c54c.png" src="_images/e8fb15a666b464aeef58dfbbe47e5a139ac9098d8a3b08bca7a15f773662c54c.png" />
 </div>
 </div>
 </section>
@@ -752,7 +757,7 @@ Defaults to the same as max_workers.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel</span></code> class can be instantiated in the same way as the <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> class, or else it can be instantiated by passing a <code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code> object to the constructor.  Alternatively a <code class="docutils literal notranslate"><span class="pre">ParFlorisModel</span></code> object can be passed to the constructor which ensures the underlying calculations are parallelized according to the <code class="docutils literal notranslate"><span class="pre">ParFlorisModel</span></code> parameters.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">UncertainFlorisModel</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">UncertainFlorisModel</span>
 
 <span class="c1"># Instantiation options</span>
 <span class="n">ufmodel</span> <span class="o">=</span> <span class="n">UncertainFlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span> <span class="c1"># Using input yaml</span>
@@ -802,7 +807,7 @@ Defaults to the same as max_workers.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9725b2d2da313e5b7581536f86f5d495dbdaa304eab3e428a162909fbdabec6f.png" src="_images/9725b2d2da313e5b7581536f86f5d495dbdaa304eab3e428a162909fbdabec6f.png" />
+<img alt="_images/d0b239daca09ca007f0fa65706321b809814b12d55d0dad73773eef647ec8fa6.png" src="_images/d0b239daca09ca007f0fa65706321b809814b12d55d0dad73773eef647ec8fa6.png" />
 </div>
 </div>
 </section>
@@ -815,7 +820,7 @@ Defaults to the same as max_workers.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel</span></code> can be instantiated in the same way as the <code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel</span></code> class</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">ApproxFlorisModel</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproxFlorisModel</span>
 
 <span class="c1"># Instantiation options</span>
 <span class="n">amodel</span> <span class="o">=</span> <span class="n">ApproxFlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span> <span class="c1"># Using input yaml</span>
@@ -876,7 +881,7 @@ Defaults to the same as max_workers.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0db180e70221cd795f0630881ab79a8ac3473e31860192e9f7c1ee8fc4e88478.png" src="_images/0db180e70221cd795f0630881ab79a8ac3473e31860192e9f7c1ee8fc4e88478.png" />
+<img alt="_images/c325817eb1fa230ae37f6c6b04821775fb20c4015ceeff76bb3d065c81d09077.png" src="_images/c325817eb1fa230ae37f6c6b04821775fb20c4015ceeff76bb3d065c81d09077.png" />
 </div>
 </div>
 </section>
@@ -1012,8 +1017,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

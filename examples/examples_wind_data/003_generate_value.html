@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -631,10 +636,10 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">TimeSeries</span><span class="p">,</span>
     <span class="n">WindRose</span><span class="p">,</span>
 <span class="p">)</span>
@@ -650,7 +655,7 @@
 
 
 <span class="c1"># Define a custom function where value = 100 / wind_speed</span>
-<span class="k">def</span> <span class="nf">custom_value_func</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_value_func</span><span class="p">(</span><span class="n">wind_directions</span><span class="p">,</span> <span class="n">wind_speeds</span><span class="p">):</span>
     <span class="k">return</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">wind_speeds</span>
 
 
@@ -701,15 +706,15 @@
 
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/5d18dcae3bff5b39a5d4524e624ea25a4194ea06d3a6cbd5d3a4f4bcdc11ad5c.png" src="../../_images/5d18dcae3bff5b39a5d4524e624ea25a4194ea06d3a6cbd5d3a4f4bcdc11ad5c.png" />
-<img alt="../../_images/b3a24ee81915a661839d219694ca47fec841c7ce50506a4d5a035047e87b3763.png" src="../../_images/b3a24ee81915a661839d219694ca47fec841c7ce50506a4d5a035047e87b3763.png" />
-<img alt="../../_images/6370a219a163e059767d41ff23f3b9cae5257c4dd510c139ccf0ca1999a0c086.png" src="../../_images/6370a219a163e059767d41ff23f3b9cae5257c4dd510c139ccf0ca1999a0c086.png" />
+<img alt="../../_images/21312c98b57088d4afe88529bfabe56f89316c1aae1a2bf7855ff6b4eeb1e8a4.png" src="../../_images/21312c98b57088d4afe88529bfabe56f89316c1aae1a2bf7855ff6b4eeb1e8a4.png" />
+<img alt="../../_images/44492254d51db01e33a26a192ee8aebbfece15dc03157e1270119fb2d9c43e24.png" src="../../_images/44492254d51db01e33a26a192ee8aebbfece15dc03157e1270119fb2d9c43e24.png" />
+<img alt="../../_images/3eff0f5c02fb57051047954f98bb6fd7e387577d3a22c48133cd688ddcbb7977.png" src="../../_images/3eff0f5c02fb57051047954f98bb6fd7e387577d3a22c48133cd688ddcbb7977.png" />
 </div>
 </div>
 </section>
@@ -812,8 +817,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

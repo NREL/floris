@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,13 +565,13 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.core.solver</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">axial_induction</span><span class="p">,</span>
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
@@ -576,22 +581,22 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">thrust_coefficient</span><span class="p">,</span>
     <span class="n">TurbineGrid</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.core.rotor_velocity</span> <span class="kn">import</span> <span class="n">average_velocity</span>
-<span class="kn">from</span> <span class="nn">floris.core.wake</span> <span class="kn">import</span> <span class="n">WakeModelManager</span>
-<span class="kn">from</span> <span class="nn">floris.core.wake_deflection.empirical_gauss</span> <span class="kn">import</span> <span class="n">yaw_added_wake_mixing</span>
-<span class="kn">from</span> <span class="nn">floris.core.wake_deflection.gauss</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.rotor_velocity</span><span class="w"> </span><span class="kn">import</span> <span class="n">average_velocity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.wake</span><span class="w"> </span><span class="kn">import</span> <span class="n">WakeModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.wake_deflection.empirical_gauss</span><span class="w"> </span><span class="kn">import</span> <span class="n">yaw_added_wake_mixing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.wake_deflection.gauss</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">calculate_transverse_velocity</span><span class="p">,</span>
     <span class="n">wake_added_yaw</span><span class="p">,</span>
     <span class="n">yaw_added_turbulence_mixing</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.core.wake_velocity.empirical_gauss</span> <span class="kn">import</span> <span class="n">awc_added_wake_mixing</span>
-<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="n">NDArrayFloat</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">cosd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.wake_velocity.empirical_gauss</span><span class="w"> </span><span class="kn">import</span> <span class="n">awc_added_wake_mixing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.type_dec</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArrayFloat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosd</span>
 
 
 <div class="viewcode-block" id="calculate_area_overlap">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.calculate_area_overlap">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_area_overlap</span><span class="p">(</span><span class="n">wake_velocities</span><span class="p">,</span> <span class="n">freestream_velocities</span><span class="p">,</span> <span class="n">y_ngrid</span><span class="p">,</span> <span class="n">z_ngrid</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_area_overlap</span><span class="p">(</span><span class="n">wake_velocities</span><span class="p">,</span> <span class="n">freestream_velocities</span><span class="p">,</span> <span class="n">y_ngrid</span><span class="p">,</span> <span class="n">z_ngrid</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    compute wake overlap based on the number of points that are not freestream</span>
 <span class="sd">    velocity, i.e. affected by the wake</span>
@@ -611,7 +616,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="c1"># @profile</span>
 <div class="viewcode-block" id="sequential_solver">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.sequential_solver">[docs]</a>
-<span class="k">def</span> <span class="nf">sequential_solver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sequential_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span>
@@ -829,7 +834,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="full_flow_sequential_solver">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.full_flow_sequential_solver">[docs]</a>
-<span class="k">def</span> <span class="nf">full_flow_sequential_solver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">full_flow_sequential_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span> <span class="o">|</span> <span class="n">FlowFieldPlanarGrid</span> <span class="o">|</span> <span class="n">PointsGrid</span><span class="p">,</span>
@@ -1023,7 +1028,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="cc_solver">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.cc_solver">[docs]</a>
-<span class="k">def</span> <span class="nf">cc_solver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cc_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span>
@@ -1272,7 +1277,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="full_flow_cc_solver">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.full_flow_cc_solver">[docs]</a>
-<span class="k">def</span> <span class="nf">full_flow_cc_solver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">full_flow_cc_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span> <span class="o">|</span> <span class="n">FlowFieldPlanarGrid</span> <span class="o">|</span> <span class="n">PointsGrid</span><span class="p">,</span>
@@ -1465,7 +1470,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="turbopark_solver">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.turbopark_solver">[docs]</a>
-<span class="k">def</span> <span class="nf">turbopark_solver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">turbopark_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span>
@@ -1706,7 +1711,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="full_flow_turbopark_solver">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.full_flow_turbopark_solver">[docs]</a>
-<span class="k">def</span> <span class="nf">full_flow_turbopark_solver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">full_flow_turbopark_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span>
@@ -1718,7 +1723,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="empirical_gauss_solver">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.empirical_gauss_solver">[docs]</a>
-<span class="k">def</span> <span class="nf">empirical_gauss_solver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">empirical_gauss_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">TurbineGrid</span><span class="p">,</span>
@@ -1943,7 +1948,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="full_flow_empirical_gauss_solver">
 <a class="viewcode-back" href="../../../_autosummary/floris.core.solver.html#floris.core.solver.full_flow_empirical_gauss_solver">[docs]</a>
-<span class="k">def</span> <span class="nf">full_flow_empirical_gauss_solver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">full_flow_empirical_gauss_solver</span><span class="p">(</span>
     <span class="n">farm</span><span class="p">:</span> <span class="n">Farm</span><span class="p">,</span>
     <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">flow_field_grid</span><span class="p">:</span> <span class="n">FlowFieldGrid</span><span class="p">,</span>
@@ -2176,8 +2181,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

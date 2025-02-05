@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -616,6 +621,7 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-structures">Data structures</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grids">Grids</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris-as-a-library">FLORIS as a library</a></li>
 </ul>
             </nav>
         </div>
@@ -634,9 +640,9 @@ are detailed here. See <a class="reference internal" href="intro_concepts.html#i
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a basic FLORIS model for use later</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
 <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;gch.yaml&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -690,7 +696,126 @@ field-quantities in FLORIS have the same shape.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/27b1e92f36910be970d9c87d71066118fc1c7f1a76dc89fb5be0ac1a224fdcb7.png" src="_images/27b1e92f36910be970d9c87d71066118fc1c7f1a76dc89fb5be0ac1a224fdcb7.png" />
+<img alt="_images/4f941b269447a1c088a82b28ea552fa94254f73e7dee019f3936ab6174915bad.png" src="_images/4f941b269447a1c088a82b28ea552fa94254f73e7dee019f3936ab6174915bad.png" />
+</div>
+</div>
+</section>
+<section id="floris-as-a-library">
+<h2>FLORIS as a library<a class="headerlink" href="#floris-as-a-library" title="Link to this heading">#</a></h2>
+<p>FLORIS is commonly used as a library in other software packages.
+In cases where the calling-code will create inputs for FLORIS rather than require them from the
+user, it can be helpful to initialize the FLORIS model with default inputs and then
+change them in code.
+In this case, the following workflow is recommended.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">floris</span>
+
+<span class="c1"># Initialize FLORIS with defaults</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">floris</span><span class="o">.</span><span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;defaults&quot;</span><span class="p">)</span>
+
+<span class="c1"># Within the calling-code&#39;s setup step, update FLORIS as needed</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
+    <span class="c1"># turbine_library_path=&quot;path/to/turbine_library&quot;,   # Shown here for reference</span>
+    <span class="c1"># turbine_type=[&quot;my_turbine&quot;]</span>
+<span class="p">)</span>
+
+<span class="c1"># Within the calling code&#39;s computation, run FLORIS</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Alternatively, the calling-code can import the FLORIS default inputs as a Python dictionary
+and modify them directly before initializing the FLORIS model.
+This is especially helpful when the calling-code will modify a parameter that isn't
+supported by the <code class="docutils literal notranslate"><span class="pre">FlorisModel.set(...)</span></code> command.
+In particular, the wake model parameters are not directly accessible, so these can be updated
+externally, as shown below.
+Note that the <code class="docutils literal notranslate"><span class="pre">FlorisModel.get_defaults()</span></code> function returns a deep copy of the default inputs,
+so these can be modified directly without side effects.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">floris</span>
+
+<span class="c1"># Retrieve the default parameters</span>
+<span class="n">fdefaults</span> <span class="o">=</span> <span class="n">floris</span><span class="o">.</span><span class="n">FlorisModel</span><span class="o">.</span><span class="n">get_defaults</span><span class="p">()</span>
+
+<span class="c1"># Update wake model parameters</span>
+<span class="n">fdefaults</span><span class="p">[</span><span class="s2">&quot;wake&quot;</span><span class="p">][</span><span class="s2">&quot;model_strings&quot;</span><span class="p">][</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;jensen&quot;</span>
+<span class="n">fdefaults</span><span class="p">[</span><span class="s2">&quot;wake&quot;</span><span class="p">][</span><span class="s2">&quot;wake_velocity_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;jensen&quot;</span><span class="p">][</span><span class="s2">&quot;we&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+<span class="c1"># Initialize FLORIS with modified parameters</span>
+<span class="n">fmodel</span> <span class="o">=</span> <span class="n">floris</span><span class="o">.</span><span class="n">FlorisModel</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="n">fdefaults</span><span class="p">)</span>
+
+<span class="c1"># Within the calling-code&#39;s setup step, update FLORIS as needed</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">wind_directions</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
+    <span class="n">wind_speeds</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
+    <span class="n">turbulence_intensities</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
+    <span class="c1"># turbine_library_path=&quot;path/to/turbine_library&quot;,   # Shown here for reference</span>
+    <span class="c1"># turbine_type=[&quot;my_turbine&quot;]</span>
+<span class="p">)</span>
+
+<span class="c1"># Verify settings are correct</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">show_config</span><span class="p">()</span>  <span class="c1"># Shows truncated set of inputs; show all with fmodel.show_config(full=True)</span>
+
+<span class="c1"># Within the calling code&#39;s computation, run FLORIS</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>solver
+    type
+        turbine_grid
+    turbine_grid_points
+        3
+wake
+    model_strings
+        combination_model
+            sosfs
+        deflection_model
+            gauss
+        turbulence_model
+            crespo_hernandez
+        velocity_model
+            jensen
+farm
+    layout_x
+        [0.0]
+    layout_y
+        [0.0]
+    turbine_type
+        [&#39;nrel_5MW&#39;]
+    turbine_library_path
+        /home/runner/work/floris/floris/floris/turbine_library
+flow_field
+    wind_speeds
+        [5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0]
+    wind_directions
+        [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+    wind_veer
+        0.0
+    wind_shear
+        0.12
+    air_density
+        1.225
+    turbulence_intensities
+        [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+    reference_wind_height
+        90.0
+name
+    GCH
+description
+    Default initialization: Gauss-Curl hybrid model (GCH)
+floris_version
+    v4
+</pre></div>
+</div>
 </div>
 </div>
 </section>
@@ -763,6 +888,7 @@ field-quantities in FLORIS have the same shape.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-structures">Data structures</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grids">Grids</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris-as-a-library">FLORIS as a library</a></li>
 </ul>
   </nav></div>
 
@@ -811,8 +937,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

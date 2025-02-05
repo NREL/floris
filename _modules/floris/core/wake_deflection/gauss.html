@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,27 +565,27 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.core.wake_deflection.gauss</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
-<span class="kn">import</span> <span class="nn">numexpr</span> <span class="k">as</span> <span class="nn">ne</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numexpr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ne</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">define</span><span class="p">,</span>
     <span class="n">field</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">pi</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">pi</span>
 
-<span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">Farm</span><span class="p">,</span>
     <span class="n">FlowField</span><span class="p">,</span>
     <span class="n">Grid</span><span class="p">,</span>
     <span class="n">Turbine</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="n">cosd</span><span class="p">,</span> <span class="n">sind</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosd</span><span class="p">,</span> <span class="n">sind</span>
 
 
 <span class="n">NUM_EPS</span> <span class="o">=</span> <span class="n">fields</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">)</span><span class="o">.</span><span class="n">NUM_EPS</span><span class="o">.</span><span class="n">default</span>
@@ -588,7 +593,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="GaussVelocityDeflection">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.GaussVelocityDeflection">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">GaussVelocityDeflection</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussVelocityDeflection</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Gauss deflection model is a blend of the models described in</span>
 <span class="sd">    :cite:`gdm-bastankhah2016experimental` and :cite:`gdm-King2019Controls` for</span>
@@ -647,7 +652,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="GaussVelocityDeflection.prepare_function">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.GaussVelocityDeflection.prepare_function">[docs]</a>
-    <span class="k">def</span> <span class="nf">prepare_function</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_function</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span><span class="p">,</span>
         <span class="n">flow_field</span><span class="p">:</span> <span class="n">FlowField</span><span class="p">,</span>
@@ -666,7 +671,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="c1"># @profile</span>
 <div class="viewcode-block" id="GaussVelocityDeflection.function">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.GaussVelocityDeflection.function">[docs]</a>
-    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">y_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -781,7 +786,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="gamma">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.gamma">[docs]</a>
-<span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gamma</span><span class="p">(</span>
     <span class="n">D</span><span class="p">,</span>
     <span class="n">velocity</span><span class="p">,</span>
     <span class="n">Uinf</span><span class="p">,</span>
@@ -807,7 +812,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="wake_added_yaw">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.wake_added_yaw">[docs]</a>
-<span class="k">def</span> <span class="nf">wake_added_yaw</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wake_added_yaw</span><span class="p">(</span>
     <span class="n">u_i</span><span class="p">,</span>
     <span class="n">v_i</span><span class="p">,</span>
     <span class="n">u_initial</span><span class="p">,</span>
@@ -910,7 +915,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="calculate_transverse_velocity">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.calculate_transverse_velocity">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_transverse_velocity</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_transverse_velocity</span><span class="p">(</span>
     <span class="n">u_i</span><span class="p">,</span>
     <span class="n">u_initial</span><span class="p">,</span>
     <span class="n">dudz_initial</span><span class="p">,</span>
@@ -1049,7 +1054,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="yaw_added_turbulence_mixing">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.yaw_added_turbulence_mixing">[docs]</a>
-<span class="k">def</span> <span class="nf">yaw_added_turbulence_mixing</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">yaw_added_turbulence_mixing</span><span class="p">(</span>
     <span class="n">u_i</span><span class="p">,</span>
     <span class="n">I_i</span><span class="p">,</span>
     <span class="n">v_i</span><span class="p">,</span>
@@ -1145,8 +1150,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -559,32 +564,32 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for floris.uncertain_floris_model</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">List</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
-<span class="kn">from</span> <span class="nn">floris.core</span> <span class="kn">import</span> <span class="n">State</span>
-<span class="kn">from</span> <span class="nn">floris.logging_manager</span> <span class="kn">import</span> <span class="n">LoggingManager</span>
-<span class="kn">from</span> <span class="nn">floris.par_floris_model</span> <span class="kn">import</span> <span class="n">ParFlorisModel</span>
-<span class="kn">from</span> <span class="nn">floris.type_dec</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">State</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.logging_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggingManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.par_floris_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParFlorisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.type_dec</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">floris_array_converter</span><span class="p">,</span>
     <span class="n">NDArrayBool</span><span class="p">,</span>
     <span class="n">NDArrayFloat</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.utilities</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">nested_get</span><span class="p">,</span>
     <span class="n">nested_set</span><span class="p">,</span>
     <span class="n">wrap_180</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.wind_data</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.wind_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">TimeSeries</span><span class="p">,</span>
     <span class="n">WindDataBase</span><span class="p">,</span>
     <span class="n">WindRose</span><span class="p">,</span>
@@ -595,7 +600,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel">[docs]</a>
-<span class="k">class</span> <span class="nc">UncertainFlorisModel</span><span class="p">(</span><span class="n">LoggingManager</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UncertainFlorisModel</span><span class="p">(</span><span class="n">LoggingManager</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An interface for handling uncertainty in wind farm simulations.</span>
 
@@ -634,7 +639,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        verbose (bool, optional): Verbosity flag for printing messages. Defaults to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">FlorisModel</span> <span class="o">|</span> <span class="n">ParFlorisModel</span><span class="p">,</span>
         <span class="n">wd_resolution</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Degree</span>
@@ -685,7 +690,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.set">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.set">[docs]</a>
-    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -703,7 +708,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_uncertain</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_set_uncertain</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_uncertain</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -791,7 +796,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.reset_operation">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.reset_operation">[docs]</a>
-    <span class="k">def</span> <span class="nf">reset_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the operation of the underlying FlorisModel object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -808,7 +813,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.run">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the simulation in the underlying FlorisModel object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -818,7 +823,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.run_no_wake">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.run_no_wake">[docs]</a>
-    <span class="k">def</span> <span class="nf">run_no_wake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_no_wake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the simulation in the underlying FlorisModel object without wakes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -826,7 +831,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_expanded</span><span class="o">.</span><span class="n">run_no_wake</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the power at each turbine in the wind farm.</span>
 
 <span class="sd">        This method calculates the power at each turbine in the wind farm, considering</span>
@@ -851,7 +856,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_turbine_powers">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_turbine_powers">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the power at each turbine in the wind farm.  If WindRose or</span>
 <span class="sd">           WindTIRose is passed in, result is reshaped to match</span>
@@ -902,7 +907,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_expected_turbine_powers">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_expected_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_expected_turbine_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the expected (mean) power of each turbine.</span>
 
@@ -939,7 +944,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">freq</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">turbine_powers</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_weighted_turbine_powers</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_weighted_turbine_powers</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">use_turbulence_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -977,7 +982,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">return</span> <span class="n">turbine_powers</span>
 
-    <span class="k">def</span> <span class="nf">_get_farm_power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_farm_power</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">use_turbulence_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -1014,7 +1019,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_farm_power">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_farm_power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_farm_power</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">use_turbulence_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -1071,7 +1076,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_expected_farm_power">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_power">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_expected_farm_power</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_expected_farm_power</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1124,7 +1129,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_farm_AEP">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AEP">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_farm_AEP</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_farm_AEP</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">turbine_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1178,7 +1183,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_expected_farm_value">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_expected_farm_value</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_expected_farm_value</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1250,7 +1255,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_farm_AVP">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_farm_AVP</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_farm_AVP</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1322,7 +1327,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_rounded_inputs</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_rounded_inputs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_array</span><span class="p">,</span>
         <span class="n">wd_resolution</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Degree</span>
@@ -1409,7 +1414,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">return</span> <span class="n">rounded_input_array</span>
 
-    <span class="k">def</span> <span class="nf">_expand_wind_directions</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_expand_wind_directions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="n">wd_sample_points</span><span class="p">,</span> <span class="n">fix_yaw_to_nominal_direction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_turbines</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1483,7 +1488,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">return</span> <span class="n">output_array</span>
 
-    <span class="k">def</span> <span class="nf">_get_unique_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_array</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_unique_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_array</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Finds unique rows in the input numpy array and constructs a mapping array</span>
 <span class="sd">        to reconstruct the input array from the unique rows.</span>
@@ -1506,7 +1511,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">return</span> <span class="n">unique_inputs</span><span class="p">,</span> <span class="n">map_to_expanded_inputs</span>
 
-    <span class="k">def</span> <span class="nf">_get_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_std</span><span class="p">,</span> <span class="n">wd_sample_points</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wd_std</span><span class="p">,</span> <span class="n">wd_sample_points</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates weights based on a Gaussian distribution sampled at specific x-locations.</span>
 
 <span class="sd">        Args:</span>
@@ -1530,7 +1535,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_operation_model">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the operation model of a FlorisModel.</span>
 
 <span class="sd">        Returns:</span>
@@ -1548,7 +1553,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.set_operation_model">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_operation_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the turbine operation model(s).</span>
 
 <span class="sd">        Args:</span>
@@ -1588,7 +1593,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.copy">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.copy">[docs]</a>
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an independent copy of the current UncertainFlorisModel object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">UncertainFlorisModel</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span>
@@ -1607,7 +1612,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.get_param">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_param">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">param_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">param_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a parameter from a FlorisModel object.</span>
 
 <span class="sd">        Args:</span>
@@ -1628,7 +1633,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="UncertainFlorisModel.set_param">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.set_param">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">param_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">param_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a parameter in a FlorisModel object.</span>
 
 <span class="sd">        Args:</span>
@@ -1643,7 +1648,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wind turbine coordinate information.</span>
 
@@ -1653,7 +1658,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">layout_x</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">layout_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">layout_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wind turbine coordinate information.</span>
 
@@ -1663,7 +1668,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">layout_y</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">wind_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wind_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wind direction information.</span>
 
@@ -1673,7 +1678,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_directions</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">wind_speeds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wind_speeds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wind speed information.</span>
 
@@ -1683,7 +1688,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">wind_speeds</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">turbulence_intensities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">turbulence_intensities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Turbulence intensity information.</span>
 
@@ -1693,7 +1698,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensities</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_findex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_findex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Number of unique wind conditions.</span>
 
@@ -1703,7 +1708,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">n_findex</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_turbines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_turbines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Number of turbines in the wind farm.</span>
 
@@ -1713,7 +1718,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">farm</span><span class="o">.</span><span class="n">n_turbines</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reference_wind_height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reference_wind_height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reference wind height.</span>
 
@@ -1723,7 +1728,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmodel_unexpanded</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flow_field</span><span class="o">.</span><span class="n">reference_wind_height</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">core</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">core</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the core of the unexpanded model.</span>
 
@@ -1736,7 +1741,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="map_turbine_powers_uncertain">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.map_turbine_powers_uncertain">[docs]</a>
-<span class="k">def</span> <span class="nf">map_turbine_powers_uncertain</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_turbine_powers_uncertain</span><span class="p">(</span>
     <span class="n">unique_turbine_powers</span><span class="p">,</span>
     <span class="n">map_to_expanded_inputs</span><span class="p">,</span>
     <span class="n">weights</span><span class="p">,</span>
@@ -1789,7 +1794,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ApproxFlorisModel">
 <a class="viewcode-back" href="../../_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.ApproxFlorisModel">[docs]</a>
-<span class="k">class</span> <span class="nc">ApproxFlorisModel</span><span class="p">(</span><span class="n">UncertainFlorisModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ApproxFlorisModel</span><span class="p">(</span><span class="n">UncertainFlorisModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The ApproxFlorisModel overloads the UncertainFlorisModel with the special case that</span>
 <span class="sd">    the wd_sample_points = [0].  This is a special case where no uncertainty is added</span>
@@ -1798,7 +1803,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    result computed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">wd_resolution</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Degree</span>
@@ -1892,8 +1897,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -615,6 +620,7 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel"><code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_defaults"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_defaults()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.set_operation"><code class="docutils literal notranslate"><span class="pre">FlorisModel.set_operation()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.set"><code class="docutils literal notranslate"><span class="pre">FlorisModel.set()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.reset_operation"><code class="docutils literal notranslate"><span class="pre">FlorisModel.reset_operation()</span></code></a></li>
@@ -644,6 +650,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">FlorisModel.set_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_turbine_layout"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_turbine_layout()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.show_config"><code class="docutils literal notranslate"><span class="pre">FlorisModel.show_config()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.print_dict"><code class="docutils literal notranslate"><span class="pre">FlorisModel.print_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">FlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">FlorisModel.layout_y</span></code></a></li>
@@ -710,6 +717,16 @@ methods on objects within FLORIS.</p>
 <dd class="field-odd"><p><strong>configuration</strong> (<em>dict</em><em> | </em><em>str</em><em> | </em><em>Path</em>)</p>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.floris_model.FlorisModel.get_defaults">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_defaults</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/floris_model.html#FlorisModel.get_defaults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.floris_model.FlorisModel.get_defaults" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.floris_model.FlorisModel.set_operation">
 <span class="sig-name descname"><span class="pre">set_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_setpoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awc_modes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awc_amplitudes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awc_frequencies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_turbines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/floris_model.html#FlorisModel.set_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.floris_model.FlorisModel.set_operation" title="Link to this definition">#</a></dt>
@@ -1456,6 +1473,17 @@ otherwise, return x and y only. Defaults to <em>False</em>.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="floris.floris_model.FlorisModel.show_config">
+<span class="sig-name descname"><span class="pre">show_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/floris_model.html#FlorisModel.show_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.floris_model.FlorisModel.show_config" title="Link to this definition">#</a></dt>
+<dd><p>Print the FlorisModel dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="floris.floris_model.FlorisModel.print_dict">
 <span class="sig-name descname"><span class="pre">print_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/floris_model.html#FlorisModel.print_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.floris_model.FlorisModel.print_dict" title="Link to this definition">#</a></dt>
 <dd><p>Print the FlorisModel dictionary.</p>
@@ -1569,9 +1597,30 @@ otherwise, return x and y only. Defaults to <em>False</em>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="floris.floris_model.FlorisModel.merge_floris_models">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_floris_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmodel_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_wind_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/floris_model.html#FlorisModel.merge_floris_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.floris_model.FlorisModel.merge_floris_models" title="Link to this definition">#</a></dt>
-<dd><p>Merge a list of FlorisModel objects into a single FlorisModel object. Note that it uses
-the very first object specified in fmodel_list to build upon,
-so it uses those wake model parameters, air density, and so on.</p>
+<dd><p>Merge a list of FlorisModel objects into a single FlorisModel object.
+Note that it uses the first object specified in fmodel_list to build upon,
+so it uses those wake model parameters, air density, and so on.
+Currently, this function supports merging the following components of the FLORIS inputs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>farm</dt><dd><ul>
+<li><p>layout_x</p></li>
+<li><p>layout_y</p></li>
+<li><p>turbine_type</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>flow_field</dt><dd><ul>
+<li><p>reference_wind_height</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
 <dl>
 <dt>Args:</dt><dd><p>fmodel_list (list): Array-like of FlorisModel objects.
 reference_wind_height (float, optional): Height in meters</p>
@@ -1662,6 +1711,7 @@ or general solver settings.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel"><code class="docutils literal notranslate"><span class="pre">FlorisModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_defaults"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_defaults()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.set_operation"><code class="docutils literal notranslate"><span class="pre">FlorisModel.set_operation()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.set"><code class="docutils literal notranslate"><span class="pre">FlorisModel.set()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.reset_operation"><code class="docutils literal notranslate"><span class="pre">FlorisModel.reset_operation()</span></code></a></li>
@@ -1691,6 +1741,7 @@ or general solver settings.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">FlorisModel.set_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_turbine_layout"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_turbine_layout()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.show_config"><code class="docutils literal notranslate"><span class="pre">FlorisModel.show_config()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.print_dict"><code class="docutils literal notranslate"><span class="pre">FlorisModel.print_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">FlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">FlorisModel.layout_y</span></code></a></li>
@@ -1755,8 +1806,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

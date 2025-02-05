@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -626,14 +631,14 @@
 <span class="sd">boundaries.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">WindRose</span>
-<span class="kn">from</span> <span class="nn">floris.optimization.layout_optimization.layout_optimization_gridded</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">WindRose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.optimization.layout_optimization.layout_optimization_gridded</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LayoutOptimizationGridded</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">floris.optimization.layout_optimization.layout_optimization_random_search</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.optimization.layout_optimization.layout_optimization_random_search</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LayoutOptimizationRandomSearch</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -703,7 +708,7 @@
     <span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -728,21 +733,21 @@ Optimization time: 0.0 s / 60.0 s
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +1.0
 Optimization time = +10.1 [s]
-Mean AEP = 86.6 [GWh] (+1.69%)
-Median AEP = 86.6 [GWh] (+1.62%)
-Max AEP = 87.1 [GWh] (+2.20%)
-Min AEP = 86.3 [GWh] (+1.30%)
+Mean AEP = 87.0 [GWh] (+2.10%)
+Median AEP = 86.9 [GWh] (+2.02%)
+Max AEP = 87.3 [GWh] (+2.42%)
+Min AEP = 86.8 [GWh] (+1.94%)
 =======================================
-Optimization time: 10.2 s / 60.0 s
+Optimization time: 10.1 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
 Optimization time = +20.3 [s]
-Mean AEP = 87.3 [GWh] (+2.52%)
-Median AEP = 87.4 [GWh] (+2.58%)
-Max AEP = 87.5 [GWh] (+2.66%)
-Min AEP = 87.1 [GWh] (+2.28%)
+Mean AEP = 87.3 [GWh] (+2.45%)
+Median AEP = 87.3 [GWh] (+2.45%)
+Max AEP = 87.4 [GWh] (+2.56%)
+Min AEP = 87.2 [GWh] (+2.32%)
 =======================================
 Optimization time: 20.3 s / 60.0 s
 </pre></div>
@@ -750,48 +755,48 @@ Optimization time: 20.3 s / 60.0 s
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
 Optimization time = +30.4 [s]
-Mean AEP = 87.5 [GWh] (+2.70%)
-Median AEP = 87.5 [GWh] (+2.70%)
+Mean AEP = 87.5 [GWh] (+2.67%)
+Median AEP = 87.5 [GWh] (+2.66%)
 Max AEP = 87.5 [GWh] (+2.76%)
-Min AEP = 87.4 [GWh] (+2.62%)
+Min AEP = 87.4 [GWh] (+2.58%)
 =======================================
 Optimization time: 30.4 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +40.6 [s]
+Optimization time = +40.5 [s]
 Mean AEP = 87.6 [GWh] (+2.78%)
-Median AEP = 87.5 [GWh] (+2.77%)
-Max AEP = 87.6 [GWh] (+2.83%)
-Min AEP = 87.5 [GWh] (+2.76%)
+Median AEP = 87.6 [GWh] (+2.79%)
+Max AEP = 87.6 [GWh] (+2.82%)
+Min AEP = 87.5 [GWh] (+2.73%)
 =======================================
-Optimization time: 40.6 s / 60.0 s
+Optimization time: 40.5 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +5.0
-Optimization time = +50.7 [s]
-Mean AEP = 87.6 [GWh] (+2.82%)
-Median AEP = 87.6 [GWh] (+2.82%)
+Optimization time = +50.6 [s]
+Mean AEP = 87.6 [GWh] (+2.83%)
+Median AEP = 87.6 [GWh] (+2.83%)
 Max AEP = 87.6 [GWh] (+2.85%)
 Min AEP = 87.6 [GWh] (+2.80%)
 =======================================
-Optimization time: 50.7 s / 60.0 s
+Optimization time: 50.6 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +6.0
-Optimization time = +60.9 [s]
-Mean AEP = 87.6 [GWh] (+2.84%)
-Median AEP = 87.6 [GWh] (+2.85%)
+Optimization time = +60.8 [s]
+Mean AEP = 87.6 [GWh] (+2.85%)
+Median AEP = 87.6 [GWh] (+2.84%)
 Max AEP = 87.6 [GWh] (+2.86%)
-Min AEP = 87.6 [GWh] (+2.82%)
+Min AEP = 87.6 [GWh] (+2.83%)
 =======================================
 Final AEP = 87.6 [GWh] (+2.86%)
 </pre></div>
 </div>
-<img alt="../../_images/44d990456a1b379528054423a50243f2d5490fa62960fc352de9075f23637453.png" src="../../_images/44d990456a1b379528054423a50243f2d5490fa62960fc352de9075f23637453.png" />
+<img alt="../../_images/98f2bca673a98678ec4bb7f216b4f8eaf0a3e656e3c14f25e8ab616b2b3c376d.png" src="../../_images/98f2bca673a98678ec4bb7f216b4f8eaf0a3e656e3c14f25e8ab616b2b3c376d.png" />
 </div>
 </div>
 </section>
@@ -894,8 +899,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -629,11 +634,11 @@
 <span class="sd">the SerialRefine method. Finally, we plot the results.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">WindRose</span>
-<span class="kn">from</span> <span class="nn">floris.optimization.yaw_optimization.yaw_optimizer_sr</span> <span class="kn">import</span> <span class="n">YawOptimizationSR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span><span class="p">,</span> <span class="n">WindRose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris.optimization.yaw_optimization.yaw_optimizer_sr</span><span class="w"> </span><span class="kn">import</span> <span class="n">YawOptimizationSR</span>
 
 
 <span class="c1"># Load the default example floris object</span>
@@ -741,46 +746,25 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=0 (0.0%)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=1 (16.7%)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=0, turbine_depth=2 (33.3%)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=0 (50.0%)
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=1 (66.7%)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Deleting stored wind_data information.</span>
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Serial Refine] Processing pass=1, turbine_depth=2 (83.3%)
@@ -816,8 +800,8 @@
 [1920 rows x 6 columns]
 </pre></div>
 </div>
-<img alt="../../_images/b293ee185b09cfec6fca7b92239c3dbfb2e3c712c2e01b0696a3573a6dd97c9c.png" src="../../_images/b293ee185b09cfec6fca7b92239c3dbfb2e3c712c2e01b0696a3573a6dd97c9c.png" />
-<img alt="../../_images/98be8a3a9fe79a12bfe976bee9fff024d3bfcb5e900e559d0a2c1d0844bfcae9.png" src="../../_images/98be8a3a9fe79a12bfe976bee9fff024d3bfcb5e900e559d0a2c1d0844bfcae9.png" />
+<img alt="../../_images/b13be52b6d13cea701ad71dac4410ca5661b4d5505f1a44e40249f3dd39fd8eb.png" src="../../_images/b13be52b6d13cea701ad71dac4410ca5661b4d5505f1a44e40249f3dd39fd8eb.png" />
+<img alt="../../_images/888f937f0ed5459de79a4e6334dce542520ef5cbc4bffd9c65edd598932866fc.png" src="../../_images/888f937f0ed5459de79a4e6334dce542520ef5cbc4bffd9c65edd598932866fc.png" />
 </div>
 </div>
 </section>
@@ -920,8 +904,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,10 +26,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -38,10 +38,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -425,9 +425,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -560,12 +565,12 @@ window.addEventListener("load", () => mermaid.run());
                   
   <h1>Source code for floris.type_dec</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Iterable</span><span class="p">,</span>
@@ -573,10 +578,10 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">attrs</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">define</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">attrs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">define</span>
 
 
 <span class="c1">### Define general data types used throughout</span>
@@ -595,7 +600,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="floris_array_converter">
 <a class="viewcode-back" href="../../_autosummary/floris.type_dec.html#floris.type_dec.floris_array_converter">[docs]</a>
-<span class="k">def</span> <span class="nf">floris_array_converter</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">floris_array_converter</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    For a given iterable, convert the data to a numpy array and cast to `floris_float_type`.</span>
 <span class="sd">    If the input is a scalar, np.array() creates a 0-dimensional array, and this is not supported</span>
@@ -625,7 +630,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="floris_numeric_dict_converter">
 <a class="viewcode-back" href="../../_autosummary/floris.type_dec.html#floris.type_dec.floris_numeric_dict_converter">[docs]</a>
-<span class="k">def</span> <span class="nf">floris_numeric_dict_converter</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">floris_numeric_dict_converter</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    For the given dictionary, convert all the values to a numeric type. If a value is a scalar, it</span>
 <span class="sd">    will be converted to a float. If a value is an iterable, it will be converted to a Numpy</span>
@@ -663,12 +668,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="c1">#         **kwargs</span>
 <span class="c1">#     )</span>
 
-<span class="k">def</span> <span class="nf">_attr_serializer</span><span class="p">(</span><span class="n">inst</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_attr_serializer</span><span class="p">(</span><span class="n">inst</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">value</span>
 
-<span class="k">def</span> <span class="nf">_attr_floris_filter</span><span class="p">(</span><span class="n">inst</span><span class="p">:</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_attr_floris_filter</span><span class="p">(</span><span class="n">inst</span><span class="p">:</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">inst</span><span class="o">.</span><span class="n">init</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -680,7 +685,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="iter_validator">
 <a class="viewcode-back" href="../../_autosummary/floris.type_dec.html#floris.type_dec.iter_validator">[docs]</a>
-<span class="k">def</span> <span class="nf">iter_validator</span><span class="p">(</span><span class="n">iter_type</span><span class="p">,</span> <span class="n">item_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">iter_validator</span><span class="p">(</span><span class="n">iter_type</span><span class="p">,</span> <span class="n">item_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper function to generate iterable validators that will reduce the amount of</span>
 <span class="sd">    boilerplate code.</span>
@@ -701,7 +706,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="convert_to_path">
 <a class="viewcode-back" href="../../_autosummary/floris.type_dec.html#floris.type_dec.convert_to_path">[docs]</a>
-<span class="k">def</span> <span class="nf">convert_to_path</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_path</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts an input string or ``pathlib.Path`` object to a fully resolved ``pathlib.Path``</span>
 <span class="sd">    object. If the input is a string, it is converted to a pathlib.Path object.</span>
@@ -753,7 +758,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FromDictMixin">
 <a class="viewcode-back" href="../../_autosummary/floris.type_dec.html#floris.type_dec.FromDictMixin">[docs]</a>
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">FromDictMixin</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FromDictMixin</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A Mixin class to allow for kwargs overloading when a data class doesn&#39;t</span>
 <span class="sd">    have a specific parameter defined. This allows passing of larger dictionaries</span>
@@ -763,7 +768,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FromDictMixin.from_dict">
 <a class="viewcode-back" href="../../_autosummary/floris.type_dec.html#floris.type_dec.FromDictMixin.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Maps a data dictionary to an `attr`-defined class.</span>
 
 <span class="sd">        TODO: Add an error to ensure that either none or all the parameters are passed in</span>
@@ -806,7 +811,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FromDictMixin.as_dict">
 <a class="viewcode-back" href="../../_autosummary/floris.type_dec.html#floris.type_dec.FromDictMixin.as_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a YAML friendly dictionary that can be saved for future reloading.</span>
 <span class="sd">        This dictionary will contain only `Python` types that can later be converted to their</span>
 <span class="sd">        proper formats. See `_attr_floris_filter` for detail on which attributes are</span>
@@ -916,8 +921,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

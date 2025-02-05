@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -418,9 +418,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -659,10 +664,10 @@
 <p>WindDataBase is the base class for all WindData objects.  It provides a common interface for working with wind data.  The WindDataBase class is not intended to be used directly, but rather to be subclassed by more specific wind data objects. It is only important to mention that many of the methods in FLORIS that accept wind data as input will accept any WindDataBase object as input.  But is not typical to use it directly.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris.wind_data</span> <span class="kn">import</span> <span class="n">WindDataBase</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris.wind_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindDataBase</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 </pre></div>
@@ -677,7 +682,7 @@
 <h3>TimeSeries Instantiation<a class="headerlink" href="#timeseries-instantiation" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
 
 <span class="c1"># Like FlorisModel, TimeSeries require wind directions, wind speeds, and turbulence intensities to be of the same length.</span>
 <span class="n">N</span> <span class="o">=</span> <span class="mi">50</span>
@@ -747,7 +752,7 @@
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Turbulence Intensity&#39;)
 </pre></div>
 </div>
-<img alt="_images/287b36be55835ca549eef372f304dc08c9257f750d57cb2645a0e501ec111b79.png" src="_images/287b36be55835ca549eef372f304dc08c9257f750d57cb2645a0e501ec111b79.png" />
+<img alt="_images/865fa2b7006ac44a5b522e5c97d16ba8fcf1cdc8f3ffe1541c8521d50efb71aa.png" src="_images/865fa2b7006ac44a5b522e5c97d16ba8fcf1cdc8f3ffe1541c8521d50efb71aa.png" />
 </div>
 </div>
 </section>
@@ -771,7 +776,7 @@
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Value (normalized price/MWh)&#39;)
 </pre></div>
 </div>
-<img alt="_images/5820acbd968bb985e7c1e32c6732f7b7036c2170660186f9fceb953713245c8b.png" src="_images/5820acbd968bb985e7c1e32c6732f7b7036c2170660186f9fceb953713245c8b.png" />
+<img alt="_images/11ac1949e2cf19335760cb85c3115d9eb4aaece95d042c1b221a7a6aa0c5f4f9.png" src="_images/11ac1949e2cf19335760cb85c3115d9eb4aaece95d042c1b221a7a6aa0c5f4f9.png" />
 </div>
 </div>
 </section>
@@ -788,7 +793,7 @@
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">WindRose</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindRose</span>
 
 <span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">270</span><span class="p">,</span> <span class="mi">280</span><span class="p">])</span>  <span class="c1"># 2 Wind Directions</span>
 <span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">])</span>  <span class="c1"># 3 Wind Speeds</span>
@@ -845,7 +850,7 @@ wind_rose.value_table
 <p>The WindTIRose is similar to the WindRose except that rather than specififying wind directions and wind speeds as arrays, with TI, frequency, adn value as 2D tables, the WindTIRose specificies wind directions, wind speeds, and turbulence intensities as arrays with the frequency and value tables now 3 dimensional, representing the frequency and value of each wind direction, wind speed, and turbulence intensity occurence.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">WindTIRose</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindTIRose</span>
 
 <span class="n">wind_directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">270</span><span class="p">,</span> <span class="mi">280</span><span class="p">])</span>  <span class="c1"># 2 Wind Directions</span>
 <span class="n">wind_speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">])</span>  <span class="c1"># 3 Wind Speeds</span>
@@ -911,7 +916,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/f3ef913c5c9ffa36f16ebaf83645610c3e0621a48e22e1539cb61ad2f70fcfd8.png" src="_images/f3ef913c5c9ffa36f16ebaf83645610c3e0621a48e22e1539cb61ad2f70fcfd8.png" />
+<img alt="_images/9dd0bc1c2317fc62d7bdbc8d86020aa2086df62caa2745b09412f25cef8ee2b2.png" src="_images/9dd0bc1c2317fc62d7bdbc8d86020aa2086df62caa2745b09412f25cef8ee2b2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -927,7 +932,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/2317bcb940c0e3a5e86d4d54f18af1e11ea62ac3fd9064ca5ec12dab16b3a05d.png" src="_images/2317bcb940c0e3a5e86d4d54f18af1e11ea62ac3fd9064ca5ec12dab16b3a05d.png" />
+<img alt="_images/72cd70cf78d8aaaebbae9eaf6bc47f27c259da9a254a09bb80d0ee89c9dc492d.png" src="_images/72cd70cf78d8aaaebbae9eaf6bc47f27c259da9a254a09bb80d0ee89c9dc492d.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -943,7 +948,7 @@ wind_rose.value_table
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;PolarAxes: &gt;
 </pre></div>
 </div>
-<img alt="_images/e4f0628a9995849bfb14d29bf2f4e38f347ba2c4eca9ffeee549d5fa6db740bb.png" src="_images/e4f0628a9995849bfb14d29bf2f4e38f347ba2c4eca9ffeee549d5fa6db740bb.png" />
+<img alt="_images/23d46b70ec5b272d2c4a45d2518bba269655c83fde8c6720ce433b8d92516cf6.png" src="_images/23d46b70ec5b272d2c4a45d2518bba269655c83fde8c6720ce433b8d92516cf6.png" />
 </div>
 </div>
 </section>
@@ -977,10 +982,10 @@ wind_rose.value_table
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ded66eefd7c49547686a8e8fb48046c16d0ddddb5201240e52b55d919797b60f.png" src="_images/ded66eefd7c49547686a8e8fb48046c16d0ddddb5201240e52b55d919797b60f.png" />
-<img alt="_images/0284aa87201a6106d20197c2711141ad3129908803f968da2d3f5c2c3ea05826.png" src="_images/0284aa87201a6106d20197c2711141ad3129908803f968da2d3f5c2c3ea05826.png" />
-<img alt="_images/007675c1df9c13b7b9914e6b539dd9f515b2ea064b76c3f5d2551b9f2b36bc9d.png" src="_images/007675c1df9c13b7b9914e6b539dd9f515b2ea064b76c3f5d2551b9f2b36bc9d.png" />
-<img alt="_images/851a0f93d69661a9762267d0201d0e0bdbdc04dee6584c43f3317aa774d50c67.png" src="_images/851a0f93d69661a9762267d0201d0e0bdbdc04dee6584c43f3317aa774d50c67.png" />
+<img alt="_images/9556d9e831a3e0d2c0191e7912094cc0c35b4a9b014b098478327ae655ed8b2e.png" src="_images/9556d9e831a3e0d2c0191e7912094cc0c35b4a9b014b098478327ae655ed8b2e.png" />
+<img alt="_images/98b57a43f07406b89bb04d03fe6bb1e1e01f35a277f12be8066bb5da92428c9e.png" src="_images/98b57a43f07406b89bb04d03fe6bb1e1e01f35a277f12be8066bb5da92428c9e.png" />
+<img alt="_images/d0c8131e4649b5a8010b808adfa2def5288a6ee3caaf153dd2a47a4e686f5c49.png" src="_images/d0c8131e4649b5a8010b808adfa2def5288a6ee3caaf153dd2a47a4e686f5c49.png" />
+<img alt="_images/fb7479b80db8d5974c9ba8126b9fd8346d44a007d0b9904776e6ef4ea0de0cb8.png" src="_images/fb7479b80db8d5974c9ba8126b9fd8346d44a007d0b9904776e6ef4ea0de0cb8.png" />
 </div>
 </div>
 </section>
@@ -993,7 +998,7 @@ wind_rose.value_table
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># TimeSeries</span>
 
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
 
 <span class="c1"># Create a FlorisModel object</span>
 <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/gch.yaml&quot;</span><span class="p">)</span>
@@ -1230,7 +1235,7 @@ is used to store wind data in a format that can be used by the FLORIS model.  <c
 for each turbine in a provided layout.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">WindRoseWRG</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindRoseWRG</span>
 </pre></div>
 </div>
 </div>
@@ -1298,7 +1303,7 @@ ti_table: 0.06
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/67a4fa92b1a2ebf98b19635788e876a611615e64f2718acb9223808adb8c67af.png" src="_images/67a4fa92b1a2ebf98b19635788e876a611615e64f2718acb9223808adb8c67af.png" />
+<img alt="_images/9b8ef53981cc63da9a7e302bd9b10694254165caf32ccf5a0e49ec0e5a3c10d3.png" src="_images/9b8ef53981cc63da9a7e302bd9b10694254165caf32ccf5a0e49ec0e5a3c10d3.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1368,7 +1373,7 @@ ti_table: 0.06
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using point 0 at (0.0, 0.0) as reference location
 </pre></div>
 </div>
-<img alt="_images/a0a6fa0e36c9039114ba118acd362737c6723fc33a77fbbf99cf13765f4b8198.png" src="_images/a0a6fa0e36c9039114ba118acd362737c6723fc33a77fbbf99cf13765f4b8198.png" />
+<img alt="_images/6820b2c561ba8172caf9be695e2c305767fa673b68d24dab5050cc7c58f35355.png" src="_images/6820b2c561ba8172caf9be695e2c305767fa673b68d24dab5050cc7c58f35355.png" />
 </div>
 </div>
 </section>
@@ -1512,8 +1517,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

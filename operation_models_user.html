@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,10 +27,10 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=30a733bc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -420,9 +420,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -667,8 +672,8 @@ We also describe the different parameters that must be specified in the turbine
 <p>The following code demonstrates the use of the second option.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">FlorisModel</span>
-<span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">layout_visualization</span> <span class="k">as</span> <span class="n">layoutviz</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlorisModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">layout_visualization</span> <span class="k">as</span> <span class="n">layoutviz</span>
 
 <span class="n">fmodel</span> <span class="o">=</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/gch.yaml&quot;</span><span class="p">)</span>
 
@@ -706,8 +711,8 @@ We also describe the different parameters that must be specified in the turbine
 cosine-loss operation model powers [kW]:  [[1561.31837381  778.04338242  651.77709894]]
 </pre></div>
 </div>
-<img alt="_images/e3a49bb7b334d3b694beaf5445827141e52f1324328c447e1c5f244339685ece.png" src="_images/e3a49bb7b334d3b694beaf5445827141e52f1324328c447e1c5f244339685ece.png" />
-<img alt="_images/3925461dff180d822dcb033865231582920643308d4f4b57494e8fd7ef5da944.png" src="_images/3925461dff180d822dcb033865231582920643308d4f4b57494e8fd7ef5da944.png" />
+<img alt="_images/b5db6bb99ece5aed2a378eb293759a59f5ad391db209ae038e06c067cd22a396.png" src="_images/b5db6bb99ece5aed2a378eb293759a59f5ad391db209ae038e06c067cd22a396.png" />
+<img alt="_images/741473f9c25148bad6f53808a7133f6e2e770220be1e75e8ec5501c0b0d1a969.png" src="_images/741473f9c25148bad6f53808a7133f6e2e770220be1e75e8ec5501c0b0d1a969.png" />
 </div>
 </div>
 </section>
@@ -752,9 +757,9 @@ thus vary as a function of the turbine's yaw angle, set using the <code class="d
 <code class="docutils literal notranslate"><span class="pre">FlorisModel.set()</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">floris</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="c1"># Set up the FlorisModel</span>
 <span class="n">fmodel</span><span class="o">.</span><span class="n">set_operation_model</span><span class="p">(</span><span class="s2">&quot;cosine-loss&quot;</span><span class="p">)</span>
@@ -787,7 +792,7 @@ thus vary as a function of the turbine's yaw angle, set using the <code class="d
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/83276a797514af536addd8322b8c00878856f690c341347e80fe48fafee60d74.png" src="_images/83276a797514af536addd8322b8c00878856f690c341347e80fe48fafee60d74.png" />
+<img alt="_images/49c0b8777f6615c20421b3ba9d00c399826c677590f727bbafe6e53919b04bb8.png" src="_images/49c0b8777f6615c20421b3ba9d00c399826c677590f727bbafe6e53919b04bb8.png" />
 </div>
 </div>
 </section>
@@ -850,7 +855,7 @@ appropriate entries of <code class="docutils literal notranslate"><span class="p
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/49bc96f03a865d25f407cf894f18cd604e0b332739fe11b0b0c087a61b84aaf9.png" src="_images/49bc96f03a865d25f407cf894f18cd604e0b332739fe11b0b0c087a61b84aaf9.png" />
+<img alt="_images/ba7c43551804409e38fe60eed3e45a3e2beb144d6a902716458cc65bb2da27e9.png" src="_images/ba7c43551804409e38fe60eed3e45a3e2beb144d6a902716458cc65bb2da27e9.png" />
 </div>
 </div>
 </section>
@@ -1046,7 +1051,7 @@ i.e. the lesser solution to <span class="math notranslate nohighlight">\(C_T=4a(
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power [kW]&#39;)
 </pre></div>
 </div>
-<img alt="_images/52300d1b0d84a03aced2ad260642066d29a4842123967cc70280357fad4962c6.png" src="_images/52300d1b0d84a03aced2ad260642066d29a4842123967cc70280357fad4962c6.png" />
+<img alt="_images/2b992f8d07cdeef1cac37665122b3dcf581af565f644933412688f70fe0d6376.png" src="_images/2b992f8d07cdeef1cac37665122b3dcf581af565f644933412688f70fe0d6376.png" />
 </div>
 </div>
 </section>
@@ -1176,8 +1181,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>
