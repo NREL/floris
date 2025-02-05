@@ -254,7 +254,8 @@ class Core(BaseClass):
 
         if vel_model == "turbopark":
             raise NotImplementedError(
-                "solve_for_points is not available for the turbopark model."
+                "solve_for_points is not available for the legacy \'turbopark\' model. "
+                "However, it is available for \'turboparkgauss\'."
             )
         elif vel_model == "empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
