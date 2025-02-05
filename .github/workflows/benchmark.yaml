@@ -1,8 +1,9 @@
 name: Floris Benchmark
 # on:
-#   schedule:
-#     - cron: '0 3 * * *'  # Runs daily at 3am UTC
+
 on:
+  schedule:
+    - cron: '0 3 * * *'  # Runs daily at 3am UTC
   push:
     branches:
       - develop
