@@ -42,3 +42,19 @@ def test_benchmark_run(benchmark):
     )
 
     benchmark(fmodel.run)
+
+def test_benchmark_100_turbine_run(benchmark):
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    wind_directions = np.linspace(0, 360, N)
+    wind_speeds = np.ones(N) * 8
+    turbulence_intensities = np.ones(N) * 0.06
+
+    fmodel.set(
+        wind_directions=wind_directions,
+        wind_speeds=wind_speeds,
+        turbulence_intensities=turbulence_intensities,
+        layout_x = np.linspace(0, 1000, 100),
+        layout_y = np.linspace(0, 1000, 100),
+    )
+
+    benchmark(fmodel.run)
