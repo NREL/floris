@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1738727516712,
+  "lastUpdate": 1738728976707,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -75,6 +75,47 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.009491877896400965",
             "extra": "mean: 3.1505703891999928 sec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "NREL",
+            "username": "NREL"
+          },
+          "committer": {
+            "name": "NREL",
+            "username": "NREL"
+          },
+          "id": "52be5a3ae2b69ed4bc7748e247d54d7459ce615c",
+          "message": "Add automatic benchmarking to FLORIS",
+          "timestamp": "2025-02-01T22:00:25Z",
+          "url": "https://github.com/NREL/floris/pull/1060/commits/52be5a3ae2b69ed4bc7748e247d54d7459ce615c"
+        },
+        "date": 1738728971317,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_benchmark_set",
+            "value": 47.72971099956353,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00029187688758958527",
+            "extra": "mean: 20.951310599998074 msec\nrounds: 45"
+          },
+          {
+            "name": "benchmarks/bench.py::test_benchmark_run",
+            "value": 335.3183603373607,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00004275586543162229",
+            "extra": "mean: 2.9822405161289387 msec\nrounds: 62"
+          },
+          {
+            "name": "benchmarks/bench.py::test_benchmark_100_turbine_run",
+            "value": 0.3145310430066487,
+            "unit": "iter/sec",
+            "range": "stddev: 0.02286649181776106",
+            "extra": "mean: 3.179336419200001 sec\nrounds: 5"
           }
         ]
       }
