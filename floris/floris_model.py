@@ -1651,6 +1651,14 @@ class FlorisModel(LoggingManager):
             del config_dict["wake"]["wake_turbulence_parameters"]
         print_nested_dict(config_dict)
 
+    def print_dict(self) -> None:
+        """Print the FlorisModel dictionary.
+        """
+        self.logger.warning(
+            "The print_dict() method has been deprecated."
+            " Please use the show_config() method instead."
+        )
+        self.show_config(full=True)
 
     ### Properties
 
