@@ -95,11 +95,10 @@ def test_benchmark_het_set(benchmark):
     # east/west flow with 0 turbine closer to bottom and
     # turbine 1 closer to top
     benchmark(
-        fmodel.set(
-            wind_data=time_series,
-            layout_x=[250.0, 250.0],
-            layout_y=[100.0, 400.0],
-        )
+        fmodel.set,
+        wind_data=time_series,
+        layout_x=[250.0, 250.0],
+        layout_y=[100.0, 400.0],
     )
 
 
