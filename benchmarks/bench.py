@@ -26,6 +26,8 @@ def test_timing_small_farm_set(benchmark):
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
         turbulence_intensities=turbulence_intensities,
+        layout_x=np.linspace(0, 1000, 3),
+        layout_y=np.linspace(0, 1000, 3),
     )
 
 
@@ -40,6 +42,8 @@ def test_timing_small_farm_run(benchmark):
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
         turbulence_intensities=turbulence_intensities,
+        layout_x=np.linspace(0, 1000, 3),
+        layout_y=np.linspace(0, 1000, 3),
     )
 
     benchmark(fmodel.run)
@@ -57,8 +61,8 @@ def test_timing_large_farm_set(benchmark):
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
         turbulence_intensities=turbulence_intensities,
-        layout_x=np.linspace(0, 1000, 100),
-        layout_y=np.linspace(0, 1000, 100),
+        layout_x=np.linspace(0, 10000, 100),
+        layout_y=np.linspace(0, 10000, 100),
     )
 
 
@@ -73,8 +77,8 @@ def test_timing_large_farm_run(benchmark):
         wind_directions=wind_directions,
         wind_speeds=wind_speeds,
         turbulence_intensities=turbulence_intensities,
-        layout_x=np.linspace(0, 1000, 100),
-        layout_y=np.linspace(0, 1000, 100),
+        layout_x=np.linspace(0, 10000, 100),
+        layout_y=np.linspace(0, 10000, 100),
     )
 
     benchmark(fmodel.run)
