@@ -108,6 +108,7 @@ def _attr_floris_filter(inst: Attribute, value: Any) -> bool:
         return False
     if isinstance(value, np.ndarray):
         if value.size == 0:
+            raise ValueError("aaa")
             return False
     return True
 
