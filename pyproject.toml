@@ -50,6 +50,7 @@ docs = [
 ]
 develop = [
     "pytest",
+    "pytest-benchmark~=5.1",
     "pre-commit",
     "ruff",
     "isort"
