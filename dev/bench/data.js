@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1738780628265,
+  "lastUpdate": 1738880983285,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -55,6 +55,61 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0001743059962009105",
             "extra": "mean: 9.005643106379006 msec\nrounds: 94"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "NREL",
+            "username": "NREL"
+          },
+          "committer": {
+            "name": "NREL",
+            "username": "NREL"
+          },
+          "id": "0c9613586c7e5f0ab58242c125826679937ce1c6",
+          "message": "Add automatic benchmarking",
+          "timestamp": "2025-02-01T22:00:25Z",
+          "url": "https://github.com/NREL/floris/pull/1062/commits/0c9613586c7e5f0ab58242c125826679937ce1c6"
+        },
+        "date": 1738880976961,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_benchmark_set",
+            "value": 47.372317450683376,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00021533412133091642",
+            "extra": "mean: 21.109374711107243 msec\nrounds: 45"
+          },
+          {
+            "name": "benchmarks/bench.py::test_benchmark_run",
+            "value": 329.5616283588456,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001551725977825971",
+            "extra": "mean: 3.0343338360712995 msec\nrounds: 61"
+          },
+          {
+            "name": "benchmarks/bench.py::test_benchmark_100_turbine_run",
+            "value": 0.31052613800312806,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03438378824276267",
+            "extra": "mean: 3.220340826799986 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_benchmark_het_set",
+            "value": 29.291440064830784,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010023886514837395",
+            "extra": "mean: 34.139666666667765 msec\nrounds: 30"
+          },
+          {
+            "name": "benchmarks/bench.py::test_benchmark_het_run",
+            "value": 106.2876656630853,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00027168242880971444",
+            "extra": "mean: 9.40842941428254 msec\nrounds: 70"
           }
         ]
       }
