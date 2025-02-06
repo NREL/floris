@@ -76,7 +76,8 @@ branch = true
 source = "floris/*"
 omit = [
     "setup.py",
-    "tests/*"
+    "tests/*",
+    "benchmarks/*"
 ]
 
 
