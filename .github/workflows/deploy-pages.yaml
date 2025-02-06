@@ -6,6 +6,7 @@ on:
     - develop
     paths:
     - docs/**
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
 jobs:
@@ -55,3 +56,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/_build/html
+        destination_dir: docs  # Publishes to the docs folder
