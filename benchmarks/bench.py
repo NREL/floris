@@ -11,15 +11,12 @@ from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.heterogeneous_map import HeterogeneousMap
 
 
-TEST_DATA = Path(__file__).resolve().parent / "data"
-YAML_INPUT = TEST_DATA / "input_full.yaml"
-
 N_Conditions = 100
 
 
 def test_timing_small_farm_set(benchmark):
     """Timing test for setting up a small farm"""
-    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel = FlorisModel(configuration="defaults")
     wind_directions = np.linspace(0, 360, N_Conditions)
     wind_speeds = np.ones(N_Conditions) * 8
     turbulence_intensities = np.ones(N_Conditions) * 0.06
@@ -34,7 +31,7 @@ def test_timing_small_farm_set(benchmark):
 
 def test_timing_small_farm_run(benchmark):
     """Timing test for running a small farm"""
-    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel = FlorisModel(configuration="defaults")
     wind_directions = np.linspace(0, 360, N_Conditions)
     wind_speeds = np.ones(N_Conditions) * 8
     turbulence_intensities = np.ones(N_Conditions) * 0.06
@@ -50,7 +47,7 @@ def test_timing_small_farm_run(benchmark):
 
 def test_timing_large_farm_set(benchmark):
     """Timing test for setting up a large farm"""
-    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel = FlorisModel(configuration="defaults")
     wind_directions = np.linspace(0, 360, N_Conditions)
     wind_speeds = np.ones(N_Conditions) * 8
     turbulence_intensities = np.ones(N_Conditions) * 0.06
@@ -67,7 +64,7 @@ def test_timing_large_farm_set(benchmark):
 
 def test_timing_large_farm_run(benchmark):
     """Timing test for running a large farm"""
-    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel = FlorisModel(configuration="defaults")
     wind_directions = np.linspace(0, 360, N_Conditions)
     wind_speeds = np.ones(N_Conditions) * 8
     turbulence_intensities = np.ones(N_Conditions) * 0.06
@@ -101,7 +98,7 @@ def test_timing_het_set(benchmark):
     )
 
     # Get the FLORIS model
-    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel = FlorisModel(configuration="defaults")
 
     time_series = TimeSeries(
         wind_directions=np.linspace(0, 360, N_Conditions),
@@ -139,7 +136,7 @@ def test_timing_het_run(benchmark):
     )
 
     # Get the FLORIS model
-    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel = FlorisModel(configuration="defaults")
 
     time_series = TimeSeries(
         wind_directions=np.linspace(0, 360, N_Conditions),
