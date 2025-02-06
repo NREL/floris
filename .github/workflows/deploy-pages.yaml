@@ -57,3 +57,36 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/_build/html
         destination_dir: docs  # Publishes to the docs folder
+
+
+jobs:
+  needs: deploy-book  # This ensures sequential execution
+  benchmark:
+    name: Run FLORIS benchmarks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[develop]"
+      - name: Run benchmark
+        run: |
+          cd benchmarks
+          pytest bench.py --benchmark-json output.json
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Python Benchmark with pytest-benchmark
+          tool: 'pytest'
+          output-file-path: benchmarks/output.json
+          # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t/github-action-not-triggering-gh-pages-upon-push/16096
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
