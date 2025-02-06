@@ -17,6 +17,24 @@ TEST_DATA = Path(__file__).resolve().parent / "data"
 YAML_INPUT = TEST_DATA / "input_full.yaml"
 
 
+def test_default_init():
+    # Test getting the default dict
+    defaults = FlorisModel.get_defaults()
+    fmodel1 = FlorisModel(defaults)
+    assert isinstance(fmodel1, FlorisModel)
+
+    # Test that there are no side effects from changing the default dict
+    defaults2 = FlorisModel.get_defaults()
+    defaults2["farm"]["layout_x"] = [0, 1000]
+    defaults2["farm"]["layout_y"] = [0, 0]
+    fmodel2 = FlorisModel(defaults2)
+    assert fmodel2.core.as_dict() != FlorisModel(defaults).core.as_dict()
+
+    # Test using the "default" string
+    # This checks that the init works and that the default dictionary hasn't changed
+    fmodel3 = FlorisModel("defaults")
+    assert fmodel1.core.as_dict() == fmodel3.core.as_dict()
+
 def test_read_yaml():
     fmodel = FlorisModel(configuration=YAML_INPUT)
     assert isinstance(fmodel, FlorisModel)
@@ -488,7 +506,6 @@ def test_expected_farm_value_regression():
     expected_farm_value = fmodel.get_expected_farm_value()
     assert np.allclose(expected_farm_value,75108001.05154414 , atol=1e-1)
 
-
 def test_get_farm_avp(caplog):
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
@@ -827,3 +844,30 @@ def test_reference_wind_height_methods(caplog):
             turbine_type=["nrel_5MW", "iea_15MW"]
         )
         fmodel.assign_hub_height_to_ref_height() # Shouldn't allow due to multiple turbine types
+
+def test_merge_floris_models():
+
+    # Check that the merge function extends the data as expected
+    fmodel1 = FlorisModel(configuration=YAML_INPUT)
+    fmodel1.set(
+        layout_x=[0, 1000],
+        layout_y=[0, 0]
+    )
+    fmodel2 = FlorisModel(configuration=YAML_INPUT)
+    fmodel2.set(
+        layout_x=[2000, 3000],
+        layout_y=[0, 0]
+    )
+
+    merged_fmodel = FlorisModel.merge_floris_models([fmodel1, fmodel2])
+    assert merged_fmodel.n_turbines == 4
+
+    # Check that this model will run without error
+    merged_fmodel.run()
+
+    # Verify error handling
+
+    ## Input list with incorrect types
+    fmodel_list = [fmodel1, "not a floris model"]
+    with pytest.raises(TypeError):
+        merged_fmodel = FlorisModel.merge_floris_models(fmodel_list)
