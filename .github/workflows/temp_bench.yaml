@@ -58,12 +58,13 @@ jobs:
         ls -lah
         git fetch origin benches
         git checkout benches
-        rsync -av dev/bench /dev/bench
+        rsync -av dev/bench /tmp/bench
         ls -lah /
         git fetch origin gh-pages
         git checkout gh-pages
-        rsync -av /dev/bench dev/bench
-        ls -lah
+        mkdir -p dev
+        rsync -av /tmp/bench/ dev/bench/
+        ls -lah dev/bench
         git add dev
         git commit -m "Add bench folder to gh-pages"
         git push origin gh-pages
