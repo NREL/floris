@@ -53,6 +53,12 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/_build/html
 
+    # Stash changes before benchmark action
+    - name: Stash changes
+      working-directory: ${{runner.workspace}}/floris/
+      run: |
+        git stash
+
     - name: Run benchmark
       working-directory: ${{runner.workspace}}/floris/
       run: |
