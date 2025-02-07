@@ -4,11 +4,8 @@ on:
   push:
     branches:
     - develop
-    # paths:  # With benchmarks set to re-run on any push
+    # paths:  # With benchmarks set to re-run on any push to develop
     # - docs/**
-  pull_request: # Delete later when ready to merge
-    branches:
-    - develop
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
