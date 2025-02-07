@@ -6,9 +6,9 @@ on:
     - develop
     # paths:  # With benchmarks set to re-run on any push to develop
     # - docs/**
-  # pull_request:
-  #   branches:
-  #   - develop
+  pull_request:
+    branches:
+    - develop
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
@@ -29,38 +29,6 @@ jobs:
         pip install -e ".[docs, develop]"
 
 
-
-
-    # Make a copy of the examples folder within the docs folder
-    - name: Copy examples to docs
-      working-directory: ${{runner.workspace}}/floris/
-      run: |
-        rsync -av examples/ docs/examples
-        ls docs/examples
-
-    # Run the script examples/_convert_examples_to_notebooks.py
-    - name: Convert examples to notebooks
-      working-directory: ${{runner.workspace}}/floris/docs/examples/
-      run: |
-        pwd
-        ls
-        python _convert_examples_to_notebooks.py
-
-    # Build the book
-    - name: Build the book
-      working-directory: ${{runner.workspace}}/floris/docs/
-      run: |
-        jupyter-book build .
-
-
-
-    # Push the book's HTML to github-pages
-    - name: GitHub Pages action
-      uses: peaceiris/actions-gh-pages@v4.0.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/_build/html
-        # destination_dir: docs
 
 
     - name: Run benchmark
