@@ -29,8 +29,10 @@ jobs:
         pip install -e ".[docs, develop]"
 
     - name: Run benchmark
-      working-directory: ${{runner.workspace}}/benchmarks/
+      working-directory: ${{runner.workspace}}/floris/
       run: |
+        ls -lah
+        cd benchmarks
         pytest bench.py --benchmark-json output.json
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
