@@ -14,7 +14,7 @@ and sandboxed environment. The simplest way to get started with virtual environm
 [conda](https://docs.conda.io/en/latest/miniconda.html).
 
 ```{warning}
-Support for python version 3.8 will be dropped in FLORIS v4.3. 
+Support for python version 3.8 will be dropped in FLORIS v4.3.
 
 FLORIS v4.3 will also require `numpy` version 2. See the [numpy documentation for details](https://numpy.org/doc/stable/numpy_2_0_migration_guide.html).
 ```
