@@ -4,8 +4,7 @@ on:
   push:
     branches:
     - develop
-    # paths:  # With benchmarks set to re-run on any push to develop
-    # - docs/**
+
 
   workflow_dispatch:  # Allows manual triggering of the workflow
 
@@ -53,7 +52,6 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/_build/html
-        # destination_dir: docs
 
     - name: Run benchmark
       working-directory: ${{runner.workspace}}/floris/
