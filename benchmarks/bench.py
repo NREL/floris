@@ -13,6 +13,8 @@ from floris.heterogeneous_map import HeterogeneousMap
 
 N_Conditions = 100
 
+# These tests are run automatically by pytest-benchmark.  The benchmark
+# object is passed to the test function.
 
 def test_timing_small_farm_set(benchmark):
     """Timing test for setting up a small farm"""
