@@ -28,38 +28,23 @@ jobs:
       run: |
         pip install -e ".[docs, develop]"
 
-    - name: Run benchmark
-      working-directory: ${{runner.workspace}}/floris/
-      run: |
-        ls -lah
-        cd benchmarks
-        pytest bench.py --benchmark-json output.json
 
-    # Store benchmark result and create the benchmark pages
-    - name: Store benchmark result
-      uses: benchmark-action/github-action-benchmark@v1
-      with:
-        name: Python Benchmark with pytest-benchmark
-        tool: 'pytest'
-        output-file-path: benchmarks/output.json
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        auto-push: true
 
-    # Fetch the gh-pages branch to get the benchmark files
-    - name: Fetch benchmark files
-      run: |
-        # Fetch the gh-pages branch
-        git fetch origin gh-pages:gh-pages
-        # Create a temporary directory
-        mkdir -p temp_bench
-        # Checkout just the dev/bench directory from gh-pages
-        git checkout gh-pages -- dev/bench || echo "No existing dev/bench directory"
-        # Copy the files if they exist
-        if [ -d "dev/bench" ]; then
-          cp -r dev/bench/* temp_bench/
-        fi
-        # Return to original branch
-        git checkout -
+    # # Fetch the gh-pages branch to get the benchmark files
+    # - name: Fetch benchmark files
+    #   run: |
+    #     # Fetch the gh-pages branch
+    #     git fetch origin gh-pages:gh-pages
+    #     # Create a temporary directory
+    #     mkdir -p temp_bench
+    #     # Checkout just the dev/bench directory from gh-pages
+    #     git checkout gh-pages -- dev/bench || echo "No existing dev/bench directory"
+    #     # Copy the files if they exist
+    #     if [ -d "dev/bench" ]; then
+    #       cp -r dev/bench/* temp_bench/
+    #     fi
+    #     # Return to original branch
+    #     git checkout -
 
     # Make a copy of the examples folder within the docs folder
     - name: Copy examples to docs
@@ -82,12 +67,12 @@ jobs:
       run: |
         jupyter-book build .
 
-    # Copy benchmark files to the built documentation
-    - name: Copy benchmark files to docs
-      working-directory: ${{runner.workspace}}/floris/
-      run: |
-        mkdir -p docs/_build/html/dev/bench
-        cp -r temp_bench/* docs/_build/html/dev/bench/ || echo "No benchmark files to copy"
+    # # Copy benchmark files to the built documentation
+    # - name: Copy benchmark files to docs
+    #   working-directory: ${{runner.workspace}}/floris/
+    #   run: |
+    #     mkdir -p docs/_build/html/dev/bench
+    #     cp -r temp_bench/* docs/_build/html/dev/bench/ || echo "No benchmark files to copy"
 
     # Push the book's HTML to github-pages
     - name: GitHub Pages action
@@ -95,4 +80,22 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/_build/html
-        destination_dir: docs
+        # destination_dir: docs
+
+
+    # - name: Run benchmark
+    #   working-directory: ${{runner.workspace}}/floris/
+    #   run: |
+    #     ls -lah
+    #     cd benchmarks
+    #     pytest bench.py --benchmark-json output.json
+
+    # # Store benchmark result and create the benchmark pages
+    # - name: Store benchmark result
+    #   uses: benchmark-action/github-action-benchmark@v1
+    #   with:
+    #     name: Python Benchmark with pytest-benchmark
+    #     tool: 'pytest'
+    #     output-file-path: benchmarks/output.json
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+    #     auto-push: true
