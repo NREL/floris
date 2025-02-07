@@ -596,7 +596,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -612,6 +614,15 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-code-quality-metrics">Live Code Quality Metrics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-quality-metrics-computed-on-super-computer">Code Quality Metrics Computed on Super Computer</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -631,7 +642,14 @@ appropriate. All plots show the corresponding commit hash
 when hovering over a point with the mouse pointer.</p>
 <!-- ## Memory overhead
 
-Coming soon! --><div class="cell tag_hide-cell docutils container">
+Coming soon! --><section id="live-code-quality-metrics">
+<h2>Live Code Quality Metrics<a class="headerlink" href="#live-code-quality-metrics" title="Link to this heading">#</a></h2>
+<p>Live code quality metrics are computed when develop branch is updated.  <a class="reference external" href="https://nrel.github.io/floris/dev/bench/">Live Chart</a>.  Note these charts are computed within github actions and are somewhat noisy</p>
+</section>
+<section id="code-quality-metrics-computed-on-super-computer">
+<h2>Code Quality Metrics Computed on Super Computer<a class="headerlink" href="#code-quality-metrics-computed-on-super-computer" title="Link to this heading">#</a></h2>
+<p>Code quality metrics computed manually on kestrel are shown below.</p>
+<div class="cell tag_hide-cell docutils container">
 <details class="hide above-input">
 <summary aria-label="Toggle hidden content">
 <span class="collapsed">Show code cell content</span>
@@ -1155,6 +1173,7 @@ if (force === true) {
 })(window);</script></div>
 </div>
 </section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1210,6 +1229,23 @@ if (force === true) {
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-code-quality-metrics">Live Code Quality Metrics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-quality-metrics-computed-on-super-computer">Code Quality Metrics Computed on Super Computer</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

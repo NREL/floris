@@ -58,9 +58,3 @@ details for a feature request. [Q&A](https://github.com/NREL/floris/discussions/
 is where to get usage support.
 [Show and tell](https://github.com/NREL/floris/discussions/categories/show-and-tell) is a free-form
 space to show off the things you are doing with FLORIS.
-
-## Timing tests
-
-Timing tests of certain key functions are available in an interactive chart generated automatically:
-
-[Timing Tests](https://nrel.github.io/floris/dev/bench/)
