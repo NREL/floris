@@ -40,12 +40,9 @@ jobs:
         name: Python Benchmark with pytest-benchmark
         tool: 'pytest'
         output-file-path: benchmarks/output.json
-        # github-token: ${{ secrets.GITHUB_TOKEN }}
-        # auto-push: true
-    - name: Copy benchmark results to docs
-      working-directory: ${{runner.workspace}}/floris/
-      run: |
-        rsync -av dev/ docs/dev
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
+
 
     # Make a copy of the examples folder within the docs folder
     - name: Copy examples to docs
