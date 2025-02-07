@@ -61,4 +61,6 @@ space to show off the things you are doing with FLORIS.
 
 ## Timing tests
 
+Timing tests of certain key functions are available in an interactive chart generated automatically:
+
 [Timing Tests](https://nrel.github.io/floris/dev/bench/)
