@@ -831,13 +831,15 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="n">vel_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="o">.</span><span class="n">model_strings</span><span class="p">[</span><span class="s2">&quot;velocity_model&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;cc&quot;</span> <span class="ow">or</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;turbopark&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;turbopark&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;solve_for_points is currently only available with the &quot;</span><span class="o">+</span>\
-                <span class="s2">&quot;gauss, jensen, and empirical_gauss models.&quot;</span>
+                <span class="s2">&quot;solve_for_points is not available for the legacy </span><span class="se">\&#39;</span><span class="s2">turbopark</span><span class="se">\&#39;</span><span class="s2"> model. &quot;</span>
+                <span class="s2">&quot;However, it is available for </span><span class="se">\&#39;</span><span class="s2">turboparkgauss</span><span class="se">\&#39;</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;empirical_gauss&quot;</span><span class="p">:</span>
             <span class="n">full_flow_empirical_gauss_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="n">field_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">vel_model</span> <span class="o">==</span> <span class="s2">&quot;cc&quot;</span><span class="p">:</span>
+            <span class="n">full_flow_cc_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="n">field_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">full_flow_sequential_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">farm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow_field</span><span class="p">,</span> <span class="n">field_grid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wake</span><span class="p">)</span>
 

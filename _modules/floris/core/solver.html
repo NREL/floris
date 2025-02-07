@@ -1271,7 +1271,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
         <span class="n">turbine_turbulence_intensity</span><span class="p">,</span>
         <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-    <span class="p">)</span></div>
+    <span class="p">)[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span></div>
 
 
 
@@ -1354,7 +1354,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">yaw_angles</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
             <span class="n">tilt_angles</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">power_setpoints</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">power_setpoints_sorted</span><span class="p">,</span>
-            <span class="n">awc_modes</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">awc_modes</span><span class="p">,</span>
+            <span class="n">awc_modes</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">awc_modes_sorted</span><span class="p">,</span>
             <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">awc_amplitudes_sorted</span><span class="p">,</span>
             <span class="n">thrust_coefficient_functions</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_thrust_coefficient_functions</span><span class="p">,</span>
             <span class="n">tilt_interps</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
@@ -1374,7 +1374,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">yaw_angles</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
             <span class="n">tilt_angles</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">power_setpoints</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">power_setpoints_sorted</span><span class="p">,</span>
-            <span class="n">awc_modes</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">awc_modes</span><span class="p">,</span>
+            <span class="n">awc_modes</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">awc_modes_sorted</span><span class="p">,</span>
             <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">awc_amplitudes_sorted</span><span class="p">,</span>
             <span class="n">axial_induction_functions</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_axial_induction_functions</span><span class="p">,</span>
             <span class="n">tilt_interps</span><span class="o">=</span><span class="n">turbine_grid_farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
@@ -1520,7 +1520,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">yaw_angles</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
             <span class="n">tilt_angles</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">power_setpoints</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">power_setpoints_sorted</span><span class="p">,</span>
-            <span class="n">awc_modes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_modes</span><span class="p">,</span>
+            <span class="n">awc_modes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_modes_sorted</span><span class="p">,</span>
             <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_amplitudes_sorted</span><span class="p">,</span>
             <span class="n">thrust_coefficient_functions</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_thrust_coefficient_functions</span><span class="p">,</span>
             <span class="n">tilt_interps</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
@@ -1539,7 +1539,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">yaw_angles</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
             <span class="n">tilt_angles</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">power_setpoints</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">power_setpoints_sorted</span><span class="p">,</span>
-            <span class="n">awc_modes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_modes</span><span class="p">,</span>
+            <span class="n">awc_modes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_modes_sorted</span><span class="p">,</span>
             <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_amplitudes_sorted</span><span class="p">,</span>
             <span class="n">thrust_coefficient_functions</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_thrust_coefficient_functions</span><span class="p">,</span>
             <span class="n">tilt_interps</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
@@ -1561,7 +1561,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">yaw_angles</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
             <span class="n">tilt_angles</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
             <span class="n">power_setpoints</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">power_setpoints_sorted</span><span class="p">,</span>
-            <span class="n">awc_modes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_modes</span><span class="p">,</span>
+            <span class="n">awc_modes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_modes_sorted</span><span class="p">,</span>
             <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_amplitudes_sorted</span><span class="p">,</span>
             <span class="n">axial_induction_functions</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_axial_induction_functions</span><span class="p">,</span>
             <span class="n">tilt_interps</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
@@ -1610,7 +1610,7 @@ window.addEventListener("load", () => mermaid.run());
                     <span class="n">yaw_angles</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">yaw_angles_sorted</span><span class="p">,</span>
                     <span class="n">tilt_angles</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">tilt_angles_sorted</span><span class="p">,</span>
                     <span class="n">power_setpoints</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">power_setpoints_sorted</span><span class="p">,</span>
-                    <span class="n">awc_modes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_modes</span><span class="p">,</span>
+                    <span class="n">awc_modes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_modes_sorted</span><span class="p">,</span>
                     <span class="n">awc_amplitudes</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">awc_amplitudes_sorted</span><span class="p">,</span>
                     <span class="n">thrust_coefficient_functions</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_thrust_coefficient_functions</span><span class="p">,</span>
                     <span class="n">tilt_interps</span><span class="o">=</span><span class="n">farm</span><span class="o">.</span><span class="n">turbine_tilt_interps</span><span class="p">,</span>
@@ -1705,7 +1705,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">flow_field</span><span class="o">.</span><span class="n">turbulence_intensity_field_sorted_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
         <span class="n">turbine_turbulence_intensity</span><span class="p">,</span>
         <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="p">)</span></div>
+    <span class="p">)[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span></div>
 
 
 

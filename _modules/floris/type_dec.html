@@ -678,9 +678,16 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># This is removed to support initializing FLORIS with default values:</span>
+    <span class="c1"># - defaults added in https://github.com/NREL/floris/pull/1040</span>
+    <span class="c1"># - bug fix in https://github.com/NREL/floris/pull/1061</span>
+    <span class="c1"># When Core is exported to a dict in _reinitialize, this filter removes empty arrays.</span>
+    <span class="c1"># For init with defaults, this results in FlowField losing the wind speed, wind direction and TI</span>
+    <span class="c1"># arrays if they weren&#39;t provided in the .set function.</span>
+    <span class="c1"># if isinstance(value, np.ndarray):</span>
+    <span class="c1">#     if value.size == 0:</span>
+    <span class="c1">#         return False</span>
     <span class="k">return</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="iter_validator">
