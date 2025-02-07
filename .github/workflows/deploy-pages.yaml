@@ -63,6 +63,9 @@ jobs:
         pytest bench.py --benchmark-json output.json
 
     # Store benchmark result and create the benchmark pages
+    # Update the index.html and data.js files in the
+    # dev/bench folder of the benches branch
+    # dev/bench is the default folder for pytest-benchmark
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
       with:
