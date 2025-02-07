@@ -28,9 +28,6 @@ jobs:
       run: |
         pip install -e ".[docs, develop]"
 
-
-
-
     - name: Run benchmark
       working-directory: ${{runner.workspace}}/floris/
       run: |
@@ -56,6 +53,8 @@ jobs:
         ls -lah
         cd floris
         ls -lah
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
         git fetch origin benches
         git checkout benches
         rsync -av dev/bench /tmp/bench
