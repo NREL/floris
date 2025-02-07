@@ -4,8 +4,11 @@ on:
   push:
     branches:
     - develop
-    paths:
-    - docs/**
+    # paths:  # With benchmarks set to re-run on any push
+    # - docs/**
+  pull_request: # Delete later when ready to merge
+    branches:
+    - develop
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
@@ -25,12 +28,31 @@ jobs:
       run: |
         pip install -e ".[docs, develop]"
 
+    - name: Run benchmark
+      working-directory: ${{runner.workspace}}/benchmarks/
+      run: |
+        pytest bench.py --benchmark-json output.json
+    - name: Store benchmark result
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        name: Python Benchmark with pytest-benchmark
+        tool: 'pytest'
+        output-file-path: benchmarks/output.json
+        # github-token: ${{ secrets.GITHUB_TOKEN }}
+        # auto-push: true
+    - name: Copy benchmark results to docs
+      working-directory: ${{runner.workspace}}/floris/
+      run: |
+        rsync -av dev/ docs/dev
+
     # Make a copy of the examples folder within the docs folder
     - name: Copy examples to docs
       working-directory: ${{runner.workspace}}/floris/
       run: |
         rsync -av examples/ docs/examples
         ls docs/examples
+
+    # Copy the benchmark results to docs
 
     # Run the script examples/_convert_examples_to_notebooks.py
     - name: Convert examples to notebooks
@@ -57,17 +79,3 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/_build/html
         destination_dir: docs  # Publishes to the docs folder
-
-
-    - name: Run benchmark
-      working-directory: ${{runner.workspace}}/benchmarks/
-      run: |
-        pytest bench.py --benchmark-json output.json
-    - name: Store benchmark result
-      uses: benchmark-action/github-action-benchmark@v1
-      with:
-        name: Python Benchmark with pytest-benchmark
-        tool: 'pytest'
-        output-file-path: benchmarks/output.json
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        auto-push: true
