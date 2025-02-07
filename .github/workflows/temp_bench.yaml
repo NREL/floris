@@ -51,15 +51,19 @@ jobs:
 
     # Add bench mark files to the gh-pages branch
     - name: Add benchmark files to gh-pages
-      working-directory: ${{runner.workspace}}/floris/
+      working-directory: ${{runner.workspace}}/
       run: |
+        ls -lah
+        cd floris
         ls -lah
         git fetch origin benches
         git checkout benches
-        cp -r dev/bench /tmp/dev/bench
+        rsync -av dev/bench /dev/bench
+        ls -lah /
         git fetch origin gh-pages
         git checkout gh-pages
-        cp -r /tmp/dev/bench ./dev/bench
+        rsync -av /dev/bench dev/bench
+        ls -lah
         git add dev
         git commit -m "Add bench folder to gh-pages"
         git push origin gh-pages
