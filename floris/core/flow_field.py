@@ -308,7 +308,6 @@ class FlowField(BaseClass):
                 F.values = multiplier[:, None]
                 in_region.append(copy.deepcopy(F))
 
-
         self.het_map = in_region
 
     @staticmethod
