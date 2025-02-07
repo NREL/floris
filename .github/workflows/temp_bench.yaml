@@ -54,8 +54,16 @@ jobs:
       working-directory: ${{runner.workspace}}/floris/
       run: |
         ls -lah
-        cd dev/bench
-        ls -lah
+        git fetch origin benches
+        git checkout benches
+        cp -r dev/bench /tmp/dev/bench
+        git fetch origin gh-pages
+        git checkout gh-pages
+        cp -r /tmp/dev/bench ./dev/bench
+        git add dev
+        git commit -m "Add bench folder to gh-pages"
+        git push origin gh-pages
+
 
 
     # # Fetch the gh-pages branch to get the benchmark files
