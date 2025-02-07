@@ -1,4 +1,4 @@
-name: deploy-pages
+name: temp-bench
 
 on:
   push:
@@ -48,6 +48,14 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         auto-push: true
         gh-pages-branch: benches
+
+    # Add bench mark files to the gh-pages branch
+    - name: Add benchmark files to gh-pages
+      working-directory: ${{runner.workspace}}/floris/
+      run: |
+        ls -lah
+        cd dev/bench
+        ls -lah
 
 
     # # Fetch the gh-pages branch to get the benchmark files
