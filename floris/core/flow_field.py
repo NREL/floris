@@ -283,7 +283,7 @@ class FlowField(BaseClass):
                 - **y**: A list of y locations at which the speed up factors are defined.
                 - **z** (optional): A list of z locations at which the speed up factors are defined.
         """
-        speed_multipliers = self.heterogeneous_inflow_config['speed_multipliers']
+        speed_multipliers = np.array(self.heterogeneous_inflow_config['speed_multipliers'])
         x = self.heterogeneous_inflow_config['x']
         y = self.heterogeneous_inflow_config['y']
         z = self.heterogeneous_inflow_config['z']
@@ -307,6 +307,7 @@ class FlowField(BaseClass):
             for multiplier in speed_multipliers:
                 F.values = multiplier[:, None]
                 in_region.append(copy.deepcopy(F))
+
 
         self.het_map = in_region
 
