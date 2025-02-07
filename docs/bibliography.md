@@ -1,6 +1,0 @@
-
-# Bibliography
-
-```{bibliography}
-:style: unsrt
-```
