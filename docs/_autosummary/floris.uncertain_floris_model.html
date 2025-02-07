@@ -1,0 +1,1392 @@
+
+<!DOCTYPE html>
+
+
+<html lang="python" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>floris.uncertain_floris_model &#8212; FLORIS</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=30a733bc"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-JV2SK7CNPR');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-JV2SK7CNPR');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/floris.uncertain_floris_model';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="floris.turbine_library" href="floris.turbine_library.html" />
+    <link rel="prev" title="floris.wind_data" href="floris.wind_data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="python"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/docs_image.png" class="logo__image only-light" alt="FLORIS - Home"/>
+    <img src="../_static/docs_image.png" class="logo__image only-dark pst-js-only" alt="FLORIS - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    FLORIS Wake Modeling & Wind Farm Controls
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../v3_to_v4.html">Switching from FLORIS v3 to v4</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">Heterogeneous Map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layout_optimization.html">Layout Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../input_reference_main.html">Main Input File Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../input_reference_turbine.html">Turbine Input File Reference</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory and Background</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../wake_models.html">Wake Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../empirical_gauss_model.html">Empirical Gaussian model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../dev_guide.html">Developer's Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_quality.html">Code Quality</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../api_docs.html">API Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="floris.flow_visualization.html">floris.flow_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.floris_model.html">floris.floris_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.wind_data.html">floris.wind_data</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">floris.uncertain_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.turbine_library.html">floris.turbine_library</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="floris.turbine_library.turbine_previewer.html">floris.turbine_library.turbine_previewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.parallel_floris_model.html">floris.parallel_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.optimization.html">floris.optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.other.html">floris.optimization.other</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimization_base.html">floris.optimization.yaw_optimization.yaw_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimization_tools.html">floris.optimization.yaw_optimization.yaw_optimization_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_geometric.html">floris.optimization.yaw_optimization.yaw_optimizer_geometric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_scipy.html">floris.optimization.yaw_optimization.yaw_optimizer_scipy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_sr.html">floris.optimization.yaw_optimization.yaw_optimizer_sr</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.layout_visualization.html">floris.layout_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.cut_plane.html">floris.cut_plane</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.core.html">floris.core</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.base.html">floris.core.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.core.html">floris.core.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.farm.html">floris.core.farm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.flow_field.html">floris.core.flow_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.grid.html">floris.core.grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.rotor_velocity.html">floris.core.rotor_velocity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.solver.html">floris.core.solver</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.turbine.html">floris.core.turbine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.wake.html">floris.core.wake</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.wake_combination.html">floris.core.wake_combination</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_combination.fls.html">floris.core.wake_combination.fls</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_combination.max.html">floris.core.wake_combination.max</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_combination.sosfs.html">floris.core.wake_combination.sosfs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.wake_deflection.html">floris.core.wake_deflection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_deflection.empirical_gauss.html">floris.core.wake_deflection.empirical_gauss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_deflection.gauss.html">floris.core.wake_deflection.gauss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_deflection.jimenez.html">floris.core.wake_deflection.jimenez</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_deflection.none.html">floris.core.wake_deflection.none</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.wake_turbulence.html">floris.core.wake_turbulence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_turbulence.crespo_hernandez.html">floris.core.wake_turbulence.crespo_hernandez</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_turbulence.none.html">floris.core.wake_turbulence.none</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_turbulence.wake_induced_mixing.html">floris.core.wake_turbulence.wake_induced_mixing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.wake_velocity.html">floris.core.wake_velocity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.cumulative_gauss_curl.html">floris.core.wake_velocity.cumulative_gauss_curl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.empirical_gauss.html">floris.core.wake_velocity.empirical_gauss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.gauss.html">floris.core.wake_velocity.gauss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.jensen.html">floris.core.wake_velocity.jensen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.none.html">floris.core.wake_velocity.none</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.turbopark.html">floris.core.wake_velocity.turbopark</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.turboparkgauss.html">floris.core.wake_velocity.turboparkgauss</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.convert_turbine_v3_to_v4.html">floris.convert_turbine_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.convert_floris_input_v3_to_v4.html">floris.convert_floris_input_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.logging_manager.html">floris.logging_manager</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/001_opening_floris_computing_power.html">Example 1: Opening FLORIS and Computing Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/002_visualizations.html">Example 2: Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/003_wind_data_objects.html">Example 3: Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/004_set.html">Example 4: Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/005_getting_power.html">Example 5: Getting Turbine and Farm Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/001_opt_yaw_single_ws.html">Example: Optimize yaw for a single wind speed and multiple wind directions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/002_opt_yaw_single_ws_uncertain.html">Example: Optimize yaw for a single wind speed and multiple wind directions.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/003_opt_yaw_multiple_ws.html">Example: Optimize yaw for multiple wind directions and multiple wind speeds.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/004_optimize_yaw_aep.html">Example: Optimize yaw and compare AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/005_optimize_yaw_aep_parallel.html">Example: Optimize yaw and compare AEP in parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/006_compare_yaw_optimizers.html">Example: Compare yaw optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/007_optimize_yaw_with_neighbor_farms.html">Example: Optimize yaw with neighbor farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/008_optimize_yaw_with_disabled_turbines.html">Example: Optimizing yaw angles with disabled turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control types</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/001_derating_control.html">Example of using the simple-derating control model in FLORIS.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_emgauss/001_empirical_gauss_velocity_deficit_parameters.html">Example: Empirical Gaussian velocity deficit parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_emgauss/002_empirical_gauss_deflection_parameters.html">Example: Empirical Gaussian deflection parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Floating</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/001_floating_turbine_models.html">Example: Floating turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/002_floating_vs_fixedbottom_farm.html">Example: Floating vs fixed-bottom farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/003_tilt_driven_vertical_wake_deflection.html">Example: Tilt-driven vertical wake deflection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Get flow</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/001_extract_wind_speed_at_turbines.html">Example: Extract wind speed at turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/002_extract_wind_speed_at_points.html">Example: Extract wind speed at points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/003_plot_velocity_deficit_profiles.html">Example: Plot velocity deficit profiles</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/001_check_turbine.html">Example: Check turbine power curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/002_multiple_turbine_types.html">Example: Multiple turbine types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/003_specify_turbine_power_curve.html">Example: Specify turbine power curve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbopark</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbopark/001_compare_turbopark_implementations.html">Example: Compare TurbOPark model implementations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Uncertain</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/001_layout_visualizations.html">Example: Layout Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/002_visualize_y_cut_plane.html">Example: Visualize y cut plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/003_visualize_cross_plane.html">Example: Visualize cross plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/004_visualize_rotor_values.html">Example: Visualize rotor velocities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/005_visualize_flow_by_sweeping_turbines.html">Example: Visualize flow by sweeping turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/floris" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/floris/edit/main/docs/_autosummary/floris.uncertain_floris_model.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.uncertain_floris_model.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/_autosummary/floris.uncertain_floris_model.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>floris.uncertain_floris_model</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.reset_operation"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.reset_operation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.run"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.run_no_wake"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.run_no_wake()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_turbine_powers"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_turbine_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_turbine_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_power()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_power"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_farm_power()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AEP"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_AEP()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_farm_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_AVP()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_x</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_y</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_directions"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.wind_directions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_speeds"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.wind_speeds</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.turbulence_intensities"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.turbulence_intensities</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.n_findex"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.n_findex</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.n_turbines"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.n_turbines</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.reference_wind_height"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.reference_wind_height</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.core"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.core</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.map_turbine_powers_uncertain"><code class="docutils literal notranslate"><span class="pre">map_turbine_powers_uncertain()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.ApproxFlorisModel"><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-floris.uncertain_floris_model">
+<span id="floris-uncertain-floris-model"></span><h1>floris.uncertain_floris_model<a class="headerlink" href="#module-floris.uncertain_floris_model" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.uncertain_floris_model.map_turbine_powers_uncertain" title="floris.uncertain_floris_model.map_turbine_powers_uncertain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_turbine_powers_uncertain</span></code></a>(...)</p></td>
+<td><p>Calculates the power at each turbine in the wind farm based on uncertainty weights.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.uncertain_floris_model.ApproxFlorisModel" title="floris.uncertain_floris_model.ApproxFlorisModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproxFlorisModel</span></code></a>(configuration[, ...])</p></td>
+<td><p>The ApproxFlorisModel overloads the UncertainFlorisModel with the special case that the wd_sample_points = [0].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.uncertain_floris_model.UncertainFlorisModel" title="floris.uncertain_floris_model.UncertainFlorisModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UncertainFlorisModel</span></code></a>(configuration[, ...])</p></td>
+<td><p>An interface for handling uncertainty in wind farm simulations.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.uncertain_floris_model.</span></span><span class="sig-name descname"><span class="pre">UncertainFlorisModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configuration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ti_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_setpoint_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awc_amplitude_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd_sample_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_yaw_to_nominal_direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel" title="Link to this definition">#</a></dt>
+<dd><p>An interface for handling uncertainty in wind farm simulations.</p>
+<p>This class contains a FlorisModel object and adds functionality to handle
+uncertainty in wind direction.  It is designed to be used similarly to FlorisModel.
+In the model, the turbine powers are computed for a set of expanded wind conditions,
+given by wd_sample_points, and then the powers are computed as a gaussian blend
+of these expanded conditions.</p>
+<p>To reduce computational costs, the wind directions, wind speeds, turbulence intensities,
+yaw angles, and power setpoints are rounded to specified resolutions.  Only unique
+conditions from within the expanded set of conditions are run.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>configuration (dict | str | Path | FlorisModel | ParFlorisModel):  The configuration</dt><dd><p>for the wind farm.  This can be a dictionary, a path to a yaml file, or a FlorisModel
+or ParFlorisModel object.  If dict, str or Path, a new FlorisModel object is
+created.  If a FlorisModel or ParFlorisModel object a copy of the object is made.</p>
+</dd>
+<dt>wd_resolution (float, optional): The resolution of wind direction for generating</dt><dd><p>gaussian blends, in degrees.  Defaults to 1.0.</p>
+</dd>
+</dl>
+<p>ws_resolution (float, optional): The resolution of wind speed, in m/s. Defaults to 1.0.
+ti_resolution (float, optional): The resolution of turbulence intensity.</p>
+<blockquote>
+<div><p>Defaults to 0.01.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>yaw_resolution (float, optional): The resolution of yaw angle, in degrees.</dt><dd><p>Defaults to 1.0.</p>
+</dd>
+<dt>power_setpoint_resolution (int, optional): The resolution of power setpoints, in kW.</dt><dd><p>Defaults to 100.</p>
+</dd>
+</dl>
+<p>wd_std (float, optional): The standard deviation of wind direction. Defaults to 3.0.
+wd_sample_points (list[float], optional): The sample points for wind direction.</p>
+<blockquote>
+<div><p>If not provided, defaults to [-2 * wd_std, -1 * wd_std, 0, wd_std, 2 * wd_std].</p>
+</div></blockquote>
+<dl class="simple">
+<dt>fix_yaw_to_nominal_direction (bool, optional): Fix the yaw angle to the nominal</dt><dd><p>direction?   When False, the yaw misalignment is the same across the sampled wind
+directions. When True, the turbine orientation is fixed to the nominal wind
+direction such that the yaw misalignment changes depending on the sampled wind
+direction.  Defaults to False.</p>
+</dd>
+</dl>
+<p>verbose (bool, optional): Verbosity flag for printing messages. Defaults to False.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configuration</strong> (<em>dict</em><em> | </em><em>str</em><em> | </em><em>Path</em><em> | </em><a class="reference internal" href="floris.floris_model.html#floris.floris_model.FlorisModel" title="floris.floris_model.FlorisModel"><em>FlorisModel</em></a><em> | </em><em>ParFlorisModel</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.set" title="Link to this definition">#</a></dt>
+<dd><p>Set the wind farm conditions in the UncertainFlorisModel.</p>
+<p>See FlorisModel.set() for details of the contents of kwargs.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: The wind farm conditions to set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.reset_operation">
+<span class="sig-name descname"><span class="pre">reset_operation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.reset_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.reset_operation" title="Link to this definition">#</a></dt>
+<dd><p>Reset the operation of the underlying FlorisModel object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.run" title="Link to this definition">#</a></dt>
+<dd><p>Run the simulation in the underlying FlorisModel object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.run_no_wake">
+<span class="sig-name descname"><span class="pre">run_no_wake</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.run_no_wake"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.run_no_wake" title="Link to this definition">#</a></dt>
+<dd><p>Run the simulation in the underlying FlorisModel object without wakes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_turbine_powers">
+<span class="sig-name descname"><span class="pre">get_turbine_powers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_turbine_powers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_turbine_powers" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Calculate the power at each turbine in the wind farm.  If WindRose or</dt><dd><p>WindTIRose is passed in, result is reshaped to match</p>
+</dd>
+<dt>Returns:</dt><dd><p>NDArrayFloat: An array containing the powers at each turbine for each findex.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers">
+<span class="sig-name descname"><span class="pre">get_expected_turbine_powers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_expected_turbine_powers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers" title="Link to this definition">#</a></dt>
+<dd><p>Compute the expected (mean) power of each turbine.</p>
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt>freq (NDArrayFloat): NumPy array with shape</dt><dd><p>with the frequencies of each wind direction and
+wind speed combination.  freq is either a 1D array,
+in which case the same frequencies are used for all
+turbines, or a 2D array with shape equal to
+(n_findex, n_turbines), in which case each turbine has a unique
+set of frequencies (this is the case for example using
+WindRoseByTurbine).</p>
+<blockquote>
+<div><p>These frequencies should typically sum across rows</p>
+</div></blockquote>
+<p>up to 1.0 and are used to weigh the wind farm power for every
+condition in calculating the wind farm's AEP. Defaults to None.
+If None and a WindData object was supplied, the WindData object's
+frequencies will be used. Otherwise, uniform frequencies are assumed
+(i.e., a simple mean over the findices is computed).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power">
+<span class="sig-name descname"><span class="pre">get_farm_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_turbulence_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_farm_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power" title="Link to this definition">#</a></dt>
+<dd><p>Report wind plant power from instance of floris. Optionally includes
+uncertainty in wind direction and yaw position when determining power.
+Uncertainty is included by computing the mean wind farm power for a
+distribution of wind direction and yaw position deviations from the
+original wind direction and yaw angles.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>turbine_weights (NDArrayFloat | list[float] | None, optional):</dt><dd><p>weighing terms that allow the user to emphasize power at
+particular turbines and/or completely ignore the power
+from other turbines. This is useful when, for example, you are
+modeling multiple wind farms in a single floris object. If you
+only want to calculate the power production for one of those
+farms and include the wake effects of the neighboring farms,
+you can set the turbine_weights for the neighboring farms'
+turbines to 0.0. The array of turbine powers from floris
+is multiplied with this array in the calculation of the
+objective function. If None, this  is an array with all values
+1.0 and with shape equal to (n_findex, n_turbines).
+Defaults to None.</p>
+</dd>
+<dt>use_turbulence_correction: (bool, optional): When True uses a</dt><dd><p>turbulence parameter to adjust power output calculations.
+Defaults to False. Not currently implemented.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>float: Sum of wind turbine powers in W.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_power">
+<span class="sig-name descname"><span class="pre">get_expected_farm_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_expected_farm_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_power" title="Link to this definition">#</a></dt>
+<dd><p>Compute the expected (mean) power of the wind farm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>freq (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the frequencies of each wind direction and
+wind speed combination. These frequencies should typically sum
+up to 1.0 and are used to weigh the wind farm power for every
+condition in calculating the wind farm's AEP. Defaults to None.
+If None and a WindData object was supplied, the WindData object's
+frequencies will be used. Otherwise, uniform frequencies are assumed
+(i.e., a simple mean over the findices is computed).</p>
+</dd>
+<dt>turbine_weights (NDArrayFloat | list[float] | None, optional):</dt><dd><p>weighing terms that allow the user to emphasize power at
+particular turbines and/or completely ignore the power
+from other turbines. This is useful when, for example, you are
+modeling multiple wind farms in a single floris object. If you
+only want to calculate the power production for one of those
+farms and include the wake effects of the neighboring farms,
+you can set the turbine_weights for the neighboring farms'
+turbines to 0.0. The array of turbine powers from floris
+is multiplied with this array in the calculation of the
+objective function. If None, this  is an array with all values
+1.0 and with shape equal to (n_findex,
+n_turbines). Defaults to None.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AEP">
+<span class="sig-name descname"><span class="pre">get_farm_AEP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hours_per_year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8760</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_farm_AEP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AEP" title="Link to this definition">#</a></dt>
+<dd><p>Estimate annual energy production (AEP) for distributions of wind speed, wind
+direction, frequency of occurrence, and yaw offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>freq (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the frequencies of each wind direction and
+wind speed combination. These frequencies should typically sum
+up to 1.0 and are used to weigh the wind farm power for every
+condition in calculating the wind farm's AEP. Defaults to None.
+If None and a WindData object was supplied, the WindData object's
+frequencies will be used. Otherwise, uniform frequencies are assumed.</p>
+</dd>
+<dt>turbine_weights (NDArrayFloat | list[float] | None, optional):</dt><dd><p>weighing terms that allow the user to emphasize power at
+particular turbines and/or completely ignore the power
+from other turbines. This is useful when, for example, you are
+modeling multiple wind farms in a single floris object. If you
+only want to calculate the power production for one of those
+farms and include the wake effects of the neighboring farms,
+you can set the turbine_weights for the neighboring farms'
+turbines to 0.0. The array of turbine powers from floris
+is multiplied with this array in the calculation of the
+objective function. If None, this  is an array with all values
+1.0 and with shape equal to (n_findex,
+n_turbines). Defaults to None.</p>
+</dd>
+</dl>
+<p>hours_per_year (float, optional): Number of hours in a year. Defaults to 365 * 24.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>float:</dt><dd><p>The Annual Energy Production (AEP) for the wind farm in
+watt-hours.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value">
+<span class="sig-name descname"><span class="pre">get_expected_farm_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_expected_farm_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value" title="Link to this definition">#</a></dt>
+<dd><p>Compute the expected (mean) value produced by the wind farm. This is
+computed by multiplying the wind farm power for each wind condition by
+the corresponding value of the power generated (e.g., electricity
+market price per unit of energy), then weighting by frequency and
+summing over all conditions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>freq (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the frequencies of each wind condition combination.
+These frequencies should typically sum up to 1.0 and are used
+to weigh the wind farm value for every condition in calculating
+the wind farm's expected value. Defaults to None. If None and a
+WindData object is supplied, the WindData object's frequencies
+will be used. Otherwise, uniform frequencies are assumed (i.e.,
+a simple mean over the findices is computed).</p>
+</dd>
+<dt>values (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the values corresponding to the power generated for each
+wind condition combination. The wind farm power is multiplied
+by the value for every condition in calculating the wind farm's
+expected value. Defaults to None. If None and a WindData object
+is supplied, the WindData object's values will be used.
+Otherwise, a value of 1 for all conditions is assumed (i.e.,
+the expected farm value will be equivalent to the expected farm
+power).</p>
+</dd>
+<dt>turbine_weights (NDArrayFloat | list[float] | None, optional):</dt><dd><p>weighing terms that allow the user to emphasize power at
+particular turbines and/or completely ignore the power
+from other turbines. This is useful when, for example, you are
+modeling multiple wind farms in a single floris object. If you
+only want to calculate the value production for one of those
+farms and include the wake effects of the neighboring farms,
+you can set the turbine_weights for the neighboring farms'
+turbines to 0.0. The array of turbine powers from floris
+is multiplied with this array in the calculation of the
+expected value. If None, this is an array with all values 1.0
+and with shape equal to (n_findex, n_turbines). Defaults to None.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>float:</dt><dd><p>The expected value produced by the wind farm in units of value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP">
+<span class="sig-name descname"><span class="pre">get_farm_AVP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">turbine_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hours_per_year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8760</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_farm_AVP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP" title="Link to this definition">#</a></dt>
+<dd><p>Estimate annual value production (AVP) for distribution of wind
+conditions, frequencies of occurrence, and corresponding values of
+power generated (e.g., electricity price per unit of energy).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>freq (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the frequencies of each wind condition combination.
+These frequencies should typically sum up to 1.0 and are used
+to weigh the wind farm value for every condition in calculating
+the wind farm's AVP. Defaults to None. If None and a
+WindData object is supplied, the WindData object's frequencies
+will be used. Otherwise, uniform frequencies are assumed (i.e.,
+a simple mean over the findices is computed).</p>
+</dd>
+<dt>values (NDArrayFloat): NumPy array with shape (n_findex)</dt><dd><p>with the values corresponding to the power generated for each
+wind condition combination. The wind farm power is multiplied
+by the value for every condition in calculating the wind farm's
+AVP. Defaults to None. If None and a WindData object is
+supplied, the WindData object's values will be used. Otherwise,
+a value of 1 for all conditions is assumed (i.e., the AVP will
+be equivalent to the AEP).</p>
+</dd>
+<dt>turbine_weights (NDArrayFloat | list[float] | None, optional):</dt><dd><p>weighing terms that allow the user to emphasize power at
+particular turbines and/or completely ignore the power
+from other turbines. This is useful when, for example, you are
+modeling multiple wind farms in a single floris object. If you
+only want to calculate the value production for one of those
+farms and include the wake effects of the neighboring farms,
+you can set the turbine_weights for the neighboring farms'
+turbines to 0.0. The array of turbine powers from floris is
+multiplied with this array in the calculation of the AVP. If
+None, this is an array with all values 1.0 and with shape equal
+to (n_findex, n_turbines). Defaults to None.</p>
+</dd>
+<dt>hours_per_year (float, optional): Number of hours in a year.</dt><dd><p>Defaults to 365 * 24.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>float:</dt><dd><p>The Annual Value Production (AVP) for the wind farm in units
+of value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model">
+<span class="sig-name descname"><span class="pre">get_operation_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_operation_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model" title="Link to this definition">#</a></dt>
+<dd><p>Get the operation model of a FlorisModel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>str: The operation_model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model">
+<span class="sig-name descname"><span class="pre">set_operation_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.set_operation_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model" title="Link to this definition">#</a></dt>
+<dd><p>Set the turbine operation model(s).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>operation_model (str): The operation model to set.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>operation_model</strong> (<em>str</em><em> | </em><em>List</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy" title="Link to this definition">#</a></dt>
+<dd><p>Create an independent copy of the current UncertainFlorisModel object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.get_param">
+<span class="sig-name descname"><span class="pre">get_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.get_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_param" title="Link to this definition">#</a></dt>
+<dd><p>Get a parameter from a FlorisModel object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>param</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>param_idx</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Args:</dt><dd><p>param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+param_idx (Optional[int], optional): The index to get the value at. Defaults to None.</p>
+<blockquote>
+<div><p>If None, the entire parameter is returned.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>Any: The value of the parameter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.set_param">
+<span class="sig-name descname"><span class="pre">set_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.set_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_param" title="Link to this definition">#</a></dt>
+<dd><p>Set a parameter in a FlorisModel object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+value (Any): The value to set.
+param_idx (Optional[int], optional): The index to set the value at. Defaults to None.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>value</strong> (<em>Any</em>)</p></li>
+<li><p><strong>param_idx</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.layout_x">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">layout_x</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_x" title="Link to this definition">#</a></dt>
+<dd><p>Wind turbine coordinate information.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>np.array: Wind turbine x-coordinate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.layout_y">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">layout_y</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_y" title="Link to this definition">#</a></dt>
+<dd><p>Wind turbine coordinate information.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>np.array: Wind turbine y-coordinate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.wind_directions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wind_directions</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_directions" title="Link to this definition">#</a></dt>
+<dd><p>Wind direction information.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>np.array: Wind direction.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.wind_speeds">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wind_speeds</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_speeds" title="Link to this definition">#</a></dt>
+<dd><p>Wind speed information.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>np.array: Wind speed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.turbulence_intensities">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">turbulence_intensities</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.turbulence_intensities" title="Link to this definition">#</a></dt>
+<dd><p>Turbulence intensity information.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>np.array: Turbulence intensity.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.n_findex">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_findex</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.n_findex" title="Link to this definition">#</a></dt>
+<dd><p>Number of unique wind conditions.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>int: Number of unique wind conditions.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.n_turbines">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_turbines</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.n_turbines" title="Link to this definition">#</a></dt>
+<dd><p>Number of turbines in the wind farm.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>int: Number of turbines in the wind farm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.reference_wind_height">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reference_wind_height</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.reference_wind_height" title="Link to this definition">#</a></dt>
+<dd><p>Reference wind height.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>float: Reference wind height.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.core">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">core</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.core" title="Link to this definition">#</a></dt>
+<dd><p>Returns the core of the unexpanded model.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Floris: The core of the unexpanded model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.map_turbine_powers_uncertain">
+<span class="sig-prename descclassname"><span class="pre">floris.uncertain_floris_model.</span></span><span class="sig-name descname"><span class="pre">map_turbine_powers_uncertain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unique_turbine_powers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_to_expanded_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_unexpanded</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sample_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_turbines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#map_turbine_powers_uncertain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.map_turbine_powers_uncertain" title="Link to this definition">#</a></dt>
+<dd><p>Calculates the power at each turbine in the wind farm based on uncertainty weights.</p>
+<p>This function calculates the power at each turbine in the wind farm, considering
+the underlying turbine powers and applying a weighted sum to handle uncertainty.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>unique_turbine_powers (NDArrayFloat): An array of unique turbine powers from the</dt><dd><p>underlying FlorisModel</p>
+</dd>
+<dt>map_to_expanded_inputs (NDArrayFloat): An array of indices mapping the unique powers to</dt><dd><p>the expanded powers</p>
+</dd>
+</dl>
+<p>weights (NDArrayFloat): An array of weights for each wind direction sample point
+n_unexpanded (int): The number of unexpanded conditions
+n_sample_points (int): The number of wind direction sample points
+n_turbines (int): The number of turbines in the wind farm</p>
+</dd>
+<dt>Returns:</dt><dd><p>NDArrayFloat: An array containing the powers at each turbine for each findex.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.ApproxFlorisModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.uncertain_floris_model.</span></span><span class="sig-name descname"><span class="pre">ApproxFlorisModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configuration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wd_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ti_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power_setpoint_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awc_amplitude_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#ApproxFlorisModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.ApproxFlorisModel" title="Link to this definition">#</a></dt>
+<dd><p>The ApproxFlorisModel overloads the UncertainFlorisModel with the special case that
+the wd_sample_points = [0].  This is a special case where no uncertainty is added
+but the resolution of the values wind direction, wind speed etc are still reduced
+by the specified resolution.  This allows for cases to be reused and a faster approximate
+result computed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configuration</strong> (<em>dict</em><em> | </em><em>str</em><em> | </em><em>Path</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./_autosummary"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="floris.wind_data.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">floris.wind_data</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="floris.turbine_library.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">floris.turbine_library</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.reset_operation"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.reset_operation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.run"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.run_no_wake"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.run_no_wake()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_turbine_powers"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_turbine_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_turbine_powers"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_turbine_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_power()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_power"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_farm_power()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AEP"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_AEP()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_expected_farm_value"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_expected_farm_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_AVP"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_farm_AVP()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_operation_model"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_operation_model"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_operation_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_x</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_y</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_directions"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.wind_directions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_speeds"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.wind_speeds</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.turbulence_intensities"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.turbulence_intensities</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.n_findex"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.n_findex</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.n_turbines"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.n_turbines</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.reference_wind_height"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.reference_wind_height</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.core"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.core</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.map_turbine_powers_uncertain"><code class="docutils literal notranslate"><span class="pre">map_turbine_powers_uncertain()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.ApproxFlorisModel"><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By National Renewable Energy Laboratory
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
