@@ -9,8 +9,8 @@ description = "A controls-oriented engineering wake model."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
-    { name = "Rafael Mudafort", email = "rafael.mudafort@nrel.gov" },
-    { name = "Paul Fleming", email = "paul.fleming@nrel.gov" },
+    { name = "Rafael Mudafort", email = "Rafael.Mudafort@nrel.gov" },
+    { name = "Paul Fleming", email = "Paul.Fleming@nrel.gov" },
     { name = "Michael (Misha) Sinner", email = "Michael.Sinner@nrel.gov" },
     { name = "Eric Simley", email = "Eric.Simley@nrel.gov" },
     { name = "Christopher Bay", email = "Christopher.Bay@nrel.gov" },
@@ -18,16 +18,16 @@ authors = [
 license = { file = "LICENSE.txt" }
 keywords = ["floris"]
 classifiers = [
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "Programming Language :: Python :: 3.13",
-        "Programming Language :: Python :: Implementation :: CPython",
-        "Programming Language :: Python :: Implementation :: PyPy"
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy"
 ]
 dependencies = [
     "attrs",
@@ -52,6 +52,7 @@ docs = [
 ]
 develop = [
     "pytest~=8.0",
+    "pytest-benchmark~=5.1",
     "pre-commit~=4.0",
     "ruff~=0.7",
     "isort~=5.0"
@@ -63,7 +64,8 @@ include = ["floris*"]
 [tool.setuptools.package-data]
 floris = [
     "turbine_library/*.yaml",
-    "core/wake_velocity/turbopark_lookup_table.mat"
+    "core/wake_velocity/turbopark_lookup_table.mat",
+    "default_inputs.yaml"
 ]
 
 [project.urls]
@@ -76,8 +78,8 @@ Documentation = "https://nrel.github.io/floris/"
 branch = true
 source = "floris/*"
 omit = [
-    "setup.py",
-    "tests/*"
+    "tests/*",
+    "benchmarks/*"
 ]
 
 

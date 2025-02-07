@@ -694,7 +694,7 @@ def cc_solver(
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
         turbine_turbulence_intensity,
         axis=(2,3)
-    )
+    )[:, :, None, None]
 
 
 def full_flow_cc_solver(
@@ -774,7 +774,7 @@ def full_flow_cc_solver(
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
-            awc_modes=turbine_grid_farm.awc_modes,
+            awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
@@ -794,7 +794,7 @@ def full_flow_cc_solver(
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
             tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
-            awc_modes=turbine_grid_farm.awc_modes,
+            awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
             axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
             tilt_interps=turbine_grid_farm.turbine_tilt_interps,
@@ -937,7 +937,7 @@ def turbopark_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
-            awc_modes=farm.awc_modes,
+            awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
@@ -956,7 +956,7 @@ def turbopark_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
-            awc_modes=farm.awc_modes,
+            awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
             thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
             tilt_interps=farm.turbine_tilt_interps,
@@ -978,7 +978,7 @@ def turbopark_solver(
             yaw_angles=farm.yaw_angles_sorted,
             tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
-            awc_modes=farm.awc_modes,
+            awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
             axial_induction_functions=farm.turbine_axial_induction_functions,
             tilt_interps=farm.turbine_tilt_interps,
@@ -1027,7 +1027,7 @@ def turbopark_solver(
                     yaw_angles=farm.yaw_angles_sorted,
                     tilt_angles=farm.tilt_angles_sorted,
                     power_setpoints=farm.power_setpoints_sorted,
-                    awc_modes=farm.awc_modes,
+                    awc_modes=farm.awc_modes_sorted,
                     awc_amplitudes=farm.awc_amplitudes_sorted,
                     thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
                     tilt_interps=farm.turbine_tilt_interps,
@@ -1122,7 +1122,7 @@ def turbopark_solver(
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
         turbine_turbulence_intensity,
         axis=(2, 3)
-    )
+    )[:, :, None, None]
 
 
 def full_flow_turbopark_solver(
