@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1738965903272,
+  "lastUpdate": 1738978706675,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -500,6 +500,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00026842222570284816",
             "extra": "mean: 9.381942100005997 msec\nrounds: 90"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "paul.fleming@nrel.gov",
+            "name": "paulf81",
+            "username": "paulf81"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "33ffc738e3d5816a5386b8b1fe6888b9a183c60e",
+          "message": "Update numpy req to 2 (#1051)\n\n* Update numpy req to 2\r\n\r\n* Add warnings/notes to documentation.\r\n\r\n* Trailing whitespace...\r\n\r\n---------\r\n\r\nCo-authored-by: misi9170 <michael.sinner@nrel.gov>",
+          "timestamp": "2025-02-07T18:19:27-07:00",
+          "tree_id": "d8a082052a598e5ad762e285c310c9574cbc70b2",
+          "url": "https://github.com/NREL/floris/commit/33ffc738e3d5816a5386b8b1fe6888b9a183c60e"
+        },
+        "date": 1738978703427,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 46.756508050053355,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00017444747621403833",
+            "extra": "mean: 21.387396999996003 msec\nrounds: 42"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 57.125473439135895,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001611873378974768",
+            "extra": "mean: 17.505325379323917 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 25.76694885772812,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006899431616646599",
+            "extra": "mean: 38.80940679168058 msec\nrounds: 24"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.30477488181397583,
+            "unit": "iter/sec",
+            "range": "stddev: 0.013173271508829024",
+            "extra": "mean: 3.2811102871999993 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 31.468910959105198,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001072329295008387",
+            "extra": "mean: 31.777394562510608 msec\nrounds: 32"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 118.70008145262237,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000044214460351750386",
+            "extra": "mean: 8.424594050503135 msec\nrounds: 99"
           }
         ]
       }
