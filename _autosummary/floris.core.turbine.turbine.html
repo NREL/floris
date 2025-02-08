@@ -715,25 +715,25 @@ nearest specified condition</p>
 given in Watts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>air_density</strong> (<em>float</em>)</p></li>
 <li><p><strong>power_functions</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>]</em>)</p></li>
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>awc_modes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>str_</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>awc_modes</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>str_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>tilt_interps</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>interp1d</em><em>]</em>)</p></li>
-<li><p><strong>turbine_type_map</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbine_type_map</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>turbine_power_thrust_tables</strong> (<em>dict</em>)</p></li>
-<li><p><strong>ix_filter</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>int64</em><em>]</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>ix_filter</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>int64</em><em>]</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>average_method</strong> (<em>str</em>)</p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>correct_cp_ct_for_tilt</strong> (<em>bool</em>)</p></li>
 <li><p><strong>multidim_condition</strong> (<em>tuple</em><em> | </em><em>None</em>)</p></li>
 </ul>
@@ -797,26 +797,26 @@ The value is obtained from the coefficient of thrust specified by the callables 
 in the thrust_coefficient_functions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>air_density</strong> (<em>float</em>)</p></li>
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>awc_modes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>str_</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>awc_modes</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>str_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>thrust_coefficient_functions</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>]</em>)</p></li>
 <li><p><strong>tilt_interps</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>interp1d</em><em>]</em>)</p></li>
-<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>bool_</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>turbine_type_map</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>bool</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbine_type_map</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>turbine_power_thrust_tables</strong> (<em>dict</em>)</p></li>
-<li><p><strong>ix_filter</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>int64</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>bool_</em><em>]</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>ix_filter</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>int64</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>bool</em><em>]</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>average_method</strong> (<em>str</em>)</p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>multidim_condition</strong> (<em>tuple</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
@@ -872,26 +872,26 @@ None.</p>
 the thrust coefficient and yaw angle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbulence_intensities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>air_density</strong> (<em>float</em>)</p></li>
-<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>awc_modes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>str_</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>power_setpoints</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>awc_modes</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>str_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>awc_amplitudes</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>axial_induction_functions</strong> (<em>dict</em>)</p></li>
-<li><p><strong>tilt_interps</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>bool_</em><em>]</em><em>]</em>)</p></li>
-<li><p><strong>turbine_type_map</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>tilt_interps</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>correct_cp_ct_for_tilt</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>bool</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>turbine_type_map</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>object_</em><em>]</em><em>]</em>)</p></li>
 <li><p><strong>turbine_power_thrust_tables</strong> (<em>dict</em>)</p></li>
-<li><p><strong>ix_filter</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>int64</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>bool_</em><em>]</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>ix_filter</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>int64</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>bool</em><em>]</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>int</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>average_method</strong> (<em>str</em>)</p></li>
-<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>Any</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>multidim_condition</strong> (<em>tuple</em><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
