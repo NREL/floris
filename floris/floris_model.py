@@ -1052,17 +1052,25 @@ class FlorisModel(LoggingManager):
         """
 
         # If not None, set the heterogeneous inflow configuration
+        # TODO: add wind direction info here
         if self.core.flow_field.heterogeneous_inflow_config is not None:
             heterogeneous_inflow_config = {
                 'x': self.core.flow_field.heterogeneous_inflow_config['x'],
                 'y': self.core.flow_field.heterogeneous_inflow_config['y'],
-                'speed_multipliers':
-                    self.core.flow_field.heterogeneous_inflow_config['speed_multipliers'][findex:findex+1],
             }
-            if 'z' in self.core.flow_field.heterogeneous_inflow_config:
-                heterogeneous_inflow_config['z'] = (
-                    self.core.flow_field.heterogeneous_inflow_config['z']
-                )
+            for k in ["z"]: # Optional, independent of findex
+                if k in self.core.flow_field.heterogeneous_inflow_config:
+                    heterogeneous_inflow_config[k] = (
+                        self.core.flow_field.heterogeneous_inflow_config[k]
+                    )
+            for k in ["u", "v", "speed_multipliers"]: # Optional, dependent on findex
+                if k in self.core.flow_field.heterogeneous_inflow_config:
+                    if self.core.flow_field.heterogeneous_inflow_config[k] is not None:
+                        heterogeneous_inflow_config[k] = (
+                            self.core.flow_field.heterogeneous_inflow_config[k][findex:findex+1,:]
+                        )
+                    else:
+                        heterogeneous_inflow_config[k] = None
         else:
             heterogeneous_inflow_config = None
 
@@ -1074,7 +1082,7 @@ class FlorisModel(LoggingManager):
             power_setpoints=self.core.farm.power_setpoints[findex:findex+1,:],
             awc_modes=self.core.farm.awc_modes[findex:findex+1,:],
             awc_amplitudes=self.core.farm.awc_amplitudes[findex:findex+1,:],
-            heterogeneous_inflow_config = heterogeneous_inflow_config,
+            heterogeneous_inflow_config=heterogeneous_inflow_config,
             solver_settings=solver_settings,
         )
 
