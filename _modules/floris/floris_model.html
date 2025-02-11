@@ -2470,7 +2470,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">                or general solver settings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span> <span class="nb">type</span><span class="p">(</span><span class="n">fm</span><span class="p">)</span> <span class="o">==</span> <span class="n">FlorisModel</span> <span class="k">for</span> <span class="n">fm</span> <span class="ow">in</span> <span class="n">fmodel_list</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span> <span class="nb">type</span><span class="p">(</span><span class="n">fm</span><span class="p">)</span> <span class="ow">is</span> <span class="n">FlorisModel</span> <span class="k">for</span> <span class="n">fm</span> <span class="ow">in</span> <span class="n">fmodel_list</span> <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="s2">&quot;Incompatible input specified. fmodel_list must be a list of FlorisModel objects.&quot;</span>
             <span class="p">)</span>
