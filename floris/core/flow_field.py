@@ -288,27 +288,40 @@ class FlowField(BaseClass):
         y = self.heterogeneous_inflow_config['y']
         z = self.heterogeneous_inflow_config['z']
 
+        interps_f = [] # Declare an empty list to store interpolants by findex
         if z is not None:
             # Compute the 3-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
-            # while the freestream wind speed is used for points outside that region
-            F = self.interpolate_multiplier_xyz(x, y, z, speed_multipliers[0], fill_value=1.0)
-            in_region = []
-            for multiplier in speed_multipliers:
-                F.values = multiplier[:, None]
-                in_region.append(copy.deepcopy(F))
+            # while the freestream wind speed is used for points outside that region.
+
+            # Because the (x,y,z) points are the same for each findex, we create the triangulation
+            # once and then overwrite the values for each findex.
+
+            # Create triangulation using zeroth findex
+            interp_3d = self.interpolate_multiplier_xyz(
+                x, y, z, speed_multipliers[0], fill_value=1.0
+            )
+            # Copy the interpolant for each findex and overwrite the values
+            for findex in range(self.n_findex):
+                interp_3d.values = speed_multipliers[findex, :].reshape(-1, 1)
+                interps_f.append(copy.deepcopy(interp_3d))
 
         else:
             # Compute the 2-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
             # while the freestream wind speed is used for points outside that region
-            F = self.interpolate_multiplier_xy(x, y, speed_multipliers[0], fill_value=1.0)
-            in_region = []
-            for multiplier in speed_multipliers:
-                F.values = multiplier[:, None]
-                in_region.append(copy.deepcopy(F))
 
-        self.het_map = in_region
+            # Because the (x,y) points are the same for each findex, we create the triangulation
+            # once and then overwrite the values for each findex.
+
+            # Create triangulation using zeroth findex
+            interp_2d = self.interpolate_multiplier_xy(x, y, speed_multipliers[0], fill_value=1.0)
+            # Copy the interpolant for each findex and overwrite the values
+            for findex in range(self.n_findex):
+                interp_2d.values = speed_multipliers[findex, :].reshape(-1, 1)
+                interps_f.append(copy.deepcopy(interp_2d))
+
+        self.het_map = interps_f
 
     @staticmethod
     def interpolate_multiplier_xy(x: NDArrayFloat,
