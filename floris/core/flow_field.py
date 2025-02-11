@@ -316,7 +316,10 @@ class FlowField(BaseClass):
             )
             # Copy the interpolant for each findex and overwrite the values
             for findex in range(self.n_findex):
-                interp_3d.values = speed_multipliers[findex, :].reshape(-1, 1)
+                if interp_method == "linear":
+                    interp_3d.values = speed_multipliers[findex, :].reshape(-1, 1)
+                else:
+                    interp_3d.values = speed_multipliers[findex, :]
                 interps_f[findex] = copy.deepcopy(interp_3d)
 
         else:
@@ -333,7 +336,10 @@ class FlowField(BaseClass):
             )
             # Copy the interpolant for each findex and overwrite the values
             for findex in range(self.n_findex):
-                interp_2d.values = speed_multipliers[findex, :].reshape(-1, 1)
+                if interp_method == "linear":
+                    interp_2d.values = speed_multipliers[findex, :].reshape(-1, 1)
+                else:
+                    interp_2d.values = speed_multipliers[findex, :]
                 interps_f[findex] = copy.deepcopy(interp_2d)
 
         self.het_map = interps_f
