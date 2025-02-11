@@ -18,6 +18,7 @@ from floris.core import (
 from floris.type_dec import (
     floris_array_converter,
     NDArrayFloat,
+    NDArrayObject,
 )
 
 
@@ -43,7 +44,7 @@ class FlowField(BaseClass):
     u: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
     v: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
     w: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    het_map: list = field(init=False, default=None)
+    het_map: NDArrayObject = field(init=False, default=None)
     dudz_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
@@ -288,7 +289,8 @@ class FlowField(BaseClass):
         y = self.heterogeneous_inflow_config['y']
         z = self.heterogeneous_inflow_config['z']
 
-        interps_f = [] # Declare an empty list to store interpolants by findex
+        # Declare an empty list to store interpolants by findex
+        interps_f = np.empty(self.n_findex, dtype=object)
         if z is not None:
             # Compute the 3-dimensional interpolants for each wind direction
             # Linear interpolation is used for points within the user-defined area of values,
@@ -304,7 +306,7 @@ class FlowField(BaseClass):
             # Copy the interpolant for each findex and overwrite the values
             for findex in range(self.n_findex):
                 interp_3d.values = speed_multipliers[findex, :].reshape(-1, 1)
-                interps_f.append(copy.deepcopy(interp_3d))
+                interps_f[findex] = copy.deepcopy(interp_3d)
 
         else:
             # Compute the 2-dimensional interpolants for each wind direction
@@ -319,7 +321,7 @@ class FlowField(BaseClass):
             # Copy the interpolant for each findex and overwrite the values
             for findex in range(self.n_findex):
                 interp_2d.values = speed_multipliers[findex, :].reshape(-1, 1)
-                interps_f.append(copy.deepcopy(interp_2d))
+                interps_f[findex] = copy.deepcopy(interp_2d)
 
         self.het_map = interps_f
 
