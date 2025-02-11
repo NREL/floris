@@ -139,7 +139,7 @@ filterwarnings = [
 # Ruff-specific rules (RUF)
 
 [tool.ruff]
-src = ["floris", "tests"]
+src = ["floris", "tests", "docs"]
 line-length = 100
 target-version = "py313"
 
