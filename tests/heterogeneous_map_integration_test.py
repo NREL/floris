@@ -394,3 +394,104 @@ def test_3d_het_and_shear():
                 wind_directions=[270.0], wind_speeds=[wind_speed]
             ),
         )
+
+
+def test_run_2d_het_map():
+    # Define a 2D het map and confirm the results are as expected
+    # when applied to FLORIS
+
+    # The side of the flow which is accelerated reverses for east versus west
+    het_map = HeterogeneousMap(
+        x=np.array([0.0, 0.0, 500.0, 500.0]),
+        y=np.array([0.0, 500.0, 0.0, 500.0]),
+        speed_multipliers=np.array(
+            [
+                [1.0, 2.0, 1.0, 2.0],  # Top accelerated
+                [2.0, 1.0, 2.0, 1.0],  # Bottom accelerated
+            ]
+        ),
+        wind_directions=np.array([270.0, 90.0]),
+        wind_speeds=np.array([8.0, 8.0]),
+    )
+
+    # Get the FLORIS model
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    from floris import TimeSeries
+
+    time_series = TimeSeries(
+        wind_directions=np.array([270.0, 90.0]),
+        wind_speeds=8.0,
+        turbulence_intensities=0.06,
+        heterogeneous_map=het_map,
+    )
+
+    # Set the model to a turbines perpinducluar to
+    # east/west flow with 0 turbine closer to bottom and
+    # turbine 1 closer to top
+    fmodel.set(
+        wind_data=time_series,
+        layout_x=[250.0, 250.0],
+        layout_y=[100.0, 400.0],
+    )
+
+    # Run the model
+    fmodel.run()
+
+    # Get the turbine powers
+    powers = fmodel.get_turbine_powers()
+
+    # Assert that in the first condition, turbine 1 has higher power
+    assert powers[0, 1] > powers[0, 0]
+
+    # Assert that in the second condition, turbine 0 has higher power
+    assert powers[1, 0] > powers[1, 1]
+
+    # Assert that the power of turbine 1 equals in the first condition
+    # equals the power of turbine 0 in the second condition
+    assert powers[0, 1] == powers[1, 0]
+
+
+def test_het_config():
+
+    # Test that setting FLORIS with a heterogeneous inflow configuration
+    # works as expected and consistent with previous results
+
+    # Get the FLORIS model
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    # Change the layout to a 4 turbine layout in a box
+    fmodel.set(layout_x=[0, 0, 500.0, 500.0], layout_y=[0, 500.0, 0, 500.0])
+
+    # Set FLORIS to run for a single condition
+    fmodel.set(wind_speeds=[8.0], wind_directions=[270.0], turbulence_intensities=[0.06])
+
+    # Define the speed-ups of the heterogeneous inflow, and their locations.
+    # Note that heterogeneity is only applied within the bounds of the points defined in the
+    # heterogeneous_inflow_config dictionary.  In this case, set the inflow to be 1.25x the ambient
+    # wind speed for the upper turbines at y = 500m.
+    speed_ups = [[1.0, 1.25, 1.0, 1.25]]  # Note speed-ups has dimensions of n_findex X n_points
+    x_locs = [-500.0, -500.0, 1000.0, 1000.0]
+    y_locs = [-500.0, 1000.0, -500.0, 1000.0]
+
+    # Create the configuration dictionary to be used for the heterogeneous inflow.
+    heterogeneous_inflow_config = {
+        "speed_multipliers": speed_ups,
+        "x": x_locs,
+        "y": y_locs,
+    }
+
+    # Set the heterogeneous inflow configuration
+    fmodel.set(heterogeneous_inflow_config=heterogeneous_inflow_config)
+
+    # Run the FLORIS simulation
+    fmodel.run()
+
+    turbine_powers = fmodel.get_turbine_powers() / 1000.0
+
+    # Test that the turbine powers are consistent with previous implementation
+    # 2248.2, 2800.1, 466.2, 601.5 before the change
+    # Using almost equal assert
+    assert np.allclose(
+        turbine_powers, np.array([[2248.2, 2800.0, 466.2, 601.4]]), atol=1.0,
+    )
