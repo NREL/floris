@@ -452,6 +452,62 @@ def test_run_2d_het_map():
     assert powers[0, 1] == powers[1, 0]
 
 
+def test_run_2d_het_map_nearest_neighbor():
+    # Define a 2D het map and confirm the results are as expected
+    # when applied to FLORIS
+
+    # The side of the flow which is accelerated reverses for east versus west
+    het_map = HeterogeneousMap(
+        x=np.array([0.0, 0.0, 500.0, 500.0]),
+        y=np.array([0.0, 500.0, 0.0, 500.0]),
+        speed_multipliers=np.array(
+            [
+                [1.0, 2.0, 1.0, 2.0],  # Top accelerated
+                [2.0, 1.0, 2.0, 1.0],  # Bottom accelerated
+            ]
+        ),
+        wind_directions=np.array([270.0, 90.0]),
+        wind_speeds=np.array([8.0, 8.0]),
+        interp_method='nn',
+    )
+
+    # Get the FLORIS model
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    from floris import TimeSeries
+
+    time_series = TimeSeries(
+        wind_directions=np.array([270.0, 90.0]),
+        wind_speeds=8.0,
+        turbulence_intensities=0.06,
+        heterogeneous_map=het_map,
+    )
+
+    # Set the model to a turbines perpinducluar to
+    # east/west flow with 0 turbine closer to bottom and
+    # turbine 1 closer to top
+    fmodel.set(
+        wind_data=time_series,
+        layout_x=[250.0, 250.0],
+        layout_y=[100.0, 400.0],
+    )
+
+    # Run the model
+    fmodel.run()
+
+    # Get the turbine powers
+    powers = fmodel.get_turbine_powers()
+
+    # Assert that in the first condition, turbine 1 has higher power
+    assert powers[0, 1] > powers[0, 0]
+
+    # Assert that in the second condition, turbine 0 has higher power
+    assert powers[1, 0] > powers[1, 1]
+
+    # Assert that the power of turbine 1 equals in the first condition
+    # equals the power of turbine 0 in the second condition
+    assert powers[0, 1] == powers[1, 0]
+
 def test_het_config():
 
     # Test that setting FLORIS with a heterogeneous inflow configuration
