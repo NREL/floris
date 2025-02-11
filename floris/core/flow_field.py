@@ -284,10 +284,10 @@ class FlowField(BaseClass):
                 - **y**: A list of y locations at which the speed up factors are defined.
                 - **z** (optional): A list of z locations at which the speed up factors are defined.
         """
-        speed_multipliers = np.array(self.heterogeneous_inflow_config['speed_multipliers'])
-        x = self.heterogeneous_inflow_config['x']
-        y = self.heterogeneous_inflow_config['y']
-        z = self.heterogeneous_inflow_config['z']
+        speed_multipliers = np.array(self.heterogeneous_inflow_config["speed_multipliers"])
+        x = self.heterogeneous_inflow_config["x"]
+        y = self.heterogeneous_inflow_config["y"]
+        z = self.heterogeneous_inflow_config["z"]
 
         if "interp_method" in self.heterogeneous_inflow_config.keys():
             interp_method = self.heterogeneous_inflow_config["interp_method"]
@@ -307,7 +307,12 @@ class FlowField(BaseClass):
 
             # Create triangulation using zeroth findex
             interp_3d = self.interpolate_multiplier_xyz(
-                x, y, z, speed_multipliers[0], fill_value=1.0, interp_method=interp_method,
+                x,
+                y,
+                z,
+                speed_multipliers[0],
+                fill_value=1.0,
+                interp_method=interp_method,
             )
             # Copy the interpolant for each findex and overwrite the values
             for findex in range(self.n_findex):
@@ -323,11 +328,9 @@ class FlowField(BaseClass):
             # once and then overwrite the values for each findex.
 
             # Create triangulation using zeroth findex
-            interp_2d = self.interpolate_multiplier_xy(x,
-                                                       y,
-                                                       speed_multipliers[0],
-                                                       fill_value=1.0,
-                                                       interp_method=interp_method)
+            interp_2d = self.interpolate_multiplier_xy(
+                x, y, speed_multipliers[0], fill_value=1.0, interp_method=interp_method
+            )
             # Copy the interpolant for each findex and overwrite the values
             for findex in range(self.n_findex):
                 interp_2d.values = speed_multipliers[findex, :].reshape(-1, 1)
@@ -336,11 +339,13 @@ class FlowField(BaseClass):
         self.het_map = interps_f
 
     @staticmethod
-    def interpolate_multiplier_xy(x: NDArrayFloat,
-                                  y: NDArrayFloat,
-                                  multiplier: NDArrayFloat,
-                                  fill_value: float = 1.0,
-                                  interp_method: str = "linear"):
+    def interpolate_multiplier_xy(
+        x: NDArrayFloat,
+        y: NDArrayFloat,
+        multiplier: NDArrayFloat,
+        fill_value: float = 1.0,
+        interp_method: str = "linear",
+    ):
         """Return an interpolant for a 2D multiplier field.
 
         Args:
@@ -359,14 +364,15 @@ class FlowField(BaseClass):
         else:
             raise UserWarning("Incompatible interpolation method specified.")
 
-
     @staticmethod
-    def interpolate_multiplier_xyz(x: NDArrayFloat,
-                                   y: NDArrayFloat,
-                                   z: NDArrayFloat,
-                                   multiplier: NDArrayFloat,
-                                   fill_value: float = 1.0,
-                                   interp_method: str = "linear"):
+    def interpolate_multiplier_xyz(
+        x: NDArrayFloat,
+        y: NDArrayFloat,
+        z: NDArrayFloat,
+        multiplier: NDArrayFloat,
+        fill_value: float = 1.0,
+        interp_method: str = "linear",
+    ):
         """Return an interpolant for a 3D multiplier field.
 
         Args:
