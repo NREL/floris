@@ -359,13 +359,15 @@ class FlowField(BaseClass):
             y (NDArrayFloat): y locations
             multiplier (NDArrayFloat): multipliers
             fill_value (float): fill value for points outside the region
+            interp_method (str): interpolation method, either "linear" or "nearest".
+                Default is "linear".
 
         Returns:
             LinearNDInterpolator: interpolant
         """
         if interp_method == "linear":
             return LinearNDInterpolator(list(zip(x, y)), multiplier, fill_value=fill_value)
-        elif interp_method == "nn":
+        elif interp_method == "nearest":
             return NearestNDInterpolator(list(zip(x, y)), multiplier)
         else:
             raise UserWarning("Incompatible interpolation method specified.")
@@ -387,6 +389,8 @@ class FlowField(BaseClass):
             z (NDArrayFloat): z locations
             multiplier (NDArrayFloat): multipliers
             fill_value (float): fill value for points outside the region
+            interp_method (str): interpolation method, either "linear" or "nearest".
+                Default is "linear".
 
         Returns:
             LinearNDInterpolator: interpolant
@@ -394,7 +398,7 @@ class FlowField(BaseClass):
 
         if interp_method == "linear":
             return LinearNDInterpolator(list(zip(x, y, z)), multiplier, fill_value=fill_value)
-        elif interp_method == "nn":
+        elif interp_method == "nearest":
             return NearestNDInterpolator(list(zip(x, y, z)), multiplier)
         else:
             raise UserWarning("Incompatible interpolation method specified.")

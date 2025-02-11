@@ -468,7 +468,7 @@ def test_run_2d_het_map_nearest_neighbor():
         ),
         wind_directions=np.array([270.0, 90.0]),
         wind_speeds=np.array([8.0, 8.0]),
-        interp_method='nn',
+        interp_method='nearest',
     )
 
     # Get the FLORIS model
