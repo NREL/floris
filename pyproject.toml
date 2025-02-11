@@ -139,7 +139,7 @@ filterwarnings = [
 # Ruff-specific rules (RUF)
 
 [tool.ruff]
-src = ["floris", "tests", "docs"]
+src = ["floris", "tests"]
 line-length = 100
 target-version = "py313"
 
@@ -178,6 +178,7 @@ exclude = [
     "dist",
     "node_modules",
     "venv",
+    "docs",
 ]
 
 # Allow unused variables when underscore-prefixed.
