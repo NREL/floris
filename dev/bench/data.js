@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1738978706675,
+  "lastUpdate": 1739305805141,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -566,6 +566,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000044214460351750386",
             "extra": "mean: 8.424594050503135 msec\nrounds: 99"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "bart.doekemeijer@shell.com",
+            "name": "Bart Doekemeijer",
+            "username": "Bartdoekemeijer"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f3f42ed8b8c08abe6ef6fa4aa4b0a93afa0f55ec",
+          "message": "Reduce computation time massively in large het_map objects (#1024)\n\n* Reduce computation time massively in large het_map objects by avoiding the recalculation of the delaunay triangulation for every findex\r\n\r\n* Import copy library\r\n\r\n* Enforce appropriate shape for interpolant object\r\n\r\n* ruff formatting\r\n\r\n* bugfix\r\n\r\n* Add a test of applying a het map\r\n\r\n* Add convert to array\r\n\r\n* Add convert to array\r\n\r\n* Add to new tests\r\n\r\n* Clean up\r\n\r\n* Add comments and rename variables for clarity.\r\n\r\n* Change FlowField.het_map to be a numpy array rather than a list.\r\n\r\n---------\r\n\r\nCo-authored-by: Paul <paul.fleming@nrel.gov>\r\nCo-authored-by: misi9170 <michael.sinner@nrel.gov>",
+          "timestamp": "2025-02-11T12:35:07-07:00",
+          "tree_id": "5e184ccdc959439058c06ebd9090b7d45f339ee9",
+          "url": "https://github.com/NREL/floris/commit/f3f42ed8b8c08abe6ef6fa4aa4b0a93afa0f55ec"
+        },
+        "date": 1739305801822,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 44.65097164109122,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0004428455944727012",
+            "extra": "mean: 22.395929209292365 msec\nrounds: 43"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 56.43423211705255,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00017746542937621082",
+            "extra": "mean: 17.719741413790466 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 24.55918240329519,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008179985757155578",
+            "extra": "mean: 40.71796786955849 msec\nrounds: 23"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.2927385335618648,
+            "unit": "iter/sec",
+            "range": "stddev: 0.019432736101069315",
+            "extra": "mean: 3.4160176586000035 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 35.31911665257149,
+            "unit": "iter/sec",
+            "range": "stddev: 0.002765181913728248",
+            "extra": "mean: 28.313278891905487 msec\nrounds: 37"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 114.71373445052305,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001525945681189993",
+            "extra": "mean: 8.717351978731964 msec\nrounds: 94"
           }
         ]
       }
