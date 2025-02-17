@@ -514,10 +514,7 @@ class FlorisModel(LoggingManager):
 
 
     #TODO: This could probably be moved elsewhere
-    def _get_turbine_voc(self) -> NDArrayFloat:
-
-        # Set to constant for now
-        A = 1.0
+    def _get_turbine_voc(self, A=0.001) -> NDArrayFloat:
 
         #TODO: Probably these should be function input parameters
         wake_slope = 0.3
