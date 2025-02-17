@@ -33,6 +33,7 @@ from floris.type_dec import (
     NDArrayStr,
 )
 from floris.utilities import (
+    load_yaml,
     nested_get,
     nested_set,
     print_nested_dict,
@@ -64,7 +65,15 @@ class FlorisModel(LoggingManager):
                 - **logging**: See `floris.simulation.core.Core` for more details.
     """
 
+    @staticmethod
+    def get_defaults() -> dict:
+        return copy.deepcopy(load_yaml(Path(__file__).parent / "default_inputs.yaml"))
+
     def __init__(self, configuration: dict | str | Path):
+
+        if configuration == "defaults":
+            configuration = FlorisModel.get_defaults()
+
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
@@ -1737,11 +1746,29 @@ class FlorisModel(LoggingManager):
         else:
             return xcoords, ycoords
 
+    def show_config(self, full=False) -> None:
+        """Print the FlorisModel dictionary.
+        """
+        config_dict = self.core.as_dict()
+        if not full:
+            del config_dict["logging"]
+            del config_dict["wake"]["enable_secondary_steering"]
+            del config_dict["wake"]["enable_yaw_added_recovery"]
+            del config_dict["wake"]["enable_transverse_velocities"]
+            del config_dict["wake"]["enable_active_wake_mixing"]
+            del config_dict["wake"]["wake_deflection_parameters"]
+            del config_dict["wake"]["wake_velocity_parameters"]
+            del config_dict["wake"]["wake_turbulence_parameters"]
+        print_nested_dict(config_dict)
+
     def print_dict(self) -> None:
         """Print the FlorisModel dictionary.
         """
-        print_nested_dict(self.core.as_dict())
-
+        self.logger.warning(
+            "The print_dict() method has been deprecated."
+            " Please use the show_config() method instead."
+        )
+        self.show_config(full=True)
 
     ### Properties
 
@@ -1881,7 +1908,7 @@ class FlorisModel(LoggingManager):
                 or general solver settings.
         """
 
-        if not all( type(fm) == FlorisModel for fm in fmodel_list ):
+        if not all( type(fm) is FlorisModel for fm in fmodel_list ):
             raise TypeError(
                 "Incompatible input specified. fmodel_list must be a list of FlorisModel objects."
             )
