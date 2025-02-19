@@ -5,6 +5,7 @@ import pytest
 from floris import FlorisModel
 from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizationSR
 
+
 DEBUG = False
 VELOCITY_MODEL = "gauss"
 DEFLECTION_MODEL = "gauss"
