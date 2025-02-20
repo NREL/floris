@@ -33,7 +33,9 @@ class HeterogeneousMap(LoggingManager):
             wind speeds at various locations in the wind farm. Options are 'linear' and 'nearest',
             representing linear interpolation and nearest-neighbor interpolation respectively.
             Linear interpolation is accurate, nearest-neighbor interpolation is very fast but
-            inaccurate. Defaults to 'linear'. Optional.
+            inaccurate. Note also that in the default 'linear' setting, speed-ups at locations
+            outside the convex hull of points defined by `x`, `y` and `z` are 1.0 while in
+            the nearest case will be the value of the nearest point. Defaults to 'linear'. Optional.
 
     Notes:
         * If wind_directions and wind_speeds are both defined, then they must be the same length
