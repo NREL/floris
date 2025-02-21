@@ -260,14 +260,14 @@ class YawOptimization(LoggingManager):
             # Find bounds closest to 0.0 deg
             combined_bounds = np.concatenate(
                 (
-                    np.expand_dims(minimum_yaw_angle_subset, axis=3),
-                    np.expand_dims(maximum_yaw_angle_subset, axis=3)
+                    np.expand_dims(minimum_yaw_angle_subset, axis=2),
+                    np.expand_dims(maximum_yaw_angle_subset, axis=2)
                 ),
-                axis=3
+                axis=2
             )
             # Overwrite all values that are not allowed to be 0.0 with bound value closest to zero
-            ids_closest = np.expand_dims(np.argmin(np.abs(combined_bounds), axis=3), axis=3)
-            yaw_mb = np.squeeze(np.take_along_axis(combined_bounds, ids_closest, axis=3))
+            ids_closest = np.expand_dims(np.argmin(np.abs(combined_bounds), axis=2), axis=2)
+            yaw_mb = np.squeeze(np.take_along_axis(combined_bounds, ids_closest, axis=2), axis=2)
             yaw_angles_template_subset[idx] = yaw_mb[idx]
 
         # Save all subset variables to self
