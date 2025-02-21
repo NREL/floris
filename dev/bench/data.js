@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1739316107937,
+  "lastUpdate": 1740156719609,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -698,6 +698,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00010698936030204971",
             "extra": "mean: 8.445402979162964 msec\nrounds: 96"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "39596329+misi9170@users.noreply.github.com",
+            "name": "misi9170",
+            "username": "misi9170"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd1b36d06f5c1dbfca97dd9acbb586dfaf729ade",
+          "message": "[BUGFIX] Dimension update in `LayoutOptimizationBase` (#1067)\n\n* Add test for unusual limits\r\n\r\n* Update index to reflect new 4D arrays in Floris v4.\r\n\r\n* isort.\r\n\r\n* Typo fix on axis labels.",
+          "timestamp": "2025-02-21T09:33:11-07:00",
+          "tree_id": "9e1ef7bbc14d26469ec9e6bd332b6288924afc5a",
+          "url": "https://github.com/NREL/floris/commit/fd1b36d06f5c1dbfca97dd9acbb586dfaf729ade"
+        },
+        "date": 1740156717556,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 46.59293425180751,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00008662623241448769",
+            "extra": "mean: 21.46248172728478 msec\nrounds: 44"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 57.05023824506905,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00020386931752682994",
+            "extra": "mean: 17.52841058619824 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 25.77167514817515,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0009282055371115662",
+            "extra": "mean: 38.80228950002144 msec\nrounds: 24"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.3021030626408369,
+            "unit": "iter/sec",
+            "range": "stddev: 0.02754523917372435",
+            "extra": "mean: 3.310128640400035 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 38.66418818643814,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001569836593865314",
+            "extra": "mean: 25.863726794883544 msec\nrounds: 39"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 116.63844705653348,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001954450763043153",
+            "extra": "mean: 8.57350235051835 msec\nrounds: 97"
           }
         ]
       }
