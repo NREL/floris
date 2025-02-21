@@ -16,33 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
-  <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../../_static/documentation_options.js?v=30a733bc"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -79,7 +76,6 @@
     <link rel="prev" title="Example: Setting FLORIS with WindRoseWRG" href="002_set_floris_with_wrg.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="python"/>
-  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -95,8 +91,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -104,6 +111,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -111,8 +119,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,8 +136,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -159,17 +166,21 @@
     
     
     <img src="../../_static/docs_image.png" class="logo__image only-light" alt="FLORIS - Home"/>
-    <img src="../../_static/docs_image.png" class="logo__image only-dark pst-js-only" alt="FLORIS - Home"/>
+    <script>document.write(`<img src="../../_static/docs_image.png" class="logo__image only-dark" alt="FLORIS - Home"/>`);</script>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -417,14 +428,9 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -585,16 +591,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 
 </div></div>
       
@@ -880,39 +894,39 @@ Optimization time: 0.0 s / 120.0 s
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +1.0
 Optimization time = +30.3 [s]
-Mean AEP = 40.8 [GWh] (+0.38%)
-Median AEP = 40.8 [GWh] (+0.36%)
-Max AEP = 40.8 [GWh] (+0.49%)
-Min AEP = 40.8 [GWh] (+0.31%)
+Mean AEP = 40.8 [GWh] (+0.47%)
+Median AEP = 40.8 [GWh] (+0.46%)
+Max AEP = 40.9 [GWh] (+0.53%)
+Min AEP = 40.8 [GWh] (+0.43%)
 =======================================
 Optimization time: 30.3 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
-Optimization time = +60.6 [s]
-Mean AEP = 40.8 [GWh] (+0.49%)
-Median AEP = 40.8 [GWh] (+0.50%)
+Optimization time = +60.7 [s]
+Mean AEP = 40.9 [GWh] (+0.55%)
+Median AEP = 40.9 [GWh] (+0.55%)
 Max AEP = 40.9 [GWh] (+0.56%)
-Min AEP = 40.8 [GWh] (+0.41%)
+Min AEP = 40.9 [GWh] (+0.54%)
 =======================================
-Optimization time: 60.6 s / 120.0 s
+Optimization time: 60.7 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
-Optimization time = +90.9 [s]
+Optimization time = +91.0 [s]
 Mean AEP = 40.9 [GWh] (+0.56%)
 Median AEP = 40.9 [GWh] (+0.56%)
-Max AEP = 40.9 [GWh] (+0.57%)
-Min AEP = 40.9 [GWh] (+0.54%)
+Max AEP = 40.9 [GWh] (+0.58%)
+Min AEP = 40.9 [GWh] (+0.55%)
 =======================================
-Optimization time: 90.9 s / 120.0 s
+Optimization time: 91.0 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +121.4 [s]
+Optimization time = +121.3 [s]
 Mean AEP = 40.9 [GWh] (+0.57%)
 Median AEP = 40.9 [GWh] (+0.57%)
 Max AEP = 40.9 [GWh] (+0.58%)
@@ -922,11 +936,11 @@ Final AEP = 40.9 [GWh] (+0.58%)
 =====================================
 Objective log array (WRG):
 (5, 4)
-[[0.99428117 0.99428117 0.99428117 0.99428117]
- [0.99910599 0.9973221  0.99760914 0.99819223]
- [0.99979948 0.99862622 0.99838369 0.99979836]
- [0.99981986 0.99984248 0.99968543 0.99998217]
- [0.99998217 1.         0.99981986 0.99998217]]
+[[0.99422577 0.99422577 0.99422577 0.99422577]
+ [0.99878302 0.99849663 0.99873233 0.99950655]
+ [0.99972441 0.99968278 0.99963548 0.99975637]
+ [1.         0.99972441 0.99974824 0.99976761]
+ [1.         0.99976761 0.99974824 1.        ]]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using supplied initial layout for 4 individuals.
@@ -944,46 +958,46 @@ Optimization time: 0.0 s / 120.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +1.0
-Optimization time = +30.3 [s]
-Mean AEP = 44.0 [GWh] (+0.58%)
-Median AEP = 44.0 [GWh] (+0.58%)
+Optimization time = +30.4 [s]
+Mean AEP = 44.0 [GWh] (+0.59%)
+Median AEP = 44.0 [GWh] (+0.59%)
 Max AEP = 44.0 [GWh] (+0.60%)
 Min AEP = 44.0 [GWh] (+0.57%)
 =======================================
-Optimization time: 30.3 s / 120.0 s
+Optimization time: 30.4 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
-Optimization time = +60.4 [s]
-Mean AEP = 44.0 [GWh] (+0.66%)
-Median AEP = 44.0 [GWh] (+0.65%)
-Max AEP = 44.0 [GWh] (+0.74%)
-Min AEP = 44.0 [GWh] (+0.60%)
+Optimization time = +61.7 [s]
+Mean AEP = 44.0 [GWh] (+0.73%)
+Median AEP = 44.0 [GWh] (+0.74%)
+Max AEP = 44.0 [GWh] (+0.76%)
+Min AEP = 44.0 [GWh] (+0.70%)
 =======================================
-Optimization time: 60.4 s / 120.0 s
+Optimization time: 61.7 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
-Optimization time = +91.4 [s]
-Mean AEP = 44.0 [GWh] (+0.74%)
-Median AEP = 44.0 [GWh] (+0.74%)
-Max AEP = 44.0 [GWh] (+0.74%)
-Min AEP = 44.0 [GWh] (+0.73%)
+Optimization time = +91.9 [s]
+Mean AEP = 44.0 [GWh] (+0.75%)
+Median AEP = 44.0 [GWh] (+0.75%)
+Max AEP = 44.0 [GWh] (+0.76%)
+Min AEP = 44.0 [GWh] (+0.74%)
 =======================================
-Optimization time: 91.4 s / 120.0 s
+Optimization time: 91.9 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +121.6 [s]
-Mean AEP = 44.0 [GWh] (+0.74%)
-Median AEP = 44.0 [GWh] (+0.74%)
-Max AEP = 44.0 [GWh] (+0.74%)
-Min AEP = 44.0 [GWh] (+0.74%)
+Optimization time = +122.1 [s]
+Mean AEP = 44.0 [GWh] (+0.76%)
+Median AEP = 44.0 [GWh] (+0.76%)
+Max AEP = 44.0 [GWh] (+0.76%)
+Min AEP = 44.0 [GWh] (+0.76%)
 =======================================
-Final AEP = 44.0 [GWh] (+0.74%)
+Final AEP = 44.0 [GWh] (+0.76%)
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using supplied initial layout for 4 individuals.
@@ -1001,40 +1015,40 @@ Optimization time: 0.0 s / 120.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +1.0
-Optimization time = +30.2 [s]
-Mean AEP = 40.3 [GWh] (+0.60%)
-Median AEP = 40.3 [GWh] (+0.63%)
-Max AEP = 40.3 [GWh] (+0.64%)
-Min AEP = 40.3 [GWh] (+0.52%)
+Optimization time = +30.4 [s]
+Mean AEP = 40.3 [GWh] (+0.62%)
+Median AEP = 40.3 [GWh] (+0.62%)
+Max AEP = 40.3 [GWh] (+0.65%)
+Min AEP = 40.3 [GWh] (+0.60%)
 =======================================
-Optimization time: 30.2 s / 120.0 s
+Optimization time: 30.4 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
-Optimization time = +60.5 [s]
+Optimization time = +60.7 [s]
 Mean AEP = 40.3 [GWh] (+0.65%)
 Median AEP = 40.3 [GWh] (+0.65%)
 Max AEP = 40.3 [GWh] (+0.65%)
-Min AEP = 40.3 [GWh] (+0.65%)
+Min AEP = 40.3 [GWh] (+0.64%)
 =======================================
-Optimization time: 60.5 s / 120.0 s
+Optimization time: 60.7 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
-Optimization time = +90.8 [s]
+Optimization time = +90.9 [s]
 Mean AEP = 40.3 [GWh] (+0.65%)
 Median AEP = 40.3 [GWh] (+0.65%)
 Max AEP = 40.3 [GWh] (+0.65%)
 Min AEP = 40.3 [GWh] (+0.65%)
 =======================================
-Optimization time: 90.8 s / 120.0 s
+Optimization time: 90.9 s / 120.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +121.1 [s]
+Optimization time = +121.2 [s]
 Mean AEP = 40.3 [GWh] (+0.65%)
 Median AEP = 40.3 [GWh] (+0.65%)
 Max AEP = 40.3 [GWh] (+0.65%)
@@ -1044,16 +1058,16 @@ Final AEP = 40.3 [GWh] (+0.65%)
 =====================================
 Objective log array (HET):
 (5, 4)
-[[0.99263864 0.99263864 0.99263864 0.99263864]
- [0.99858967 0.99850638 0.9982789  0.99826967]
- [0.99997148 0.99896033 0.99919835 0.99858967]
- [1.         0.99991339 0.99990489 0.99999472]
- [1.         0.99999472 0.9999409  1.        ]]
+[[0.99245945 0.99245945 0.99245945 0.99245945]
+ [0.99832746 0.99815453 0.99836361 0.99843677]
+ [0.99976928 0.9994067  0.99981426 0.99995766]
+ [0.99998085 0.99981426 0.99991847 0.99997038]
+ [1.         0.99998831 0.99997156 0.99998085]]
 </pre></div>
 </div>
 <img alt="../../_images/bd42e8e110f628c4cec2febd86d9b57ac1edea879bf25cd8d10f97ab9dea4061.png" src="../../_images/bd42e8e110f628c4cec2febd86d9b57ac1edea879bf25cd8d10f97ab9dea4061.png" />
-<img alt="../../_images/5bb667f6fe08659a7a4c095b5de9cbbb7bed3ce6d9bfa74d29791bf67c25afe6.png" src="../../_images/5bb667f6fe08659a7a4c095b5de9cbbb7bed3ce6d9bfa74d29791bf67c25afe6.png" />
-<img alt="../../_images/fcee5e614e7e3b4b244b09b89951e3c139f73a99c64b2fbe4346c09c60ec03f9.png" src="../../_images/fcee5e614e7e3b4b244b09b89951e3c139f73a99c64b2fbe4346c09c60ec03f9.png" />
+<img alt="../../_images/961d5b16ab137b20b1775a29e346cadfcebf140647646f06866e76bd6030655e.png" src="../../_images/961d5b16ab137b20b1775a29e346cadfcebf140647646f06866e76bd6030655e.png" />
+<img alt="../../_images/1703c87d9fa00783c2fe26d6c60516a7e3bd1ecf350f9213cddcb8d9b0be2128.png" src="../../_images/1703c87d9fa00783c2fe26d6c60516a7e3bd1ecf350f9213cddcb8d9b0be2128.png" />
 </div>
 </div>
 </section>
@@ -1147,8 +1161,8 @@ By National Renewable Energy Laboratory
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
