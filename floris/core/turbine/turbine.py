@@ -15,7 +15,7 @@ from floris.core import BaseClass
 from floris.core.turbine import (
     AWCTurbine,
     CosineLossTurbine,
-    MITTurbine,
+    UnifiedMomentumModelTurbine,
     MixedOperationTurbine,
     PeakShavingTurbine,
     SimpleDeratingTurbine,
@@ -42,7 +42,7 @@ TURBINE_MODEL_MAP = {
         "mixed": MixedOperationTurbine,
         "awc": AWCTurbine,
         "peak-shaving": PeakShavingTurbine,
-        "mit-loss": MITTurbine,
+        "unified-momentum": UnifiedMomentumModelTurbine,
     },
 }
 

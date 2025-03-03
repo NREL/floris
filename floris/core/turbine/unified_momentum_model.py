@@ -25,10 +25,10 @@ from floris.type_dec import NDArrayFloat
 
 
 ## Turbine operation model functions
-# These are called by FLORIS through the MITTurbine class to ultimately compute
+# These are called by FLORIS through the UnifiedMomentumModelTurbine class to ultimately compute
 # the power, thrust coefficient, and axial induction of the turbine.
 
-def mit_rotor_axial_induction(Cts: NDArrayFloat, yaw_angles: NDArrayFloat)-> NDArrayFloat:
+def UMM_rotor_axial_induction(Cts: NDArrayFloat, yaw_angles: NDArrayFloat)-> NDArrayFloat:
     """
     Computes the axial induction of a yawed rotor given the yaw-aligned thrust
     coefficient and yaw angles using the yawed actuator disk model developed at
@@ -46,7 +46,7 @@ def mit_rotor_axial_induction(Cts: NDArrayFloat, yaw_angles: NDArrayFloat)-> NDA
 
     return sol.an
 
-def mit_rotor_velocity_yaw_correction(
+def UMM_rotor_velocity_yaw_correction(
     Cts: NDArrayFloat,
     yaw_angles: NDArrayFloat,
     axial_inductions: NDArrayFloat,
@@ -62,7 +62,7 @@ def mit_rotor_velocity_yaw_correction(
         Cts (NDArrayFloat): Yaw-aligned thrust coefficient(s).
         yaw_angles (NDArrayFloat): Rotor yaw angle(s) in degrees.
         axial_induction (NDArrayFloat): Rotor axial induction(s); this should follow the MIT model
-            yaw dependent derivation and probably gotten from `mit_rotor_axial_induction`.
+        yaw dependent derivation and probably gotten from `UMM_rotor_axial_induction`.
         rotor_effective_velocities (NDArrayFloat) rotor effective wind speed(s) at the rotor.
 
     Returns: NDArrayFloat: corrected rotor effective wind speed(s) of the yawed rotor.
@@ -237,8 +237,9 @@ def adaptivefixedpointiteration(
 ## The operation model class to interface with FLORIS.
 # This uses the iterative solve functions above.
 
-class MITTurbine(BaseOperationModel):
+class UnifiedMomentumModelTurbine(BaseOperationModel):
     """
+    Turbine operation model as described by Heck et al. (2023).
     """
 
     def power(
@@ -274,9 +275,9 @@ class MITTurbine(BaseOperationModel):
 
         thrust_coefficients = thrust_coefficient_interpolator(rotor_effective_velocities)
 
-        axial_inductions = mit_rotor_axial_induction(thrust_coefficients, yaw_angles)
+        axial_inductions = UMM_rotor_axial_induction(thrust_coefficients, yaw_angles)
 
-        corrected_rotor_effective_velocities = mit_rotor_velocity_yaw_correction(
+        corrected_rotor_effective_velocities = UMM_rotor_velocity_yaw_correction(
             thrust_coefficients,
             yaw_angles,
             axial_inductions,
@@ -331,9 +332,9 @@ class MITTurbine(BaseOperationModel):
 
         thrust_coefficients = thrust_coefficient_interpolator(rotor_effective_velocities)
 
-        axial_inductions = mit_rotor_axial_induction(thrust_coefficients, yaw_angles)
+        axial_inductions = UMM_rotor_axial_induction(thrust_coefficients, yaw_angles)
 
-        corrected_rotor_effective_velocities = mit_rotor_velocity_yaw_correction(
+        corrected_rotor_effective_velocities = UMM_rotor_velocity_yaw_correction(
             thrust_coefficients,
             yaw_angles,
             axial_inductions,
@@ -382,7 +383,7 @@ class MITTurbine(BaseOperationModel):
 
         thrust_coefficients = thrust_coefficient_interpolator(rotor_effective_velocities)
 
-        axial_inductions = mit_rotor_axial_induction(thrust_coefficients, yaw_angles)
+        axial_inductions = UMM_rotor_axial_induction(thrust_coefficients, yaw_angles)
 
         return axial_inductions
 

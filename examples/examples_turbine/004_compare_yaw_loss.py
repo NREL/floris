@@ -51,7 +51,7 @@ def evaluate_yawed_power(wsp: float, op_model: str) -> float:
 
 
 # Loop over the operational models and wind speeds to compare
-op_models = ["simple", "cosine-loss", "mit-loss"]
+op_models = ["simple", "cosine-loss", "unified-momentum"]
 wind_speeds = [11.0, 11.5, 15.0]
 results = {}
 for op_model, wsp in itertools.product(op_models, wind_speeds):

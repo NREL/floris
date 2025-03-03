@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from floris.core.turbine.mit_turbine import MITTurbine
+from floris.core.turbine.unified_momentum_model import UnifiedMomentumModelTurbine
 from floris.core.turbine.operation_models import (
     AWCTurbine,
     CosineLossTurbine,
@@ -41,9 +41,9 @@ def test_submodel_attributes():
     assert hasattr(PeakShavingTurbine, "thrust_coefficient")
     assert hasattr(PeakShavingTurbine, "axial_induction")
 
-    assert hasattr(MITTurbine, "power")
-    assert hasattr(MITTurbine, "thrust_coefficient")
-    assert hasattr(MITTurbine, "axial_induction")
+    assert hasattr(UnifiedMomentumModelTurbine, "power")
+    assert hasattr(UnifiedMomentumModelTurbine, "thrust_coefficient")
+    assert hasattr(UnifiedMomentumModelTurbine, "axial_induction")
 
 def test_SimpleTurbine():
 
@@ -666,10 +666,7 @@ def test_PeakShavingTurbine():
     assert test_power[-1,0] == base_power[-1,0]
 
 
-def test_MITTurbine():
-
-    # NOTE: These tests should be updated to reflect actual expected behavior
-    # of the MITTurbine model. Currently, match the CosineLossTurbine model.
+def test_UnifiedMomentumModelTurbine():
 
     n_turbines = 1
     wind_speed = 10.0
@@ -682,7 +679,7 @@ def test_MITTurbine():
 
 
     # Check that power works as expected
-    test_power = MITTurbine.power(
+    test_power = UnifiedMomentumModelTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=turbine_data["power_thrust_table"]["ref_air_density"], # Matches ref_air_density
@@ -695,7 +692,7 @@ def test_MITTurbine():
     assert np.allclose(baseline_power, test_power)
 
     # Check that yaw and tilt angle have an effect
-    test_power = MITTurbine.power(
+    test_power = UnifiedMomentumModelTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=turbine_data["power_thrust_table"]["ref_air_density"], # Matches ref_air_density
@@ -706,7 +703,7 @@ def test_MITTurbine():
     assert test_power < baseline_power
 
     # Check that a lower air density decreases power appropriately
-    test_power = MITTurbine.power(
+    test_power = UnifiedMomentumModelTurbine.power(
         power_thrust_table=turbine_data["power_thrust_table"],
         velocities=wind_speed * np.ones((1, n_turbines, 3, 3)), # 1 findex, 1 turbine, 3x3 grid
         air_density=1.1,
