@@ -181,7 +181,7 @@ class WindRose(WindDataBase):
         if np.isnan(wind_speeds).any():
             raise ValueError("wind_speeds contains NaN values")
 
-        # Confirm that both wind_directions and wind_speeds are monitonically
+        # Confirm that both wind_directions and wind_speeds are monotonically
         # increasing and evenly spaced
         if len(wind_directions) > 1:
             # Check monotonically increasing
@@ -596,17 +596,15 @@ class WindRose(WindDataBase):
         # This is the case when wind directions doesn't cover the full range of possible
         # degrees (0-360)
         if np.abs((wd_range_min_current % 360.0) - (wd_range_max_current % 360.0)) > 1e-6:
-            wind_direction_column = np.concatenate(
-                (
-                    np.array([wd_range_min_current]),
-                    wind_direction_column,
-                    np.array([wd_range_max_current]),
-                )
-            )
-            ti_matrix = ti_matrix = np.vstack((ti_matrix[0, :], ti_matrix, ti_matrix[-1, :]))
-            freq_matrix = np.vstack((freq_matrix[0, :], freq_matrix, freq_matrix[-1, :]))
+            wind_direction_column = np.concatenate((
+                np.array([wd_range_min_current]),
+                wind_direction_column,
+                np.array([wd_range_max_current])
+            ))
+            ti_matrix = ti_matrix = np.vstack((ti_matrix[0, :], ti_matrix, ti_matrix[-1,:]))
+            freq_matrix = np.vstack((freq_matrix[0, :], freq_matrix, freq_matrix[-1,:]))
             if self.value_table is not None:
-                value_matrix = np.vstack((value_matrix[0, :], value_matrix, value_matrix[-1, :]))
+                value_matrix = np.vstack((value_matrix[0, :], value_matrix, value_matrix[-1,:]))
 
         # In the alternative case, where the wind directions cover the full range
         # ie, 0, 10, 20 30, ...350, then need to place 0 at 360 and 350 at -10
@@ -629,7 +627,11 @@ class WindRose(WindDataBase):
 
         # Pad out the wind speeds
         wind_speed_column = np.concatenate(
-            (np.array([ws_range_min_current]), wind_speed_column, np.array([ws_range_max_current]))
+            (
+                np.array([ws_range_min_current]),
+                wind_speed_column,
+                np.array([ws_range_max_current])
+            )
         )
         ti_matrix = np.hstack(
             (ti_matrix[:, 0].reshape((-1, 1)), ti_matrix, ti_matrix[:, -1].reshape((-1, 1)))
@@ -642,7 +644,7 @@ class WindRose(WindDataBase):
                 (
                     value_matrix[:, 0].reshape((-1, 1)),
                     value_matrix,
-                    value_matrix[:, -1].reshape((-1, 1)),
+                    value_matrix[:, -1].reshape((-1, 1))
                 )
             )
 
@@ -1592,21 +1594,21 @@ class WindTIRose(WindDataBase):
                 (
                     np.array([wd_range_min_current]),
                     wind_direction_column,
-                    np.array([wd_range_max_current]),
+                    np.array([wd_range_max_current])
                 )
             )
             freq_matrix = np.concatenate(
                 (freq_matrix[0, :, :][None, :, :], freq_matrix, freq_matrix[-1, :, :][None, :, :]),
-                axis=0,
+                axis=0
             )
             if self.value_table is not None:
                 value_matrix = np.concatenate(
                     (
                         value_matrix[0, :, :][None, :, :],
                         value_matrix,
-                        value_matrix[-1, :, :][None, :, :],
+                        value_matrix[-1, :, :][None, :, :]
                     ),
-                    axis=0,
+                    axis=0
                 )
 
         # In the alternative case, where the wind directions cover the full range
@@ -1637,20 +1639,24 @@ class WindTIRose(WindDataBase):
 
         # Pad out the wind speeds
         wind_speed_column = np.concatenate(
-            (np.array([ws_range_min_current]), wind_speed_column, np.array([ws_range_max_current]))
+            (
+                np.array([ws_range_min_current]),
+                wind_speed_column,
+                np.array([ws_range_max_current])
+            )
         )
         freq_matrix = np.concatenate(
             (freq_matrix[:, 0, :][:, None, :], freq_matrix, freq_matrix[:, -1, :][:, None, :]),
-            axis=1,
+            axis=1
         )
         if self.value_table is not None:
             value_matrix = np.concatenate(
                 (
                     value_matrix[:, 0, :][:, None, :],
                     value_matrix,
-                    value_matrix[:, -1, :][:, None, :],
+                    value_matrix[:, -1, :][:, None, :]
                 ),
-                axis=1,
+                axis=1
             )
 
         # Pad out the turbulence intensities
@@ -1658,21 +1664,21 @@ class WindTIRose(WindDataBase):
             (
                 np.array([ti_range_min_current]),
                 turbulence_intensity_column,
-                np.array([ti_range_max_current]),
+                np.array([ti_range_max_current])
             )
         )
         freq_matrix = np.concatenate(
             (freq_matrix[:, :, 0][:, :, None], freq_matrix, freq_matrix[:, :, -1][:, :, None]),
-            axis=2,
+            axis=2
         )
         if self.value_table is not None:
             value_matrix = np.concatenate(
                 (
                     value_matrix[:, :, 0][:, :, None],
                     value_matrix,
-                    value_matrix[:, :, -1][:, :, None],
+                    value_matrix[:, :, -1][:, :, None]
                 ),
-                axis=2,
+                axis=2
             )
 
         # Grid wind directions, wind speeds and turbulence intensities to match the
@@ -2186,17 +2192,6 @@ class TimeSeries(WindDataBase):
         if values is not None:
             if len(wind_directions) != len(values):
                 raise ValueError("wind_directions and values must be the same length")
-
-        # Confirm that none of wind_directions, wind_speeds, turbulence_intensitiess and
-        # values contain NaNs
-        if np.isnan(wind_directions).any():
-            raise ValueError("wind_directions must not contain NaNs")
-        if np.isnan(wind_speeds).any():
-            raise ValueError("wind_speeds must not contain NaNs")
-        if np.isnan(turbulence_intensities).any():
-            raise ValueError("turbulence_intensities must not contain NaNs")
-        if values is not None and np.isnan(values).any():
-            raise ValueError("values must not contain NaNs")
 
         self.wind_directions = wind_directions
         self.wind_speeds = wind_speeds
@@ -3005,7 +3000,7 @@ class WindRoseWRG(WindDataBase):
             wind_speeds = self.wind_speeds
         ws_steps = np.diff(wind_speeds)
         if not np.all(np.isclose(ws_steps, ws_steps[0])):
-            raise ValueError("wind_speeds must be equally spaced.")
+           raise ValueError("wind_speeds must be equally spaced.")
         else:
             ws_step = ws_steps[0]
 
