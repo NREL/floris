@@ -176,10 +176,10 @@ class WindRose(WindDataBase):
 
         # Confirm that none of wind_directions or wind_speeds contain NaN values
         if np.isnan(wind_directions).any():
-            raise ValueError("wind_directions contains NaN values")
+            raise ValueError("wind_directions must not contain NaNs")
 
         if np.isnan(wind_speeds).any():
-            raise ValueError("wind_speeds contains NaN values")
+            raise ValueError("wind_speeds must not contain NaNs")
 
         # Confirm that both wind_directions and wind_speeds are monotonically
         # increasing and evenly spaced
