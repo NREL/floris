@@ -35,13 +35,16 @@ def UMM_rotor_axial_induction(Cts: NDArrayFloat, yaw_angles: NDArrayFloat)-> NDA
     MIT as described in Heck et al. 2023. Assumes the modified thrust
     coefficient, C_T', is invariant to yaw misalignment angle.
 
+    Uses form of C_T' from Eq. (19) of Calaf et al., 2010, https://doi.org/10.1063/1.3291077
+
     Args
         Cts (NDArrayFloat): Yaw-aligned thrust coefficient(s).
         yaw_angles (NDArrayFloat): Rotor yaw angle(s) in degrees.
 
     Returns: NDArrayFloat: Axial induction factor(s) of the yawed rotor.
     """
-    Ctprime = - 4 * (Cts + 2 * np.sqrt(1 - Cts) - 2) / Cts
+    ai_yawaligned = 0.5*(1 - np.sqrt(1 - Cts)) # Actuator disc theory
+    Ctprime = Cts / (1-ai_yawaligned)**2 # Eq. (19) of Calaf et al., 2010
     sol = Heck()(Ctprime, np.deg2rad(yaw_angles))
 
     return sol.an
@@ -67,8 +70,14 @@ def UMM_rotor_velocity_yaw_correction(
 
     Returns: NDArrayFloat: corrected rotor effective wind speed(s) of the yawed rotor.
     """
-    Ctprime = - 4 * (Cts + 2 * np.sqrt(1 - Cts) - 2) / Cts
-    ratio = (1 + 0.25 * Ctprime) * (1 - axial_inductions) * np.cos(np.deg2rad(yaw_angles))
+    ai_yawaligned = 0.5*(1 - np.sqrt(1 - Cts)) # Actuator disc theory
+    Ctprime = Cts / (1-ai_yawaligned)**2 # Eq. (19) of Calaf et al., 2010
+
+    u_d_yawed = (1 - axial_inductions) * np.cos(np.deg2rad(yaw_angles)) # Eq. 2.3 of Heck et al.
+    u_d_aligned = (1 - (Ctprime)/(Ctprime + 4)) # From eq. D1 of Heck et al.
+
+    # Ratio of yaw-adjusted rotor wind speeds to yaw-aligned rotor wind speeds
+    ratio = u_d_yawed / u_d_aligned
 
     return ratio * rotor_effective_velocities
 
