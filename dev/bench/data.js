@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1741048202323,
+  "lastUpdate": 1741107703870,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -830,6 +830,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0001910497811520803",
             "extra": "mean: 8.64317560214942 msec\nrounds: 93"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "michael.sinner@nrel.gov",
+            "name": "misi9170",
+            "username": "misi9170"
+          },
+          "committer": {
+            "email": "michael.sinner@nrel.gov",
+            "name": "misi9170",
+            "username": "misi9170"
+          },
+          "distinct": true,
+          "id": "e77566324e5d83ab9caa7589056da722b5acad63",
+          "message": "Update docs notes on Floris support and numpy requirements.",
+          "timestamp": "2025-03-04T09:41:06-07:00",
+          "tree_id": "8ff8a8ba12d518b692e60d401881ac0f8ce1eff3",
+          "url": "https://github.com/NREL/floris/commit/e77566324e5d83ab9caa7589056da722b5acad63"
+        },
+        "date": 1741107701846,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 44.10851427972288,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008060258171057385",
+            "extra": "mean: 22.671359857153696 msec\nrounds: 42"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 56.20414898148207,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002048170595505677",
+            "extra": "mean: 17.792280785702783 msec\nrounds: 28"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 24.693963136191066,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0012425372142089895",
+            "extra": "mean: 40.49572741665012 msec\nrounds: 24"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.2981069212261281,
+            "unit": "iter/sec",
+            "range": "stddev: 0.019679214666826535",
+            "extra": "mean: 3.3545011162000264 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 36.99711244463313,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006568998644788379",
+            "extra": "mean: 27.029136435891278 msec\nrounds: 39"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 116.14705698353868,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00020054490197208058",
+            "extra": "mean: 8.609774762882957 msec\nrounds: 97"
           }
         ]
       }
