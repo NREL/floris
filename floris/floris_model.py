@@ -33,6 +33,7 @@ from floris.type_dec import (
     NDArrayStr,
 )
 from floris.utilities import (
+    load_yaml,
     nested_get,
     nested_set,
     print_nested_dict,
@@ -63,7 +64,15 @@ class FlorisModel(LoggingManager):
                 - **logging**: See `floris.simulation.core.Core` for more details.
     """
 
+    @staticmethod
+    def get_defaults() -> dict:
+        return copy.deepcopy(load_yaml(Path(__file__).parent / "default_inputs.yaml"))
+
     def __init__(self, configuration: dict | str | Path):
+
+        if configuration == "defaults":
+            configuration = FlorisModel.get_defaults()
+
         self.configuration = configuration
 
         if isinstance(self.configuration, (str, Path)):
@@ -1627,11 +1636,29 @@ class FlorisModel(LoggingManager):
         else:
             return xcoords, ycoords
 
+    def show_config(self, full=False) -> None:
+        """Print the FlorisModel dictionary.
+        """
+        config_dict = self.core.as_dict()
+        if not full:
+            del config_dict["logging"]
+            del config_dict["wake"]["enable_secondary_steering"]
+            del config_dict["wake"]["enable_yaw_added_recovery"]
+            del config_dict["wake"]["enable_transverse_velocities"]
+            del config_dict["wake"]["enable_active_wake_mixing"]
+            del config_dict["wake"]["wake_deflection_parameters"]
+            del config_dict["wake"]["wake_velocity_parameters"]
+            del config_dict["wake"]["wake_turbulence_parameters"]
+        print_nested_dict(config_dict)
+
     def print_dict(self) -> None:
         """Print the FlorisModel dictionary.
         """
-        print_nested_dict(self.core.as_dict())
-
+        self.logger.warning(
+            "The print_dict() method has been deprecated."
+            " Please use the show_config() method instead."
+        )
+        self.show_config(full=True)
 
     ### Properties
 
@@ -1745,9 +1772,16 @@ class FlorisModel(LoggingManager):
 
     @staticmethod
     def merge_floris_models(fmodel_list, reference_wind_height=None):
-        """Merge a list of FlorisModel objects into a single FlorisModel object. Note that it uses
-        the very first object specified in fmodel_list to build upon,
+        """Merge a list of FlorisModel objects into a single FlorisModel object.
+        Note that it uses the first object specified in fmodel_list to build upon,
         so it uses those wake model parameters, air density, and so on.
+        Currently, this function supports merging the following components of the FLORIS inputs:
+            - farm
+                - layout_x
+                - layout_y
+                - turbine_type
+            - flow_field
+                - reference_wind_height
 
         Args:
             fmodel_list (list): Array-like of FlorisModel objects.
@@ -1764,8 +1798,8 @@ class FlorisModel(LoggingManager):
                 or general solver settings.
         """
 
-        if not isinstance(fmodel_list[0], FlorisModel):
-            raise ValueError(
+        if not all( type(fm) is FlorisModel for fm in fmodel_list ):
+            raise TypeError(
                 "Incompatible input specified. fmodel_list must be a list of FlorisModel objects."
             )
 
