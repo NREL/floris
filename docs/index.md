@@ -9,9 +9,7 @@ of a wind farm or extending FLORIS to include your own wake model, please join
 the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/)!
 
 ```{note}
-Support for python version 3.8 will be dropped in FLORIS v4.3. See {ref}`installation` for details.
-
-FLORIS v4.3 will also move to requiring `numpy` version 2. See the [numpy documentation for details](https://numpy.org/doc/stable/numpy_2_0_migration_guide.html).
+Support for python version 3.8 was dropped in FLORIS v4.3. See {ref}`installation` for details. FLORIS v4.3 also made the move to requiring `numpy` version 2. See the [numpy documentation for details](https://numpy.org/doc/stable/numpy_2_0_migration_guide.html).
 ```
 
 ## Quick Start
