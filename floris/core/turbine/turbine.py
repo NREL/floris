@@ -15,11 +15,11 @@ from floris.core import BaseClass
 from floris.core.turbine import (
     AWCTurbine,
     CosineLossTurbine,
-    UnifiedMomentumModelTurbine,
     MixedOperationTurbine,
     PeakShavingTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
+    UnifiedMomentumModelTurbine,
 )
 from floris.type_dec import (
     convert_to_path,
