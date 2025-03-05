@@ -5,13 +5,35 @@ import numpy as np
 import pytest
 import yaml
 
-from floris import FlorisModel, WindRose
-from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
+from floris import (
+    FlorisModel,
+    TimeSeries,
+    WindRose,
+)
+from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED
 
 
 TEST_DATA = Path(__file__).resolve().parent / "data"
 YAML_INPUT = TEST_DATA / "input_full.yaml"
 
+
+def test_default_init():
+    # Test getting the default dict
+    defaults = FlorisModel.get_defaults()
+    fmodel1 = FlorisModel(defaults)
+    assert isinstance(fmodel1, FlorisModel)
+
+    # Test that there are no side effects from changing the default dict
+    defaults2 = FlorisModel.get_defaults()
+    defaults2["farm"]["layout_x"] = [0, 1000]
+    defaults2["farm"]["layout_y"] = [0, 0]
+    fmodel2 = FlorisModel(defaults2)
+    assert fmodel2.core.as_dict() != FlorisModel(defaults).core.as_dict()
+
+    # Test using the "default" string
+    # This checks that the init works and that the default dictionary hasn't changed
+    fmodel3 = FlorisModel("defaults")
+    assert fmodel1.core.as_dict() == fmodel3.core.as_dict()
 
 def test_read_yaml():
     fmodel = FlorisModel(configuration=YAML_INPUT)
@@ -40,7 +62,24 @@ def test_assign_setpoints():
 
     # power_setpoints and disable_turbines (disable_turbines overrides power_setpoints)
     fmodel.set(power_setpoints=[[1e6, 2e6]], disable_turbines=[[True, False]])
-    assert np.allclose(fmodel.core.farm.power_setpoints, np.array([[0.001, 2e6]]))
+    assert np.allclose(fmodel.core.farm.power_setpoints, np.array([[POWER_SETPOINT_DISABLED, 2e6]]))
+
+    # Setting sequentially is equivalent to setting together
+    fmodel.reset_operation()
+    fmodel.set(disable_turbines=[[True, False]])
+    fmodel.set(yaw_angles=[[0, 30]])
+    assert np.allclose(
+        fmodel.core.farm.power_setpoints,
+        np.array([[POWER_SETPOINT_DISABLED, POWER_SETPOINT_DEFAULT]])
+    )
+    assert np.allclose(fmodel.core.farm.yaw_angles, np.array([[0, 30]]))
+
+    fmodel.set(disable_turbines=[[True, False]], yaw_angles=[[0, 30]])
+    assert np.allclose(
+        fmodel.core.farm.power_setpoints,
+        np.array([[POWER_SETPOINT_DISABLED, POWER_SETPOINT_DEFAULT]])
+    )
+    assert np.allclose(fmodel.core.farm.yaw_angles, np.array([[0, 30]]))
 
 def test_set_run():
     """
@@ -390,6 +429,83 @@ def test_get_farm_aep(caplog):
     expected_farm_power = fmodel.get_expected_farm_power(freq=freq)
     np.testing.assert_allclose(expected_farm_power, aep / (365 * 24))
 
+def test_expected_farm_power_regression():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 8.0, 8.0])
+    wind_directions = np.array([270.0, 270.0, 270.0])
+    turbulence_intensities = np.array([0.06, 0.06, 0.06])
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=layout_x,
+        layout_y=layout_y,
+    )
+
+    fmodel.run()
+
+    expected_farm_power = fmodel.get_expected_farm_power()
+
+    # Assert the expected farm power has not inadvetently changed
+    np.testing.assert_allclose(expected_farm_power, 3507908.918358342, atol=1e-1)
+
+def test_expected_farm_power_equals_sum_of_expected_turbine_powers():
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 8.0, 8.0])
+    wind_directions = np.array([270.0, 270.0, 270.0])
+    turbulence_intensities = np.array([0.06, 0.06, 0.06])
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+
+    fmodel.set(
+        wind_speeds=wind_speeds,
+        wind_directions=wind_directions,
+        turbulence_intensities=turbulence_intensities,
+        layout_x=layout_x,
+        layout_y=layout_y,
+    )
+
+    fmodel.run()
+
+    expected_farm_power = fmodel.get_expected_farm_power()
+    expected_turbine_powers = fmodel.get_expected_turbine_powers()
+
+    # Assert the expected farm power is the sum of the expected turbine powers
+    np.testing.assert_allclose(expected_farm_power, np.sum(expected_turbine_powers))
+
+def test_expected_farm_value_regression():
+
+    # Ensure this calculation hasn't changed unintentionally
+
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    wind_speeds = np.array([8.0, 8.0, 9.0])
+    wind_directions = np.array([270.0, 270.0, 270.0])
+    values = np.array([30.0, 20.0, 10.0])
+    time_series = TimeSeries(
+        wind_directions=wind_directions,
+        wind_speeds=wind_speeds,
+        turbulence_intensities=0.06,
+        values=values,
+    )
+
+    layout_x = np.array([0, 0])
+    layout_y = np.array([0, 1000])
+    fmodel.set(layout_x=layout_x, layout_y=layout_y, wind_data=time_series)
+    fmodel.run()
+
+    expected_farm_value = fmodel.get_expected_farm_value()
+    assert np.allclose(expected_farm_value,75108001.05154414 , atol=1e-1)
+
 def test_get_farm_avp(caplog):
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
@@ -638,6 +754,8 @@ def test_set_operation_model():
     fmodel.set_operation_model("simple-derating")
     assert fmodel.get_operation_model() == "simple-derating"
 
+    reference_wind_height = fmodel.reference_wind_height
+
     # Check multiple turbine types works
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
@@ -645,26 +763,26 @@ def test_set_operation_model():
 
     # Check that setting a single turbine type, and then altering the operation model works
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     assert fmodel.get_operation_model() == "simple-derating"
 
     # Check that setting over mutliple turbine types works
-    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     assert fmodel.get_operation_model() == "simple-derating"
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
     assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
 
     # Check setting over single turbine type; then updating layout works
-    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
     assert fmodel.get_operation_model() == "simple-derating"
 
     # Check that setting for multiple turbine types and then updating layout breaks
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    fmodel.set(turbine_type=["nrel_5MW"])
+    fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
     assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
     with pytest.raises(ValueError):
@@ -672,7 +790,7 @@ def test_set_operation_model():
 
     # Check one more variation
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
-    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"])
+    fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     with pytest.raises(ValueError):
@@ -700,3 +818,56 @@ def test_set_operation():
     with pytest.raises(ValueError):
         fmodel.set_operation(yaw_angles=np.array([[25.0, 0.0], [25.0, 0.0]]))
         fmodel.run()
+
+def test_reference_wind_height_methods(caplog):
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+
+    # Check that if the turbine type is changed, a warning is raised/not raised regarding the
+    # reference wind height
+    with caplog.at_level(logging.WARNING):
+        fmodel.set(turbine_type=["iea_15MW"])
+    assert caplog.text != "" # Checking not empty
+    caplog.clear()
+    with caplog.at_level(logging.WARNING):
+        fmodel.set(turbine_type=["iea_15MW"], reference_wind_height=100.0)
+    assert caplog.text == "" # Checking empty
+
+    # Check that assigning the reference wind height to the turbine hub height works
+    assert fmodel.core.flow_field.reference_wind_height == 100.0 # Set in line above
+    fmodel.assign_hub_height_to_ref_height()
+    assert fmodel.core.flow_field.reference_wind_height == 150.0 # 150m is HH for IEA 15MW
+
+    with pytest.raises(ValueError):
+        fmodel.set(
+            layout_x = [0.0, 0.0],
+            layout_y = [0.0, 1000.0],
+            turbine_type=["nrel_5MW", "iea_15MW"]
+        )
+        fmodel.assign_hub_height_to_ref_height() # Shouldn't allow due to multiple turbine types
+
+def test_merge_floris_models():
+
+    # Check that the merge function extends the data as expected
+    fmodel1 = FlorisModel(configuration=YAML_INPUT)
+    fmodel1.set(
+        layout_x=[0, 1000],
+        layout_y=[0, 0]
+    )
+    fmodel2 = FlorisModel(configuration=YAML_INPUT)
+    fmodel2.set(
+        layout_x=[2000, 3000],
+        layout_y=[0, 0]
+    )
+
+    merged_fmodel = FlorisModel.merge_floris_models([fmodel1, fmodel2])
+    assert merged_fmodel.n_turbines == 4
+
+    # Check that this model will run without error
+    merged_fmodel.run()
+
+    # Verify error handling
+
+    ## Input list with incorrect types
+    fmodel_list = [fmodel1, "not a floris model"]
+    with pytest.raises(TypeError):
+        merged_fmodel = FlorisModel.merge_floris_models(fmodel_list)
