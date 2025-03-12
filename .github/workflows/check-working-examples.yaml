@@ -29,9 +29,15 @@ jobs:
       # reliance on the repo directory structure.
       run: |
 
-        mkdir -p temp1/temp2/temp3
-        cp -r examples/ temp1/temp2/temp3/.
-        cd temp1/temp2/temp3/examples/
+        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          mkdir temp1\temp2\temp3
+          cp -r examples\ temp1\temp2\temp3\.
+          cd temp1\temp2\temp3\examples\
+        else
+          mkdir -p temp1/temp2/temp3
+          cp -r examples temp1/temp2/temp3/.
+          cd temp1/temp2/temp3/examples/
+        fi
 
         error_found=0  # 0 is false
         error_results="Error in example:"
