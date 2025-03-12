@@ -174,7 +174,14 @@ class WindRose(WindDataBase):
         if not isinstance(wind_speeds, np.ndarray):
             raise TypeError("wind_speeds must be a NumPy array")
 
-        # Confirm that both wind_directions and wind_speeds are monitonically
+        # Confirm that none of wind_directions or wind_speeds contain NaN values
+        if np.isnan(wind_directions).any():
+            raise ValueError("wind_directions must not contain NaNs")
+
+        if np.isnan(wind_speeds).any():
+            raise ValueError("wind_speeds must not contain NaNs")
+
+        # Confirm that both wind_directions and wind_speeds are monotonically
         # increasing and evenly spaced
         if len(wind_directions) > 1:
             # Check monotonically increasing
@@ -1124,6 +1131,14 @@ class WindTIRose(WindDataBase):
 
         if not isinstance(turbulence_intensities, np.ndarray):
             raise TypeError("turbulence_intensities must be a NumPy array")
+
+        # Check that wind_directions, wind_speeds, and turbulence_intensities do not contain NaNs
+        if np.isnan(wind_directions).any():
+            raise ValueError("wind_directions must not contain NaNs")
+        if np.isnan(wind_speeds).any():
+            raise ValueError("wind_speeds must not contain NaNs")
+        if np.isnan(turbulence_intensities).any():
+            raise ValueError("turbulence_intensities must not contain NaNs")
 
         # Confirm that both wind_directions and wind_speeds
         # and turbulence intensities are monotonically
