@@ -29,7 +29,13 @@ class HeterogeneousMap(LoggingManager):
             (degrees). Optional.
         wind_speeds (NDArrayFloat, optional): A 1D NumPy array (size num_ws) of wind speeds (m/s).
             Optional.
-
+        interp_method (str, optional): Interpolation method used to calculate the heterogeneous
+            wind speeds at various locations in the wind farm. Options are 'linear' and 'nearest',
+            representing linear interpolation and nearest-neighbor interpolation respectively.
+            Linear interpolation is accurate, nearest-neighbor interpolation is very fast but
+            inaccurate. Note also that in the default 'linear' setting, speed-ups at locations
+            outside the convex hull of points defined by `x`, `y` and `z` are 1.0 while in
+            the nearest case will be the value of the nearest point. Defaults to 'linear'. Optional.
 
     Notes:
         * If wind_directions and wind_speeds are both defined, then they must be the same length
@@ -45,6 +51,7 @@ class HeterogeneousMap(LoggingManager):
         z: NDArrayFloat = None,
         wind_directions: NDArrayFloat = None,
         wind_speeds: NDArrayFloat = None,
+        interp_method: str = "linear",
     ):
         # Check that x, y and speed_multipliers are lists or numpy arrays
         if not isinstance(x, (list, np.ndarray)):
@@ -62,6 +69,7 @@ class HeterogeneousMap(LoggingManager):
         self.x = np.array(x)
         self.y = np.array(y)
         self.speed_multipliers = np.array(speed_multipliers)
+        self.interp_method = str(interp_method)
 
         # If z is provided, save it as an np array
         if z is not None:
@@ -251,6 +259,7 @@ class HeterogeneousMap(LoggingManager):
                 "x": self.x,
                 "y": self.y,
                 "speed_multipliers": speed_multipliers_by_findex,
+                "interp_method": self.interp_method,
             }
         else:
             return {
@@ -258,6 +267,7 @@ class HeterogeneousMap(LoggingManager):
                 "y": self.y,
                 "z": self.z,
                 "speed_multipliers": speed_multipliers_by_findex,
+                "interp_method": self.interp_method,
             }
 
     def get_heterogeneous_map_2d(self, z: float):
@@ -287,6 +297,7 @@ class HeterogeneousMap(LoggingManager):
             speed_multipliers=speed_multipliers,
             wind_directions=self.wind_directions,
             wind_speeds=self.wind_speeds,
+            interp_method=self.interp_method,
         )
 
     @staticmethod
