@@ -537,29 +537,29 @@ class AWCTurbine(BaseOperationModel):
             cubature_weights=cubature_weights
         )
 
-        if (awc_modes == 'helix').any():
-            if np.any(np.isclose(
-                base_powers/1000,
-                np.max(power_thrust_table['power'])
-                )):
-                raise UserWarning(
-                    'The selected wind speed is above or near rated wind speed. '
-                    '`AWCTurbine` operation model is not designed '
-                    'or verified for above-rated conditions.'
-                    )
+        valid_entries = ['helix', 'baseline']
+        if not np.all(np.isin(awc_modes, valid_entries)):
+            raise UserWarning(
+                'Active wake mixing strategies other than the `helix` strategy '
+                'have not yet been implemented in FLORIS. Returning baseline power.'
+            )
+
+        def apply_awc(base_powers,power_thrust_table,awc_amplitudes):
             return base_powers * (1 - (
                 power_thrust_table['helix_power_b']
                 + power_thrust_table['helix_power_c']*base_powers
                 )
                 *awc_amplitudes**power_thrust_table['helix_a']
-            ) # TODO: Should probably add max function here
-        if (awc_modes == 'baseline').any():
-            return base_powers
-        else:
+            ) 
+
+        mask = (awc_modes == 'helix')
+        if np.any(np.isclose(base_powers[mask]/1000,np.max(power_thrust_table['power']))):
             raise UserWarning(
-                'Active wake mixing strategies other than the `helix` strategy '
-                'have not yet been implemented in FLORIS. Returning baseline power.'
-                )
+                'The selected wind speed is above or near rated wind speed. '
+                '`AWCTurbine` operation model is not designed '
+                'or verified for above-rated conditions.'
+            )
+        return np.where(mask, apply_awc(base_powers,power_thrust_table,awc_amplitudes), base_powers)
 
 
     def thrust_coefficient(
@@ -577,20 +577,17 @@ class AWCTurbine(BaseOperationModel):
             average_method=average_method,
             cubature_weights=cubature_weights
         )
-        if (awc_modes == 'helix').any():
+
+        def apply_awc(base_powers,power_thrust_table,awc_amplitudes):
             return base_thrust_coefficients * (1 - (
                 power_thrust_table['helix_thrust_b']
                 + power_thrust_table['helix_thrust_c']*base_thrust_coefficients
                 )
                 *awc_amplitudes**power_thrust_table['helix_a']
-            )
-        if (awc_modes == 'baseline').any():
-            return base_thrust_coefficients
-        else:
-            raise UserWarning(
-                'Active wake mixing strategies other than the `helix` strategy '
-                'have not yet been implemented in FLORIS. Returning baseline power.'
                 )
+
+        mask = (awc_modes == 'helix')
+        return np.where(mask, apply_awc(base_thrust_coefficients,power_thrust_table,awc_amplitudes), base_thrust_coefficients)
 
     def axial_induction(
         power_thrust_table: dict,
