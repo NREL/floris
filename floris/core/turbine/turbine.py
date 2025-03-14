@@ -62,15 +62,18 @@ def select_multidim_condition(
 
     # Find the nearest key to the specified conditions.
     specified_conditions = np.array(specified_conditions)
+    if len(specified_conditions.shape) == 1: # Single specified condition
+        specified_conditions = specified_conditions.reshape(-1, 1)
 
     # Find the nearest key to the specified conditions.
     nearest_condition = np.zeros_like(condition)
     for i, c in enumerate(condition):
+        # specified_conditions[:,i] assumes two dimensions, which isn't necessarily the case.
         nearest_condition[i] = (
             specified_conditions[:, i][np.absolute(specified_conditions[:, i] - c).argmin()]
         )
 
-    return tuple(nearest_condition)
+    return tuple(nearest_condition)# if len(specified_conditions)
 
 
 def power(
@@ -560,6 +563,8 @@ class Turbine(BaseClass):
         for key in df2.index.unique():
             # Select the correct ws/Cp/Ct data
             data = df2.loc[key]
+            if type(key) is not tuple:
+                key = (key,)
 
             # Build the interpolants
             power_thrust_table_.update(
@@ -585,14 +590,16 @@ class Turbine(BaseClass):
         """
 
         if self.multi_dimensional_cp_ct:
-            if isinstance(list(value.keys())[0], tuple):
-                value = list(value.values())[0] # Check the first entry of multidim
-            elif "power_thrust_data_file" in value.keys():
+            if "power_thrust_data_file" in value.keys():
                 return None
             else:
-                raise ValueError(
-                    "power_thrust_data_file must be defined if multi_dimensional_cp_ct is True."
-                )
+                key_types = [type(k) for k in value.keys()]
+                if key_types[0] in (tuple, float, int):
+                    value = list(value.values())[0] # Check the first entry of multidim
+                else:
+                    raise ValueError(
+                        "power_thrust_data_file must be defined if multi_dimensional_cp_ct is True."
+                    )
 
         if not {"wind_speed", "power", "thrust_coefficient"} <= set(value.keys()):
             raise ValueError(
