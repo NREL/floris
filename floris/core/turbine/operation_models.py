@@ -550,7 +550,7 @@ class AWCTurbine(BaseOperationModel):
                 + power_thrust_table['helix_power_c']*base_powers
                 )
                 *awc_amplitudes**power_thrust_table['helix_a']
-            ) 
+            )
 
         mask = (awc_modes == 'helix')
         if np.any(np.isclose(base_powers[mask]/1000,np.max(power_thrust_table['power']))):
@@ -587,7 +587,11 @@ class AWCTurbine(BaseOperationModel):
                 )
 
         mask = (awc_modes == 'helix')
-        return np.where(mask, apply_awc(base_thrust_coefficients,power_thrust_table,awc_amplitudes), base_thrust_coefficients)
+        return np.where(
+            mask,
+            apply_awc(base_thrust_coefficients,power_thrust_table,awc_amplitudes),
+            base_thrust_coefficients
+        )
 
     def axial_induction(
         power_thrust_table: dict,
