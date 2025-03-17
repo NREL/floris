@@ -58,9 +58,18 @@ def compute_load_ti(
     sorted_indices = fmodel.core.grid.sorted_indices[:, :, 0, 0]
     unsorted_indices = fmodel.core.grid.unsorted_indices[:, :, 0, 0]
 
-    # Ensure load_ambient_tis is an array of length n_findex
+    # Ensure load_ambient_tis is a list or np.array
+    if not isinstance(load_ambient_tis, (list, np.ndarray)):
+        raise ValueError("load_ambient_tis must be a list or np.array")
+
+    # Ensure load_ambient_tis is  of length n_findex
     if len(load_ambient_tis) != fmodel.n_findex:
-        raise ValueError("load_ambient_tis must be a list or np.array of length n_findex")
+        raise ValueError(
+            (
+                "load_ambient_tis must be a list or np.array of length n_findex",
+                f"FMODEL findex = {fmodel.n_findex}, load_ambient_tis = {len(load_ambient_tis)}",
+            )
+        )
 
     # Initialize the load_ti to the load_ambient_ti
     # This should be n_findex x n_turbines
