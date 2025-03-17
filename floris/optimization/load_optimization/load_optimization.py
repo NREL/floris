@@ -31,7 +31,12 @@ def get_rotor_diameters(fmodel: FlorisModel):
     Returns:
         np.array: Array of rated powers for each turbine
     """
-    return fmodel.core.farm.rotor_diameters[0, :]
+
+    # If fmodel.core.farm.rotor_diameters is 1 dimensional, return
+    if fmodel.core.farm.rotor_diameters.ndim == 1:
+        return fmodel.core.farm.rotor_diameters
+    else:
+        return fmodel.core.farm.rotor_diameters[0, :]
 
 
 def compute_load_ti(
@@ -169,6 +174,10 @@ def compute_turbine_voc(
         np.array: Array of VOC for each findex and turbine
     """
 
+    # A should be a float and not a list or array
+    if not isinstance(A, (int, float)):
+        raise ValueError("A (coefficient of VOC) must be a float")
+
     # Get the ambient wind speed and apply to each turbine per findex
     ambient_wind_speeds = fmodel.wind_speeds
     ambient_wind_speeds = np.tile(ambient_wind_speeds[:, np.newaxis], (1, fmodel.n_turbines))
@@ -196,6 +205,55 @@ def compute_turbine_voc(
     return A * (ws_std**exp_ws_std) * (thrust**exp_thrust)
 
 
+def compute_farm_revenue(
+    fmodel: FlorisModel,
+):
+    if fmodel.core.state is not State.USED:
+        raise ValueError("FlorisModel must be run before computing net revenue")
+
+    # Make sure fmodel.wind_data is not None
+    if fmodel.wind_data is None:
+        raise ValueError("FlorisModel must have wind data to compute net revenue")
+
+    # Ensure that fmodel.wind_data is not None
+    if fmodel.wind_data.values is None:
+        raise ValueError("FlorisModel wind_data.values must be set to compute revenue")
+
+    farm_power = fmodel.get_farm_power()
+    values = fmodel.wind_data.values
+    return farm_power * values
+
+
+def compute_farm_voc(
+    fmodel: FlorisModel,
+    A: float,
+    load_ambient_tis: np.array,
+    wake_slope: float = 0.3,
+    max_dist_D: float = 10.0,
+):
+    """Compute the farm Variable Operating Cost (VOC) for each findex.
+
+    Args:
+        fmodel (FlorisModel): FlorisModel object
+        A (float): Coefficient for the VOC calculation
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
+        wake_slope (float, optional): Wake slope. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+
+    Returns:
+        np.array: Array of farm VOC for each findex
+
+    """
+    turbine_voc = compute_turbine_voc(
+        fmodel=fmodel,
+        A=A,
+        load_ambient_tis=load_ambient_tis,
+        wake_slope=wake_slope,
+        max_dist_D=max_dist_D,
+    )
+    return np.sum(turbine_voc, axis=1)
+
+
 def compute_net_revenue(
     fmodel: FlorisModel,
     A: float,
@@ -217,27 +275,57 @@ def compute_net_revenue(
 
     """
 
-    if fmodel.core.state is not State.USED:
-        raise ValueError("FlorisModel must be run before computing net revenue")
+    revenue = compute_farm_revenue(
+        fmodel=fmodel,
+    )
 
-    # Make sure fmodel.wind_data is not None
-    if fmodel.wind_data is None:
-        raise ValueError("FlorisModel must have wind data to compute net revenue")
-
-    farm_power = fmodel.get_farm_power()
-    values = fmodel.wind_data.values
-    revenue = farm_power * values
-
-    turbine_voc = compute_turbine_voc(
+    farm_voc = compute_farm_voc(
         fmodel=fmodel,
         A=A,
         load_ambient_tis=load_ambient_tis,
         wake_slope=wake_slope,
         max_dist_D=max_dist_D,
     )
-    farm_voc = np.sum(turbine_voc, axis=1)
 
     return revenue - farm_voc
+
+
+def find_A_to_satisfy_rev_voc_ratio(
+    fmodel: FlorisModel,
+    target_rev_voc_ratio: float,
+    load_ambient_tis: np.array,
+    wake_slope: float = 0.3,
+    max_dist_D: float = 10.0,
+):
+    """Find the value of A that satisfies the target revenue to VOC ratio.
+
+    Args:
+        fmodel (FlorisModel): FlorisModel object
+        target_rev_voc_ratio (float): Target revenue to VOC ratio
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
+        wake_slope (float, optional): Wake slope. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+
+    Returns:
+        float: Value of A that satisfies the target revenue to VOC ratio
+
+    """
+
+    # Compute farm revenue
+    farm_revenue = compute_farm_revenue(
+        fmodel=fmodel,
+    )
+
+    # Compute farm VOC
+    farm_voc = compute_farm_voc(
+        fmodel=fmodel,
+        A=1.0,
+        load_ambient_tis=load_ambient_tis,
+        wake_slope=wake_slope,
+        max_dist_D=max_dist_D,
+    )
+
+    return (farm_revenue.sum() / farm_voc.sum()) / target_rev_voc_ratio
 
 
 def optimize_derate(
