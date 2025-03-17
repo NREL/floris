@@ -6,9 +6,12 @@ from floris import (
     WindRose,
 )
 from floris.optimization.load_optimization.load_optimization import (
+    compute_farm_revenue,
+    compute_farm_voc,
     compute_load_ti,
     compute_net_revenue,
     compute_turbine_voc,
+    find_A_to_satisfy_rev_voc_ratio,
     get_max_powers,
     get_rotor_diameters,
     optimize_derate,
@@ -22,7 +25,7 @@ def test_get_max_powers():
     np.testing.assert_allclose(rated_powers, [5e6, 5e6], atol=1e-4)
 
 
-def test_get_rotor_diamaeters():
+def test_get_rotor_diameters():
     fmodel = FlorisModel(configuration="defaults")
     fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
     rotor_diameters = get_rotor_diameters(fmodel)
@@ -108,3 +111,29 @@ def test_compute_net_revenue_no_wake():
     net_revenue = compute_net_revenue(fmodel, 1, load_ambient_tis)
     assert net_revenue.shape == (2,)
     assert net_revenue[0] == net_revenue[1]
+
+def test_find_A_to_satisfy_rev_voc_ratio():
+    # Test the function that finds the A value that satisfies the revenue to voc ratio
+    target_rev_voc_ratio = 10.0
+
+    fmodel = FlorisModel(configuration="defaults")
+    fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+    N = 100
+    time_series = TimeSeries(
+        wind_directions=np.ones(N) * 270.0,
+        wind_speeds=8.0,
+        turbulence_intensities=0.06,
+        values=np.ones(N)
+    )
+    fmodel.set(wind_data=time_series)
+    fmodel.run()
+
+    load_ambient_tis = np.ones(N) * 0.1
+
+    A = find_A_to_satisfy_rev_voc_ratio(fmodel, target_rev_voc_ratio, load_ambient_tis)
+
+    farm_revenue = compute_farm_revenue(fmodel)
+
+    farm_voc = compute_farm_voc(fmodel, A, load_ambient_tis)
+
+    assert np.allclose(farm_revenue.sum() / farm_voc.sum(), target_rev_voc_ratio, atol=1e-4)
