@@ -331,12 +331,16 @@ def find_A_to_satisfy_rev_voc_ratio(
 def optimize_derate(
     fmodel: FlorisModel,
     A: float,
-    load_ambient_ti: float,
+    load_ambient_tis: np.array,
     wake_slope: float = 0.3,
     max_dist_D: float = 10.0,
     initial_power_setpoint: np.array = None,
     derating_levels: np.array = np.linspace(1.0, 0.001, 5),
 ):
+
+    # Ensure we're in derating mode
+    fmodel.set_operation_model("simple-derating")
+
     # If initial set point not provided, set to rated (assumed max) power
     if initial_power_setpoint is None:
         max_power = get_max_powers(fmodel)
@@ -349,16 +353,30 @@ def optimize_derate(
     # Get the sorted coords
     sorted_indices = fmodel.core.grid.sorted_indices[:, :, 0, 0]
 
-    # Initialize the net revenue
-    net_revenue = np.zeros(fmodel.n_findex)
+    # Initialize the net revenue using the initial setpoints
+    fmodel.set(power_setpoints=initial_power_setpoint)
+    fmodel.run()
+    net_revenue = compute_net_revenue(
+                fmodel=fmodel,
+                A=A,
+                load_ambient_tis=load_ambient_tis,
+                wake_slope=wake_slope,
+                max_dist_D=max_dist_D,
+            )
 
-    # Loop over turbines
+    # Now loop over turbines
     for t in sorted_indices.T:
         # Loop over derating levels
         for d in derating_levels:
+
+            # Apply the proposed derating level to the test_power_setpoint matrix
             test_power_setpoint[range(fmodel.n_findex), t] = (
                 initial_power_setpoint[range(fmodel.n_findex), t] * d
             )
+
+            # print("=======")
+            # print(test_power_setpoint)
+            # print(compute_farm_revenue(fmodel))
 
             # Apply the setpoint to fmodel
             fmodel.set(power_setpoints=test_power_setpoint)
@@ -366,20 +384,37 @@ def optimize_derate(
             # Run
             fmodel.run()
 
+            # print(fmodel.get_farm_power())
+            # print(compute_farm_revenue(fmodel))
+
             # Get the net revenue
             test_net_revenue = compute_net_revenue(
                 fmodel=fmodel,
                 A=A,
-                load_ambient_ti=load_ambient_ti,
+                load_ambient_tis=load_ambient_tis,
                 wake_slope=wake_slope,
                 max_dist_D=max_dist_D,
             )
 
+            # print(test_net_revenue)
+            # print('********')
+
             # Get a map of where test_net_revenue is greater than net_revenue
             update_mask = test_net_revenue > net_revenue
 
+            # print(f"Derating {d} turbine {t} for {np.sum(update_mask)} findex")
+            # print(f"Net: {net_revenue}")
+            # print(f"Test: {test_net_revenue}")
+            # print(f"Mask: {update_mask}")
+
             # Where update_mask is false, revert the test_power_setpoint to previous value
-            test_power_setpoint[update_mask, t] = final_power_setpoint[update_mask, t]
+            test_power_setpoint[~update_mask, :] = final_power_setpoint[~update_mask, :]
 
             # Update the final_power_setpoint
             final_power_setpoint[:, :] = test_power_setpoint[:, :]
+
+            # Update the net_revenue
+            net_revenue[update_mask] = test_net_revenue[update_mask]
+
+    # Return the final power setpoint
+    return final_power_setpoint
