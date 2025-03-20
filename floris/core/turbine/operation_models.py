@@ -593,8 +593,8 @@ class AWCTurbine(BaseOperationModel):
 
         awc_thrust_coefficients = AWCTurbine.AWC_model(
             power_thrust_table['helix_a'],
-            power_thrust_table['helix_power_b'],
-            power_thrust_table['helix_power_c'],
+            power_thrust_table['helix_thrust_b'],
+            power_thrust_table['helix_thrust_c'],
             base_thrust_coefficients[helix_mask],
             awc_amplitudes[helix_mask]
         )
