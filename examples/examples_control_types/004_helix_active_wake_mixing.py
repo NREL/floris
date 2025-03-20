@@ -97,13 +97,14 @@ awc_amplitudes = np.array([
     np.linspace(0, 5, N),
     np.zeros(N), np.zeros(N), np.zeros(N)
     ]).reshape(4, N).T
+awc_modes = np.tile(awc_modes, (N,1)) # Repeat over N findices
 
 # Reset FlorisModel for different helix amplitudes
 fmodel.set(
     wind_directions=270 * np.ones(N),
     wind_speeds=8 * np.ones(N),
     turbulence_intensities=0.06*np.ones(N),
-    awc_modes=np.tile(awc_modes,(N,1)),
+    awc_modes=awc_modes,
     awc_amplitudes=awc_amplitudes
     )
 fmodel.run()
