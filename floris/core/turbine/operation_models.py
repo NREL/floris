@@ -519,6 +519,9 @@ class AWCTurbine(BaseOperationModel):
     the other operation models.
     """
 
+    def AWC_model(a, b, c, base_values, awc_amplitudes):
+            return base_values * (1 - (b + c*base_values)*awc_amplitudes**a)
+
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -544,22 +547,27 @@ class AWCTurbine(BaseOperationModel):
                 'have not yet been implemented in FLORIS. Returning baseline power.'
             )
 
-        def apply_awc(base_powers,power_thrust_table,awc_amplitudes):
-            return base_powers * (1 - (
-                power_thrust_table['helix_power_b']
-                + power_thrust_table['helix_power_c']*base_powers
-                )
-                *awc_amplitudes**power_thrust_table['helix_a']
-            )
+        # Create a copy of the base power to modify according to different AWC modes
+        powers = base_powers.copy()
 
-        mask = (awc_modes == 'helix')
-        if np.any(np.isclose(base_powers[mask]/1000,np.max(power_thrust_table['power']))):
+        helix_mask = (awc_modes == 'helix')
+        if np.any(np.isclose(base_powers[helix_mask]/1000,np.max(power_thrust_table['power']))):
             raise UserWarning(
                 'The selected wind speed is above or near rated wind speed. '
                 '`AWCTurbine` operation model is not designed '
                 'or verified for above-rated conditions.'
             )
-        return np.where(mask, apply_awc(base_powers,power_thrust_table,awc_amplitudes), base_powers)
+
+        awc_powers = AWCTurbine.AWC_model(
+            power_thrust_table['helix_a'],
+            power_thrust_table['helix_power_b'],
+            power_thrust_table['helix_power_c'],
+            base_powers[helix_mask],
+            awc_amplitudes[helix_mask]
+        )
+        powers[helix_mask] = awc_powers
+
+        return powers
 
 
     def thrust_coefficient(
@@ -578,20 +586,21 @@ class AWCTurbine(BaseOperationModel):
             cubature_weights=cubature_weights
         )
 
-        def apply_awc(base_powers,power_thrust_table,awc_amplitudes):
-            return base_thrust_coefficients * (1 - (
-                power_thrust_table['helix_thrust_b']
-                + power_thrust_table['helix_thrust_c']*base_thrust_coefficients
-                )
-                *awc_amplitudes**power_thrust_table['helix_a']
-                )
+        # Create a copy of the base thrust coefficients to modify according to different AWC modes
+        thrust_coefficients = base_thrust_coefficients.copy()
 
-        mask = (awc_modes == 'helix')
-        return np.where(
-            mask,
-            apply_awc(base_thrust_coefficients,power_thrust_table,awc_amplitudes),
-            base_thrust_coefficients
+        helix_mask = (awc_modes == 'helix')
+
+        awc_thrust_coefficients = AWCTurbine.AWC_model(
+            power_thrust_table['helix_a'],
+            power_thrust_table['helix_power_b'],
+            power_thrust_table['helix_power_c'],
+            base_thrust_coefficients[helix_mask],
+            awc_amplitudes[helix_mask]
         )
+        thrust_coefficients[helix_mask] = awc_thrust_coefficients
+
+        return thrust_coefficients
 
     def axial_induction(
         power_thrust_table: dict,
