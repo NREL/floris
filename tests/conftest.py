@@ -390,6 +390,20 @@ class SampleInputs:
             "TSR": 8.0
         }
 
+        self.controller_dependent_turbine_parameters = {
+            "ref_air_density": 1.225,
+            "ref_tilt": 5.0,
+            "rated_rpm": 12.1,
+            "rotor_solidity": 0.05132,
+            "generator_efficiency": 0.944,
+            "rated_power": 5000.0,
+            "rotor_diameter": 126,
+            "beta": -0.45891,
+            "cd": 0.0040638,
+            "cl_alfa": 4.275049,
+            "cp_ct_data_file": "demo_cp_ct_surfaces/nrel_5MW_demo_cp_ct_surface.npz"
+        }
+
         self.turbine_floating = copy.deepcopy(self.turbine)
         self.turbine_floating["floating_tilt_table"] = {
             "tilt": [
