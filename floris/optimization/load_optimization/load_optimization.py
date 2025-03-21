@@ -160,6 +160,9 @@ def compute_turbine_voc(
 ):
     """Compute the turbine Variable Operating Cost (VOC) for each findex and turbine.
 
+    In this first approximation, variable operating cost is computed as the
+    product of turbine thrust and wind speed standard deviation.
+
     Args:
         fmodel (FlorisModel): FlorisModel object
         A (float): Coefficient for the VOC calculation
@@ -186,7 +189,7 @@ def compute_turbine_voc(
     D = fmodel.core.farm.rotor_diameters[0, 0]
     area = np.pi * (D / 2) ** 2
 
-    # Compute the thurst
+    # Compute the thrust
     cts = fmodel.get_turbine_thrust_coefficients()
     thrust = 0.5 * fmodel.core.flow_field.air_density * area * cts * ambient_wind_speeds**2
 
@@ -208,6 +211,16 @@ def compute_turbine_voc(
 def compute_farm_revenue(
     fmodel: FlorisModel,
 ):
+    """Compute the farm revenue of the FlorisModel object.
+
+    Args:
+        fmodel (FlorisModel): FlorisModel object
+
+    Returns:
+        np.array: Array of farm revenue for each findex
+
+    """
+
     if fmodel.core.state is not State.USED:
         raise ValueError("FlorisModel must be run before computing net revenue")
 
@@ -230,6 +243,8 @@ def compute_farm_voc(
     load_ambient_tis: np.array,
     wake_slope: float = 0.3,
     max_dist_D: float = 10.0,
+    exp_ws_std: float = 1.0,
+    exp_thrust: float = 1.0,
 ):
     """Compute the farm Variable Operating Cost (VOC) for each findex.
 
@@ -239,6 +254,9 @@ def compute_farm_voc(
         load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
         wake_slope (float, optional): Wake slope. Defaults to 0.3.
         max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
+            Defaults to 1.0.
+        exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.0.
 
     Returns:
         np.array: Array of farm VOC for each findex
@@ -250,6 +268,8 @@ def compute_farm_voc(
         load_ambient_tis=load_ambient_tis,
         wake_slope=wake_slope,
         max_dist_D=max_dist_D,
+        exp_ws_std=exp_ws_std,
+        exp_thrust=exp_thrust,
     )
     return np.sum(turbine_voc, axis=1)
 
@@ -260,6 +280,8 @@ def compute_net_revenue(
     load_ambient_tis: np.array,
     wake_slope: float = 0.3,
     max_dist_D: float = 10.0,
+    exp_ws_std: float = 1.0,
+    exp_thrust: float = 1.0,
 ):
     """Compute the net revenue for the current layout."
 
@@ -269,6 +291,9 @@ def compute_net_revenue(
         load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
         wake_slope (float, optional): Wake slope. Defaults to 0.3.
         max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
+            Defaults to 1.0.
+        exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.0.
 
     Returns:
         np.array: Array of net revenue for each findex
@@ -285,6 +310,8 @@ def compute_net_revenue(
         load_ambient_tis=load_ambient_tis,
         wake_slope=wake_slope,
         max_dist_D=max_dist_D,
+        exp_ws_std=exp_ws_std,
+        exp_thrust=exp_thrust,
     )
 
     return revenue - farm_voc
@@ -296,6 +323,8 @@ def find_A_to_satisfy_rev_voc_ratio(
     load_ambient_tis: np.array,
     wake_slope: float = 0.3,
     max_dist_D: float = 10.0,
+    exp_ws_std: float = 1.0,
+    exp_thrust: float = 1.0,
 ):
     """Find the value of A that satisfies the target revenue to VOC ratio.
 
@@ -305,6 +334,9 @@ def find_A_to_satisfy_rev_voc_ratio(
         load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
         wake_slope (float, optional): Wake slope. Defaults to 0.3.
         max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
+            Defaults to 1.0.
+        exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.
 
     Returns:
         float: Value of A that satisfies the target revenue to VOC ratio
@@ -323,6 +355,8 @@ def find_A_to_satisfy_rev_voc_ratio(
         load_ambient_tis=load_ambient_tis,
         wake_slope=wake_slope,
         max_dist_D=max_dist_D,
+        exp_ws_std=exp_ws_std,
+        exp_thrust=exp_thrust,
     )
 
     return (farm_revenue.sum() / farm_voc.sum()) / target_rev_voc_ratio
@@ -334,9 +368,28 @@ def optimize_derate(
     load_ambient_tis: np.array,
     wake_slope: float = 0.3,
     max_dist_D: float = 10.0,
+    exp_ws_std: float = 1.0,
+    exp_thrust: float = 1.0,
     initial_power_setpoint: np.array = None,
     derating_levels: np.array = np.linspace(1.0, 0.001, 5),
 ):
+    """Optimize the derating of each turbine to maximize net revenue.
+
+    Args:
+        fmodel (FlorisModel): FlorisModel object
+        A (float): Coefficient for the VOC calculation
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
+        wake_slope (float, optional): Wake slope. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
+            Defaults to 1.0.
+        exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.
+        initial_power_setpoint (np.array, optional): Initial power setpoint for each turbine.
+            Defaults to None.
+        derating_levels (np.array, optional): Array of derating levels to consider.
+            Defaults to np.linspace(1.0, 0.001, 5).
+
+    """
 
     # Ensure we're in derating mode
     fmodel.set_operation_model("simple-derating")
@@ -357,35 +410,29 @@ def optimize_derate(
     fmodel.set(power_setpoints=initial_power_setpoint)
     fmodel.run()
     net_revenue = compute_net_revenue(
-                fmodel=fmodel,
-                A=A,
-                load_ambient_tis=load_ambient_tis,
-                wake_slope=wake_slope,
-                max_dist_D=max_dist_D,
-            )
+        fmodel=fmodel,
+        A=A,
+        load_ambient_tis=load_ambient_tis,
+        wake_slope=wake_slope,
+        max_dist_D=max_dist_D,
+        exp_ws_std=exp_ws_std,
+        exp_thrust=exp_thrust,
+    )
 
     # Now loop over turbines
     for t in sorted_indices.T:
         # Loop over derating levels
         for d in derating_levels:
-
             # Apply the proposed derating level to the test_power_setpoint matrix
             test_power_setpoint[range(fmodel.n_findex), t] = (
                 initial_power_setpoint[range(fmodel.n_findex), t] * d
             )
-
-            # print("=======")
-            # print(test_power_setpoint)
-            # print(compute_farm_revenue(fmodel))
 
             # Apply the setpoint to fmodel
             fmodel.set(power_setpoints=test_power_setpoint)
 
             # Run
             fmodel.run()
-
-            # print(fmodel.get_farm_power())
-            # print(compute_farm_revenue(fmodel))
 
             # Get the net revenue
             test_net_revenue = compute_net_revenue(
@@ -395,9 +442,6 @@ def optimize_derate(
                 wake_slope=wake_slope,
                 max_dist_D=max_dist_D,
             )
-
-            # print(test_net_revenue)
-            # print('********')
 
             # Get a map of where test_net_revenue is greater than net_revenue
             update_mask = test_net_revenue > net_revenue
