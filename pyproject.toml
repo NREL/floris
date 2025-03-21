@@ -49,6 +49,7 @@ docs = [
     "sphinx-autodoc-typehints~=2.0",
     "sphinxcontrib-autoyaml~=1.0",
     "sphinxcontrib.mermaid~=1.0",
+    "bokeh~=3.7",
 ]
 develop = [
     "pytest~=8.0",
