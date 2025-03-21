@@ -36,8 +36,6 @@ class ControllerDependentTurbine(BaseOperationModel):
     These are called by thrust_coefficient() and power() to compute the vertical shear and predict
     the turbine status in terms of tip speed ratio and pitch angle.
     This class is not intended to be instantiated; it simply defines a library of static methods.
-
-    TODO: Should the turbine submodels each implement axial_induction()?
     """
 
     @staticmethod
@@ -73,12 +71,12 @@ class ControllerDependentTurbine(BaseOperationModel):
 
         shear = ControllerDependentTurbine.compute_local_vertical_shear(velocities)
 
-        beta = power_thrust_table["beta"]
-        cd = power_thrust_table["cd"]
-        cl_alfa = power_thrust_table["cl_alfa"]
+        beta = power_thrust_table["controller_dependent_turbine_parameters"]["beta"]
+        cd = power_thrust_table["controller_dependent_turbine_parameters"]["cd"]
+        cl_alfa = power_thrust_table["controller_dependent_turbine_parameters"]["cl_alfa"]
 
-        sigma = power_thrust_table["rotor_solidity"]
-        R = power_thrust_table["rotor_diameter"] / 2
+        sigma = power_thrust_table["controller_dependent_turbine_parameters"]["rotor_solidity"]
+        R = power_thrust_table["controller_dependent_turbine_parameters"]["rotor_diameter"] / 2
 
         air_density = power_thrust_table["ref_air_density"]
 
@@ -200,9 +198,10 @@ class ControllerDependentTurbine(BaseOperationModel):
         ratio = p / p0
 
         # Extract data from lookup table and construct interpolator
-        cp_i = np.array(power_thrust_table["cp_ct_data"]["cp_lut"])
-        pitch_i = np.array(power_thrust_table["cp_ct_data"]["pitch_lut"])
-        tsr_i = np.array(power_thrust_table["cp_ct_data"]["tsr_lut"])
+        cp_ct_data = power_thrust_table["controller_dependent_turbine_parameters"]["cp_ct_data"]
+        cp_i = np.array(cp_ct_data["cp_lut"])
+        pitch_i = np.array(cp_ct_data["pitch_lut"])
+        tsr_i = np.array(cp_ct_data["tsr_lut"])
         interp_lut = RegularGridInterpolator(
             (tsr_i, pitch_i), cp_i, bounds_error=False, fill_value=None
         )
@@ -220,12 +219,17 @@ class ControllerDependentTurbine(BaseOperationModel):
             * np.pi
             * R**2
             * power_coefficient
-            * power_thrust_table["generator_efficiency"]
+            * power_thrust_table["controller_dependent_turbine_parameters"]["generator_efficiency"]
         )
 
-        if power.max() > power_thrust_table["rated_power"] * 1e3 * 1.01:
+        if power.max() > (power_thrust_table["controller_dependent_turbine_parameters"]
+                                            ["rated_power"] * 1e3 * 1.01):
             print("Powers more than 1% above rated detected. Consider checking Cp-Ct data.")
-        power = np.clip(power, 0, power_thrust_table["rated_power"] * 1e3)
+        power = np.clip(
+            power,
+            0,
+            power_thrust_table["controller_dependent_turbine_parameters"]["rated_power"] * 1e3
+        )
         return power
 
     @staticmethod
@@ -262,12 +266,12 @@ class ControllerDependentTurbine(BaseOperationModel):
         # Only update tilt angle if requested (if the tilt isn't accounted for in the Ct curve)
         tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angles)
 
-        beta = power_thrust_table["beta"]
-        cd = power_thrust_table["cd"]
-        cl_alfa = power_thrust_table["cl_alfa"]
+        beta = power_thrust_table["controller_dependent_turbine_parameters"]["beta"]
+        cd = power_thrust_table["controller_dependent_turbine_parameters"]["cd"]
+        cl_alfa = power_thrust_table["controller_dependent_turbine_parameters"]["cl_alfa"]
 
-        sigma = power_thrust_table["rotor_solidity"]
-        R = power_thrust_table["rotor_diameter"] / 2
+        sigma = power_thrust_table["controller_dependent_turbine_parameters"]["rotor_solidity"]
+        R = power_thrust_table["controller_dependent_turbine_parameters"]["rotor_diameter"] / 2
 
         shear = ControllerDependentTurbine.compute_local_vertical_shear(velocities)
 
@@ -353,9 +357,10 @@ class ControllerDependentTurbine(BaseOperationModel):
         ratio = thrust_coefficient1 / thrust_coefficient0 # See above eq. (29)
 
         # Extract data from lookup table and construct interpolator
-        ct_i = np.array(power_thrust_table["cp_ct_data"]["ct_lut"])
-        pitch_i = np.array(power_thrust_table["cp_ct_data"]["pitch_lut"])
-        tsr_i = np.array(power_thrust_table["cp_ct_data"]["tsr_lut"])
+        cp_ct_data = power_thrust_table["controller_dependent_turbine_parameters"]["cp_ct_data"]
+        ct_i = np.array(cp_ct_data["ct_lut"])
+        pitch_i = np.array(cp_ct_data["pitch_lut"])
+        tsr_i = np.array(cp_ct_data["tsr_lut"])
         interp_lut = RegularGridInterpolator(
             (tsr_i, pitch_i), ct_i, bounds_error=False, fill_value=None
         )  # *0.9722085500886761)
@@ -461,22 +466,24 @@ class ControllerDependentTurbine(BaseOperationModel):
         even user-defined.
         """
         # Unpack parameters from power_thrust_table
-        beta = power_thrust_table["beta"]
-        cd = power_thrust_table["cd"]
-        cl_alfa = power_thrust_table["cl_alfa"]
-        sigma = power_thrust_table["rotor_solidity"]
+        beta = power_thrust_table["controller_dependent_turbine_parameters"]["beta"]
+        cd = power_thrust_table["controller_dependent_turbine_parameters"]["cd"]
+        cl_alfa = power_thrust_table["controller_dependent_turbine_parameters"]["cl_alfa"]
+        sigma = power_thrust_table["controller_dependent_turbine_parameters"]["rotor_solidity"]
 
         # Compute power demanded
         if power_setpoints is None:
             power_demanded = (
                 np.ones_like(tilt_angles)
-                * power_thrust_table["rated_power"]
+                * power_thrust_table["controller_dependent_turbine_parameters"]["rated_power"]
                 * 1000
-                / power_thrust_table["generator_efficiency"]
+                / power_thrust_table["controller_dependent_turbine_parameters"]
+                                    ["generator_efficiency"]
             )
         else:
             power_demanded = (
-                power_setpoints / power_thrust_table["generator_efficiency"]
+                power_setpoints / power_thrust_table["controller_dependent_turbine_parameters"]
+                                                    ["generator_efficiency"]
             )
 
         ## Define function to get tip speed ratio
@@ -709,9 +716,10 @@ class ControllerDependentTurbine(BaseOperationModel):
             return y
 
         # Extract data from lookup table
-        cp_i = np.array(power_thrust_table["cp_ct_data"]["cp_lut"])
-        pitch_i = np.array(power_thrust_table["cp_ct_data"]["pitch_lut"])
-        tsr_i = np.array(power_thrust_table["cp_ct_data"]["tsr_lut"])
+        cp_ct_data = power_thrust_table["controller_dependent_turbine_parameters"]["cp_ct_data"]
+        cp_i = np.array(cp_ct_data["cp_lut"])
+        pitch_i = np.array(cp_ct_data["pitch_lut"])
+        tsr_i = np.array(cp_ct_data["tsr_lut"])
         idx = np.squeeze(np.where(cp_i == np.max(cp_i)))
 
         tsr_opt = tsr_i[idx[0]]
@@ -719,10 +727,10 @@ class ControllerDependentTurbine(BaseOperationModel):
         max_cp = cp_i[idx[0], idx[1]]
 
         omega_cut_in = 0  # RPM
-        omega_max = power_thrust_table["rated_rpm"]  # RPM
+        omega_max = power_thrust_table["controller_dependent_turbine_parameters"]["rated_rpm"]
         rated_power_aero = (
-            power_thrust_table["rated_power"]
-            / power_thrust_table["generator_efficiency"]  # kW
+            power_thrust_table["controller_dependent_turbine_parameters"]["rated_power"]
+            / power_thrust_table["controller_dependent_turbine_parameters"]["generator_efficiency"]
         ) * 1000
 
         # Compute torque-rpm relation and check for region 2-and-a-half

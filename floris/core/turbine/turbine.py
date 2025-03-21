@@ -512,17 +512,24 @@ class Turbine(BaseClass):
             bypass_numeric_converter = True
 
         # Check for whether a cp_ct_data_file is specified, and load it if so.
-        if "cp_ct_data_file" in self.power_thrust_table:
+        if "controller_dependent_turbine_parameters" in self.power_thrust_table:
             floris_root = Path(__file__).resolve().parents[2]
-            file_path = floris_root / "turbine_library" / self.power_thrust_table["cp_ct_data_file"]
+            file_path = (
+                floris_root / "turbine_library" /
+                self.power_thrust_table["controller_dependent_turbine_parameters"]
+                                       ["cp_ct_data_file"]
+            )
             npz_data = dict(np.load(file_path))
-            self.power_thrust_table["cp_ct_data"] = {k: v.tolist() for k, v in npz_data.items()}
+            self.power_thrust_table["controller_dependent_turbine_parameters"]["cp_ct_data"] = {
+                k: v.tolist() for k, v in npz_data.items()
+            }
             bypass_numeric_converter = True
 
         # Raise warning if "demo" in the cp_ct data file name
         if (
             self.operation_model in ["controller-dependent"]
-            and "demo" in self.power_thrust_table["cp_ct_data_file"]
+            and "demo" in self.power_thrust_table["controller_dependent_turbine_parameters"]
+                                                 ["cp_ct_data_file"]
         ):
             self.logger.warning(
                 "Cp/Ct data provided with FLORIS is for demonstration purposes only,"

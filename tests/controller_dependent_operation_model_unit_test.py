@@ -23,13 +23,16 @@ def test_ControllerDependentTurbine_power_curve():
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = (
-        SampleInputs().controller_dependent_turbine_power_thrust_table
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"] = (
+        SampleInputs().controller_dependent_turbine_parameters
     )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
-    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
-        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
-    )
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"]["cp_ct_data"] = \
+        np.load(
+            data_file_path / turbine_data["power_thrust_table"]
+                                         ["controller_dependent_turbine_parameters"]
+                                         ["cp_ct_data_file"]
+        )
 
     N_test = 20
     wind_speeds = np.tile(
@@ -63,13 +66,16 @@ def test_ControllerDependentTurbine_derating():
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = (
-        SampleInputs().controller_dependent_turbine_power_thrust_table
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"] = (
+        SampleInputs().controller_dependent_turbine_parameters
     )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
-    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
-        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
-    )
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"]["cp_ct_data"] = \
+        np.load(
+            data_file_path / turbine_data["power_thrust_table"]
+                                         ["controller_dependent_turbine_parameters"]
+                                         ["cp_ct_data_file"]
+        )
 
     N_test = 20
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
@@ -108,13 +114,16 @@ def test_ControllerDependentTurbine_yawing():
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = (
-        SampleInputs().controller_dependent_turbine_power_thrust_table
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"] = (
+        SampleInputs().controller_dependent_turbine_parameters
     )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
-    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
-        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
-    )
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"]["cp_ct_data"] = \
+        np.load(
+            data_file_path / turbine_data["power_thrust_table"]
+                                         ["controller_dependent_turbine_parameters"]
+                                         ["cp_ct_data_file"]
+        )
 
     N_test = 20
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
@@ -144,13 +153,16 @@ def test_ControllerDependentTurbine_shear():
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = (
-        SampleInputs().controller_dependent_turbine_power_thrust_table
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"] = (
+        SampleInputs().controller_dependent_turbine_parameters
     )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
-    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
-        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
-    )
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"]["cp_ct_data"] = \
+        np.load(
+            data_file_path / turbine_data["power_thrust_table"]
+                                         ["controller_dependent_turbine_parameters"]
+                                         ["cp_ct_data_file"]
+        )
 
     N_test = 31
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
@@ -202,13 +214,16 @@ def test_ControllerDependentTurbine_regression():
     n_turbines = 1
     wind_speed = 10.0
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = (
-        SampleInputs().controller_dependent_turbine_power_thrust_table
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"] = (
+        SampleInputs().controller_dependent_turbine_parameters
     )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
-    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
-        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
-    )
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"]["cp_ct_data"] = \
+        np.load(
+            data_file_path / turbine_data["power_thrust_table"]
+                                         ["controller_dependent_turbine_parameters"]
+                                         ["cp_ct_data_file"]
+        )
 
     N_test = 20
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
@@ -332,13 +347,16 @@ def test_ControllerDependentTurbine_integration():
 
     n_turbines = 1
     turbine_data = SampleInputs().turbine
-    turbine_data["power_thrust_table"] = (
-        SampleInputs().controller_dependent_turbine_power_thrust_table
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"] = (
+        SampleInputs().controller_dependent_turbine_parameters
     )
     data_file_path = Path(__file__).resolve().parents[1] / "floris" / "turbine_library"
-    turbine_data["power_thrust_table"]["cp_ct_data"] = np.load(
-        data_file_path / turbine_data["power_thrust_table"]["cp_ct_data_file"]
-    )
+    turbine_data["power_thrust_table"]["controller_dependent_turbine_parameters"]["cp_ct_data"] = \
+        np.load(
+            data_file_path / turbine_data["power_thrust_table"]
+                                         ["controller_dependent_turbine_parameters"]
+                                         ["cp_ct_data_file"]
+        )
 
     N_test = 20
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
