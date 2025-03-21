@@ -779,8 +779,12 @@ class WindRose(WindDataBase):
                 )
 
         # Configure the plot
-        ax.figure.colorbar(sm_ws, ax=ax, **legend_kwargs)
-        ax.figure.tight_layout()
+        try:
+           ax.figure.colorbar(sm_ws, ax=ax, **legend_kwargs)
+           ax.figure.tight_layout()
+        except TypeError:
+           ax.legend(reversed(rects), ws_bins, **legend_kwargs)
+           ax.figure.get_children()[-1].remove() # Remove the empty colorbar
         ax.set_theta_direction(-1)
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
@@ -1822,8 +1826,12 @@ class WindTIRose(WindDataBase):
                 )
 
         # Configure the plot
-        ax.figure.colorbar(sm_wv, ax=ax, **legend_kwargs)
-        ax.figure.tight_layout()
+        try:
+            ax.figure.colorbar(sm_wv, ax=ax, **legend_kwargs)
+            ax.figure.tight_layout()
+        except TypeError:
+            ax.legend(reversed(rects), var_bins, **legend_kwargs)
+            ax.figure.get_children()[-1].remove() # Remove the empty colorbar
         ax.set_theta_direction(-1)
         ax.set_theta_offset(np.pi / 2.0)
         ax.set_theta_zero_location("N")
