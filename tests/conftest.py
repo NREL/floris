@@ -401,7 +401,7 @@ class SampleInputs:
             "beta": -0.45891,
             "cd": 0.0040638,
             "cl_alfa": 4.275049,
-            "cp_ct_data_file": "nrel_5MW_demo_cp_ct_surface.npz"
+            "cp_ct_data_file": "demo_cp_ct_surfaces/nrel_5MW_demo_cp_ct_surface.npz"
         }
 
         self.turbine_floating = copy.deepcopy(self.turbine)
