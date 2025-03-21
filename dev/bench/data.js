@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1741800203524,
+  "lastUpdate": 1742578163967,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -1094,6 +1094,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00033726194843215047",
             "extra": "mean: 9.000295941174338 msec\nrounds: 68"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "39596329+misi9170@users.noreply.github.com",
+            "name": "misi9170",
+            "username": "misi9170"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8d13b29281fb531609b3f9f90801484b67a32d6a",
+          "message": "Add bokeh requirementfor building docs. (#1086)",
+          "timestamp": "2025-03-21T11:10:19-06:00",
+          "tree_id": "70e80af082c2520c6d289f8708a7cc1716b123b5",
+          "url": "https://github.com/NREL/floris/commit/8d13b29281fb531609b3f9f90801484b67a32d6a"
+        },
+        "date": 1742578161951,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 47.12597067897658,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001618068574674008",
+            "extra": "mean: 21.219722068157022 msec\nrounds: 44"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 56.67638901913544,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00023868973622737414",
+            "extra": "mean: 17.644031620687294 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 25.76530231730867,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008856018516007296",
+            "extra": "mean: 38.81188692003889 msec\nrounds: 25"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.30089658196050767,
+            "unit": "iter/sec",
+            "range": "stddev: 0.01839204792628541",
+            "extra": "mean: 3.3234009953999704 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 38.54357591613444,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0009976435169294195",
+            "extra": "mean: 25.944660717932962 msec\nrounds: 39"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 115.91668641288828,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00008914991417643103",
+            "extra": "mean: 8.626885661983643 msec\nrounds: 71"
           }
         ]
       }
