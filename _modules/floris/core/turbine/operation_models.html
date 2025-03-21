@@ -1161,6 +1161,12 @@ document.write(`
 <span class="sd">    the other operation models.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="AWCTurbine.AWC_model">
+<a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.AWC_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">AWC_model</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">base_values</span><span class="p">,</span> <span class="n">awc_amplitudes</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">base_values</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">base_values</span><span class="p">)</span><span class="o">*</span><span class="n">awc_amplitudes</span><span class="o">**</span><span class="n">a</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="AWCTurbine.power">
 <a class="viewcode-back" href="../../../../_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.power">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span>
@@ -1181,29 +1187,34 @@ document.write(`
             <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">awc_modes</span> <span class="o">==</span> <span class="s1">&#39;helix&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
-                <span class="n">base_powers</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;power&#39;</span><span class="p">])</span>
-                <span class="p">)):</span>
-                <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-                    <span class="s1">&#39;The selected wind speed is above or near rated wind speed. &#39;</span>
-                    <span class="s1">&#39;`AWCTurbine` operation model is not designed &#39;</span>
-                    <span class="s1">&#39;or verified for above-rated conditions.&#39;</span>
-                    <span class="p">)</span>
-            <span class="k">return</span> <span class="n">base_powers</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>
-                <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_power_b&#39;</span><span class="p">]</span>
-                <span class="o">+</span> <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_power_c&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">base_powers</span>
-                <span class="p">)</span>
-                <span class="o">*</span><span class="n">awc_amplitudes</span><span class="o">**</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_a&#39;</span><span class="p">]</span>
-            <span class="p">)</span> <span class="c1"># TODO: Should probably add max function here</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">awc_modes</span> <span class="o">==</span> <span class="s1">&#39;baseline&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">base_powers</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="n">valid_entries</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;helix&#39;</span><span class="p">,</span> <span class="s1">&#39;baseline&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">awc_modes</span><span class="p">,</span> <span class="n">valid_entries</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
                 <span class="s1">&#39;Active wake mixing strategies other than the `helix` strategy &#39;</span>
                 <span class="s1">&#39;have not yet been implemented in FLORIS. Returning baseline power.&#39;</span>
-                <span class="p">)</span></div>
+            <span class="p">)</span>
+
+        <span class="c1"># Create a copy of the base power to modify according to different AWC modes</span>
+        <span class="n">powers</span> <span class="o">=</span> <span class="n">base_powers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">helix_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">awc_modes</span> <span class="o">==</span> <span class="s1">&#39;helix&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">base_powers</span><span class="p">[</span><span class="n">helix_mask</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;power&#39;</span><span class="p">]))):</span>
+            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
+                <span class="s1">&#39;The selected wind speed is above or near rated wind speed. &#39;</span>
+                <span class="s1">&#39;`AWCTurbine` operation model is not designed &#39;</span>
+                <span class="s1">&#39;or verified for above-rated conditions.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">awc_powers</span> <span class="o">=</span> <span class="n">AWCTurbine</span><span class="o">.</span><span class="n">AWC_model</span><span class="p">(</span>
+            <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_a&#39;</span><span class="p">],</span>
+            <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_power_b&#39;</span><span class="p">],</span>
+            <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_power_c&#39;</span><span class="p">],</span>
+            <span class="n">base_powers</span><span class="p">[</span><span class="n">helix_mask</span><span class="p">],</span>
+            <span class="n">awc_amplitudes</span><span class="p">[</span><span class="n">helix_mask</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">powers</span><span class="p">[</span><span class="n">helix_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">awc_powers</span>
+
+        <span class="k">return</span> <span class="n">powers</span></div>
 
 
 
@@ -1224,20 +1235,22 @@ document.write(`
             <span class="n">average_method</span><span class="o">=</span><span class="n">average_method</span><span class="p">,</span>
             <span class="n">cubature_weights</span><span class="o">=</span><span class="n">cubature_weights</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">awc_modes</span> <span class="o">==</span> <span class="s1">&#39;helix&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">base_thrust_coefficients</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span>
-                <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_thrust_b&#39;</span><span class="p">]</span>
-                <span class="o">+</span> <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_thrust_c&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">base_thrust_coefficients</span>
-                <span class="p">)</span>
-                <span class="o">*</span><span class="n">awc_amplitudes</span><span class="o">**</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_a&#39;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">awc_modes</span> <span class="o">==</span> <span class="s1">&#39;baseline&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">base_thrust_coefficients</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-                <span class="s1">&#39;Active wake mixing strategies other than the `helix` strategy &#39;</span>
-                <span class="s1">&#39;have not yet been implemented in FLORIS. Returning baseline power.&#39;</span>
-                <span class="p">)</span></div>
+
+        <span class="c1"># Create a copy of the base thrust coefficients to modify according to different AWC modes</span>
+        <span class="n">thrust_coefficients</span> <span class="o">=</span> <span class="n">base_thrust_coefficients</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">helix_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">awc_modes</span> <span class="o">==</span> <span class="s1">&#39;helix&#39;</span><span class="p">)</span>
+
+        <span class="n">awc_thrust_coefficients</span> <span class="o">=</span> <span class="n">AWCTurbine</span><span class="o">.</span><span class="n">AWC_model</span><span class="p">(</span>
+            <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_a&#39;</span><span class="p">],</span>
+            <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_thrust_b&#39;</span><span class="p">],</span>
+            <span class="n">power_thrust_table</span><span class="p">[</span><span class="s1">&#39;helix_thrust_c&#39;</span><span class="p">],</span>
+            <span class="n">base_thrust_coefficients</span><span class="p">[</span><span class="n">helix_mask</span><span class="p">],</span>
+            <span class="n">awc_amplitudes</span><span class="p">[</span><span class="n">helix_mask</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">thrust_coefficients</span><span class="p">[</span><span class="n">helix_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">awc_thrust_coefficients</span>
+
+        <span class="k">return</span> <span class="n">thrust_coefficients</span></div>
 
 
 <div class="viewcode-block" id="AWCTurbine.axial_induction">
