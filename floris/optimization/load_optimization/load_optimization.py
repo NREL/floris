@@ -446,11 +446,6 @@ def optimize_derate(
             # Get a map of where test_net_revenue is greater than net_revenue
             update_mask = test_net_revenue > net_revenue
 
-            # print(f"Derating {d} turbine {t} for {np.sum(update_mask)} findex")
-            # print(f"Net: {net_revenue}")
-            # print(f"Test: {test_net_revenue}")
-            # print(f"Mask: {update_mask}")
-
             # Where update_mask is false, revert the test_power_setpoint to previous value
             test_power_setpoint[~update_mask, :] = final_power_setpoint[~update_mask, :]
 
