@@ -17,6 +17,7 @@ D = 126.0
 
 # Declare a floris model with default configuration
 fmodel = FlorisModel(configuration="defaults")
+fmodel.set_operation_model("simple-derating")
 
 # WIND DIRECTION SWEEP
 wind_directions = np.arange(0, 360, 1.0)

@@ -1,6 +1,7 @@
-"""Example: Simple optimization of derating
+"""Example: Optimize a row of turbines
 
-Look at optimizing for a two turbine farm with constant direction and varying TI and price
+This example optimizes the derating of a row of turbines to maximize net revenue.
+The row is aligned when the wind direction is 270 degrees.
 
 """
 
@@ -12,19 +13,17 @@ from floris.optimization.load_optimization.load_optimization import (
     compute_farm_revenue,
     compute_farm_voc,
     compute_net_revenue,
-    compute_turbine_voc,
     find_A_to_satisfy_rev_voc_ratio,
     optimize_derate,
 )
 
 
-# Compare VOC and net revenue under different conditions
-
-
 # Parameters
 D = 126.0
-N = 100
-derating_levels = np.linspace(1.0, 0.001, 20)
+d_spacing = 7.0
+derating_levels = np.linspace(1.0, 0.00000001, 10)
+n_turbines = 3
+N_per_loop = 10
 
 
 # Declare a floris model with default configuration
@@ -32,25 +31,41 @@ fmodel = FlorisModel(configuration="defaults")
 fmodel.set_operation_model("simple-derating")
 
 
-# Set up a two turbine farm
-fmodel.set(layout_x=[0, D * 5], layout_y=[0.0, 0.0])
+# Set up a row of turbines
+fmodel.set(
+    layout_x=[i * D * d_spacing for i in range(n_turbines)],
+    layout_y=[0.0 for i in range(n_turbines)],
+)
 
 
-# Set up the conditions
-wind_directions = np.ones(N) * 270.0
-values = np.ones(N)
-load_ambient_tis = np.linspace(0.05, 0.25, N)
+# Set up input conditions
+wind_directions = []
+values = []
+load_ambient_tis = []
+
+for w_i in np.linspace(230, 270, N_per_loop):
+    for v_i in np.linspace(1, 5, N_per_loop):
+        for t_i in np.linspace(0.02, 0.2, N_per_loop):
+            wind_directions.append(w_i)
+            values.append(v_i)
+            load_ambient_tis.append(t_i)
+wind_directions = np.array(wind_directions)
+values = np.array(values)
+load_ambient_tis = np.array(load_ambient_tis)
+N = len(wind_directions)
+
 time_series = TimeSeries(
     wind_directions=wind_directions, wind_speeds=8.0, turbulence_intensities=0.06, values=values
 )
 
+# Run the FLORIS model
 fmodel.set(wind_data=time_series)
 fmodel.run()
 
 # Set the initial power setpoints as no derating
-initial_power_setpoint = np.ones((N, 2)) * 5e6
+initial_power_setpoint = np.ones((N, n_turbines)) * 5e6
 
-# Calculate the A which would put the farm at a 10x revenue to VOC ratio
+# Calculate the A which would put the farm at a 4 revenue to VOC ratio
 A_initial = find_A_to_satisfy_rev_voc_ratio(fmodel, 4.0, load_ambient_tis)
 
 # Set these initial power setpoints
@@ -79,43 +94,48 @@ farm_revenue_opt = compute_farm_revenue(fmodel)
 
 
 # Show the results
-fig, axarr = plt.subplots(6, 1, sharex=True, figsize=(10, 12))
+fig, axarr = plt.subplots(7, 1, sharex=True, figsize=(10, 12))
+
+# Plot the wind direction
+ax = axarr[0]
+ax.plot(wind_directions, color="k")
+ax.set_ylabel("Wind Direction (deg)")
 
 # Plot the load TI
-ax = axarr[0]
-ax.plot(load_ambient_tis, marker="s", color="k")
+ax = axarr[1]
+ax.plot(load_ambient_tis, color="k")
 ax.set_ylabel("Load Ambient TI")
 
 # Plot the values
-ax = axarr[1]
+ax = axarr[2]
 ax.plot(values, color="k")
 ax.set_ylabel("Value of Electricity (-)")
 
 # Plot the initial and final farm revenue
-ax = axarr[2]
+ax = axarr[3]
 ax.plot(farm_revenue_initial, label="Initial", color="k")
 ax.plot(farm_revenue_opt, label="Optimized", color="r")
 ax.set_ylabel("Farm Revenue ($)")
 ax.legend()
 
 # Plot the initial and final farm VOC
-ax = axarr[3]
+ax = axarr[4]
 ax.plot(farm_voc_initial, label="Initial", color="k")
 ax.plot(farm_voc_opt, label="Optimized", color="r")
 ax.set_ylabel("Farm VOC")
 ax.legend()
 
 # Plot the initial and final farm net revenue
-ax = axarr[4]
+ax = axarr[5]
 ax.plot(net_revenue_initial, label="Initial", color="k")
 ax.plot(net_revenue_opt, label="Optimized", color="r")
 ax.set_ylabel("Farm Net Revenue ($)")
 ax.legend()
 
 # Plot the turbine deratings
-ax = axarr[5]
-for i in range(2):
-    ax.plot(opt_power_setpoints[:, i] / 1000.0, label=f"Turbine {i}")
+ax = axarr[6]
+for i in range(n_turbines):
+    ax.plot(opt_power_setpoints[:, i] / 1000.0, label=f"Turbine {i}", lw=3 * n_turbines / (i + 1))
 ax.set_ylabel("Power Setpoint (kW)")
 ax.set_xlabel("Time Step")
 ax.legend()
