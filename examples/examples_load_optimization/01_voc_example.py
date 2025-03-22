@@ -13,6 +13,7 @@ from floris.optimization.load_optimization.load_optimization import compute_turb
 
 # Parameters
 D = 126.0
+MIN_POWER_SETPOINT = 0.00000001
 
 
 # Declare a floris model with default configuration
@@ -50,7 +51,7 @@ fmodel = FlorisModel(configuration="defaults")
 N = 50
 wind_directions = np.ones(N) * 270.0
 load_ambient_tis = np.ones(N) * 0.1
-power_setpoints = np.linspace(5e6, 1, N)
+power_setpoints = np.linspace(5e6, MIN_POWER_SETPOINT, N)
 power_setpoints_grid = np.column_stack([power_setpoints, power_setpoints * 0 + 1e7])
 time_series = TimeSeries(
     wind_directions=wind_directions, wind_speeds=8.0, turbulence_intensities=0.06

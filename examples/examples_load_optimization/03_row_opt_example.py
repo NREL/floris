@@ -21,7 +21,8 @@ from floris.optimization.load_optimization.load_optimization import (
 # Parameters
 D = 126.0
 d_spacing = 7.0
-derating_levels = np.linspace(1.0, 0.00000001, 10)
+MIN_POWER_SETPOINT = 0.00000001
+derating_levels = np.linspace(1.0, MIN_POWER_SETPOINT, 10)
 n_turbines = 3
 N_per_loop = 10
 

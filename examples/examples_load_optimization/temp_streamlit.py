@@ -15,6 +15,8 @@ from floris.optimization.load_optimization.load_optimization import (
 )
 
 
+MIN_POWER_SETPOINT = 0.00000001
+
 def run_analysis(A_gain, exp_ws_std, exp_thrust):
     # Parameters
     D = 126.0
@@ -55,7 +57,7 @@ def run_analysis(A_gain, exp_ws_std, exp_thrust):
 
         # Set the setpoints to ramp down the upstream turbine
         power_setpoints = np.ones((N, 2)) * 5.0e6
-        up_setpoints = np.linspace(2e6, 0.001, N)
+        up_setpoints = np.linspace(2e6, MIN_POWER_SETPOINT, N)
         power_setpoints[:, t_i] = up_setpoints
 
         # Run this
