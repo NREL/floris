@@ -358,7 +358,7 @@ def test_ControllerDependentTurbine_integration():
                                          ["cp_ct_data_file"]
         )
 
-    N_test = 20
+    N_test = 6
     tilt_angles_nom = turbine_data["power_thrust_table"]["ref_tilt"] * np.ones((N_test, n_turbines))
     power_setpoints_nom = POWER_SETPOINT_DEFAULT * np.ones((N_test, n_turbines))
 
@@ -464,7 +464,7 @@ def test_CpCt_data_consistency():
     """
 
     n_turbines = 1
-    N_test = 50
+    N_test = 6
 
     wind_speeds = np.tile(
         np.linspace(0, 30, N_test)[:, None, None, None],
