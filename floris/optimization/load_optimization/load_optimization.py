@@ -52,6 +52,9 @@ def compute_load_ti(
         load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
         wake_slope (float, optional): Wake slope. Defaults to 0.3.
         max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+
+    Returns:
+        np.array: Array of load turbulence intensity for each findex and turbine
     """
 
     if fmodel.core.state is not State.USED:
@@ -208,35 +211,6 @@ def compute_turbine_voc(
     return A * (ws_std**exp_ws_std) * (thrust**exp_thrust)
 
 
-def compute_farm_revenue(
-    fmodel: FlorisModel,
-):
-    """Compute the farm revenue of the FlorisModel object.
-
-    Args:
-        fmodel (FlorisModel): FlorisModel object
-
-    Returns:
-        np.array: Array of farm revenue for each findex
-
-    """
-
-    if fmodel.core.state is not State.USED:
-        raise ValueError("FlorisModel must be run before computing net revenue")
-
-    # Make sure fmodel.wind_data is not None
-    if fmodel.wind_data is None:
-        raise ValueError("FlorisModel must have wind data to compute net revenue")
-
-    # Ensure that fmodel.wind_data is not None
-    if fmodel.wind_data.values is None:
-        raise ValueError("FlorisModel wind_data.values must be set to compute revenue")
-
-    farm_power = fmodel.get_farm_power()
-    values = fmodel.wind_data.values
-    return farm_power * values
-
-
 def compute_farm_voc(
     fmodel: FlorisModel,
     A: float,
@@ -272,6 +246,35 @@ def compute_farm_voc(
         exp_thrust=exp_thrust,
     )
     return np.sum(turbine_voc, axis=1)
+
+
+def compute_farm_revenue(
+    fmodel: FlorisModel,
+):
+    """Compute the farm revenue of the FlorisModel object.
+
+    Args:
+        fmodel (FlorisModel): FlorisModel object
+
+    Returns:
+        np.array: Array of farm revenue for each findex
+
+    """
+
+    if fmodel.core.state is not State.USED:
+        raise ValueError("FlorisModel must be run before computing net revenue")
+
+    # Make sure fmodel.wind_data is not None
+    if fmodel.wind_data is None:
+        raise ValueError("FlorisModel must have wind_data to compute net revenue")
+
+    # Ensure that fmodel.wind_data is not None
+    if fmodel.wind_data.values is None:
+        raise ValueError("FlorisModel wind_data.values must be set to compute revenue")
+
+    farm_power = fmodel.get_farm_power()
+    values = fmodel.wind_data.values
+    return farm_power * values
 
 
 def compute_net_revenue(
