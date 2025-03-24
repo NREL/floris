@@ -96,4 +96,27 @@ ax[0].grid()
 ax[1].grid()
 ax[0].set_title("Load TI and VOC vs T0 Power Setpoint")
 
+## Load ambient TI sweep
+load_ambient_tis = np.linspace(0.05, 0.25, N)
+power_setpoints = POWER_SETPOINT_DEFAULT * np.ones((N, 2))
+fmodel.set(power_setpoints=power_setpoints)
+fmodel.run()
+
+# Compute the load turbulence intensity and VOC
+load_ti = compute_load_ti(fmodel, load_ambient_tis)
+voc = compute_turbine_voc(fmodel, A=0.01, load_ambient_tis=load_ambient_tis)
+
+# Plot the TI and VOC for each turbine
+fig, ax = plt.subplots(2, 1, sharex=True)
+for t in range(fmodel.n_turbines):
+    ax[0].plot(load_ambient_tis, load_ti[:, t], label=f"Turbine {t}")
+    ax[1].plot(load_ambient_tis, voc[:, t], label=f"Turbine {t}")
+ax[0].set_ylabel("Load TI [-]")
+ax[1].set_ylabel("VOC [$]")
+ax[1].set_xlabel("Load Ambient TI [-]")
+ax[1].legend(loc="lower right")
+ax[0].grid()
+ax[1].grid()
+ax[0].set_title("Load TI and VOC vs Load Ambient TI")
+
 plt.show()
