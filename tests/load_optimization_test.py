@@ -14,7 +14,7 @@ from floris.optimization.load_optimization.load_optimization import (
     find_A_to_satisfy_rev_voc_ratio,
     get_max_powers,
     get_rotor_diameters,
-    optimize_derate,
+    optimize_power_setpoints,
 )
 
 

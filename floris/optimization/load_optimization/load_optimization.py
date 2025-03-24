@@ -365,7 +365,7 @@ def find_A_to_satisfy_rev_voc_ratio(
     return (farm_revenue.sum() / farm_voc.sum()) / target_rev_voc_ratio
 
 
-def optimize_derate(
+def optimize_power_setpoints(
     fmodel: FlorisModel,
     A: float,
     load_ambient_tis: np.array,
@@ -373,7 +373,7 @@ def optimize_derate(
     max_dist_D: float = 10.0,
     exp_ws_std: float = 1.0,
     exp_thrust: float = 1.0,
-    initial_power_setpoint: np.array = None,
+    power_setpoint_initial: np.array = None,
     derating_levels: np.array = np.linspace(1.0, 0.001, 5),
 ):
     """Optimize the derating of each turbine to maximize net revenue.
@@ -387,9 +387,10 @@ def optimize_derate(
         exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
             Defaults to 1.0.
         exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.
-        initial_power_setpoint (np.array, optional): Initial power setpoint for each turbine.
+        power_setpoint_initial (np.array, optional): Initial power setpoint for each turbine.
             Defaults to None.
-        derating_levels (np.array, optional): Array of derating levels to consider.
+        derating_levels (np.array, optional): Array of derating levels to consider, represented
+            as fractions of the power_setpoint_initial.
             Defaults to np.linspace(1.0, 0.001, 5).
 
     """
@@ -398,21 +399,21 @@ def optimize_derate(
     fmodel.set_operation_model("simple-derating")
 
     # If initial set point not provided, set to rated (assumed max) power
-    if initial_power_setpoint is None:
+    if power_setpoint_initial is None:
         max_power = get_max_powers(fmodel)
-        initial_power_setpoint = np.tile(max_power, (fmodel.n_findex, 1))
+        power_setpoint_initial = np.tile(max_power, (fmodel.n_findex, 1))
 
     # Initialize the the test power setpoints
-    test_power_setpoint = initial_power_setpoint.copy()
-    final_power_setpoint = initial_power_setpoint.copy()
+    power_setpoint_test = power_setpoint_initial.copy()
+    power_setpoint_opt = power_setpoint_initial.copy()
 
     # Get the sorted coords
     sorted_indices = fmodel.core.grid.sorted_indices[:, :, 0, 0]
 
     # Initialize the net revenue using the initial setpoints
-    fmodel.set(power_setpoints=initial_power_setpoint)
+    fmodel.set(power_setpoints=power_setpoint_initial)
     fmodel.run()
-    net_revenue = compute_net_revenue(
+    net_revenue_opt = compute_net_revenue(
         fmodel=fmodel,
         A=A,
         load_ambient_tis=load_ambient_tis,
@@ -427,12 +428,12 @@ def optimize_derate(
         # Loop over derating levels
         for d in derating_levels:
             # Apply the proposed derating level to the test_power_setpoint matrix
-            test_power_setpoint[range(fmodel.n_findex), t] = (
-                initial_power_setpoint[range(fmodel.n_findex), t] * d
+            power_setpoint_test[range(fmodel.n_findex), t] = (
+                power_setpoint_initial[range(fmodel.n_findex), t] * d
             )
 
             # Apply the setpoint to fmodel
-            fmodel.set(power_setpoints=test_power_setpoint)
+            fmodel.set(power_setpoints=power_setpoint_test)
 
             # Run
             fmodel.run()
@@ -447,16 +448,16 @@ def optimize_derate(
             )
 
             # Get a map of where test_net_revenue is greater than net_revenue
-            update_mask = test_net_revenue > net_revenue
+            update_mask = test_net_revenue > net_revenue_opt
 
             # Where update_mask is false, revert the test_power_setpoint to previous value
-            test_power_setpoint[~update_mask, :] = final_power_setpoint[~update_mask, :]
+            power_setpoint_test[~update_mask, :] = power_setpoint_opt[~update_mask, :]
 
             # Update the final_power_setpoint
-            final_power_setpoint[:, :] = test_power_setpoint[:, :]
+            power_setpoint_opt[:, :] = power_setpoint_test[:, :]
 
             # Update the net_revenue
-            net_revenue[update_mask] = test_net_revenue[update_mask]
+            net_revenue_opt[update_mask] = test_net_revenue[update_mask]
 
-    # Return the final power setpoint
-    return final_power_setpoint
+    # Return the final power setpoint and optimized revenue
+    return power_setpoint_opt, net_revenue_opt

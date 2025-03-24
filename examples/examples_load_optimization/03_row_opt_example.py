@@ -14,7 +14,7 @@ from floris.optimization.load_optimization.load_optimization import (
     compute_farm_voc,
     compute_net_revenue,
     find_A_to_satisfy_rev_voc_ratio,
-    optimize_derate,
+    optimize_power_setpoints,
 )
 
 
@@ -78,11 +78,11 @@ farm_revenue_initial = compute_farm_revenue(fmodel)
 
 
 # Compute the optimal derating levels given A_initial
-opt_power_setpoints = optimize_derate(
+opt_power_setpoints, opt_net_revenue = optimize_power_setpoints(
     fmodel,
     A_initial,
     load_ambient_tis,
-    initial_power_setpoint=initial_power_setpoint,
+    power_setpoint_initial=initial_power_setpoint,
     derating_levels=derating_levels,
 )
 
