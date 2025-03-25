@@ -292,9 +292,16 @@ def awc_added_wake_mixing(
     awc_wake_exp,
     awc_wake_denominator
 ):
+    # Drop surplus (grid) dimensions
+    awc_amplitude_i = awc_amplitude_i[:,:,0,0]
+    awc_mode_i = awc_mode_i[:,:,0,0]
 
     # TODO: Add TI in the mix, finetune amplitude/freq effect
-    awc_mixing_factor = np.zeros_like(awc_amplitude_i[:,:,0,0])
-    helix_mask = (awc_mode_i[:,:,0,0] == 'helix')
-    awc_mixing_factor[helix_mask] = awc_amplitude_i[:,:,0,0][helix_mask]**awc_wake_exp/awc_wake_denominator
-    return awc_mixing_factor 
+    awc_mixing_factor = np.zeros_like(awc_amplitude_i)
+    helix_mask = awc_mode_i == 'helix'
+
+    awc_mixing_factor[helix_mask] = (
+        awc_amplitude_i[helix_mask]**awc_wake_exp/awc_wake_denominator
+    )
+
+    return awc_mixing_factor
