@@ -37,7 +37,8 @@ class ControllerDependentTurbine(BaseOperationModel):
     the turbine status in terms of tip speed ratio and pitch angle.
     This class is not intended to be instantiated; it simply defines a library of static methods.
 
-    Developed and implemented by Simone Tamaro at Technische Universität München (TUM).
+    Developed and implemented by Simone Tamaro, Filippo Campagnolo, and Carlo L. Bottasso
+    at Technische Universität München (TUM).
     email: simone.tamaro@tum.de
     """
 
