@@ -13,12 +13,12 @@ from floris.core import (
     Turbine,
 )
 from floris.core.wake_velocity.gauss import gaussian_function
+from floris.type_dec import floris_float_type
 from floris.utilities import (
     cosd,
     sind,
     tand,
 )
-from floris.type_dec import floris_float_type
 
 
 @define
