@@ -12,6 +12,7 @@ from floris.optimization.load_optimization.load_optimization import (
     compute_net_revenue,
     compute_turbine_voc,
     find_A_to_satisfy_rev_voc_ratio,
+    find_A_to_satisfy_target_VOC_per_MW,
     get_max_powers,
     get_rotor_diameters,
     optimize_power_setpoints,
@@ -81,7 +82,7 @@ def test_compute_turbine_voc_no_wake():
     assert voc[0, 0] == voc[1, 1]
 
 
-def test_compute_turbien_voc_wake():
+def test_compute_turbine_voc_wake():
     # Test two turbines in a wake, n_findex = 1
     fmodel = FlorisModel(configuration="defaults")
     fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
@@ -137,3 +138,29 @@ def test_find_A_to_satisfy_rev_voc_ratio():
     farm_voc = compute_farm_voc(fmodel, A, load_ambient_tis)
 
     assert np.allclose(farm_revenue.sum() / farm_voc.sum(), target_rev_voc_ratio, atol=1e-4)
+
+def test_find_A_to_satisfy_target_VOC_per_MW():
+    # Test the function that finds the A value that satisfies the average VOC/MW/findex
+    target_VOC_per_MW_findex = 10.0
+
+    fmodel = FlorisModel(configuration="defaults")
+    fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
+    N = 100
+    time_series = TimeSeries(
+        wind_directions=np.ones(N) * 270.0,
+        wind_speeds=8.0,
+        turbulence_intensities=0.06,
+        values=np.ones(N)
+    )
+    fmodel.set(wind_data=time_series)
+    fmodel.run()
+
+    load_ambient_tis = np.ones(N) * 0.1
+
+    A = find_A_to_satisfy_target_VOC_per_MW(fmodel, target_VOC_per_MW_findex, load_ambient_tis)
+
+    farm_power = fmodel.get_farm_power()
+
+    farm_voc = compute_farm_voc(fmodel, A, load_ambient_tis)
+
+    assert np.allclose(1e6 * farm_voc.sum() / farm_power.sum(), target_VOC_per_MW_findex, atol=1e-4)

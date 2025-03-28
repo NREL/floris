@@ -391,6 +391,58 @@ def find_A_to_satisfy_rev_voc_ratio(
     return (farm_revenue.sum() / farm_voc.sum()) / target_rev_voc_ratio
 
 
+def find_A_to_satisfy_target_VOC_per_MW(
+    fmodel: FlorisModel,
+    target_VOC_per_MW_findex: float,
+    load_ambient_tis: np.array,
+    wake_slope: float = 0.3,
+    max_dist_D: float = 10.0,
+    exp_ws_std: float = 1.0,
+    exp_thrust: float = 1.0,
+):
+    """Find the value of A that satisfies the target average cost per total farm power per findex
+    over all findices. Note that if each findex represents 1 hour of operation, this is equivalent
+    to the target average cost/MWh.
+
+    Args:
+        fmodel (FlorisModel): FlorisModel object
+        target_VOC_per_MW_findex (float): Target average cost per MW per findex
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex,
+            expressed as fractions of mean wind speed
+        wake_slope (float, optional): Wake slope, defined as the lateral expansion of the wake on
+            each side per unit downstream distance along the axial direction. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance downstream of a turbine beyond which wake
+            added turbulence is assumed to be zero, in rotor diameters. Defaults to 10.0
+            (see IEC 61400-1 Ed. 4 Annex E).
+        exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
+            Defaults to 1.0.
+        exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.
+
+    Returns:
+        float: Value of A that satisfies the target cost/MW/findex
+
+    """
+
+    if fmodel.core.state is not State.USED:
+        raise ValueError("FlorisModel must be run before finding A for target cost/MW/findex")
+
+    # Compute farm power
+    farm_power = fmodel.get_farm_power()
+
+    # Compute farm VOC
+    farm_voc = compute_farm_voc(
+        fmodel=fmodel,
+        A=1.0,
+        load_ambient_tis=load_ambient_tis,
+        wake_slope=wake_slope,
+        max_dist_D=max_dist_D,
+        exp_ws_std=exp_ws_std,
+        exp_thrust=exp_thrust,
+    )
+
+    return 1e-6 * target_VOC_per_MW_findex / (farm_voc.sum() / (farm_power.sum()))
+
+
 def optimize_power_setpoints(
     fmodel: FlorisModel,
     A: float,
