@@ -46,7 +46,7 @@ values = []
 load_ambient_tis = []
 
 for w_i in np.linspace(230, 270, N_per_loop):
-    for v_i in np.linspace(1, 5, N_per_loop):
+    for v_i in np.linspace(1e-5, 5e-5, N_per_loop):
         for t_i in np.linspace(0.02, 0.2, N_per_loop):
             wind_directions.append(w_i)
             values.append(v_i)
@@ -111,8 +111,8 @@ ax.set_ylabel("Load Ambient\n TI (-)")
 
 # Plot the values
 ax = axarr[2]
-ax.plot(values, color="k")
-ax.set_ylabel("Value of\n Electricity (-)")
+ax.plot(1e6*values, color="k")
+ax.set_ylabel("Value of\n Electricity ($/MWh)")
 
 # Plot the initial and final farm revenue
 ax = axarr[3]
@@ -125,7 +125,7 @@ ax.legend()
 ax = axarr[4]
 ax.plot(farm_voc_initial, label="Initial", color="k")
 ax.plot(farm_voc_opt, label="Optimized", color="r")
-ax.set_ylabel("Farm VOC (-)")
+ax.set_ylabel("Farm VOC ($)")
 ax.legend()
 
 # Plot the initial and final farm net revenue

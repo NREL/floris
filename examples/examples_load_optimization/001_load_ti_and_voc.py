@@ -44,7 +44,7 @@ fmodel.run()
 
 # Compute the load turbulence intensity and VOC
 load_ti = compute_load_ti(fmodel, load_ambient_tis)
-voc = compute_turbine_voc(fmodel, A=0.01, load_ambient_tis=load_ambient_tis)
+voc = compute_turbine_voc(fmodel, A=2e-5, load_ambient_tis=load_ambient_tis)
 
 # Plot the TI and VOC for each turbine
 fig, ax = plt.subplots(2, 1, sharex=True)
@@ -84,7 +84,7 @@ fmodel.run()
 
 # Compute the load turbulence intensity and VOC
 load_ti = compute_load_ti(fmodel, load_ambient_tis)
-voc = compute_turbine_voc(fmodel, A=0.01, load_ambient_tis=load_ambient_tis)
+voc = compute_turbine_voc(fmodel, A=2e-5, load_ambient_tis=load_ambient_tis)
 
 # Plot the TI and VOC for each turbine
 fig, ax = plt.subplots(2, 1, sharex=True)
@@ -99,7 +99,7 @@ ax[0].grid()
 ax[1].grid()
 ax[0].set_title(
     "Load TI and VOC vs T0 Power Setpoint\n"
-    "Wind Direction = 270\u00B0"
+    "Wind Direction = 270\u00B0, Wind Speed = 8 m/s"
 )
 
 ## Load ambient TI sweep
@@ -110,7 +110,7 @@ fmodel.run()
 
 # Compute the load turbulence intensity and VOC
 load_ti = compute_load_ti(fmodel, load_ambient_tis)
-voc = compute_turbine_voc(fmodel, A=0.01, load_ambient_tis=load_ambient_tis)
+voc = compute_turbine_voc(fmodel, A=2e-5, load_ambient_tis=load_ambient_tis)
 
 # Plot the TI and VOC for each turbine
 fig, ax = plt.subplots(2, 1, sharex=True)
@@ -125,7 +125,7 @@ ax[0].grid()
 ax[1].grid()
 ax[0].set_title(
     "Load TI and VOC vs Load Ambient TI\n"
-    "Wind Direction = 270\u00B0"
+    "Wind Direction = 270\u00B0, Wind Speed = 8 m/s"
 )
 
 plt.show()
