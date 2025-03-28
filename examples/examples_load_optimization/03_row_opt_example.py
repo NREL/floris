@@ -1,6 +1,7 @@
 """Example: Optimize a row of turbines
 
-This example optimizes the derating of a row of turbines to maximize net revenue.
+This example optimizes the derating of a row of three turbines to maximize net revenue for a
+variety of combinations of wind direction, load ambient TI, and electricity values.
 The row is aligned when the wind direction is 270 degrees.
 
 """
@@ -24,7 +25,7 @@ d_spacing = 7.0
 MIN_POWER_SETPOINT = 0.00000001
 derating_levels = np.linspace(1.0, MIN_POWER_SETPOINT, 10)
 n_turbines = 3
-N_per_loop = 10
+N_per_loop = 10 # Number of unique values for wind direction, value, and load ambient TI
 
 
 # Declare a floris model with default configuration
@@ -95,50 +96,51 @@ farm_revenue_opt = compute_farm_revenue(fmodel)
 
 
 # Show the results
-fig, axarr = plt.subplots(7, 1, sharex=True, figsize=(10, 12))
+fig, axarr = plt.subplots(7, 1, sharex=True, figsize=(10, 10))
 
 # Plot the wind direction
 ax = axarr[0]
 ax.plot(wind_directions, color="k")
-ax.set_ylabel("Wind Direction (deg)")
+ax.set_ylabel("Wind\n Direction (deg)")
+ax.set_title("X, Y Turbine Coordinates: T0: (0, 0), T1: (7D, 0), T2: (14D, 0); Wind Speed = 8 m/s")
 
 # Plot the load TI
 ax = axarr[1]
 ax.plot(load_ambient_tis, color="k")
-ax.set_ylabel("Load Ambient TI")
+ax.set_ylabel("Load Ambient\n TI (-)")
 
 # Plot the values
 ax = axarr[2]
 ax.plot(values, color="k")
-ax.set_ylabel("Value of Electricity (-)")
+ax.set_ylabel("Value of\n Electricity (-)")
 
 # Plot the initial and final farm revenue
 ax = axarr[3]
 ax.plot(farm_revenue_initial, label="Initial", color="k")
 ax.plot(farm_revenue_opt, label="Optimized", color="r")
-ax.set_ylabel("Farm Revenue ($)")
+ax.set_ylabel("Farm\n Revenue ($)")
 ax.legend()
 
 # Plot the initial and final farm VOC
 ax = axarr[4]
 ax.plot(farm_voc_initial, label="Initial", color="k")
 ax.plot(farm_voc_opt, label="Optimized", color="r")
-ax.set_ylabel("Farm VOC")
+ax.set_ylabel("Farm VOC (-)")
 ax.legend()
 
 # Plot the initial and final farm net revenue
 ax = axarr[5]
 ax.plot(net_revenue_initial, label="Initial", color="k")
 ax.plot(net_revenue_opt, label="Optimized", color="r")
-ax.set_ylabel("Farm Net Revenue ($)")
+ax.set_ylabel("Farm Net\nRevenue ($)")
 ax.legend()
 
 # Plot the turbine deratings
 ax = axarr[6]
 for i in range(n_turbines):
     ax.plot(opt_power_setpoints[:, i] / 1000.0, label=f"Turbine {i}", lw=3 * n_turbines / (i + 1))
-ax.set_ylabel("Power Setpoint (kW)")
-ax.set_xlabel("Time Step")
+ax.set_ylabel("Power\n Setpoint (kW)")
+ax.set_xlabel("Wind Condition and Electricity Value Combination")
 ax.legend()
 
 for ax in axarr:

@@ -57,7 +57,10 @@ ax[1].set_xlabel("Wind Direction [deg]")
 ax[1].legend(loc="lower right")
 ax[0].grid()
 ax[1].grid()
-ax[0].set_title("Load TI and VOC vs Wind Direction")
+ax[0].set_title(
+    "Load TI and VOC vs Wind Direction\n"
+    "X, Y Turbine Coordinates: T0: (0, 0), T1: (7D, 0)"
+)
 
 ## Power setpoint sweep
 N = 50
@@ -94,7 +97,10 @@ ax[1].set_xlabel("Power Setpoint (T0) [W]")
 ax[1].legend(loc="lower right")
 ax[0].grid()
 ax[1].grid()
-ax[0].set_title("Load TI and VOC vs T0 Power Setpoint")
+ax[0].set_title(
+    "Load TI and VOC vs T0 Power Setpoint\n"
+    "Wind Direction = 270\u00B0"
+)
 
 ## Load ambient TI sweep
 load_ambient_tis = np.linspace(0.05, 0.25, N)
@@ -117,6 +123,9 @@ ax[1].set_xlabel("Load Ambient TI [-]")
 ax[1].legend(loc="lower right")
 ax[0].grid()
 ax[1].grid()
-ax[0].set_title("Load TI and VOC vs Load Ambient TI")
+ax[0].set_title(
+    "Load TI and VOC vs Load Ambient TI\n"
+    "Wind Direction = 270\u00B0"
+)
 
 plt.show()

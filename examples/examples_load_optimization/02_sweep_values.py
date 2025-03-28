@@ -27,7 +27,6 @@ fmodel = FlorisModel(configuration="defaults")
 
 # Sweep TI first==================================================================
 
-# WIND DIRECTION SWEEP
 wind_directions = np.ones(N) * 270.0
 
 # Assume uniform load ambient turbulence intensities
@@ -52,7 +51,7 @@ voc = compute_turbine_voc(fmodel, 0.01, load_ambient_tis)
 # Compute net revenue
 net_revenue = compute_net_revenue(fmodel, 0.01, load_ambient_tis)
 
-# Print the TI for each turbine
+# Plot the VOC vs. load TI for each turbine
 fig, axarr = plt.subplots(1, 2, figsize=(12, 5), sharex=False, sharey=False)
 
 ax = axarr[0]
@@ -67,11 +66,11 @@ ax.plot(load_ambient_tis, net_revenue, label="Farm Net Revenue", color="k")
 ax.set_ylabel("Net Revenue")
 ax.set_xlabel("Load Ambient TI")
 ax.grid(True)
+fig.suptitle("X, Y Turbine Coordinates: T0: (0, 0), T1: (7D, 0); Wind DIrection = 270\u00B0")
 
 
-# Sweep values first==================================================================
+# Sweep values next==================================================================
 
-# WIND DIRECTION SWEEP
 wind_directions = np.ones(N) * 270.0
 
 # Assume uniform load ambient turbulence intensities
@@ -96,7 +95,7 @@ voc = compute_turbine_voc(fmodel, 0.01, load_ambient_tis)
 # Compute net revenue
 net_revenue = compute_net_revenue(fmodel, 0.01, load_ambient_tis)
 
-# Print the TI for each turbine
+# Plot the VOC vs. value for each turbine
 fig, axarr = plt.subplots(1, 2, figsize=(12, 5), sharex=False, sharey=False)
 
 ax = axarr[0]
@@ -111,6 +110,7 @@ ax.plot(values, net_revenue, label="Farm Net Revenue", color="k")
 ax.set_ylabel("Net Revenue")
 ax.set_xlabel("Value of Electricity (-)")
 ax.grid(True)
+fig.suptitle("X, Y Turbine Coordinates: T0: (0, 0), T1: (7D, 0); Wind Direction = 270\u00B0")
 
 
 plt.show()
