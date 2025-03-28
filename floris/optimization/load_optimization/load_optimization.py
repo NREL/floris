@@ -29,7 +29,7 @@ def get_rotor_diameters(fmodel: FlorisModel):
         fmodel (FlorisModel): FlorisModel object
 
     Returns:
-        np.array: Array of rated powers for each turbine
+        np.array: Array of rotor diameters for each turbine
     """
 
     # If fmodel.core.farm.rotor_diameters is 1 dimensional, return
@@ -45,13 +45,19 @@ def compute_load_ti(
     wake_slope: float = 0.3,
     max_dist_D: float = 10.0,
 ):
-    """Compute the turbine 'load' turbulence intensity for the current layout.
+    """Compute the turbine 'load' turbulence intensity for the current layout by combining the
+    'load' ambient turbulence intensity and wake added turbulence following Annex E in the
+    IEC 61400-1 Ed. 4 standard.
 
     Args:
         fmodel (FlorisModel): FlorisModel object
-        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
-        wake_slope (float, optional): Wake slope. Defaults to 0.3.
-        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex,
+            expressed as fractions of mean wind speed
+        wake_slope (float, optional): Wake slope, defined as the lateral expansion of the wake on
+            each side per unit downstream distance along the axial direction. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance downstream of a turbine beyond which wake
+            added turbulence is assumed to be zero, in rotor diameters. Defaults to 10.0
+            (see IEC 61400-1 Ed. 4 Annex E).
 
     Returns:
         np.array: Array of load turbulence intensity for each findex and turbine
@@ -130,14 +136,16 @@ def compute_load_ti(
         # Set the minimum distance mask
         max_dist_mask = distance < D * max_dist_D
 
-        # Compute the standard deviation of the wind speed owed to this wake
+        # Compute the standard deviation of the wind speed owed to this wake following Annex E
+        # of the IEC 61400-1 Ed. 4 standard
         ws_std = np.where(
             wake_cone_mask & downstream_mask & max_dist_mask,
             ambient_wind_speeds / (1.5 + 0.8 * (distance / D) / np.sqrt(ct_t)),
             0.0,
         )
 
-        # Combine with ambient TI to get the total TI from this wake
+        # Combine with ambient TI to get the total TI from this wake following Annex E
+        # of the IEC 61400-1 Ed. 4 standard
         ti_add_update = (
             np.sqrt(ws_std**2 + (load_ambient_tis_reshape * ambient_wind_speeds) ** 2)
             / ambient_wind_speeds
@@ -169,9 +177,13 @@ def compute_turbine_voc(
     Args:
         fmodel (FlorisModel): FlorisModel object
         A (float): Coefficient for the VOC calculation
-        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
-        wake_slope (float, optional): Wake slope. Defaults to 0.3.
-        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex,
+            expressed as fractions of mean wind speed
+        wake_slope (float, optional): Wake slope, defined as the lateral expansion of the wake on
+            each side per unit downstream distance along the axial direction. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance downstream of a turbine beyond which wake
+            added turbulence is assumed to be zero, in rotor diameters. Defaults to 10.0
+            (see IEC 61400-1 Ed. 4 Annex E).
         exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
             Defaults to 1.0.
         exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.0.
@@ -225,9 +237,13 @@ def compute_farm_voc(
     Args:
         fmodel (FlorisModel): FlorisModel object
         A (float): Coefficient for the VOC calculation
-        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
-        wake_slope (float, optional): Wake slope. Defaults to 0.3.
-        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex,
+            expressed as fractions of mean wind speed
+        wake_slope (float, optional): Wake slope, defined as the lateral expansion of the wake on
+            each side per unit downstream distance along the axial direction. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance downstream of a turbine beyond which wake
+            added turbulence is assumed to be zero, in rotor diameters. Defaults to 10.0
+            (see IEC 61400-1 Ed. 4 Annex E).
         exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
             Defaults to 1.0.
         exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.0.
@@ -251,7 +267,7 @@ def compute_farm_voc(
 def compute_farm_revenue(
     fmodel: FlorisModel,
 ):
-    """Compute the farm revenue of the FlorisModel object.
+    """Compute the farm revenue of the FlorisModel object using the values from fmodel.wind_data.
 
     Args:
         fmodel (FlorisModel): FlorisModel object
@@ -268,7 +284,7 @@ def compute_farm_revenue(
     if fmodel.wind_data is None:
         raise ValueError("FlorisModel must have wind_data to compute net revenue")
 
-    # Ensure that fmodel.wind_data is not None
+    # Ensure that fmodel.wind_data.values is not None
     if fmodel.wind_data.values is None:
         raise ValueError("FlorisModel wind_data.values must be set to compute revenue")
 
@@ -286,14 +302,19 @@ def compute_net_revenue(
     exp_ws_std: float = 1.0,
     exp_thrust: float = 1.0,
 ):
-    """Compute the net revenue for the current layout."
+    """Compute the net revenue for the current layout as the difference between the farm revenue
+    the farm VOC for each index.
 
     Args:
         fmodel (FlorisModel): FlorisModel object
         A (float): Coefficient for the VOC calculation
-        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
-        wake_slope (float, optional): Wake slope. Defaults to 0.3.
-        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex,
+            expressed as fractions of mean wind speed
+        wake_slope (float, optional): Wake slope, defined as the lateral expansion of the wake on
+            each side per unit downstream distance along the axial direction. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance downstream of a turbine beyond which wake
+            added turbulence is assumed to be zero, in rotor diameters. Defaults to 10.0
+            (see IEC 61400-1 Ed. 4 Annex E).
         exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
             Defaults to 1.0.
         exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.0.
@@ -329,14 +350,19 @@ def find_A_to_satisfy_rev_voc_ratio(
     exp_ws_std: float = 1.0,
     exp_thrust: float = 1.0,
 ):
-    """Find the value of A that satisfies the target revenue to VOC ratio.
+    """Find the value of A that satisfies the target ratio of total farm revenue over all findices
+    to total farm VOC over all findices.
 
     Args:
         fmodel (FlorisModel): FlorisModel object
         target_rev_voc_ratio (float): Target revenue to VOC ratio
-        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
-        wake_slope (float, optional): Wake slope. Defaults to 0.3.
-        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex,
+            expressed as fractions of mean wind speed
+        wake_slope (float, optional): Wake slope, defined as the lateral expansion of the wake on
+            each side per unit downstream distance along the axial direction. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance downstream of a turbine beyond which wake
+            added turbulence is assumed to be zero, in rotor diameters. Defaults to 10.0
+            (see IEC 61400-1 Ed. 4 Annex E).
         exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
             Defaults to 1.0.
         exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.
@@ -376,21 +402,26 @@ def optimize_power_setpoints(
     power_setpoint_initial: np.array = None,
     derating_levels: np.array = np.linspace(1.0, 0.001, 5),
 ):
-    """Optimize the derating of each turbine to maximize net revenue.
+    """Optimize the derating of each turbine to maximize net revenue sequentially from upstream to
+    downstream.
 
     Args:
         fmodel (FlorisModel): FlorisModel object
         A (float): Coefficient for the VOC calculation
-        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex
-        wake_slope (float, optional): Wake slope. Defaults to 0.3.
-        max_dist_D (flat, optional): Maximum distance in rotor diameters. Defaults to 10.0.
+        load_ambient_tis (list or np.array): Ambient 'load' turbulence intensity for each findex,
+            expressed as fractions of mean wind speed
+        wake_slope (float, optional): Wake slope, defined as the lateral expansion of the wake on
+            each side per unit downstream distance along the axial direction. Defaults to 0.3.
+        max_dist_D (flat, optional): Maximum distance downstream of a turbine beyond which wake
+            added turbulence is assumed to be zero, in rotor diameters. Defaults to 10.0
+            (see IEC 61400-1 Ed. 4 Annex E).
         exp_ws_std (float, optional): Exponent for the wind speed standard deviation.
             Defaults to 1.0.
         exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.
         power_setpoint_initial (np.array, optional): Initial power setpoint for each turbine.
-            Defaults to None.
-        derating_levels (np.array, optional): Array of derating levels to consider, represented
-            as fractions of the power_setpoint_initial.
+            If None, each turbine's rated power will be used. Defaults to None.
+        derating_levels (np.array, optional): Array of derating levels to consider in optimization,
+            represented as fractions of the power_setpoint_initial.
             Defaults to np.linspace(1.0, 0.001, 5).
 
     """
@@ -403,7 +434,7 @@ def optimize_power_setpoints(
         max_power = get_max_powers(fmodel)
         power_setpoint_initial = np.tile(max_power, (fmodel.n_findex, 1))
 
-    # Initialize the the test power setpoints
+    # Initialize the test power setpoints
     power_setpoint_test = power_setpoint_initial.copy()
     power_setpoint_opt = power_setpoint_initial.copy()
 
