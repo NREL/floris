@@ -282,6 +282,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.core.rotor_velocity.html">floris.core.rotor_velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.core.solver.html">floris.core.solver</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.core.turbine.html">floris.core.turbine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html">floris.core.turbine.controller_dependent_operation_model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
 </ul>
@@ -394,6 +395,10 @@ window.addEventListener("load", () => mermaid.run());
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Operation models</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_operation_models/001_compare_yaw_loss.html">Example: Compare yaw loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
 <ul class="nav bd-sidenav">
@@ -737,10 +742,10 @@ in the corresponding input files found in the source code dropdowns.</p>
 <section id="jensen-and-jimenez">
 <h2>Jensen and Jimenez<a class="headerlink" href="#jensen-and-jimenez" title="Link to this heading">#</a></h2>
 <p>The Jensen model computes the wake velocity deficit based on the classic Jensen/Park model
-<span id="id1">Jensen [<a class="reference internal" href="bibliography.html#id19" title="Niels Otto Jensen. A note on wind generator interaction. Risø National Laboratory, 1983.">2</a>]</span>. It is often refered to as a &quot;top-hat&quot; model because the spanwise
+<span id="id1">Jensen [<a class="reference internal" href="bibliography.html#id19" title="Niels Otto Jensen. A note on wind generator interaction. Risø National Laboratory, 1983.">4</a>]</span>. It is often refered to as a &quot;top-hat&quot; model because the spanwise
 velocity profile is constant across the wake and abruptly jumps to freestream outside of the
 wake boundary line. The slope of the wake boundary line, or wake expansion, is a user parameter.</p>
-<p>The Jiménez wake deflection model is derived from <span id="id2">Jiménez <em>et al.</em> [<a class="reference internal" href="bibliography.html#id18" title="Ángel Jiménez, Antonio Crespo, and Emilio Migoya. Application of a les technique to characterize the wake deflection of a wind turbine in yaw. Wind energy, 13(6):559–572, 2010.">3</a>]</span>.</p>
+<p>The Jiménez wake deflection model is derived from <span id="id2">Jiménez <em>et al.</em> [<a class="reference internal" href="bibliography.html#id18" title="Ángel Jiménez, Antonio Crespo, and Emilio Migoya. Application of a les technique to characterize the wake deflection of a wind turbine in yaw. Wind energy, 13(6):559–572, 2010.">5</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_plot</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/jensen.yaml&quot;</span><span class="p">)</span>
@@ -754,13 +759,13 @@ wake boundary line. The slope of the wake boundary line, or wake expansion, is a
 </section>
 <section id="gauss-and-gch">
 <h2>Gauss and GCH<a class="headerlink" href="#gauss-and-gch" title="Link to this heading">#</a></h2>
-<p>The Gaussian velocity model is implemented based on <span id="id3">Bastankhah and Porté-Agel [<a class="reference internal" href="bibliography.html#id4" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">4</a>]</span> and
-<span id="id4">Niayifar and Porté-Agel [<a class="reference internal" href="bibliography.html#id5" title="Amin Niayifar and Fernando Porté-Agel. Analytical modeling of wind farms: a new approach for power prediction. Energies, 9(9):741, 2016.">5</a>]</span>. This model represents the velocity deficity as a gaussian
+<p>The Gaussian velocity model is implemented based on <span id="id3">Bastankhah and Porté-Agel [<a class="reference internal" href="bibliography.html#id4" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">6</a>]</span> and
+<span id="id4">Niayifar and Porté-Agel [<a class="reference internal" href="bibliography.html#id5" title="Amin Niayifar and Fernando Porté-Agel. Analytical modeling of wind farms: a new approach for power prediction. Energies, 9(9):741, 2016.">7</a>]</span>. This model represents the velocity deficity as a gaussian
 distribution in the spanwise direction, and the gaussian profile is controlled by user parameters.
 There is a near wake zone and a far wake zone. Both maintain the gaussian profile in the spanwise
 direction, but they have different models for wake recovery.</p>
 <p>The Gauss deflection model is a blend of the models described in
-<span id="id5">Bastankhah and Porté-Agel [<a class="reference internal" href="bibliography.html#id4" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">4</a>]</span> and <span id="id6">King <em>et al.</em> [<a class="reference internal" href="bibliography.html#id17" title="Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. Submitted to Wind Energy Science, 2019.">6</a>]</span> for calculating
+<span id="id5">Bastankhah and Porté-Agel [<a class="reference internal" href="bibliography.html#id4" title="Majid Bastankhah and Fernando Porté-Agel. Experimental and theoretical study of wind turbine wakes in yawed conditions. Journal of Fluid Mechanics, 806:506–541, 2016.">6</a>]</span> and <span id="id6">King <em>et al.</em> [<a class="reference internal" href="bibliography.html#id17" title="Jennifer King, Paul Fleming, Ryan King, and Luis A. Martinez-Tossas. Controls-oriented model to capture secondary effects of wake steering. Submitted to Wind Energy Science, 2019.">8</a>]</span> for calculating
 the deflection field in turbine wakes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -792,8 +797,8 @@ simpler tuning and data fitting.</p>
 </section>
 <section id="cumulative-curl">
 <h2>Cumulative Curl<a class="headerlink" href="#cumulative-curl" title="Link to this heading">#</a></h2>
-<p>The cumulative curl model is an implementation of the model described in <span id="id7">Bay <em>et al.</em> [<a class="reference internal" href="bibliography.html#id27" title="C. J. Bay, P. Fleming, B. Doekemeijer, J. King, M. Churchfield, and R. Mudafort. Addressing deep array effects and impacts to wake steering with the cumulative-curl wake model. Wind Energy Science Discussions, 2022:1–28, 2022. URL: https://wes.copernicus.org/preprints/wes-2022-17/, doi:10.5194/wes-2022-17.">7</a>]</span>,
-which itself is based on the cumulative model of <span id="id8">Bastankhah <em>et al.</em> [<a class="reference internal" href="bibliography.html#id26" title="Majid Bastankhah, Bridget L. Welch, Luis A. Martínez-Tossas, Jennifer King, and Paul Fleming. Analytical solution for the cumulative wake of wind turbines in wind farms. Journal of Fluid Mechanics, 911:A53, 2021. doi:10.1017/jfm.2020.1037.">8</a>]</span></p>
+<p>The cumulative curl model is an implementation of the model described in <span id="id7">Bay <em>et al.</em> [<a class="reference internal" href="bibliography.html#id27" title="C. J. Bay, P. Fleming, B. Doekemeijer, J. King, M. Churchfield, and R. Mudafort. Addressing deep array effects and impacts to wake steering with the cumulative-curl wake model. Wind Energy Science Discussions, 2022:1–28, 2022. URL: https://wes.copernicus.org/preprints/wes-2022-17/, doi:10.5194/wes-2022-17.">9</a>]</span>,
+which itself is based on the cumulative model of <span id="id8">Bastankhah <em>et al.</em> [<a class="reference internal" href="bibliography.html#id26" title="Majid Bastankhah, Bridget L. Welch, Luis A. Martínez-Tossas, Jennifer King, and Paul Fleming. Analytical solution for the cumulative wake of wind turbines in wind farms. Journal of Fluid Mechanics, 911:A53, 2021. doi:10.1017/jfm.2020.1037.">10</a>]</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_plot</span><span class="p">(</span><span class="s2">&quot;../examples/inputs/cc.yaml&quot;</span><span class="p">)</span>
@@ -807,10 +812,10 @@ which itself is based on the cumulative model of <span id="id8">Bastankhah <em>e
 </section>
 <section id="turbopark">
 <h2>TurbOPark<a class="headerlink" href="#turbopark" title="Link to this heading">#</a></h2>
-<p>The TurbOPark model is designed to model long wakes from large wind farm clusters. It was originally presented as a “top-hat” model in <span id="id9">Nygaard <em>et al.</em> [<a class="reference internal" href="bibliography.html#id25" title="Nicolai Gayle Nygaard, Søren Trads Steen, Lina Poulsen, and Jesper Grønnegaard Pedersen. Modelling cluster wakes and wind farm blockage. In Journal of Physics: Conference Series, volume 1618, 062072. IOP Publishing, 2020.">9</a>]</span> and was updated in <span id="id10">Pedersen <em>et al.</em> [<a class="reference internal" href="bibliography.html#id28" title="J G Pedersen, E Svensson, L Poulsen, and N G Nygaard. Turbulence optimized park model with gaussian wake profile. Journal of Physics: Conference Series, 2265(2):022063, may 2022. URL: https://dx.doi.org/10.1088/1742-6596/2265/2/022063.">10</a>]</span> to have a Gaussian profile. For the latter, Ørsted released the <a class="reference external" href="https://github.com/OrstedRD/TurbOPark">Matlab code with documentation</a>, which allows the verification of the implementation in FLORIS.</p>
+<p>The TurbOPark model is designed to model long wakes from large wind farm clusters. It was originally presented as a “top-hat” model in <span id="id9">Nygaard <em>et al.</em> [<a class="reference internal" href="bibliography.html#id25" title="Nicolai Gayle Nygaard, Søren Trads Steen, Lina Poulsen, and Jesper Grønnegaard Pedersen. Modelling cluster wakes and wind farm blockage. In Journal of Physics: Conference Series, volume 1618, 062072. IOP Publishing, 2020.">11</a>]</span> and was updated in <span id="id10">Pedersen <em>et al.</em> [<a class="reference internal" href="bibliography.html#id28" title="J G Pedersen, E Svensson, L Poulsen, and N G Nygaard. Turbulence optimized park model with gaussian wake profile. Journal of Physics: Conference Series, 2265(2):022063, may 2022. URL: https://dx.doi.org/10.1088/1742-6596/2265/2/022063.">12</a>]</span> to have a Gaussian profile. For the latter, Ørsted released the <a class="reference external" href="https://github.com/OrstedRD/TurbOPark">Matlab code with documentation</a>, which allows the verification of the implementation in FLORIS.</p>
 <p>The first implementation, the <a class="reference external" href="https://github.com/NREL/floris/blob/main/floris/core/wake_velocity/turbopark.py"><code class="docutils literal notranslate"><span class="pre">TurboparkVelocityDeficitModel</span></code></a>, was released in <a class="reference external" href="https://github.com/NREL/floris/releases/tag/v3.1">FLORIS v3.1</a>. The second implementation, the <a class="reference external" href="https://github.com/NREL/floris/blob/main/floris/core/wake_velocity/turboparkgauss.py"><code class="docutils literal notranslate"><span class="pre">TurboparkgaussVelocityDeficitModel</span></code></a>, was released in FLORIS v4.2 and shows a near-perfect match to the predictions of Ørsted’s Matlab implementation. As such, we will emphasize the use of the <code class="docutils literal notranslate"><span class="pre">TurboparkgaussVelocityDeficitModel</span></code> going forward, and suggest that new users use this model (by setting the <code class="docutils literal notranslate"><span class="pre">velocity_model</span></code> field of the FLORIS input file to <code class="docutils literal notranslate"><span class="pre">turboparkgauss</span></code> instead of the <code class="docutils literal notranslate"><span class="pre">TurboparkVelocityDeficitModel</span></code> (<code class="docutils literal notranslate"><span class="pre">velocity_model:</span> <span class="pre">turbopark</span></code>)) if they are interested in testing the TurbOPark model.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">TurboparkgaussVelocityDeficitModel</span></code> implementation was contributed by <a class="reference external" href="https://github.com/JasperShell">Jasper Kreeft</a>.</p>
-<p>Note that the original top-hat TurbOPark model (<span id="id11">Nygaard <em>et al.</em> [<a class="reference internal" href="bibliography.html#id25" title="Nicolai Gayle Nygaard, Søren Trads Steen, Lina Poulsen, and Jesper Grønnegaard Pedersen. Modelling cluster wakes and wind farm blockage. In Journal of Physics: Conference Series, volume 1618, 062072. IOP Publishing, 2020.">9</a>]</span>) is <em>not</em> available in FLORIS.</p>
+<p>Note that the original top-hat TurbOPark model (<span id="id11">Nygaard <em>et al.</em> [<a class="reference internal" href="bibliography.html#id25" title="Nicolai Gayle Nygaard, Søren Trads Steen, Lina Poulsen, and Jesper Grønnegaard Pedersen. Modelling cluster wakes and wind farm blockage. In Journal of Physics: Conference Series, volume 1618, 062072. IOP Publishing, 2020.">11</a>]</span>) is <em>not</em> available in FLORIS.</p>
 <p>The wakes as predicted by the <code class="docutils literal notranslate"><span class="pre">TurboparkgaussVelocityDeficit</span></code> model are demonstrated below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -829,7 +834,7 @@ which itself is based on the cumulative model of <span id="id8">Bastankhah <em>e
 <h3>Crespo-Hernandez<a class="headerlink" href="#crespo-hernandez" title="Link to this heading">#</a></h3>
 <p>CrespoHernandez is a wake-turbulence model that is used to compute additional variability introduced
 to the flow field by operation of a wind turbine. Implementation of the model follows the original
-formulation and limitations outlined in <span id="id12">Crespo and Hernandez [<a class="reference internal" href="bibliography.html#id15" title="A Crespo and J Hernandez. Turbulence characteristics in wind-turbine wakes. Journal of wind engineering and industrial aerodynamics, 61(1):71–85, 1996.">11</a>]</span>.</p>
+formulation and limitations outlined in <span id="id12">Crespo and Hernandez [<a class="reference internal" href="bibliography.html#id15" title="A Crespo and J Hernandez. Turbulence characteristics in wind-turbine wakes. Journal of wind engineering and industrial aerodynamics, 61(1):71–85, 1996.">13</a>]</span>.</p>
 </section>
 </section>
 <section id="wake-combination-models">
@@ -921,7 +926,7 @@ flow field.</p>
 <section id="max">
 <h3>Max<a class="headerlink" href="#max" title="Link to this heading">#</a></h3>
 <p>The MAX model incorporates the velocity deficits into the base flow field by selecting the
-maximum of the two for each point. For more information, refer to <span id="id13">Gunn <em>et al.</em> [<a class="reference internal" href="bibliography.html#id16" title="Kester Gunn, Clym Stock-Williams, M Burke, Richard Willden, C Vogel, W Hunter, T Stallard, N Robinson, and SR Schmidt. Limitations to the validity of single wake superposition in wind farm yield assessment. In Journal of Physics: Conference Series, number 1. IOP Publishing: Conference Series, 2016.">12</a>]</span>.</p>
+maximum of the two for each point. For more information, refer to <span id="id13">Gunn <em>et al.</em> [<a class="reference internal" href="bibliography.html#id16" title="Kester Gunn, Clym Stock-Williams, M Burke, Richard Willden, C Vogel, W Hunter, T Stallard, N Robinson, and SR Schmidt. Limitations to the validity of single wake superposition in wind farm yield assessment. In Journal of Physics: Conference Series, number 1. IOP Publishing: Conference Series, 2016.">14</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">combination_plot</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">)</span>

@@ -272,6 +272,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.core.rotor_velocity.html">floris.core.rotor_velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.core.solver.html">floris.core.solver</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/floris.core.turbine.html">floris.core.turbine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.core.turbine.controller_dependent_operation_model.html">floris.core.turbine.controller_dependent_operation_model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
 </ul>
@@ -384,6 +385,10 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Operation models</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples_operation_models/001_compare_yaw_loss.html">Example: Compare yaw loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
 <ul class="nav bd-sidenav">
@@ -746,22 +751,22 @@ Optimization time: 0.0 s / 60.0 s
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +1.0
-Optimization time = +10.2 [s]
-Mean AEP = 87.0 [GWh] (+2.11%)
-Median AEP = 87.0 [GWh] (+2.13%)
-Max AEP = 87.1 [GWh] (+2.19%)
-Min AEP = 86.9 [GWh] (+2.02%)
+Optimization time = +10.1 [s]
+Mean AEP = 86.4 [GWh] (+1.47%)
+Median AEP = 86.4 [GWh] (+1.44%)
+Max AEP = 86.6 [GWh] (+1.60%)
+Min AEP = 86.4 [GWh] (+1.39%)
 =======================================
-Optimization time: 10.2 s / 60.0 s
+Optimization time: 10.1 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +2.0
 Optimization time = +20.3 [s]
-Mean AEP = 87.3 [GWh] (+2.49%)
-Median AEP = 87.3 [GWh] (+2.45%)
-Max AEP = 87.5 [GWh] (+2.71%)
-Min AEP = 87.2 [GWh] (+2.36%)
+Mean AEP = 87.2 [GWh] (+2.40%)
+Median AEP = 87.2 [GWh] (+2.37%)
+Max AEP = 87.4 [GWh] (+2.65%)
+Min AEP = 87.1 [GWh] (+2.19%)
 =======================================
 Optimization time: 20.3 s / 60.0 s
 </pre></div>
@@ -769,48 +774,48 @@ Optimization time: 20.3 s / 60.0 s
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +3.0
 Optimization time = +30.4 [s]
-Mean AEP = 87.5 [GWh] (+2.74%)
-Median AEP = 87.5 [GWh] (+2.74%)
-Max AEP = 87.6 [GWh] (+2.79%)
-Min AEP = 87.5 [GWh] (+2.70%)
+Mean AEP = 87.4 [GWh] (+2.58%)
+Median AEP = 87.4 [GWh] (+2.59%)
+Max AEP = 87.5 [GWh] (+2.68%)
+Min AEP = 87.3 [GWh] (+2.48%)
 =======================================
 Optimization time: 30.4 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +4.0
-Optimization time = +40.5 [s]
-Mean AEP = 87.6 [GWh] (+2.78%)
-Median AEP = 87.6 [GWh] (+2.78%)
-Max AEP = 87.6 [GWh] (+2.79%)
-Min AEP = 87.5 [GWh] (+2.77%)
+Optimization time = +40.6 [s]
+Mean AEP = 87.5 [GWh] (+2.67%)
+Median AEP = 87.5 [GWh] (+2.71%)
+Max AEP = 87.5 [GWh] (+2.72%)
+Min AEP = 87.4 [GWh] (+2.55%)
 =======================================
-Optimization time: 40.5 s / 60.0 s
+Optimization time: 40.6 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +5.0
 Optimization time = +50.7 [s]
-Mean AEP = 87.6 [GWh] (+2.80%)
-Median AEP = 87.6 [GWh] (+2.81%)
-Max AEP = 87.6 [GWh] (+2.82%)
-Min AEP = 87.6 [GWh] (+2.78%)
+Mean AEP = 87.5 [GWh] (+2.75%)
+Median AEP = 87.5 [GWh] (+2.75%)
+Max AEP = 87.5 [GWh] (+2.76%)
+Min AEP = 87.5 [GWh] (+2.74%)
 =======================================
 Optimization time: 50.7 s / 60.0 s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=======================================
 Optimization step +6.0
-Optimization time = +60.8 [s]
+Optimization time = +60.9 [s]
 Mean AEP = 87.6 [GWh] (+2.82%)
-Median AEP = 87.6 [GWh] (+2.82%)
-Max AEP = 87.6 [GWh] (+2.83%)
-Min AEP = 87.6 [GWh] (+2.80%)
+Median AEP = 87.6 [GWh] (+2.80%)
+Max AEP = 87.7 [GWh] (+2.89%)
+Min AEP = 87.5 [GWh] (+2.76%)
 =======================================
-Final AEP = 87.6 [GWh] (+2.83%)
+Final AEP = 87.7 [GWh] (+2.89%)
 </pre></div>
 </div>
-<img alt="../../_images/26a43890c654fd7cddb4d4f5596e7a7957485e2ce4f52f7ffaddf1772d889625.png" src="../../_images/26a43890c654fd7cddb4d4f5596e7a7957485e2ce4f52f7ffaddf1772d889625.png" />
+<img alt="../../_images/eafb149471bbc9b74c853e9348d0d7117976500e125c681969dbd02a1fe3726d.png" src="../../_images/eafb149471bbc9b74c853e9348d0d7117976500e125c681969dbd02a1fe3726d.png" />
 </div>
 </div>
 </section>

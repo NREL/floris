@@ -279,6 +279,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.core.rotor_velocity.html">floris.core.rotor_velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.core.solver.html">floris.core.solver</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.core.turbine.html">floris.core.turbine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html">floris.core.turbine.controller_dependent_operation_model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
 </ul>
@@ -391,6 +392,10 @@ window.addEventListener("load", () => mermaid.run());
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Operation models</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_operation_models/001_compare_yaw_loss.html">Example: Compare yaw loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
 <ul class="nav bd-sidenav">
@@ -739,9 +744,11 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.ax_width">ax_width (floris.flow_visualization.VelocityProfilesFigure attribute)</a>
 </li>
-      <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.axial_induction">axial_induction() (floris.core.turbine.operation_models.AWCTurbine method)</a>
+      <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.axial_induction">axial_induction() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
 
       <ul>
+        <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.axial_induction">(floris.core.turbine.operation_models.AWCTurbine method)</a>
+</li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.BaseOperationModel.axial_induction">(floris.core.turbine.operation_models.BaseOperationModel static method)</a>
 </li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.CosineLossTurbine.axial_induction">(floris.core.turbine.operation_models.CosineLossTurbine method)</a>
@@ -883,12 +890,14 @@ document.write(`
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html#floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.LayoutOptimizationPyOptSparse.compute_cons">(floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.LayoutOptimizationPyOptSparse method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.compute_local_vertical_shear">compute_local_vertical_shear() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
+</li>
       <li><a href="_autosummary/floris.turbine_library.turbine_previewer.html#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_power_curves">compute_power_curves() (floris.turbine_library.turbine_previewer.TurbineLibrary method)</a>
+</li>
+      <li><a href="_autosummary/floris.turbine_library.turbine_previewer.html#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_thrust_coefficient_curves">compute_thrust_coefficient_curves() (floris.turbine_library.turbine_previewer.TurbineLibrary method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/floris.turbine_library.turbine_previewer.html#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_thrust_coefficient_curves">compute_thrust_coefficient_curves() (floris.turbine_library.turbine_previewer.TurbineLibrary method)</a>
-</li>
       <li><a href="_autosummary/floris.core.rotor_velocity.html#floris.core.rotor_velocity.compute_tilt_angles_for_floating_turbines">compute_tilt_angles_for_floating_turbines() (in module floris.core.rotor_velocity)</a>
 </li>
       <li><a href="_autosummary/floris.core.rotor_velocity.html#floris.core.rotor_velocity.compute_tilt_angles_for_floating_turbines_map">compute_tilt_angles_for_floating_turbines_map() (in module floris.core.rotor_velocity)</a>
@@ -922,6 +931,10 @@ document.write(`
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.construct_turbine_tilt_interps">construct_turbine_tilt_interps() (floris.core.farm.Farm method)</a>
 </li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.construct_turbine_TSRs">construct_turbine_TSRs() (floris.core.farm.Farm method)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.control_trajectory">control_trajectory() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine">ControllerDependentTurbine (class in floris.core.turbine.controller_dependent_operation_model)</a>
 </li>
       <li><a href="_autosummary/floris.type_dec.html#floris.type_dec.convert_to_path">convert_to_path() (in module floris.type_dec)</a>
 </li>
@@ -1059,6 +1072,8 @@ document.write(`
         <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.finalize">(floris.core.flow_field.FlowField method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.find_cp">find_cp() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
+</li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html#floris.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid.find_lengths">find_lengths() (floris.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid method)</a>
 </li>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.floating_tilt_table">floating_tilt_table (floris.core.turbine.turbine.Turbine attribute)</a>
@@ -1138,6 +1153,13 @@ document.write(`
 
       <ul>
         <li><a href="_autosummary/floris.core.turbine.html#module-floris.core.turbine">module</a>
+</li>
+      </ul></li>
+      <li>
+    floris.core.turbine.controller_dependent_operation_model
+
+      <ul>
+        <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#module-floris.core.turbine.controller_dependent_operation_model">module</a>
 </li>
       </ul></li>
       <li>
@@ -1336,6 +1358,8 @@ document.write(`
         <li><a href="_autosummary/floris.layout_visualization.html#module-floris.layout_visualization">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     floris.logging_manager
 
@@ -1343,8 +1367,6 @@ document.write(`
         <li><a href="_autosummary/floris.logging_manager.html#module-floris.logging_manager">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     floris.optimization
 
@@ -1614,6 +1636,8 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.optimization.yaw_optimization.yaw_optimizer_geometric.html#floris.optimization.yaw_optimization.yaw_optimizer_geometric.geometric_yaw">geometric_yaw() (in module floris.optimization.yaw_optimization.yaw_optimizer_geometric)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.get_ct">get_ct() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
+</li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.TurbineCubatureGrid.get_cubature_coefficients">get_cubature_coefficients() (floris.core.grid.TurbineCubatureGrid class method)</a>
 </li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_defaults">get_defaults() (floris.floris_model.FlorisModel static method)</a>
@@ -1658,10 +1682,10 @@ document.write(`
         <li><a href="_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel.get_farm_power">(floris.uncertain_floris_model.UncertainFlorisModel method)</a>
 </li>
       </ul></li>
-      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose">get_heterogeneous_wind_rose() (floris.wind_data.WindRoseWRG method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRoseWRG.get_heterogeneous_wind_rose">get_heterogeneous_wind_rose() (floris.wind_data.WindRoseWRG method)</a>
+</li>
       <li><a href="_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.get_operation_model">get_operation_model() (floris.floris_model.FlorisModel method)</a>
 
       <ul>
@@ -1931,6 +1955,8 @@ document.write(`
         <li><a href="_autosummary/floris.core.solver.html#module-floris.core.solver">floris.core.solver</a>
 </li>
         <li><a href="_autosummary/floris.core.turbine.html#module-floris.core.turbine">floris.core.turbine</a>
+</li>
+        <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#module-floris.core.turbine.controller_dependent_operation_model">floris.core.turbine.controller_dependent_operation_model</a>
 </li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#module-floris.core.turbine.operation_models">floris.core.turbine.operation_models</a>
 </li>
@@ -2229,9 +2255,11 @@ document.write(`
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.power">power() (floris.core.turbine.operation_models.AWCTurbine method)</a>
+      <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.power">power() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
 
       <ul>
+        <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.power">(floris.core.turbine.operation_models.AWCTurbine method)</a>
+</li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.BaseOperationModel.power">(floris.core.turbine.operation_models.BaseOperationModel static method)</a>
 </li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.CosineLossTurbine.power">(floris.core.turbine.operation_models.CosineLossTurbine method)</a>
@@ -2591,9 +2619,11 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_random_search.html#floris.optimization.layout_optimization.layout_optimization_random_search.test_point_in_bounds">test_point_in_bounds() (in module floris.optimization.layout_optimization.layout_optimization_random_search)</a>
 </li>
-      <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.thrust_coefficient">thrust_coefficient() (floris.core.turbine.operation_models.AWCTurbine method)</a>
+      <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.thrust_coefficient">thrust_coefficient() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
 
       <ul>
+        <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.AWCTurbine.thrust_coefficient">(floris.core.turbine.operation_models.AWCTurbine method)</a>
+</li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.BaseOperationModel.thrust_coefficient">(floris.core.turbine.operation_models.BaseOperationModel static method)</a>
 </li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.CosineLossTurbine.thrust_coefficient">(floris.core.turbine.operation_models.CosineLossTurbine method)</a>
@@ -2647,10 +2677,10 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.turbine_axial_induction_functions">turbine_axial_induction_functions (floris.core.farm.Farm attribute)</a>
 </li>
-      <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.Grid.turbine_coordinates">turbine_coordinates (floris.core.grid.Grid attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.Grid.turbine_coordinates">turbine_coordinates (floris.core.grid.Grid attribute)</a>
+</li>
       <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.turbine_definitions">turbine_definitions (floris.core.farm.Farm attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.Grid.turbine_diameters">turbine_diameters (floris.core.grid.Grid attribute)</a>

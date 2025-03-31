@@ -279,6 +279,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.core.rotor_velocity.html">floris.core.rotor_velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/floris.core.solver.html">floris.core.solver</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_autosummary/floris.core.turbine.html">floris.core.turbine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.core.turbine.controller_dependent_operation_model.html">floris.core.turbine.controller_dependent_operation_model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../_autosummary/floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
 </ul>
@@ -391,6 +392,10 @@ window.addEventListener("load", () => mermaid.run());
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Operation models</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/examples_operation_models/001_compare_yaw_loss.html">Example: Compare yaw loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
 <ul class="nav bd-sidenav">
@@ -582,6 +587,8 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -594,6 +601,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">floris.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseClass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.turbine</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AWCTurbine</span><span class="p">,</span>
+    <span class="n">ControllerDependentTurbine</span><span class="p">,</span>
     <span class="n">CosineLossTurbine</span><span class="p">,</span>
     <span class="n">MixedOperationTurbine</span><span class="p">,</span>
     <span class="n">PeakShavingTurbine</span><span class="p">,</span>
@@ -617,6 +625,7 @@ document.write(`
     <span class="s2">&quot;operation_model&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;simple&quot;</span><span class="p">:</span> <span class="n">SimpleTurbine</span><span class="p">,</span>
         <span class="s2">&quot;cosine-loss&quot;</span><span class="p">:</span> <span class="n">CosineLossTurbine</span><span class="p">,</span>
+        <span class="s2">&quot;controller-dependent&quot;</span><span class="p">:</span> <span class="n">ControllerDependentTurbine</span><span class="p">,</span>
         <span class="s2">&quot;simple-derating&quot;</span><span class="p">:</span> <span class="n">SimpleDeratingTurbine</span><span class="p">,</span>
         <span class="s2">&quot;mixed&quot;</span><span class="p">:</span> <span class="n">MixedOperationTurbine</span><span class="p">,</span>
         <span class="s2">&quot;awc&quot;</span><span class="p">:</span> <span class="n">AWCTurbine</span><span class="p">,</span>
@@ -1068,10 +1077,6 @@ document.write(`
     <span class="n">correct_cp_ct_for_tilt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">floating_tilt_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NDArrayFloat</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="c1"># Even though this Turbine class does not support the multidimensional features as they</span>
-    <span class="c1"># are implemented in TurbineMultiDim, providing the following two attributes here allows</span>
-    <span class="c1"># the turbine data inputs to keep the multidimensional Cp and Ct curve but switch them off</span>
-    <span class="c1"># with multi_dimensional_cp_ct = False</span>
     <span class="n">multi_dimensional_cp_ct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Initialized in the post_init function</span>
@@ -1099,9 +1104,39 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_tilt_interpolation</span><span class="p">()</span>
+
+        <span class="n">bypass_numeric_converter</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_dimensional_cp_ct</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_multidim_power_thrust_table</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bypass_numeric_converter</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Check for whether a cp_ct_data_file is specified, and load it if so.</span>
+        <span class="k">if</span> <span class="s2">&quot;controller_dependent_turbine_parameters&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">:</span>
+            <span class="n">floris_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">floris_root</span> <span class="o">/</span> <span class="s2">&quot;turbine_library&quot;</span> <span class="o">/</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;controller_dependent_turbine_parameters&quot;</span><span class="p">]</span>
+                                       <span class="p">[</span><span class="s2">&quot;cp_ct_data_file&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">npz_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;controller_dependent_turbine_parameters&quot;</span><span class="p">][</span><span class="s2">&quot;cp_ct_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">npz_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="n">bypass_numeric_converter</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Raise warning if &quot;demo&quot; in the cp_ct data file name</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">operation_model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;controller-dependent&quot;</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="s2">&quot;demo&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">[</span><span class="s2">&quot;controller_dependent_turbine_parameters&quot;</span><span class="p">]</span>
+                                                 <span class="p">[</span><span class="s2">&quot;cp_ct_data_file&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Cp/Ct data provided with FLORIS is for demonstration purposes only,&quot;</span>
+                <span class="s2">&quot; and may not accurately reflect the actual Cp/Ct surfaces of reference wind&quot;</span>
+                <span class="s2">&quot; turbines.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">bypass_numeric_converter</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span> <span class="o">=</span> <span class="n">floris_numeric_dict_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_thrust_table</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_power_thrust_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

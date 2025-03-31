@@ -272,6 +272,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.core.rotor_velocity.html">floris.core.rotor_velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../_autosummary/floris.core.solver.html">floris.core.solver</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/floris.core.turbine.html">floris.core.turbine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.core.turbine.controller_dependent_operation_model.html">floris.core.turbine.controller_dependent_operation_model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../_autosummary/floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
 </ul>
@@ -384,6 +385,10 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Operation models</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples_operation_models/001_compare_yaw_loss.html">Example: Compare yaw loss</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
 <ul class="nav bd-sidenav">
@@ -765,17 +770,17 @@ document.write(`
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">Computing AVP with uniform frequencies. Results results may not reflect annual operation.</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 37.57 GWh
-AEP from WindRose 37.88 GWh
-AEP from WindTIRose 37.87 GWh
-Annual Value Production (AVP) from TimeSeries 953019.53 dollars
-AVP from WindRose 963795.07 dollars
-AVP from WindTIRose 964163.10 dollars
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AEP from TimeSeries 37.51 GWh
+AEP from WindRose 37.93 GWh
+AEP from WindTIRose 37.91 GWh
+Annual Value Production (AVP) from TimeSeries 965560.89 dollars
+AVP from WindRose 981370.79 dollars
+AVP from WindTIRose 981123.58 dollars
 </pre></div>
 </div>
-<img alt="../../_images/febcb9338f33e3d089425bd578c63d7f613840bb5904f2370b2f26039fa827d4.png" src="../../_images/febcb9338f33e3d089425bd578c63d7f613840bb5904f2370b2f26039fa827d4.png" />
-<img alt="../../_images/d891d7838c47348cb6497d49119d7dd53e1bc667faeccb9ef93db5ed45ed0b43.png" src="../../_images/d891d7838c47348cb6497d49119d7dd53e1bc667faeccb9ef93db5ed45ed0b43.png" />
-<img alt="../../_images/db136d16cfd6598ac02972eb951408226f05c67ac06cc39ae8a35c8f210f570f.png" src="../../_images/db136d16cfd6598ac02972eb951408226f05c67ac06cc39ae8a35c8f210f570f.png" />
+<img alt="../../_images/c54213f9f725a46b11ad81fca24596a321d856f26a76a6cd2d4f7e97cd44abe1.png" src="../../_images/c54213f9f725a46b11ad81fca24596a321d856f26a76a6cd2d4f7e97cd44abe1.png" />
+<img alt="../../_images/5cedc960511821f4087b9fd695320cf63568b3d3965fa041f18fba82fcf3aeee.png" src="../../_images/5cedc960511821f4087b9fd695320cf63568b3d3965fa041f18fba82fcf3aeee.png" />
+<img alt="../../_images/e8ceaa19b07af58f0bca7a9fe35814beb26d609d47506bf9400124267c3edf4d.png" src="../../_images/e8ceaa19b07af58f0bca7a9fe35814beb26d609d47506bf9400124267c3edf4d.png" />
 </div>
 </div>
 </section>
