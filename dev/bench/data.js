@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1743455756870,
+  "lastUpdate": 1743456773699,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -1556,6 +1556,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0004775492866383106",
             "extra": "mean: 8.58785712328688 msec\nrounds: 73"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "paul.fleming@nrel.gov",
+            "name": "paulf81",
+            "username": "paulf81"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f131d1fceeeee28d7c1258ac39266705420c7082",
+          "message": "Add variable operating cost optimization (#1054)\n\n* Add load heuristic function\n\n* Add simple example\n\n* Add tests\n\n* Update code\n\n* Update example\n\n* A as input\n\n* Initial blocking\n\n* Block out load ti work\n\n* remove test\n\n* Remove changes to FlorisModel\n\n* Clean up load optimization module\n\n* Add load optimization tests\n\n* Better errors\n\n* Update example 0\n\n* Update example 1\n\n* Additional utilities\n\n* Add testing\n\n* new example\n\n* Remove old example\n\n* Additional fixes\n\n* Add docstrings and options\n\n* Clean up examples\n\n* clean up load_opt\n\n* more cleanup\n\n* delete streamlit app\n\n* Rearrange function order for clarity.\n\n* Combine 00 and 01 examples into one (001).\n\n* Add sweep over load ambient TI to include key elements from 02 example.\n\n* Rename optimization function, optimization variable, and return optimal cost.'\n\n* adding to docstrings and comments in load_optimization\n\n* updating plot labels and comments for load optimization examples\n\n* making VOC and values in load optimization examples more realstic, in line with ~0/MWh elec. prices\n\n* adding function to find A for VOC that satisfies target cost/MW/findex\n\n* Remove duplicated examples\n\n* Address comments\n\n* Update test names\n\n* Make power setpoint disabled a smaller number\n\n* Rename optimization example\n\n* Clean up names\n\n* rename example 1\n\n* load ti -> LTI\n\n* undo change\n\n* use absolute derating levels\n\n* Make example more clear\n\n* revert change\n\n* clean up\n\n* Clean out unnecessary helper functions\n\n* remove seaborn\n\n---------\n\nCo-authored-by: misi9170 <michael.sinner@nrel.gov>\nCo-authored-by: Eric Simley <eric.simley@nrel.gov>",
+          "timestamp": "2025-03-31T15:06:08-06:00",
+          "tree_id": "6f94ec6332eb6864a2eebbc98153e123aed890b6",
+          "url": "https://github.com/NREL/floris/commit/f131d1fceeeee28d7c1258ac39266705420c7082"
+        },
+        "date": 1743456771317,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 42.51260335011759,
+            "unit": "iter/sec",
+            "range": "stddev: 0.005631624869591368",
+            "extra": "mean: 23.522436200022412 msec\nrounds: 40"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 56.66712950035834,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00021944831554349635",
+            "extra": "mean: 17.64691468964696 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 24.408216451311286,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0012903871500242674",
+            "extra": "mean: 40.969810391298665 msec\nrounds: 23"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.3041236467832172,
+            "unit": "iter/sec",
+            "range": "stddev: 0.007765648716376424",
+            "extra": "mean: 3.2881362912000442 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 36.7250528240075,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000265805418532222",
+            "extra": "mean: 27.229368594571252 msec\nrounds: 37"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 118.61932436189284,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00005474216836446296",
+            "extra": "mean: 8.430329589040014 msec\nrounds: 73"
           }
         ]
       }
