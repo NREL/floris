@@ -9,7 +9,6 @@ The row is aligned when the wind direction is 270 degrees.
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 from floris import FlorisModel, TimeSeries
 from floris.core.turbine.operation_models import (
@@ -29,11 +28,10 @@ D = 126.0
 d_spacing = 7.0
 power_setpoint_levels = np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 10)
 n_turbines = 3
-A = 4e-6 # Selected to demonstrate variation in derating selection
+A = 4e-6  # Selected to demonstrate variation in derating selection
 
 # Declare a floris model with default configuration
 fmodel = FlorisModel(configuration="defaults")
-
 
 
 # Set up a row of turbines
@@ -181,11 +179,31 @@ df = pd.DataFrame(
 df = df.set_index("status")
 
 
+# Assuming your dataframe df is already set up as in your example
 fig, ax = plt.subplots(figsize=(10, 5))
-sns.heatmap(df, annot=True, cmap="coolwarm_r", ax=ax)  # fmt=".0f",
+
+# Get the data values as a numpy array
+data = df.values
+
+# Create the heatmap
+im = ax.imshow(data, cmap="coolwarm_r", aspect="auto")
+
+# Add the annotations to the cells
+for i in range(len(df.index)):
+    for j in range(len(df.columns)):
+        text = ax.text(j, i, f"{data[i, j]:.3f}", ha="center", va="center", color="w")
+
+# Set title
 ax.set_title("Optimized Power Setpoints (W)")
 
-# Ensure y-labels fit in the plot
-plt.tight_layout()
+# Set x and y tick labels
+ax.set_xticks(np.arange(len(df.columns)))
+ax.set_yticks(np.arange(len(df.index)))
+ax.set_xticklabels(df.columns)
+ax.set_yticklabels(df.index)
 
+# Rotate the x tick labels
+plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+plt.tight_layout()
 plt.show()
