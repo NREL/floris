@@ -1,5 +1,4 @@
-"""
-Example: Compare yaw loss under different operation models
+"""Example: Compare yaw loss under different operation models
 
 This example shows demonstrates how the Controller-dependent operation model (developed at TUM)
 and Unified Momentum Model (developed at MIT) alter how a turbine loses power to yaw compared
