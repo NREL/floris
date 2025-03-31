@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1743443581842,
+  "lastUpdate": 1743446392690,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -1358,6 +1358,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00026602961539940666",
             "extra": "mean: 8.400044292942987 msec\nrounds: 99"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "94170674+sTamaroTum@users.noreply.github.com",
+            "name": "Simone",
+            "username": "sTamaroTum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5bbd3cee7d1769f2b3e069fc2714d018afaa73ef",
+          "message": "Add control-dependent operation model (#832)\n\n* Add a place-holder mit loss function\n\n* track new mit loss model\n\n* Add mit loss model to tests\n\n* import mit loss model\n\n* add mit loss model class\n\n* Add an example to compare loss models\n\n* Update example for clarity\n\n* Placeholder tests.\n\n* test attributes.\n\n* Update names\n\n* fix comment\n\n* New TUM misalignment model and new IEA file\n\n* ok\n\n* small fix\n\n* removed useless lines\n\n* Remove assertions from tests; tests will need building out. Robust paths to data tables.\n\n* set, run in example.\n\n* Format for ruff.\n\n* Remove assertions on tests; tests will still need to be built.\n\n* Remove v3 generator_efficiency key (remains on power_thrust_table for use with TUMLossTurbine operation model).\n\n* Added an if statement in get_ct() and find_cp() functions to add a small dummy misalignment in case both yaw and tilt are 0. This was causing a division by zero in the tests.\n\n* Replaced rotor_average_velocities with rotor_effective_velocities when calling TUMLossTurbine.control_trajectory() so that rated power stays independent from air_density\n\n* Added some np.squeeze() to suppress warnings arising during pytest\n\n* Corrected incoherent interpolation method (cubic) in get_pitch() and get_tsr()\n\n* Testing the IEA 15 MW with the tum-loss model\n\n* Added the look-up tables of Cp and Ct for the IEAs 10MW and 15MW, and for the NREL 5MW, so that they can be run with the tum-loss model. The respective yaml files have been modified to include the necessary model parameters.\n\n* Bring example up to v4.\n\n* Set reference_wind_height explicitly to avoid warning.\n\n* Formating updates.\n\n* Update 3mw model fields.\n\n* Separate TUM operation model to own file.\n\n* Remove tum_rotor_velocity_yaw_correction, since it is not used and appears identical to rotor_velocity_yaw_cosine_correction.\n\n* Add reg test for development purposes.\n\n* Separate find_cp and get_ct functions.\n\n* Simplify axial_induction() by calling similar code in thrust_coefficient()\n\n* Add further comments to power() and thrust_coefficient() methods.\n\n* Simplify calls to control_trajectory().\n\n* Various formatting changes throughout for improved alignment with rest of code.\n\n* Move to kW as base power unit for consistency with other turbine specifications.\n\n* Format using ruff format.\n\n* Specify data file on turbine yaml; update to type_dec to allow strings\n\n* Revert \"Set reference_wind_height explicitly to avoid warning.\"\n\nThis reverts commit 0ced9d2fd0696e326892ff55477a3104159ae6e7.\n\n* Raise error if velocities provided are insufficient to get shear information; add tests for range of wind speeds and grid points.\n\n* Add description in documentation (still to build out).\n\n* Simplifying formatting; adding references to equations in paper where appropriate.\n\n* Vectorize interpolation operations.\n\n* Make all functions staticmethods on TUMLossModel\n\n* Switch to cosd, sind from floris.utilities.\n\n* Add correct 15MW data and remove 3MW model. Reg tests fail due to updated 15MW data.\n\n* Update base values in reg test.\n\n* Remove unneeded print statements.\n\n* Load cp_ct data on turbine construction rather than in operation model calls. Revert type_dec changes.\n\n* Rename cp_ct data file to be clearer. Update fields in all turine models; may remove from iea10mw, nrel5mw subsequently.\n\n* Add 5mw and 10mw cp ct data (tests failing).\n\n* Store loaded data as nested lists for generality\n\n* Update reg tests results to reflect new data for nrel 5MW cp/ct surface.\n\n* Ensure data is read in as numpy arrays\n\n* Tests for TUMLossTurbine built out. Fails similarity test to existing data.\n\n* Change operation model name to ControllerDependentTurbine.\n\n* Fix capitalization; remove unneeded imports.\n\n* Add warnings and clarity around mismatch between CpCt tables and reference power/thrust curves.\n\n* Add warning about curves to documentation.\n\n* Revert comments in reference turbine yamls.\n\n* Formatting\n\n* Formatting 2, isort.\n\n* Add further details from sTamaroTum\n\n* Clearer information on grid points.\n\n* Add missing newline character.\n\n* Move cp_ct_surfaces into subfloder.\n\n* Move parameters for this model to a subdictionary for clarity.\n\n* Reduce findices in tests to speed them up.\n\n* Add developer attribution\n\n* Full author attributions.\n\n---------\n\nCo-authored-by: Paul <paul.fleming@nrel.gov>\nCo-authored-by: misi9170 <michael.sinner@nrel.gov>",
+          "timestamp": "2025-03-31T12:12:27-06:00",
+          "tree_id": "356d97549550c56ed4df510ddaf3137bc4ce06eb",
+          "url": "https://github.com/NREL/floris/commit/5bbd3cee7d1769f2b3e069fc2714d018afaa73ef"
+        },
+        "date": 1743446390568,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 41.085015404391754,
+            "unit": "iter/sec",
+            "range": "stddev: 0.005572459495423635",
+            "extra": "mean: 24.339774249983748 msec\nrounds: 40"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 56.37850558115574,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001075600164897499",
+            "extra": "mean: 17.737256241397173 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 24.441443646788418,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008374667280994175",
+            "extra": "mean: 40.91411352174359 msec\nrounds: 23"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.3015431506921842,
+            "unit": "iter/sec",
+            "range": "stddev: 0.011612045833768018",
+            "extra": "mean: 3.3162749600000097 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 34.751808664081054,
+            "unit": "iter/sec",
+            "range": "stddev: 0.001582202048110794",
+            "extra": "mean: 28.775480714291135 msec\nrounds: 35"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 115.21007525953651,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002469071682684749",
+            "extra": "mean: 8.679796430540263 msec\nrounds: 72"
           }
         ]
       }
