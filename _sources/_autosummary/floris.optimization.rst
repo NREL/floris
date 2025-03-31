@@ -11,5 +11,6 @@
    :recursive:
 
    layout_optimization
+   load_optimization
    other
    yaw_optimization

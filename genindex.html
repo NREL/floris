@@ -254,6 +254,10 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.load_optimization.html">floris.optimization.load_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.load_optimization.load_optimization.html">floris.optimization.load_optimization.load_optimization</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.other.html">floris.optimization.other</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
 </ul>
@@ -388,6 +392,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Load optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_load_optimization/001_lti_and_voc.html">Example: LTI and VOC Behavior with Changing Wind Direction and Power Setpoints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_load_optimization/002_row_opt_example.html">Example: Optimize a row of turbines</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -899,7 +908,15 @@ document.write(`
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html#floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.LayoutOptimizationPyOptSparse.compute_cons">(floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.LayoutOptimizationPyOptSparse method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#floris.optimization.load_optimization.load_optimization.compute_farm_revenue">compute_farm_revenue() (in module floris.optimization.load_optimization.load_optimization)</a>
+</li>
+      <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#floris.optimization.load_optimization.load_optimization.compute_farm_voc">compute_farm_voc() (in module floris.optimization.load_optimization.load_optimization)</a>
+</li>
       <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.compute_local_vertical_shear">compute_local_vertical_shear() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
+</li>
+      <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#floris.optimization.load_optimization.load_optimization.compute_lti">compute_lti() (in module floris.optimization.load_optimization.load_optimization)</a>
+</li>
+      <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#floris.optimization.load_optimization.load_optimization.compute_net_revenue">compute_net_revenue() (in module floris.optimization.load_optimization.load_optimization)</a>
 </li>
       <li><a href="_autosummary/floris.turbine_library.turbine_previewer.html#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_power_curves">compute_power_curves() (floris.turbine_library.turbine_previewer.TurbineLibrary method)</a>
 </li>
@@ -907,10 +924,12 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.rotor_velocity.html#floris.core.rotor_velocity.compute_tilt_angles_for_floating_turbines">compute_tilt_angles_for_floating_turbines() (in module floris.core.rotor_velocity)</a>
 </li>
-      <li><a href="_autosummary/floris.core.rotor_velocity.html#floris.core.rotor_velocity.compute_tilt_angles_for_floating_turbines_map">compute_tilt_angles_for_floating_turbines_map() (in module floris.core.rotor_velocity)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.core.rotor_velocity.html#floris.core.rotor_velocity.compute_tilt_angles_for_floating_turbines_map">compute_tilt_angles_for_floating_turbines_map() (in module floris.core.rotor_velocity)</a>
+</li>
+      <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#floris.optimization.load_optimization.load_optimization.compute_turbine_voc">compute_turbine_voc() (in module floris.optimization.load_optimization.load_optimization)</a>
+</li>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.condition_keys">condition_keys (floris.core.turbine.turbine.Turbine attribute)</a>
 </li>
       <li><a href="_autosummary/floris.logging_manager.html#floris.logging_manager.configure_console_log">configure_console_log() (in module floris.logging_manager)</a>
@@ -1097,6 +1116,10 @@ document.write(`
         <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.finalize">(floris.core.flow_field.FlowField method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#floris.optimization.load_optimization.load_optimization.find_A_to_satisfy_rev_voc_ratio">find_A_to_satisfy_rev_voc_ratio() (in module floris.optimization.load_optimization.load_optimization)</a>
+</li>
+      <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#floris.optimization.load_optimization.load_optimization.find_A_to_satisfy_target_VOC_per_MW">find_A_to_satisfy_target_VOC_per_MW() (in module floris.optimization.load_optimization.load_optimization)</a>
+</li>
       <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.find_cp">find_cp() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
 </li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html#floris.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid.find_lengths">find_lengths() (floris.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid method)</a>
@@ -1466,6 +1489,20 @@ document.write(`
 
       <ul>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html#module-floris.optimization.layout_optimization.layout_optimization_scipy">module</a>
+</li>
+      </ul></li>
+      <li>
+    floris.optimization.load_optimization
+
+      <ul>
+        <li><a href="_autosummary/floris.optimization.load_optimization.html#module-floris.optimization.load_optimization">module</a>
+</li>
+      </ul></li>
+      <li>
+    floris.optimization.load_optimization.load_optimization
+
+      <ul>
+        <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#module-floris.optimization.load_optimization.load_optimization">module</a>
 </li>
       </ul></li>
       <li>
@@ -2086,6 +2123,10 @@ document.write(`
 </li>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html#module-floris.optimization.layout_optimization.layout_optimization_scipy">floris.optimization.layout_optimization.layout_optimization_scipy</a>
 </li>
+        <li><a href="_autosummary/floris.optimization.load_optimization.html#module-floris.optimization.load_optimization">floris.optimization.load_optimization</a>
+</li>
+        <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#module-floris.optimization.load_optimization.load_optimization">floris.optimization.load_optimization.load_optimization</a>
+</li>
         <li><a href="_autosummary/floris.optimization.other.html#module-floris.optimization.other">floris.optimization.other</a>
 </li>
         <li><a href="_autosummary/floris.optimization.other.boundary_grid.html#module-floris.optimization.other.boundary_grid">floris.optimization.other.boundary_grid</a>
@@ -2215,6 +2256,8 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.optimization.load_optimization.load_optimization.html#floris.optimization.load_optimization.load_optimization.optimize_power_setpoints">optimize_power_setpoints() (in module floris.optimization.load_optimization.load_optimization)</a>
+</li>
       <li><a href="_autosummary/floris.parallel_floris_model.html#floris.parallel_floris_model.ParallelFlorisModel.optimize_yaw_angles">optimize_yaw_angles() (floris.parallel_floris_model.ParallelFlorisModel method)</a>
 </li>
       <li><a href="_autosummary/floris.core.wake_velocity.turbopark.html#floris.core.wake_velocity.turbopark.TurbOParkVelocityDeficit.overlap_gauss_interp">overlap_gauss_interp (floris.core.wake_velocity.turbopark.TurbOParkVelocityDeficit attribute)</a>

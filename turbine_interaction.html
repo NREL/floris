@@ -247,6 +247,10 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.load_optimization.html">floris.optimization.load_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.load_optimization.load_optimization.html">floris.optimization.load_optimization.load_optimization</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/floris.optimization.other.html">floris.optimization.other</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
 </ul>
@@ -381,6 +385,11 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Load optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_load_optimization/001_lti_and_voc.html">Example: LTI and VOC Behavior with Changing Wind Direction and Power Setpoints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_load_optimization/002_row_opt_example.html">Example: Optimize a row of turbines</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
 <ul class="nav bd-sidenav">
@@ -801,10 +810,10 @@ are going to be compared.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_10MW
-iea_15MW_floating
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW_floating
 nrel_5MW
 iea_15MW_multi_dim_cp_ct
+iea_10MW
 </pre></div>
 </div>
 </div>
@@ -824,10 +833,10 @@ arguments.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_10MW
-iea_15MW_floating
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>iea_15MW_floating
 nrel_5MW
 iea_15MW_multi_dim_cp_ct
+iea_10MW
 iea_15MW
 </pre></div>
 </div>
@@ -855,7 +864,7 @@ a multi-dimensional turbine in relation to the standard 15 MW example.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3dd76f073048d6ee245ef8644f30872bda6779ac74ad69cfca188fdd41b56807.png" src="_images/3dd76f073048d6ee245ef8644f30872bda6779ac74ad69cfca188fdd41b56807.png" />
+<img alt="_images/c4aafa3fe160651b338fd35dce70cc2f1e80a2ff724c497547c5e611a6227cc1.png" src="_images/c4aafa3fe160651b338fd35dce70cc2f1e80a2ff724c497547c5e611a6227cc1.png" />
 </div>
 </div>
 <p>Alternatively, these can all be ploted individually with:</p>
@@ -896,10 +905,10 @@ a multi-dimensional turbine in relation to the standard 15 MW example.</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                  Turbine | Rotor Diameter (m) | Hub Height (m) |    TSR | Air Density (ρ) | Tilt (º)
 -----------------------------------------------------------------------------------------------------
-                 iea_10MW |             198.00 |          119.0 |    8.0 |           1.225 |    6.000
         iea_15MW_floating |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
                  nrel_5MW |             125.88 |           90.0 |    8.0 |           1.225 |    5.000
  iea_15MW_multi_dim_cp_ct |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
+                 iea_10MW |             198.00 |          119.0 |    8.0 |           1.225 |    6.000
                  iea_15MW |             242.24 |          150.0 |    8.0 |           1.225 |    6.000
 </pre></div>
 </div>
