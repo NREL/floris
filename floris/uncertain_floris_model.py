@@ -958,7 +958,10 @@ class UncertainFlorisModel(LoggingManager):
                 # Set a single one here, then, and return
                 turbine_type = self.fmodel_unexpanded.core.farm.turbine_definitions[0]
                 turbine_type["operation_model"] = operation_model
-                self.set(turbine_type=[turbine_type])
+                self.set(
+                    turbine_type=[turbine_type],
+                    reference_wind_height=self.reference_wind_height
+                )
                 return
             else:
                 operation_model = [operation_model] * self.fmodel_unexpanded.core.farm.n_turbines
@@ -976,7 +979,10 @@ class UncertainFlorisModel(LoggingManager):
             )
             turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
 
-        self.set(turbine_type=turbine_type_list)
+        self.set(
+            turbine_type=turbine_type_list,
+            reference_wind_height=self.reference_wind_height
+        )
 
     def copy(self):
         """Create an independent copy of the current UncertainFlorisModel object"""
@@ -1094,6 +1100,16 @@ class UncertainFlorisModel(LoggingManager):
             int: Number of turbines in the wind farm.
         """
         return self.fmodel_unexpanded.core.farm.n_turbines
+
+    @property
+    def reference_wind_height(self):
+        """
+        Reference wind height.
+
+        Returns:
+            float: Reference wind height.
+        """
+        return self.fmodel_unexpanded.core.flow_field.reference_wind_height
 
     @property
     def core(self):

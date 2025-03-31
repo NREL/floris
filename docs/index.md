@@ -8,6 +8,11 @@ is highly encouraged. If you are interested in using FLORIS to conduct studies
 of a wind farm or extending FLORIS to include your own wake model, please join
 the conversation in [GitHub Discussions](https://github.com/NREL/floris/discussions/)!
 
+```{note}
+Support for python version 3.8 was dropped in FLORIS v4.3, and support for python version 3.9 will end in the latter half of 2025.
+See {ref}`installation` for details. FLORIS v4.3 also made the move to requiring `numpy` version 2. See the [numpy documentation for details](https://numpy.org/doc/stable/numpy_2_0_migration_guide.html).
+```
+
 ## Quick Start
 
 FLORIS is a Python package run on the command line typically by providing
