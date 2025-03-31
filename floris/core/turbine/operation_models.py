@@ -29,7 +29,7 @@ from floris.utilities import cosd
 
 
 POWER_SETPOINT_DEFAULT = 1e12
-POWER_SETPOINT_DISABLED = 1e-8
+POWER_SETPOINT_DISABLED = 0.001
 
 
 @define
