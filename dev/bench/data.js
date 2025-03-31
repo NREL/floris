@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1742586508817,
+  "lastUpdate": 1743443581842,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -1292,6 +1292,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00012185334176785582",
             "extra": "mean: 8.879075521757267 msec\nrounds: 92"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gyalla@sandia.gov",
+            "name": "Gopal Yalla",
+            "username": "gyalla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4ff8eba096acc8b0e60df30e4d698d048632bc8d",
+          "message": " [BUGFIX] AWC wake mixing factor with mixed awc_modes inputs (#1090)\n\n* Fixing bug in awc wake mixing factor\n\n* Formatting.\n\n* Setting awc_mixing_factor as a float\n\n* Specify as floris_float_type\n\n* isort.\n\n---------\n\nCo-authored-by: misi9170 <michael.sinner@nrel.gov>",
+          "timestamp": "2025-03-31T11:34:03-06:00",
+          "tree_id": "5f38f9b3a71bef2a5b9701e094235376ccaad1bd",
+          "url": "https://github.com/NREL/floris/commit/4ff8eba096acc8b0e60df30e4d698d048632bc8d"
+        },
+        "date": 1743443579120,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 46.754511813350554,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00018851126896202085",
+            "extra": "mean: 21.388310159073335 msec\nrounds: 44"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 56.87825234009248,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00018558083826492684",
+            "extra": "mean: 17.581412206913352 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 26.082814262389476,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010519787907692253",
+            "extra": "mean: 38.339421119981125 msec\nrounds: 25"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.30636565267620713,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0021131212097108723",
+            "extra": "mean: 3.26407347319996 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 38.581340237614064,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010763374471131574",
+            "extra": "mean: 25.91926547499952 msec\nrounds: 40"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 119.0469913164763,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00026602961539940666",
+            "extra": "mean: 8.400044292942987 msec\nrounds: 99"
           }
         ]
       }
