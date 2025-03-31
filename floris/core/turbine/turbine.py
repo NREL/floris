@@ -22,6 +22,7 @@ from floris.core.turbine import (
     PeakShavingTurbine,
     SimpleDeratingTurbine,
     SimpleTurbine,
+    UnifiedMomentumModelTurbine,
 )
 from floris.type_dec import (
     convert_to_path,
@@ -45,6 +46,7 @@ TURBINE_MODEL_MAP = {
         "mixed": MixedOperationTurbine,
         "awc": AWCTurbine,
         "peak-shaving": PeakShavingTurbine,
+        "unified-momentum": UnifiedMomentumModelTurbine,
     },
 }
 
