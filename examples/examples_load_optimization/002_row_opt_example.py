@@ -43,17 +43,17 @@ fmodel.set(
 # Set up input conditions
 wind_directions = []
 values = []
-load_ambient_tis = []
+ambient_lti = []
 
 for w_i in np.linspace(230, 270, N_per_loop):
     for v_i in np.linspace(1e-5, 5e-5, N_per_loop):
         for t_i in np.linspace(0.02, 0.2, N_per_loop):
             wind_directions.append(w_i)
             values.append(v_i)
-            load_ambient_tis.append(t_i)
+            ambient_lti.append(t_i)
 wind_directions = np.array(wind_directions)
 values = np.array(values)
-load_ambient_tis = np.array(load_ambient_tis)
+ambient_lti = np.array(ambient_lti)
 N = len(wind_directions)
 
 time_series = TimeSeries(
@@ -68,13 +68,13 @@ fmodel.run()
 initial_power_setpoint = np.ones((N, n_turbines)) * 5e6
 
 # Calculate the A which would put the farm at a 4 revenue to VOC ratio
-A_initial = find_A_to_satisfy_rev_voc_ratio(fmodel, 4.0, load_ambient_tis)
+A_initial = find_A_to_satisfy_rev_voc_ratio(fmodel, 4.0, ambient_lti)
 
 # Set these initial power setpoints
 fmodel.set(power_setpoints=initial_power_setpoint)
 fmodel.run()
-net_revenue_initial = compute_net_revenue(fmodel, A_initial, load_ambient_tis)
-farm_voc_initial = compute_farm_voc(fmodel, A_initial, load_ambient_tis)
+net_revenue_initial = compute_net_revenue(fmodel, A_initial, ambient_lti)
+farm_voc_initial = compute_farm_voc(fmodel, A_initial, ambient_lti)
 farm_revenue_initial = compute_farm_revenue(fmodel)
 
 
@@ -82,7 +82,7 @@ farm_revenue_initial = compute_farm_revenue(fmodel)
 opt_power_setpoints, opt_net_revenue = optimize_power_setpoints(
     fmodel,
     A_initial,
-    load_ambient_tis,
+    ambient_lti,
     power_setpoint_initial=initial_power_setpoint,
     derating_levels=derating_levels,
 )
@@ -90,8 +90,8 @@ opt_power_setpoints, opt_net_revenue = optimize_power_setpoints(
 # Compute final values
 fmodel.set(power_setpoints=opt_power_setpoints)
 fmodel.run()
-net_revenue_opt = compute_net_revenue(fmodel, A_initial, load_ambient_tis)
-farm_voc_opt = compute_farm_voc(fmodel, A_initial, load_ambient_tis)
+net_revenue_opt = compute_net_revenue(fmodel, A_initial, ambient_lti)
+farm_voc_opt = compute_farm_voc(fmodel, A_initial, ambient_lti)
 farm_revenue_opt = compute_farm_revenue(fmodel)
 
 
@@ -106,7 +106,7 @@ ax.set_title("X, Y Turbine Coordinates: T0: (0, 0), T1: (7D, 0), T2: (14D, 0); W
 
 # Plot the load TI
 ax = axarr[1]
-ax.plot(load_ambient_tis, color="k")
+ax.plot(ambient_lti, color="k")
 ax.set_ylabel("Load Ambient\n TI (-)")
 
 # Plot the values
