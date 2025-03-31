@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1743446392690,
+  "lastUpdate": 1743451389842,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -1424,6 +1424,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0002469071682684749",
             "extra": "mean: 8.679796430540263 msec\nrounds: 72"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "33415790+jaimeliew1@users.noreply.github.com",
+            "name": "Jaime Liew",
+            "username": "jaimeliew1"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "57cfe4bb025675d121a466fcc9dd81c199b169ea",
+          "message": "Add Unified Momentum Model to operation models (#924)\n\n* add boiler plate\n\n* Add MIT yawed actuator disk model implementation\n\n* Complete MIT rotor model implementation\n\n* Add example\n\n* Add some tests\n\n* update MITTurbine operation model key\n\n* Update yaw loss example\n\n* update example 004_compare_yaw_loss.py\n\n* Consolidate MIT operation model to one module\n\n* Linting\n\n* Rearrange the functions in the module\n\n* Add model description and verification figures\n\n* Fix broken import\n\n* Lint and support older Python versions\n\n* Update name to Unified Momentum Model.\n\n* Update docs to indicate low thrust limit, update figure generation.\n\n* Reformulate rotor equations and add reference comments.\n\n* isort.\n\n* Respecify nrel 5MW for UMM comparison.\n\n* Separate tests for clarity and consistency with #832\n\n* Combine example with example from #832\n\n* Clean up example for clarity.\n\n---------\n\nCo-authored-by: Rafael M Mudafort <rafmudaf@gmail.com>\nCo-authored-by: misi9170 <michael.sinner@nrel.gov>",
+          "timestamp": "2025-03-31T13:40:10-06:00",
+          "tree_id": "00cf29534c5acc3f1d280a748c330120aa214c27",
+          "url": "https://github.com/NREL/floris/commit/57cfe4bb025675d121a466fcc9dd81c199b169ea"
+        },
+        "date": 1743451387747,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 42.747024154685306,
+            "unit": "iter/sec",
+            "range": "stddev: 0.005491851521428411",
+            "extra": "mean: 23.39344129269393 msec\nrounds: 41"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 55.6444091235463,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00040348283541263",
+            "extra": "mean: 17.971257413835012 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 24.427300191307054,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0013993962742551598",
+            "extra": "mean: 40.93780287499271 msec\nrounds: 24"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.3007671417728144,
+            "unit": "iter/sec",
+            "range": "stddev: 0.009842042227599908",
+            "extra": "mean: 3.3248312768000234 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 36.32709134448572,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010339761259024432",
+            "extra": "mean: 27.527664973699995 msec\nrounds: 38"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 117.57820669732703,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002000985011086605",
+            "extra": "mean: 8.504977479153316 msec\nrounds: 96"
           }
         ]
       }
