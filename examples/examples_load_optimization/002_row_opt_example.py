@@ -1,20 +1,25 @@
 """Example: Optimize a row of turbines
 
 This example optimizes the derating of a row of three turbines to maximize net revenue for a
-variety of combinations of wind direction, load ambient TI, and electricity values.
+variety of combinations of wind direction, ambient "load TI" (LTI), and electricity values.
 The row is aligned when the wind direction is 270 degrees.
 
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 
 from floris import FlorisModel, TimeSeries
+from floris.core.turbine.operation_models import (
+    POWER_SETPOINT_DEFAULT,
+    POWER_SETPOINT_DISABLED,
+)
 from floris.optimization.load_optimization.load_optimization import (
     compute_farm_revenue,
     compute_farm_voc,
     compute_net_revenue,
-    find_A_to_satisfy_rev_voc_ratio,
     optimize_power_setpoints,
 )
 
@@ -22,11 +27,9 @@ from floris.optimization.load_optimization.load_optimization import (
 # Parameters
 D = 126.0
 d_spacing = 7.0
-MIN_POWER_SETPOINT = 0.00000001
-derating_levels = np.linspace(1.0, MIN_POWER_SETPOINT, 10)
+derating_levels = np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 10)
 n_turbines = 3
-N_per_loop = 10 # Number of unique values for wind direction, value, and load ambient TI
-
+A = 4e-6
 
 # Declare a floris model with default configuration
 fmodel = FlorisModel(configuration="defaults")
@@ -45,9 +48,9 @@ wind_directions = []
 values = []
 ambient_lti = []
 
-for w_i in np.linspace(230, 270, N_per_loop):
-    for v_i in np.linspace(1e-5, 5e-5, N_per_loop):
-        for t_i in np.linspace(0.02, 0.2, N_per_loop):
+for w_i in [240.0, 270.0]:
+    for t_i in [0.1, 0.25]:
+        for v_i in [1e-5, 1e-6]:
             wind_directions.append(w_i)
             values.append(v_i)
             ambient_lti.append(t_i)
@@ -68,20 +71,21 @@ fmodel.run()
 initial_power_setpoint = np.ones((N, n_turbines)) * 5e6
 
 # Calculate the A which would put the farm at a 4 revenue to VOC ratio
-A_initial = find_A_to_satisfy_rev_voc_ratio(fmodel, 4.0, ambient_lti)
+# A_initial = find_A_to_satisfy_rev_voc_ratio(fmodel, 4.0, ambient_lti)
+# print(A_initial)
 
 # Set these initial power setpoints
 fmodel.set(power_setpoints=initial_power_setpoint)
 fmodel.run()
-net_revenue_initial = compute_net_revenue(fmodel, A_initial, ambient_lti)
-farm_voc_initial = compute_farm_voc(fmodel, A_initial, ambient_lti)
+net_revenue_initial = compute_net_revenue(fmodel, A, ambient_lti)
+farm_voc_initial = compute_farm_voc(fmodel, A, ambient_lti)
 farm_revenue_initial = compute_farm_revenue(fmodel)
 
 
 # Compute the optimal derating levels given A_initial
 opt_power_setpoints, opt_net_revenue = optimize_power_setpoints(
     fmodel,
-    A_initial,
+    A,
     ambient_lti,
     power_setpoint_initial=initial_power_setpoint,
     derating_levels=derating_levels,
@@ -90,60 +94,99 @@ opt_power_setpoints, opt_net_revenue = optimize_power_setpoints(
 # Compute final values
 fmodel.set(power_setpoints=opt_power_setpoints)
 fmodel.run()
-net_revenue_opt = compute_net_revenue(fmodel, A_initial, ambient_lti)
-farm_voc_opt = compute_farm_voc(fmodel, A_initial, ambient_lti)
+net_revenue_opt = compute_net_revenue(fmodel, A, ambient_lti)
+farm_voc_opt = compute_farm_voc(fmodel, A, ambient_lti)
 farm_revenue_opt = compute_farm_revenue(fmodel)
 
 
 # Show the results
-fig, axarr = plt.subplots(7, 1, sharex=True, figsize=(10, 10))
+fig, axarr = plt.subplots(7, 1, sharex=True, figsize=(10, 9))
 
 # Plot the wind direction
 ax = axarr[0]
 ax.plot(wind_directions, color="k")
-ax.set_ylabel("Wind\n Direction (deg)")
+ax.set_ylabel("Wind\n Direction (deg)", fontsize=7)
 ax.set_title("X, Y Turbine Coordinates: T0: (0, 0), T1: (7D, 0), T2: (14D, 0); Wind Speed = 8 m/s")
 
 # Plot the load TI
 ax = axarr[1]
 ax.plot(ambient_lti, color="k")
-ax.set_ylabel("Load Ambient\n TI (-)")
+ax.set_ylabel("LTI (-)", fontsize=7)
 
 # Plot the values
 ax = axarr[2]
-ax.plot(1e6*values, color="k")
-ax.set_ylabel("Value of\n Electricity ($/MWh)")
+ax.plot(1e6 * values, color="k")
+ax.set_ylabel("Value of\n Electricity ($/MWh)", fontsize=7)
 
 # Plot the initial and final farm revenue
 ax = axarr[3]
 ax.plot(farm_revenue_initial, label="Initial", color="k")
 ax.plot(farm_revenue_opt, label="Optimized", color="r")
-ax.set_ylabel("Farm\n Revenue ($)")
+ax.set_ylabel("Farm\n Revenue ($)", fontsize=7)
 ax.legend()
 
 # Plot the initial and final farm VOC
 ax = axarr[4]
 ax.plot(farm_voc_initial, label="Initial", color="k")
 ax.plot(farm_voc_opt, label="Optimized", color="r")
-ax.set_ylabel("Farm VOC ($)")
+ax.set_ylabel("Farm VOC ($)", fontsize=7)
 ax.legend()
 
 # Plot the initial and final farm net revenue
 ax = axarr[5]
 ax.plot(net_revenue_initial, label="Initial", color="k")
 ax.plot(net_revenue_opt, label="Optimized", color="r")
-ax.set_ylabel("Farm Net\nRevenue ($)")
+ax.set_ylabel("Farm Net\nRevenue ($)", fontsize=7)
 ax.legend()
 
 # Plot the turbine deratings
 ax = axarr[6]
 for i in range(n_turbines):
     ax.plot(opt_power_setpoints[:, i] / 1000.0, label=f"Turbine {i}", lw=3 * n_turbines / (i + 1))
-ax.set_ylabel("Power\n Setpoint (kW)")
+ax.set_ylabel("Power\n Setpoint (kW)", fontsize=7)
 ax.set_xlabel("Wind Condition and Electricity Value Combination")
 ax.legend()
 
 for ax in axarr:
     ax.grid(True)
+
+
+# Produce a heat-map to illustrate the chosen derating configurations by condition
+
+# Make a list of strings whose value is "waked" when wind_directions is at its maximum
+wake_status = ["waked" if wd == wind_directions.max() else "unwaked" for wd in wind_directions]
+
+# Make a list of strings whose value is "high_ambient_ti"
+# when ambient_lti is at its maximum, otherwise "low_ambient_ti"
+ambient_status = [
+    "high_ambient_ti" if ti == ambient_lti.max() else "low_ambient_ti" for ti in ambient_lti
+]
+
+# Make a list of strings whose value is "high_value" when values is at its maximum,
+#  otherwise "low_value"
+value_status = ["high_value" if v == values.max() else "low_value" for v in values]
+
+# Cat the elements of each of these strings together
+status = [f"{w} {a} {v}" for w, a, v in zip(wake_status, ambient_status, value_status)]
+
+# Combine into a dataframe
+df = pd.DataFrame(
+    {
+        "status": status,
+        "Turbine 0": opt_power_setpoints[:, 0],
+        "Turbine 1": opt_power_setpoints[:, 1],
+        "Turbine 2": opt_power_setpoints[:, 2],
+    }
+)
+
+df = df.set_index("status")
+
+
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.heatmap(df, annot=True, cmap="coolwarm_r", ax=ax)  # fmt=".0f",
+ax.set_title("Optimized Power Setpoints (W)")
+
+# Ensure y-labels fit in the plot
+plt.tight_layout()
 
 plt.show()
