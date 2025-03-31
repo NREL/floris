@@ -51,14 +51,14 @@ fig, ax = plt.subplots(2, 1, sharex=True)
 for t in range(fmodel.n_turbines):
     ax[0].plot(wind_directions, load_ti[:, t], label=f"Turbine {t}")
     ax[1].plot(wind_directions, voc[:, t], label=f"Turbine {t}")
-ax[0].set_ylabel("Load TI [-]")
+ax[0].set_ylabel("LTI [-]")
 ax[1].set_ylabel("VOC [$]")
 ax[1].set_xlabel("Wind Direction [deg]")
 ax[1].legend(loc="lower right")
 ax[0].grid()
 ax[1].grid()
 ax[0].set_title(
-    "Load TI and VOC vs Wind Direction\n"
+    "LTI and VOC vs Wind Direction\n"
     "X, Y Turbine Coordinates: T0: (0, 0), T1: (7D, 0)"
 )
 
@@ -91,14 +91,14 @@ fig, ax = plt.subplots(2, 1, sharex=True)
 for t in range(fmodel.n_turbines):
     ax[0].plot(power_setpoints[:,0], load_ti[:, t], label=f"Turbine {t}")
     ax[1].plot(power_setpoints[:,0], voc[:, t], label=f"Turbine {t}")
-ax[0].set_ylabel("Load TI [-]")
+ax[0].set_ylabel("LTI [-]")
 ax[1].set_ylabel("VOC [$]")
 ax[1].set_xlabel("Power Setpoint (T0) [W]")
 ax[1].legend(loc="lower right")
 ax[0].grid()
 ax[1].grid()
 ax[0].set_title(
-    "Load TI and VOC vs T0 Power Setpoint\n"
+    "LTI and VOC vs T0 Power Setpoint\n"
     "Wind Direction = 270\u00B0, Wind Speed = 8 m/s"
 )
 
@@ -117,14 +117,14 @@ fig, ax = plt.subplots(2, 1, sharex=True)
 for t in range(fmodel.n_turbines):
     ax[0].plot(ambient_lti, load_ti[:, t], label=f"Turbine {t}")
     ax[1].plot(ambient_lti, voc[:, t], label=f"Turbine {t}")
-ax[0].set_ylabel("Load TI [-]")
+ax[0].set_ylabel("LTI [-]")
 ax[1].set_ylabel("VOC [$]")
 ax[1].set_xlabel("Load Ambient TI [-]")
 ax[1].legend(loc="lower right")
 ax[0].grid()
 ax[1].grid()
 ax[0].set_title(
-    "Load TI and VOC vs Load Ambient TI\n"
+    "LTI and VOC vs Load Ambient TI\n"
     "Wind Direction = 270\u00B0, Wind Speed = 8 m/s"
 )
 
