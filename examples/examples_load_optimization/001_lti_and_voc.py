@@ -1,4 +1,4 @@
-"""Example: Load turbulence intensity
+"""Example: LTI and VOC Behavior with Changing Wind Direction and Power Setpoints
 
 Demonstrate the behavior of the load turbulence intensity model and
 variable operating cost (VOC) model with respect
