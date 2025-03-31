@@ -50,12 +50,12 @@ for op_model, wsp in itertools.product(op_models, wind_speeds):
     results[(op_model, wsp)] = evaluate_yawed_power(wsp, op_model)
 
 # Plot the results
-fig, axes = plt.subplots(1, len(wind_speeds), sharey=True)
+fig, axes = plt.subplots(1, len(wind_speeds), sharey=True, figsize=(10, 5))
 
 colors = ["k", "k", "C0", "C1"]
 linestyles = ["dashed", "solid", "dashed", "dotted"]
 for wsp, ax in zip(wind_speeds, axes):
-    ax.set_title(f"wsp: {wsp} m/s")
+    ax.set_title(f"Wind speed: {wsp} m/s")
     ax.set_xlabel("Yaw angle [deg]")
     ax.grid(True)
     for op_model, c, ls in zip(op_models, colors, linestyles):
