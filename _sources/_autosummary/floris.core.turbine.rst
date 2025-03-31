@@ -13,3 +13,4 @@ floris.core.turbine
    controller_dependent_operation_model
    operation_models
    turbine
+   unified_momentum_model

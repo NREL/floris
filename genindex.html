@@ -282,6 +282,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html">floris.core.turbine.controller_dependent_operation_model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.unified_momentum_model.html">floris.core.turbine.unified_momentum_model</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.core.wake.html">floris.core.wake</a></li>
@@ -395,7 +396,7 @@ window.addEventListener("load", () => mermaid.run());
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Operation models</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="examples/examples_operation_models/001_compare_yaw_loss.html">Example: Compare yaw loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_operation_models/001_compare_yaw_loss.html"></a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
 <ul class="nav bd-sidenav">
@@ -632,6 +633,8 @@ document.write(`
         <li><a href="_autosummary/floris.core.wake_deflection.jimenez.html#floris.core.wake_deflection.jimenez.JimenezVelocityDeflection.ad">(floris.core.wake_deflection.jimenez.JimenezVelocityDeflection attribute)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.adaptivefixedpointiteration">adaptivefixedpointiteration() (in module floris.core.turbine.unified_momentum_model)</a>
+</li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html#floris.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.add_con_group">add_con_group() (floris.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse method)</a>
 
       <ul>
@@ -669,6 +672,8 @@ document.write(`
 </li>
       </ul></li>
       <li><a href="_autosummary/floris.core.wake_velocity.cumulative_gauss_curl.html#floris.core.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit.alpha_mod">alpha_mod (floris.core.wake_velocity.cumulative_gauss_curl.CumulativeGaussCurlVelocityDeficit attribute)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.an">an (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
 </li>
       <li><a href="_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.ApproxFlorisModel">ApproxFlorisModel (class in floris.uncertain_floris_model)</a>
 </li>
@@ -761,6 +766,8 @@ document.write(`
 </li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleTurbine.axial_induction">(floris.core.turbine.operation_models.SimpleTurbine method)</a>
 </li>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.axial_induction">(floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine method)</a>
+</li>
         <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.axial_induction">(in module floris.core.turbine.turbine)</a>
 </li>
       </ul></li>
@@ -792,9 +799,11 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.GaussVelocityDeflection.beta">beta (floris.core.wake_deflection.gauss.GaussVelocityDeflection attribute)</a>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.beta">beta (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
 
       <ul>
+        <li><a href="_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.GaussVelocityDeflection.beta">(floris.core.wake_deflection.gauss.GaussVelocityDeflection attribute)</a>
+</li>
         <li><a href="_autosummary/floris.core.wake_velocity.gauss.html#floris.core.wake_velocity.gauss.GaussVelocityDeficit.beta">(floris.core.wake_velocity.gauss.GaussVelocityDeficit attribute)</a>
 </li>
       </ul></li>
@@ -896,12 +905,12 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.turbine_library.turbine_previewer.html#floris.turbine_library.turbine_previewer.TurbineLibrary.compute_thrust_coefficient_curves">compute_thrust_coefficient_curves() (floris.turbine_library.turbine_previewer.TurbineLibrary method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.core.rotor_velocity.html#floris.core.rotor_velocity.compute_tilt_angles_for_floating_turbines">compute_tilt_angles_for_floating_turbines() (in module floris.core.rotor_velocity)</a>
 </li>
       <li><a href="_autosummary/floris.core.rotor_velocity.html#floris.core.rotor_velocity.compute_tilt_angles_for_floating_turbines_map">compute_tilt_angles_for_floating_turbines_map() (in module floris.core.rotor_velocity)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.condition_keys">condition_keys (floris.core.turbine.turbine.Turbine attribute)</a>
 </li>
       <li><a href="_autosummary/floris.logging_manager.html#floris.logging_manager.configure_console_log">configure_console_log() (in module floris.logging_manager)</a>
@@ -936,6 +945,12 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine">ControllerDependentTurbine (class in floris.core.turbine.controller_dependent_operation_model)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.converged">converged (floris.core.turbine.unified_momentum_model.FixedPointIterationResult attribute)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.converged">(floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
+</li>
+      </ul></li>
       <li><a href="_autosummary/floris.type_dec.html#floris.type_dec.convert_to_path">convert_to_path() (in module floris.type_dec)</a>
 </li>
       <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.coordinate_labels">coordinate_labels (floris.flow_visualization.VelocityProfilesFigure attribute)</a>
@@ -966,7 +981,13 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.CosineLossTurbine">CosineLossTurbine (class in floris.core.turbine.operation_models)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.Cp">Cp (floris.core.turbine.unified_momentum_model.MomentumSolution property)</a>
+</li>
       <li><a href="_autosummary/floris.core.wake_turbulence.crespo_hernandez.html#floris.core.wake_turbulence.crespo_hernandez.CrespoHernandez">CrespoHernandez (class in floris.core.wake_turbulence.crespo_hernandez)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.Ct">Ct (floris.core.turbine.unified_momentum_model.MomentumSolution property)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.Ctprime">Ctprime (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.Grid.cubature_weights">cubature_weights (floris.core.grid.Grid attribute)</a>
 </li>
@@ -1000,14 +1021,14 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.optimization.other.boundary_grid.html#floris.optimization.other.boundary_grid.discontinuous_grid">discontinuous_grid() (in module floris.optimization.other.boundary_grid)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html#floris.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse.distance_from_boundaries">distance_from_boundaries() (floris.optimization.layout_optimization.layout_optimization_pyoptsparse.LayoutOptimizationPyOptSparse method)</a>
 
       <ul>
         <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html#floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.LayoutOptimizationPyOptSparse.distance_from_boundaries">(floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.LayoutOptimizationPyOptSparse method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.core.wake_deflection.gauss.html#floris.core.wake_deflection.gauss.GaussVelocityDeflection.dm">dm (floris.core.wake_deflection.gauss.GaussVelocityDeflection attribute)</a>
 </li>
       <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRose.downsample">downsample() (floris.wind_data.WindRose method)</a>
@@ -1019,6 +1040,10 @@ document.write(`
       <li><a href="_autosummary/floris.core.wake_turbulence.crespo_hernandez.html#floris.core.wake_turbulence.crespo_hernandez.CrespoHernandez.downstream">downstream (floris.core.wake_turbulence.crespo_hernandez.CrespoHernandez attribute)</a>
 </li>
       <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.downstream_dists_D">downstream_dists_D (floris.flow_visualization.VelocityProfilesFigure attribute)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.dp">dp (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.dp_NL">dp_NL (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.dudz_initial_sorted">dudz_initial_sorted (floris.core.flow_field.FlowField attribute)</a>
 </li>
@@ -1075,6 +1100,12 @@ document.write(`
       <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.find_cp">find_cp() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
 </li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_boundary_grid.html#floris.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid.find_lengths">find_lengths() (floris.optimization.layout_optimization.layout_optimization_boundary_grid.LayoutOptimizationBoundaryGrid method)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.fixedpointiteration">fixedpointiteration() (in module floris.core.turbine.unified_momentum_model)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible">FixedPointIterationCompatible (class in floris.core.turbine.unified_momentum_model)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationResult">FixedPointIterationResult (class in floris.core.turbine.unified_momentum_model)</a>
 </li>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.floating_tilt_table">floating_tilt_table (floris.core.turbine.turbine.Turbine attribute)</a>
 </li>
@@ -1174,6 +1205,13 @@ document.write(`
 
       <ul>
         <li><a href="_autosummary/floris.core.turbine.turbine.html#module-floris.core.turbine.turbine">module</a>
+</li>
+      </ul></li>
+      <li>
+    floris.core.turbine.unified_momentum_model
+
+      <ul>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#module-floris.core.turbine.unified_momentum_model">module</a>
 </li>
       </ul></li>
       <li>
@@ -1351,6 +1389,8 @@ document.write(`
         <li><a href="_autosummary/floris.flow_visualization.html#module-floris.flow_visualization">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     floris.layout_visualization
 
@@ -1358,8 +1398,6 @@ document.write(`
         <li><a href="_autosummary/floris.layout_visualization.html#module-floris.layout_visualization">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     floris.logging_manager
 
@@ -1744,16 +1782,18 @@ document.write(`
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.Heck">Heck (class in floris.core.turbine.unified_momentum_model)</a>
+</li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.het_map">het_map (floris.core.flow_field.FlowField attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.het_map_validator">het_map_validator() (floris.core.flow_field.FlowField method)</a>
 </li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.heterogeneous_config_validator">heterogeneous_config_validator() (floris.core.flow_field.FlowField method)</a>
 </li>
-      <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.heterogeneous_inflow_config">heterogeneous_inflow_config (floris.core.flow_field.FlowField attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.heterogeneous_inflow_config">heterogeneous_inflow_config (floris.core.flow_field.FlowField attribute)</a>
+</li>
       <li><a href="_autosummary/floris.core.wake_deflection.empirical_gauss.html#floris.core.wake_deflection.empirical_gauss.EmpiricalGaussVelocityDeflection.horizontal_deflection_gain_D">horizontal_deflection_gain_D (floris.core.wake_deflection.empirical_gauss.EmpiricalGaussVelocityDeflection attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.hub_height">hub_height (floris.core.turbine.turbine.Turbine attribute)</a>
@@ -1776,12 +1816,18 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.wake_turbulence.crespo_hernandez.html#floris.core.wake_turbulence.crespo_hernandez.CrespoHernandez.initial">initial (floris.core.wake_turbulence.crespo_hernandez.CrespoHernandez attribute)</a>
 </li>
-      <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.initialize">initialize() (floris.core.farm.Farm method)</a>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.initial_guess">initial_guess() (floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible method)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.Heck.initial_guess">(floris.core.turbine.unified_momentum_model.Heck method)</a>
 </li>
-      <li><a href="_autosummary/floris.core.core.html#floris.core.core.Core.initialize_domain">initialize_domain() (floris.core.core.Core method)</a>
+      </ul></li>
+      <li><a href="_autosummary/floris.core.farm.html#floris.core.farm.Farm.initialize">initialize() (floris.core.farm.Farm method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.core.core.html#floris.core.core.Core.initialize_domain">initialize_domain() (floris.core.core.Core method)</a>
+</li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.initialize_velocity_field">initialize_velocity_field() (floris.core.flow_field.FlowField method)</a>
 </li>
       <li><a href="_autosummary/floris.core.base.html#floris.core.base.State.INITIALIZED">INITIALIZED (floris.core.base.State attribute)</a>
@@ -1880,6 +1926,8 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_scipy.html#floris.optimization.layout_optimization.layout_optimization_scipy.LayoutOptimizationScipy">LayoutOptimizationScipy (class in floris.optimization.layout_optimization.layout_optimization_scipy)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.LimitedHeck">LimitedHeck (class in floris.core.turbine.unified_momentum_model)</a>
+</li>
       <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.line_contour_cut_plane">line_contour_cut_plane() (in module floris.flow_visualization)</a>
 </li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_base.html#floris.optimization.layout_optimization.layout_optimization_base.list_depth">list_depth() (in module floris.optimization.layout_optimization.layout_optimization_base)</a>
@@ -1917,6 +1965,8 @@ document.write(`
       <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.VelocityProfilesFigure.match_profile_to_axes">match_profile_to_axes() (floris.flow_visualization.VelocityProfilesFigure method)</a>
 </li>
       <li><a href="_autosummary/floris.core.wake_combination.max.html#floris.core.wake_combination.max.MAX">MAX (class in floris.core.wake_combination.max)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.max_resid">max_resid (floris.core.turbine.unified_momentum_model.FixedPointIterationResult attribute)</a>
 </li>
       <li><a href="_autosummary/floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html#floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.LayoutOptimizationPyOptSparse.mean_distance">mean_distance() (floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.LayoutOptimizationPyOptSparse method)</a>
 </li>
@@ -1961,6 +2011,8 @@ document.write(`
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#module-floris.core.turbine.operation_models">floris.core.turbine.operation_models</a>
 </li>
         <li><a href="_autosummary/floris.core.turbine.turbine.html#module-floris.core.turbine.turbine">floris.core.turbine.turbine</a>
+</li>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#module-floris.core.turbine.unified_momentum_model">floris.core.turbine.unified_momentum_model</a>
 </li>
         <li><a href="_autosummary/floris.core.wake.html#module-floris.core.wake">floris.core.wake</a>
 </li>
@@ -2069,6 +2121,8 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution">MomentumSolution (class in floris.core.turbine.unified_momentum_model)</a>
+</li>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.multi_dimensional_cp_ct">multi_dimensional_cp_ct (floris.core.turbine.turbine.Turbine attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.multidim_conditions">multidim_conditions (floris.core.flow_field.FlowField attribute)</a>
@@ -2115,6 +2169,12 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.utilities.html#floris.utilities.nested_set">nested_set() (in module floris.utilities)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.niter">niter (floris.core.turbine.unified_momentum_model.FixedPointIterationResult attribute)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.niter">(floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
+</li>
+      </ul></li>
       <li><a href="_autosummary/floris.core.wake_velocity.none.html#floris.core.wake_velocity.none.NoneVelocityDeficit">NoneVelocityDeficit (class in floris.core.wake_velocity.none)</a>
 </li>
       <li><a href="_autosummary/floris.core.wake_deflection.none.html#floris.core.wake_deflection.none.NoneVelocityDeflection">NoneVelocityDeflection (class in floris.core.wake_deflection.none)</a>
@@ -2253,6 +2313,8 @@ document.write(`
 </li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.PointsGrid">PointsGrid (class in floris.core.grid)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.Heck.post_process">post_process() (floris.core.turbine.unified_momentum_model.Heck method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html#floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine.power">power() (floris.core.turbine.controller_dependent_operation_model.ControllerDependentTurbine static method)</a>
@@ -2271,6 +2333,8 @@ document.write(`
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleDeratingTurbine.power">(floris.core.turbine.operation_models.SimpleDeratingTurbine method)</a>
 </li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleTurbine.power">(floris.core.turbine.operation_models.SimpleTurbine method)</a>
+</li>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.power">(floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine method)</a>
 </li>
         <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.power">(in module floris.core.turbine.turbine)</a>
 </li>
@@ -2381,6 +2445,8 @@ document.write(`
         <li><a href="_autosummary/floris.optimization.other.boundary_grid.html#floris.optimization.other.boundary_grid.BoundaryGrid.reinitialize_xy">(floris.optimization.other.boundary_grid.BoundaryGrid method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.relax">relax (floris.core.turbine.unified_momentum_model.FixedPointIterationResult attribute)</a>
+</li>
       <li><a href="_autosummary/floris.wind_data.html#floris.wind_data.WindRose.resample_by_interpolation">resample_by_interpolation() (floris.wind_data.WindRose method)</a>
 
       <ul>
@@ -2397,12 +2463,18 @@ document.write(`
       </ul></li>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_area">reset_rotor_area() (floris.core.turbine.turbine.Turbine method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_diameter_dependencies">reset_rotor_diameter_dependencies() (floris.core.turbine.turbine.Turbine method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.Turbine.reset_rotor_radius">reset_rotor_radius() (floris.core.turbine.turbine.Turbine method)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.residual">residual() (floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible method)</a>
+
+      <ul>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.Heck.residual">(floris.core.turbine.unified_momentum_model.Heck method)</a>
+</li>
+      </ul></li>
       <li><a href="_autosummary/floris.flow_visualization.html#floris.flow_visualization.reverse_cut_plane_x_axis_in_plot">reverse_cut_plane_x_axis_in_plot() (in module floris.flow_visualization)</a>
 </li>
       <li><a href="_autosummary/floris.utilities.html#floris.utilities.reverse_rotate_coordinates_rel_west">reverse_rotate_coordinates_rel_west() (in module floris.utilities)</a>
@@ -2636,6 +2708,8 @@ document.write(`
 </li>
         <li><a href="_autosummary/floris.core.turbine.operation_models.html#floris.core.turbine.operation_models.SimpleTurbine.thrust_coefficient">(floris.core.turbine.operation_models.SimpleTurbine method)</a>
 </li>
+        <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.thrust_coefficient">(floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine method)</a>
+</li>
         <li><a href="_autosummary/floris.core.turbine.turbine.html#floris.core.turbine.turbine.thrust_coefficient">(in module floris.core.turbine.turbine)</a>
 </li>
       </ul></li>
@@ -2759,11 +2833,19 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.u">u (floris.core.flow_field.FlowField attribute)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.u4">u4 (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
+</li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.u_initial_sorted">u_initial_sorted (floris.core.flow_field.FlowField attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.u_sorted">u_sorted (floris.core.flow_field.FlowField attribute)</a>
 </li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.UMM_rotor_axial_induction">UMM_rotor_axial_induction() (in module floris.core.turbine.unified_momentum_model)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.UMM_rotor_velocity_yaw_correction">UMM_rotor_velocity_yaw_correction() (in module floris.core.turbine.unified_momentum_model)</a>
+</li>
       <li><a href="_autosummary/floris.uncertain_floris_model.html#floris.uncertain_floris_model.UncertainFlorisModel">UncertainFlorisModel (class in floris.uncertain_floris_model)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine">UnifiedMomentumModelTurbine (class in floris.core.turbine.unified_momentum_model)</a>
 </li>
       <li><a href="_autosummary/floris.core.base.html#floris.core.base.State.UNINITIALIZED">UNINITIALIZED (floris.core.base.State attribute)</a>
 </li>
@@ -2812,6 +2894,8 @@ document.write(`
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.v">v (floris.core.flow_field.FlowField attribute)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.v4">v4 (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.flow_field.html#floris.core.flow_field.FlowField.v_initial_sorted">v_initial_sorted (floris.core.flow_field.FlowField attribute)</a>
 </li>
@@ -2927,6 +3011,10 @@ document.write(`
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.x">x (floris.core.turbine.unified_momentum_model.FixedPointIterationResult attribute)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.x0">x0 (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
+</li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.FlowFieldPlanarGrid.x1_bounds">x1_bounds (floris.core.grid.FlowFieldPlanarGrid attribute)</a>
 </li>
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.FlowFieldPlanarGrid.x2_bounds">x2_bounds (floris.core.grid.FlowFieldPlanarGrid attribute)</a>
@@ -2972,6 +3060,8 @@ document.write(`
       <li><a href="_autosummary/floris.core.grid.html#floris.core.grid.Grid.y_sorted_inertial_frame">y_sorted_inertial_frame (floris.core.grid.Grid attribute)</a>
 </li>
       <li><a href="_autosummary/floris.utilities.html#floris.utilities.Loader.yaml_constructors">yaml_constructors (floris.utilities.Loader attribute)</a>
+</li>
+      <li><a href="_autosummary/floris.core.turbine.unified_momentum_model.html#floris.core.turbine.unified_momentum_model.MomentumSolution.yaw">yaw (floris.core.turbine.unified_momentum_model.MomentumSolution attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>

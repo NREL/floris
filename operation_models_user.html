@@ -277,6 +277,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.controller_dependent_operation_model.html">floris.core.turbine.controller_dependent_operation_model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/floris.core.turbine.unified_momentum_model.html">floris.core.turbine.unified_momentum_model</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/floris.core.wake.html">floris.core.wake</a></li>
@@ -390,7 +391,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Operation models</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="examples/examples_operation_models/001_compare_yaw_loss.html">Example: Compare yaw loss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples_operation_models/001_compare_yaw_loss.html"></a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
 <ul class="nav bd-sidenav">
@@ -649,6 +650,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#awc-model">AWC model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peak-shaving-model">Peak shaving model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#controller-dependent-model">Controller-dependent model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unified-momentum-model">Unified Momentum Model</a></li>
 </ul>
 </li>
 </ul>
@@ -1265,6 +1267,105 @@ Evaluating model: controller-dependent
 </div>
 </div>
 </section>
+<section id="unified-momentum-model">
+<h3>Unified Momentum Model<a class="headerlink" href="#unified-momentum-model" title="Link to this heading">#</a></h3>
+<p>User-level name: <code class="docutils literal notranslate"><span class="pre">&quot;unified-momentum&quot;</span></code></p>
+<p>Underlying class: <code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine</span></code></p>
+<p>Required data on <code class="docutils literal notranslate"><span class="pre">power_thrust_table</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ref_air_density</span></code> (scalar)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ref_tilt</span></code> (scalar)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wind_speed</span></code> (list)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">power</span></code> (list)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thrust_coefficient</span></code> (list)</p></li>
+</ul>
+<p>An extension of the classical one-dimensional momentum theory to model the induction of an
+actuator disk is presented in <span id="id4">K.S. Heck and Howland [<a class="reference internal" href="bibliography.html#id32" title="H.M. Johlas K.S. Heck and M.F. Howland. Modelling the induction, thrust and power of a yaw-misaligned actuator disk. Journal of Fluid Mechanics, mar 2023. URL: https://doi.org/10.1017/jfm.2023.129, doi:10.1017/jfm.2023.129.">3</a>]</span> to directly account
+for power and thrust loss due to yaw misalignment rather than using an empirical correction
+as in the cosine loss model. Analytical expressions for the induction, thrust, initial wake
+velocities and power are developed as a function of the yaw angle and thrust coefficient.</p>
+<p>Note that the low thrust limit of the Unified Momentum Model is presently implemented in FLORIS, which returns the equations derived and validated in Heck et al. (2023).
+This low thrust limit will be accurate for thrust coefficients approximately less than 0.9.</p>
+<p>This section recreates key validation figures discussed in the paper through FLORIS.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_points</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set_operation_model</span><span class="p">(</span><span class="s2">&quot;unified-momentum&quot;</span><span class="p">)</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">layout_x</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">layout_y</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">turbine_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nrel_5MW&quot;</span><span class="p">])</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">reset_operation</span><span class="p">()</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">wind_data</span><span class="o">=</span><span class="n">TimeSeries</span><span class="p">(</span>
+        <span class="n">wind_speeds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">n_points</span> <span class="o">*</span> <span class="p">[</span><span class="mf">11.0</span><span class="p">]),</span>
+        <span class="n">wind_directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">n_points</span> <span class="o">*</span> <span class="p">[</span><span class="mf">270.0</span><span class="p">]),</span>
+        <span class="n">turbulence_intensities</span><span class="o">=</span><span class="mf">0.06</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+<span class="n">cos_reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">))</span>
+<span class="n">cos3_reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">))</span><span class="o">**</span><span class="mi">3</span>
+
+<span class="n">fmodel</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">yaw_angles</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">fmodel</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">powers</span> <span class="o">=</span> <span class="n">fmodel</span><span class="o">.</span><span class="n">get_turbine_powers</span><span class="p">()</span>
+<span class="n">power_ratio_umm</span> <span class="o">=</span> <span class="n">powers</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">powers</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">power_ratio_umm</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Unified momentum model&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">cos_reference</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\cos(\gamma)$&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">cos3_reference</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\cos^3(\gamma)$&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Figure 2 (a): Power ratio vs yaw angle&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Yaw angle, $\gamma$ (degrees)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Power ratio, $P(\gamma)/P(0)$&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Blue">floris.floris_model.FlorisModel</span> <span class=" -Color -Color-Bold -Color-Bold-Black">WARNING</span> <span class=" -Color -Color-Yellow">turbine_type has been changed without specifying a new reference_wind_height. reference_wind_height remains 90.00 m. Consider calling `FlorisModel.assign_hub_height_to_ref_height` to update the reference wind height to the turbine hub height.</span>
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Power ratio, $P(\\gamma)/P(0)$&#39;)
+</pre></div>
+</div>
+<img alt="_images/2b8ee3bc7f98b28bddb9e404d511e274783753825a7c71ec2f17540ef55e96b2.png" src="_images/2b8ee3bc7f98b28bddb9e404d511e274783753825a7c71ec2f17540ef55e96b2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">floris.core.turbine.unified_momentum_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Heck</span><span class="p">,</span> <span class="n">LimitedHeck</span>
+
+<span class="n">n_points</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">yaw_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+
+<span class="n">ct_prime</span> <span class="o">=</span> <span class="mf">1.33</span>
+
+<span class="n">heck</span> <span class="o">=</span> <span class="n">Heck</span><span class="p">()</span>
+<span class="n">ai_umm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">heck</span><span class="p">(</span><span class="n">ct_prime</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">yaw</span><span class="p">))</span><span class="o">.</span><span class="n">an</span> <span class="k">for</span> <span class="n">yaw</span> <span class="ow">in</span> <span class="n">yaw_angles</span><span class="p">])</span>
+<span class="n">heck_no_spanwise</span> <span class="o">=</span> <span class="n">LimitedHeck</span><span class="p">()</span>
+<span class="n">ai_no_spanwise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">heck_no_spanwise</span><span class="p">(</span><span class="n">ct_prime</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">yaw</span><span class="p">))</span><span class="o">.</span><span class="n">an</span> <span class="k">for</span> <span class="n">yaw</span> <span class="ow">in</span> <span class="n">yaw_angles</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">ai_umm</span> <span class="o">/</span> <span class="n">ai_umm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Yaw-dependent UMM&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">yaw_angles</span><span class="p">,</span> <span class="n">ai_no_spanwise</span><span class="o">/</span> <span class="n">ai_no_spanwise</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Low outlet spanwise velocity limit&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Figure 3: Normalized rotor-normal, rotor-averaged induction for the yawed UMM&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Yaw angle, $\gamma$ (degrees)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Axial induction ratio, $a_n(\gamma) / a_n(0)$&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Axial induction ratio, $a_n(\\gamma) / a_n(0)$&#39;)
+</pre></div>
+</div>
+<img alt="_images/4357330d8fca1328c7cf65c664ddd6b4f680b7a1bfa5e34f0fd9721a6b3b03bc.png" src="_images/4357330d8fca1328c7cf65c664ddd6b4f680b7a1bfa5e34f0fd9721a6b3b03bc.png" />
+</div>
+</div>
+</section>
 </section>
 </section>
 
@@ -1341,6 +1442,7 @@ Evaluating model: controller-dependent
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#awc-model">AWC model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peak-shaving-model">Peak shaving model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#controller-dependent-model">Controller-dependent model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unified-momentum-model">Unified Momentum Model</a></li>
 </ul>
 </li>
 </ul>

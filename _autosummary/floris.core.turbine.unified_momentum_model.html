@@ -1,0 +1,1305 @@
+
+<!DOCTYPE html>
+
+
+<html lang="python" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>floris.core.turbine.unified_momentum_model &#8212; FLORIS</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=30a733bc"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JV2SK7CNPR"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-JV2SK7CNPR');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-JV2SK7CNPR');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/floris.core.turbine.unified_momentum_model';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="floris.core.wake" href="floris.core.wake.html" />
+    <link rel="prev" title="floris.core.turbine.turbine" href="floris.core.turbine.turbine.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="python"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/docs_image.png" class="logo__image only-light" alt="FLORIS - Home"/>
+    <script>document.write(`<img src="../_static/docs_image.png" class="logo__image only-dark" alt="FLORIS - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    FLORIS Wake Modeling & Wind Farm Controls
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../v3_to_v4.html">Switching from FLORIS v3 to v4</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../intro_concepts.html">Introductory Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wind_data_user.html">Wind Data Objects</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../floris_models.html">FLORIS Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_concepts.html">Advanced Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../heterogeneous_map.html">Heterogeneous Map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../floating_wind_turbine.html">Floating Wind Turbine Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../turbine_interaction.html">Turbine Library Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operation_models_user.html">Turbine Operation Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layout_optimization.html">Layout Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../input_reference_main.html">Main Input File Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../input_reference_turbine.html">Turbine Input File Reference</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory and Background</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../wake_models.html">Wake Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../empirical_gauss_model.html">Empirical Gaussian model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../dev_guide.html">Developer's Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_quality.html">Code Quality</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../api_docs.html">API Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="floris.flow_visualization.html">floris.flow_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.floris_model.html">floris.floris_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.wind_data.html">floris.wind_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.uncertain_floris_model.html">floris.uncertain_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.turbine_library.html">floris.turbine_library</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="floris.turbine_library.turbine_previewer.html">floris.turbine_library.turbine_previewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.turbine_library.turbine_utilities.html">floris.turbine_library.turbine_utilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.parallel_floris_model.html">floris.parallel_floris_model</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="floris.optimization.html">floris.optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.layout_optimization.html">floris.optimization.layout_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_base.html">floris.optimization.layout_optimization.layout_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_boundary_grid.html">floris.optimization.layout_optimization.layout_optimization_boundary_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_gridded.html">floris.optimization.layout_optimization.layout_optimization_gridded</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread.html">floris.optimization.layout_optimization.layout_optimization_pyoptsparse_spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_random_search.html">floris.optimization.layout_optimization.layout_optimization_random_search</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.layout_optimization.layout_optimization_scipy.html">floris.optimization.layout_optimization.layout_optimization_scipy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.other.html">floris.optimization.other</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.other.boundary_grid.html">floris.optimization.other.boundary_grid</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.optimization.yaw_optimization.html">floris.optimization.yaw_optimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimization_base.html">floris.optimization.yaw_optimization.yaw_optimization_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimization_tools.html">floris.optimization.yaw_optimization.yaw_optimization_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_geometric.html">floris.optimization.yaw_optimization.yaw_optimizer_geometric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_scipy.html">floris.optimization.yaw_optimization.yaw_optimizer_scipy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.optimization.yaw_optimization.yaw_optimizer_sr.html">floris.optimization.yaw_optimization.yaw_optimizer_sr</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.layout_visualization.html">floris.layout_visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.cut_plane.html">floris.cut_plane</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="floris.core.html">floris.core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="floris.core.base.html">floris.core.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.core.html">floris.core.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.farm.html">floris.core.farm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.flow_field.html">floris.core.flow_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.grid.html">floris.core.grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.rotor_velocity.html">floris.core.rotor_velocity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.solver.html">floris.core.solver</a></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="floris.core.turbine.html">floris.core.turbine</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="floris.core.turbine.controller_dependent_operation_model.html">floris.core.turbine.controller_dependent_operation_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.turbine.operation_models.html">floris.core.turbine.operation_models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.turbine.turbine.html">floris.core.turbine.turbine</a></li>
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">floris.core.turbine.unified_momentum_model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="floris.core.wake.html">floris.core.wake</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.wake_combination.html">floris.core.wake_combination</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_combination.fls.html">floris.core.wake_combination.fls</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_combination.max.html">floris.core.wake_combination.max</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_combination.sosfs.html">floris.core.wake_combination.sosfs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.wake_deflection.html">floris.core.wake_deflection</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_deflection.empirical_gauss.html">floris.core.wake_deflection.empirical_gauss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_deflection.gauss.html">floris.core.wake_deflection.gauss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_deflection.jimenez.html">floris.core.wake_deflection.jimenez</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_deflection.none.html">floris.core.wake_deflection.none</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.wake_turbulence.html">floris.core.wake_turbulence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_turbulence.crespo_hernandez.html">floris.core.wake_turbulence.crespo_hernandez</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_turbulence.none.html">floris.core.wake_turbulence.none</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_turbulence.wake_induced_mixing.html">floris.core.wake_turbulence.wake_induced_mixing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="floris.core.wake_velocity.html">floris.core.wake_velocity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.cumulative_gauss_curl.html">floris.core.wake_velocity.cumulative_gauss_curl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.empirical_gauss.html">floris.core.wake_velocity.empirical_gauss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.gauss.html">floris.core.wake_velocity.gauss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.jensen.html">floris.core.wake_velocity.jensen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.none.html">floris.core.wake_velocity.none</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.turbopark.html">floris.core.wake_velocity.turbopark</a></li>
+<li class="toctree-l4"><a class="reference internal" href="floris.core.wake_velocity.turboparkgauss.html">floris.core.wake_velocity.turboparkgauss</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.convert_turbine_v3_to_v4.html">floris.convert_turbine_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.convert_floris_input_v3_to_v4.html">floris.convert_floris_input_v3_to_v4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.utilities.html">floris.utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.type_dec.html">floris.type_dec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floris.logging_manager.html">floris.logging_manager</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/001_opening_floris_computing_power.html">Example 1: Opening FLORIS and Computing Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/002_visualizations.html">Example 2: Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/003_wind_data_objects.html">Example 3: Wind Data Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/004_set.html">Example 4: Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/005_getting_power.html">Example 5: Getting Turbine and Farm Power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/006_get_farm_aep.html">Example 6: Getting Expected Power and AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/007_sweeping_variables.html">Example 7: Sweeping Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/008_uncertain_models.html">Example 8: Uncertain Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/009_parallel_models.html">Example 9: Parallel Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/010_compare_farm_power_with_neighbor.html">Example 10: Compare farm power with neighboring farm</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/001_opt_yaw_single_ws.html">Example: Optimize yaw for a single wind speed and multiple wind directions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/002_opt_yaw_single_ws_uncertain.html">Example: Optimize yaw for a single wind speed and multiple wind directions.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/003_opt_yaw_multiple_ws.html">Example: Optimize yaw for multiple wind directions and multiple wind speeds.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/004_optimize_yaw_aep.html">Example: Optimize yaw and compare AEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/005_optimize_yaw_aep_parallel.html">Example: Optimize yaw and compare AEP in parallel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/006_compare_yaw_optimizers.html">Example: Compare yaw optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/007_optimize_yaw_with_neighbor_farms.html">Example: Optimize yaw with neighbor farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_optimization/008_optimize_yaw_with_disabled_turbines.html">Example: Optimizing yaw angles with disabled turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Control types</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/001_derating_control.html">Example of using the simple-derating control model in FLORIS.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/002_disable_turbines.html">Example: Disabling turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/003_setting_yaw_and_disabling.html">Example: Setting yaw angles and disabling turbine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/004_helix_active_wake_mixing.html">Example: Helix active wake mixing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_control_types/005_peak_shaving.html">Example of using the peak-shaving turbine operation model.</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Emgauss</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_emgauss/001_empirical_gauss_velocity_deficit_parameters.html">Example: Empirical Gaussian velocity deficit parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_emgauss/002_empirical_gauss_deflection_parameters.html">Example: Empirical Gaussian deflection parameters</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Floating</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/001_floating_turbine_models.html">Example: Floating turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/002_floating_vs_fixedbottom_farm.html">Example: Floating vs fixed-bottom farm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_floating/003_tilt_driven_vertical_wake_deflection.html">Example: Tilt-driven vertical wake deflection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Get flow</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/001_extract_wind_speed_at_turbines.html">Example: Extract wind speed at turbines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/002_extract_wind_speed_at_points.html">Example: Extract wind speed at points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_get_flow/003_plot_velocity_deficit_profiles.html">Example: Plot velocity deficit profiles</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Heterogeneous</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/001_heterogeneous_inflow_single.html">Example: Heterogeneous Inflow for single case</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/002_heterogeneous_using_wind_data.html">Example: Heterogeneous Inflow using wind data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/003_heterogeneous_speedup_by_wd_and_ws.html">Example: Heterogeneous Speedup by Wind Direction and Wind Speed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_heterogeneous/004_heterogeneous_2d_and_3d.html">Example: Heterogeneous Inflow in 2D and 3D</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Layout optimization</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/001_optimize_layout.html">Example: Optimize Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/002_optimize_layout_with_heterogeneity.html">Example: Layout optimization with heterogeneous inflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/003_genetic_random_search.html">Example: Layout optimization with genetic random search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/004_generate_gridded_layout.html">Example: Gridded layout design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_layout_optimization/005_layout_optimization_complex_boundary.html">Example: Separated boundaries layout optimization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Multidim</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_multidim/001_multi_dimensional_cp_ct.html">Example: Multi-dimensional Cp/Ct data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_multidim/002_multi_dimensional_cp_ct_2Hs.html">Example: Multi-dimensional Cp/Ct with 2 Hs values</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Operation models</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_operation_models/001_compare_yaw_loss.html"></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbine</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/001_check_turbine.html">Example: Check turbine power curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/002_multiple_turbine_types.html">Example: Multiple turbine types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbine/003_specify_turbine_power_curve.html">Example: Specify turbine power curve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Turbopark</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_turbopark/001_compare_turbopark_implementations.html">Example: Compare TurbOPark model implementations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Uncertain</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/001_uncertain_model_params.html">Example: Uncertain Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/002_approx_floris_model.html">Example: Approximate Model Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_uncertain/003_uncertain_model_with_parallelization.html">Example: Uncertain Model With Parallelization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Visualizations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/001_layout_visualizations.html">Example: Layout Visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/002_visualize_y_cut_plane.html">Example: Visualize y cut plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/003_visualize_cross_plane.html">Example: Visualize cross plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/004_visualize_rotor_values.html">Example: Visualize rotor velocities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_visualizations/005_visualize_flow_by_sweeping_turbines.html">Example: Visualize flow by sweeping turbines</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/001_wind_data_comparisons.html">Example: Wind Data Comparisons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/002_generate_ti.html">Example: Generate TI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_data/003_generate_value.html">Example: Generate value</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples - Wind resource grid</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/000_generate_example_wrg.html">Example: Generate Example WRG File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/001_wind_rose_wrg.html">Example: WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/002_set_floris_with_wrg.html">Example: Setting FLORIS with WindRoseWRG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples_wind_resource_grid/003_wrg_compar_layout_optimization.html">Example: Layout optimization with WindRoseWRG comparison</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/floris" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/floris/edit/main/docs/_autosummary/floris.core.turbine.unified_momentum_model.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/floris/issues/new?title=Issue%20on%20page%20%2F_autosummary/floris.core.turbine.unified_momentum_model.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/_autosummary/floris.core.turbine.unified_momentum_model.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>floris.core.turbine.unified_momentum_model</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UMM_rotor_axial_induction"><code class="docutils literal notranslate"><span class="pre">UMM_rotor_axial_induction()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UMM_rotor_velocity_yaw_correction"><code class="docutils literal notranslate"><span class="pre">UMM_rotor_velocity_yaw_correction()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationCompatible</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.residual"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationCompatible.residual()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.initial_guess"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationCompatible.initial_guess()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.converged"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.converged</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.niter"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.niter</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.relax"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.relax</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.max_resid"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.max_resid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.x"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.x</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.fixedpointiteration"><code class="docutils literal notranslate"><span class="pre">fixedpointiteration()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.adaptivefixedpointiteration"><code class="docutils literal notranslate"><span class="pre">adaptivefixedpointiteration()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine"><code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.power"><code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine.power()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.thrust_coefficient"><code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine.thrust_coefficient()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.axial_induction"><code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine.axial_induction()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution"><code class="docutils literal notranslate"><span class="pre">MomentumSolution</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Ctprime"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.Ctprime</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.yaw"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.yaw</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.an"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.an</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.u4"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.u4</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.v4"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.v4</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.x0"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.x0</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.dp"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.dp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.dp_NL"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.dp_NL</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.niter"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.niter</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.converged"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.converged</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.beta"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.beta</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Ct"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.Ct</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Cp"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.Cp</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.LimitedHeck"><code class="docutils literal notranslate"><span class="pre">LimitedHeck</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.Heck"><code class="docutils literal notranslate"><span class="pre">Heck</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.Heck.initial_guess"><code class="docutils literal notranslate"><span class="pre">Heck.initial_guess()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.Heck.residual"><code class="docutils literal notranslate"><span class="pre">Heck.residual()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.Heck.post_process"><code class="docutils literal notranslate"><span class="pre">Heck.post_process()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-floris.core.turbine.unified_momentum_model">
+<span id="floris-core-turbine-unified-momentum-model"></span><h1>floris.core.turbine.unified_momentum_model<a class="headerlink" href="#module-floris.core.turbine.unified_momentum_model" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.UMM_rotor_axial_induction" title="floris.core.turbine.unified_momentum_model.UMM_rotor_axial_induction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UMM_rotor_axial_induction</span></code></a>(Cts, yaw_angles)</p></td>
+<td><p>Computes the axial induction of a yawed rotor given the yaw-aligned thrust coefficient and yaw angles using the yawed actuator disk model developed at MIT as described in Heck et al. 2023.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.UMM_rotor_velocity_yaw_correction" title="floris.core.turbine.unified_momentum_model.UMM_rotor_velocity_yaw_correction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UMM_rotor_velocity_yaw_correction</span></code></a>(Cts, ...)</p></td>
+<td><p>Computes adjusted rotor wind speeds given the yaw-aligned thrust coefficient, yaw angles, and axial induction values using the yawed actuator disk model developed at MIT as described in Heck et al. 2023.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.adaptivefixedpointiteration" title="floris.core.turbine.unified_momentum_model.adaptivefixedpointiteration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adaptivefixedpointiteration</span></code></a>([max_iter, ...])</p></td>
+<td><p>Class decorator which adds a __call__ method to the class which performs fixed-point iteration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.fixedpointiteration" title="floris.core.turbine.unified_momentum_model.fixedpointiteration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fixedpointiteration</span></code></a>([max_iter, tolerance, ...])</p></td>
+<td><p>Class decorator which adds a __call__ method to the class which performs fixed-point iteration.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible" title="floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FixedPointIterationCompatible</span></code></a>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult" title="floris.core.turbine.unified_momentum_model.FixedPointIterationResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FixedPointIterationResult</span></code></a>(converged, niter, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.Heck" title="floris.core.turbine.unified_momentum_model.Heck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Heck</span></code></a>([v4_correction])</p></td>
+<td><p>Solves the iterative momentum equation for an actuator disk model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.LimitedHeck" title="floris.core.turbine.unified_momentum_model.LimitedHeck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LimitedHeck</span></code></a>()</p></td>
+<td><p>Solves the limiting case when v_4 &lt;&lt; u_4.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.MomentumSolution" title="floris.core.turbine.unified_momentum_model.MomentumSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MomentumSolution</span></code></a>(Ctprime, yaw, an, u4, v4, ...)</p></td>
+<td><p>Stores the results of the Unified Momentum model solution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine" title="floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine</span></code></a>()</p></td>
+<td><p>Turbine operation model as described by Heck et al. (2023).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.UMM_rotor_axial_induction">
+<span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">UMM_rotor_axial_induction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Cts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#UMM_rotor_axial_induction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.UMM_rotor_axial_induction" title="Link to this definition">#</a></dt>
+<dd><p>Computes the axial induction of a yawed rotor given the yaw-aligned thrust
+coefficient and yaw angles using the yawed actuator disk model developed at
+MIT as described in Heck et al. 2023. Assumes the modified thrust
+coefficient, C_T', is invariant to yaw misalignment angle.</p>
+<p>Uses form of C_T' from Eq. (19) of Calaf et al., 2010, <a class="reference external" href="https://doi.org/10.1063/1.3291077">https://doi.org/10.1063/1.3291077</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Cts</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args</dt><dd><p>Cts (NDArrayFloat): Yaw-aligned thrust coefficient(s).
+yaw_angles (NDArrayFloat): Rotor yaw angle(s) in degrees.</p>
+</dd>
+</dl>
+<p>Returns: NDArrayFloat: Axial induction factor(s) of the yawed rotor.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.UMM_rotor_velocity_yaw_correction">
+<span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">UMM_rotor_velocity_yaw_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Cts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axial_inductions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotor_effective_velocities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#UMM_rotor_velocity_yaw_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.UMM_rotor_velocity_yaw_correction" title="Link to this definition">#</a></dt>
+<dd><p>Computes adjusted rotor wind speeds given the yaw-aligned thrust
+coefficient, yaw angles, and axial induction values using the yawed actuator
+disk model developed at MIT as described in Heck et al. 2023. Assumes the
+modified thrust coefficient, C_T', is invariant to yaw misalignment angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>]]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Cts</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>axial_inductions</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>rotor_effective_velocities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args</dt><dd><p>Cts (NDArrayFloat): Yaw-aligned thrust coefficient(s).
+yaw_angles (NDArrayFloat): Rotor yaw angle(s) in degrees.
+axial_induction (NDArrayFloat): Rotor axial induction(s); this should follow the MIT model
+yaw dependent derivation and probably gotten from <cite>UMM_rotor_axial_induction</cite>.
+rotor_effective_velocities (NDArrayFloat) rotor effective wind speed(s) at the rotor.</p>
+</dd>
+</dl>
+<p>Returns: NDArrayFloat: corrected rotor effective wind speed(s) of the yawed rotor.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">FixedPointIterationCompatible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#FixedPointIterationCompatible"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible" title="Link to this definition">#</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.residual">
+<span class="sig-name descname"><span class="pre">residual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#FixedPointIterationCompatible.residual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.residual" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_SupportsArray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">_NestedSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">_SupportsArray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_NestedSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.initial_guess">
+<span class="sig-name descname"><span class="pre">initial_guess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#FixedPointIterationCompatible.initial_guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.initial_guess" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_SupportsArray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">_NestedSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">_SupportsArray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_NestedSequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">FixedPointIterationResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">converged</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">niter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_resid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#FixedPointIterationResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>converged</strong> (<em>bool</em>)</p></li>
+<li><p><strong>niter</strong> (<em>int</em>)</p></li>
+<li><p><strong>relax</strong> (<em>float</em>)</p></li>
+<li><p><strong>max_resid</strong> (<em>float</em>)</p></li>
+<li><p><strong>x</strong> (<em>Buffer</em><em> | </em><em>_SupportsArray</em><em>[</em><em>dtype</em><em>[</em><em>Any</em><em>]</em><em>] </em><em>| </em><em>_NestedSequence</em><em>[</em><em>_SupportsArray</em><em>[</em><em>dtype</em><em>[</em><em>Any</em><em>]</em><em>]</em><em>] </em><em>| </em><em>bool</em><em> | </em><em>int</em><em> | </em><em>float</em><em> | </em><em>complex</em><em> | </em><em>str</em><em> | </em><em>bytes</em><em> | </em><em>_NestedSequence</em><em>[</em><em>bool</em><em> | </em><em>int</em><em> | </em><em>float</em><em> | </em><em>complex</em><em> | </em><em>str</em><em> | </em><em>bytes</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationResult.converged">
+<span class="sig-name descname"><span class="pre">converged</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.converged" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationResult.niter">
+<span class="sig-name descname"><span class="pre">niter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.niter" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationResult.relax">
+<span class="sig-name descname"><span class="pre">relax</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.relax" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationResult.max_resid">
+<span class="sig-name descname"><span class="pre">max_resid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.max_resid" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.FixedPointIterationResult.x">
+<span class="sig-name descname"><span class="pre">x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">_SupportsArray</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">]],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">_NestedSequence</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">_SupportsArray</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code><span class="pre">]]],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">_NestedSequence</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code><span class="pre">]]</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.x" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.fixedpointiteration">
+<span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">fixedpointiteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relaxation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#fixedpointiteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.fixedpointiteration" title="Link to this definition">#</a></dt>
+<dd><p>Class decorator which adds a __call__ method to the class which performs
+fixed-point iteration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible" title="floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedPointIterationCompatible</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>max_iter</strong> (<em>int</em>)</p></li>
+<li><p><strong>tolerance</strong> (<em>float</em>)</p></li>
+<li><p><strong>relaxation</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><p>max_iter (int): Maximum number of iterations (default: 100)
+tolerance (float): Convergence criteria (default: 1e-6)
+relaxation (float): Relaxation factor between 0 and 1 (default: 0.0)</p>
+</dd>
+</dl>
+<p>The class must contain 2 mandatory methods and 3
+optional method:</p>
+<p>mandatory:
+initial_guess(self, <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs)
+residual(self, x, <a href="#id5"><span class="problematic" id="id6">*</span></a>args, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs)</p>
+<p>optional:
+pre_process(self, <a href="#id9"><span class="problematic" id="id10">*</span></a>args, <a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs) # Optional
+post_process(self, result:FixedPointIterationResult) # Optional
+callback(self, x) # Optional</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.adaptivefixedpointiteration">
+<span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">adaptivefixedpointiteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relaxations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.0]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#adaptivefixedpointiteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.adaptivefixedpointiteration" title="Link to this definition">#</a></dt>
+<dd><p>Class decorator which adds a __call__ method to the class which performs
+fixed-point iteration. Same as <cite>fixedpointiteration</cite>, but takes a list of
+relaxation factors, and iterates over all of them in order until convergence
+is reached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>max_iter</strong> (<em>int</em>)</p></li>
+<li><p><strong>tolerance</strong> (<em>float</em>)</p></li>
+<li><p><strong>relaxations</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">UnifiedMomentumModelTurbine</span></span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#UnifiedMomentumModelTurbine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine" title="Link to this definition">#</a></dt>
+<dd><p>Turbine operation model as described by Heck et al. (2023).</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.power">
+<span class="sig-name descname"><span class="pre">power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cubature_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#UnifiedMomentumModelTurbine.power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.power" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.thrust_coefficient">
+<span class="sig-name descname"><span class="pre">thrust_coefficient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cubature_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#UnifiedMomentumModelTurbine.thrust_coefficient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.thrust_coefficient" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.axial_induction">
+<span class="sig-name descname"><span class="pre">axial_induction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw_angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cubature_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#UnifiedMomentumModelTurbine.axial_induction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.axial_induction" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>power_thrust_table</strong> (<em>dict</em>)</p></li>
+<li><p><strong>velocities</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>air_density</strong> (<em>float</em>)</p></li>
+<li><p><strong>yaw_angles</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>average_method</strong> (<em>str</em>)</p></li>
+<li><p><strong>cubature_weights</strong> (<em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">MomentumSolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ctprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">an</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_NL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">niter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#MomentumSolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution" title="Link to this definition">#</a></dt>
+<dd><p>Stores the results of the Unified Momentum model solution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ctprime</strong> (<em>float</em>)</p></li>
+<li><p><strong>yaw</strong> (<em>float</em>)</p></li>
+<li><p><strong>an</strong> (<em>float</em><em> | </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>u4</strong> (<em>float</em><em> | </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>v4</strong> (<em>float</em><em> | </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>x0</strong> (<em>float</em><em> | </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>dp</strong> (<em>float</em><em> | </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>dp_NL</strong> (<em>float</em><em> | </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>niter</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>converged</strong> (<em>bool</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>beta</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.Ctprime">
+<span class="sig-name descname"><span class="pre">Ctprime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Ctprime" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.yaw">
+<span class="sig-name descname"><span class="pre">yaw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.yaw" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.an">
+<span class="sig-name descname"><span class="pre">an</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]]]</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.an" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.u4">
+<span class="sig-name descname"><span class="pre">u4</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]]]</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.u4" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.v4">
+<span class="sig-name descname"><span class="pre">v4</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]]]</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.v4" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.x0">
+<span class="sig-name descname"><span class="pre">x0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]]]</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.x0" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.dp">
+<span class="sig-name descname"><span class="pre">dp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]]]</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.dp" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.dp_NL">
+<span class="sig-name descname"><span class="pre">dp_NL</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">],</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code><span class="pre">]],</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.dp_NL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.niter">
+<span class="sig-name descname"><span class="pre">niter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.niter" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.converged">
+<span class="sig-name descname"><span class="pre">converged</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.converged" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.beta" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.Ct">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ct</span></span><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Ct" title="Link to this definition">#</a></dt>
+<dd><p>Returns the thrust coefficient Ct.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.MomentumSolution.Cp">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Cp</span></span><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Cp" title="Link to this definition">#</a></dt>
+<dd><p>Returns the power coefficient Cp.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.LimitedHeck">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">LimitedHeck</span></span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#LimitedHeck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.LimitedHeck" title="Link to this definition">#</a></dt>
+<dd><p>Solves the limiting case when v_4 &lt;&lt; u_4. (Eq. 2.19, 2.20). Also takes Numpy
+array arguments.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.Heck">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">floris.core.turbine.unified_momentum_model.</span></span><span class="sig-name descname"><span class="pre">Heck</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v4_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#Heck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.Heck" title="Link to this definition">#</a></dt>
+<dd><p>Solves the iterative momentum equation for an actuator disk model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v4_correction</strong> (<em>float</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.Heck.initial_guess">
+<span class="sig-name descname"><span class="pre">initial_guess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ctprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#Heck.initial_guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.Heck.initial_guess" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.Heck.residual">
+<span class="sig-name descname"><span class="pre">residual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ctprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#Heck.residual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.Heck.residual" title="Link to this definition">#</a></dt>
+<dd><p>Residual function of yawed-actuator disk model in Eq. 2.15.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>x</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>Ctprime</strong> (<em>float</em>)</p></li>
+<li><p><strong>yaw</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x (np.ndarray): (a, u4, v4)
+Ctprime (float): Rotor thrust coefficient.
+yaw (float): Rotor yaw angle (radians).</p>
+</dd>
+<dt>Returns:</dt><dd><p>np.ndarray: residuals of induction and outlet velocities.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="floris.core.turbine.unified_momentum_model.Heck.post_process">
+<span class="sig-name descname"><span class="pre">post_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ctprime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/core/turbine/unified_momentum_model.html#Heck.post_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.core.turbine.unified_momentum_model.Heck.post_process" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ctprime</strong> (<em>float</em>)</p></li>
+<li><p><strong>yaw</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./_autosummary"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="floris.core.turbine.turbine.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">floris.core.turbine.turbine</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="floris.core.wake.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">floris.core.wake</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UMM_rotor_axial_induction"><code class="docutils literal notranslate"><span class="pre">UMM_rotor_axial_induction()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UMM_rotor_velocity_yaw_correction"><code class="docutils literal notranslate"><span class="pre">UMM_rotor_velocity_yaw_correction()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationCompatible</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.residual"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationCompatible.residual()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationCompatible.initial_guess"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationCompatible.initial_guess()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.converged"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.converged</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.niter"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.niter</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.relax"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.relax</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.max_resid"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.max_resid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.FixedPointIterationResult.x"><code class="docutils literal notranslate"><span class="pre">FixedPointIterationResult.x</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.fixedpointiteration"><code class="docutils literal notranslate"><span class="pre">fixedpointiteration()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.adaptivefixedpointiteration"><code class="docutils literal notranslate"><span class="pre">adaptivefixedpointiteration()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine"><code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.power"><code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine.power()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.thrust_coefficient"><code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine.thrust_coefficient()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.UnifiedMomentumModelTurbine.axial_induction"><code class="docutils literal notranslate"><span class="pre">UnifiedMomentumModelTurbine.axial_induction()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution"><code class="docutils literal notranslate"><span class="pre">MomentumSolution</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Ctprime"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.Ctprime</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.yaw"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.yaw</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.an"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.an</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.u4"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.u4</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.v4"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.v4</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.x0"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.x0</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.dp"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.dp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.dp_NL"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.dp_NL</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.niter"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.niter</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.converged"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.converged</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.beta"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.beta</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Ct"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.Ct</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.MomentumSolution.Cp"><code class="docutils literal notranslate"><span class="pre">MomentumSolution.Cp</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.LimitedHeck"><code class="docutils literal notranslate"><span class="pre">LimitedHeck</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.Heck"><code class="docutils literal notranslate"><span class="pre">Heck</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.Heck.initial_guess"><code class="docutils literal notranslate"><span class="pre">Heck.initial_guess()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.Heck.residual"><code class="docutils literal notranslate"><span class="pre">Heck.residual()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.core.turbine.unified_momentum_model.Heck.post_process"><code class="docutils literal notranslate"><span class="pre">Heck.post_process()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By National Renewable Energy Laboratory
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
