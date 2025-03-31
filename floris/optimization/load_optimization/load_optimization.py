@@ -471,7 +471,9 @@ def optimize_power_setpoints(
     exp_ws_std: float = 1.0,
     exp_thrust: float = 1.0,
     power_setpoint_initial: np.array = None,
-    derating_levels: np.array = np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 5),
+    power_setpoint_levels: np.array = np.linspace(
+        POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 5
+    ),
 ):
     """Optimize the derating of each turbine to maximize net revenue sequentially from upstream to
     downstream.
@@ -491,8 +493,9 @@ def optimize_power_setpoints(
         exp_thrust (float, optional): Exponent for the thrust. Defaults to 1.
         power_setpoint_initial (np.array, optional): Initial power setpoint for each turbine.
             If None, each turbine's rated power will be used. Defaults to None.
-        derating_levels (np.array, optional): Array of derating levels to consider in optimization,
-            in W. Defaults to np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 5).
+        power_setpoint_levels (np.array, optional): Array of power setpoint levels to consider
+            in optimization in W.
+            Defaults to np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 5).
 
     """
 
@@ -531,11 +534,8 @@ def optimize_power_setpoints(
     # Now loop over turbines
     for t in sorted_indices.T:
         # Loop over derating levels
-        for d in derating_levels:
+        for d in power_setpoint_levels:
             # Apply the proposed derating level to the test_power_setpoint matrix
-            # power_setpoint_test[range(fmodel.n_findex), t] = (
-            #     power_setpoint_initial[range(fmodel.n_findex), t] * d
-            # )
             power_setpoint_test[range(fmodel.n_findex), t] = d
 
             # Apply the setpoint to fmodel

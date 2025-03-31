@@ -27,9 +27,9 @@ from floris.optimization.load_optimization.load_optimization import (
 # Parameters
 D = 126.0
 d_spacing = 7.0
-derating_levels = np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 10)
+power_setpoint_levels = np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 10)
 n_turbines = 3
-A = 4e-6
+A = 4e-6 # Selected to demonstrate variation in derating selection
 
 # Declare a floris model with default configuration
 fmodel = FlorisModel(configuration="defaults")
@@ -70,10 +70,6 @@ fmodel.run()
 # Set the initial power setpoints as no derating
 initial_power_setpoint = np.ones((N, n_turbines)) * 5e6
 
-# Calculate the A which would put the farm at a 4 revenue to VOC ratio
-# A_initial = find_A_to_satisfy_rev_voc_ratio(fmodel, 4.0, ambient_lti)
-# print(A_initial)
-
 # Set these initial power setpoints
 fmodel.set(power_setpoints=initial_power_setpoint)
 fmodel.run()
@@ -88,7 +84,7 @@ opt_power_setpoints, opt_net_revenue = optimize_power_setpoints(
     A,
     ambient_lti,
     power_setpoint_initial=initial_power_setpoint,
-    derating_levels=derating_levels,
+    power_setpoint_levels=power_setpoint_levels,
 )
 
 # Compute final values
