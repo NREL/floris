@@ -33,7 +33,7 @@ A = 4e-6 # Selected to demonstrate variation in derating selection
 
 # Declare a floris model with default configuration
 fmodel = FlorisModel(configuration="defaults")
-fmodel.set_operation_model("simple-derating")
+
 
 
 # Set up a row of turbines
@@ -41,6 +41,9 @@ fmodel.set(
     layout_x=[i * D * d_spacing for i in range(n_turbines)],
     layout_y=[0.0 for i in range(n_turbines)],
 )
+
+# Set operation to simple derating
+fmodel.set_operation_model("simple-derating")
 
 
 # Set up input conditions

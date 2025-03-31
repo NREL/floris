@@ -13,24 +13,8 @@ from floris.optimization.load_optimization.load_optimization import (
     compute_turbine_voc,
     find_A_to_satisfy_rev_voc_ratio,
     find_A_to_satisfy_target_VOC_per_MW,
-    get_max_powers,
-    get_rotor_diameters,
     optimize_power_setpoints,
 )
-
-
-def test_get_max_powers():
-    fmodel = FlorisModel(configuration="defaults")
-    fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
-    rated_powers = get_max_powers(fmodel)
-    np.testing.assert_allclose(rated_powers, [5e6, 5e6], atol=1e-4)
-
-
-def test_get_rotor_diameters():
-    fmodel = FlorisModel(configuration="defaults")
-    fmodel.set(layout_x=[0, 500.0], layout_y=[0.0, 0.0])
-    rotor_diameters = get_rotor_diameters(fmodel)
-    np.testing.assert_allclose(rotor_diameters, [125.88, 125.88], atol=1e-4)
 
 
 def test_compute_lti_no_wake():

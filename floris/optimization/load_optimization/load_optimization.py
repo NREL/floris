@@ -10,39 +10,6 @@ from floris.core.turbine.operation_models import (
 )
 
 
-def get_max_powers(fmodel: FlorisModel):
-    """Get the rated power of each turbine in the farm.
-
-    Args:
-        fmodel (FlorisModel): FlorisModel object
-
-    Returns:
-        np.array: Array of rated powers for each turbine
-    """
-    rated_powers = np.zeros(fmodel.n_turbines)
-    for t in range(fmodel.n_turbines):
-        rated_powers[t] = fmodel.core.farm.turbine_map[0].power_thrust_table["power"].max() * 1000.0
-
-    return rated_powers
-
-
-def get_rotor_diameters(fmodel: FlorisModel):
-    """Get the rotor diameter of each turbine
-
-    Args:
-        fmodel (FlorisModel): FlorisModel object
-
-    Returns:
-        np.array: Array of rotor diameters for each turbine
-    """
-
-    # If fmodel.core.farm.rotor_diameters is 1 dimensional, return
-    if fmodel.core.farm.rotor_diameters.ndim == 1:
-        return fmodel.core.farm.rotor_diameters
-    else:
-        return fmodel.core.farm.rotor_diameters[0, :]
-
-
 def compute_lti(
     fmodel: FlorisModel,
     ambient_lti: np.array,
@@ -75,7 +42,7 @@ def compute_lti(
     if fmodel.core.state is not State.USED:
         raise ValueError("FlorisModel must be run before computing load turbulence intensity")
 
-    rotor_diameters = get_rotor_diameters(fmodel)
+    D = fmodel.core.farm.rotor_diameters.flatten()[0]
 
     # Get the indices for sorting and unsorting
     sorted_indices = fmodel.core.grid.sorted_indices[:, :, 0, 0]
@@ -119,9 +86,6 @@ def compute_lti(
 
     # 2. Iterate over turbines from front to back across findices
     for t in range(fmodel.n_turbines):
-        # Set D to the diameter of the current turbine
-        D = rotor_diameters[t]
-
         # Get current turbine locations
         x_t = x_sorted[:, t].reshape(-1, 1)
         y_t = y_sorted[:, t].reshape(-1, 1)
@@ -213,7 +177,7 @@ def compute_turbine_voc(
     ambient_wind_speeds = np.tile(ambient_wind_speeds[:, np.newaxis], (1, fmodel.n_turbines))
 
     # Compute the rotor area
-    D = fmodel.core.farm.rotor_diameters[0, 0]
+    D = fmodel.core.farm.rotor_diameters.flatten()[0]
     area = np.pi * (D / 2) ** 2
 
     # Compute the thrust
@@ -506,9 +470,18 @@ def optimize_power_setpoints(
             "Operation model must include derating (e.g., 'mixed' or 'simple-derating')"
         )
 
+    # Raise an error if there is more than one turbine type specified
+    if not np.array(
+        [
+            fmodel.core.farm.turbine_definitions[0] == td
+            for td in fmodel.core.farm.turbine_definitions
+        ]
+    ).all():
+        raise NotImplementedError("Only one turbine type is currently supported for optimization")
+
     # If initial set point not provided, set to rated (assumed max) power
     if power_setpoint_initial is None:
-        max_power = get_max_powers(fmodel)
+        max_power = fmodel.core.farm.turbine_map[0].power_thrust_table["power"].max() * 1000.0
         power_setpoint_initial = np.tile(max_power, (fmodel.n_findex, 1))
 
     # Initialize the test power setpoints
