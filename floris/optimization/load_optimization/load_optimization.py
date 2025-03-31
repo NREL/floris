@@ -5,6 +5,7 @@ import numpy as np
 from floris import FlorisModel
 from floris.core import State
 from floris.core.turbine.operation_models import (
+    POWER_SETPOINT_DEFAULT,
     POWER_SETPOINT_DISABLED,
 )
 
@@ -470,7 +471,7 @@ def optimize_power_setpoints(
     exp_ws_std: float = 1.0,
     exp_thrust: float = 1.0,
     power_setpoint_initial: np.array = None,
-    derating_levels: np.array = np.linspace(1.0, POWER_SETPOINT_DISABLED, 5),
+    derating_levels: np.array = np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 5),
 ):
     """Optimize the derating of each turbine to maximize net revenue sequentially from upstream to
     downstream.
@@ -491,8 +492,7 @@ def optimize_power_setpoints(
         power_setpoint_initial (np.array, optional): Initial power setpoint for each turbine.
             If None, each turbine's rated power will be used. Defaults to None.
         derating_levels (np.array, optional): Array of derating levels to consider in optimization,
-            represented as fractions of the power_setpoint_initial.
-            Defaults to np.linspace(1.0, 0.001, 5).
+            in W. Defaults to np.linspace(POWER_SETPOINT_DEFAULT, POWER_SETPOINT_DISABLED, 5).
 
     """
 
@@ -533,9 +533,10 @@ def optimize_power_setpoints(
         # Loop over derating levels
         for d in derating_levels:
             # Apply the proposed derating level to the test_power_setpoint matrix
-            power_setpoint_test[range(fmodel.n_findex), t] = (
-                power_setpoint_initial[range(fmodel.n_findex), t] * d
-            )
+            # power_setpoint_test[range(fmodel.n_findex), t] = (
+            #     power_setpoint_initial[range(fmodel.n_findex), t] * d
+            # )
+            power_setpoint_test[range(fmodel.n_findex), t] = d
 
             # Apply the setpoint to fmodel
             fmodel.set(power_setpoints=power_setpoint_test)
