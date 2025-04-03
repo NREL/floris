@@ -21,7 +21,7 @@ jobs:
     - name: Install project
       run: |
         python -m pip install --upgrade pip
-        pip install -e .
+        pip install .
         pip install nbconvert  # For converting Jupyter notebook to python script in the next step
     - name: Run examples
       # Run all examples and test that they finish successfully. Do not evaluate the results.
