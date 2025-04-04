@@ -29,7 +29,7 @@ jobs:
       if: success() || failure()  # Run this step even if the linting step fails
       run: |
         mkdir -p temp1/temp2/temp3
-        cp -r tests/ temp1/temp2/temp3/.
+        cp -rL tests temp1/temp2/temp3/.
         cd temp1/temp2/temp3/
 
         # -rA displays the captured output for all tests after they're run
