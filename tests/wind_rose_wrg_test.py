@@ -12,13 +12,10 @@ from floris import (
 )
 
 
-WRG_FILE_FILE = (
-    Path(floris.__file__).resolve().parent /
-    "../examples/examples_wind_resource_grid/wrg_example.wrg"
-)
-
 TEST_DATA = Path(__file__).resolve().parent / "data"
 YAML_INPUT = TEST_DATA / "input_full.yaml"
+
+WRG_FILE_FILE = TEST_DATA / "wrg_test.wrg"
 
 def test_load_wrg():
     WindRoseWRG(WRG_FILE_FILE)
