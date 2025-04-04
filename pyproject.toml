@@ -65,6 +65,7 @@ include = ["floris*"]
 [tool.setuptools.package-data]
 floris = [
     "turbine_library/*.yaml",
+    "turbine_library/*.csv",
     "turbine_library/demo_cp_ct_surfaces/*.npz",
     "core/wake_velocity/turbopark_lookup_table.mat",
     "default_inputs.yaml"
