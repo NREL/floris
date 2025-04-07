@@ -23,11 +23,15 @@ jobs:
     - name: Install project
       run: |
         python -m pip install --upgrade pip
-        pip install -e ".[develop]"
+        pip install ".[develop]"
     - uses: pre-commit/action@v3.0.0
     - name: Run tests
       if: success() || failure()  # Run this step even if the linting step fails
       run: |
+        mkdir -p temp1/temp2/temp3
+        cp -rL tests temp1/temp2/temp3/.
+        cd temp1/temp2/temp3/
+
         # -rA displays the captured output for all tests after they're run
         # See the docs: https://doc.pytest.org/en/latest/reference/reference.html#command-line-flags
         pytest -rA tests/ --ignore tests/timing.py --ignore tests/profiling.py

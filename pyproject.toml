@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "floris"
-version = "4.4"
+version = "4.4.1"
 description = "A controls-oriented engineering wake model."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -65,6 +65,8 @@ include = ["floris*"]
 [tool.setuptools.package-data]
 floris = [
     "turbine_library/*.yaml",
+    "turbine_library/*.csv",
+    "turbine_library/demo_cp_ct_surfaces/*.npz",
     "core/wake_velocity/turbopark_lookup_table.mat",
     "default_inputs.yaml"
 ]
