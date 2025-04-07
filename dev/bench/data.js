@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1743462474199,
+  "lastUpdate": 1744030511670,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -1754,6 +1754,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00010193428125158642",
             "extra": "mean: 8.617477855670924 msec\nrounds: 97"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "39596329+misi9170@users.noreply.github.com",
+            "name": "misi9170",
+            "username": "misi9170"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b8c25bd92749f3a25c1857b1ec5cb97da7302268",
+          "message": "[BUGFIX] Add demo_cp_ct_surface location to data files. (#1095)\n\n* Add demo_cp_ct_surface location to data files.\n\n* Remove editable install (-e) flags from workflows, and remove cp-ct surfaces from package data.\n\n* Create subdirectory to run tests from.\n\n* Reinclude needed data.\n\n* Add multidim turbine csvs to data\"\n\n* Update paths in tests to be more robust to test location.\n\n* Copy wrg data into tests/data directory.\n\n* Resolve sym links in copy\n\n---------\n\nCo-authored-by: Rafael M Mudafort <rafmudaf@gmail.com>",
+          "timestamp": "2025-04-07T06:32:36-06:00",
+          "tree_id": "404bf8453e2498ad7ea8f7372ee217923b0084eb",
+          "url": "https://github.com/NREL/floris/commit/b8c25bd92749f3a25c1857b1ec5cb97da7302268"
+        },
+        "date": 1744030509360,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 44.1731045509967,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00026174405448115327",
+            "extra": "mean: 22.63820961113399 msec\nrounds: 18"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 56.69488222368846,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00033655831874512685",
+            "extra": "mean: 17.638276344847515 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 25.011355019260787,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008362434644254439",
+            "extra": "mean: 39.98184021737 msec\nrounds: 23"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.30728111293776134,
+            "unit": "iter/sec",
+            "range": "stddev: 0.01028724961352561",
+            "extra": "mean: 3.2543490565999944 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 37.021649562139814,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00040491808060702045",
+            "extra": "mean: 27.011222131567305 msec\nrounds: 38"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 116.12386386182767,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002290158096052246",
+            "extra": "mean: 8.611494371130041 msec\nrounds: 97"
           }
         ]
       }
