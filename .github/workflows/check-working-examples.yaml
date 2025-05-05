@@ -21,7 +21,7 @@ jobs:
     - name: Install project
       run: |
         python -m pip install --upgrade pip
-        pip install -e .
+        pip install .
         pip install nbconvert  # For converting Jupyter notebook to python script in the next step
     - name: Run examples
       # Run all examples and test that they finish successfully. Do not evaluate the results.
@@ -31,11 +31,11 @@ jobs:
 
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
           mkdir temp1\temp2\temp3
-          cp -r examples\ temp1\temp2\temp3\.
+          cp -rL examples\ temp1\temp2\temp3\.
           cd temp1\temp2\temp3\examples\
         else
           mkdir -p temp1/temp2/temp3
-          cp -r examples temp1/temp2/temp3/.
+          cp -rL examples temp1/temp2/temp3/.
           cd temp1/temp2/temp3/examples/
         fi
 

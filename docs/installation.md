@@ -18,6 +18,10 @@ FLORIS support for python version 3.8 and 3.9 was recently ended as they reached
 FLORIS v4.3 also made the move to requiring `numpy` version 2. See the [numpy documentation for details](https://numpy.org/doc/stable/numpy_2_0_migration_guide.html).
 ```
 
+```{warning}
+Support for python version 3.9 will end in the latter half of 2025 as it reaches [end-of-life](https://devguide.python.org/versions/).
+```
+
 Installing into a Python environment that contains a previous version of FLORIS may cause conflicts.
 If you intend to use [pyOptSparse](https://mdolab-pyoptsparse.readthedocs-hosted.com/en/latest/)
 with FLORIS, it is recommended to install that package first before installing FLORIS.

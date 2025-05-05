@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "floris"
-version = "4.3"
+version = "4.4.1"
 description = "A controls-oriented engineering wake model."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -49,6 +49,7 @@ docs = [
     "sphinx-autodoc-typehints~=2.0",
     "sphinxcontrib-autoyaml~=1.0",
     "sphinxcontrib.mermaid~=1.0",
+    "bokeh~=3.7",
 ]
 develop = [
     "pytest~=8.0",
@@ -64,6 +65,8 @@ include = ["floris*"]
 [tool.setuptools.package-data]
 floris = [
     "turbine_library/*.yaml",
+    "turbine_library/*.csv",
+    "turbine_library/demo_cp_ct_surfaces/*.npz",
     "core/wake_velocity/turbopark_lookup_table.mat",
     "default_inputs.yaml"
 ]
