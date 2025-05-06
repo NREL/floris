@@ -466,6 +466,8 @@ def test_parallel_uncertain_model():
 
     ufmodel = UncertainFlorisModel(FlorisModel(configuration=YAML_INPUT))
     pufmodel = UncertainFlorisModel(ParFlorisModel(configuration=YAML_INPUT))
+    assert isinstance(ufmodel.fmodel_expanded, FlorisModel)
+    assert isinstance(pufmodel.fmodel_expanded, ParFlorisModel)
 
     # Run the models and compare outputs
     ufmodel.run()
