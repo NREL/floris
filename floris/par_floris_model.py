@@ -234,7 +234,14 @@ class ParFlorisModel(FlorisModel):
 
     def copy(self):
         """Create an independent copy of the current ParFlorisModel object"""
-        return ParFlorisModel(self.core.as_dict())
+        return ParFlorisModel(
+            configuration=self.core.as_dict(),
+            interface=self.interface,
+            max_workers=self.max_workers,
+            n_wind_condition_splits=self.n_wind_condition_splits,
+            return_turbine_powers_only=self.return_turbine_powers_only,
+            print_timings=self.print_timings,
+        )
 
     def _preprocessing(self):
         """
