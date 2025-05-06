@@ -232,6 +232,10 @@ class ParFlorisModel(FlorisModel):
 
         return sampled_wind_speeds
 
+    def copy(self):
+        """Create an independent copy of the current ParFlorisModel object"""
+        return ParFlorisModel(self.core.as_dict())
+
     def _preprocessing(self):
         """
         Prepare the input arguments for parallel execution.
