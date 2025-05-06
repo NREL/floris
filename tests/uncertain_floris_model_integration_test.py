@@ -271,6 +271,32 @@ def test_get_powers_with_wind_data():
 
     assert np.allclose(farm_power_weighted, ufmodel.get_turbine_powers()[:, :, :-1].sum(axis=2))
 
+def test_AEP_with_wind_data():
+    wind_speeds = np.array([8.0, 10.0])
+    wind_directions = np.array([270.0, 280.0])
+    frequencies = np.array([[0.25, 0.25], [0.1, 0.4]])
+    wind_rose = WindRose(
+        wind_directions=np.unique(wind_directions),
+        wind_speeds=np.unique(wind_speeds),
+        freq_table=frequencies,
+        ti_table=0.06,
+    )
+
+    # Set wind_data on UncertainFlorisModel directly
+    ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
+    ufmodel.set(wind_data=wind_rose)
+    ufmodel.run()
+    aep_1 = ufmodel.get_farm_AEP()
+
+    # Set wind_data on FlorisModel and then set on UncertainFlorisModel
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(wind_data=wind_rose)
+    ufmodel = UncertainFlorisModel(fmodel)
+    ufmodel.run()
+    aep_2 = ufmodel.get_farm_AEP()
+
+    # Check AEPs match
+    assert np.allclose(aep_1, aep_2)
 
 def test_approx_floris_model():
     afmodel = ApproxFlorisModel(configuration=YAML_INPUT, wd_resolution=1.0)

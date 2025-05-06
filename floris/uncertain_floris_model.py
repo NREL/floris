@@ -109,6 +109,15 @@ class UncertainFlorisModel(LoggingManager):
         # Instantiate the un-expanded FlorisModel
         if isinstance(configuration, (FlorisModel, ParFlorisModel)):
             self.fmodel_unexpanded = configuration.copy()
+            # Copy over any control setpoints, wind data, if not already done.
+            self.fmodel_unexpanded.set(
+                yaw_angles=configuration.core.farm.yaw_angles,
+                power_setpoints=configuration.core.farm.power_setpoints,
+                awc_modes=configuration.core.farm.awc_modes,
+                awc_amplitudes=configuration.core.farm.awc_amplitudes,
+                awc_frequencies=configuration.core.farm.awc_frequencies,
+                wind_data=configuration.wind_data,
+            )
         elif isinstance(configuration, (dict, str, Path)):
             self.fmodel_unexpanded = FlorisModel(configuration)
         else:
