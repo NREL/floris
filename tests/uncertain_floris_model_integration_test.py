@@ -476,3 +476,19 @@ def test_parallel_uncertain_model():
     powers_punc = pufmodel.get_turbine_powers()
 
     assert np.allclose(powers_unc, powers_punc)
+
+def test_copy():
+    """
+    Check that the UncertainFlorisModel copy method works as expected for
+    both FlorisModel and ParFlorisModel.
+    """
+    ufmodel = UncertainFlorisModel(FlorisModel(configuration=YAML_INPUT))
+
+    ufmodel_copy = ufmodel.copy()
+    assert isinstance(ufmodel_copy, UncertainFlorisModel)
+    assert isinstance(ufmodel_copy.fmodel_expanded, FlorisModel)
+
+    pufmodel = UncertainFlorisModel(ParFlorisModel(configuration=YAML_INPUT))
+    pufmodel_copy = pufmodel.copy()
+    assert isinstance(pufmodel_copy, UncertainFlorisModel)
+    assert isinstance(pufmodel_copy.fmodel_expanded, ParFlorisModel)
