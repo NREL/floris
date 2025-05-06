@@ -13,6 +13,7 @@ from floris import (
 )
 from floris.par_floris_model import ParFlorisModel
 
+
 if __name__ == "__main__":
     # Following the refactoring of ParFlorisModel, the UncertainFlorisModel can be
     # parallelized by passing the ParFlorisModel as the model to be run.  This example
