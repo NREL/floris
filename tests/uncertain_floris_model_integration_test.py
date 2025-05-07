@@ -331,6 +331,9 @@ def test_approx_floris_model():
     np.testing.assert_almost_equal(power[0], power[1])
     assert not np.allclose(power[2], power[3])
 
+    # Test copy method
+    assert isinstance(afmodel.copy(), ApproxFlorisModel)
+
 
 def test_expected_farm_power_regression():
     ufmodel = UncertainFlorisModel(

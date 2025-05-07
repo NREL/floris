@@ -1227,3 +1227,18 @@ class ApproxFlorisModel(UncertainFlorisModel):
         self.yaw_resolution = yaw_resolution
         self.power_setpoint_resolution = power_setpoint_resolution
         self.awc_amplitude_resolution = awc_amplitude_resolution
+
+    @property
+    def secondary_init_kwargs(self):
+        """
+        ApproxFlorisModel secondary keyword arguments (after configuration).
+        """
+        return {
+            "wd_resolution": self.wd_resolution,
+            "ws_resolution": self.ws_resolution,
+            "ti_resolution": self.ti_resolution,
+            "yaw_resolution": self.yaw_resolution,
+            "power_setpoint_resolution": self.power_setpoint_resolution,
+            "awc_amplitude_resolution": self.awc_amplitude_resolution,
+            "verbose": self.verbose,
+        }
