@@ -997,16 +997,7 @@ class UncertainFlorisModel(LoggingManager):
         """Create an independent copy of the current UncertainFlorisModel object"""
         return UncertainFlorisModel(
             self.fmodel_unexpanded.copy(),
-            wd_resolution=self.wd_resolution,
-            ws_resolution=self.ws_resolution,
-            ti_resolution=self.ti_resolution,
-            yaw_resolution=self.yaw_resolution,
-            power_setpoint_resolution=self.power_setpoint_resolution,
-            awc_amplitude_resolution=self.awc_amplitude_resolution,
-            wd_std=self.wd_std,
-            wd_sample_points=self.wd_sample_points,
-            fix_yaw_to_nominal_direction=self.fix_yaw_to_nominal_direction,
-            verbose=self.verbose,
+            **self.secondary_init_kwargs,
         )
 
     def get_param(self, param: List[str], param_idx: Optional[int] = None) -> Any:
@@ -1037,8 +1028,26 @@ class UncertainFlorisModel(LoggingManager):
         """
         fm_dict_mod = self.fmodel_unexpanded.core.as_dict()
         nested_set(fm_dict_mod, param, value, param_idx)
-        self.fmodel_unexpanded.__init__(fm_dict_mod)
+        self.fmodel_unexpanded.__init__(fm_dict_mod, **self.fmodel_unexpanded.secondary_init_kwargs)
         self.set()
+
+    @property
+    def secondary_init_kwargs(self):
+        """
+        UncertainFlorisModel secondary keyword arguments (after configuration).
+        """
+        return {
+            "wd_resolution": self.wd_resolution,
+            "ws_resolution": self.ws_resolution,
+            "ti_resolution": self.ti_resolution,
+            "yaw_resolution": self.yaw_resolution,
+            "power_setpoint_resolution": self.power_setpoint_resolution,
+            "awc_amplitude_resolution": self.awc_amplitude_resolution,
+            "wd_std": self.wd_std,
+            "wd_sample_points": self.wd_sample_points,
+            "fix_yaw_to_nominal_direction": self.fix_yaw_to_nominal_direction,
+            "verbose": self.verbose,
+        }
 
     @property
     def layout_x(self):

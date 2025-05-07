@@ -232,17 +232,6 @@ class ParFlorisModel(FlorisModel):
 
         return sampled_wind_speeds
 
-    def copy(self):
-        """Create an independent copy of the current ParFlorisModel object"""
-        return ParFlorisModel(
-            configuration=self.core.as_dict(),
-            interface=self.interface,
-            max_workers=self.max_workers,
-            n_wind_condition_splits=self.n_wind_condition_splits,
-            return_turbine_powers_only=self.return_turbine_powers_only,
-            print_timings=self.print_timings,
-        )
-
     def _preprocessing(self):
         """
         Prepare the input arguments for parallel execution.
@@ -360,6 +349,19 @@ class ParFlorisModel(FlorisModel):
             return self._stored_turbine_powers
         else:
             return super()._get_turbine_powers()
+
+    @property
+    def secondary_init_kwargs(self):
+        """
+        ParFlorisModel secondary keyword arguments (after configuration).
+        """
+        return {
+            "interface": self.interface,
+            "max_workers": self.max_workers,
+            "n_wind_condition_splits": self.n_wind_condition_splits,
+            "return_turbine_powers_only": self.return_turbine_powers_only,
+            "print_timings": self.print_timings
+        }
 
     @property
     def fmodel(self):

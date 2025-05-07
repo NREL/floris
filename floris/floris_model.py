@@ -1577,7 +1577,7 @@ class FlorisModel(LoggingManager):
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object"""
-        return FlorisModel(self.core.as_dict())
+        return self.__class__(self.core.as_dict(), **self.secondary_init_kwargs)
 
     def get_param(
         self,
@@ -1616,7 +1616,7 @@ class FlorisModel(LoggingManager):
         """
         fm_dict_mod = self.core.as_dict()
         nested_set(fm_dict_mod, param, value, param_idx)
-        self.__init__(fm_dict_mod)
+        self.__init__(fm_dict_mod, **self.secondary_init_kwargs)
 
     def get_turbine_layout(self, z=False):
         """
@@ -1661,6 +1661,14 @@ class FlorisModel(LoggingManager):
         self.show_config(full=True)
 
     ### Properties
+
+    @property
+    def secondary_init_kwargs(self):
+        """
+        FlorisModel takes only the configuration argument. This method is a placeholder
+        for children of FlorisModel.
+        """
+        return {}
 
     @property
     def layout_x(self):
