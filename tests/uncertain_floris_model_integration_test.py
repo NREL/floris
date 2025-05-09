@@ -271,6 +271,32 @@ def test_get_powers_with_wind_data():
 
     assert np.allclose(farm_power_weighted, ufmodel.get_turbine_powers()[:, :, :-1].sum(axis=2))
 
+def test_AEP_with_wind_data():
+    wind_speeds = np.array([8.0, 10.0])
+    wind_directions = np.array([270.0, 280.0])
+    frequencies = np.array([[0.25, 0.25], [0.1, 0.4]])
+    wind_rose = WindRose(
+        wind_directions=np.unique(wind_directions),
+        wind_speeds=np.unique(wind_speeds),
+        freq_table=frequencies,
+        ti_table=0.06,
+    )
+
+    # Set wind_data on UncertainFlorisModel directly
+    ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
+    ufmodel.set(wind_data=wind_rose)
+    ufmodel.run()
+    aep_1 = ufmodel.get_farm_AEP()
+
+    # Set wind_data on FlorisModel and then set on UncertainFlorisModel
+    fmodel = FlorisModel(configuration=YAML_INPUT)
+    fmodel.set(wind_data=wind_rose)
+    ufmodel = UncertainFlorisModel(fmodel)
+    ufmodel.run()
+    aep_2 = ufmodel.get_farm_AEP()
+
+    # Check AEPs match
+    assert np.allclose(aep_1, aep_2)
 
 def test_approx_floris_model():
     afmodel = ApproxFlorisModel(configuration=YAML_INPUT, wd_resolution=1.0)
@@ -304,6 +330,9 @@ def test_approx_floris_model():
     power = afmodel.get_farm_power()
     np.testing.assert_almost_equal(power[0], power[1])
     assert not np.allclose(power[2], power[3])
+
+    # Test copy method
+    assert isinstance(afmodel.copy(), ApproxFlorisModel)
 
 
 def test_expected_farm_power_regression():
@@ -466,6 +495,8 @@ def test_parallel_uncertain_model():
 
     ufmodel = UncertainFlorisModel(FlorisModel(configuration=YAML_INPUT))
     pufmodel = UncertainFlorisModel(ParFlorisModel(configuration=YAML_INPUT))
+    assert isinstance(ufmodel.fmodel_expanded, FlorisModel)
+    assert isinstance(pufmodel.fmodel_expanded, ParFlorisModel)
 
     # Run the models and compare outputs
     ufmodel.run()
@@ -474,3 +505,19 @@ def test_parallel_uncertain_model():
     powers_punc = pufmodel.get_turbine_powers()
 
     assert np.allclose(powers_unc, powers_punc)
+
+def test_copy():
+    """
+    Check that the UncertainFlorisModel copy method works as expected for
+    both FlorisModel and ParFlorisModel.
+    """
+    ufmodel = UncertainFlorisModel(FlorisModel(configuration=YAML_INPUT))
+
+    ufmodel_copy = ufmodel.copy()
+    assert isinstance(ufmodel_copy, UncertainFlorisModel)
+    assert isinstance(ufmodel_copy.fmodel_expanded, FlorisModel)
+
+    pufmodel = UncertainFlorisModel(ParFlorisModel(configuration=YAML_INPUT))
+    pufmodel_copy = pufmodel.copy()
+    assert isinstance(pufmodel_copy, UncertainFlorisModel)
+    assert isinstance(pufmodel_copy.fmodel_expanded, ParFlorisModel)

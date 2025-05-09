@@ -109,6 +109,15 @@ class UncertainFlorisModel(LoggingManager):
         # Instantiate the un-expanded FlorisModel
         if isinstance(configuration, (FlorisModel, ParFlorisModel)):
             self.fmodel_unexpanded = configuration.copy()
+            # Copy over any control setpoints, wind data, if not already done.
+            self.fmodel_unexpanded.set(
+                yaw_angles=configuration.core.farm.yaw_angles,
+                power_setpoints=configuration.core.farm.power_setpoints,
+                awc_modes=configuration.core.farm.awc_modes,
+                awc_amplitudes=configuration.core.farm.awc_amplitudes,
+                awc_frequencies=configuration.core.farm.awc_frequencies,
+                wind_data=configuration.wind_data,
+            )
         elif isinstance(configuration, (dict, str, Path)):
             self.fmodel_unexpanded = FlorisModel(configuration)
         else:
@@ -985,20 +994,14 @@ class UncertainFlorisModel(LoggingManager):
         )
 
     def copy(self):
-        """Create an independent copy of the current UncertainFlorisModel object"""
-        return UncertainFlorisModel(
-            self.fmodel_unexpanded.core.as_dict(),
-            wd_resolution=self.wd_resolution,
-            ws_resolution=self.ws_resolution,
-            ti_resolution=self.ti_resolution,
-            yaw_resolution=self.yaw_resolution,
-            power_setpoint_resolution=self.power_setpoint_resolution,
-            awc_amplitude_resolution=self.awc_amplitude_resolution,
-            wd_std=self.wd_std,
-            wd_sample_points=self.wd_sample_points,
-            fix_yaw_to_nominal_direction=self.fix_yaw_to_nominal_direction,
-            verbose=self.verbose,
-        )
+        """Create an independent copy of the current UncertainFlorisModel object
+
+        When creating the copy, this method uses self.__class__(), rather than
+        UncertainFlorisModel() directly, so that subclasses of UncertainFlorisModel can inherit this
+        method and return instantiations of their own class, rather than the UncertainFlorisModel
+        class.
+        """
+        return self.__class__(self.fmodel_unexpanded.copy(), **self.secondary_init_kwargs)
 
     def get_param(self, param: List[str], param_idx: Optional[int] = None) -> Any:
         """Get a parameter from a FlorisModel object.
@@ -1028,8 +1031,26 @@ class UncertainFlorisModel(LoggingManager):
         """
         fm_dict_mod = self.fmodel_unexpanded.core.as_dict()
         nested_set(fm_dict_mod, param, value, param_idx)
-        self.fmodel_unexpanded.__init__(fm_dict_mod)
+        self.fmodel_unexpanded.__init__(fm_dict_mod, **self.fmodel_unexpanded.secondary_init_kwargs)
         self.set()
+
+    @property
+    def secondary_init_kwargs(self):
+        """
+        UncertainFlorisModel secondary keyword arguments (after configuration).
+        """
+        return {
+            "wd_resolution": self.wd_resolution,
+            "ws_resolution": self.ws_resolution,
+            "ti_resolution": self.ti_resolution,
+            "yaw_resolution": self.yaw_resolution,
+            "power_setpoint_resolution": self.power_setpoint_resolution,
+            "awc_amplitude_resolution": self.awc_amplitude_resolution,
+            "wd_std": self.wd_std,
+            "wd_sample_points": self.wd_sample_points,
+            "fix_yaw_to_nominal_direction": self.fix_yaw_to_nominal_direction,
+            "verbose": self.verbose,
+        }
 
     @property
     def layout_x(self):
@@ -1212,3 +1233,18 @@ class ApproxFlorisModel(UncertainFlorisModel):
         self.yaw_resolution = yaw_resolution
         self.power_setpoint_resolution = power_setpoint_resolution
         self.awc_amplitude_resolution = awc_amplitude_resolution
+
+    @property
+    def secondary_init_kwargs(self):
+        """
+        ApproxFlorisModel secondary keyword arguments (after configuration).
+        """
+        return {
+            "wd_resolution": self.wd_resolution,
+            "ws_resolution": self.ws_resolution,
+            "ti_resolution": self.ti_resolution,
+            "yaw_resolution": self.yaw_resolution,
+            "power_setpoint_resolution": self.power_setpoint_resolution,
+            "awc_amplitude_resolution": self.awc_amplitude_resolution,
+            "verbose": self.verbose,
+        }

@@ -312,3 +312,16 @@ def test_sample_flow_at_points(sample_inputs_fixture):
         pfmodel = ParFlorisModel(fmodel, max_workers=2, interface=interface)
         ws_test = pfmodel.sample_flow_at_points(x_test, y_test, z_test)
         assert np.allclose(ws_base, ws_test)
+
+def test_copy(sample_inputs_fixture):
+    """
+    Check that the ParFlorisModel copies correctly as a ParFlorisModel.
+    """
+
+    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
+    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+
+    pfmodel = ParFlorisModel(sample_inputs_fixture.core, max_workers=2)
+    pfmodel_copy = pfmodel.copy()
+    assert isinstance(pfmodel_copy, ParFlorisModel)
+    assert pfmodel_copy.max_workers == 2
