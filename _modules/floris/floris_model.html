@@ -2253,8 +2253,13 @@ document.write(`
 <div class="viewcode-block" id="FlorisModel.copy">
 <a class="viewcode-back" href="../../_autosummary/floris.floris_model.html#floris.floris_model.FlorisModel.copy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an independent copy of the current FlorisModel object&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">FlorisModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an independent copy of the current FlorisModel object</span>
+
+<span class="sd">        When creating the copy, this method uses self.__class__(), rather than FlorisModel()</span>
+<span class="sd">        directly, so that subclasses of FlorisModel can inherit this method and return</span>
+<span class="sd">        instantiations of their own class, rather than the FlorisModel class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">secondary_init_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FlorisModel.get_param">
@@ -2299,7 +2304,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fm_dict_mod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
         <span class="n">nested_set</span><span class="p">(</span><span class="n">fm_dict_mod</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">param_idx</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fm_dict_mod</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fm_dict_mod</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">secondary_init_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FlorisModel.get_turbine_layout">
@@ -2354,6 +2359,14 @@ document.write(`
 
 
     <span class="c1">### Properties</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">secondary_init_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        FlorisModel takes only the configuration argument. This method is a placeholder for</span>
+<span class="sd">        subclasses of FlorisModel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">layout_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

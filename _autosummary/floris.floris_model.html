@@ -681,6 +681,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_turbine_layout"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_turbine_layout()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.show_config"><code class="docutils literal notranslate"><span class="pre">FlorisModel.show_config()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.print_dict"><code class="docutils literal notranslate"><span class="pre">FlorisModel.print_dict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.secondary_init_kwargs"><code class="docutils literal notranslate"><span class="pre">FlorisModel.secondary_init_kwargs</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">FlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">FlorisModel.layout_y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.wind_directions"><code class="docutils literal notranslate"><span class="pre">FlorisModel.wind_directions</span></code></a></li>
@@ -1435,6 +1436,9 @@ profile.</p>
 <dt class="sig sig-object py" id="floris.floris_model.FlorisModel.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/floris_model.html#FlorisModel.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.floris_model.FlorisModel.copy" title="Link to this definition">#</a></dt>
 <dd><p>Create an independent copy of the current FlorisModel object</p>
+<p>When creating the copy, this method uses self.__class__(), rather than FlorisModel()
+directly, so that subclasses of FlorisModel can inherit this method and return
+instantiations of their own class, rather than the FlorisModel class.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1521,6 +1525,13 @@ otherwise, return x and y only. Defaults to <em>False</em>.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.floris_model.FlorisModel.secondary_init_kwargs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">secondary_init_kwargs</span></span><a class="headerlink" href="#floris.floris_model.FlorisModel.secondary_init_kwargs" title="Link to this definition">#</a></dt>
+<dd><p>FlorisModel takes only the configuration argument. This method is a placeholder for
+subclasses of FlorisModel.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1771,6 +1782,7 @@ or general solver settings.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.get_turbine_layout"><code class="docutils literal notranslate"><span class="pre">FlorisModel.get_turbine_layout()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.show_config"><code class="docutils literal notranslate"><span class="pre">FlorisModel.show_config()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.print_dict"><code class="docutils literal notranslate"><span class="pre">FlorisModel.print_dict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.secondary_init_kwargs"><code class="docutils literal notranslate"><span class="pre">FlorisModel.secondary_init_kwargs</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">FlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">FlorisModel.layout_y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.floris_model.FlorisModel.wind_directions"><code class="docutils literal notranslate"><span class="pre">FlorisModel.wind_directions</span></code></a></li>

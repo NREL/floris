@@ -665,6 +665,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.copy()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.secondary_init_kwargs"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.secondary_init_kwargs</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_directions"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.wind_directions</span></code></a></li>
@@ -677,7 +678,10 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.map_turbine_powers_uncertain"><code class="docutils literal notranslate"><span class="pre">map_turbine_powers_uncertain()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.ApproxFlorisModel"><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.ApproxFlorisModel"><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.ApproxFlorisModel.secondary_init_kwargs"><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel.secondary_init_kwargs</span></code></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -1087,6 +1091,10 @@ of value.</p>
 <dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/floris/uncertain_floris_model.html#UncertainFlorisModel.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy" title="Link to this definition">#</a></dt>
 <dd><p>Create an independent copy of the current UncertainFlorisModel object</p>
+<p>When creating the copy, this method uses self.__class__(), rather than
+UncertainFlorisModel() directly, so that subclasses of UncertainFlorisModel can inherit this
+method and return instantiations of their own class, rather than the UncertainFlorisModel
+class.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1135,6 +1143,12 @@ param_idx (Optional[int], optional): The index to set the value at. Defaults to 
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.UncertainFlorisModel.secondary_init_kwargs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">secondary_init_kwargs</span></span><a class="headerlink" href="#floris.uncertain_floris_model.UncertainFlorisModel.secondary_init_kwargs" title="Link to this definition">#</a></dt>
+<dd><p>UncertainFlorisModel secondary keyword arguments (after configuration).</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1265,6 +1279,12 @@ result computed</p>
 <dd class="field-odd"><p><strong>configuration</strong> (<em>dict</em><em> | </em><em>str</em><em> | </em><em>Path</em>)</p>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="floris.uncertain_floris_model.ApproxFlorisModel.secondary_init_kwargs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">secondary_init_kwargs</span></span><a class="headerlink" href="#floris.uncertain_floris_model.ApproxFlorisModel.secondary_init_kwargs" title="Link to this definition">#</a></dt>
+<dd><p>ApproxFlorisModel secondary keyword arguments (after configuration).</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -1350,6 +1370,7 @@ result computed</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.copy"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.copy()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.get_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.get_param()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.set_param"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.set_param()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.secondary_init_kwargs"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.secondary_init_kwargs</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_x"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_x</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.layout_y"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.layout_y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.UncertainFlorisModel.wind_directions"><code class="docutils literal notranslate"><span class="pre">UncertainFlorisModel.wind_directions</span></code></a></li>
@@ -1362,7 +1383,10 @@ result computed</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.map_turbine_powers_uncertain"><code class="docutils literal notranslate"><span class="pre">map_turbine_powers_uncertain()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.ApproxFlorisModel"><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.ApproxFlorisModel"><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floris.uncertain_floris_model.ApproxFlorisModel.secondary_init_kwargs"><code class="docutils literal notranslate"><span class="pre">ApproxFlorisModel.secondary_init_kwargs</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
