@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1744741543646,
+  "lastUpdate": 1746796811640,
   "repoUrl": "https://github.com/NREL/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -2018,6 +2018,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00037636311090500794",
             "extra": "mean: 8.942307082191927 msec\nrounds: 73"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "39596329+misi9170@users.noreply.github.com",
+            "name": "misi9170",
+            "username": "misi9170"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "41d09b46c88034b93caea370640ae0c7da98c6e8",
+          "message": "[BUGFIX] `UncertainFlorisModel` not correctly using `ParFlorisModel` (#1107)\n\n* Add copy method so that it copy not inhereted from FlorisModel\n\n* Add usual if __name__ == \"__main__\": wrapper\n\n* assert type of fmodel_expanded.\n\n* formatting\n\n* Further tests for copy methods of ParFlorisModel and UncertainFlorisModel (currently failing)\n\n* Update UncertainFlorisModel.copy() to handle either type of underlying fmodel_unexpanded.\n\n* allow wind_data to be provided with input fmodel and test.\n\n* Copy ParFlorisModel metadata\n\n* Add handling to quite wind_data copy warning for Uncertain yaw optimizations\n\n* Update comments for clarity\n\n* Convert to an unpackable dict of secondary kwargs for reinstantiation\n\n* More general copying in UncertainFlorisModel\n\n* secondary_init_kwargs on ApproxFlorisModel\n\n* Improve docstings",
+          "timestamp": "2025-05-09T06:57:01-06:00",
+          "tree_id": "9a24402b5c1d670b1061d1bbd6a51e8ed6378110",
+          "url": "https://github.com/NREL/floris/commit/41d09b46c88034b93caea370640ae0c7da98c6e8"
+        },
+        "date": 1746796809773,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 41.1787138255914,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00579900937522752",
+            "extra": "mean: 24.28439130555186 msec\nrounds: 36"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 55.75907414668413,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00018004016780527908",
+            "extra": "mean: 17.934300655160143 msec\nrounds: 29"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 22.982594369305463,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0012488270711360058",
+            "extra": "mean: 43.51118868179459 msec\nrounds: 22"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.297726152865805,
+            "unit": "iter/sec",
+            "range": "stddev: 0.01289764386662821",
+            "extra": "mean: 3.3587912596000025 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 36.15448503064514,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00014829860332480092",
+            "extra": "mean: 27.65908570271111 msec\nrounds: 37"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 113.2467680679648,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006936015289281808",
+            "extra": "mean: 8.830274073692348 msec\nrounds: 95"
           }
         ]
       }
