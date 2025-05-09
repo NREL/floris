@@ -1,0 +1,7 @@
+version: 2
+updates:
+- package-ecosystem: "pip"
+  directory: "/" # Location of package manifests
+  target-branch: "develop"
+  schedule:
+    interval: "weekly"
