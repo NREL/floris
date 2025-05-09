@@ -994,7 +994,13 @@ class UncertainFlorisModel(LoggingManager):
         )
 
     def copy(self):
-        """Create an independent copy of the current UncertainFlorisModel object"""
+        """Create an independent copy of the current UncertainFlorisModel object
+
+        When creating the copy, this method uses self.__class__(), rather than
+        UncertainFlorisModel() directly, so that subclasses of UncertainFlorisModel can inherit this
+        method and return instantiations of their own class, rather than the UncertainFlorisModel
+        class.
+        """
         return self.__class__(self.fmodel_unexpanded.copy(), **self.secondary_init_kwargs)
 
     def get_param(self, param: List[str], param_idx: Optional[int] = None) -> Any:

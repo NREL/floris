@@ -1576,7 +1576,12 @@ class FlorisModel(LoggingManager):
         )
 
     def copy(self):
-        """Create an independent copy of the current FlorisModel object"""
+        """Create an independent copy of the current FlorisModel object
+
+        When creating the copy, this method uses self.__class__(), rather than FlorisModel()
+        directly, so that subclasses of FlorisModel can inherit this method and return
+        instantiations of their own class, rather than the FlorisModel class.
+        """
         return self.__class__(self.core.as_dict(), **self.secondary_init_kwargs)
 
     def get_param(
@@ -1665,8 +1670,8 @@ class FlorisModel(LoggingManager):
     @property
     def secondary_init_kwargs(self):
         """
-        FlorisModel takes only the configuration argument. This method is a placeholder
-        for children of FlorisModel.
+        FlorisModel takes only the configuration argument. This method is a placeholder for
+        subclasses of FlorisModel.
         """
         return {}
 
