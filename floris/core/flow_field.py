@@ -14,6 +14,7 @@ from shapely.geometry import Polygon
 from floris.core import (
     BaseClass,
     Grid,
+    PointsGrid,
 )
 from floris.type_dec import (
     floris_array_converter,
@@ -149,14 +150,25 @@ class FlowField(BaseClass):
         # determined by this line. Since the right-most dimension on grid.z is storing the values
         # for height, using it here to apply the shear law makes that dimension store the vertical
         # wind profile.
-        wind_profile_plane = (grid.z_sorted / self.reference_wind_height) ** self.wind_shear
+
+        # Extract relevant x,y,z locations from the grid object
+        if isinstance(grid, PointsGrid):
+            x = np.tile(grid.points_x[None, :, None, None], (self.n_findex, 1, 1, 1))
+            y = np.tile(grid.points_y[None, :, None, None], (self.n_findex, 1, 1, 1))
+            z = grid.z_sorted
+        else:
+            x = grid.x_sorted_inertial_frame
+            y = grid.y_sorted_inertial_frame
+            z = grid.z_sorted
+
+        wind_profile_plane = (z / self.reference_wind_height) ** self.wind_shear
         dwind_profile_plane = (
             self.wind_shear
             * (1 / self.reference_wind_height) ** self.wind_shear
             * np.power(
-                grid.z_sorted,
+                z,
                 (self.wind_shear - 1),
-                where=grid.z_sorted != 0.0
+                where=z != 0.0
             )
         )
         # If no heterogeneous inflow defined, then set all speeds ups to 1.0
@@ -173,13 +185,7 @@ class FlowField(BaseClass):
             hull = ConvexHull(bounds)
             polygon = Polygon(bounds[hull.vertices])
             path = mpltPath.Path(polygon.boundary.coords)
-            points = np.column_stack(
-                (
-                    grid.x_sorted_inertial_frame.flatten(),
-                    grid.y_sorted_inertial_frame.flatten(),
-                )
-            )
-            inside = path.contains_points(points)
+            inside = path.contains_points(np.column_stack((x.flatten(), y.flatten())))
             if not np.all(inside):
                 self.logger.warning(
                     "The calculated flow field contains points outside of the the user-defined "
@@ -190,18 +196,9 @@ class FlowField(BaseClass):
                 )
 
             if len(self.het_map[0].points[0]) == 2:
-                speed_ups = self.calculate_speed_ups(
-                    self.het_map,
-                    grid.x_sorted_inertial_frame,
-                    grid.y_sorted_inertial_frame
-                )
+                speed_ups = self.calculate_speed_ups(self.het_map, x, y)
             elif len(self.het_map[0].points[0]) == 3:
-                speed_ups = self.calculate_speed_ups(
-                    self.het_map,
-                    grid.x_sorted_inertial_frame,
-                    grid.y_sorted_inertial_frame,
-                    grid.z_sorted
-                )
+                speed_ups = self.calculate_speed_ups(self.het_map, x, y, z)
 
         # Create the sheer-law wind profile
         # This array is of shape (# wind directions, # wind speeds, grid.template_array)
