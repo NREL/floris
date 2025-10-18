@@ -30,6 +30,7 @@ from floris.core import (
     turbopark_solver,
     WakeModelManager,
 )
+from floris.core.jensen import JensenJimenez
 from floris.type_dec import NDArrayFloat
 from floris.utilities import (
     load_yaml,
@@ -197,6 +198,13 @@ class Core(BaseClass):
                 self.flow_field,
                 self.grid,
                 self.wake
+            )
+        elif vel_model=="jensen":
+            model = JensenJimenez() # TODO: what to pass here?
+            model.turbine_solve(
+                self.farm,
+                self.flow_field,
+                self.grid,
             )
         else:
             sequential_solver(
