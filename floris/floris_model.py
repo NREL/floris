@@ -501,7 +501,7 @@ class FlorisModel(LoggingManager):
         self.core.initialize_domain()
 
         # Perform the wake calculations
-        self.core.steady_state_atmospheric_condition()
+        self.core.solve_for_turbines()
 
     def run_no_wake(self) -> None:
         """

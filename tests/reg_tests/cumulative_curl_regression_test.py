@@ -194,7 +194,7 @@ def test_regression_tandem(sample_inputs_fixture):
 
     floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     n_turbines = floris.farm.n_turbines
     n_findex = floris.flow_field.n_findex

@@ -24,7 +24,7 @@ if __name__=="__main__":
     # floris.farm.flow_field.calculate_wake()
 
     # start = time.time()
-    # cProfile.run('re.compile("floris.steady_state_atmospheric_condition()")')
+    # cProfile.run('re.compile("floris.solve_for_turbines()")')
     # end = time.time()
     # print(start, end, end - start)
 
@@ -51,4 +51,4 @@ if __name__=="__main__":
     for i in range(N):
         core = Core.from_dict(copy.deepcopy(sample_inputs.core))
         core.initialize_domain()
-        core.steady_state_atmospheric_condition()
+        core.solve_for_turbines()

@@ -20,7 +20,7 @@ def test_NoneWakeTurbulence(sample_inputs_fixture):
 
     core = Core.from_dict(sample_inputs_fixture.core)
     core.initialize_domain()
-    core.steady_state_atmospheric_condition()
+    core.solve_for_turbines()
 
     assert (
         core.flow_field.turbulence_intensity_field_sorted[0,:] == turbulence_intensities[0]

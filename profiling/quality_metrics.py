@@ -35,7 +35,7 @@ def run_floris(input_dict):
         start = time.perf_counter()
         core = Core.from_dict(copy.deepcopy(input_dict.core))
         core.initialize_domain()
-        core.steady_state_atmospheric_condition()
+        core.solve_for_turbines()
         end = time.perf_counter()
         return end - start
     except KeyError:
@@ -87,13 +87,13 @@ def memory_profile(input_dict):
     # Run once to initialize Python and memory
     core = Core.from_dict(copy.deepcopy(input_dict.core))
     core.initialize_domain()
-    core.steady_state_atmospheric_condition()
+    core.solve_for_turbines()
 
     with perf():
         for i in range(N_ITERATIONS):
             core = Core.from_dict(copy.deepcopy(input_dict.core))
             core.initialize_domain()
-            core.steady_state_atmospheric_condition()
+            core.solve_for_turbines()
 
     print(
         "Size of one data array: "

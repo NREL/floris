@@ -148,7 +148,7 @@ class Core(BaseClass):
 
         self.state.INITIALIZED
 
-    def steady_state_atmospheric_condition(self):
+    def solve_for_turbines(self):
         """Perform the steady-state wind farm wake calculations. Note that
         initialize_domain() is required to be called before this function."""
 

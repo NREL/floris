@@ -227,7 +227,7 @@ def test_regression_tandem(sample_inputs_fixture):
 
     floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     n_turbines = floris.farm.n_turbines
     n_findex = floris.flow_field.n_findex
@@ -368,7 +368,7 @@ def test_regression_rotation(sample_inputs_fixture):
 
     floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     farm_avg_velocities = average_velocity(floris.flow_field.u)
 
@@ -403,7 +403,7 @@ def test_regression_yaw(sample_inputs_fixture):
     floris.farm.yaw_angles = yaw_angles
 
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     n_turbines = floris.farm.n_turbines
     n_findex = floris.flow_field.n_findex
@@ -499,7 +499,7 @@ def test_regression_tilt(sample_inputs_fixture):
     floris.farm.tilt_angles = tilt_angles
 
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     n_turbines = floris.farm.n_turbines
     n_findex = floris.flow_field.n_findex
@@ -601,7 +601,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     floris.farm.yaw_angles = yaw_angles
 
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     n_turbines = floris.farm.n_turbines
     n_findex = floris.flow_field.n_findex
@@ -685,7 +685,7 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     floris.farm.yaw_angles = yaw_angles
 
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     n_turbines = floris.farm.n_turbines
     n_findex = floris.flow_field.n_findex
@@ -781,7 +781,7 @@ def test_regression_helix(sample_inputs_fixture):
     floris.farm.awc_amplitudes = awc_amplitudes
 
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     n_turbines = floris.farm.n_turbines
     n_findex = floris.flow_field.n_findex
@@ -898,7 +898,7 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
 
     floris = Core.from_dict(sample_inputs_fixture.core)
     floris.initialize_domain()
-    floris.steady_state_atmospheric_condition()
+    floris.solve_for_turbines()
 
     # farm_avg_velocities = average_velocity(floris.flow_field.u)
     velocities = floris.flow_field.u
