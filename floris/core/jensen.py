@@ -21,8 +21,6 @@ from floris.utilities import cosd, sind
 
 NUM_EPS = fields(BaseModel).NUM_EPS.default
 
-# TODO: I'll likely want an abstract base class; can work on that later
-
 @define
 class BaseWakeModel():
     def set_turbine_i(self, grid, farm, i):
@@ -149,12 +147,14 @@ class JensenJimenez(BaseWakeModel):
         # u is 4-dimensional (n wind speeds, n turbines, grid res 1, grid res 2)
         # velocities is 3-dimensional (n turbines, grid res 1, grid res 2)
 
+        # TODO: How much faster is numexpr? Is it worth it still worth it?
+
         x_i = self.x_i
         y_i = self.y_i
         z_i = self.z_i
         yaw_angle_i = self.yaw_angle_i
         hub_height_i = self.hub_height_i
-        rotor_diameter_i = self.rotor_diameter_i # Check if numexpr can use these without unpacking?
+        rotor_diameter_i = self.rotor_diameter_i # Must be unpacked for numexpr?
 
         rotor_radius = rotor_diameter_i / 2.0
 
