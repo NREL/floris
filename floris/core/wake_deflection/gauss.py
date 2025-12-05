@@ -480,16 +480,19 @@ def yaw_added_turbulence_mixing(
     # use the left two dimensions only here and expand
     # before returning. Dimensions are (wd, ws).
 
-    I_i = I_i[:, 0, 0, 0]
+    # I_i = I_i[:, 0, 0, 0]
 
-    average_u_i = np.cbrt(np.mean(u_i ** 3, axis=(1, 2, 3)))
+    # average_u_i = np.cbrt(np.mean(u_i ** 3, axis=(1, 2, 3)))
+    average_u_i = np.cbrt(u_i ** 3)
 
     # Convert ambient turbulence intensity to TKE (eq 24)
     k = (average_u_i * I_i) ** 2 / (2 / 3)
 
     u_term = np.sqrt(2 * k)
-    v_term = np.mean(v_i + turb_v_i, axis=(1, 2, 3))
-    w_term = np.mean(w_i + turb_w_i, axis=(1, 2, 3))
+    # v_term = np.mean(v_i + turb_v_i, axis=(1, 2, 3))
+    # w_term = np.mean(w_i + turb_w_i, axis=(1, 2, 3))
+    v_term = v_i + turb_v_i
+    w_term = w_i + turb_w_i
 
     # Compute the new TKE (eq 23)
     k_total = 0.5 * (u_term ** 2 + v_term ** 2 + w_term ** 2)
@@ -500,4 +503,5 @@ def yaw_added_turbulence_mixing(
     # Remove ambient from total TI leaving only the TI due to mixing
     I_mixing = I_total - I_i
 
-    return I_mixing[:, None, None, None]
+    # return I_mixing[:, None, None, None]
+    return I_mixing

@@ -48,12 +48,18 @@ class FlowField(BaseClass):
     dudz_initial_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
     turbulence_intensity_field: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    turbulence_intensity_field_grid : NDArrayFloat = field(
+        init=False, factory=lambda: np.array([])
+    )
     turbulence_intensity_field_sorted: NDArrayFloat = field(
         init=False, factory=lambda: np.array([])
     )
     turbulence_intensity_field_sorted_avg: NDArrayFloat = field(
         init=False, factory=lambda: np.array([])
     )
+
+    SAWS: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    SATI: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
     @turbulence_intensities.validator
     def turbulence_intensities_validator(
@@ -247,6 +253,14 @@ class FlowField(BaseClass):
             ),
             axis=(2,3)
         )
+        self.turbulence_intensity_field_grid = np.take_along_axis(
+            self.turbulence_intensity_field_sorted,
+            unsorted_indices,
+            axis=1
+        )
+
+        self._get_sector_averaged_turbine_wind_speeds()
+        self._get_sector_averaged_turbine_TIs()
 
     def calculate_speed_ups(self, het_map, x, y, z=None):
         if z is not None:
@@ -324,6 +338,62 @@ class FlowField(BaseClass):
                 interps_f[findex] = copy.deepcopy(interp_2d)
 
         self.het_map = interps_f
+
+    def _get_sector_averaged_turbine_wind_speeds(self) -> NDArrayFloat:
+        n_turbines = np.shape(self.u)[1]
+        self.SAWS = np.zeros((self.n_findex, n_turbines, 4))
+        for i in range(n_turbines):
+            vels = self.u[:, i]
+
+            # simple average
+            self.SAWS[:, i, 0] = np.mean(vels[0, 0, :])
+            self.SAWS[:, i, 1] = np.mean(vels[0, :, -1])
+            self.SAWS[:, i, 2] = np.mean(vels[0, -1, :])
+            self.SAWS[:, i, 3] = np.mean(vels[0, :, 0])
+
+            # weighted average
+            # self.core.flow_field.SAWS[:, i, 0] = (
+            #     0.5 * vels[0, 0, 0] + vels[0, 0, 1] + 0.5 * vels[0, 0, 2]
+            # ) / 2
+            # self.core.flow_field.SAWS[:, i, 1] = (
+            #     0.5 * vels[0, 0, 2] + vels[0, 1, 2] + 0.5 * vels[0, 2, 2]
+            # ) / 2
+            # self.core.flow_field.SAWS[:, i, 2] = (
+            #     0.5 * vels[0, 2, 0] + vels[0, 2, 1] + 0.5 * vels[0, 2, 2]
+            # ) / 2
+            # self.core.flow_field.SAWS[:, i, 3] = (
+            #     0.5 * vels[0, 0, 0] + vels[0, 1, 0] + 0.5 * vels[0, 2, 0]
+            # ) / 2
+
+    def _get_sector_averaged_turbine_TIs(self) -> NDArrayFloat:
+        n_turbines = np.shape(self.u)[1]
+        self.SATI = np.zeros(
+            (self.n_findex, n_turbines, 4)
+        )
+        for i in range(n_turbines):
+            TIs = self.turbulence_intensity_field_grid[:, i]
+
+            # simple average
+            self.SATI[:, i, 0] = np.mean(TIs[0, 0, :])
+            self.SATI[:, i, 1] = np.mean(TIs[0, :, -1])
+            self.SATI[:, i, 2] = np.mean(TIs[0, -1, :])
+            self.SATI[:, i, 3] = np.mean(TIs[0, :, 0])
+
+            # weighted average
+            # self.core.flow_field.SATI[:, i, 0] = (
+            #     0.5 * TIs[0, 0, 0] + TIs[0, 0, 1] + 0.5 * TIs[0, 0, 2]
+            # ) / 2
+            # self.core.flow_field.SATI[:, i, 1] = (
+            #     0.5 * TIs[0, 0, 2] + TIs[0, 1, 2] + 0.5 * TIs[0, 2, 2]
+            # ) / 2
+            # self.core.flow_field.SATI[:, i, 2] = (
+            #     0.5 * TIs[0, 2, 0] + TIs[0, 2, 1] + 0.5 * TIs[0, 2, 2]
+            # ) / 2
+            # self.core.flow_field.SATI[:, i, 3] = (
+            #     0.5 * TIs[0, 0, 0] + TIs[0, 1, 0] + 0.5 * TIs[0, 2, 0]
+            # ) / 2
+
+
 
     @staticmethod
     def interpolate_multiplier_xy(x: NDArrayFloat,
