@@ -374,10 +374,10 @@ class FlowField(BaseClass):
             TIs = self.turbulence_intensity_field_grid[:, i]
 
             # simple average
-            self.SATI[:, i, 0] = np.mean(TIs[0, 0, :])
-            self.SATI[:, i, 1] = np.mean(TIs[0, :, -1])
-            self.SATI[:, i, 2] = np.mean(TIs[0, -1, :])
-            self.SATI[:, i, 3] = np.mean(TIs[0, :, 0])
+            self.SATI[:, i, 0] = np.mean(TIs[:, 0, :], axis=1)
+            self.SATI[:, i, 1] = np.mean(TIs[:, :, -1], axis=1)
+            self.SATI[:, i, 2] = np.mean(TIs[:, -1, :], axis=1)
+            self.SATI[:, i, 3] = np.mean(TIs[:, :, 0], axis=1)
 
             # weighted average
             # self.core.flow_field.SATI[:, i, 0] = (
