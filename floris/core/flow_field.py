@@ -346,10 +346,10 @@ class FlowField(BaseClass):
             vels = self.u[:, i]
 
             # simple average
-            self.SAWS[:, i, 0] = np.mean(vels[:, 0, :])
-            self.SAWS[:, i, 1] = np.mean(vels[:, :, -1])
-            self.SAWS[:, i, 2] = np.mean(vels[:, -1, :])
-            self.SAWS[:, i, 3] = np.mean(vels[:, :, 0])
+            self.SAWS[:, i, 0] = np.mean(vels[:, 0, :], axis=1)
+            self.SAWS[:, i, 1] = np.mean(vels[:, :, -1], axis=1)
+            self.SAWS[:, i, 2] = np.mean(vels[:, -1, :], axis=1)
+            self.SAWS[:, i, 3] = np.mean(vels[:, :, 0], axis=1)
 
             # weighted average
             # self.core.flow_field.SAWS[:, i, 0] = (
