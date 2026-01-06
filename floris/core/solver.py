@@ -255,6 +255,11 @@ def sequential_solver(
             np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbine_turbulence_intensity
         )
 
+        
+        flow_field.turbulence_wake_mixing_sorted = (
+            turbine_turbulence_intensity * flow_field.u_initial_sorted / flow_field.u_sorted
+        )
+
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake

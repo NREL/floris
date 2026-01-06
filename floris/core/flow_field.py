@@ -57,6 +57,8 @@ class FlowField(BaseClass):
     turbulence_intensity_field_sorted_avg: NDArrayFloat = field(
         init=False, factory=lambda: np.array([])
     )
+    turbulence_wake_mixing: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
+    turbulence_wake_mixing_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
     SAWS: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
     SATI: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
@@ -258,6 +260,11 @@ class FlowField(BaseClass):
             unsorted_indices,
             axis=1
         )
+        self.turbulence_wake_mixing = np.take_along_axis(
+            self.turbulence_wake_mixing_sorted,
+            unsorted_indices,
+            axis=1
+        )
 
         self._get_sector_averaged_turbine_wind_speeds()
         self._get_sector_averaged_turbine_TIs()
@@ -346,10 +353,10 @@ class FlowField(BaseClass):
             vels = self.u[:, i]
 
             # simple average
-            self.SAWS[:, i, 0] = np.mean(vels[:, 0, :], axis=1)
-            self.SAWS[:, i, 1] = np.mean(vels[:, :, -1], axis=1)
-            self.SAWS[:, i, 2] = np.mean(vels[:, -1, :], axis=1)
-            self.SAWS[:, i, 3] = np.mean(vels[:, :, 0], axis=1)
+            self.SAWS[:, i, 0] = np.mean(vels[:, :, -1], axis=1)    # Up
+            self.SAWS[:, i, 3] = np.mean(vels[:, -1, :], axis=1)    # Right
+            self.SAWS[:, i, 2] = np.mean(vels[:, :, 0], axis=1)     # Down
+            self.SAWS[:, i, 1] = np.mean(vels[:, 0, :], axis=1)     # Left
 
             # weighted average
             # self.core.flow_field.SAWS[:, i, 0] = (
@@ -371,13 +378,14 @@ class FlowField(BaseClass):
             (self.n_findex, n_turbines, 4)
         )
         for i in range(n_turbines):
-            TIs = self.turbulence_intensity_field_grid[:, i]
+            # TIs = self.turbulence_intensity_field_grid[:, i]
+            TIs = self.turbulence_wake_mixing_sorted[:, i]
 
             # simple average
-            self.SATI[:, i, 0] = np.mean(TIs[:, 0, :], axis=1)
-            self.SATI[:, i, 1] = np.mean(TIs[:, :, -1], axis=1)
-            self.SATI[:, i, 2] = np.mean(TIs[:, -1, :], axis=1)
-            self.SATI[:, i, 3] = np.mean(TIs[:, :, 0], axis=1)
+            self.SATI[:, i, 0] = np.mean(TIs[:, :, -1], axis=1)     # Up
+            self.SATI[:, i, 3] = np.mean(TIs[:, -1, :], axis=1)     # Right
+            self.SATI[:, i, 2] = np.mean(TIs[:, :, 0], axis=1)      # Down
+            self.SATI[:, i, 1] = np.mean(TIs[:, 0, :], axis=1)      # Left
 
             # weighted average
             # self.core.flow_field.SATI[:, i, 0] = (
