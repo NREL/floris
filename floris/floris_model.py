@@ -588,12 +588,12 @@ class FlorisModel(LoggingManager):
 
     def get_turbine_powers_percent(self):
         """
-        Calculates the percent power at each turbine in the wind farm, relative to the max power.
+        Calculates the percent power at each turbine in the wind farm, relative to the requested
+            power setpoint.
 
         Returns:
             NDArrayFloat: Percent power at each turbine.
         """
-        turbine_powers = self.get_turbine_powers()
         turbine_max_powers = np.array(
             [
                 np.max(self.core.farm.turbine_map[i].power_thrust_table["power"])
@@ -602,7 +602,9 @@ class FlorisModel(LoggingManager):
             ]
         ) * 1000
 
-        return (turbine_powers / turbine_max_powers) * 100.0
+        turbine_powers_percent = (self.core.farm.power_setpoints / turbine_max_powers) * 100.0
+
+        return np.clip(turbine_powers_percent, 0, 100)
 
     def get_expected_turbine_powers(self, freq=None):
         """
