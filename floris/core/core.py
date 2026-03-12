@@ -29,7 +29,7 @@ from floris.core import (
     turbopark_solver,
     WakeModelManager,
 )
-from floris.core.jensen import JensenJimenez
+from floris.core.wake_model import JensenJimenez
 from floris.type_dec import NDArrayFloat
 from floris.utilities import (
     load_yaml,
