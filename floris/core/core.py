@@ -232,6 +232,13 @@ class Core(BaseClass):
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="jensen":
+            model = JensenJimenez() # TODO: what to pass here?
+            model.point_solve(
+                self.farm,
+                self.flow_field,
+                self.grid,
+            )
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 

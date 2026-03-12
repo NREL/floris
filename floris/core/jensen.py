@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+import copy
 import numexpr as ne
 import numpy as np
 
@@ -377,5 +378,134 @@ class JensenJimenez(BaseWakeModel):
             # END TODO
 
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
-            flow_field.v_sorted += v_wake
-            flow_field.w_sorted += w_wake
+
+        # Add the final turbine turbulence intensity field to the flow field object
+        flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
+        flow_field.turbulence_intensity_field_sorted_avg = np.mean(
+            turbine_turbulence_intensity,
+            axis=(2,3),
+            keepdims=True
+        )
+
+    def point_solve(
+        self,
+        farm: Farm,
+        flow_field: FlowField,
+        flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+    ) -> None:
+
+        # ** TODO: Can this block be moved to a general method, perhaps?
+        # Get the flow quantities and turbine performance
+        turbine_grid_farm = copy.deepcopy(farm)
+        turbine_grid_flow_field = copy.deepcopy(flow_field)
+
+        turbine_grid_farm.construct_turbine_map()
+        turbine_grid_farm.construct_turbine_thrust_coefficient_functions()
+        turbine_grid_farm.construct_turbine_axial_induction_functions()
+        turbine_grid_farm.construct_turbine_power_functions()
+        turbine_grid_farm.construct_hub_heights()
+        turbine_grid_farm.construct_rotor_diameters()
+        turbine_grid_farm.construct_turbine_TSRs()
+        turbine_grid_farm.construct_turbine_ref_tilts()
+        turbine_grid_farm.construct_turbine_tilt_interps()
+        turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
+        turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
+
+        turbine_grid = TurbineGrid(
+            turbine_coordinates=turbine_grid_farm.coordinates,
+            turbine_diameters=turbine_grid_farm.rotor_diameters,
+            wind_directions=turbine_grid_flow_field.wind_directions,
+            grid_resolution=3,
+        )
+        turbine_grid_farm.expand_farm_properties(
+            turbine_grid_flow_field.n_findex,
+            turbine_grid.sorted_coord_indices,
+        )
+        turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
+        turbine_grid_farm.initialize(turbine_grid.sorted_indices)
+        # ** END TODO
+
+        self.turbine_solve(turbine_grid_farm, turbine_grid_flow_field, turbine_grid)
+
+
+        wake_field = np.zeros_like(flow_field.u_initial_sorted)
+        v_wake = np.zeros_like(flow_field.v_initial_sorted)
+        w_wake = np.zeros_like(flow_field.w_initial_sorted)
+
+        # Initialize the turbulence intensity field over the entire flow field grid
+        n_points = flow_field_grid.x_sorted.shape[1]
+        ambient_turbulence_intensities = flow_field.turbulence_intensities[:, None, None, None]
+        ambient_turbulence_intensities = np.repeat(ambient_turbulence_intensities, n_points, axis=1)
+        turbulence_intensity_field = ambient_turbulence_intensities.copy()
+
+        # Calculate the velocity deficit in the full grid sequentially from upstream to
+        # downstream turbines
+        for i in range(flow_field_grid.n_turbines):
+
+            # Get the current turbine quantities
+            self.set_turbine_i(turbine_grid, turbine_grid_farm, i)
+            thrust_coefficient_i = self.turbine_thrust_coefficient(
+                turbine_grid,
+                turbine_grid_farm,
+                turbine_grid_flow_field,
+                i
+            )
+            axial_induction_i = self.turbine_axial_induction(
+                turbine_grid,
+                turbine_grid_farm,
+                turbine_grid_flow_field,
+                i
+            )
+            turbulence_intensity_i = \
+                turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]
+
+            # Model calculations
+            deflection_field = self.deflection(
+                turbulence_intensity_i,
+                thrust_coefficient_i,
+                flow_field_grid.x_sorted,
+            )
+
+            velocity_deficit = self.velocity_deficit(
+                axial_induction_i,
+                deflection_field,
+                turbulence_intensity_i,
+                thrust_coefficient_i,
+                flow_field_grid.x_sorted,
+                flow_field_grid.y_sorted,
+                flow_field_grid.z_sorted
+            )
+
+            wake_field = self.combination(
+                wake_field,
+                velocity_deficit * flow_field.u_initial_sorted
+            )
+
+            wake_added_turbulence_intensity = self.wake_turbulence(
+                flow_field_grid.x_sorted,
+                axial_induction_i,
+            )
+
+            # TODO: all of this looks like it should actually be part of the turbulence model?
+
+            # Calculate locations where wake-added turbulence (WAT) applies
+            area_overlap = np.where(velocity_deficit * flow_field.u_initial_sorted > 0.05, 1, 0)
+
+            # Modify wake added turbulence by wake area overlap
+            downstream_influence_length = 15 * self.rotor_diameter_i
+            ti_added = (
+                area_overlap
+                * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
+                * (flow_field_grid.x_sorted > self.x_i)
+                * (np.abs(self.y_i - flow_field_grid.y_sorted) < 2 * self.rotor_diameter_i)
+                * (flow_field_grid.x_sorted <= downstream_influence_length + self.x_i)
+            )
+            # Combine turbine TIs with WAT
+            turbulence_intensity_field = np.maximum(
+                np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbulence_intensity_field
+            )
+            # END TODO
+
+            flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
+
+        flow_field.turbulence_intensity_field_sorted = turbulence_intensity_field
