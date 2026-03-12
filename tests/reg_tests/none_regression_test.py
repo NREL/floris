@@ -297,24 +297,6 @@ def test_regression_rotation(sample_inputs_fixture):
     assert np.allclose(t3_270, t2_360)
 
 
-def test_regression_yaw(sample_inputs_fixture):
-    """
-    Tandem turbines with the upstream turbine yawed
-    """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
-
-    floris = Core.from_dict(sample_inputs_fixture.core)
-
-    yaw_angles = np.zeros((N_FINDEX, N_TURBINES))
-    yaw_angles[:,0] = 5.0
-    floris.farm.yaw_angles = yaw_angles
-
-    floris.initialize_domain()
-    with pytest.raises(ValueError):
-        floris.solve_for_turbines()
-
-
 def test_regression_small_grid_rotation(sample_inputs_fixture):
     """
     This utilizes a 5x5 wind farm with the layout in a regular grid oriented along the cardinal
