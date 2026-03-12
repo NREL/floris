@@ -302,8 +302,6 @@ class JensenJimenez(BaseWakeModel):
     ) -> None:
 
         wake_field = np.zeros_like(flow_field.u_initial_sorted)
-        v_wake = np.zeros_like(flow_field.v_initial_sorted)
-        w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
         # Expand input turbulence intensity to 4d for (n_turbines, grid, grid)
         turbine_turbulence_intensity = np.repeat(
@@ -429,8 +427,6 @@ class JensenJimenez(BaseWakeModel):
 
 
         wake_field = np.zeros_like(flow_field.u_initial_sorted)
-        v_wake = np.zeros_like(flow_field.v_initial_sorted)
-        w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
         # Initialize the turbulence intensity field over the entire flow field grid
         n_points = flow_field_grid.x_sorted.shape[1]

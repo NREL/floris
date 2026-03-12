@@ -61,6 +61,7 @@ MODEL_MAP = {
 
 @define
 class WakeModelManager(BaseClass):
+    # TODO: Will likely want to reconfigure this, eventually
     """
     WakeModelManager is a container class for the wake velocity, deflection,
     turbulence, and combination models.

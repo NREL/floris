@@ -153,6 +153,7 @@ class Core(BaseClass):
         initialize_domain() is required to be called before this function."""
 
         vel_model = self.wake.model_strings["velocity_model"]
+        model_parameters = self.wake.wake_velocity_parameters[vel_model]
 
         if vel_model not in ["empirical_gauss"] and \
             self.farm.correct_cp_ct_for_tilt.any():
@@ -199,7 +200,7 @@ class Core(BaseClass):
                 self.wake
             )
         elif vel_model=="jensen":
-            model = JensenJimenez() # TODO: what to pass here?
+            model = JensenJimenez(**model_parameters)
             model.turbine_solve(
                 self.farm,
                 self.flow_field,
@@ -225,6 +226,7 @@ class Core(BaseClass):
         self.flow_field.initialize_velocity_field(self.grid)
 
         vel_model = self.wake.model_strings["velocity_model"]
+        model_parameters = self.wake.wake_velocity_parameters[vel_model]
 
         if vel_model=="cc":
             full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
@@ -233,7 +235,7 @@ class Core(BaseClass):
         elif vel_model=="empirical_gauss":
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="jensen":
-            model = JensenJimenez() # TODO: what to pass here?
+            model = JensenJimenez(**model_parameters)
             model.point_solve(
                 self.farm,
                 self.flow_field,
