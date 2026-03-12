@@ -262,10 +262,13 @@ class JensenJimenez(BaseWakeModel):
         """
         return np.hypot(wake_field, velocity_field)
 
-    def wake_turbulence(
+    def turbulence(
         self,
+        turbulence_intensity: np.ndarray,
         x: np.ndarray,
+        y: np.ndarray,
         axial_induction: np.ndarray,
+        area_overlap: np.ndarray,
     ) -> np.ndarray:
         # Replace zeros and negatives with 1 to prevent nans/infs
         x_i = self.x_i
@@ -292,7 +295,23 @@ class JensenJimenez(BaseWakeModel):
             " * (delta_x / rotor_diameter_i) ** downstream"
         )
         # Mask the 1 values from above with zeros
-        return ti * downstream_mask
+        wake_added_turbulence_intensity = ti * downstream_mask
+
+        # Modify wake added turbulence by wake area overlap
+        downstream_influence_length = 15 * self.rotor_diameter_i
+        ti_added = (
+            area_overlap
+            * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
+            * (x > self.x_i)
+            * (np.abs(self.y_i - y) < 2 * self.rotor_diameter_i)
+            * (x <= downstream_influence_length + self.x_i)
+        )
+        # Combine turbine TIs with WAT
+        turbulence_intensity = np.maximum(
+            np.sqrt(ti_added**2 + ambient_TI**2), turbulence_intensity
+        )
+
+        return turbulence_intensity
 
     def turbine_solve(
         self,
@@ -344,13 +363,6 @@ class JensenJimenez(BaseWakeModel):
                 velocity_deficit * flow_field.u_initial_sorted
             )
 
-            wake_added_turbulence_intensity = self.wake_turbulence(
-                grid.x_sorted,
-                axial_induction_i,
-            )
-
-            # TODO: all of this looks like it should actually be part of the turbulence model?
-
             # Calculate wake overlap for wake-added turbulence (WAT)
             area_overlap = (
                 np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3))
@@ -358,22 +370,13 @@ class JensenJimenez(BaseWakeModel):
             )
             area_overlap = area_overlap[:, :, None, None]
 
-            # Modify wake added turbulence by wake area overlap
-            downstream_influence_length = 15 * self.rotor_diameter_i
-            ti_added = (
-                area_overlap
-                * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
-                * (grid.x_sorted > self.x_i)
-                * (np.abs(self.y_i - grid.y_sorted) < 2 * self.rotor_diameter_i)
-                * (grid.x_sorted <= downstream_influence_length + self.x_i)
+            turbine_turbulence_intensity = self.turbulence(
+                turbine_turbulence_intensity,
+                grid.x_sorted,
+                grid.y_sorted,
+                axial_induction_i,
+                area_overlap,
             )
-
-            # Combine turbine TIs with WAT
-            turbine_turbulence_intensity = np.maximum(
-                np.sqrt(ti_added**2 + self.ambient_turbulence_intensities**2),
-                turbine_turbulence_intensity
-            )
-            # END TODO
 
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
 
@@ -477,30 +480,13 @@ class JensenJimenez(BaseWakeModel):
                 velocity_deficit * flow_field.u_initial_sorted
             )
 
-            wake_added_turbulence_intensity = self.wake_turbulence(
+            turbulence_intensity_field = self.turbulence(
+                turbulence_intensity_field,
                 flow_field_grid.x_sorted,
+                flow_field_grid.y_sorted,
                 axial_induction_i,
+                np.where(velocity_deficit * flow_field.u_initial_sorted > 0.05, 1, 0),
             )
-
-            # TODO: all of this looks like it should actually be part of the turbulence model?
-
-            # Calculate locations where wake-added turbulence (WAT) applies
-            area_overlap = np.where(velocity_deficit * flow_field.u_initial_sorted > 0.05, 1, 0)
-
-            # Modify wake added turbulence by wake area overlap
-            downstream_influence_length = 15 * self.rotor_diameter_i
-            ti_added = (
-                area_overlap
-                * np.nan_to_num(wake_added_turbulence_intensity, posinf=0.0)
-                * (flow_field_grid.x_sorted > self.x_i)
-                * (np.abs(self.y_i - flow_field_grid.y_sorted) < 2 * self.rotor_diameter_i)
-                * (flow_field_grid.x_sorted <= downstream_influence_length + self.x_i)
-            )
-            # Combine turbine TIs with WAT
-            turbulence_intensity_field = np.maximum(
-                np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbulence_intensity_field
-            )
-            # END TODO
 
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
 
