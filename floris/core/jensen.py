@@ -1,8 +1,13 @@
+import copy
 from abc import abstractmethod
 
-import copy
 import numexpr as ne
 import numpy as np
+from attrs import (
+    define,
+    field,
+    fields,
+)
 
 from floris.core import (
     axial_induction,
@@ -15,10 +20,8 @@ from floris.core import (
     thrust_coefficient,
     TurbineGrid,
 )
-
-from attrs import define, field, fields
-
 from floris.utilities import cosd, sind
+
 
 NUM_EPS = fields(BaseModel).NUM_EPS.default
 
@@ -105,6 +108,44 @@ class BaseWakeModel():
         )
 
         return axial_induction_i[:, 0:1, None, None]
+
+    @staticmethod
+    def generate_turbine_grid_objects(
+        farm: Farm,
+        flow_field: FlowField,
+    ):
+        """Generate turbine grid objects from points grid objects.
+           Intermediate step of point_solve.
+        """
+        turbine_grid_farm = copy.deepcopy(farm)
+        turbine_grid_flow_field = copy.deepcopy(flow_field)
+
+        turbine_grid_farm.construct_turbine_map()
+        turbine_grid_farm.construct_turbine_thrust_coefficient_functions()
+        turbine_grid_farm.construct_turbine_axial_induction_functions()
+        turbine_grid_farm.construct_turbine_power_functions()
+        turbine_grid_farm.construct_hub_heights()
+        turbine_grid_farm.construct_rotor_diameters()
+        turbine_grid_farm.construct_turbine_TSRs()
+        turbine_grid_farm.construct_turbine_ref_tilts()
+        turbine_grid_farm.construct_turbine_tilt_interps()
+        turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
+        turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
+
+        turbine_grid = TurbineGrid(
+            turbine_coordinates=turbine_grid_farm.coordinates,
+            turbine_diameters=turbine_grid_farm.rotor_diameters,
+            wind_directions=turbine_grid_flow_field.wind_directions,
+            grid_resolution=3,
+        )
+        turbine_grid_farm.expand_farm_properties(
+            turbine_grid_flow_field.n_findex,
+            turbine_grid.sorted_coord_indices,
+        )
+        turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
+        turbine_grid_farm.initialize(turbine_grid.sorted_indices)
+
+        return turbine_grid_farm, turbine_grid_flow_field, turbine_grid
 
 @define
 class JensenJimenez(BaseWakeModel):
@@ -395,36 +436,12 @@ class JensenJimenez(BaseWakeModel):
         flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     ) -> None:
 
-        # ** TODO: Can this block be moved to a general method, perhaps?
         # Get the flow quantities and turbine performance
-        turbine_grid_farm = copy.deepcopy(farm)
-        turbine_grid_flow_field = copy.deepcopy(flow_field)
-
-        turbine_grid_farm.construct_turbine_map()
-        turbine_grid_farm.construct_turbine_thrust_coefficient_functions()
-        turbine_grid_farm.construct_turbine_axial_induction_functions()
-        turbine_grid_farm.construct_turbine_power_functions()
-        turbine_grid_farm.construct_hub_heights()
-        turbine_grid_farm.construct_rotor_diameters()
-        turbine_grid_farm.construct_turbine_TSRs()
-        turbine_grid_farm.construct_turbine_ref_tilts()
-        turbine_grid_farm.construct_turbine_tilt_interps()
-        turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-        turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
-
-        turbine_grid = TurbineGrid(
-            turbine_coordinates=turbine_grid_farm.coordinates,
-            turbine_diameters=turbine_grid_farm.rotor_diameters,
-            wind_directions=turbine_grid_flow_field.wind_directions,
-            grid_resolution=3,
-        )
-        turbine_grid_farm.expand_farm_properties(
-            turbine_grid_flow_field.n_findex,
-            turbine_grid.sorted_coord_indices,
-        )
-        turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-        turbine_grid_farm.initialize(turbine_grid.sorted_indices)
-        # ** END TODO
+        (
+            turbine_grid_farm,
+            turbine_grid_flow_field,
+            turbine_grid
+        ) = self.generate_turbine_grid_objects(farm, flow_field)
 
         self.turbine_solve(turbine_grid_farm, turbine_grid_flow_field, turbine_grid)
 
