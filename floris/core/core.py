@@ -30,6 +30,7 @@ from floris.core import (
     WakeModelManager,
 )
 from floris.core.wake_model import (
+    Gauss,
     JensenJimenez,
     NoneWake,
 )
@@ -209,6 +210,13 @@ class Core(BaseClass):
                 self.flow_field,
                 self.grid,
             )
+        elif vel_model=="gauss":
+            model = Gauss(**model_parameters)
+            model.turbine_solve(
+                self.farm,
+                self.flow_field,
+                self.grid,
+            )
         elif vel_model=="none":
             model = NoneWake(**model_parameters)
             model.turbine_solve(
@@ -246,6 +254,13 @@ class Core(BaseClass):
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="jensen":
             model = JensenJimenez(**model_parameters)
+            model.point_solve(
+                self.farm,
+                self.flow_field,
+                self.grid,
+            )
+        elif vel_model=="gauss":
+            model = Gauss(**model_parameters)
             model.point_solve(
                 self.farm,
                 self.flow_field,

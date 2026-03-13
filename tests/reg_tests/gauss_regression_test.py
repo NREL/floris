@@ -364,6 +364,7 @@ def test_regression_tandem(sample_inputs_fixture):
             max_findex_print=4,
         )
 
+    import ipdb; ipdb.set_trace()
     assert_results_arrays(test_results[0:4], baseline)
 
 

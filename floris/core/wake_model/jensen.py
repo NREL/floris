@@ -38,15 +38,7 @@ class JensenJimenez(BaseWakeModel):
     ai: float = field(converter=float, default=0.8)
     downstream: float = field(converter=float, default=-0.32)
 
-    # Storage
-    x_i: np.ndarray = field(init=False)
-    y_i: np.ndarray = field(init=False)
-    z_i: np.ndarray = field(init=False)
-
-    yaw_angle_i: np.ndarray = field(init=False)
-    hub_height_i: np.ndarray = field(init=False)
-    rotor_diameter_i: np.ndarray = field(init=False)
-
+    # Uninitialized attributes set in turbine_solve
     ambient_turbulence_intensities: np.ndarray = field(init=False)
 
     def velocity_deficit(

@@ -2,7 +2,11 @@ import copy
 from abc import abstractmethod
 
 import numpy as np
-from attrs import define
+from attrs import (
+    define,
+    field,
+    fields,
+)
 
 from floris.core import (
     BaseModel,
@@ -18,6 +22,17 @@ from floris.core import (
 
 @define
 class BaseWakeModel(BaseModel):
+
+    # Storage
+    x_i: np.ndarray = field(init=False)
+    y_i: np.ndarray = field(init=False)
+    z_i: np.ndarray = field(init=False)
+
+    yaw_angle_i: np.ndarray = field(init=False)
+    hub_height_i: np.ndarray = field(init=False)
+    rotor_diameter_i: np.ndarray = field(init=False)
+    TSR_i: np.ndarray = field(init=False)
+
     def set_turbine_i(self, grid, farm, i):
 
         # Get the current turbine quantities
@@ -28,6 +43,7 @@ class BaseWakeModel(BaseModel):
         self.yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
         self.hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
         self.rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
+        self.TSR_i = farm.TSRs_sorted[:, i:i+1, None, None]
 
     @staticmethod
     def turbine_thrust_coefficient(grid, farm, flow_field, i):
