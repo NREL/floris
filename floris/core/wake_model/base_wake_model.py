@@ -9,8 +9,8 @@ from attrs import (
 )
 
 from floris.core import (
-    BaseModel,
     axial_induction,
+    BaseModel,
     Farm,
     FlowField,
     FlowFieldGrid,
@@ -19,6 +19,7 @@ from floris.core import (
     thrust_coefficient,
     TurbineGrid,
 )
+
 
 @define
 class BaseWakeModel(BaseModel):

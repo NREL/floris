@@ -157,7 +157,7 @@ class Core(BaseClass):
         initialize_domain() is required to be called before this function."""
 
         vel_model = self.wake.model_strings["velocity_model"]
-        model_parameters = self.wake.wake_velocity_parameters[vel_model]
+        model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
 
         if vel_model not in ["empirical_gauss"] and \
             self.farm.correct_cp_ct_for_tilt.any():
@@ -244,7 +244,7 @@ class Core(BaseClass):
         self.flow_field.initialize_velocity_field(self.grid)
 
         vel_model = self.wake.model_strings["velocity_model"]
-        model_parameters = self.wake.wake_velocity_parameters[vel_model]
+        model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
 
         if vel_model=="cc":
             full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
@@ -460,3 +460,28 @@ def check_input_file_for_v3_keys(input_dict) -> None:
             + "velocity_model to gauss. "
             + v3_deprecation_msg
         )
+
+def _temp_create_single_wake_model_dict(wake, vel_model):
+    """
+    This is a temporary function until wake model parametrization is unified on the
+    input dictionary. However, we may use it going forward for back compatibility with
+    v4. In that case, checks should be made to ensure compatible deficit/deflection/turbulence
+    models are being used together.
+    """
+    if vel_model == "gauss":
+        model_parameters = wake.wake_velocity_parameters["gauss"] | \
+            wake.wake_deflection_parameters["gauss"] | \
+            wake.wake_turbulence_parameters["crespo_hernandez"]
+        model_parameters["enable_transverse_velocities"] = wake.enable_transverse_velocities
+        model_parameters["enable_yaw_added_recovery"] = wake.enable_yaw_added_recovery
+        model_parameters["enable_secondary_steering"] = wake.enable_secondary_steering
+    elif vel_model == "jensen":
+        model_parameters = wake.wake_velocity_parameters["jensen"] | \
+            wake.wake_deflection_parameters["jimenez"] | \
+            wake.wake_turbulence_parameters["crespo_hernandez"]
+    elif vel_model == "none":
+        model_parameters = {}
+    else:
+        model_parameters = None
+
+    return model_parameters

@@ -15,13 +15,13 @@ from floris.core import (
     PointsGrid,
     TurbineGrid,
 )
-from floris.core.wake_model import BaseWakeModel
-from floris.utilities import cosd, sind
 from floris.core.wake_deflection.gauss import (
     calculate_transverse_velocity,
     wake_added_yaw,
     yaw_added_turbulence_mixing,
 )
+from floris.core.wake_model import BaseWakeModel
+from floris.utilities import cosd
 
 
 NUM_EPS = fields(BaseModel).NUM_EPS.default
@@ -47,6 +47,11 @@ class Gauss(BaseWakeModel):
     constant: float = field(converter=float, default=0.9)
     ai: float = field(converter=float, default=0.8)
     downstream: float = field(converter=float, default=-0.32)
+
+    # Secondary effects parameters (GCH)
+    enable_transverse_velocities: bool = field(converter=bool, default=True)
+    enable_yaw_added_recovery: bool = field(converter=bool, default=True)
+    enable_secondary_steering: bool = field(converter=bool, default=True)
 
     effective_yaw_i: np.ndarray = field(init=False)
 
@@ -373,10 +378,6 @@ class Gauss(BaseWakeModel):
         self.freestream_velocity = flow_field.u_initial_sorted
         self.wind_veer = flow_field.wind_veer
 
-        # Secondary effect options (TODO: these should be options set by user)
-        enable_secondary_steering = False
-        enable_transverse_velocities = False
-        enable_yaw_added_recovery = False
 
         # Calculate the velocity deficit sequentially from upstream to downstream turbines
         for i in range(grid.n_turbines):
@@ -393,7 +394,7 @@ class Gauss(BaseWakeModel):
             self.effective_yaw_i = self.yaw_angle_i.copy()
 
             # Model calculations
-            if enable_secondary_steering:
+            if self.enable_secondary_steering:
                 added_yaw = wake_added_yaw(
                     u_i,
                     v_i,
@@ -415,7 +416,7 @@ class Gauss(BaseWakeModel):
                 grid.x_sorted,
             )
 
-            if enable_transverse_velocities:
+            if self.enable_transverse_velocities:
                 v_wake, w_wake = calculate_transverse_velocity(
                     u_i,
                     flow_field.u_initial_sorted,
@@ -431,8 +432,11 @@ class Gauss(BaseWakeModel):
                     axial_induction_i,
                     flow_field.wind_shear,
                 )
+            else:
+                v_wake = np.zeros_like(flow_field.v_initial_sorted)
+                w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
-            if enable_yaw_added_recovery:
+            if self.enable_yaw_added_recovery:
                 I_mixing = yaw_added_turbulence_mixing(
                     u_i,
                     turbulence_intensity_i,
@@ -442,7 +446,9 @@ class Gauss(BaseWakeModel):
                     w_wake[:, i:i+1],
                 )
                 gch_gain = 2
-                turbine_turbulence_intensity[:, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
+                turbine_turbulence_intensity[:, i:i+1] = (
+                    turbulence_intensity_i + gch_gain * I_mixing
+                )
 
             velocity_deficit = self.velocity_deficit(
                 axial_induction_i,
@@ -475,6 +481,8 @@ class Gauss(BaseWakeModel):
             )
 
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
+            flow_field.v_sorted += v_wake
+            flow_field.w_sorted += w_wake
 
         # Add the final turbine turbulence intensity field to the flow field object
         flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
@@ -509,6 +517,9 @@ class Gauss(BaseWakeModel):
         ambient_turbulence_intensities = np.repeat(ambient_turbulence_intensities, n_points, axis=1)
         turbulence_intensity_field = ambient_turbulence_intensities.copy()
 
+        # Extract freestream velocity for deficit, deflection calculations
+        self.freestream_velocity = flow_field.u_initial_sorted
+
         # Calculate the velocity deficit in the full grid sequentially from upstream to
         # downstream turbines
         for i in range(flow_field_grid.n_turbines):
@@ -527,15 +538,53 @@ class Gauss(BaseWakeModel):
                 turbine_grid_flow_field,
                 i
             )
+            u_i = turbine_grid_flow_field.u_sorted[:, i:i+1]
+            v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
             turbulence_intensity_i = \
                 turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]
 
             # Model calculations
+            if self.enable_secondary_steering:
+                added_yaw = wake_added_yaw(
+                    u_i,
+                    v_i,
+                    turbine_grid_flow_field.u_initial_sorted,
+                    turbine_grid.y_sorted[:, i:i+1] - self.y_i,
+                    turbine_grid.z_sorted[:, i:i+1],
+                    self.rotor_diameter_i,
+                    self.hub_height_i,
+                    thrust_coefficient_i,
+                    self.TSR_i,
+                    axial_induction_i,
+                    flow_field.wind_shear,
+                )
+                self.effective_yaw_i += added_yaw
+
             deflection_field = self.deflection(
                 turbulence_intensity_i,
                 thrust_coefficient_i,
                 flow_field_grid.x_sorted,
             )
+
+            if self.enable_transverse_velocities:
+                v_wake, w_wake = calculate_transverse_velocity(
+                    u_i,
+                    flow_field.u_initial_sorted,
+                    flow_field.dudz_initial_sorted,
+                    flow_field_grid.x_sorted - self.x_i,
+                    flow_field_grid.y_sorted - self.y_i,
+                    flow_field_grid.z_sorted,
+                    self.rotor_diameter_i,
+                    self.hub_height_i,
+                    self.yaw_angle_i,
+                    thrust_coefficient_i,
+                    self.TSR_i,
+                    axial_induction_i,
+                    flow_field.wind_shear,
+                )
+            else:
+                v_wake = np.zeros_like(flow_field.v_initial_sorted)
+                w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
             velocity_deficit = self.velocity_deficit(
                 axial_induction_i,
@@ -561,6 +610,8 @@ class Gauss(BaseWakeModel):
             )
 
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
+            flow_field.v_sorted += v_wake
+            flow_field.w_sorted += w_wake
 
         flow_field.turbulence_intensity_field_sorted = turbulence_intensity_field
 
@@ -607,12 +658,6 @@ def rC(wind_veer, sigma_y, sigma_z, y, y_i, delta, z, HH, Ct, yaw, D):
     d = np.clip(1 - (Ct * cosd(yaw) / ( 8.0 * sigma_y * sigma_z / (D * D) )), 0.0, 1.0)
     C = ne.evaluate("1 - sqrt(d)")
     return r_squared, C
-
-
-def mask_upstream_wake(mesh_y_rotated, x_coord_rotated, y_coord_rotated, turbine_yaw):
-    yR = mesh_y_rotated - y_coord_rotated
-    xR = yR * tand(turbine_yaw) + x_coord_rotated
-    return xR, yR
 
 
 def gaussian_function(C, r_squared, n, sigma):

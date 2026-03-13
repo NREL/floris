@@ -520,7 +520,6 @@ class SampleInputs:
                     "awc_wake_exp": 1.2,
                     "awc_wake_denominator": 400
                 },
-                "none": {}
             },
             "wake_turbulence_parameters": {
                 "crespo_hernandez": {
