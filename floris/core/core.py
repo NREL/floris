@@ -205,25 +205,13 @@ class Core(BaseClass):
             )
         elif vel_model=="jensen":
             model = JensenJimenez(**model_parameters)
-            model.turbine_solve(
-                self.farm,
-                self.flow_field,
-                self.grid,
-            )
+            model.turbine_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="gauss":
             model = Gauss(**model_parameters)
-            model.turbine_solve(
-                self.farm,
-                self.flow_field,
-                self.grid,
-            )
+            model.turbine_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="none":
             model = NoneWake(**model_parameters)
-            model.turbine_solve(
-                self.farm,
-                self.flow_field,
-                self.grid,
-            )
+            model.turbine_solve(self.farm, self.flow_field, self.grid)
         else:
             sequential_solver(
                 self.farm,
@@ -254,25 +242,13 @@ class Core(BaseClass):
             full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="jensen":
             model = JensenJimenez(**model_parameters)
-            model.point_solve(
-                self.farm,
-                self.flow_field,
-                self.grid,
-            )
+            model.point_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="gauss":
             model = Gauss(**model_parameters)
-            model.point_solve(
-                self.farm,
-                self.flow_field,
-                self.grid,
-            )
+            model.point_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="none":
             model = NoneWake(**model_parameters)
-            model.point_solve(
-                self.farm,
-                self.flow_field,
-                self.grid,
-            )
+            model.point_solve(self.farm, self.flow_field, self.grid)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
 

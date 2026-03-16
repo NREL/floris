@@ -543,6 +543,9 @@ class Gauss(BaseWakeModel):
             turbulence_intensity_i = \
                 turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]
 
+            # Initialize the effective yaw angle
+            self.effective_yaw_i = self.yaw_angle_i.copy()
+
             # Model calculations
             if self.enable_secondary_steering:
                 added_yaw = wake_added_yaw(
