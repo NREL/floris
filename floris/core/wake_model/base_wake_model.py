@@ -87,7 +87,7 @@ class BaseWakeModel(BaseModel):
         self,
         farm: Farm,
         flow_field: FlowField,
-        flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+        grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     ):
         raise NotImplementedError(
             "points_solve is not implemented for "+self.__class__.__name__

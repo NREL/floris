@@ -299,7 +299,7 @@ class JensenJimenez(BaseWakeModel):
         self,
         farm: Farm,
         flow_field: FlowField,
-        flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+        grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     ) -> None:
 
         # Get the flow quantities and turbine performance
@@ -315,14 +315,14 @@ class JensenJimenez(BaseWakeModel):
         wake_field = np.zeros_like(flow_field.u_initial_sorted)
 
         # Initialize the turbulence intensity field over the entire flow field grid
-        n_points = flow_field_grid.x_sorted.shape[1]
+        n_points = grid.x_sorted.shape[1]
         ambient_turbulence_intensities = flow_field.turbulence_intensities[:, None, None, None]
         ambient_turbulence_intensities = np.repeat(ambient_turbulence_intensities, n_points, axis=1)
         turbulence_intensity_field = ambient_turbulence_intensities.copy()
 
         # Calculate the velocity deficit in the full grid sequentially from upstream to
         # downstream turbines
-        for i in range(flow_field_grid.n_turbines):
+        for i in range(grid.n_turbines):
 
             # Get the current turbine quantities
             self.set_turbine_i(turbine_grid, turbine_grid_farm, i)
@@ -345,7 +345,7 @@ class JensenJimenez(BaseWakeModel):
             deflection_field = self.deflection(
                 turbulence_intensity_i,
                 thrust_coefficient_i,
-                flow_field_grid.x_sorted,
+                grid.x_sorted,
             )
 
             velocity_deficit = self.velocity_deficit(
@@ -353,9 +353,9 @@ class JensenJimenez(BaseWakeModel):
                 deflection_field,
                 turbulence_intensity_i,
                 thrust_coefficient_i,
-                flow_field_grid.x_sorted,
-                flow_field_grid.y_sorted,
-                flow_field_grid.z_sorted
+                grid.x_sorted,
+                grid.y_sorted,
+                grid.z_sorted
             )
 
             wake_field = self.combination(
@@ -365,8 +365,8 @@ class JensenJimenez(BaseWakeModel):
 
             turbulence_intensity_field = self.turbulence(
                 turbulence_intensity_field,
-                flow_field_grid.x_sorted,
-                flow_field_grid.y_sorted,
+                grid.x_sorted,
+                grid.y_sorted,
                 axial_induction_i,
                 np.where(velocity_deficit * flow_field.u_initial_sorted > 0.05, 1, 0),
             )

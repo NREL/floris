@@ -41,12 +41,12 @@ class NoneWake(BaseWakeModel):
         self,
         farm: Farm,
         flow_field: FlowField,
-        flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+        grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     ) -> None:
 
 
         # Initialize the turbulence intensity field over the entire flow field grid
-        n_points = flow_field_grid.x_sorted.shape[1]
+        n_points = grid.x_sorted.shape[1]
         ambient_turbulence_intensities = flow_field.turbulence_intensities[:, None, None, None]
         ambient_turbulence_intensities = np.repeat(ambient_turbulence_intensities, n_points, axis=1)
 

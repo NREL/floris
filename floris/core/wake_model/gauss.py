@@ -496,7 +496,7 @@ class Gauss(BaseWakeModel):
         self,
         farm: Farm,
         flow_field: FlowField,
-        flow_field_grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+        grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
     ) -> None:
 
         # Get the flow quantities and turbine performance
@@ -512,7 +512,7 @@ class Gauss(BaseWakeModel):
         wake_field = np.zeros_like(flow_field.u_initial_sorted)
 
         # Initialize the turbulence intensity field over the entire flow field grid
-        n_points = flow_field_grid.x_sorted.shape[1]
+        n_points = grid.x_sorted.shape[1]
         ambient_turbulence_intensities = flow_field.turbulence_intensities[:, None, None, None]
         ambient_turbulence_intensities = np.repeat(ambient_turbulence_intensities, n_points, axis=1)
         turbulence_intensity_field = ambient_turbulence_intensities.copy()
@@ -522,7 +522,7 @@ class Gauss(BaseWakeModel):
 
         # Calculate the velocity deficit in the full grid sequentially from upstream to
         # downstream turbines
-        for i in range(flow_field_grid.n_turbines):
+        for i in range(grid.n_turbines):
 
             # Get the current turbine quantities
             self.set_turbine_i(turbine_grid, turbine_grid_farm, i)
@@ -566,7 +566,7 @@ class Gauss(BaseWakeModel):
             deflection_field = self.deflection(
                 turbulence_intensity_i,
                 thrust_coefficient_i,
-                flow_field_grid.x_sorted,
+                grid.x_sorted,
             )
 
             if self.enable_transverse_velocities:
@@ -574,9 +574,9 @@ class Gauss(BaseWakeModel):
                     u_i,
                     flow_field.u_initial_sorted,
                     flow_field.dudz_initial_sorted,
-                    flow_field_grid.x_sorted - self.x_i,
-                    flow_field_grid.y_sorted - self.y_i,
-                    flow_field_grid.z_sorted,
+                    grid.x_sorted - self.x_i,
+                    grid.y_sorted - self.y_i,
+                    grid.z_sorted,
                     self.rotor_diameter_i,
                     self.hub_height_i,
                     self.yaw_angle_i,
@@ -594,9 +594,9 @@ class Gauss(BaseWakeModel):
                 deflection_field,
                 turbulence_intensity_i,
                 thrust_coefficient_i,
-                flow_field_grid.x_sorted,
-                flow_field_grid.y_sorted,
-                flow_field_grid.z_sorted
+                grid.x_sorted,
+                grid.y_sorted,
+                grid.z_sorted
             )
 
             wake_field = self.combination(
@@ -606,8 +606,8 @@ class Gauss(BaseWakeModel):
 
             turbulence_intensity_field = self.turbulence(
                 turbulence_intensity_field,
-                flow_field_grid.x_sorted,
-                flow_field_grid.y_sorted,
+                grid.x_sorted,
+                grid.y_sorted,
                 axial_induction_i,
                 np.where(velocity_deficit * flow_field.u_initial_sorted > 0.05, 1, 0),
             )
