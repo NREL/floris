@@ -14,6 +14,7 @@ from floris.core.wake_deflection import (
     JimenezVelocityDeflection,
     NoneVelocityDeflection,
 )
+from floris.core.wake_model import BaseWakeModel
 from floris.core.wake_turbulence import (
     CrespoHernandez,
     NoneWakeTurbulence,
@@ -87,8 +88,11 @@ class WakeModelManager(BaseClass):
     deflection_model: BaseModel = field(init=False)
     turbulence_model: BaseModel = field(init=False)
     velocity_model: BaseModel = field(init=False)
+    user_defined_wake_model: BaseWakeModel | None = field(default=None)
 
     def __attrs_post_init__(self) -> None:
+        # TODO: May want to replace this with something that simply instantiates the correct model
+        # class.
         velocity_model_string = self.model_strings["velocity_model"].lower()
         model: BaseModel = MODEL_MAP["velocity_model"][velocity_model_string]
         if velocity_model_string == "none":
@@ -126,6 +130,9 @@ class WakeModelManager(BaseClass):
         combination_model_string = self.model_strings["combination_model"].lower()
         model: BaseModel = MODEL_MAP["combination_model"][combination_model_string]
         self.combination_model = model()
+
+    def assign_user_defined_wake_model(self, wake_model: BaseWakeModel):
+        self.user_defined_wake_model = wake_model
 
     @model_strings.validator
     def validate_model_strings(self, instance: attrs.Attribute, value: dict) -> None:

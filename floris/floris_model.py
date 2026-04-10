@@ -21,6 +21,7 @@ from floris.core.turbine.turbine import (
     power,
     thrust_coefficient,
 )
+from floris.core.wake_model import BaseWakeModel
 from floris.cut_plane import CutPlane
 from floris.logging_manager import LoggingManager
 from floris.type_dec import (
@@ -1614,6 +1615,15 @@ class FlorisModel(LoggingManager):
             turbine_type=turbine_type_list,
             reference_wind_height=self.reference_wind_height
         )
+
+    def set_wake_model(self, wake_model: BaseWakeModel):
+        """Set the wake model.
+
+        Args:
+            wake_model (BaseWakeModel): The wake model to set.
+        """
+        self.core.wake.assign_user_defined_wake_model(wake_model)
+        # TODO: Won't be kept through a new .set() operation; will need to handle that.
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object

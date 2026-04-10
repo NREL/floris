@@ -52,11 +52,11 @@ class Gauss(BaseWakeModel):
     enable_yaw_added_recovery: bool = field(converter=bool, default=True)
     enable_secondary_steering: bool = field(converter=bool, default=True)
 
-    effective_yaw_i: np.ndarray = field(init=False)
+    effective_yaw_i: np.ndarray = field(init=False, default=None)
 
-    ambient_turbulence_intensities: np.ndarray = field(init=False)
-    wind_veer: float = field(init=False)
-    freestream_velocity: np.ndarray = field(init=False)
+    ambient_turbulence_intensities: np.ndarray = field(init=False, default=None)
+    wind_veer: float = field(init=False, default=None)
+    freestream_velocity: np.ndarray = field(init=False, default=None)
 
     def velocity_deficit(
         self,

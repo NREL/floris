@@ -10,7 +10,7 @@ from attrs import (
 
 from floris.core import (
     axial_induction,
-    BaseModel,
+    BaseLibrary,
     Farm,
     FlowField,
     FlowFieldPlanarGrid,
@@ -21,17 +21,17 @@ from floris.core import (
 
 
 @define
-class BaseWakeModel(BaseModel):
+class BaseWakeModel(BaseLibrary): # Inherit instead from BaseLibrary
 
     # Storage
-    x_i: np.ndarray = field(init=False)
-    y_i: np.ndarray = field(init=False)
-    z_i: np.ndarray = field(init=False)
+    x_i: np.ndarray = field(init=False, default=None)
+    y_i: np.ndarray = field(init=False, default=None)
+    z_i: np.ndarray = field(init=False, default=None)
 
-    yaw_angle_i: np.ndarray = field(init=False)
-    hub_height_i: np.ndarray = field(init=False)
-    rotor_diameter_i: np.ndarray = field(init=False)
-    TSR_i: np.ndarray = field(init=False)
+    yaw_angle_i: np.ndarray = field(init=False, default=None)
+    hub_height_i: np.ndarray = field(init=False, default=None)
+    rotor_diameter_i: np.ndarray = field(init=False, default=None)
+    TSR_i: np.ndarray = field(init=False, default=None)
 
     def set_turbine_i(self, grid, farm, i):
 

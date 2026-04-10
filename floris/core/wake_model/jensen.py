@@ -38,7 +38,7 @@ class JensenJimenez(BaseWakeModel):
     downstream: float = field(converter=float, default=-0.32)
 
     # Uninitialized attributes set in turbine_solve
-    ambient_turbulence_intensities: np.ndarray = field(init=False)
+    ambient_turbulence_intensities: np.ndarray = field(init=False, default=None)
 
     def velocity_deficit(
         self,

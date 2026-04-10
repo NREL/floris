@@ -10,6 +10,7 @@ from attrs import define, field
 from floris import logging_manager
 from floris.core import (
     BaseClass,
+    BaseLibrary,
     cc_solver,
     empirical_gauss_solver,
     Farm,
@@ -61,7 +62,9 @@ class Core(BaseClass):
     description: str = field(converter=str)
     floris_version: str = field(converter=str)
 
-    grid: Grid = field(init=False)
+    grid: Grid | TurbineGrid | TurbineCubatureGrid | FlowFieldPlanarGrid | PointsGrid = field(
+        init=False
+    )
 
     def __attrs_post_init__(self) -> None:
 
@@ -139,6 +142,11 @@ class Core(BaseClass):
                 self.grid.sorted_coord_indices
             )
 
+        if isinstance(self.wake.user_defined_wake_model, dict):
+            self.wake.user_defined_wake_model = BaseLibrary.from_dict(
+                self.wake.user_defined_wake_model
+            )
+
     def initialize_domain(self):
         """Initialize solution space prior to wake calculations"""
 
@@ -178,7 +186,9 @@ class Core(BaseClass):
                 "be included, but no enhanced wake recovery will occur."
             )
 
-        if vel_model=="cc":
+        if self.wake.user_defined_wake_model is not None:
+            self.wake.user_defined_wake_model.turbine_solve(self.farm, self.flow_field, self.grid)
+        elif vel_model=="cc":
             cc_solver(
                 self.farm,
                 self.flow_field,
@@ -234,7 +244,9 @@ class Core(BaseClass):
         vel_model = self.wake.model_strings["velocity_model"]
         model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
 
-        if vel_model=="cc":
+        if self.wake.user_defined_wake_model is not None:
+            self.wake.user_defined_wake_model.point_solve(self.farm, self.flow_field, self.grid)
+        elif vel_model=="cc":
             full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
