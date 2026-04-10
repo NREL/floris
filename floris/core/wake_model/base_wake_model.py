@@ -13,7 +13,6 @@ from floris.core import (
     BaseModel,
     Farm,
     FlowField,
-    FlowFieldGrid,
     FlowFieldPlanarGrid,
     PointsGrid,
     thrust_coefficient,
@@ -87,7 +86,7 @@ class BaseWakeModel(BaseModel):
         self,
         farm: Farm,
         flow_field: FlowField,
-        grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+        grid: FlowFieldPlanarGrid | PointsGrid,
     ):
         raise NotImplementedError(
             "points_solve is not implemented for "+self.__class__.__name__

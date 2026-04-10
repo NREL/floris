@@ -10,7 +10,6 @@ from floris.core import (
     BaseModel,
     Farm,
     FlowField,
-    FlowFieldGrid,
     FlowFieldPlanarGrid,
     PointsGrid,
     TurbineGrid,
@@ -496,7 +495,7 @@ class Gauss(BaseWakeModel):
         self,
         farm: Farm,
         flow_field: FlowField,
-        grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+        grid: FlowFieldPlanarGrid | PointsGrid,
     ) -> None:
 
         # Get the flow quantities and turbine performance

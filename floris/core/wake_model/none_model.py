@@ -10,7 +10,6 @@ from floris.core import (
     BaseModel,
     Farm,
     FlowField,
-    FlowFieldGrid,
     FlowFieldPlanarGrid,
     PointsGrid,
     TurbineGrid,
@@ -41,7 +40,7 @@ class NoneWake(BaseWakeModel):
         self,
         farm: Farm,
         flow_field: FlowField,
-        grid: FlowFieldGrid | FlowFieldPlanarGrid | PointsGrid,
+        grid: FlowFieldPlanarGrid | PointsGrid,
     ) -> None:
 
 
