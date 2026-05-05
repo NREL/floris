@@ -31,6 +31,7 @@ from floris.core import (
     WakeModelManager,
 )
 from floris.core.wake_model import (
+    EmpiricalGauss,
     Gauss,
     JensenJimenez,
     NoneWake,
@@ -207,12 +208,8 @@ class Core(BaseClass):
                 self.wake
             )
         elif vel_model=="empirical_gauss":
-            empirical_gauss_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+            model = EmpiricalGauss(**model_parameters)
+            model.turbine_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="jensen":
             model = JensenJimenez(**model_parameters)
             model.turbine_solve(self.farm, self.flow_field, self.grid)
@@ -251,7 +248,8 @@ class Core(BaseClass):
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="empirical_gauss":
-            full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
+            model = EmpiricalGauss(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="jensen":
             model = JensenJimenez(**model_parameters)
             model.point_solve(self.farm, self.flow_field, self.grid)
@@ -467,6 +465,12 @@ def _temp_create_single_wake_model_dict(wake, vel_model):
         model_parameters = wake.wake_velocity_parameters["jensen"] | \
             wake.wake_deflection_parameters["jimenez"] | \
             wake.wake_turbulence_parameters["crespo_hernandez"]
+    elif vel_model == "empirical_gauss":
+        model_parameters = wake.wake_velocity_parameters["empirical_gauss"] | \
+            wake.wake_deflection_parameters["empirical_gauss"] | \
+            wake.wake_turbulence_parameters["wake_induced_mixing"]
+        model_parameters["enable_yaw_added_recovery"] = wake.enable_yaw_added_recovery
+        model_parameters["enable_active_wake_mixing"] = wake.enable_active_wake_mixing
     elif vel_model == "none":
         model_parameters = {}
     else:
