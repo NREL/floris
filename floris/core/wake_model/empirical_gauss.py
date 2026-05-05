@@ -6,8 +6,6 @@ from attrs import (
     fields,
 )
 
-from floris.type_dec import floris_float_type
-
 from floris.core import (
     BaseModel,
     Farm,
@@ -17,8 +15,9 @@ from floris.core import (
     TurbineGrid,
 )
 from floris.core.rotor_velocity import average_velocity
-from floris.core.wake_model.gauss import gaussian_function
 from floris.core.wake_model import BaseWakeModel
+from floris.core.wake_model.gauss import gaussian_function
+from floris.type_dec import floris_float_type
 from floris.utilities import cosd
 
 

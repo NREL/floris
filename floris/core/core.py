@@ -12,13 +12,11 @@ from floris.core import (
     BaseClass,
     BaseLibrary,
     cc_solver,
-    empirical_gauss_solver,
     Farm,
     FlowField,
     FlowFieldGrid,
     FlowFieldPlanarGrid,
     full_flow_cc_solver,
-    full_flow_empirical_gauss_solver,
     full_flow_sequential_solver,
     full_flow_turbopark_solver,
     Grid,
@@ -285,16 +283,26 @@ class Core(BaseClass):
         self.flow_field.initialize_velocity_field(field_grid)
 
         vel_model = self.wake.model_strings["velocity_model"]
+        model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
 
-        if vel_model == "turbopark":
-            raise NotImplementedError(
-                "solve_for_points is not available for the legacy \'turbopark\' model. "
-                "However, it is available for \'turboparkgauss\'."
-            )
-        elif vel_model == "empirical_gauss":
-            full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
-        elif vel_model == "cc":
+        if self.wake.user_defined_wake_model is not None:
+            self.wake.user_defined_wake_model.point_solve(self.farm, self.flow_field, field_grid)
+        elif vel_model=="cc":
             full_flow_cc_solver(self.farm, self.flow_field, field_grid, self.wake)
+        elif vel_model=="turbopark":
+            full_flow_turbopark_solver(self.farm, self.flow_field, field_grid, self.wake)
+        elif vel_model=="empirical_gauss":
+            model = EmpiricalGauss(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, field_grid)
+        elif vel_model=="jensen":
+            model = JensenJimenez(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, field_grid)
+        elif vel_model=="gauss":
+            model = Gauss(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, field_grid)
+        elif vel_model=="none":
+            model = NoneWake(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, field_grid)
         else:
             full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
 
