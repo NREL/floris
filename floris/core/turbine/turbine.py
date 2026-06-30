@@ -47,7 +47,7 @@ TURBINE_MODEL_MAP = {
 }
 
 
-def _select_multidim_condition(
+def select_multidim_condition(
     condition: dict,
     specified_conditions: Iterable[tuple],
     condition_keys: list[str],
@@ -222,7 +222,7 @@ def power(
                 * (turbine_type_map == turb_type)
             )
         else: # Multidimensional
-            md_conditions, md_conditions_map = _select_multidim_condition(
+            md_conditions, md_conditions_map = select_multidim_condition(
                 multidim_condition,
                 [k for k in turbine_power_thrust_tables[turb_type].keys() if k != "condition_keys"],
                 turbine_power_thrust_tables[turb_type]["condition_keys"],
@@ -353,7 +353,7 @@ def thrust_coefficient(
                 * (turbine_type_map == turb_type)
             )
         else: # Multidimensional
-            md_conditions, md_conditions_map = _select_multidim_condition(
+            md_conditions, md_conditions_map = select_multidim_condition(
                 multidim_condition,
                 [k for k in turbine_power_thrust_tables[turb_type].keys() if k != "condition_keys"],
                 turbine_power_thrust_tables[turb_type]["condition_keys"],
@@ -480,7 +480,7 @@ def axial_induction(
                 * (turbine_type_map == turb_type)
             )
         else: # Multidimensional
-            md_conditions, md_conditions_map = _select_multidim_condition(
+            md_conditions, md_conditions_map = select_multidim_condition(
                 multidim_condition,
                 [k for k in turbine_power_thrust_tables[turb_type].keys() if k != "condition_keys"],
                 turbine_power_thrust_tables[turb_type]["condition_keys"],

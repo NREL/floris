@@ -115,6 +115,8 @@ class Farm(BaseClass):
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, factory=list)
 
+    turbine_powers: NDArrayFloat = field(init=False, factory=list)
+
     internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
 
     # Private attributes
@@ -275,6 +277,7 @@ class Farm(BaseClass):
             sorted_indices[:, :, 0, 0],
             axis=1,
         )
+        self.turbine_powers = np.full((self.yaw_angles.shape[0], self.n_turbines), np.nan)
         self.state = State.INITIALIZED
 
     def construct_hub_heights(self):

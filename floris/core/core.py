@@ -155,10 +155,13 @@ class Core(BaseClass):
         """Perform the steady-state wind farm wake calculations. Note that
         initialize_domain() is required to be called before this function."""
 
-        vel_model = self.wake.model_strings["velocity_model"]
+        if self.wake.user_defined_wake_model is not None:
+            vel_model = "user_defined"
+        else:
+            vel_model = self.wake.model_strings["velocity_model"]
         model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
 
-        if vel_model not in ["empirical_gauss"] and \
+        if vel_model not in ["empirical_gauss", "user_defined"] and \
             self.farm.correct_cp_ct_for_tilt.any():
             self.logger.warning(
                 "The current model does not account for vertical wake deflection due to " +
