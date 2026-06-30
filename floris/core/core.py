@@ -14,7 +14,6 @@ from floris.core import (
     cc_solver,
     Farm,
     FlowField,
-    FlowFieldGrid,
     FlowFieldPlanarGrid,
     full_flow_cc_solver,
     full_flow_sequential_solver,
@@ -109,13 +108,6 @@ class Core(BaseClass):
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 grid_resolution=self.solver["turbine_grid_points"],
-            )
-        elif self.solver["type"] == "flow_field_grid":
-            self.grid = FlowFieldGrid(
-                turbine_coordinates=self.farm.coordinates,
-                turbine_diameters=self.farm.rotor_diameters,
-                wind_directions=self.flow_field.wind_directions,
-                grid_resolution=self.solver["flow_field_grid_points"],
             )
         elif self.solver["type"] == "flow_field_planar_grid":
             self.grid = FlowFieldPlanarGrid(
@@ -325,6 +317,11 @@ class Core(BaseClass):
         :py:meth:`~floris.floris_model.FlorisModel.sample_velocity_deficit_profiles`
         for more details.
         """
+
+        self.logger.warning(
+            "Velocity deficit profiles will move to a Numpy data structure in the next release. "
+            "See https://github.com/NatLabRockies/floris/pull/1194."
+        )
 
         # Create a grid that contains coordinates for all the sample points in all profiles.
         # Effectively, this is a grid of parallel lines.
