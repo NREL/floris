@@ -358,6 +358,9 @@ class ParFlorisModel(FlorisModel):
             self.core.flow_field.turbulence_intensity_field = \
                 self._fmodels_split[0].core.flow_field.turbulence_intensity_field
 
+            if not np.isnan(self._fmodels_split[0].core.farm.turbine_powers).any():
+                self.core.farm.turbine_powers = self._fmodels_split[0].core.farm.turbine_powers
+
             for fm in self._fmodels_split[1:]:
                 self.core.flow_field.u = np.append(
                     self.core.flow_field.u,
@@ -379,6 +382,13 @@ class ParFlorisModel(FlorisModel):
                     fm.core.flow_field.turbulence_intensity_field,
                     axis=0
                 )
+
+                if not np.isnan(fm.core.farm.turbine_powers).any():
+                    self.core.farm.turbine_powers = np.append(
+                        self.core.farm.turbine_powers,
+                        fm.core.farm.turbine_powers,
+                        axis=0
+                    )
 
     def _print_timings(self, t0, t1, t2, t3):
         """
