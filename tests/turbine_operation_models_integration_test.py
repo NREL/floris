@@ -10,10 +10,13 @@ from floris.type_dec import floris_float_type
 # Establish a static class
 @define
 class UserDefinedStatic(BaseOperationModel):
+    @staticmethod
     def power(velocities, **_):
         return 1000*np.ones(velocities.shape[:2])
+    @staticmethod
     def thrust_coefficient(velocities, **_):
         return 0.8*np.ones(velocities.shape[:2])
+    @staticmethod
     def axial_induction(velocities, **_):
         return 1/3*np.ones(velocities.shape[:2])
 

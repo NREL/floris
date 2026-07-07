@@ -40,6 +40,7 @@ class SimpleTurbine(BaseOperationModel):
     not intended to be instantiated; it simply defines a library of static methods.
     """
 
+    @staticmethod
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -74,6 +75,7 @@ class SimpleTurbine(BaseOperationModel):
 
         return power
 
+    @staticmethod
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -103,6 +105,7 @@ class SimpleTurbine(BaseOperationModel):
 
         return thrust_coefficient
 
+    @staticmethod
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -134,6 +137,7 @@ class CosineLossTurbine(BaseOperationModel):
     not intended to be instantiated; it simply defines a library of static methods.
     """
 
+    @staticmethod
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -187,6 +191,7 @@ class CosineLossTurbine(BaseOperationModel):
 
         return power
 
+    @staticmethod
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -237,6 +242,7 @@ class CosineLossTurbine(BaseOperationModel):
 
         return thrust_coefficient
 
+    @staticmethod
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -275,6 +281,7 @@ class SimpleDeratingTurbine(BaseOperationModel):
     added to the kwargs dictionaries in the respective functions on turbine.py. They won't affect
     the other operation models.
     """
+    @staticmethod
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -299,6 +306,7 @@ class SimpleDeratingTurbine(BaseOperationModel):
         # TODO: would we like special handling of zero power setpoints
         # (mixed with non-zero values) to speed up computation in that case?
 
+    @staticmethod
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -327,6 +335,7 @@ class SimpleDeratingTurbine(BaseOperationModel):
             thrust_coefficients = power_fractions * base_thrust_coefficients
             return np.minimum(base_thrust_coefficients, thrust_coefficients)
 
+    @staticmethod
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -487,9 +496,11 @@ class AWCTurbine(BaseOperationModel):
     the other operation models.
     """
 
+    @staticmethod
     def AWC_model(a, b, c, base_values, awc_amplitudes):
             return base_values * (1 - (b + c*base_values)*awc_amplitudes**a)
 
+    @staticmethod
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -537,7 +548,7 @@ class AWCTurbine(BaseOperationModel):
 
         return powers
 
-
+    @staticmethod
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -570,6 +581,7 @@ class AWCTurbine(BaseOperationModel):
 
         return thrust_coefficients
 
+    @staticmethod
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -593,6 +605,7 @@ class AWCTurbine(BaseOperationModel):
 @define
 class PeakShavingTurbine():
 
+    @staticmethod
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -640,6 +653,7 @@ class PeakShavingTurbine():
 
         return powers
 
+    @staticmethod
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -688,6 +702,7 @@ class PeakShavingTurbine():
 
         return thrust_coefficient
 
+    @staticmethod
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
