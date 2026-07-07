@@ -5,15 +5,15 @@ It is based on an idealized actuator disk model that does not curtail (i.e. has 
 wind speed).
 """
 
+import matplotlib.pyplot as plt
 import numpy as np
 from attrs import define, field
-import matplotlib.pyplot as plt
-
-from floris.type_dec import floris_float_type, NDArrayFloat
-from floris.core.turbine.operation_models import BaseOperationModel
-from floris.core.rotor_velocity import average_velocity
 
 from floris import FlorisModel
+from floris.core.rotor_velocity import average_velocity
+from floris.core.turbine.operation_models import BaseOperationModel
+from floris.type_dec import floris_float_type, NDArrayFloat
+
 
 # Declare the new operation model, inheriting from BaseOperationModel. The `@define` decorator from
 # the `attrs` package is used to declare attributes for the class.
