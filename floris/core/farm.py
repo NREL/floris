@@ -115,9 +115,13 @@ class Farm(BaseClass):
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    turbine_powers: NDArrayFloat = field(init=False, factory=list)
-
     internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
+
+    # Post-turbine solve attributes
+    turbine_powers: NDArrayFloat = field(init=False, factory=list)
+    turbine_thrust_coefficients: NDArrayFloat = field(init=False, factory=list)
+    turbine_axial_inductions: NDArrayFloat = field(init=False, factory=list)
+    turbine_rotor_average_velocities: NDArrayFloat = field(init=False, factory=list)
 
     # Private attributes
     _turbine_types: List = field(init=False, validator=iter_validator(list, str), factory=list)
@@ -278,6 +282,14 @@ class Farm(BaseClass):
             axis=1,
         )
         self.turbine_powers = np.full((self.yaw_angles.shape[0], self.n_turbines), np.nan)
+        self.turbine_thrust_coefficients = np.full(
+            (self.yaw_angles.shape[0], self.n_turbines), np.nan
+        )
+        self.turbine_axial_inductions = np.full((self.yaw_angles.shape[0], self.n_turbines), np.nan)
+        self.turbine_rotor_average_velocities = np.full(
+            (self.yaw_angles.shape[0], self.n_turbines), np.nan
+        )
+
         self.state = State.INITIALIZED
 
     def construct_hub_heights(self):
