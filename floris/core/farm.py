@@ -371,13 +371,6 @@ class Farm(BaseClass):
             sorted_coord_indices,
             axis=1
         )
-
-        # NOTE: Tilt angles are sorted twice - here and in initialize()
-        self.tilt_angles_sorted = np.take_along_axis(
-            self.tilt_angles * template_shape,
-            sorted_coord_indices,
-            axis=1
-        )
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(
                 [turb["turbine_type"] for turb in self.turbine_definitions] * n_findex,
