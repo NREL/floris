@@ -1036,13 +1036,6 @@ class FlorisModel(LoggingManager):
         )
         return turbine_ais
 
-    def get_turbine_ais(self) -> NDArrayFloat:
-        self.logger.warning(
-            "Computing axial inductions with get_turbine_ais is now deprecated. Please use"
-            " the more explicit get_turbine_axial_induction_factors method instead."
-        )
-        return self.get_turbine_axial_induction_factors()
-
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
             velocities=self.core.flow_field.u,
