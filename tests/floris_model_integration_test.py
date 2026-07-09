@@ -747,45 +747,54 @@ def test_get_and_set_param():
 
 def test_get_operation_model():
     fmodel = FlorisModel(configuration=YAML_INPUT)
-    assert fmodel.get_operation_model() == "cosine-loss"
+    assert fmodel.get_operation_model().__class__.__name__ == "CosineLossTurbine"
 
 def test_set_operation_model():
 
     fmodel = FlorisModel(configuration=YAML_INPUT)
     fmodel.set_operation_model("simple-derating")
-    assert fmodel.get_operation_model() == "simple-derating"
+    assert fmodel.get_operation_model().__class__.__name__ == "SimpleDeratingTurbine"
 
     reference_wind_height = fmodel.reference_wind_height
 
     # Check multiple turbine types works
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
-    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+    assert (
+        [om.__class__.__name__ for om in fmodel.get_operation_model()]
+        == ["SimpleDeratingTurbine", "CosineLossTurbine"]
+    )
 
     # Check that setting a single turbine type, and then altering the operation model works
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
-    assert fmodel.get_operation_model() == "simple-derating"
+    assert fmodel.get_operation_model().__class__.__name__ == "SimpleDeratingTurbine"
 
     # Check that setting over mutliple turbine types works
     fmodel.set(turbine_type=["nrel_5MW", "iea_15MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
-    assert fmodel.get_operation_model() == "simple-derating"
+    assert fmodel.get_operation_model().__class__.__name__ == "SimpleDeratingTurbine"
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
-    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+    assert (
+        [om.__class__.__name__ for om in fmodel.get_operation_model()]
+        == ["SimpleDeratingTurbine", "CosineLossTurbine"]
+    )
 
     # Check setting over single turbine type; then updating layout works
     fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model("simple-derating")
     fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
-    assert fmodel.get_operation_model() == "simple-derating"
+    assert fmodel.get_operation_model().__class__.__name__ == "SimpleDeratingTurbine"
 
     # Check that setting for multiple turbine types and then updating layout breaks
     fmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     fmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     fmodel.set_operation_model(["simple-derating", "cosine-loss"])
-    assert fmodel.get_operation_model() == ["simple-derating", "cosine-loss"]
+    assert (
+        [om.__class__.__name__ for om in fmodel.get_operation_model()]
+        == ["SimpleDeratingTurbine", "CosineLossTurbine"]
+    )
     with pytest.raises(ValueError):
         fmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
 

@@ -2,6 +2,8 @@
 import numpy as np
 from scipy.optimize import minimize
 
+from floris.core.turbine.operation_models import CosineLossTurbine
+
 from .yaw_optimization_base import YawOptimization
 
 
@@ -30,11 +32,14 @@ class YawOptimizationScipy(YawOptimization):
         Instantiate YawOptimizationScipy object with a FlorisModel object
         and assign parameter values.
         """
-        valid_op_models = ["cosine-loss"]
-        if fmodel.get_operation_model() not in valid_op_models:
+        valid_op_models = (CosineLossTurbine,)
+        if (
+            hasattr(fmodel.get_operation_model(), "__len__")
+            or not isinstance(fmodel.get_operation_model(), valid_op_models)
+        ):
             raise ValueError(
                 "YawOptimizationScipy is currently limited to the following operation models: "
-                + ", ".join(valid_op_models)
+                + ", ".join([m.__name__ for m in valid_op_models])
             )
         if opt_options is None:
             # Default SciPy parameters

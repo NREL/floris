@@ -1570,24 +1570,24 @@ class FlorisModel(LoggingManager):
 
         self.core.flow_field.reference_wind_height = unique_heights[0]
 
-    def get_operation_model(self) -> str:
+    def get_operation_model(self) -> BaseOperationModel | list[BaseOperationModel]:
         """Get the operation model of a FlorisModel.
 
         Returns:
-            str: The operation_model.
+            BaseOperationModel | list[BaseOperationModel]: The operation_model instance(s).
         """
         operation_models = [
-            self.core.farm.turbine_definitions[tindex]["operation_model"]
+            self.core.farm.turbine_map[tindex].operation_model
             for tindex in range(self.core.farm.n_turbines)
         ]
-        if len(set(operation_models)) == 1:
+        if all(om == operation_models[0] for om in operation_models):
             return operation_models[0]
         else:
             return operation_models
 
     def set_operation_model(
         self,
-        operation_model: str | List[str] | BaseOperationModel | List[BaseOperationModel]
+        operation_model: BaseOperationModel | str | List[BaseOperationModel | str]
     ):
         """Set the turbine operation model(s).
 
