@@ -437,7 +437,7 @@ def test_get_and_set_param():
 
 def test_get_operation_model():
     ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
-    assert ufmodel.get_operation_model().__class__.__name__ == "CosineLossTurbine"
+    assert ufmodel.get_operation_model()[0].__class__.__name__ == "CosineLossTurbine"
 
 
 def test_set_operation_model():
@@ -446,7 +446,7 @@ def test_set_operation_model():
 
     ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
     ufmodel.set_operation_model("simple-derating")
-    assert ufmodel.get_operation_model().__class__.__name__ == "SimpleDeratingTurbine"
+    assert ufmodel.get_operation_model()[0].__class__.__name__ == "SimpleDeratingTurbine"
 
     reference_wind_height = ufmodel.reference_wind_height
 
@@ -472,12 +472,12 @@ def test_set_operation_model():
     ufmodel.set(layout_x=[0, 0], layout_y=[0, 1000])
     ufmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     ufmodel.set_operation_model("simple-derating")
-    assert ufmodel.get_operation_model().__class__.__name__ == "SimpleDeratingTurbine"
+    assert ufmodel.get_operation_model()[0].__class__.__name__ == "SimpleDeratingTurbine"
 
     # Check that setting over mutliple turbine types works
     ufmodel.set(turbine_type=["nrel_5MW", "iea_15MW"], reference_wind_height=reference_wind_height)
     ufmodel.set_operation_model("simple-derating")
-    assert ufmodel.get_operation_model().__class__.__name__ == "SimpleDeratingTurbine"
+    assert ufmodel.get_operation_model()[0].__class__.__name__ == "SimpleDeratingTurbine"
     ufmodel.set_operation_model(["simple-derating", "cosine-loss"])
     operation_models = ufmodel.get_operation_model()
     assert isinstance(operation_models, list)
@@ -496,7 +496,7 @@ def test_set_operation_model():
     ufmodel.set(turbine_type=["nrel_5MW"], reference_wind_height=reference_wind_height)
     ufmodel.set_operation_model("simple-derating")
     ufmodel.set(layout_x=[0, 0, 0], layout_y=[0, 1000, 2000])
-    assert ufmodel.get_operation_model().__class__.__name__ == "SimpleDeratingTurbine"
+    assert ufmodel.get_operation_model()[0].__class__.__name__ == "SimpleDeratingTurbine"
 
     # Check that setting for multiple turbine types and then updating layout breaks
     ufmodel.set(layout_x=[0, 0], layout_y=[0, 1000])

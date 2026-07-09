@@ -33,10 +33,7 @@ class YawOptimizationScipy(YawOptimization):
         and assign parameter values.
         """
         valid_op_models = (CosineLossTurbine,)
-        if (
-            hasattr(fmodel.get_operation_model(), "__len__")
-            or not isinstance(fmodel.get_operation_model(), valid_op_models)
-        ):
+        if not all(isinstance(m, valid_op_models) for m in fmodel.get_operation_model()):
             raise ValueError(
                 "YawOptimizationScipy is currently limited to the following operation models: "
                 + ", ".join([m.__name__ for m in valid_op_models])

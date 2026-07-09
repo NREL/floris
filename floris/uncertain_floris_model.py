@@ -958,20 +958,16 @@ class UncertainFlorisModel(LoggingManager):
 
         return weights
 
-    def get_operation_model(self) -> BaseOperationModel | list[BaseOperationModel]:
+    def get_operation_model(self) -> list[BaseOperationModel]:
         """Get the operation model of a FlorisModel.
 
         Returns:
-            BaseOperationModel | list[BaseOperationModel]: The operation_model instance(s).
+            list[BaseOperationModel]: The operation_model instance(s).
         """
-        operation_models = [
+        return [
             self.fmodel_unexpanded.core.farm.turbine_map[tindex].operation_model
             for tindex in range(self.fmodel_unexpanded.core.farm.n_turbines)
         ]
-        if all(om == operation_models[0] for om in operation_models):
-            return operation_models[0]
-        else:
-            return operation_models
 
     def set_operation_model(self, operation_model: str | List[str]):
         """Set the turbine operation model(s).
