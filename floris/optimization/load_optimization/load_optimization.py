@@ -5,8 +5,10 @@ import numpy as np
 from floris import FlorisModel
 from floris.core import State
 from floris.core.turbine.operation_models import (
+    MixedOperationTurbine,
     POWER_SETPOINT_DEFAULT,
     POWER_SETPOINT_DISABLED,
+    SimpleDeratingTurbine,
 )
 
 
@@ -465,7 +467,8 @@ def optimize_power_setpoints(
 
     # Ensure we're in an operation model which includes derating
     # presently this can be "mixed" or "simple-derating"
-    if fmodel.get_operation_model() not in ["mixed", "simple-derating"]:
+    valid_op_models = (SimpleDeratingTurbine, MixedOperationTurbine)
+    if not all(isinstance(m, valid_op_models) for m in fmodel.get_operation_model()):
         raise ValueError(
             "Operation model must include derating (e.g., 'mixed' or 'simple-derating')"
         )
