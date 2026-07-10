@@ -121,10 +121,8 @@ class Core(BaseClass):
             )
 
         if isinstance(self.grid, (TurbineGrid, TurbineCubatureGrid)):
-            self.farm.expand_farm_properties(
-                self.flow_field.n_findex,
-                self.grid.sorted_coord_indices
-            )
+            self.farm.set_sorted_indices(self.grid.sorted_coord_indices)
+            self.farm.expand_farm_properties(self.flow_field.n_findex)
 
     def initialize_domain(self):
         """Initialize solution space prior to wake calculations"""
@@ -135,7 +133,7 @@ class Core(BaseClass):
         self.flow_field.initialize_velocity_field(self.grid)
 
         # Initialize farm quantities
-        self.farm.initialize(self.grid.sorted_indices)
+        self.farm.initialize()
 
         self.state.INITIALIZED
 

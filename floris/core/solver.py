@@ -282,12 +282,10 @@ def full_flow_sequential_solver(
         wind_directions=turbine_grid_flow_field.wind_directions,
         grid_resolution=3,
     )
-    turbine_grid_farm.expand_farm_properties(
-        turbine_grid_flow_field.n_findex,
-        turbine_grid.sorted_coord_indices,
-    )
+    turbine_grid_farm.set_sorted_indices(turbine_grid.sorted_coord_indices)
+    turbine_grid_farm.expand_farm_properties(turbine_grid_flow_field.n_findex)
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-    turbine_grid_farm.initialize(turbine_grid.sorted_indices)
+    turbine_grid_farm.initialize()
     sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
@@ -744,12 +742,10 @@ def full_flow_cc_solver(
         wind_directions=turbine_grid_flow_field.wind_directions,
         grid_resolution=3,
     )
-    turbine_grid_farm.expand_farm_properties(
-        turbine_grid_flow_field.n_findex,
-        turbine_grid.sorted_coord_indices,
-    )
+    turbine_grid_farm.set_sorted_indices(turbine_grid.sorted_coord_indices)
+    turbine_grid_farm.expand_farm_properties(turbine_grid_flow_field.n_findex)
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-    turbine_grid_farm.initialize(turbine_grid.sorted_indices)
+    turbine_grid_farm.initialize()
     cc_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
 
     ### Referring to the quantities from above, calculate the wake in the full grid
@@ -1430,12 +1426,10 @@ def full_flow_empirical_gauss_solver(
         wind_directions=turbine_grid_flow_field.wind_directions,
         grid_resolution=3,
     )
-    turbine_grid_farm.expand_farm_properties(
-        turbine_grid_flow_field.n_findex,
-        turbine_grid.sorted_coord_indices
-    )
+    turbine_grid_farm.set_sorted_indices(turbine_grid.sorted_coord_indices)
+    turbine_grid_farm.expand_farm_properties(turbine_grid_flow_field.n_findex)
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
-    turbine_grid_farm.initialize(turbine_grid.sorted_indices)
+    turbine_grid_farm.initialize()
     wim_field = empirical_gauss_solver(
         turbine_grid_farm,
         turbine_grid_flow_field,
