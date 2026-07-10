@@ -17,7 +17,7 @@ from floris.core.rotor_velocity import (
     average_velocity,
     rotor_velocity_air_density_correction,
 )
-from floris.core.turbine.operation_models import BaseOperationModel
+from floris.core.turbine import BaseOperationModel
 from floris.type_dec import NDArrayFloat
 
 
@@ -248,6 +248,7 @@ class UnifiedMomentumModelTurbine(BaseOperationModel):
     Turbine operation model as described by Heck et al. (2023).
     """
 
+    @staticmethod
     def power(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -305,6 +306,7 @@ class UnifiedMomentumModelTurbine(BaseOperationModel):
 
         return power
 
+    @staticmethod
     def thrust_coefficient(
         power_thrust_table: dict,
         velocities: NDArrayFloat,
@@ -356,6 +358,7 @@ class UnifiedMomentumModelTurbine(BaseOperationModel):
 
         return yawed_thrust_coefficients
 
+    @staticmethod
     def axial_induction(
         power_thrust_table: dict,
         velocities: NDArrayFloat,

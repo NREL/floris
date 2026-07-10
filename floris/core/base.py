@@ -72,7 +72,6 @@ class BaseLibrary(BaseClass):
     """
     __classinfo__: dict = {"module": "", "name": ""}
     def __attrs_post_init__(self) -> None:
-        #import ipdb; ipdb.set_trace()
         self.__classinfo__ = {
             "module": type(self).__module__,
             "name": type(self).__name__
@@ -81,11 +80,6 @@ class BaseLibrary(BaseClass):
     @staticmethod
     def from_dict(data_dict):
         """Recreate instance from dictionary with class information"""
-        if "__classinfo__" not in data_dict:
-            raise ValueError(
-                "Dictionary does not contain class information. ",
-                "Insure inheritance from BaseLibrary."
-            )
         data_noinfo = data_dict.copy()
         class_info = data_noinfo.pop("__classinfo__")
 
