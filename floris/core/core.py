@@ -70,7 +70,7 @@ class Core(BaseClass):
         )
 
         # Initialize farm quantities that depend on other objects
-        self.farm.construct_turbine_map()
+        self.farm.construct_turbines()
         self.farm.construct_turbine_thrust_coefficient_functions()
         self.farm.construct_turbine_axial_induction_functions()
         self.farm.construct_turbine_power_functions()

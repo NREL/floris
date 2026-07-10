@@ -148,15 +148,15 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     for i in range(4):
         assert farm.turbine_definitions[i]["hub_height"] == turbine_def["hub_height"]
     assert farm.turbine_definitions[-1]["hub_height"] == 100.0
-    farm.construct_turbine_map()
+    farm.construct_turbines()
     for i in range(4):
-        assert farm.turbine_map[i].hub_height == turbine_def["hub_height"]
-    assert farm.turbine_map[-1].hub_height == 100.0
+        assert farm.turbines[i].hub_height == turbine_def["hub_height"]
+    assert farm.turbines[-1].hub_height == 100.0
 
     # Duplicate type found in external and internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
     external_library = Path(__file__).parent / "data"
-    farm_data["turbine_library_path"] = external_library
+    farm_data["external_turbine_library_path"] = external_library
     farm_data["turbine_type"] = ["nrel_5MW"]
     with pytest.raises(ValueError):
         Farm.from_dict(farm_data)
@@ -176,7 +176,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     # 1 turbine as string from internal library, 1 turbine as string from external library
     farm_data = deepcopy(sample_inputs_fixture.farm)
     external_library = Path(__file__).parent / "data"
-    farm_data["turbine_library_path"] = external_library
+    farm_data["external_turbine_library_path"] = external_library
     farm_data["turbine_type"] = 4 * ["iea_10MW"] + ["nrel_5MW_custom"]
     farm_data["layout_x"] = np.arange(0, 500, 100)
     farm_data["layout_y"] = np.zeros(5)
@@ -190,34 +190,34 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
 
     # Demonstrate a passing case
     farm_data = deepcopy(SampleInputs().farm)
-    farm_data["turbine_library_path"] = external_library
+    farm_data["external_turbine_library_path"] = external_library
     farm_data["turbine_type"] = ["nrel_5MW_custom"] * N_TURBINES
     farm = Farm.from_dict(farm_data)
-    assert farm.turbine_library_path == external_library
+    assert farm.external_turbine_library_path == external_library
 
     # Demonstrate a file not existing in the user library, but exists in the internal library, so
     # the loading is successful
-    farm_data["turbine_library_path"] = external_library
+    farm_data["external_turbine_library_path"] = external_library
     farm_data["turbine_type"] = ["iea_10MW"] * N_TURBINES
     farm = Farm.from_dict(farm_data)
     assert farm.turbine_definitions[0]["turbine_type"] == "iea_10MW"
 
     # Demonstrate a failing case with an incorrect library location
-    farm_data["turbine_library_path"] = external_library / "turbine_library_path"
+    farm_data["external_turbine_library_path"] = external_library / "turbine_library_path"
     with pytest.raises(FileExistsError):
         Farm.from_dict(farm_data)
 
     # Demonstrate a failing case where there is a duplicated turbine between the internal
     # and external turbine libraries
     farm_data = deepcopy(SampleInputs().farm)
-    farm_data["turbine_library_path"] = external_library
+    farm_data["external_turbine_library_path"] = external_library
     farm_data["turbine_type"] = ["nrel_5MW"] * N_TURBINES
     with pytest.raises(ValueError):
         Farm.from_dict(farm_data)
 
     # Demonstrate a failing case where there a turbine does not exist in either
     farm_data = deepcopy(SampleInputs().farm)
-    farm_data["turbine_library_path"] = external_library
+    farm_data["external_turbine_library_path"] = external_library
     farm_data["turbine_type"] = ["FAKE_TURBINE"] * N_TURBINES
     with pytest.raises(FileNotFoundError):
         Farm.from_dict(farm_data)

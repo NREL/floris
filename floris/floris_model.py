@@ -199,7 +199,7 @@ class FlorisModel(LoggingManager):
                 )
             farm_dict["turbine_type"] = turbine_type
         if turbine_library_path is not None:
-            farm_dict["turbine_library_path"] = turbine_library_path
+            farm_dict["external_turbine_library_path"] = turbine_library_path
 
         ## If layout is changed and self._wind_data is not None, update the layout in wind_data
         if (layout_x is not None) or (layout_y is not None):

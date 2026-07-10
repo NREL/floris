@@ -481,7 +481,7 @@ def optimize_power_setpoints(
 
     # If initial set point not provided, set to rated (assumed max) power
     if power_setpoint_initial is None:
-        max_power = fmodel.core.farm.turbine_map[0].power_thrust_table["power"].max() * 1000.0
+        max_power = fmodel.core.farm.turbines[0].power_thrust_table["power"].max() * 1000.0
         power_setpoint_initial = np.tile(max_power, (fmodel.n_findex, 1))
 
     # Initialize the test power setpoints

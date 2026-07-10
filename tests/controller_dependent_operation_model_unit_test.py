@@ -477,7 +477,7 @@ def test_CpCt_data_consistency():
         yaml_file = Path(__file__).resolve().parent / "data" / "input_full.yaml"
         fmodel = FlorisModel(configuration=yaml_file)
         fmodel.set(turbine_type=[turbine])
-        power_thrust_table = fmodel.core.farm.turbine_map[0].power_thrust_table
+        power_thrust_table = fmodel.core.farm.turbines[0].power_thrust_table
 
         tilt_angles_nom = power_thrust_table["ref_tilt"] * np.ones((N_test, n_turbines))
 

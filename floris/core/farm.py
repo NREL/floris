@@ -54,31 +54,31 @@ class Farm(BaseClass):
         turbine_type (list[dict | str]): A list of turbine definition dictionaries, or string
             references to the filename of the turbine type in either the FLORIS-provided turbine
             library (.../floris/turbine_library/), or a user-provided
-            :py:attr:`turbine_library_path`.
-        turbine_library_path (:obj:`str`): Either an absolute file path to the turbine library, or a
-            path relative to the file that is running the analysis.
+            :py:attr:`external_turbine_library_path`.
+        external_turbine_library_path (:obj:`str`): Either an absolute file path to the turbine
+            library, or a path relative to the file that is running the analysis.
     """
 
     layout_x: NDArrayFloat = field(converter=floris_array_converter)
     layout_y: NDArrayFloat = field(converter=floris_array_converter)
     # TODO: turbine_type should be immutable
+
+    # TODO: consolidate turbine_type, turbine_definitions, turbines, turbine_type_map
     turbine_type: List = field(validator=iter_validator(list, (dict, str)))
-    turbine_library_path: Path = field(
-        default=default_turbine_library_path, converter=convert_to_path
-    )
 
     turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
 
+    # TODO: Get from Turbine (turbines)
     turbine_thrust_coefficient_functions: Dict[str, Callable] = field(init=False, factory=list)
     turbine_axial_induction_functions: Dict[str, Callable] = field(init=False, factory=list)
 
+    turbine_power_functions: Dict[str, Callable] = field(init=False, factory=list)
+
     turbine_tilt_interps: dict[str, interp1d] = field(init=False, factory=dict)
 
+    # TODO: Collect into a ControlSetpoint class
     yaw_angles: NDArrayFloat = field(init=False)
     yaw_angles_sorted: NDArrayFloat = field(init=False)
-
-    tilt_angles: NDArrayFloat = field(init=False)
-    tilt_angles_sorted: NDArrayFloat = field(init=False)
 
     power_setpoints: NDArrayFloat = field(init=False)
     power_setpoints_sorted: NDArrayFloat = field(init=False)
@@ -92,22 +92,15 @@ class Farm(BaseClass):
     awc_frequencies: NDArrayFloat = field(init=False)
     awc_frequencies_sorted: NDArrayFloat = field(init=False)
 
+    # TODO: Get from turbines (not "controllable")
+    tilt_angles: NDArrayFloat = field(init=False)
+    tilt_angles_sorted: NDArrayFloat = field(init=False)
+
     hub_heights: NDArrayFloat = field(init=False)
     hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    turbine_map: List[Turbine] = field(init=False, factory=list)
-
-    turbine_type_map: NDArrayObject = field(init=False, factory=list)
-    turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
-
-    turbine_power_functions: Dict[str, Callable] = field(init=False, factory=list)
-    turbine_power_thrust_tables: Dict[str, dict] = field(init=False, factory=list)
-
     rotor_diameters: NDArrayFloat = field(init=False, factory=list)
     rotor_diameters_sorted: NDArrayFloat = field(init=False, factory=list)
-
-    TSRs: NDArrayFloat = field(init=False, factory=list)
-    TSRs_sorted: NDArrayFloat = field(init=False, factory=list)
 
     ref_tilts: NDArrayFloat = field(init=False, factory=list)
     ref_tilts_sorted: NDArrayFloat = field(init=False, factory=list)
@@ -115,9 +108,28 @@ class Farm(BaseClass):
     correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
     correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
+    # Is this now just going to set on the Turbine object? Think so.
+    turbine_power_thrust_tables: Dict[str, dict] = field(init=False, factory=list)
 
-    # Private attributes
+    # TODO: Turbine map: consolidate with turbine_definitions, turbine_type_map
+    turbines: List[Turbine] = field(init=False, factory=list)
+
+    turbine_type_map: NDArrayObject = field(init=False, factory=list)
+    turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
+
+    # TODO: Are these control_setpoints? What models need them, and when/how? What is the eventual
+    # use? Perhaps these are the "optimal" TSRs, which could be considered control setpoints, but
+    # dont affect power.
+    TSRs: NDArrayFloat = field(init=False, factory=list)
+    TSRs_sorted: NDArrayFloat = field(init=False, factory=list)
+
+    # Likely leave this on Farm as is
+    external_turbine_library_path: Path = field(
+        default=default_turbine_library_path, converter=convert_to_path
+    )
+    internal_turbine_library_path: Path = field(init=False, default=default_turbine_library_path)
+
+    # Private attributes. TODO: Do we still need these? Possibly.
     _turbine_types: List = field(init=False, validator=iter_validator(list, str), factory=list)
     _turbine_definition_cache: dict = field(init=False, factory=dict)
 
@@ -129,7 +141,7 @@ class Farm(BaseClass):
         #     library preprocessing the inputs and loading the specified file directly into
         #     the main input file. The result is that floris sees the turbine definition as a dict.
         # - A string selecting an turbine that exists in an external turbine library
-        #   specified in `turbine_library_path`
+        #   specified in `external_turbine_library_path`
 
         # Load all the turbine types into a cache to be mapped to specific turbine indices later.
         # This allows to read the yaml input files once rather than every time they're given.
@@ -152,7 +164,7 @@ class Farm(BaseClass):
                         )
                 self._turbine_definition_cache[t["turbine_type"]] = t
                 self._turbine_definition_cache[t["turbine_type"]]["turbine_library_path"] = (
-                    self.turbine_library_path
+                    self.external_turbine_library_path
                 )
 
             # If a turbine type is a string, then it is expected in the internal or external
@@ -162,14 +174,14 @@ class Farm(BaseClass):
                     continue # Skip t if already loaded
 
                 # Check if the file exists in the internal and/or external library
-                internal_fn = (self.internal_turbine_library / t).with_suffix(".yaml")
-                external_fn = (self.turbine_library_path / t).with_suffix(".yaml")
+                internal_fn = (self.internal_turbine_library_path / t).with_suffix(".yaml")
+                external_fn = (self.external_turbine_library_path / t).with_suffix(".yaml")
                 in_internal = internal_fn.exists()
                 in_external = external_fn.exists()
 
                 # If an external library is used and there's a duplicate of an internal
                 # definition, then raise an error
-                is_unique_path = self.turbine_library_path != default_turbine_library_path
+                is_unique_path = self.external_turbine_library_path != default_turbine_library_path
                 if is_unique_path and in_external and in_internal:
                     raise ValueError(
                         f"The turbine type: {t} exists in both the internal and external"
@@ -187,7 +199,7 @@ class Farm(BaseClass):
                     )
                 self._turbine_definition_cache[t] = load_yaml(full_path)
                 self._turbine_definition_cache[t]["turbine_library_path"] = (
-                    self.turbine_library_path
+                    self.external_turbine_library_path
                 )
 
         # Convert any dict entries in the turbine_type list to the type string. Since the
@@ -237,7 +249,7 @@ class Farm(BaseClass):
                 "alter the operation model before setting the layout."
             )
 
-    @turbine_library_path.validator
+    @external_turbine_library_path.validator
     def check_library_path(self, attribute: attrs.Attribute, value: Path) -> None:
         """Ensures that the input to `library_path` exists and is a directory."""
         if not value.is_dir():
@@ -295,38 +307,38 @@ class Farm(BaseClass):
 
     def construct_turbine_correct_cp_ct_for_tilt(self):
         self.correct_cp_ct_for_tilt = np.array(
-            [turb.correct_cp_ct_for_tilt for turb in self.turbine_map]
+            [turb.correct_cp_ct_for_tilt for turb in self.turbines]
         )
 
-    def construct_turbine_map(self):
-        turbine_map_unique = {
+    def construct_turbines(self):
+        turbines_unique = {
             k: Turbine.from_dict(v) for k, v in self._turbine_definition_cache.items()
         }
-        self.turbine_map = [turbine_map_unique[k] for k in self._turbine_types]
+        self.turbines = [turbines_unique[k] for k in self._turbine_types]
 
     def construct_turbine_thrust_coefficient_functions(self):
         self.turbine_thrust_coefficient_functions = {
-            turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbine_map
+            turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbines
         }
 
     def construct_turbine_axial_induction_functions(self):
         self.turbine_axial_induction_functions = {
-            turb.turbine_type: turb.axial_induction_function for turb in self.turbine_map
+            turb.turbine_type: turb.axial_induction_function for turb in self.turbines
         }
 
     def construct_turbine_tilt_interps(self):
         self.turbine_tilt_interps = {
-            turb.turbine_type: turb.tilt_interp for turb in self.turbine_map
+            turb.turbine_type: turb.tilt_interp for turb in self.turbines
         }
 
     def construct_turbine_power_functions(self):
         self.turbine_power_functions = {
-            turb.turbine_type: turb.power_function for turb in self.turbine_map
+            turb.turbine_type: turb.power_function for turb in self.turbines
         }
 
     def construct_turbine_power_thrust_tables(self):
         self.turbine_power_thrust_tables = {
-            turb.turbine_type: turb.power_thrust_table for turb in self.turbine_map
+            turb.turbine_type: turb.power_thrust_table for turb in self.turbines
         }
 
     def expand_farm_properties(self, n_findex: int, sorted_coord_indices):
