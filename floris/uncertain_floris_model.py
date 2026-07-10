@@ -963,10 +963,7 @@ class UncertainFlorisModel(LoggingManager):
         Returns:
             str: The operation_model.
         """
-        operation_models = [
-            self.fmodel_unexpanded.core.farm.turbine_definitions[tindex]["operation_model"]
-            for tindex in range(self.fmodel_unexpanded.core.farm.n_turbines)
-        ]
+        operation_models = [t.operation_model for t in self.fmodel_expanded.core.farm.turbines]
         if len(set(operation_models)) == 1:
             return operation_models[0]
         else:
@@ -981,10 +978,10 @@ class UncertainFlorisModel(LoggingManager):
         if isinstance(operation_model, str):
             if len(self.fmodel_unexpanded.core.farm.turbine_type) == 1:
                 # Set a single one here, then, and return
-                turbine_type = self.fmodel_unexpanded.core.farm.turbine_definitions[0]
-                turbine_type["operation_model"] = operation_model
+                turbine_dict = self.fmodel_unexpanded.core.farm.turbines[0].as_dict()
+                turbine_dict["operation_model"] = operation_model
                 self.set(
-                    turbine_type=[turbine_type],
+                    turbine_type=[turbine_dict],
                     reference_wind_height=self.reference_wind_height
                 )
                 return
@@ -996,16 +993,17 @@ class UncertainFlorisModel(LoggingManager):
                 "The length of the operation_model list must be " "equal to the number of turbines."
             )
 
-        turbine_type_list = self.fmodel_unexpanded.core.farm.turbine_definitions
+        turbine_dicts = [t.as_dict() for t in self.fmodel_unexpanded.core.farm.turbines]
 
         for tindex in range(self.fmodel_unexpanded.core.farm.n_turbines):
-            turbine_type_list[tindex]["turbine_type"] = (
-                turbine_type_list[tindex]["turbine_type"] + "_" + operation_model[tindex]
+            # TODO: Can we get rid of this renaming business? Is it still needed?
+            turbine_dicts[tindex]["turbine_type"] = (
+                turbine_dicts[tindex]["turbine_type"] + "_" + operation_model[tindex]
             )
-            turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
+            turbine_dicts[tindex]["operation_model"] = operation_model[tindex]
 
         self.set(
-            turbine_type=turbine_type_list,
+            turbine_type=turbine_dicts,
             reference_wind_height=self.reference_wind_height
         )
 

@@ -566,6 +566,7 @@ class Turbine(BaseClass):
     power_function: Callable = field(init=False)
     tilt_interp: interp1d = field(init=False, default=None)
     power_thrust_data_file: str = field(default=None)
+    ref_tilt: float = field(default=0.0, init=False)
 
     # Only used by mutlidimensional turbines
     turbine_library_path: Path = field(
@@ -588,6 +589,8 @@ class Turbine(BaseClass):
         if self.multi_dimensional_cp_ct:
             self._initialize_multidim_power_thrust_table()
             bypass_numeric_converter = True
+        else:
+            self.ref_tilt = self.power_thrust_table["ref_tilt"]
 
         # Check for whether a cp_ct_data_file is specified, and load it if so.
         if "controller_dependent_turbine_parameters" in self.power_thrust_table:
@@ -649,6 +652,7 @@ class Turbine(BaseClass):
     def _initialize_multidim_power_thrust_table(self):
         # Collect reference information
         power_thrust_table_ref = copy.deepcopy(self.power_thrust_table)
+        self.ref_tilt = power_thrust_table_ref["ref_tilt"]
         self.power_thrust_data_file = power_thrust_table_ref.pop("power_thrust_data_file")
 
         # Solidify the data file path and name

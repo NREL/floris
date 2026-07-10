@@ -14,7 +14,7 @@ from tests.conftest import (
 )
 
 
-def test_farm_init_homogenous_turbines():
+def test_farm_init_homogeneous_turbines():
     farm_data = SampleInputs().farm
     turbine_data = SampleInputs().turbine
 
@@ -77,7 +77,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data["layout_y"] = np.zeros(5)
     farm = Farm.from_dict(farm_data)
     assert len(farm.turbine_type) == 1
-    assert len(farm.turbine_definitions) == 5
+    assert len(farm.turbines) == 5
 
     # N definitions for M turbines
     farm_data = deepcopy(sample_inputs_fixture.farm)
@@ -94,7 +94,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data["layout_y"] = np.zeros(5)
     farm = Farm.from_dict(farm_data)
     assert len(farm.turbine_type) == 5
-    assert len(farm.turbine_definitions) == 5
+    assert len(farm.turbines) == 5
 
     # String not found in internal library
     farm_data = deepcopy(sample_inputs_fixture.farm)
@@ -113,7 +113,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data["layout_y"] = np.zeros(5)
     Farm.from_dict(farm_data)
     assert len(farm.turbine_type) == 5
-    assert len(farm.turbine_definitions) == 5
+    assert len(farm.turbines) == 5
 
     # Check that error is correctly raised if two turbines have the same name
     farm_data = deepcopy(sample_inputs_fixture.farm)
@@ -146,8 +146,8 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data["turbine_type"] = [turbine_def]*4 + [turbine_def_mod]
     farm = Farm.from_dict(farm_data)
     for i in range(4):
-        assert farm.turbine_definitions[i]["hub_height"] == turbine_def["hub_height"]
-    assert farm.turbine_definitions[-1]["hub_height"] == 100.0
+        assert farm.turbines[i].hub_height == turbine_def["hub_height"]
+    assert farm.turbines[-1].hub_height == 100.0
     farm.construct_turbines()
     for i in range(4):
         assert farm.turbines[i].hub_height == turbine_def["hub_height"]
@@ -171,7 +171,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data["turbine_type"] = ["nrel_5MW", turbine_def, "nrel_5MW", turbine_def, "nrel_5MW"]
     Farm.from_dict(farm_data)
     assert len(farm.turbine_type) == 5
-    assert len(farm.turbine_definitions) == 5
+    assert len(farm.turbines) == 5
 
     # 1 turbine as string from internal library, 1 turbine as string from external library
     farm_data = deepcopy(sample_inputs_fixture.farm)
@@ -182,7 +182,7 @@ def test_check_turbine_type(sample_inputs_fixture: SampleInputs):
     farm_data["layout_y"] = np.zeros(5)
     Farm.from_dict(farm_data)
     assert len(farm.turbine_type) == 5
-    assert len(farm.turbine_definitions) == 5
+    assert len(farm.turbines) == 5
 
 
 def test_farm_external_library(sample_inputs_fixture: SampleInputs):
@@ -200,7 +200,7 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     farm_data["external_turbine_library_path"] = external_library
     farm_data["turbine_type"] = ["iea_10MW"] * N_TURBINES
     farm = Farm.from_dict(farm_data)
-    assert farm.turbine_definitions[0]["turbine_type"] == "iea_10MW"
+    assert farm.turbines[0].turbine_type == "iea_10MW"
 
     # Demonstrate a failing case with an incorrect library location
     farm_data["external_turbine_library_path"] = external_library / "turbine_library_path"

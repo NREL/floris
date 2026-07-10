@@ -1568,10 +1568,7 @@ class FlorisModel(LoggingManager):
         Returns:
             str: The operation_model.
         """
-        operation_models = [
-            self.core.farm.turbine_definitions[tindex]["operation_model"]
-            for tindex in range(self.core.farm.n_turbines)
-        ]
+        operation_models = [t.operation_model for t in self.core.farm.turbines]
         if len(set(operation_models)) == 1:
             return operation_models[0]
         else:
@@ -1586,10 +1583,10 @@ class FlorisModel(LoggingManager):
         if isinstance(operation_model, str):
             if len(self.core.farm.turbine_type) == 1:
                 # Set a single one here, then, and return
-                turbine_type = self.core.farm.turbine_definitions[0]
-                turbine_type["operation_model"] = operation_model
+                turbine_dict = self.core.farm.turbines[0].as_dict()
+                turbine_dict["operation_model"] = operation_model
                 self.set(
-                    turbine_type=[turbine_type],
+                    turbine_type=[turbine_dict],
                     reference_wind_height=self.reference_wind_height
                 )
                 return
@@ -1602,16 +1599,17 @@ class FlorisModel(LoggingManager):
                     "equal to the number of turbines."
                 )
 
-        turbine_type_list = self.core.farm.turbine_definitions
+        turbine_dicts = [t.as_dict() for t in self.core.farm.turbines]
 
         for tindex in range(self.core.farm.n_turbines):
-            turbine_type_list[tindex]["turbine_type"] = (
-                turbine_type_list[tindex]["turbine_type"]+"_"+operation_model[tindex]
+            # TODO: Can we get rid of this whole renaming business? Is it still needed?
+            turbine_dicts[tindex]["turbine_type"] = (
+                turbine_dicts[tindex]["turbine_type"]+"_"+operation_model[tindex]
             )
-            turbine_type_list[tindex]["operation_model"] = operation_model[tindex]
+            turbine_dicts[tindex]["operation_model"] = operation_model[tindex]
 
         self.set(
-            turbine_type=turbine_type_list,
+            turbine_type=turbine_dicts,
             reference_wind_height=self.reference_wind_height
         )
 

@@ -154,8 +154,8 @@ class Core(BaseClass):
             )
 
         operation_model_awc = False
-        for td in self.farm.turbine_definitions:
-            if "operation_model" in td and td["operation_model"] == "awc":
+        for t in self.farm.turbines:
+            if t.operation_model == "awc":
                 operation_model_awc = True
         if vel_model != "empirical_gauss" and operation_model_awc:
             self.logger.warning(

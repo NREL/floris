@@ -66,8 +66,6 @@ class Farm(BaseClass):
     # TODO: consolidate turbine_type, turbine_definitions, turbines, turbine_type_map
     turbine_type: List = field(validator=iter_validator(list, (dict, str)))
 
-    turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
-
     # TODO: Get from Turbine (turbines)
     turbine_thrust_coefficient_functions: Dict[str, Callable] = field(init=False, factory=list)
     turbine_axial_induction_functions: Dict[str, Callable] = field(init=False, factory=list)
@@ -224,10 +222,7 @@ class Farm(BaseClass):
         for _, v in self._turbine_definition_cache.items():
             check_turbine_definition_for_v3_keys(v)
 
-        # Map each turbine definition to its index in this list
-        self.turbine_definitions = [
-            copy.deepcopy(self._turbine_definition_cache[t]) for t in self._turbine_types
-        ]
+        self.construct_turbines()
 
     @layout_x.validator
     def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
@@ -290,19 +285,17 @@ class Farm(BaseClass):
         self.state = State.INITIALIZED
 
     def construct_hub_heights(self):
-        self.hub_heights = np.array([turb['hub_height'] for turb in self.turbine_definitions])
+        self.hub_heights = np.array([t.hub_height for t in self.turbines])
 
     def construct_rotor_diameters(self):
-        self.rotor_diameters = np.array([
-            turb['rotor_diameter'] for turb in self.turbine_definitions
-        ])
+        self.rotor_diameters = np.array([t.rotor_diameter for t in self.turbines])
 
     def construct_turbine_TSRs(self):
-        self.TSRs = np.array([turb['TSR'] for turb in self.turbine_definitions])
+        self.TSRs = np.array([t.TSR for t in self.turbines])
 
     def construct_turbine_ref_tilts(self):
         self.ref_tilts = np.array(
-            [turb['power_thrust_table']['ref_tilt'] for turb in self.turbine_definitions]
+            [t.ref_tilt for t in self.turbines]
         )
 
     def construct_turbine_correct_cp_ct_for_tilt(self):
@@ -377,7 +370,7 @@ class Farm(BaseClass):
         )
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(
-                [turb["turbine_type"] for turb in self.turbine_definitions] * n_findex,
+                [t.turbine_type for t in self.turbines] * n_findex,
                 np.shape(sorted_coord_indices)
             ),
             sorted_coord_indices,
@@ -446,41 +439,7 @@ class Farm(BaseClass):
         return tilt_angles
 
     def finalize(self, unsorted_indices):
-        self.yaw_angles = np.take_along_axis(
-            self.yaw_angles_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.tilt_angles = np.take_along_axis(
-            self.tilt_angles_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.hub_heights = np.take_along_axis(
-            self.hub_heights_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.rotor_diameters = np.take_along_axis(
-            self.rotor_diameters_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.TSRs = np.take_along_axis(
-            self.TSRs_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.ref_tilts = np.take_along_axis(
-            self.ref_tilts_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.correct_cp_ct_for_tilt = np.take_along_axis(
-            self.correct_cp_ct_for_tilt_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
+        # TODO: Why does turbine_type_map need to be reshaped?
         self.turbine_type_map = np.take_along_axis(
             self.turbine_type_map_sorted,
             unsorted_indices[:,:,0,0],
