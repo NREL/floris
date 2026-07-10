@@ -1,4 +1,5 @@
 
+import importlib
 from abc import abstractmethod
 from enum import Enum
 from typing import (
@@ -63,3 +64,27 @@ class BaseModel(BaseClass):
     @abstractmethod
     def function() -> None:
         raise NotImplementedError("BaseModel.function")
+
+@define
+class BaseLibrary(BaseClass):
+    """
+    Base class that writes the name and module of the class into the attrs dictionary.
+    """
+    __classinfo__: dict = {"module": "", "name": ""}
+    def __attrs_post_init__(self) -> None:
+        self.__classinfo__ = {
+            "module": type(self).__module__,
+            "name": type(self).__name__
+        }
+
+    @staticmethod
+    def from_dict(data_dict):
+        """Recreate instance from dictionary with class information"""
+        data_noinfo = data_dict.copy()
+        class_info = data_noinfo.pop("__classinfo__")
+
+        # Import the module and get the class
+        module = importlib.import_module(class_info["module"])
+        cls = getattr(module, class_info["name"])
+
+        return cls(**data_noinfo)

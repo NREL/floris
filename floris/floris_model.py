@@ -12,6 +12,7 @@ import pandas as pd
 
 from floris.core import Core, State
 from floris.core.rotor_velocity import average_velocity
+from floris.core.turbine import BaseOperationModel
 from floris.core.turbine.operation_models import (
     POWER_SETPOINT_DEFAULT,
     POWER_SETPOINT_DISABLED,
@@ -1014,7 +1015,7 @@ class FlorisModel(LoggingManager):
             turbine_weights=turbine_weights
         ) * hours_per_year
 
-    def get_turbine_ais(self) -> NDArrayFloat:
+    def get_turbine_axial_induction_factors(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
             velocities=self.core.flow_field.u,
             turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
@@ -1562,25 +1563,29 @@ class FlorisModel(LoggingManager):
 
         self.core.flow_field.reference_wind_height = unique_heights[0]
 
-    def get_operation_model(self) -> str:
+    def get_operation_model(self) -> list[BaseOperationModel]:
         """Get the operation model of a FlorisModel.
 
         Returns:
-            str: The operation_model.
+            list[BaseOperationModel]: The operation_model instance for each turbine.
         """
-        operation_models = [t.operation_model for t in self.core.farm.turbines]
-        if len(set(operation_models)) == 1:
-            return operation_models[0]
-        else:
-            return operation_models
+        return [t.operation_model for t in self.core.farm.turbines]
 
-    def set_operation_model(self, operation_model: str | List[str]):
+    def set_operation_model(
+        self,
+        operation_model: BaseOperationModel | str | List[BaseOperationModel | str]
+    ):
         """Set the turbine operation model(s).
 
+        Can be provided either as a string representing one of the built-in operation
+        models, or as a custom operation model object that inherits from
+        :py:class:`~.turbine_operation.BaseOperationModel`. Also, a list of operation
+        models can be provided to set different operation models for each turbine.
+
         Args:
-            operation_model (str): The operation model to set.
+            operation_model (str, BaseOperationModel, list): The operation model to set.
         """
-        if isinstance(operation_model, str):
+        if (not isinstance(operation_model, (list, np.ndarray))):
             if len(self.core.farm.turbine_type) == 1:
                 # Set a single one here, then, and return
                 turbine_dict = self.core.farm.turbines[0].as_dict()
@@ -1599,14 +1604,15 @@ class FlorisModel(LoggingManager):
                     "equal to the number of turbines."
                 )
 
-        turbine_dicts = [t.as_dict() for t in self.core.farm.turbines]
+        # Proceed to update turbine definitions
+        turbine_dicts = self.core.farm.turbines
 
         for tindex in range(self.core.farm.n_turbines):
-            # TODO: Can we get rid of this whole renaming business? Is it still needed?
-            turbine_dicts[tindex]["turbine_type"] = (
-                turbine_dicts[tindex]["turbine_type"]+"_"+operation_model[tindex]
+            import ipdb; ipdb.set_trace()
+            turbine_dicts[tindex].turbine_type = (
+                turbine_dicts[tindex].turbine_type+"_"+str(operation_model[tindex])
             )
-            turbine_dicts[tindex]["operation_model"] = operation_model[tindex]
+            turbine_dicts[tindex].operation_model = operation_model[tindex]
 
         self.set(
             turbine_type=turbine_dicts,

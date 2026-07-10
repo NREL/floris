@@ -1,4 +1,5 @@
 import copy
+import inspect
 import logging
 import os
 from collections.abc import Callable, Iterable
@@ -9,9 +10,10 @@ import numpy as np
 from attrs import define, field
 from scipy.interpolate import interp1d
 
-from floris.core import BaseClass
+from floris.core import BaseClass, BaseLibrary
 from floris.core.turbine import (
     AWCTurbine,
+    BaseOperationModel,
     ControllerDependentTurbine,
     CosineLossTurbine,
     MixedOperationTurbine,
@@ -503,6 +505,46 @@ def axial_induction(
     return axial_induction
 
 
+def _op_model_converter(operation_model):
+    # If operation_model is an instantiated class, return it
+    if isinstance(operation_model, BaseOperationModel):
+        return operation_model
+
+    # If operation_model is an uninstantiated class with only static methods, instantiate it
+    elif isinstance(operation_model, type) and issubclass(operation_model, BaseOperationModel):
+        # Check if all methods are static
+        if all(
+            isinstance(inspect.getattr_static(operation_model, method), staticmethod)
+            for method in ["power", "thrust_coefficient", "axial_induction"]
+        ):
+            return operation_model()
+        else:
+            raise TypeError(
+                "operation_model must be an instantiated BaseOperationModel or a subclass "
+                "with only static methods."
+            )
+
+    # If operation_model is a string, instantiate from TURBINE_MODEL_MAP
+    elif isinstance(operation_model, str):
+        if operation_model not in TURBINE_MODEL_MAP["operation_model"]:
+            valid_models = list(TURBINE_MODEL_MAP["operation_model"].keys())
+            raise ValueError(
+                f"Unknown operation model '{operation_model}'. "
+                f"Expected one of {valid_models}."
+            )
+        return TURBINE_MODEL_MAP["operation_model"][operation_model]()
+
+    # Handle dict representation of an operation model
+    elif isinstance(operation_model, dict):
+        return BaseLibrary.from_dict(operation_model)
+
+    # Otherwise, raise an error
+    else:
+        raise TypeError(
+            "operation_model must be a BaseOperationModel instance, "
+            "a BaseOperationModel subclass, or a valid operation-model string."
+        )
+
 @define
 class Turbine(BaseClass):
     """
@@ -533,6 +575,9 @@ class Turbine(BaseClass):
                     defined.
                 ref_tilt (float): The implicit tilt of the turbine for which the Cp and Ct
                     curves are defined. This is typically the nacelle tilt.
+        operation_model (str | BaseOperationModel): The turbine operation model to use for this
+            turbine. This can be given as a string corresponding to one of the provided operation
+            models, or a custom operation model defined as a subclass of BaseOperationModel.
         correct_cp_ct_for_tilt (bool): A flag to indicate whether to correct Cp and Ct for tilt
             usually for a floating turbine.
             Optional, defaults to False.
@@ -551,7 +596,10 @@ class Turbine(BaseClass):
     hub_height: float = field()
     TSR: float = field()
     power_thrust_table: dict = field(default={}) # conversion to numpy in __post_init__
-    operation_model: str = field(default="cosine-loss")
+    operation_model: BaseOperationModel = field(
+        default=CosineLossTurbine(),
+        converter=_op_model_converter
+    )
 
     correct_cp_ct_for_tilt: bool = field(default=False)
     floating_tilt_table: dict[str, NDArrayFloat] | None = field(default=None)
@@ -606,26 +654,13 @@ class Turbine(BaseClass):
             }
             bypass_numeric_converter = True
 
-        # Raise warning if "demo" in the cp_ct data file name
-        if (
-            self.operation_model in ["controller-dependent"]
-            and "demo" in self.power_thrust_table["controller_dependent_turbine_parameters"]
-                                                 ["cp_ct_data_file"]
-        ):
-            self.logger.warning(
-                "Cp/Ct data provided with FLORIS is for demonstration purposes only,"
-                " and may not accurately reflect the actual Cp/Ct surfaces of reference wind"
-                " turbines."
-            )
-
         if not bypass_numeric_converter:
             self.power_thrust_table = floris_numeric_dict_converter(self.power_thrust_table)
 
     def _initialize_power_thrust_functions(self) -> None:
-        turbine_function_model = TURBINE_MODEL_MAP["operation_model"][self.operation_model]
-        self.thrust_coefficient_function = turbine_function_model.thrust_coefficient
-        self.axial_induction_function = turbine_function_model.axial_induction
-        self.power_function = turbine_function_model.power
+        self.thrust_coefficient_function = self.operation_model.thrust_coefficient
+        self.axial_induction_function = self.operation_model.axial_induction
+        self.power_function = self.operation_model.power
 
 
     def _initialize_tilt_interpolation(self) -> None:
@@ -793,4 +828,16 @@ class Turbine(BaseClass):
         if self.correct_cp_ct_for_tilt and self.floating_tilt_table is None:
             raise ValueError(
                 "To enable the Cp and Ct tilt correction, a tilt table must be given."
+            )
+
+    @operation_model.validator
+    def _op_model_validator(self, instance: attrs.Attribute, value):
+        if (isinstance(value, ControllerDependentTurbine)
+            and "demo" in
+            self.power_thrust_table["controller_dependent_turbine_parameters"]["cp_ct_data_file"]
+        ):
+            self.logger.warning(
+                "Cp/Ct data provided with FLORIS is for demonstration purposes only,"
+                " and may not accurately reflect the actual Cp/Ct surfaces of reference wind"
+                " turbines."
             )

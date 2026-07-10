@@ -9,6 +9,7 @@ import numpy as np
 
 from floris import FlorisModel
 from floris.core import average_velocity, State
+from floris.core.turbine import BaseOperationModel
 from floris.logging_manager import LoggingManager
 from floris.par_floris_model import ParFlorisModel
 from floris.type_dec import (
@@ -957,17 +958,13 @@ class UncertainFlorisModel(LoggingManager):
 
         return weights
 
-    def get_operation_model(self) -> str:
+    def get_operation_model(self) -> list[BaseOperationModel]:
         """Get the operation model of a FlorisModel.
 
         Returns:
-            str: The operation_model.
+            list[BaseOperationModel]: The operation_model instance(s).
         """
-        operation_models = [t.operation_model for t in self.fmodel_expanded.core.farm.turbines]
-        if len(set(operation_models)) == 1:
-            return operation_models[0]
-        else:
-            return operation_models
+        return [t.operation_model for t in self.fmodel_expanded.core.farm.turbines]
 
     def set_operation_model(self, operation_model: str | List[str]):
         """Set the turbine operation model(s).
