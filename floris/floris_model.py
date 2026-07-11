@@ -1605,14 +1605,13 @@ class FlorisModel(LoggingManager):
                 )
 
         # Proceed to update turbine definitions
-        turbine_dicts = self.core.farm.turbines
+        turbine_dicts = [t.as_dict() for t in self.core.farm.turbines]
 
         for tindex in range(self.core.farm.n_turbines):
-            import ipdb; ipdb.set_trace()
-            turbine_dicts[tindex].turbine_type = (
-                turbine_dicts[tindex].turbine_type+"_"+str(operation_model[tindex])
+            turbine_dicts[tindex]["turbine_type"] = (
+                turbine_dicts[tindex]["turbine_type"]+"_"+str(operation_model[tindex])
             )
-            turbine_dicts[tindex].operation_model = operation_model[tindex]
+            turbine_dicts[tindex]["operation_model"] = operation_model[tindex]
 
         self.set(
             turbine_type=turbine_dicts,
