@@ -1,6 +1,7 @@
 from floris.core.turbine.operation_model_base import BaseOperationModel
 from floris.core.turbine.operation_models import (
     AWCTurbine,
+    BaseOperationModel,
     CosineLossTurbine,
     MixedOperationTurbine,
     PeakShavingTurbine,

@@ -1,3 +1,4 @@
+import inspect
 import copy
 import inspect
 import logging
@@ -49,7 +50,7 @@ TURBINE_MODEL_MAP = {
 }
 
 
-def _select_multidim_condition(
+def select_multidim_condition(
     condition: dict,
     specified_conditions: Iterable[tuple],
     condition_keys: list[str],
@@ -119,22 +120,20 @@ def _select_multidim_condition(
 
 
 def power(
+    turbines: list, # list[Turbine], but circular import problems I need to sort out.
     velocities: NDArrayFloat,
     turbulence_intensities: NDArrayFloat,
     air_density: float,
-    power_functions: dict[str, Callable],
     yaw_angles: NDArrayFloat,
-    tilt_angles: NDArrayFloat,
+    tilt_angles: NDArrayFloat, # From turbines? Maybe
     power_setpoints: NDArrayFloat,
     awc_modes: NDArrayStr,
     awc_amplitudes: NDArrayFloat,
-    tilt_interps: dict[str, interp1d],
-    turbine_type_map: NDArrayObject,
-    turbine_power_thrust_tables: dict,
-    ix_filter: NDArrayInt | Iterable[int] | None = None,
-    average_method: str = "cubic-mean",
-    cubature_weights: NDArrayFloat | None = None,
-    correct_cp_ct_for_tilt: bool = False,
+    turbine_type_map: NDArrayObject, # May still need this, but think on best form for it
+    ix_filter: NDArrayInt | Iterable[int] | None = None, # Not sure I'll need this, we'll see. Could just apply to the type map?
+    average_method: str = "cubic-mean", # From turbine?
+    cubature_weights: NDArrayFloat | None = None, # From turbine? No.
+    correct_cp_ct_for_tilt: bool = False, # From turbine?
     multidim_condition: dict | None = None,
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
@@ -158,11 +157,8 @@ def power(
             and "helix" are implemented).
         awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
             turbine [deg].
-        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
-            turbine.
         turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
             each turbine.
-        turbine_power_thrust_tables: Reference data for the power and thrust representation
         ix_filter (NDArrayInt, optional): The boolean array, or
             integer indices to filter out before calculation. Defaults to None.
         average_method (str, optional): The method for averaging over turbine rotor points
@@ -176,6 +172,9 @@ def power(
     Returns:
         NDArrayFloat: The power, in Watts, for each turbine after adjusting for yaw and tilt.
     """
+
+    # Note: will only have one, if turbine_type is the same for all turbines.
+    turbine_dict = {t.turbine_type: t for t in turbines}
 
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
@@ -213,33 +212,32 @@ def power(
     p = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
-        if "power" in turbine_power_thrust_tables[turb_type]:  # Not multidimensional
-            power_thrust_table = turbine_power_thrust_tables[turb_type]
-
-            power_model_kwargs["power_thrust_table"] = power_thrust_table
-            power_model_kwargs["tilt_interp"] = tilt_interps[turb_type]
-
+        power_model_kwargs["tilt_interp"] = turbine_dict[turb_type].tilt_interp
+        if "power" in turbine_dict[turb_type].power_thrust_table: # Not multidimensional
+            # TODO: consider saving power_thrust_table as an attribute of the Op Model, so we
+            # don't need to pass it.
+            power_model_kwargs["power_thrust_table"] = turbine_dict[turb_type].power_thrust_table
             p += (
-                power_functions[turb_type](**power_model_kwargs)
+                turbine_dict[turb_type].operation_model.power(**power_model_kwargs)
                 * (turbine_type_map == turb_type)
             )
         else: # Multidimensional
-            md_conditions, md_conditions_map = _select_multidim_condition(
+            md_conditions, md_conditions_map = select_multidim_condition(
                 multidim_condition,
-                [k for k in turbine_power_thrust_tables[turb_type].keys() if k != "condition_keys"],
-                turbine_power_thrust_tables[turb_type]["condition_keys"],
+                [k for k in turbine_dict[turb_type].power_thrust_table.keys()
+                 if k != "condition_keys"],
+                turbine_dict[turb_type].power_thrust_table["condition_keys"],
                 velocities.shape[0],
             )
 
             # Loop over conditions and mask onto power
             for i, md_cond in enumerate(md_conditions):
-                power_thrust_table = turbine_power_thrust_tables[turb_type][tuple(md_cond)]
-
-                power_model_kwargs["power_thrust_table"] = power_thrust_table
-                power_model_kwargs["tilt_interp"] = tilt_interps[turb_type]
+                power_model_kwargs["power_thrust_table"] = (
+                    turbine_dict[turb_type].power_thrust_table[tuple(md_cond)]
+                )
 
                 p += (
-                    power_functions[turb_type](**power_model_kwargs)
+                    turbine_dict[turb_type].operation_model.power(**power_model_kwargs)
                     * (turbine_type_map == turb_type)
                     * (md_conditions_map[:, None] == i)
                 )
@@ -355,7 +353,7 @@ def thrust_coefficient(
                 * (turbine_type_map == turb_type)
             )
         else: # Multidimensional
-            md_conditions, md_conditions_map = _select_multidim_condition(
+            md_conditions, md_conditions_map = select_multidim_condition(
                 multidim_condition,
                 [k for k in turbine_power_thrust_tables[turb_type].keys() if k != "condition_keys"],
                 turbine_power_thrust_tables[turb_type]["condition_keys"],
@@ -482,7 +480,7 @@ def axial_induction(
                 * (turbine_type_map == turb_type)
             )
         else: # Multidimensional
-            md_conditions, md_conditions_map = _select_multidim_condition(
+            md_conditions, md_conditions_map = select_multidim_condition(
                 multidim_condition,
                 [k for k in turbine_power_thrust_tables[turb_type].keys() if k != "condition_keys"],
                 turbine_power_thrust_tables[turb_type]["condition_keys"],
@@ -504,6 +502,85 @@ def axial_induction(
 
     return axial_induction
 
+def _op_model_converter(operation_model):
+    # If operation_model is an instantiated class, return it
+    if isinstance(operation_model, BaseOperationModel):
+        return operation_model
+
+    # If operation_model is an uninstantiated class with only static methods, instantiate it
+    elif isinstance(operation_model, type) and issubclass(operation_model, BaseOperationModel):
+        # Check if all methods are static
+        if all(
+            isinstance(inspect.getattr_static(operation_model, method), staticmethod)
+            for method in ["power", "thrust_coefficient", "axial_induction"]
+        ):
+            return operation_model()
+        else:
+            raise TypeError(
+                "operation_model must be an instantiated BaseOperationModel or a subclass "
+                "with only static methods."
+            )
+
+    # If operation_model is a string, instantiate from TURBINE_MODEL_MAP
+    elif isinstance(operation_model, str):
+        if operation_model not in TURBINE_MODEL_MAP["operation_model"]:
+            valid_models = list(TURBINE_MODEL_MAP["operation_model"].keys())
+            raise ValueError(
+                f"Unknown operation model '{operation_model}'. "
+                f"Expected one of {valid_models}."
+            )
+        return TURBINE_MODEL_MAP["operation_model"][operation_model]()
+
+    # Handle dict representation of an operation model
+    elif isinstance(operation_model, dict):
+        return BaseLibrary.from_dict(operation_model)
+
+    # Otherwise, raise an error
+    else:
+        raise TypeError(
+            "operation_model must be a BaseOperationModel instance, "
+            "a BaseOperationModel subclass, or a valid operation-model string."
+        )
+
+def _op_model_converter(operation_model):
+    # If operation_model is an instantiated class, return it
+    if isinstance(operation_model, BaseOperationModel):
+        return operation_model
+
+    # If operation_model is an uninstantiated class with only static methods, instantiate it
+    elif isinstance(operation_model, type) and issubclass(operation_model, BaseOperationModel):
+        # Check if all methods are static
+        if all(
+            isinstance(inspect.getattr_static(operation_model, method), staticmethod)
+            for method in ["power", "thrust_coefficient", "axial_induction"]
+        ):
+            return operation_model()
+        else:
+            raise TypeError(
+                "operation_model must be an instantiated BaseOperationModel or a subclass "
+                "with only static methods."
+            )
+
+    # If operation_model is a string, instantiate from TURBINE_MODEL_MAP
+    elif isinstance(operation_model, str):
+        if operation_model not in TURBINE_MODEL_MAP["operation_model"]:
+            valid_models = list(TURBINE_MODEL_MAP["operation_model"].keys())
+            raise ValueError(
+                f"Unknown operation model '{operation_model}'. "
+                f"Expected one of {valid_models}."
+            )
+        return TURBINE_MODEL_MAP["operation_model"][operation_model]()
+
+    # Handle dict representation of an operation model
+    elif isinstance(operation_model, dict):
+        return BaseLibrary.from_dict(operation_model)
+
+    # Otherwise, raise an error
+    else:
+        raise TypeError(
+            "operation_model must be a BaseOperationModel instance, "
+            "a BaseOperationModel subclass, or a valid operation-model string."
+        )
 
 def _op_model_converter(operation_model):
     # If operation_model is an instantiated class, return it

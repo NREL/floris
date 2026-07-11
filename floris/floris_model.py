@@ -553,16 +553,15 @@ class FlorisModel(LoggingManager):
             self.logger.warning("Some velocities at the rotor are negative.")
 
         turbine_powers = power(
+            turbines=self.core.farm.turbines,
             velocities=self.core.flow_field.u,
             turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
-            power_functions=self.core.farm.turbine_power_functions,
             yaw_angles=self.core.farm.yaw_angles,
             tilt_angles=self.core.farm.tilt_angles,
             power_setpoints=self.core.farm.power_setpoints,
             awc_modes = self.core.farm.awc_modes,
             awc_amplitudes=self.core.farm.awc_amplitudes,
-            tilt_interps=self.core.farm.turbine_tilt_interps,
             turbine_type_map=self.core.farm.turbine_type_map,
             turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
             correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
