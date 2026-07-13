@@ -77,7 +77,13 @@ class GaussVelocityDeficit(BaseModel):
         u0 = u_initial * np.sqrt(1 - ct_i)
 
         # Initial lateral bounds
-        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(uR / (u_initial + u0))
+        # Guard against the zero-inflow case (u_initial == 0), where uR and u0 are
+        # both zero and the ratio would be 0/0 = NaN. A zero inflow produces zero
+        # wake, so the initial wake width is zero there.
+        u_sum = u_initial + u0
+        sigma_z0 = rotor_diameter_i * 0.5 * np.sqrt(
+            np.divide(uR, u_sum, out=np.zeros_like(u_sum), where=u_sum > 0.0)
+        )
         sigma_y0 = sigma_z0 * cosd(yaw_angle) * cosd(wind_veer)
 
         # Compute the bounds of the near and far wake regions and a mask
