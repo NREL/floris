@@ -563,8 +563,6 @@ class FlorisModel(LoggingManager):
             awc_modes = self.core.farm.awc_modes,
             awc_amplitudes=self.core.farm.awc_amplitudes,
             turbine_type_map=self.core.farm.turbine_type_map,
-            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
-            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
             multidim_condition=self.core.flow_field.multidim_conditions,
         )
         return turbine_powers

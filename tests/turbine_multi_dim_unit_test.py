@@ -135,18 +135,16 @@ def test_power():
     # Single turbine
     wind_speed = 10.0
     p = power(
+        turbines=[turbine] * N_TURBINES,
         velocities=wind_speed * np.ones((1, 1, 3, 3)),
         turbulence_intensities=0.06 * np.ones((1, 1, 3, 3)),
         air_density=AIR_DENSITY,
-        power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, 1)), # 1 findex, 1 turbine
         tilt_angles=turbine.power_thrust_table[condition_tuple]["ref_tilt"] * np.ones((1, 1)),
         power_setpoints=np.ones((1, 1)) * POWER_SETPOINT_DEFAULT,
         awc_modes=np.array([["baseline"]*N_TURBINES]*1),
         awc_amplitudes=np.zeros((1, 1)),
-        tilt_interps={turbine.turbine_type: turbine.tilt_interp},
         turbine_type_map=turbine_type_map[:,0],
-        turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
         multidim_condition=condition,
     )
 
@@ -157,22 +155,20 @@ def test_power():
     # Multiple turbines with ix filter
     velocities = np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST
     p = power(
+        turbines=[turbine] * N_TURBINES,
         velocities=np.ones((N_TURBINES, 3, 3)) * WIND_CONDITION_BROADCAST,  # 16 x 4 x 3 x 3
         turbulence_intensities=(
             0.06 * np.ones((N_TURBINES, 3, 3))
             * np.ones_like(WIND_CONDITION_BROADCAST)
         ),
         air_density=AIR_DENSITY,
-        power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((1, N_TURBINES)),
         tilt_angles=np.ones((1, N_TURBINES)) * 5.0,
         power_setpoints=np.ones((1, N_TURBINES)) * POWER_SETPOINT_DEFAULT,
         awc_modes=np.array([["baseline"]*N_TURBINES]*1),
         awc_amplitudes=np.zeros((1, N_TURBINES)),
-        tilt_interps={turbine.turbine_type: turbine.tilt_interp},
         turbine_type_map=turbine_type_map,
         ix_filter=INDEX_FILTER,
-        turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
         multidim_condition=condition
     )
     assert len(p[0]) == len(INDEX_FILTER)
@@ -310,10 +306,10 @@ def test_multiple_conditions():
     assert np.allclose(ai, 0.26551081)
 
     p = power(
+        turbines=[turbine] * N_TURBINES,
         velocities=wind_speed * np.ones((N_CONDITIONS, N_TURBINES, 3, 3)),
         turbulence_intensities=0.06 * np.ones((N_CONDITIONS, N_TURBINES, 3, 3)),
         air_density=1.225,
-        power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((N_CONDITIONS, N_TURBINES)),
         tilt_angles=turbine.power_thrust_table[(2,1)]["ref_tilt"] * np.ones(
             (N_CONDITIONS, N_TURBINES)
@@ -321,11 +317,8 @@ def test_multiple_conditions():
         power_setpoints=np.ones((N_CONDITIONS, N_TURBINES)) * POWER_SETPOINT_DEFAULT,
         awc_modes=np.array([["baseline"]*N_TURBINES]*N_CONDITIONS),
         awc_amplitudes=np.zeros((N_CONDITIONS, N_TURBINES)),
-        tilt_interps={turbine.turbine_type: turbine.tilt_interp},
         turbine_type_map=turbine_type_map,
-        turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
         multidim_condition=conditions,
-        correct_cp_ct_for_tilt=np.zeros((N_CONDITIONS, N_TURBINES), dtype=bool)
     )
     assert np.allclose(p, 12424759.67683091)
 
@@ -368,10 +361,10 @@ def test_multiple_conditions():
     assert np.allclose(ai, np.array([[0.26551081], [0.02498745]]))
 
     p = power(
+        turbines=[turbine]*N_TURBINES,
         velocities=wind_speed * np.ones((N_CONDITIONS, N_TURBINES, 3, 3)),
         turbulence_intensities=0.06 * np.ones((N_CONDITIONS, N_TURBINES, 3, 3)),
         air_density=1.225,
-        power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((N_CONDITIONS, N_TURBINES)),
                 tilt_angles=turbine.power_thrust_table[(2,1)]["ref_tilt"] * np.ones(
             (N_CONDITIONS, N_TURBINES)
@@ -379,9 +372,7 @@ def test_multiple_conditions():
         power_setpoints=np.ones((N_CONDITIONS, N_TURBINES)) * POWER_SETPOINT_DEFAULT,
         awc_modes=np.array([["baseline"]*N_TURBINES]*N_CONDITIONS),
         awc_amplitudes=np.zeros((N_CONDITIONS, N_TURBINES)),
-        tilt_interps={turbine.turbine_type: turbine.tilt_interp},
         turbine_type_map=turbine_type_map,
-        turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
         multidim_condition=conditions,
     )
     assert np.allclose(p, np.array([[12424759.67683091], [ 1553094.95985386]]))
@@ -426,10 +417,10 @@ def test_multiple_conditions():
     assert np.allclose(ai, np.array([[0.26551081], [0.2118128]]))
 
     p = power(
+        turbines=[turbine]*N_TURBINES,
         velocities=np.tile(wind_speeds[:,None,None,None], (1, N_TURBINES, 3, 3)),
         turbulence_intensities=0.06 * np.ones((N_CONDITIONS, N_TURBINES, 3, 3)),
         air_density=1.225,
-        power_functions={turbine.turbine_type: turbine.power_function},
         yaw_angles=np.zeros((N_CONDITIONS, N_TURBINES)),
         tilt_angles=turbine.power_thrust_table[(2,1)]["ref_tilt"] * np.ones(
             (N_CONDITIONS, N_TURBINES)
@@ -437,9 +428,7 @@ def test_multiple_conditions():
         power_setpoints=np.ones((N_CONDITIONS, N_TURBINES)) * POWER_SETPOINT_DEFAULT,
         awc_modes=np.array([["baseline"]*N_TURBINES]*N_CONDITIONS),
         awc_amplitudes=np.zeros((N_CONDITIONS, N_TURBINES)),
-        tilt_interps={turbine.turbine_type: turbine.tilt_interp},
         turbine_type_map=turbine_type_map,
-        turbine_power_thrust_tables={turbine.turbine_type: turbine.power_thrust_table},
         multidim_condition=conditions,
     )
     assert np.allclose(p, np.array([[12424759.67683091], [15000000.0]]))

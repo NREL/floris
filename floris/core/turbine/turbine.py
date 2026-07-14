@@ -1,4 +1,3 @@
-import inspect
 import copy
 import inspect
 import logging
@@ -130,29 +129,25 @@ def power(
     awc_modes: NDArrayStr,
     awc_amplitudes: NDArrayFloat,
     turbine_type_map: NDArrayObject, # May still need this, but think on best form for it
-    ix_filter: NDArrayInt | Iterable[int] | None = None, # Not sure I'll need this, we'll see. Could just apply to the type map?
-    average_method: str = "cubic-mean", # From turbine?
+    ix_filter: NDArrayInt | Iterable[int] | None = None, # Could just apply to the type map?
+    average_method: str = "cubic-mean", # From turbine? No.
     cubature_weights: NDArrayFloat | None = None, # From turbine? No.
-    correct_cp_ct_for_tilt: bool = False, # From turbine?
     multidim_condition: dict | None = None,
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
     given in Watts.
 
     Args:
+        turbines (list[Turbine]): Instantiated turbine objects for each turbine in the farm.
         velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a
             turbine.
         turbulence_intensities (NDArrayFloat[findex, turbines]): The turbulence intensity at
             each turbine.
         air_density (float): air density for simulation [kg/m^3]
-        power_functions (dict[str, Callable]): A dictionary of power functions for
-            each turbine type. Keys are the turbine type and values are the callable functions.
         yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
         tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
         power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
             turbine [W].
-        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
-            and "helix" are implemented).
         awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
             and "helix" are implemented).
         awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
@@ -186,12 +181,9 @@ def power(
         awc_modes = awc_modes[:, ix_filter]
         awc_amplitudes = awc_amplitudes[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
-        if type(correct_cp_ct_for_tilt) is bool:
-            pass
-        else:
-            correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
     # Establish the main set of keyword arguments for power()
+    # TODO: Could some of these simply be attributes on the Turbine instantiation?
     power_model_kwargs = {
         "power_thrust_table": None, # Will be filled below
         "velocities": velocities,
@@ -205,7 +197,7 @@ def power(
         "tilt_interp": None, # Will be filled below
         "average_method": average_method,
         "cubature_weights": cubature_weights,
-        "correct_cp_ct_for_tilt": correct_cp_ct_for_tilt,
+        "correct_cp_ct_for_tilt": None, # Will be filled below
     }
 
     # Loop over each turbine type given to get power for all turbines
@@ -213,6 +205,9 @@ def power(
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         power_model_kwargs["tilt_interp"] = turbine_dict[turb_type].tilt_interp
+        power_model_kwargs["correct_cp_ct_for_tilt"] = (
+            turbine_dict[turb_type].correct_cp_ct_for_tilt
+        )
         if "power" in turbine_dict[turb_type].power_thrust_table: # Not multidimensional
             # TODO: consider saving power_thrust_table as an attribute of the Op Model, so we
             # don't need to pass it.
