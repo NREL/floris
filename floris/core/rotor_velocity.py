@@ -128,23 +128,22 @@ def average_velocity(
         raise ValueError("Incorrect method given.")
 
 def compute_tilt_angles_for_floating_turbines_map(
+    turbines: list,
     turbine_type_map: NDArrayObject,
-    tilt_angles: NDArrayFloat,
-    tilt_interps: dict[str, interp1d],
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
+    turbine_dict = {t.turbine_type: t for t in turbines}
     # Loop over each turbine type given to get tilt angles for all turbines
-    old_tilt_angles = copy.deepcopy(tilt_angles)
     tilt_angles = np.zeros(np.shape(rotor_effective_velocities))
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # If no tilt interpolation is specified, assume no modification to tilt
-        if tilt_interps[turb_type] is None: # Use passed tilt angles
-            tilt_angles += old_tilt_angles * (turbine_type_map == turb_type)
+        if turbine_dict[turb_type].tilt_interp is None: # Use reference tilt angle
+            tilt_angles += turbine_dict[turb_type].ref_tilt * (turbine_type_map == turb_type)
         else: # Apply interpolated tilt angle
             tilt_angles += compute_tilt_angles_for_floating_turbines(
                 tilt_angles,
-                tilt_interps[turb_type],
+                turbine_dict[turb_type].tilt_interp,
                 rotor_effective_velocities
             ) * (turbine_type_map == turb_type)
 

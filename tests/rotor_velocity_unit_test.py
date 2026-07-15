@@ -228,9 +228,8 @@ def test_compute_tilt_angles_for_floating_turbines():
 
     # Multiple turbines
     tilt_N_turbines = compute_tilt_angles_for_floating_turbines_map(
+        turbines=[turbine_floating]*N_TURBINES,
         turbine_type_map=np.array(turbine_type_map),
-        tilt_angles=5.0*np.ones((1, N_TURBINES)),
-        tilt_interps={turbine_floating.turbine_type: turbine_floating.tilt_interp},
         rotor_effective_velocities=rotor_effective_velocities_N_TURBINES,
     )
 

@@ -11,7 +11,10 @@ from floris.core import (
     thrust_coefficient,
     TurbineGrid,
 )
-from floris.core.rotor_velocity import average_velocity
+from floris.core.rotor_velocity import (
+    average_velocity,
+    compute_tilt_angles_for_floating_turbines_map,
+)
 from floris.core.wake import WakeModelManager
 from floris.core.wake_deflection.empirical_gauss import yaw_added_wake_mixing
 from floris.core.wake_deflection.gauss import (
@@ -88,7 +91,6 @@ def sequential_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -107,7 +109,6 @@ def sequential_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -265,10 +266,6 @@ def full_flow_sequential_solver(
     turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_turbine_TSRs()
-    turbine_grid_farm.construct_turbine_ref_tilts()
-    turbine_grid_farm.construct_turbine_tilt_interps()
-    turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
@@ -321,7 +318,6 @@ def full_flow_sequential_solver(
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
-            tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
@@ -340,7 +336,6 @@ def full_flow_sequential_solver(
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
-            tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
@@ -520,7 +515,6 @@ def cc_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -536,7 +530,6 @@ def cc_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -557,7 +550,6 @@ def cc_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -710,10 +702,6 @@ def full_flow_cc_solver(
     turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_turbine_TSRs()
-    turbine_grid_farm.construct_turbine_ref_tilts()
-    turbine_grid_farm.construct_turbine_tilt_interps()
-    turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
@@ -770,7 +758,6 @@ def full_flow_cc_solver(
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
-            tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
@@ -787,7 +774,6 @@ def full_flow_cc_solver(
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
-            tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
@@ -952,7 +938,6 @@ def turbopark_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -968,7 +953,6 @@ def turbopark_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -987,7 +971,6 @@ def turbopark_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -1031,7 +1014,6 @@ def turbopark_solver(
                     turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
                     air_density=flow_field.air_density,
                     yaw_angles=farm.yaw_angles_sorted,
-                    tilt_angles=farm.tilt_angles_sorted,
                     power_setpoints=farm.power_setpoints_sorted,
                     awc_modes=farm.awc_modes_sorted,
                     awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -1207,7 +1189,6 @@ def empirical_gauss_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -1226,7 +1207,6 @@ def empirical_gauss_solver(
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
             yaw_angles=farm.yaw_angles_sorted,
-            tilt_angles=farm.tilt_angles_sorted,
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
@@ -1255,7 +1235,7 @@ def empirical_gauss_solver(
             method=grid.average_method,
             cubature_weights=grid.cubature_weights
         )
-        tilt_angle_i = farm.calculate_tilt_for_eff_velocities(average_velocities)
+        tilt_angle_i = calculate_tilt_for_eff_velocities(farm, average_velocities)
         tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
@@ -1370,10 +1350,6 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_turbine_TSRs()
-    turbine_grid_farm.construct_turbine_ref_tilts()
-    turbine_grid_farm.construct_turbine_tilt_interps()
-    turbine_grid_farm.construct_turbine_correct_cp_ct_for_tilt()
-    turbine_grid_farm.set_tilt_to_ref_tilt(flow_field.n_findex)
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
@@ -1424,7 +1400,6 @@ def full_flow_empirical_gauss_solver(
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
-            tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
@@ -1443,7 +1418,6 @@ def full_flow_empirical_gauss_solver(
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
             yaw_angles=turbine_grid_farm.yaw_angles_sorted,
-            tilt_angles=turbine_grid_farm.tilt_angles_sorted,
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
@@ -1468,7 +1442,7 @@ def full_flow_empirical_gauss_solver(
             method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights
         )
-        tilt_angle_i = turbine_grid_farm.calculate_tilt_for_eff_velocities(average_velocities)
+        tilt_angle_i = calculate_tilt_for_eff_velocities(turbine_grid_farm, average_velocities)
         tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
@@ -1518,3 +1492,11 @@ def full_flow_empirical_gauss_solver(
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
         flow_field.turbulence_intensity_field_sorted = turbulence_intensity_field
+
+def calculate_tilt_for_eff_velocities(farm, rotor_effective_velocities):
+    tilt_angles = compute_tilt_angles_for_floating_turbines_map(
+        farm.turbines,
+        farm.turbine_type_map_sorted,
+        rotor_effective_velocities,
+    )
+    return tilt_angles

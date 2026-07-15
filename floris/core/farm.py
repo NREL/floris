@@ -21,7 +21,6 @@ from floris.core import (
     State,
     Turbine,
 )
-from floris.core.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.type_dec import (
     convert_to_path,
@@ -77,13 +76,7 @@ class Farm(BaseClass):
     turbine_type_map: NDArrayObject = field(init=False, factory=list)
     turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
 
-    # TODO: Get from Turbine (turbines)
-    turbine_thrust_coefficient_functions: Dict[str, Callable] = field(init=False, factory=list)
-    turbine_axial_induction_functions: Dict[str, Callable] = field(init=False, factory=list)
-    turbine_power_functions: Dict[str, Callable] = field(init=False, factory=list)
-    turbine_tilt_interps: dict[str, interp1d] = field(init=False, factory=dict)
-
-    # TODO: Collect into a ControlSetpoint class
+    # TODO (later): Collect into a ControlSetpoint class
     yaw_angles: NDArrayFloat = field(init=False)
     power_setpoints: NDArrayFloat = field(init=False)
     awc_modes: NDArrayStr = field(init=False)
@@ -91,15 +84,8 @@ class Farm(BaseClass):
     awc_frequencies: NDArrayFloat = field(init=False)
 
     # Convenience attributes extracted from the Turbine objects.
-    # TODO: convert _sorted versions to properties
-    tilt_angles: NDArrayFloat = field(init=False)
     hub_heights: NDArrayFloat = field(init=False)
     rotor_diameters: NDArrayFloat = field(init=False, factory=list)
-    ref_tilts: NDArrayFloat = field(init=False, factory=list)
-    correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
-
-    # Is this now just going to set on the Turbine object? Think so.
-    turbine_power_thrust_tables: Dict[str, dict] = field(init=False, factory=list)
 
     # TODO: Are these control_setpoints? What models need them, and when/how? What is the eventual
     # use? Perhaps these are the "optimal" TSRs, which could be considered control setpoints, but
@@ -254,16 +240,6 @@ class Farm(BaseClass):
     def construct_turbine_TSRs(self):
         self.TSRs = np.array([t.TSR for t in self.turbines])
 
-    def construct_turbine_ref_tilts(self):
-        self.ref_tilts = np.array(
-            [t.ref_tilt for t in self.turbines]
-        )
-
-    def construct_turbine_correct_cp_ct_for_tilt(self):
-        self.correct_cp_ct_for_tilt = np.array(
-            [turb.correct_cp_ct_for_tilt for turb in self.turbines]
-        )
-
     def construct_turbines(self):
         turbines_unique = {
             k: Turbine.from_dict(v) for k, v in self._turbine_definition_cache.items()
@@ -317,12 +293,6 @@ class Farm(BaseClass):
         yaw_angles = np.zeros((n_findex, self.n_turbines))
         self.set_yaw_angles(yaw_angles)
 
-    def set_tilt_to_ref_tilt(self, n_findex: int):
-        self.tilt_angles = (
-            np.ones((n_findex, self.n_turbines))
-            * self.ref_tilts
-        )
-
     def set_power_setpoints(self, power_setpoints: NDArrayFloat):
         self.power_setpoints = np.array(power_setpoints)
 
@@ -351,15 +321,6 @@ class Farm(BaseClass):
     def set_awc_frequencies_to_ref_freq(self, n_findex: int):
         awc_frequencies = np.zeros((n_findex, self.n_turbines))
         self.set_awc_frequencies(awc_frequencies)
-
-    def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
-        tilt_angles = compute_tilt_angles_for_floating_turbines_map(
-            self.turbine_type_map_sorted,
-            self.tilt_angles_sorted,
-            self.turbine_tilt_interps,
-            rotor_effective_velocities,
-        )
-        return tilt_angles
 
     def finalize(self, unsorted_indices):
         # TODO: Why does turbine_type_map need to be reshaped?
@@ -393,20 +354,8 @@ class Farm(BaseClass):
         return _sort_by_coord_indices(self.hub_heights, self._sorted_indices)
 
     @property
-    def ref_tilts_sorted(self):
-        return _sort_by_coord_indices(self.ref_tilts, self._sorted_indices)
-
-    @property
     def TSRs_sorted(self):
         return _sort_by_coord_indices(self.TSRs, self._sorted_indices)
-
-    @property
-    def correct_cp_ct_for_tilt_sorted(self):
-        return _sort_by_coord_indices(self.correct_cp_ct_for_tilt, self._sorted_indices)
-
-    @property
-    def tilt_angles_sorted(self):
-        return _sort_by_coord_indices(self.tilt_angles, self._sorted_indices)
 
     @property
     def yaw_angles_sorted(self):

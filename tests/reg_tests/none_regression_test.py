@@ -146,7 +146,6 @@ def test_regression_tandem(sample_inputs_fixture):
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
     awc_modes = floris.farm.awc_modes
     awc_amplitudes = floris.farm.awc_amplitudes
@@ -161,7 +160,6 @@ def test_regression_tandem(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -173,7 +171,6 @@ def test_regression_tandem(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -185,7 +182,6 @@ def test_regression_tandem(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -349,7 +345,6 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
     awc_modes = floris.farm.awc_modes
     awc_amplitudes = floris.farm.awc_amplitudes
@@ -360,7 +355,6 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,

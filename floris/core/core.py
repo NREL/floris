@@ -78,11 +78,7 @@ class Core(BaseClass):
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()
         self.farm.construct_turbine_TSRs()
-        self.farm.construct_turbine_ref_tilts()
-        self.farm.construct_turbine_tilt_interps()
-        self.farm.construct_turbine_correct_cp_ct_for_tilt()
         self.farm.set_yaw_angles_to_ref_yaw(self.flow_field.n_findex)
-        self.farm.set_tilt_to_ref_tilt(self.flow_field.n_findex)
         self.farm.set_power_setpoints_to_ref_power(self.flow_field.n_findex)
         self.farm.set_awc_modes_to_ref_mode(self.flow_field.n_findex)
         self.farm.set_awc_amplitudes_to_ref_amp(self.flow_field.n_findex)
@@ -144,7 +140,7 @@ class Core(BaseClass):
         vel_model = self.wake.model_strings["velocity_model"]
 
         if vel_model not in ["empirical_gauss"] and \
-            self.farm.correct_cp_ct_for_tilt.any():
+            any(t.correct_cp_ct_for_tilt for t in self.farm.turbines):
             self.logger.warning(
                 "The current model does not account for vertical wake deflection due to " +
                 "tilt. Corrections to power and thrust coefficient can be included, but no " +

@@ -1,4 +1,5 @@
 
+import copy
 import numpy as np
 
 from floris.core import (
@@ -236,7 +237,6 @@ def test_regression_tandem(sample_inputs_fixture):
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
     awc_modes = floris.farm.awc_modes
     awc_amplitudes = floris.farm.awc_amplitudes
@@ -251,7 +251,6 @@ def test_regression_tandem(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -263,7 +262,6 @@ def test_regression_tandem(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -275,7 +273,6 @@ def test_regression_tandem(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -404,7 +401,6 @@ def test_regression_yaw(sample_inputs_fixture):
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
     awc_modes = floris.farm.awc_modes
     awc_amplitudes = floris.farm.awc_amplitudes
@@ -419,7 +415,6 @@ def test_regression_yaw(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -431,7 +426,6 @@ def test_regression_yaw(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -443,7 +437,6 @@ def test_regression_yaw(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -478,9 +471,15 @@ def test_regression_tilt(sample_inputs_fixture):
 
     floris = Core.from_dict(sample_inputs_fixture.core)
 
-    tilt_angles = np.zeros((N_FINDEX, N_TURBINES))
-    tilt_angles[:,0] = 8.0
-    floris.farm.tilt_angles = tilt_angles
+    # Set ref tilt to 0.0 on all turbines
+    for turb in floris.farm.turbines:
+        turb.ref_tilt = 0.0
+    # Replace first turbine with a new turbine that is tilted at 8 degrees
+    turb_front = copy.deepcopy(floris.farm.turbines[0])
+    turb_front.turbine_type = 'nrel_5mw_tilt8'
+    turb_front.ref_tilt = 8.0
+    floris.farm.turbines[0] = turb_front
+    floris.farm.expand_farm_properties(N_FINDEX)
 
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()
@@ -492,7 +491,6 @@ def test_regression_tilt(sample_inputs_fixture):
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
     awc_modes = floris.farm.awc_modes
     awc_amplitudes = floris.farm.awc_amplitudes
@@ -507,7 +505,6 @@ def test_regression_tilt(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -519,7 +516,6 @@ def test_regression_tilt(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -531,7 +527,6 @@ def test_regression_tilt(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -586,7 +581,6 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
     awc_modes = floris.farm.awc_modes
     awc_amplitudes = floris.farm.awc_amplitudes
@@ -601,7 +595,6 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -613,7 +606,6 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -625,7 +617,6 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -662,7 +653,6 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
     awc_modes = floris.farm.awc_modes
     awc_amplitudes = floris.farm.awc_amplitudes
@@ -677,7 +667,6 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -689,7 +678,6 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -701,7 +689,6 @@ def test_regression_yaw_added_recovery(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -750,7 +737,6 @@ def test_regression_helix(sample_inputs_fixture):
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
     air_density = floris.flow_field.air_density
     yaw_angles = floris.farm.yaw_angles
-    tilt_angles = floris.farm.tilt_angles
     power_setpoints = floris.farm.power_setpoints
     awc_modes = floris.farm.awc_modes
     awc_amplitudes = floris.farm.awc_amplitudes
@@ -765,7 +751,6 @@ def test_regression_helix(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -777,7 +762,6 @@ def test_regression_helix(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -789,7 +773,6 @@ def test_regression_helix(sample_inputs_fixture):
         turbulence_intensities=turbulence_intensities,
         air_density=air_density,
         yaw_angles=yaw_angles,
-        tilt_angles=tilt_angles,
         power_setpoints=power_setpoints,
         awc_modes=awc_modes,
         awc_amplitudes=awc_amplitudes,
@@ -856,26 +839,12 @@ def test_regression_small_grid_rotation(sample_inputs_fixture):
     velocities = floris.flow_field.u
     turbulence_intensities = floris.flow_field.turbulence_intensity_field
 
-    # farm_eff_velocities = rotor_effective_velocity(
-    #     floris.flow_field.air_density,
-    #     floris.farm.ref_air_densities,
-    #     velocities,
-    #     yaw_angles,
-    #     tilt_angles,
-    #     floris.farm.ref_tilts,
-    #     floris.farm.pPs,
-    #     floris.farm.pTs,
-    #     floris.farm.turbine_tilt_interps,
-    #     floris.farm.correct_cp_ct_for_tilt,
-    #     floris.farm.turbine_type_map,
-    # )
     farm_powers = power(
         turbines=floris.farm.turbines,
         velocities=velocities,
         turbulence_intensities=turbulence_intensities,
         air_density=floris.flow_field.air_density,
         yaw_angles=floris.farm.yaw_angles,
-        tilt_angles=floris.farm.tilt_angles,
         power_setpoints=floris.farm.power_setpoints,
         awc_modes=floris.farm.awc_modes,
         awc_amplitudes=floris.farm.awc_amplitudes,
