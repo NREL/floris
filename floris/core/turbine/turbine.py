@@ -130,8 +130,8 @@ def power(
     awc_amplitudes: NDArrayFloat,
     turbine_type_map: NDArrayObject, # May still need this, but think on best form for it
     ix_filter: NDArrayInt | Iterable[int] | None = None, # Could just apply to the type map?
-    average_method: str = "cubic-mean", # From turbine? No.
-    cubature_weights: NDArrayFloat | None = None, # From turbine? No.
+    average_method: str = "cubic-mean",
+    cubature_weights: NDArrayFloat | None = None,
     multidim_condition: dict | None = None,
 ) -> NDArrayFloat:
     """Power produced by a turbine adjusted for yaw and tilt. Value
@@ -241,20 +241,17 @@ def power(
 
 
 def thrust_coefficient(
+    turbines: list, # list[Turbine], but circular import problems I need to sort out.
     velocities: NDArrayFloat,
     turbulence_intensities: NDArrayFloat,
     air_density: float,
     yaw_angles: NDArrayFloat,
-    tilt_angles: NDArrayFloat,
+    tilt_angles: NDArrayFloat, # From turbines? Maybe
     power_setpoints: NDArrayFloat,
     awc_modes: NDArrayStr,
     awc_amplitudes: NDArrayFloat,
-    thrust_coefficient_functions: dict[str, Callable],
-    tilt_interps: dict[str, interp1d],
-    correct_cp_ct_for_tilt: NDArrayBool,
-    turbine_type_map: NDArrayObject,
-    turbine_power_thrust_tables: dict,
-    ix_filter: NDArrayFilter | Iterable[int] | None = None,
+    turbine_type_map: NDArrayObject, # May still need this, but think on best form for it
+    ix_filter: NDArrayInt | Iterable[int] | None = None, # Could just apply to the type map?
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
     multidim_condition: dict | None = None,
@@ -301,6 +298,9 @@ def thrust_coefficient(
         NDArrayFloat: Coefficient of thrust for each requested turbine.
     """
 
+    # Note: will only have one, if turbine_type is the same for all turbines.
+    turbine_dict = {t.turbine_type: t for t in turbines}
+
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         velocities = velocities[:, ix_filter]
@@ -311,10 +311,6 @@ def thrust_coefficient(
         awc_modes = awc_modes[:, ix_filter]
         awc_amplitudes = awc_amplitudes[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
-        if type(correct_cp_ct_for_tilt) is bool:
-            pass
-        else:
-            correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
     # Establish the main set of keyword arguments for thrust_coefficient()
     thrust_model_kwargs = {
@@ -330,40 +326,42 @@ def thrust_coefficient(
         "tilt_interp": None, # Will be filled below
         "average_method": average_method,
         "cubature_weights": cubature_weights,
-        "correct_cp_ct_for_tilt": correct_cp_ct_for_tilt,
+        "correct_cp_ct_for_tilt": None, # Will be filled below
     }
 
     # Loop over each turbine type given to get thrust coefficient for all turbines
     thrust_coefficient = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
-        if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]:  # Not multidimensional
-            power_thrust_table = turbine_power_thrust_tables[turb_type]
-
-            thrust_model_kwargs["power_thrust_table"] = power_thrust_table
-            thrust_model_kwargs["tilt_interp"] = tilt_interps[turb_type]
-
+        thrust_model_kwargs["tilt_interp"] = turbine_dict[turb_type].tilt_interp
+        thrust_model_kwargs["correct_cp_ct_for_tilt"] = (
+            turbine_dict[turb_type].correct_cp_ct_for_tilt
+        )
+        if "thrust_coefficient" in turbine_dict[turb_type].power_thrust_table:  # Not multidim
+            thrust_model_kwargs["power_thrust_table"] = turbine_dict[turb_type].power_thrust_table
             thrust_coefficient += (
-                thrust_coefficient_functions[turb_type](**thrust_model_kwargs)
+                turbine_dict[turb_type].operation_model.thrust_coefficient(**thrust_model_kwargs)
                 * (turbine_type_map == turb_type)
             )
         else: # Multidimensional
             md_conditions, md_conditions_map = select_multidim_condition(
                 multidim_condition,
-                [k for k in turbine_power_thrust_tables[turb_type].keys() if k != "condition_keys"],
-                turbine_power_thrust_tables[turb_type]["condition_keys"],
+                [k for k in turbine_dict[turb_type].power_thrust_table.keys()
+                 if k != "condition_keys"],
+                turbine_dict[turb_type].power_thrust_table["condition_keys"],
                 velocities.shape[0],
             )
 
             # Loop over conditions and mask onto thrust_coefficient
             for i, md_cond in enumerate(md_conditions):
-                power_thrust_table = turbine_power_thrust_tables[turb_type][tuple(md_cond)]
-
-                thrust_model_kwargs["power_thrust_table"] = power_thrust_table
-                thrust_model_kwargs["tilt_interp"] = tilt_interps[turb_type]
+                thrust_model_kwargs["power_thrust_table"] = (
+                    turbine_dict[turb_type].power_thrust_table[tuple(md_cond)]
+                )
 
                 thrust_coefficient += (
-                    thrust_coefficient_functions[turb_type](**thrust_model_kwargs)
+                    turbine_dict[turb_type].operation_model.thrust_coefficient(
+                        **thrust_model_kwargs
+                    )
                     * (turbine_type_map == turb_type)
                     * (md_conditions_map[:, None] == i)
                 )
@@ -372,20 +370,17 @@ def thrust_coefficient(
 
 
 def axial_induction(
+    turbines: list, # list[Turbine], but circular import problems I need to sort out.
     velocities: NDArrayFloat,
     turbulence_intensities: NDArrayFloat,
     air_density: float,
     yaw_angles: NDArrayFloat,
-    tilt_angles: NDArrayFloat,
+    tilt_angles: NDArrayFloat, # From turbines? Maybe
     power_setpoints: NDArrayFloat,
     awc_modes: NDArrayStr,
     awc_amplitudes: NDArrayFloat,
-    axial_induction_functions: dict,
-    tilt_interps: NDArrayObject,
-    correct_cp_ct_for_tilt: NDArrayBool,
-    turbine_type_map: NDArrayObject,
-    turbine_power_thrust_tables: dict,
-    ix_filter: NDArrayFilter | Iterable[int] | None = None,
+    turbine_type_map: NDArrayObject, # May still need this, but think on best form for it
+    ix_filter: NDArrayInt | Iterable[int] | None = None, # Could just apply to the type map?
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
     multidim_condition: dict | None = None,
@@ -428,6 +423,9 @@ def axial_induction(
         Union[float, NDArrayFloat]: [description]
     """
 
+    # Note: will only have one, if turbine_type is the same for all turbines.
+    turbine_dict = {t.turbine_type: t for t in turbines}
+
     # Down-select inputs if ix_filter is given
     if ix_filter is not None:
         velocities = velocities[:, ix_filter]
@@ -438,10 +436,6 @@ def axial_induction(
         awc_modes = awc_modes[:, ix_filter]
         awc_amplitudes = awc_amplitudes[:, ix_filter]
         turbine_type_map = turbine_type_map[:, ix_filter]
-        if type(correct_cp_ct_for_tilt) is bool:
-            pass
-        else:
-            correct_cp_ct_for_tilt = correct_cp_ct_for_tilt[:, ix_filter]
 
     # Establish the main set of keyword arguments for axial_induction()
     axial_induction_model_kwargs = {
@@ -457,40 +451,46 @@ def axial_induction(
         "tilt_interp": None, # Will be filled below
         "average_method": average_method,
         "cubature_weights": cubature_weights,
-        "correct_cp_ct_for_tilt": correct_cp_ct_for_tilt,
+        "correct_cp_ct_for_tilt": None, # Will be filled below
     }
 
     # Loop over each turbine type given to get axial induction for all turbines
     axial_induction = np.zeros(np.shape(velocities)[0:2])
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
-        if "thrust_coefficient" in turbine_power_thrust_tables[turb_type]:  # Not multidimensional
-            power_thrust_table = turbine_power_thrust_tables[turb_type]
-
-            axial_induction_model_kwargs["power_thrust_table"] = power_thrust_table
-            axial_induction_model_kwargs["tilt_interp"] = tilt_interps[turb_type]
-
+        axial_induction_model_kwargs["tilt_interp"] = turbine_dict[turb_type].tilt_interp
+        axial_induction_model_kwargs["correct_cp_ct_for_tilt"] = (
+            turbine_dict[turb_type].correct_cp_ct_for_tilt
+        )
+        if "thrust_coefficient" in turbine_dict[turb_type].power_thrust_table:  # Not multidim
+            axial_induction_model_kwargs["power_thrust_table"] = (
+                turbine_dict[turb_type].power_thrust_table
+            )
             axial_induction += (
-                axial_induction_functions[turb_type](**axial_induction_model_kwargs)
+                turbine_dict[turb_type].operation_model.axial_induction(
+                    **axial_induction_model_kwargs
+                )
                 * (turbine_type_map == turb_type)
             )
         else: # Multidimensional
             md_conditions, md_conditions_map = select_multidim_condition(
                 multidim_condition,
-                [k for k in turbine_power_thrust_tables[turb_type].keys() if k != "condition_keys"],
-                turbine_power_thrust_tables[turb_type]["condition_keys"],
+                [k for k in turbine_dict[turb_type].power_thrust_table.keys()
+                 if k != "condition_keys"],
+                turbine_dict[turb_type].power_thrust_table["condition_keys"],
                 velocities.shape[0],
             )
 
             # Loop over conditions and mask onto axial_induction
             for i, md_cond in enumerate(md_conditions):
-                power_thrust_table = turbine_power_thrust_tables[turb_type][tuple(md_cond)]
-
-                axial_induction_model_kwargs["power_thrust_table"] = power_thrust_table
-                axial_induction_model_kwargs["tilt_interp"] = tilt_interps[turb_type]
+                axial_induction_model_kwargs["power_thrust_table"] = (
+                    turbine_dict[turb_type].power_thrust_table[tuple(md_cond)]
+                )
 
                 axial_induction += (
-                    axial_induction_functions[turb_type](**axial_induction_model_kwargs)
+                    turbine_dict[turb_type].operation_model.axial_induction(
+                        **axial_induction_model_kwargs
+                    )
                     * (turbine_type_map == turb_type)
                     * (md_conditions_map[:, None] == i)
                 )

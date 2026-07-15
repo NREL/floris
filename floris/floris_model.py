@@ -1014,6 +1014,7 @@ class FlorisModel(LoggingManager):
 
     def get_turbine_axial_induction_factors(self) -> NDArrayFloat:
         turbine_ais = axial_induction(
+            turbines=self.core.farm.turbines,
             velocities=self.core.flow_field.u,
             turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
@@ -1022,11 +1023,7 @@ class FlorisModel(LoggingManager):
             power_setpoints=self.core.farm.power_setpoints,
             awc_modes = self.core.farm.awc_modes,
             awc_amplitudes=self.core.farm.awc_amplitudes,
-            axial_induction_functions=self.core.farm.turbine_axial_induction_functions,
-            tilt_interps=self.core.farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.core.farm.turbine_type_map,
-            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
             average_method=self.core.grid.average_method,
             cubature_weights=self.core.grid.cubature_weights,
             multidim_condition=self.core.flow_field.multidim_conditions,
@@ -1035,6 +1032,7 @@ class FlorisModel(LoggingManager):
 
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
         turbine_thrust_coefficients = thrust_coefficient(
+            turbines=self.core.farm.turbines,
             velocities=self.core.flow_field.u,
             turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
             air_density=self.core.flow_field.air_density,
@@ -1043,11 +1041,7 @@ class FlorisModel(LoggingManager):
             power_setpoints=self.core.farm.power_setpoints,
             awc_modes = self.core.farm.awc_modes,
             awc_amplitudes=self.core.farm.awc_amplitudes,
-            thrust_coefficient_functions=self.core.farm.turbine_thrust_coefficient_functions,
-            tilt_interps=self.core.farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
             turbine_type_map=self.core.farm.turbine_type_map,
-            turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
             average_method=self.core.grid.average_method,
             cubature_weights=self.core.grid.cubature_weights,
             multidim_condition=self.core.flow_field.multidim_conditions,

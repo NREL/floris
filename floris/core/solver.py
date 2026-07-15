@@ -83,6 +83,7 @@ def sequential_solver(
         v_i = flow_field.v_sorted[:, i:i+1]
 
         ct_i = thrust_coefficient(
+            turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
@@ -91,11 +92,7 @@ def sequential_solver(
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
-            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
@@ -105,6 +102,7 @@ def sequential_solver(
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
+            turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
@@ -113,11 +111,7 @@ def sequential_solver(
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
-            axial_induction_functions=farm.turbine_axial_induction_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
@@ -322,6 +316,7 @@ def full_flow_sequential_solver(
         v_i = turbine_grid_flow_field.v_sorted[:, i:i+1]
 
         ct_i = thrust_coefficient(
+            turbines=farm.turbines,
             velocities=turbine_grid_flow_field.u_sorted,
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
@@ -330,11 +325,7 @@ def full_flow_sequential_solver(
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
-            thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
-            tilt_interps=turbine_grid_farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights,
@@ -344,6 +335,7 @@ def full_flow_sequential_solver(
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
+            turbines=farm.turbines,
             velocities=turbine_grid_flow_field.u_sorted,
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
@@ -352,11 +344,7 @@ def full_flow_sequential_solver(
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
-            axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
-            tilt_interps=turbine_grid_farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights,
@@ -527,38 +515,32 @@ def cc_solver(
 
         turb_avg_vels = average_velocity(turb_inflow_field)[:, :, None, None]
         turb_Cts = thrust_coefficient(
-            turb_avg_vels,
-            flow_field.turbulence_intensity_field_sorted,
-            flow_field.air_density,
-            farm.yaw_angles_sorted,
-            farm.tilt_angles_sorted,
-            farm.power_setpoints_sorted,
-            farm.awc_modes_sorted,
-            farm.awc_amplitudes_sorted,
-            farm.turbine_thrust_coefficient_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
+            turbines=farm.turbines,
+            velocities=turb_avg_vels,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
+            air_density=flow_field.air_density,
+            yaw_angles=farm.yaw_angles_sorted,
+            tilt_angles=farm.tilt_angles_sorted,
+            power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
             multidim_condition=flow_field.multidim_conditions,
         )
         turb_Cts = turb_Cts[:, :, None, None]
         turb_aIs = axial_induction(
-            turb_avg_vels,
-            flow_field.turbulence_intensity_field_sorted,
-            flow_field.air_density,
-            farm.yaw_angles_sorted,
-            farm.tilt_angles_sorted,
-            farm.power_setpoints_sorted,
-            farm.awc_modes_sorted,
-            farm.awc_amplitudes_sorted,
-            farm.turbine_axial_induction_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
+            turbines=farm.turbines,
+            velocities=turb_avg_vels,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
+            air_density=flow_field.air_density,
+            yaw_angles=farm.yaw_angles_sorted,
+            tilt_angles=farm.tilt_angles_sorted,
+            power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
@@ -570,6 +552,7 @@ def cc_solver(
         v_i = flow_field.v_sorted[:, i:i+1]
 
         axial_induction_i = axial_induction(
+            turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
@@ -578,11 +561,7 @@ def cc_solver(
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
-            axial_induction_functions=farm.turbine_axial_induction_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
@@ -786,6 +765,7 @@ def full_flow_cc_solver(
 
         turb_avg_vels = average_velocity(turbine_grid_flow_field.u_sorted)
         turb_Cts = thrust_coefficient(
+            turbines=farm.turbines,
             velocities=turb_avg_vels,
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
@@ -794,11 +774,7 @@ def full_flow_cc_solver(
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
-            thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
-            tilt_interps=turbine_grid_farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             average_method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights,
             multidim_condition=turbine_grid_flow_field.multidim_conditions,
@@ -806,6 +782,7 @@ def full_flow_cc_solver(
         turb_Cts = turb_Cts[:, :, None, None]
 
         axial_induction_i = axial_induction(
+            turbines=farm.turbines,
             velocities=turbine_grid_flow_field.u_sorted,
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
@@ -814,11 +791,7 @@ def full_flow_cc_solver(
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
-            axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
-            tilt_interps=turbine_grid_farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights,
@@ -974,6 +947,7 @@ def turbopark_solver(
         z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3), keepdims=True)
 
         Cts = thrust_coefficient(
+            turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
@@ -982,17 +956,14 @@ def turbopark_solver(
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
-            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
             multidim_condition=flow_field.multidim_conditions,
         )
 
         ct_i = thrust_coefficient(
+            turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
@@ -1001,11 +972,7 @@ def turbopark_solver(
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
-            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
@@ -1015,6 +982,7 @@ def turbopark_solver(
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
+            turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
@@ -1023,11 +991,7 @@ def turbopark_solver(
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
-            axial_induction_functions=farm.turbine_axial_induction_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
@@ -1062,6 +1026,7 @@ def turbopark_solver(
                 yaw_ii = farm.yaw_angles_sorted[:, ii:ii+1, None, None]
                 turbulence_intensity_ii = turbine_turbulence_intensity[:, ii:ii+1]
                 ct_ii = thrust_coefficient(
+                    turbines=farm.turbines,
                     velocities=flow_field.u_sorted,
                     turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
                     air_density=flow_field.air_density,
@@ -1070,11 +1035,7 @@ def turbopark_solver(
                     power_setpoints=farm.power_setpoints_sorted,
                     awc_modes=farm.awc_modes_sorted,
                     awc_amplitudes=farm.awc_amplitudes_sorted,
-                    thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
-                    tilt_interps=farm.turbine_tilt_interps,
-                    correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
                     turbine_type_map=farm.turbine_type_map_sorted,
-                    turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
                     ix_filter=[ii],
                     average_method=grid.average_method,
                     cubature_weights=grid.cubature_weights,
@@ -1241,6 +1202,7 @@ def empirical_gauss_solver(
         z_i = np.mean(grid.z_sorted[:, i:i+1], axis=(2, 3), keepdims=True)
 
         ct_i = thrust_coefficient(
+            turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
@@ -1249,11 +1211,7 @@ def empirical_gauss_solver(
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
-            thrust_coefficient_functions=farm.turbine_thrust_coefficient_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
@@ -1263,6 +1221,7 @@ def empirical_gauss_solver(
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
+            turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
             air_density=flow_field.air_density,
@@ -1271,11 +1230,7 @@ def empirical_gauss_solver(
             power_setpoints=farm.power_setpoints_sorted,
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
-            axial_induction_functions=farm.turbine_axial_induction_functions,
-            tilt_interps=farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
@@ -1464,6 +1419,7 @@ def full_flow_empirical_gauss_solver(
         z_i = np.mean(turbine_grid.z_sorted[:, i:i+1], axis=(2,3), keepdims=True)
 
         ct_i = thrust_coefficient(
+            turbines=farm.turbines,
             velocities=turbine_grid_flow_field.u_sorted,
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
@@ -1472,11 +1428,7 @@ def full_flow_empirical_gauss_solver(
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
-            thrust_coefficient_functions=turbine_grid_farm.turbine_thrust_coefficient_functions,
-            tilt_interps=turbine_grid_farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights,
@@ -1486,6 +1438,7 @@ def full_flow_empirical_gauss_solver(
         # get the first index here (0:1)
         ct_i = ct_i[:, 0:1, None, None]
         axial_induction_i = axial_induction(
+            turbines=farm.turbines,
             velocities=turbine_grid_flow_field.u_sorted,
             turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
             air_density=turbine_grid_flow_field.air_density,
@@ -1494,11 +1447,7 @@ def full_flow_empirical_gauss_solver(
             power_setpoints=turbine_grid_farm.power_setpoints_sorted,
             awc_modes=turbine_grid_farm.awc_modes_sorted,
             awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
-            axial_induction_functions=turbine_grid_farm.turbine_axial_induction_functions,
-            tilt_interps=turbine_grid_farm.turbine_tilt_interps,
-            correct_cp_ct_for_tilt=turbine_grid_farm.correct_cp_ct_for_tilt_sorted,
             turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-            turbine_power_thrust_tables=turbine_grid_farm.turbine_power_thrust_tables,
             ix_filter=[i],
             average_method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights,
