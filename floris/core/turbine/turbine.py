@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 import inspect
 import logging
@@ -119,7 +121,7 @@ def select_multidim_condition(
 
 
 def power(
-    turbines: list, # list[Turbine], but circular import problems I need to sort out.
+    turbines: list[Turbine],
     velocities: NDArrayFloat,
     turbulence_intensities: NDArrayFloat,
     air_density: float,
@@ -241,7 +243,7 @@ def power(
 
 
 def thrust_coefficient(
-    turbines: list, # list[Turbine], but circular import problems I need to sort out.
+    turbines: list[Turbine],
     velocities: NDArrayFloat,
     turbulence_intensities: NDArrayFloat,
     air_density: float,
@@ -370,7 +372,7 @@ def thrust_coefficient(
 
 
 def axial_induction(
-    turbines: list, # list[Turbine], but circular import problems I need to sort out.
+    turbines: list[Turbine],
     velocities: NDArrayFloat,
     turbulence_intensities: NDArrayFloat,
     air_density: float,
