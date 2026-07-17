@@ -1,9 +1,7 @@
 import copy
-from collections.abc import Callable
 from pathlib import Path
 from typing import (
     Any,
-    Dict,
     List,
 )
 
@@ -14,7 +12,6 @@ from attrs import (
     field,
     setters,
 )
-from scipy.interpolate import interp1d
 
 from floris.core import (
     BaseClass,
@@ -72,8 +69,6 @@ class Farm(BaseClass):
     )
 
     turbines: List[Turbine] = field(init=False, factory=list)
-    # TODO: Are these still needed after Ct, power, etc come from turbines directly?
-    turbine_type_map: NDArrayObject = field(init=False, factory=list)
     turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
 
     # TODO (later): Collect into a ControlSetpoint class
@@ -82,15 +77,14 @@ class Farm(BaseClass):
     awc_modes: NDArrayStr = field(init=False)
     awc_amplitudes: NDArrayFloat = field(init=False)
     awc_frequencies: NDArrayFloat = field(init=False)
+    # TODO: Are TSRs control_setpoints? What models need them, and when/how? What is the eventual
+    # use? Perhaps these are the "optimal" TSRs, which could be considered control setpoints, but
+    # dont affect power.
+    TSRs: NDArrayFloat = field(init=False, factory=list)
 
     # Convenience attributes extracted from the Turbine objects.
     hub_heights: NDArrayFloat = field(init=False)
     rotor_diameters: NDArrayFloat = field(init=False, factory=list)
-
-    # TODO: Are these control_setpoints? What models need them, and when/how? What is the eventual
-    # use? Perhaps these are the "optimal" TSRs, which could be considered control setpoints, but
-    # dont affect power.
-    TSRs: NDArrayFloat = field(init=False, factory=list)
 
     # Likely leave this on Farm as is
     external_turbine_library_path: Path = field(
@@ -98,7 +92,7 @@ class Farm(BaseClass):
     )
     internal_turbine_library_path: Path = field(init=False, default=default_turbine_library_path)
 
-    # Private attributes. TODO: Do we still need these? Possibly.
+    # Private attributes.
     _turbine_types: List = field(init=False, validator=iter_validator(list, str), factory=list)
     _turbine_definition_cache: dict = field(init=False, factory=dict)
     _sorted_indices: NDArrayInt = field(init=False, factory=list)
@@ -246,40 +240,13 @@ class Farm(BaseClass):
         }
         self.turbines = [turbines_unique[k] for k in self._turbine_types]
 
-    def construct_turbine_thrust_coefficient_functions(self):
-        self.turbine_thrust_coefficient_functions = {
-            turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbines
-        }
-
-    def construct_turbine_axial_induction_functions(self):
-        self.turbine_axial_induction_functions = {
-            turb.turbine_type: turb.axial_induction_function for turb in self.turbines
-        }
-
-    def construct_turbine_tilt_interps(self):
-        self.turbine_tilt_interps = {
-            turb.turbine_type: turb.tilt_interp for turb in self.turbines
-        }
-
-    def construct_turbine_power_functions(self):
-        self.turbine_power_functions = {
-            turb.turbine_type: turb.power_function for turb in self.turbines
-        }
-
-    def construct_turbine_power_thrust_tables(self):
-        self.turbine_power_thrust_tables = {
-            turb.turbine_type: turb.power_thrust_table for turb in self.turbines
-        }
-
     def set_sorted_indices(self, sorted_indices: NDArrayInt):
         self._sorted_indices = sorted_indices
 
-    def expand_farm_properties(self, n_findex: int):
-        # TODO: Possibly remove this function; not clear what the point is, hoping to get rid
-        # of turbine_type_map_sorted.
+    def construct_turbine_type_map(self):
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(
-                [t.turbine_type for t in self.turbines] * n_findex,
+                [t.turbine_type for t in self.turbines] * self._sorted_indices.shape[0],
                 np.shape(self._sorted_indices)
             ),
             self._sorted_indices,
@@ -304,7 +271,6 @@ class Farm(BaseClass):
         self.awc_modes = np.array(awc_modes)
 
     def set_awc_modes_to_ref_mode(self, n_findex: int):
-        # awc_modes = np.empty((n_findex, self.n_turbines))\
         awc_modes = np.array([["baseline"]*self.n_turbines]*n_findex)
         self.set_awc_modes(awc_modes)
 
@@ -322,13 +288,7 @@ class Farm(BaseClass):
         awc_frequencies = np.zeros((n_findex, self.n_turbines))
         self.set_awc_frequencies(awc_frequencies)
 
-    def finalize(self, unsorted_indices):
-        # TODO: Why does turbine_type_map need to be reshaped?
-        self.turbine_type_map = np.take_along_axis(
-            self.turbine_type_map_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
+    def finalize(self):
         self.state.USED
 
     @property
@@ -377,6 +337,13 @@ class Farm(BaseClass):
     def awc_frequencies_sorted(self):
         return _sort_by_coord_indices(self.awc_frequencies, self._sorted_indices)
 
+    @property
+    def turbine_type_map(self):
+        return np.broadcast_to(
+            np.array([t.turbine_type for t in self.turbines]),
+            (self._sorted_indices.shape[0], self.n_turbines)
+        )
+
 def check_turbine_definition_for_v3_keys(turbine_definition: dict):
     """Check that the turbine definition does not contain any v3 keys."""
     v3_deprecation_msg = (
@@ -412,7 +379,6 @@ def check_turbine_definition_for_v3_keys(turbine_definition: dict):
             + v3_deprecation_msg
         )
 
-# TODO: Move to utilities?
 def _sort_by_coord_indices(array, sorted_indices):
     if array.ndim != 2:
         template_shape = np.ones_like(sorted_indices)

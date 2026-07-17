@@ -1,5 +1,6 @@
 
 import copy
+
 import numpy as np
 
 from floris.core import (
@@ -479,7 +480,7 @@ def test_regression_tilt(sample_inputs_fixture):
     turb_front.turbine_type = 'nrel_5mw_tilt8'
     turb_front.ref_tilt = 8.0
     floris.farm.turbines[0] = turb_front
-    floris.farm.expand_farm_properties(N_FINDEX)
+    floris.farm.construct_turbine_type_map()
 
     floris.initialize_domain()
     floris.steady_state_atmospheric_condition()

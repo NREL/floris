@@ -261,9 +261,6 @@ def full_flow_sequential_solver(
     turbine_grid_flow_field = copy.deepcopy(flow_field)
 
     turbine_grid_farm.construct_turbines()
-    turbine_grid_farm.construct_turbine_thrust_coefficient_functions()
-    turbine_grid_farm.construct_turbine_axial_induction_functions()
-    turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_turbine_TSRs()
 
@@ -274,7 +271,7 @@ def full_flow_sequential_solver(
         grid_resolution=3,
     )
     turbine_grid_farm.set_sorted_indices(turbine_grid.sorted_coord_indices)
-    turbine_grid_farm.expand_farm_properties(turbine_grid_flow_field.n_findex)
+    turbine_grid_farm.construct_turbine_type_map()
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize()
     sequential_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
@@ -697,9 +694,6 @@ def full_flow_cc_solver(
     turbine_grid_flow_field = copy.deepcopy(flow_field)
 
     turbine_grid_farm.construct_turbines()
-    turbine_grid_farm.construct_turbine_thrust_coefficient_functions()
-    turbine_grid_farm.construct_turbine_axial_induction_functions()
-    turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_turbine_TSRs()
 
@@ -710,7 +704,7 @@ def full_flow_cc_solver(
         grid_resolution=3,
     )
     turbine_grid_farm.set_sorted_indices(turbine_grid.sorted_coord_indices)
-    turbine_grid_farm.expand_farm_properties(turbine_grid_flow_field.n_findex)
+    turbine_grid_farm.construct_turbine_type_map()
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize()
     cc_solver(turbine_grid_farm, turbine_grid_flow_field, turbine_grid, model_manager)
@@ -1345,9 +1339,6 @@ def full_flow_empirical_gauss_solver(
     turbine_grid_flow_field = copy.deepcopy(flow_field)
 
     turbine_grid_farm.construct_turbines()
-    turbine_grid_farm.construct_turbine_thrust_coefficient_functions()
-    turbine_grid_farm.construct_turbine_axial_induction_functions()
-    turbine_grid_farm.construct_turbine_power_functions()
     turbine_grid_farm.construct_hub_heights()
     turbine_grid_farm.construct_turbine_TSRs()
 
@@ -1358,7 +1349,7 @@ def full_flow_empirical_gauss_solver(
         grid_resolution=3,
     )
     turbine_grid_farm.set_sorted_indices(turbine_grid.sorted_coord_indices)
-    turbine_grid_farm.expand_farm_properties(turbine_grid_flow_field.n_findex)
+    turbine_grid_farm.construct_turbine_type_map()
     turbine_grid_flow_field.initialize_velocity_field(turbine_grid)
     turbine_grid_farm.initialize()
     wim_field = empirical_gauss_solver(

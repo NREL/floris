@@ -71,10 +71,6 @@ class Core(BaseClass):
 
         # Initialize farm quantities that depend on other objects
         self.farm.construct_turbines()
-        self.farm.construct_turbine_thrust_coefficient_functions()
-        self.farm.construct_turbine_axial_induction_functions()
-        self.farm.construct_turbine_power_functions()
-        self.farm.construct_turbine_power_thrust_tables()
         self.farm.construct_hub_heights()
         self.farm.construct_rotor_diameters()
         self.farm.construct_turbine_TSRs()
@@ -118,7 +114,7 @@ class Core(BaseClass):
 
         if isinstance(self.grid, (TurbineGrid, TurbineCubatureGrid)):
             self.farm.set_sorted_indices(self.grid.sorted_coord_indices)
-            self.farm.expand_farm_properties(self.flow_field.n_findex)
+            self.farm.construct_turbine_type_map()
 
     def initialize_domain(self):
         """Initialize solution space prior to wake calculations"""
@@ -335,7 +331,7 @@ class Core(BaseClass):
         # Once the wake calculation is finished, unsort the values to match
         # the user-supplied order of things.
         self.flow_field.finalize(self.grid.unsorted_indices)
-        self.farm.finalize(self.grid.unsorted_indices)
+        self.farm.finalize()
         self.state = State.USED
 
     ## I/O
