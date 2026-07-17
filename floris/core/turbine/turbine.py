@@ -540,7 +540,9 @@ def power(
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Tilt arguments
-        power_model_kwargs["tilt_angles"] = turbine_dict[turb_type].ref_tilt
+        power_model_kwargs["tilt_angles"] = (
+            turbine_dict[turb_type].ref_tilt * np.ones_like(yaw_angles)
+        )
         power_model_kwargs["tilt_interp"] = turbine_dict[turb_type].tilt_interp
         power_model_kwargs["correct_cp_ct_for_tilt"] = (
             turbine_dict[turb_type].correct_cp_ct_for_tilt
@@ -670,7 +672,9 @@ def thrust_coefficient(
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Tilt arguments
-        thrust_model_kwargs["tilt_angles"] = turbine_dict[turb_type].ref_tilt
+        thrust_model_kwargs["tilt_angles"] = (
+            turbine_dict[turb_type].ref_tilt * np.ones_like(yaw_angles)
+        )
         thrust_model_kwargs["tilt_interp"] = turbine_dict[turb_type].tilt_interp
         thrust_model_kwargs["correct_cp_ct_for_tilt"] = (
             turbine_dict[turb_type].correct_cp_ct_for_tilt
@@ -796,7 +800,9 @@ def axial_induction(
     turb_types = np.unique(turbine_type_map)
     for turb_type in turb_types:
         # Tilt arguments
-        axial_induction_model_kwargs["tilt_angles"] = turbine_dict[turb_type].ref_tilt
+        axial_induction_model_kwargs["tilt_angles"] = (
+            turbine_dict[turb_type].ref_tilt * np.ones_like(yaw_angles)
+        )
         axial_induction_model_kwargs["tilt_interp"] = turbine_dict[turb_type].tilt_interp
         axial_induction_model_kwargs["correct_cp_ct_for_tilt"] = (
             turbine_dict[turb_type].correct_cp_ct_for_tilt

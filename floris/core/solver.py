@@ -13,7 +13,7 @@ from floris.core import (
 )
 from floris.core.rotor_velocity import (
     average_velocity,
-    compute_tilt_angles_for_floating_turbines_map,
+    calculate_tilt_for_rotor_effective_velocities,
 )
 from floris.core.wake import WakeModelManager
 from floris.core.wake_deflection.empirical_gauss import yaw_added_wake_mixing
@@ -1229,7 +1229,7 @@ def empirical_gauss_solver(
             method=grid.average_method,
             cubature_weights=grid.cubature_weights
         )
-        tilt_angle_i = calculate_tilt_for_eff_velocities(farm, average_velocities)
+        tilt_angle_i = calculate_tilt_for_rotor_effective_velocities(farm, average_velocities)
         tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
@@ -1433,7 +1433,10 @@ def full_flow_empirical_gauss_solver(
             method=turbine_grid.average_method,
             cubature_weights=turbine_grid.cubature_weights
         )
-        tilt_angle_i = calculate_tilt_for_eff_velocities(turbine_grid_farm, average_velocities)
+        tilt_angle_i = calculate_tilt_for_rotor_effective_velocities(
+            turbine_grid_farm,
+            average_velocities
+        )
         tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
 
         if model_manager.enable_secondary_steering:
@@ -1483,11 +1486,3 @@ def full_flow_empirical_gauss_solver(
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
         flow_field.turbulence_intensity_field_sorted = turbulence_intensity_field
-
-def calculate_tilt_for_eff_velocities(farm, rotor_effective_velocities):
-    tilt_angles = compute_tilt_angles_for_floating_turbines_map(
-        farm.turbines,
-        farm.turbine_type_map_sorted,
-        rotor_effective_velocities,
-    )
-    return tilt_angles

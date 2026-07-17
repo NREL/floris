@@ -127,6 +127,15 @@ def average_velocity(
     else:
         raise ValueError("Incorrect method given.")
 
+# TODO: Consider breaking following tilt functions out into separate file
+def calculate_tilt_for_rotor_effective_velocities(farm, rotor_effective_velocities):
+    tilt_angles = compute_tilt_angles_for_floating_turbines_map(
+        farm.turbines,
+        farm.turbine_type_map_sorted,
+        rotor_effective_velocities,
+    )
+    return tilt_angles
+
 def compute_tilt_angles_for_floating_turbines_map(
     turbines: list,
     turbine_type_map: NDArrayObject,

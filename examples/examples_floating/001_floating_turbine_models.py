@@ -29,6 +29,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from floris import FlorisModel, TimeSeries
+from floris.core.rotor_velocity import calculate_tilt_for_rotor_effective_velocities
 
 
 # Create the Floris instances
@@ -65,16 +66,21 @@ ct_floating_defined_floating = (
 
 # Grab turbine tilt angles
 eff_vels = fmodel_fixed.turbine_average_velocities
-tilt_angles_fixed = np.squeeze(fmodel_fixed.core.farm.calculate_tilt_for_eff_velocities(eff_vels))
+tilt_angles_fixed = np.squeeze(
+    calculate_tilt_for_rotor_effective_velocities(fmodel_fixed.core.farm, eff_vels)
+)
 
 eff_vels = fmodel_floating.turbine_average_velocities
 tilt_angles_floating = np.squeeze(
-    fmodel_floating.core.farm.calculate_tilt_for_eff_velocities(eff_vels)
+    calculate_tilt_for_rotor_effective_velocities(fmodel_floating.core.farm, eff_vels)
 )
 
 eff_vels = fmodel_floating_defined_floating.turbine_average_velocities
 tilt_angles_floating_defined_floating = np.squeeze(
-    fmodel_floating_defined_floating.core.farm.calculate_tilt_for_eff_velocities(eff_vels)
+    calculate_tilt_for_rotor_effective_velocities(
+        fmodel_floating_defined_floating.core.farm,
+        eff_vels
+    )
 )
 
 # Plot results
