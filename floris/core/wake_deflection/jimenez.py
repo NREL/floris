@@ -57,16 +57,21 @@ class JimenezVelocityDeflection(BaseModel):
     ):
         """
         Calculates the deflection field of the wake in relation to the yaw of
-        the ith turbine. This is coded as defined in [1].
+        the turbine. This is coded as defined in [1].
 
         Args:
-            x_i (np.array): x-coordinate of the ith turbine.
-            y_i (np.array): y-coordinate of the ith turbine.
-            yaw_i (np.array): yaw angle of the ith turbine.
-            turbulence_intensity_i (np.array): turbulence intensity at the ith turbine.
-            ct_i (np.array): thrust coefficient of the ith turbine.
-            rotor_diameter_i (np.array): rotor diameter of the ith turbine.
-            x (np.array): x-coordinates of the flow field at which to calculate the deflection.
+            x_locations (np.array): streamwise locations in wake
+            y_locations (np.array): spanwise locations in wake
+            z_locations (np.array): vertical locations in wake
+                (not used in Jiménez)
+            turbine (:py:class:`floris.core.turbine.Turbine`):
+                Turbine object
+            coord
+                (:py:meth:`floris.core.turbine_map.TurbineMap.coords`):
+                Spatial coordinates of wind turbine.
+            flow_field
+                (:py:class:`floris.core.flow_field.FlowField`):
+                Flow field object.
 
         Returns:
             deflection (np.array): Deflected wake centerline.
