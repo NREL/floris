@@ -225,7 +225,7 @@ class Farm(BaseClass):
             self.state = State.INITIALIZED
         else:
             raise ValueError(
-                "The Farm object must be initialized with the sorted indices from the FlowField "
+                "The Farm object must be initialized with the sorted indices from a Grid object "
                 "before it can be used. Please call Farm.set_sorted_indices() first."
             )
 
