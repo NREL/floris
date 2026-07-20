@@ -165,7 +165,7 @@ class ParFlorisModel(FlorisModel):
                         self._fmodels_split = list(self._fmodels_split)
             t2 = timerpc()
             self._postprocessing()
-            self.core.farm.finalize(self.core.grid.unsorted_indices)
+            self.core.farm.finalize()
             self.core.state = State.USED
             t3 = timerpc()
             self._print_timings(t0, t1, t2, t3)

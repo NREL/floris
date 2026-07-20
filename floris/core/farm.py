@@ -1,29 +1,30 @@
 import copy
-from collections.abc import Callable
 from pathlib import Path
 from typing import (
     Any,
-    Dict,
     List,
 )
 
 import attrs
 import numpy as np
-from attrs import define, field
-from scipy.interpolate import interp1d
+from attrs import (
+    define,
+    field,
+    setters,
+)
 
 from floris.core import (
     BaseClass,
     State,
     Turbine,
 )
-from floris.core.rotor_velocity import compute_tilt_angles_for_floating_turbines_map
 from floris.core.turbine.operation_models import POWER_SETPOINT_DEFAULT
 from floris.type_dec import (
     convert_to_path,
     floris_array_converter,
     iter_validator,
     NDArrayFloat,
+    NDArrayInt,
     NDArrayObject,
     NDArrayStr,
 )
@@ -54,72 +55,51 @@ class Farm(BaseClass):
         turbine_type (list[dict | str]): A list of turbine definition dictionaries, or string
             references to the filename of the turbine type in either the FLORIS-provided turbine
             library (.../floris/turbine_library/), or a user-provided
-            :py:attr:`turbine_library_path`.
-        turbine_library_path (:obj:`str`): Either an absolute file path to the turbine library, or a
-            path relative to the file that is running the analysis.
+            :py:attr:`external_turbine_library_path`.
+        external_turbine_library_path (:obj:`str`): Either an absolute file path to the turbine
+            library, or a path relative to the file that is running the analysis.
     """
 
-    layout_x: NDArrayFloat = field(converter=floris_array_converter)
-    layout_y: NDArrayFloat = field(converter=floris_array_converter)
-    # TODO: turbine_type should be immutable
-    turbine_type: List = field(validator=iter_validator(list, (dict, str)))
-    turbine_library_path: Path = field(
-        default=default_turbine_library_path, converter=convert_to_path
+    layout_x: NDArrayFloat = field(init=True, converter=floris_array_converter)
+    layout_y: NDArrayFloat = field(init=True, converter=floris_array_converter)
+
+    turbine_type: List = field(
+        init=True,
+        validator=iter_validator(list, (dict, str)),
+        on_setattr=setters.frozen
     )
 
-    turbine_definitions: list = field(init=False, validator=iter_validator(list, dict))
+    external_turbine_library_path: Path = field(
+        init=True,
+        default=default_turbine_library_path,
+        converter=convert_to_path
+    )
 
-    turbine_thrust_coefficient_functions: Dict[str, Callable] = field(init=False, factory=list)
-    turbine_axial_induction_functions: Dict[str, Callable] = field(init=False, factory=list)
+    # Generated after initialization
+    internal_turbine_library_path: Path = field(init=False, default=default_turbine_library_path)
 
-    turbine_tilt_interps: dict[str, interp1d] = field(init=False, factory=dict)
-
-    yaw_angles: NDArrayFloat = field(init=False)
-    yaw_angles_sorted: NDArrayFloat = field(init=False)
-
-    tilt_angles: NDArrayFloat = field(init=False)
-    tilt_angles_sorted: NDArrayFloat = field(init=False)
-
-    power_setpoints: NDArrayFloat = field(init=False)
-    power_setpoints_sorted: NDArrayFloat = field(init=False)
-
-    awc_modes: NDArrayStr = field(init=False)
-    awc_modes_sorted: NDArrayStr = field(init=False)
-
-    awc_amplitudes: NDArrayFloat = field(init=False)
-    awc_amplitudes_sorted: NDArrayFloat = field(init=False)
-
-    awc_frequencies: NDArrayFloat = field(init=False)
-    awc_frequencies_sorted: NDArrayFloat = field(init=False)
-
-    hub_heights: NDArrayFloat = field(init=False)
-    hub_heights_sorted: NDArrayFloat = field(init=False, factory=list)
-
-    turbine_map: List[Turbine] = field(init=False, factory=list)
-
-    turbine_type_map: NDArrayObject = field(init=False, factory=list)
+    turbines: List[Turbine] = field(init=False, factory=list)
     turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
 
-    turbine_power_functions: Dict[str, Callable] = field(init=False, factory=list)
-    turbine_power_thrust_tables: Dict[str, dict] = field(init=False, factory=list)
-
-    rotor_diameters: NDArrayFloat = field(init=False, factory=list)
-    rotor_diameters_sorted: NDArrayFloat = field(init=False, factory=list)
-
+    # TODO (later): Collect into a ControlSetpoint class
+    yaw_angles: NDArrayFloat = field(init=False)
+    power_setpoints: NDArrayFloat = field(init=False)
+    awc_modes: NDArrayStr = field(init=False)
+    awc_amplitudes: NDArrayFloat = field(init=False)
+    awc_frequencies: NDArrayFloat = field(init=False)
+    # TODO: Are TSRs control_setpoints? What models need them, and when/how? What is the eventual
+    # use? Perhaps these are the "optimal" TSRs, which could be considered control setpoints, but
+    # dont affect power.
     TSRs: NDArrayFloat = field(init=False, factory=list)
-    TSRs_sorted: NDArrayFloat = field(init=False, factory=list)
 
-    ref_tilts: NDArrayFloat = field(init=False, factory=list)
-    ref_tilts_sorted: NDArrayFloat = field(init=False, factory=list)
+    # Convenience attributes extracted from the Turbine objects.
+    hub_heights: NDArrayFloat = field(init=False)
+    rotor_diameters: NDArrayFloat = field(init=False, factory=list)
 
-    correct_cp_ct_for_tilt: NDArrayFloat = field(init=False, factory=list)
-    correct_cp_ct_for_tilt_sorted: NDArrayFloat = field(init=False, factory=list)
-
-    internal_turbine_library: Path = field(init=False, default=default_turbine_library_path)
-
-    # Private attributes
+    # Private attributes.
     _turbine_types: List = field(init=False, validator=iter_validator(list, str), factory=list)
     _turbine_definition_cache: dict = field(init=False, factory=dict)
+    _sorted_indices: NDArrayInt = field(init=False, factory=list)
 
     def __attrs_post_init__(self) -> None:
         # Turbine definitions can be supplied in three ways:
@@ -129,7 +109,7 @@ class Farm(BaseClass):
         #     library preprocessing the inputs and loading the specified file directly into
         #     the main input file. The result is that floris sees the turbine definition as a dict.
         # - A string selecting an turbine that exists in an external turbine library
-        #   specified in `turbine_library_path`
+        #   specified in `external_turbine_library_path`
 
         # Load all the turbine types into a cache to be mapped to specific turbine indices later.
         # This allows to read the yaml input files once rather than every time they're given.
@@ -152,7 +132,7 @@ class Farm(BaseClass):
                         )
                 self._turbine_definition_cache[t["turbine_type"]] = t
                 self._turbine_definition_cache[t["turbine_type"]]["turbine_library_path"] = (
-                    self.turbine_library_path
+                    self.external_turbine_library_path
                 )
 
             # If a turbine type is a string, then it is expected in the internal or external
@@ -162,14 +142,14 @@ class Farm(BaseClass):
                     continue # Skip t if already loaded
 
                 # Check if the file exists in the internal and/or external library
-                internal_fn = (self.internal_turbine_library / t).with_suffix(".yaml")
-                external_fn = (self.turbine_library_path / t).with_suffix(".yaml")
+                internal_fn = (self.internal_turbine_library_path / t).with_suffix(".yaml")
+                external_fn = (self.external_turbine_library_path / t).with_suffix(".yaml")
                 in_internal = internal_fn.exists()
                 in_external = external_fn.exists()
 
                 # If an external library is used and there's a duplicate of an internal
                 # definition, then raise an error
-                is_unique_path = self.turbine_library_path != default_turbine_library_path
+                is_unique_path = self.external_turbine_library_path != default_turbine_library_path
                 if is_unique_path and in_external and in_internal:
                     raise ValueError(
                         f"The turbine type: {t} exists in both the internal and external"
@@ -187,7 +167,7 @@ class Farm(BaseClass):
                     )
                 self._turbine_definition_cache[t] = load_yaml(full_path)
                 self._turbine_definition_cache[t]["turbine_library_path"] = (
-                    self.turbine_library_path
+                    self.external_turbine_library_path
                 )
 
         # Convert any dict entries in the turbine_type list to the type string. Since the
@@ -212,23 +192,20 @@ class Farm(BaseClass):
         for _, v in self._turbine_definition_cache.items():
             check_turbine_definition_for_v3_keys(v)
 
-        # Map each turbine definition to its index in this list
-        self.turbine_definitions = [
-            copy.deepcopy(self._turbine_definition_cache[t]) for t in self._turbine_types
-        ]
+        self.construct_turbines()
 
     @layout_x.validator
-    def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
+    def _check_x(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_y):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
     @layout_y.validator
-    def check_y(self, attribute: attrs.Attribute, value: Any) -> None:
+    def _check_y(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
     @turbine_type.validator
-    def check_turbine_type(self, attribute: attrs.Attribute, value: Any) -> None:
+    def _check_turbine_type(self, attribute: attrs.Attribute, value: Any) -> None:
         # Check that the list of turbines is either of length 1 or N turbines
         if len(value) != 1 and len(value) != self.n_turbines:
             raise ValueError(
@@ -237,138 +214,42 @@ class Farm(BaseClass):
                 "alter the operation model before setting the layout."
             )
 
-    @turbine_library_path.validator
-    def check_library_path(self, attribute: attrs.Attribute, value: Path) -> None:
+    @external_turbine_library_path.validator
+    def _check_library_path(self, attribute: attrs.Attribute, value: Path) -> None:
         """Ensures that the input to `library_path` exists and is a directory."""
         if not value.is_dir():
             raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
 
-    def initialize(self, sorted_indices):
-        # Sort yaw angles from most upstream to most downstream wind turbine
-        self.yaw_angles_sorted = np.take_along_axis(
-            self.yaw_angles,
-            sorted_indices[:, :, 0, 0],
-            axis=1,
-        )
-        self.tilt_angles_sorted = np.take_along_axis(
-            self.tilt_angles,
-            sorted_indices[:, :, 0, 0],
-            axis=1,
-        )
-        self.power_setpoints_sorted = np.take_along_axis(
-            self.power_setpoints,
-            sorted_indices[:, :, 0, 0],
-            axis=1,
-        )
-        self.awc_modes_sorted = np.take_along_axis(
-            self.awc_modes,
-            sorted_indices[:, :, 0, 0],
-            axis=1,
-        )
-        self.awc_amplitudes_sorted = np.take_along_axis(
-            self.awc_amplitudes,
-            sorted_indices[:, :, 0, 0],
-            axis=1,
-        )
-        self.awc_frequencies_sorted = np.take_along_axis(
-            self.awc_frequencies,
-            sorted_indices[:, :, 0, 0],
-            axis=1,
-        )
-        self.state = State.INITIALIZED
+    def initialize(self):
+        if hasattr(self, "_sorted_indices"):
+            self.state = State.INITIALIZED
+        else:
+            raise ValueError(
+                "The Farm object must be initialized with the sorted indices from a Grid object "
+                "before it can be used. Please call Farm.set_sorted_indices() first."
+            )
 
-    def construct_hub_heights(self):
-        self.hub_heights = np.array([turb['hub_height'] for turb in self.turbine_definitions])
-
-    def construct_rotor_diameters(self):
-        self.rotor_diameters = np.array([
-            turb['rotor_diameter'] for turb in self.turbine_definitions
-        ])
-
-    def construct_turbine_TSRs(self):
-        self.TSRs = np.array([turb['TSR'] for turb in self.turbine_definitions])
-
-    def construct_turbine_ref_tilts(self):
-        self.ref_tilts = np.array(
-            [turb['power_thrust_table']['ref_tilt'] for turb in self.turbine_definitions]
-        )
-
-    def construct_turbine_correct_cp_ct_for_tilt(self):
-        self.correct_cp_ct_for_tilt = np.array(
-            [turb.correct_cp_ct_for_tilt for turb in self.turbine_map]
-        )
-
-    def construct_turbine_map(self):
-        turbine_map_unique = {
+    def construct_turbines(self):
+        turbines_unique = {
             k: Turbine.from_dict(v) for k, v in self._turbine_definition_cache.items()
         }
-        self.turbine_map = [turbine_map_unique[k] for k in self._turbine_types]
+        self.turbines = [turbines_unique[k] for k in self._turbine_types]
 
-    def construct_turbine_thrust_coefficient_functions(self):
-        self.turbine_thrust_coefficient_functions = {
-            turb.turbine_type: turb.thrust_coefficient_function for turb in self.turbine_map
-        }
+        # Extract various attributes for convenience.
+        self.hub_heights = np.array([t.hub_height for t in self.turbines])
+        self.rotor_diameters = np.array([t.rotor_diameter for t in self.turbines])
+        self.TSRs = np.array([t.TSR for t in self.turbines])
 
-    def construct_turbine_axial_induction_functions(self):
-        self.turbine_axial_induction_functions = {
-            turb.turbine_type: turb.axial_induction_function for turb in self.turbine_map
-        }
+    def set_sorted_indices(self, sorted_indices: NDArrayInt):
+        self._sorted_indices = sorted_indices
 
-    def construct_turbine_tilt_interps(self):
-        self.turbine_tilt_interps = {
-            turb.turbine_type: turb.tilt_interp for turb in self.turbine_map
-        }
-
-    def construct_turbine_power_functions(self):
-        self.turbine_power_functions = {
-            turb.turbine_type: turb.power_function for turb in self.turbine_map
-        }
-
-    def construct_turbine_power_thrust_tables(self):
-        self.turbine_power_thrust_tables = {
-            turb.turbine_type: turb.power_thrust_table for turb in self.turbine_map
-        }
-
-    def expand_farm_properties(self, n_findex: int, sorted_coord_indices):
-        template_shape = np.ones_like(sorted_coord_indices)
-        self.hub_heights_sorted = np.take_along_axis(
-            self.hub_heights * template_shape,
-            sorted_coord_indices,
-            axis=1
-        )
-        self.rotor_diameters_sorted = np.take_along_axis(
-            self.rotor_diameters * template_shape,
-            sorted_coord_indices,
-            axis=1
-        )
-        self.TSRs_sorted = np.take_along_axis(
-            self.TSRs * template_shape,
-            sorted_coord_indices,
-            axis=1
-        )
-        self.ref_tilts_sorted = np.take_along_axis(
-            self.ref_tilts * template_shape,
-            sorted_coord_indices,
-            axis=1
-        )
-        self.correct_cp_ct_for_tilt_sorted = np.take_along_axis(
-            self.correct_cp_ct_for_tilt * template_shape,
-            sorted_coord_indices,
-            axis=1
-        )
-
-        # NOTE: Tilt angles are sorted twice - here and in initialize()
-        self.tilt_angles_sorted = np.take_along_axis(
-            self.tilt_angles * template_shape,
-            sorted_coord_indices,
-            axis=1
-        )
+    def construct_turbine_type_map(self):
         self.turbine_type_map_sorted = np.take_along_axis(
             np.reshape(
-                [turb["turbine_type"] for turb in self.turbine_definitions] * n_findex,
-                np.shape(sorted_coord_indices)
+                [t.turbine_type for t in self.turbines] * self._sorted_indices.shape[0],
+                np.shape(self._sorted_indices)
             ),
-            sorted_coord_indices,
+            self._sorted_indices,
             axis=1
         )
 
@@ -378,17 +259,6 @@ class Farm(BaseClass):
     def set_yaw_angles_to_ref_yaw(self, n_findex: int):
         yaw_angles = np.zeros((n_findex, self.n_turbines))
         self.set_yaw_angles(yaw_angles)
-        self.yaw_angles_sorted = np.zeros((n_findex, self.n_turbines))
-
-    def set_tilt_to_ref_tilt(self, n_findex: int):
-        self.tilt_angles = (
-            np.ones((n_findex, self.n_turbines))
-            * self.ref_tilts
-        )
-        self.tilt_angles_sorted = (
-            np.ones((n_findex, self.n_turbines))
-            * self.ref_tilts
-        )
 
     def set_power_setpoints(self, power_setpoints: NDArrayFloat):
         self.power_setpoints = np.array(power_setpoints)
@@ -396,17 +266,13 @@ class Farm(BaseClass):
     def set_power_setpoints_to_ref_power(self, n_findex: int):
         power_setpoints = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
         self.set_power_setpoints(power_setpoints)
-        self.power_setpoints_sorted = POWER_SETPOINT_DEFAULT * np.ones((n_findex, self.n_turbines))
 
     def set_awc_modes(self, awc_modes: NDArrayStr):
         self.awc_modes = np.array(awc_modes)
 
     def set_awc_modes_to_ref_mode(self, n_findex: int):
-        # awc_modes = np.empty((n_findex, self.n_turbines))\
         awc_modes = np.array([["baseline"]*self.n_turbines]*n_findex)
         self.set_awc_modes(awc_modes)
-        # self.awc_modes_sorted = np.empty((n_findex, self.n_turbines))
-        self.awc_modes_sorted = np.array([["baseline"]*self.n_turbines]*n_findex)
 
     def set_awc_amplitudes(self, awc_amplitudes: NDArrayFloat):
         self.awc_amplitudes = np.array(awc_amplitudes)
@@ -414,7 +280,6 @@ class Farm(BaseClass):
     def set_awc_amplitudes_to_ref_amp(self, n_findex: int):
         awc_amplitudes = np.zeros((n_findex, self.n_turbines))
         self.set_awc_amplitudes(awc_amplitudes)
-        self.awc_amplitudes_sorted = np.zeros((n_findex, self.n_turbines))
 
     def set_awc_frequencies(self, awc_frequencies: NDArrayFloat):
         self.awc_frequencies = np.array(awc_frequencies)
@@ -422,58 +287,15 @@ class Farm(BaseClass):
     def set_awc_frequencies_to_ref_freq(self, n_findex: int):
         awc_frequencies = np.zeros((n_findex, self.n_turbines))
         self.set_awc_frequencies(awc_frequencies)
-        self.awc_frequencies_sorted = np.zeros((n_findex, self.n_turbines))
 
-    def calculate_tilt_for_eff_velocities(self, rotor_effective_velocities):
-        tilt_angles = compute_tilt_angles_for_floating_turbines_map(
-            self.turbine_type_map_sorted,
-            self.tilt_angles_sorted,
-            self.turbine_tilt_interps,
-            rotor_effective_velocities,
-        )
-        return tilt_angles
+    def set_control_setpoints_to_reference(self, n_findex: int):
+        self.set_yaw_angles_to_ref_yaw(n_findex)
+        self.set_power_setpoints_to_ref_power(n_findex)
+        self.set_awc_modes_to_ref_mode(n_findex)
+        self.set_awc_amplitudes_to_ref_amp(n_findex)
+        self.set_awc_frequencies_to_ref_freq(n_findex)
 
-    def finalize(self, unsorted_indices):
-        self.yaw_angles = np.take_along_axis(
-            self.yaw_angles_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.tilt_angles = np.take_along_axis(
-            self.tilt_angles_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.hub_heights = np.take_along_axis(
-            self.hub_heights_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.rotor_diameters = np.take_along_axis(
-            self.rotor_diameters_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.TSRs = np.take_along_axis(
-            self.TSRs_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.ref_tilts = np.take_along_axis(
-            self.ref_tilts_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.correct_cp_ct_for_tilt = np.take_along_axis(
-            self.correct_cp_ct_for_tilt_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
-        self.turbine_type_map = np.take_along_axis(
-            self.turbine_type_map_sorted,
-            unsorted_indices[:,:,0,0],
-            axis=1
-        )
+    def finalize(self):
         self.state.USED
 
     @property
@@ -489,6 +311,45 @@ class Farm(BaseClass):
     @property
     def n_turbines(self):
         return len(self.layout_x)
+
+    @property
+    def rotor_diameters_sorted(self):
+        return _sort_by_coord_indices(self.rotor_diameters, self._sorted_indices)
+
+    @property
+    def hub_heights_sorted(self):
+        return _sort_by_coord_indices(self.hub_heights, self._sorted_indices)
+
+    @property
+    def TSRs_sorted(self):
+        return _sort_by_coord_indices(self.TSRs, self._sorted_indices)
+
+    @property
+    def yaw_angles_sorted(self):
+        return _sort_by_coord_indices(self.yaw_angles, self._sorted_indices)
+
+    @property
+    def power_setpoints_sorted(self):
+        return _sort_by_coord_indices(self.power_setpoints, self._sorted_indices)
+
+    @property
+    def awc_modes_sorted(self):
+        return _sort_by_coord_indices(self.awc_modes, self._sorted_indices)
+
+    @property
+    def awc_amplitudes_sorted(self):
+        return _sort_by_coord_indices(self.awc_amplitudes, self._sorted_indices)
+
+    @property
+    def awc_frequencies_sorted(self):
+        return _sort_by_coord_indices(self.awc_frequencies, self._sorted_indices)
+
+    @property
+    def turbine_type_map(self):
+        return np.broadcast_to(
+            np.array([t.turbine_type for t in self.turbines]),
+            (self._sorted_indices.shape[0], self.n_turbines)
+        )
 
 def check_turbine_definition_for_v3_keys(turbine_definition: dict):
     """Check that the turbine definition does not contain any v3 keys."""
@@ -524,3 +385,20 @@ def check_turbine_definition_for_v3_keys(turbine_definition: dict):
             "in absolute terms with units kW, rather than as a coefficient). "
             + v3_deprecation_msg
         )
+
+def _sort_by_coord_indices(array, sorted_indices):
+    if array.ndim != 2:
+        template_shape = np.ones_like(sorted_indices)
+        return np.take_along_axis(
+            array * template_shape,
+            sorted_indices,
+            axis=1
+        )
+    elif array.ndim == 2:
+        return np.take_along_axis(
+            array,
+            sorted_indices,
+            axis=1
+        )
+    else:
+        raise ValueError("Array must be 1-dimensional or 2-dimensional to sort.")

@@ -53,7 +53,7 @@ class YawOptimizationGeometric(YawOptimization):
                 self.fmodel_subset.layout_x[active_turbines[nwdi]],
                 self.fmodel_subset.layout_y[active_turbines[nwdi]],
                 wd,
-                self.fmodel.core.farm.turbine_definitions[0]["rotor_diameter"],
+                self.fmodel.core.farm.turbines[0].rotor_diameter,
                 top_left_yaw_upper=self.maximum_yaw_angle[0, 0],
                 bottom_left_yaw_upper=self.maximum_yaw_angle[0, 0],
                 top_left_yaw_lower=self.minimum_yaw_angle[0, 0],
