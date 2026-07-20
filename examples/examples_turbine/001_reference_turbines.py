@@ -33,7 +33,7 @@ fmodel.set(
 # multi-dimensional power/thrust coefficient turbine definitions as they require different handling
 turbines = [
     t.stem
-    for t in fmodel.core.farm.internal_turbine_library.iterdir()
+    for t in fmodel.core.farm.internal_turbine_library_path.iterdir()
     if t.suffix == ".yaml" and ("multi_dim" not in t.stem)
 ]
 
@@ -51,16 +51,16 @@ for t in turbines:
 
     # Plot power and ct onto the fig_pow_ct plot
     axarr_pow_ct[0].plot(
-        fmodel.core.farm.turbine_map[0].power_thrust_table["wind_speed"],
-        fmodel.core.farm.turbine_map[0].power_thrust_table["power"],
+        fmodel.core.farm.turbines[0].power_thrust_table["wind_speed"],
+        fmodel.core.farm.turbines[0].power_thrust_table["power"],
         label=t,
     )
     axarr_pow_ct[0].grid(True)
     axarr_pow_ct[0].legend()
     axarr_pow_ct[0].set_ylabel("Power (kW)")
     axarr_pow_ct[1].plot(
-        fmodel.core.farm.turbine_map[0].power_thrust_table["wind_speed"],
-        fmodel.core.farm.turbine_map[0].power_thrust_table["thrust_coefficient"],
+        fmodel.core.farm.turbines[0].power_thrust_table["wind_speed"],
+        fmodel.core.farm.turbines[0].power_thrust_table["thrust_coefficient"],
         label=t,
     )
     axarr_pow_ct[1].grid(True)

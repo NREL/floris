@@ -77,23 +77,7 @@ class Core(BaseClass):
         )
 
         # Initialize farm quantities that depend on other objects
-        self.farm.construct_turbine_map()
-        self.farm.construct_turbine_thrust_coefficient_functions()
-        self.farm.construct_turbine_axial_induction_functions()
-        self.farm.construct_turbine_power_functions()
-        self.farm.construct_turbine_power_thrust_tables()
-        self.farm.construct_hub_heights()
-        self.farm.construct_rotor_diameters()
-        self.farm.construct_turbine_TSRs()
-        self.farm.construct_turbine_ref_tilts()
-        self.farm.construct_turbine_tilt_interps()
-        self.farm.construct_turbine_correct_cp_ct_for_tilt()
-        self.farm.set_yaw_angles_to_ref_yaw(self.flow_field.n_findex)
-        self.farm.set_tilt_to_ref_tilt(self.flow_field.n_findex)
-        self.farm.set_power_setpoints_to_ref_power(self.flow_field.n_findex)
-        self.farm.set_awc_modes_to_ref_mode(self.flow_field.n_findex)
-        self.farm.set_awc_amplitudes_to_ref_amp(self.flow_field.n_findex)
-        self.farm.set_awc_frequencies_to_ref_freq(self.flow_field.n_findex)
+        self.farm.set_control_setpoints_to_reference(self.flow_field.n_findex)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(
@@ -128,10 +112,8 @@ class Core(BaseClass):
             )
 
         if isinstance(self.grid, (TurbineGrid, TurbineCubatureGrid)):
-            self.farm.expand_farm_properties(
-                self.flow_field.n_findex,
-                self.grid.sorted_coord_indices
-            )
+            self.farm.set_sorted_indices(self.grid.sorted_coord_indices)
+            self.farm.construct_turbine_type_map()
 
         if isinstance(self.wake.user_defined_wake_model, dict):
             self.wake.user_defined_wake_model = BaseLibrary.from_dict(
@@ -147,7 +129,7 @@ class Core(BaseClass):
         self.flow_field.initialize_velocity_field(self.grid)
 
         # Initialize farm quantities
-        self.farm.initialize(self.grid.sorted_indices)
+        self.farm.initialize()
 
         self.state.INITIALIZED
 
@@ -162,7 +144,7 @@ class Core(BaseClass):
         model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
 
         if vel_model not in ["empirical_gauss", "user_defined"] and \
-            self.farm.correct_cp_ct_for_tilt.any():
+            any(t.correct_cp_ct_for_tilt for t in self.farm.turbines):
             self.logger.warning(
                 "The current model does not account for vertical wake deflection due to " +
                 "tilt. Corrections to power and thrust coefficient can be included, but no " +
@@ -170,8 +152,8 @@ class Core(BaseClass):
             )
 
         operation_model_awc = False
-        for td in self.farm.turbine_definitions:
-            if "operation_model" in td and td["operation_model"] == "awc":
+        for t in self.farm.turbines:
+            if t.operation_model == "awc":
                 operation_model_awc = True
         if vel_model != "empirical_gauss" and operation_model_awc:
             self.logger.warning(
@@ -387,7 +369,7 @@ class Core(BaseClass):
         # Once the wake calculation is finished, unsort the values to match
         # the user-supplied order of things.
         self.flow_field.finalize(self.grid.unsorted_indices)
-        self.farm.finalize(self.grid.unsorted_indices)
+        self.farm.finalize()
         self.state = State.USED
 
     ## I/O

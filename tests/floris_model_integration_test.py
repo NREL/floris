@@ -300,7 +300,7 @@ def test_disable_turbines():
     # Set to mixed turbine model
     with open(
         str(
-            fmodel.core.as_dict()["farm"]["turbine_library_path"]
+            fmodel.core.as_dict()["farm"]["external_turbine_library_path"]
             / (fmodel.core.as_dict()["farm"]["turbine_type"][0] + ".yaml")
         )
     ) as t:

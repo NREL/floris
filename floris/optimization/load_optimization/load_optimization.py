@@ -474,17 +474,12 @@ def optimize_power_setpoints(
         )
 
     # Raise an error if there is more than one turbine type specified
-    if not np.array(
-        [
-            fmodel.core.farm.turbine_definitions[0] == td
-            for td in fmodel.core.farm.turbine_definitions
-        ]
-    ).all():
+    if not all(fmodel.core.farm.turbines[0] == t for t in fmodel.core.farm.turbines):
         raise NotImplementedError("Only one turbine type is currently supported for optimization")
 
     # If initial set point not provided, set to rated (assumed max) power
     if power_setpoint_initial is None:
-        max_power = fmodel.core.farm.turbine_map[0].power_thrust_table["power"].max() * 1000.0
+        max_power = fmodel.core.farm.turbines[0].power_thrust_table["power"].max() * 1000.0
         power_setpoint_initial = np.tile(max_power, (fmodel.n_findex, 1))
 
     # Initialize the test power setpoints

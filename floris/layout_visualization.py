@@ -428,13 +428,11 @@ def plot_waking_directions(
     }
     wake_plotting_dict = {**def_wake_plotting_dict, **wake_plotting_dict}
 
-    # N_turbs = len(fmodel.core.farm.turbine_definitions)
-
     if D is None:
-        D = fmodel.core.farm.turbine_definitions[0]["rotor_diameter"]
+        D = fmodel.core.farm.turbines[0].rotor_diameter
         # TODO: build out capability to use multiple diameters, if of interest.
-        # D = np.array([turb['rotor_diameter'] for turb in
-        #      fmodel.core.farm.turbine_definitions])
+        # D = np.array([t.rotor_diameter for t in
+        #      fmodel.core.farm.turbines])
     # else:
     # D = D*np.ones(N_turbs)
 

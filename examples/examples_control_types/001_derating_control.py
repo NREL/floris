@@ -28,8 +28,8 @@ fmodel.set_operation_model("simple-derating")
 # Convert to a simple two turbine layout with derating turbines
 fmodel.set(layout_x=[0, 1000.0], layout_y=[0.0, 0.0])
 
-# For reference, load the turbine type
-turbine_type = fmodel.core.farm.turbine_definitions[0]
+# For reference, load the turbine alone
+turbine = fmodel.core.farm.turbines[0]
 
 # Set the wind directions and speeds to be constant over n_findex = N time steps
 N = 50
@@ -80,7 +80,7 @@ ax.plot(
 )
 ax.plot(
     power_setpoints[:, 1] / 1000,
-    np.ones(N) * np.max(turbine_type["power_thrust_table"]["power"]),
+    np.ones(N) * np.max(turbine.power_thrust_table["power"]),
     color="k",
     linestyle="dashed",
     label="Rated power",

@@ -14,7 +14,10 @@ from floris.core import (
     PointsGrid,
     TurbineGrid,
 )
-from floris.core.rotor_velocity import average_velocity
+from floris.core.rotor_velocity import (
+    average_velocity,
+    calculate_tilt_for_rotor_effective_velocities,
+)
 from floris.core.wake_model import BaseWakeModel
 from floris.core.wake_model.gauss import gaussian_function
 from floris.type_dec import floris_float_type
@@ -280,8 +283,8 @@ class EmpiricalGauss(BaseWakeModel):
                 method=grid.average_method,
                 cubature_weights=grid.cubature_weights
             )
-            self.tilt_angle_i = farm.calculate_tilt_for_eff_velocities(
-                average_velocities
+            self.tilt_angle_i = calculate_tilt_for_rotor_effective_velocities(
+                farm, average_velocities
             )[:, i:i+1, None, None]
 
             if self.enable_yaw_added_recovery:
@@ -410,8 +413,11 @@ class EmpiricalGauss(BaseWakeModel):
                 method=turbine_grid.average_method,
                 cubature_weights=turbine_grid.cubature_weights
             )
-            tilt_angle_i = turbine_grid_farm.calculate_tilt_for_eff_velocities(average_velocities)
-            tilt_angle_i = tilt_angle_i[:, i:i+1, None, None]
+            # Check: should self.tilt_angle_i be updated? Could it just be saved?
+            self.tilt_angle_i = calculate_tilt_for_rotor_effective_velocities(
+                turbine_grid_farm,
+                average_velocities
+            )[:, i:i+1, None, None]
 
             # Model calculations
             deflection_field_y, deflection_field_z = self.deflection(
