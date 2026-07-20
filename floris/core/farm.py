@@ -60,13 +60,23 @@ class Farm(BaseClass):
             library, or a path relative to the file that is running the analysis.
     """
 
-    layout_x: NDArrayFloat = field(converter=floris_array_converter)
-    layout_y: NDArrayFloat = field(converter=floris_array_converter)
+    layout_x: NDArrayFloat = field(init=True, converter=floris_array_converter)
+    layout_y: NDArrayFloat = field(init=True, converter=floris_array_converter)
 
     turbine_type: List = field(
+        init=True,
         validator=iter_validator(list, (dict, str)),
         on_setattr=setters.frozen
     )
+
+    external_turbine_library_path: Path = field(
+        init=True,
+        default=default_turbine_library_path,
+        converter=convert_to_path
+    )
+
+    # Generated after initialization
+    internal_turbine_library_path: Path = field(init=False, default=default_turbine_library_path)
 
     turbines: List[Turbine] = field(init=False, factory=list)
     turbine_type_map_sorted: NDArrayObject = field(init=False, factory=list)
@@ -85,12 +95,6 @@ class Farm(BaseClass):
     # Convenience attributes extracted from the Turbine objects.
     hub_heights: NDArrayFloat = field(init=False)
     rotor_diameters: NDArrayFloat = field(init=False, factory=list)
-
-    # Likely leave this on Farm as is
-    external_turbine_library_path: Path = field(
-        default=default_turbine_library_path, converter=convert_to_path
-    )
-    internal_turbine_library_path: Path = field(init=False, default=default_turbine_library_path)
 
     # Private attributes.
     _turbine_types: List = field(init=False, validator=iter_validator(list, str), factory=list)
@@ -191,17 +195,17 @@ class Farm(BaseClass):
         self.construct_turbines()
 
     @layout_x.validator
-    def check_x(self, attribute: attrs.Attribute, value: Any) -> None:
+    def _check_x(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_y):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
     @layout_y.validator
-    def check_y(self, attribute: attrs.Attribute, value: Any) -> None:
+    def _check_y(self, attribute: attrs.Attribute, value: Any) -> None:
         if len(value) != len(self.layout_x):
             raise ValueError("layout_x and layout_y must have the same number of entries.")
 
     @turbine_type.validator
-    def check_turbine_type(self, attribute: attrs.Attribute, value: Any) -> None:
+    def _check_turbine_type(self, attribute: attrs.Attribute, value: Any) -> None:
         # Check that the list of turbines is either of length 1 or N turbines
         if len(value) != 1 and len(value) != self.n_turbines:
             raise ValueError(
@@ -211,7 +215,7 @@ class Farm(BaseClass):
             )
 
     @external_turbine_library_path.validator
-    def check_library_path(self, attribute: attrs.Attribute, value: Path) -> None:
+    def _check_library_path(self, attribute: attrs.Attribute, value: Path) -> None:
         """Ensures that the input to `library_path` exists and is a directory."""
         if not value.is_dir():
             raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
@@ -225,20 +229,16 @@ class Farm(BaseClass):
                 "before it can be used. Please call Farm.set_sorted_indices() first."
             )
 
-    def construct_hub_heights(self):
-        self.hub_heights = np.array([t.hub_height for t in self.turbines])
-
-    def construct_rotor_diameters(self):
-        self.rotor_diameters = np.array([t.rotor_diameter for t in self.turbines])
-
-    def construct_turbine_TSRs(self):
-        self.TSRs = np.array([t.TSR for t in self.turbines])
-
     def construct_turbines(self):
         turbines_unique = {
             k: Turbine.from_dict(v) for k, v in self._turbine_definition_cache.items()
         }
         self.turbines = [turbines_unique[k] for k in self._turbine_types]
+
+        # Extract various attributes for convenience.
+        self.hub_heights = np.array([t.hub_height for t in self.turbines])
+        self.rotor_diameters = np.array([t.rotor_diameter for t in self.turbines])
+        self.TSRs = np.array([t.TSR for t in self.turbines])
 
     def set_sorted_indices(self, sorted_indices: NDArrayInt):
         self._sorted_indices = sorted_indices
@@ -287,6 +287,13 @@ class Farm(BaseClass):
     def set_awc_frequencies_to_ref_freq(self, n_findex: int):
         awc_frequencies = np.zeros((n_findex, self.n_turbines))
         self.set_awc_frequencies(awc_frequencies)
+
+    def set_control_setpoints_to_reference(self, n_findex: int):
+        self.set_yaw_angles_to_ref_yaw(n_findex)
+        self.set_power_setpoints_to_ref_power(n_findex)
+        self.set_awc_modes_to_ref_mode(n_findex)
+        self.set_awc_amplitudes_to_ref_amp(n_findex)
+        self.set_awc_frequencies_to_ref_freq(n_findex)
 
     def finalize(self):
         self.state.USED

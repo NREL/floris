@@ -260,10 +260,6 @@ def full_flow_sequential_solver(
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
 
-    turbine_grid_farm.construct_turbines()
-    turbine_grid_farm.construct_hub_heights()
-    turbine_grid_farm.construct_turbine_TSRs()
-
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
         turbine_diameters=turbine_grid_farm.rotor_diameters,
@@ -692,10 +688,6 @@ def full_flow_cc_solver(
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
-
-    turbine_grid_farm.construct_turbines()
-    turbine_grid_farm.construct_hub_heights()
-    turbine_grid_farm.construct_turbine_TSRs()
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,
@@ -1337,10 +1329,6 @@ def full_flow_empirical_gauss_solver(
     # Get the flow quantities and turbine performance
     turbine_grid_farm = copy.deepcopy(farm)
     turbine_grid_flow_field = copy.deepcopy(flow_field)
-
-    turbine_grid_farm.construct_turbines()
-    turbine_grid_farm.construct_hub_heights()
-    turbine_grid_farm.construct_turbine_TSRs()
 
     turbine_grid = TurbineGrid(
         turbine_coordinates=turbine_grid_farm.coordinates,

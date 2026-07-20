@@ -70,15 +70,7 @@ class Core(BaseClass):
         )
 
         # Initialize farm quantities that depend on other objects
-        self.farm.construct_turbines()
-        self.farm.construct_hub_heights()
-        self.farm.construct_rotor_diameters()
-        self.farm.construct_turbine_TSRs()
-        self.farm.set_yaw_angles_to_ref_yaw(self.flow_field.n_findex)
-        self.farm.set_power_setpoints_to_ref_power(self.flow_field.n_findex)
-        self.farm.set_awc_modes_to_ref_mode(self.flow_field.n_findex)
-        self.farm.set_awc_amplitudes_to_ref_amp(self.flow_field.n_findex)
-        self.farm.set_awc_frequencies_to_ref_freq(self.flow_field.n_findex)
+        self.farm.set_control_setpoints_to_reference(self.flow_field.n_findex)
 
         if self.solver["type"] == "turbine_grid":
             self.grid = TurbineGrid(

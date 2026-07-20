@@ -277,7 +277,7 @@ class Turbine(BaseClass):
         self.power_thrust_table = power_thrust_table_
 
     @power_thrust_table.validator
-    def check_power_thrust_table(self, instance: attrs.Attribute, value: dict) -> None:
+    def _check_power_thrust_table(self, instance: attrs.Attribute, value: dict) -> None:
         """
         Verify that the power and thrust tables are given with arrays of equal length
         to the wind speed array.
@@ -308,7 +308,7 @@ class Turbine(BaseClass):
             )
 
     @rotor_diameter.validator
-    def reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:
+    def _reset_rotor_diameter_dependencies(self, instance: attrs.Attribute, value: float) -> None:
         """Resets the `rotor_radius` and `rotor_area` attributes."""
         # Temporarily turn off validators to avoid infinite recursion
         with attrs.validators.disabled():
@@ -317,7 +317,7 @@ class Turbine(BaseClass):
             self.rotor_area = np.pi * self.rotor_radius ** 2.0
 
     @rotor_radius.validator
-    def reset_rotor_radius(self, instance: attrs.Attribute, value: float) -> None:
+    def _reset_rotor_radius(self, instance: attrs.Attribute, value: float) -> None:
         """
         Resets the `rotor_diameter` value to trigger the recalculation of
         `rotor_diameter`, `rotor_radius` and `rotor_area`.
@@ -325,7 +325,7 @@ class Turbine(BaseClass):
         self.rotor_diameter = value * 2.0
 
     @rotor_area.validator
-    def reset_rotor_area(self, instance: attrs.Attribute, value: float) -> None:
+    def _reset_rotor_area(self, instance: attrs.Attribute, value: float) -> None:
         """
         Resets the `rotor_radius` value to trigger the recalculation of
         `rotor_diameter`, `rotor_radius` and `rotor_area`.
@@ -333,7 +333,7 @@ class Turbine(BaseClass):
         self.rotor_radius = (value / np.pi) ** 0.5
 
     @floating_tilt_table.validator
-    def check_floating_tilt_table(self, instance: attrs.Attribute, value: dict | None) -> None:
+    def _check_floating_tilt_table(self, instance: attrs.Attribute, value: dict | None) -> None:
         """
         If the tilt / wind_speed table is defined, verify that the tilt and
         wind_speed arrays are the same length.
@@ -359,7 +359,7 @@ class Turbine(BaseClass):
             raise ValueError("tilt and wind_speed inputs must be the same size.")
 
     @correct_cp_ct_for_tilt.validator
-    def check_for_cp_ct_correct_flag_if_floating(
+    def _check_for_cp_ct_correct_flag_if_floating(
         self,
         instance: attrs.Attribute,
         value: bool
@@ -384,7 +384,6 @@ class Turbine(BaseClass):
                 " and may not accurately reflect the actual Cp/Ct surfaces of reference wind"
                 " turbines."
             )
-
 
 def select_multidim_condition(
     condition: dict,
@@ -464,34 +463,34 @@ def power(
     power_setpoints: NDArrayFloat,
     awc_modes: NDArrayStr,
     awc_amplitudes: NDArrayFloat,
-    turbine_type_map: NDArrayObject, # May still need this, but think on best form for it
-    ix_filter: NDArrayInt | Iterable[int] | None = None, # Could just apply to the type map?
+    turbine_type_map: NDArrayObject,
+    ix_filter: NDArrayInt | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
     multidim_condition: dict | None = None,
 ) -> NDArrayFloat:
-    """Power produced by a turbine adjusted for yaw and tilt. Value
-    given in Watts.
+    """
+    Convenience function for computing the power of multiple turbines at once.
 
     Args:
-        turbines (list[Turbine]): Instantiated turbine objects for each turbine in the farm.
-        velocities (NDArrayFloat[n_findex, n_turbines, n_grid, n_grid]): The velocities at a
-            turbine.
-        turbulence_intensities (NDArrayFloat[findex, turbines]): The turbulence intensity at
+        turbines (list[Turbine]): List of all turbines in the farm
+        velocities (NDArrayFloat[n_findex, n_turbines, n_grid1, n_grid2]): The velocity field at the
+            turbines.
+        turbulence_intensities (NDArrayFloat[n_findex, n_turbines]): The turbulence intensity at
             each turbine.
         air_density (float): air density for simulation [kg/m^3]
-        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
-        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
-        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
+        yaw_angles (NDArrayFloat[n_findex, n_turbines]): The yaw angle for each turbine.
+        power_setpoints: (NDArrayFloat[n_findex, n_turbines]): Maximum power setpoint for each
             turbine [W].
-        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
-            and "helix" are implemented).
-        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
+        awc_modes: (NDArrayStr[n_findex, n_turbines]): awc excitation mode (currently, only
+            "baseline" and "helix" are implemented).
+        awc_amplitudes: (NDArrayFloat[n_findex, n_turbines]): awc excitation amplitude for each
             turbine [deg].
-        turbine_type_map: (NDArrayObject[wd, ws, turbines]): The Turbine type definition for
-            each turbine.
-        ix_filter (NDArrayInt, optional): The boolean array, or
-            integer indices to filter out before calculation. Defaults to None.
+        turbine_type_map: (NDArrayObject[n_findex, n_turbines]): The turbine_type definition
+            for each turbine.
+        ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
+            integer indices as an iterable of array to filter out before calculation.
+            Defaults to None.
         average_method (str, optional): The method for averaging over turbine rotor points
             to determine a rotor-average wind speed. Defaults to "cubic-mean".
         cubature_weights (NDArrayFloat | None): Weights for cubature averaging methods. Defaults to
@@ -501,7 +500,7 @@ def power(
             None.
 
     Returns:
-        NDArrayFloat: The power, in Watts, for each turbine after adjusting for yaw and tilt.
+        NDArrayFloat[n_findex, n_turbines]: The power, in Watts, for each turbine.
     """
 
     # Note: will only have one, if turbine_type is the same for all turbines.
@@ -588,38 +587,31 @@ def thrust_coefficient(
     power_setpoints: NDArrayFloat,
     awc_modes: NDArrayStr,
     awc_amplitudes: NDArrayFloat,
-    turbine_type_map: NDArrayObject, # May still need this, but think on best form for it
-    ix_filter: NDArrayInt | Iterable[int] | None = None, # Could just apply to the type map?
+    turbine_type_map: NDArrayObject,
+    ix_filter: NDArrayInt | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
     multidim_condition: dict | None = None,
 ) -> NDArrayFloat:
 
-    """Thrust coefficient of a turbine.
-    The value is obtained from the coefficient of thrust specified by the callables specified
-    in the thrust_coefficient_functions.
+    """
+    Convenience function for calling thrust_coefficient on multiple turbines at once.
 
     Args:
-        velocities (NDArrayFloat[findex, turbines, grid1, grid2]): The velocity field at
-            a turbine.
-        turbulence_intensities (NDArrayFloat[findex, turbines]): The turbulence intensity at
+        turbines (list[Turbine]): List of all turbines in the farm
+        velocities (NDArrayFloat[n_findex, n_turbines, n_grid1, n_grid2]): The velocity field at the
+            turbines.
+        turbulence_intensities (NDArrayFloat[n_findex, n_turbines]): The turbulence intensity at
             each turbine.
         air_density (float): air density for simulation [kg/m^3]
-        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
-        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
-        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
+        yaw_angles (NDArrayFloat[n_findex, n_turbines]): The yaw angle for each turbine.
+        power_setpoints: (NDArrayFloat[n_findex, n_turbines]): Maximum power setpoint for each
             turbine [W].
-        awc_modes: (NDArrayStr[findex, turbines]): awc excitation mode (currently, only "baseline"
-            and "helix" are implemented).
-        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
+        awc_modes: (NDArrayStr[n_findex, n_turbines]): awc excitation mode (currently, only
+            "baseline" and "helix" are implemented).
+        awc_amplitudes: (NDArrayFloat[n_findex, n_turbines]): awc excitation amplitude for each
             turbine [deg].
-        thrust_coefficient_functions (dict): The thrust coefficient functions for each turbine. Keys
-            are the turbine type string and values are the callable functions.
-        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
-            turbine.
-        correct_cp_ct_for_tilt (NDArrayBool[findex, turbines]): Boolean for determining if the
-            turbines Cp and Ct should be corrected for tilt.
-        turbine_type_map: (NDArrayObject[findex, turbines]): The Turbine type definition
+        turbine_type_map: (NDArrayObject[n_findex, n_turbines]): The turbine_type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
             integer indices as an iterable of array to filter out before calculation.
@@ -633,7 +625,7 @@ def thrust_coefficient(
             None.
 
     Returns:
-        NDArrayFloat: Coefficient of thrust for each requested turbine.
+        NDArrayFloat[n_findex, n_turbines]: Coefficient of thrust for each requested turbine.
     """
 
     # Note: will only have one, if turbine_type is the same for all turbines.
@@ -720,37 +712,33 @@ def axial_induction(
     power_setpoints: NDArrayFloat,
     awc_modes: NDArrayStr,
     awc_amplitudes: NDArrayFloat,
-    turbine_type_map: NDArrayObject, # May still need this, but think on best form for it
-    ix_filter: NDArrayInt | Iterable[int] | None = None, # Could just apply to the type map?
+    turbine_type_map: NDArrayObject,
+    ix_filter: NDArrayInt | Iterable[int] | None = None,
     average_method: str = "cubic-mean",
     cubature_weights: NDArrayFloat | None = None,
     multidim_condition: dict | None = None,
 ) -> NDArrayFloat:
-    """Axial induction factor of the turbine incorporating
-    the thrust coefficient and yaw angle.
+    """
+    Convenience function for computing the axial induction factor of multiple turbines at once.
 
     Args:
-        velocities (NDArrayFloat): The velocity field at each turbine; should be shape:
-            (number of turbines, ngrid, ngrid), or (ngrid, ngrid) for a single turbine.
-        turbulence_intensities (NDArrayFloat[findex, turbines]): The turbulence intensity at
+        turbines (list[Turbine]): List of all turbines in the farm
+        velocities (NDArrayFloat[n_findex, n_turbines, n_grid1, n_grid2]): The velocity field at the
+            turbines.
+        turbulence_intensities (NDArrayFloat[n_findex, n_turbines]): The turbulence intensity at
             each turbine.
         air_density (float): air density for simulation [kg/m^3]
-        yaw_angles (NDArrayFloat[findex, turbines]): The yaw angle for each turbine.
-        tilt_angles (NDArrayFloat[findex, turbines]): The tilt angle for each turbine.
-        power_setpoints: (NDArrayFloat[findex, turbines]): Maximum power setpoint for each
+        yaw_angles (NDArrayFloat[n_findex, n_turbines]): The yaw angle for each turbine.
+        power_setpoints: (NDArrayFloat[n_findex, n_turbines]): Maximum power setpoint for each
             turbine [W].
-        awc_amplitudes: (NDArrayFloat[findex, turbines]): awc excitation amplitude for each
+        awc_modes: (NDArrayStr[n_findex, n_turbines]): awc excitation mode (currently, only
+            "baseline" and "helix" are implemented).
+        awc_amplitudes: (NDArrayFloat[n_findex, n_turbines]): awc excitation amplitude for each
             turbine [deg].
-        axial_induction_functions (dict): The axial induction functions for each turbine. Keys are
-            the turbine type string and values are the callable functions.
-        tilt_interps (Iterable[tuple]): The tilt interpolation functions for each
-            turbine.
-        correct_cp_ct_for_tilt (NDArrayBool[findex, turbines]): Boolean for determining if the
-            turbines Cp and Ct should be corrected for tilt.
-        turbine_type_map: (NDArrayObject[findex, turbines]): The Turbine type definition
+        turbine_type_map: (NDArrayObject[n_findex, n_turbines]): The turbine_type definition
             for each turbine.
         ix_filter (NDArrayFilter | Iterable[int] | None, optional): The boolean array, or
-            integer indices (as an array or iterable) to filter out before calculation.
+            integer indices as an iterable of array to filter out before calculation.
             Defaults to None.
         average_method (str, optional): The method for averaging over turbine rotor points
             to determine a rotor-average wind speed. Defaults to "cubic-mean".
@@ -761,7 +749,7 @@ def axial_induction(
             None.
 
     Returns:
-        Union[float, NDArrayFloat]: [description]
+        NDArrayFloat[n_findex, n_turbines]: Axial induction factor for each requested turbine.
     """
 
     # Note: will only have one, if turbine_type is the same for all turbines.

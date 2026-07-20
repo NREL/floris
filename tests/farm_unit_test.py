@@ -34,7 +34,6 @@ def test_farm_init_homogeneous_turbines():
     # turbine_type=[turbine_data]
     # turbine_type=[turbine_data["turbine_type"]]
 
-    farm.construct_hub_heights()
     farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
 
     # Check initial values
@@ -45,21 +44,11 @@ def test_farm_init_homogeneous_turbines():
 
 def test_asdict(sample_inputs_fixture: SampleInputs):
     farm = Farm.from_dict(sample_inputs_fixture.farm)
-    farm.construct_hub_heights()
-    farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
-    farm.set_power_setpoints_to_ref_power(N_FINDEX)
-    farm.set_awc_modes_to_ref_mode(N_FINDEX)
-    farm.set_awc_amplitudes_to_ref_amp(N_FINDEX)
-    farm.set_awc_frequencies_to_ref_freq(N_FINDEX)
+    farm.set_control_setpoints_to_reference(N_FINDEX)
     dict1 = farm.as_dict()
 
     new_farm = farm.from_dict(dict1)
-    new_farm.construct_hub_heights()
-    new_farm.set_yaw_angles_to_ref_yaw(N_FINDEX)
-    new_farm.set_power_setpoints_to_ref_power(N_FINDEX)
-    new_farm.set_awc_modes_to_ref_mode(N_FINDEX)
-    new_farm.set_awc_amplitudes_to_ref_amp(N_FINDEX)
-    new_farm.set_awc_frequencies_to_ref_freq(N_FINDEX)
+    new_farm.set_control_setpoints_to_reference(N_FINDEX)
     dict2 = new_farm.as_dict()
 
     assert dict1 == dict2
