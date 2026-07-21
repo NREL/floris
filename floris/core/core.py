@@ -181,8 +181,9 @@ class Core(BaseClass):
                 self.wake
             )
         elif vel_model=="turboparkgauss":
-            model = TurboparkGauss(**model_parameters)
-            model.turbine_solve(self.farm, self.flow_field, self.grid)
+            # model = TurboparkGauss(**model_parameters)
+            # model.turbine_solve(self.farm, self.flow_field, self.grid)
+            sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="empirical_gauss":
             model = EmpiricalGauss(**model_parameters)
             model.turbine_solve(self.farm, self.flow_field, self.grid)
@@ -225,8 +226,9 @@ class Core(BaseClass):
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turboparkgauss":
-            model = TurboparkGauss(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, self.grid)
+            # model = TurboparkGauss(**model_parameters)
+            # model.point_solve(self.farm, self.flow_field, self.grid)
+            full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="empirical_gauss":
             model = EmpiricalGauss(**model_parameters)
             model.point_solve(self.farm, self.flow_field, self.grid)
