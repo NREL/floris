@@ -28,10 +28,12 @@ from floris.core import (
     WakeModelManager,
 )
 from floris.core.wake_model import (
+    CumulativeCurl,
     EmpiricalGauss,
     Gauss,
     JensenJimenez,
     NoneWake,
+    TurboparkGauss,
 )
 from floris.type_dec import NDArrayFloat
 from floris.utilities import (
@@ -165,12 +167,8 @@ class Core(BaseClass):
         if self.wake.user_defined_wake_model is not None:
             self.wake.user_defined_wake_model.turbine_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="cc":
-            cc_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
+            model = CumulativeCurl(**model_parameters)
+            model.turbine_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="turbopark":
             self.logger.warning(
                 "The turbopark model has been superseded by the turboparkgauss model. We " +
@@ -182,6 +180,9 @@ class Core(BaseClass):
                 self.grid,
                 self.wake
             )
+        elif vel_model=="turboparkgauss":
+            model = TurboparkGauss(**model_parameters)
+            model.turbine_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="empirical_gauss":
             model = EmpiricalGauss(**model_parameters)
             model.turbine_solve(self.farm, self.flow_field, self.grid)
@@ -219,9 +220,13 @@ class Core(BaseClass):
         if self.wake.user_defined_wake_model is not None:
             self.wake.user_defined_wake_model.point_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="cc":
-            full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
+            model = CumulativeCurl(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
+        elif vel_model=="turboparkgauss":
+            model = TurboparkGauss(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="empirical_gauss":
             model = EmpiricalGauss(**model_parameters)
             model.point_solve(self.farm, self.flow_field, self.grid)
@@ -265,9 +270,13 @@ class Core(BaseClass):
         if self.wake.user_defined_wake_model is not None:
             self.wake.user_defined_wake_model.point_solve(self.farm, self.flow_field, field_grid)
         elif vel_model=="cc":
-            full_flow_cc_solver(self.farm, self.flow_field, field_grid, self.wake)
+            model = CumulativeCurl(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, field_grid)
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, field_grid, self.wake)
+        elif vel_model=="turboparkgauss":
+            model = TurboparkGauss(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, field_grid)
         elif vel_model=="empirical_gauss":
             model = EmpiricalGauss(**model_parameters)
             model.point_solve(self.farm, self.flow_field, field_grid)
@@ -451,10 +460,19 @@ def _temp_create_single_wake_model_dict(wake, vel_model):
         model_parameters["enable_transverse_velocities"] = wake.enable_transverse_velocities
         model_parameters["enable_yaw_added_recovery"] = wake.enable_yaw_added_recovery
         model_parameters["enable_secondary_steering"] = wake.enable_secondary_steering
+    elif vel_model == "cc":
+        model_parameters = wake.wake_velocity_parameters["cc"] | \
+            wake.wake_deflection_parameters["gauss"] | \
+            wake.wake_turbulence_parameters["crespo_hernandez"]
+        model_parameters["enable_transverse_velocities"] = wake.enable_transverse_velocities
+        model_parameters["enable_yaw_added_recovery"] = wake.enable_yaw_added_recovery
+        model_parameters["enable_secondary_steering"] = wake.enable_secondary_steering
     elif vel_model == "jensen":
         model_parameters = wake.wake_velocity_parameters["jensen"] | \
             wake.wake_deflection_parameters["jimenez"] | \
             wake.wake_turbulence_parameters["crespo_hernandez"]
+    elif vel_model == "turboparkgauss":
+        model_parameters = wake.wake_velocity_parameters["turboparkgauss"]
     elif vel_model == "empirical_gauss":
         model_parameters = wake.wake_velocity_parameters["empirical_gauss"] | \
             wake.wake_deflection_parameters["empirical_gauss"] | \
