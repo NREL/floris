@@ -4,4 +4,4 @@ from floris.core.wake_model.empirical_gauss import EmpiricalGauss
 from floris.core.wake_model.gauss import Gauss
 from floris.core.wake_model.jensen import JensenJimenez
 from floris.core.wake_model.none_model import NoneWake
-from floris.core.wake_model.turboparkgauss import TurboparkGauss
+from floris.core.wake_model.turboparkgauss import TurbOParkGauss

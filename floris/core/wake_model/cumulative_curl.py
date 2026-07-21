@@ -21,7 +21,6 @@ from floris.core import (
 )
 from floris.core.rotor_velocity import (
     average_velocity,
-    calculate_tilt_for_rotor_effective_velocities,
 )
 from floris.core.wake_deflection.gauss import (
     calculate_transverse_velocity,
@@ -29,8 +28,10 @@ from floris.core.wake_deflection.gauss import (
     yaw_added_turbulence_mixing,
 )
 from floris.core.wake_model import BaseWakeModel
-from floris.type_dec import NDArrayFloat
-from floris.utilities import cosd, sind, tand
+from floris.utilities import (
+    cosd,
+    tand,
+)
 
 
 NUM_EPS = fields(BaseModel).NUM_EPS.default
@@ -248,7 +249,7 @@ class CumulativeCurl(BaseWakeModel):
             x_i = self.x_i
         if freestream_velocity is None:
             freestream_velocity = self.freestream_velocity
-        
+
         # Opposite sign convention
         yaw_i = -1 * self.effective_yaw_i
 
@@ -282,7 +283,9 @@ class CumulativeCurl(BaseWakeModel):
         # initial Gaussian wake expansion
         freestream_velocity_local = freestream_velocity
         rotor_diameter_i = self.rotor_diameter_i
-        sigma_z0 = ne.evaluate("rotor_diameter_i * 0.5 * sqrt(uR / (freestream_velocity_local + u0))")
+        sigma_z0 = ne.evaluate(
+            "rotor_diameter_i * 0.5 * sqrt(uR / (freestream_velocity_local + u0))"
+        )
         sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(self.wind_veer)
 
         xR = x_i
@@ -389,11 +392,15 @@ class CumulativeCurl(BaseWakeModel):
 
         # Set up turbulence arrays
         turbine_turbulence_intensity = flow_field.turbulence_intensities[:, None, None, None]
-        turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
+        turbine_turbulence_intensity = np.repeat(
+            turbine_turbulence_intensity, farm.n_turbines, axis=1
+        )
 
         # Ambient turbulent intensity
-        self.ambient_turbulence_intensities = flow_field.turbulence_intensities.copy()
-        self.ambient_turbulence_intensities = self.ambient_turbulence_intensities[:, None, None, None]
+        self.ambient_turbulence_intensities = (
+            flow_field.turbulence_intensities.copy()
+            [:, None, None, None]
+        )
 
         # Initialize state arrays for cumulative calculation
         shape = (farm.n_turbines,) + np.shape(flow_field.u_initial_sorted)
@@ -539,7 +546,9 @@ class CumulativeCurl(BaseWakeModel):
                     w_wake[:, i:i+1],
                 )
                 gch_gain = 1.0
-                turbine_turbulence_intensity[:, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
+                turbine_turbulence_intensity[:, i:i+1] = (
+                    turbulence_intensity_i + gch_gain * I_mixing
+                )
 
             # Compute velocity deficit (cumulative)
             self.turb_u_wake, self.Ctmp = self.velocity_deficit(
@@ -632,7 +641,8 @@ class CumulativeCurl(BaseWakeModel):
         # Calculate the velocity deficit sequentially from upstream to downstream turbines
         for i in range(grid.n_turbines):
 
-            # Set self.Ctmp and self.turb_u_wake for this iteration (point_solve uses local versions for full grid)
+            # Set self.Ctmp and self.turb_u_wake for this iteration
+            # (point_solve uses local versions for full grid)
             self.Ctmp = Ctmp
             self.turb_u_wake = turb_u_wake
 

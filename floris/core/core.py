@@ -33,7 +33,7 @@ from floris.core.wake_model import (
     Gauss,
     JensenJimenez,
     NoneWake,
-    TurboparkGauss,
+    TurbOParkGauss,
 )
 from floris.type_dec import NDArrayFloat
 from floris.utilities import (
@@ -181,9 +181,8 @@ class Core(BaseClass):
                 self.wake
             )
         elif vel_model=="turboparkgauss":
-            # model = TurboparkGauss(**model_parameters)
-            # model.turbine_solve(self.farm, self.flow_field, self.grid)
-            sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+            model = TurbOParkGauss(**model_parameters)
+            model.turbine_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="empirical_gauss":
             model = EmpiricalGauss(**model_parameters)
             model.turbine_solve(self.farm, self.flow_field, self.grid)
@@ -226,9 +225,8 @@ class Core(BaseClass):
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
         elif vel_model=="turboparkgauss":
-            # model = TurboparkGauss(**model_parameters)
-            # model.point_solve(self.farm, self.flow_field, self.grid)
-            full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+            model = TurbOParkGauss(**model_parameters)
+            model.point_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="empirical_gauss":
             model = EmpiricalGauss(**model_parameters)
             model.point_solve(self.farm, self.flow_field, self.grid)
@@ -277,7 +275,7 @@ class Core(BaseClass):
         elif vel_model=="turbopark":
             full_flow_turbopark_solver(self.farm, self.flow_field, field_grid, self.wake)
         elif vel_model=="turboparkgauss":
-            model = TurboparkGauss(**model_parameters)
+            model = TurbOParkGauss(**model_parameters)
             model.point_solve(self.farm, self.flow_field, field_grid)
         elif vel_model=="empirical_gauss":
             model = EmpiricalGauss(**model_parameters)

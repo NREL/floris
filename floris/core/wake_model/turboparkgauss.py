@@ -1,40 +1,33 @@
-"""
-TurboparkGauss wake model implementation.
-Refactored from standalone solver functions to BaseWakeModel-derived class.
-"""
-import copy
-
 import numpy as np
-from attrs import define, field, fields
+from attrs import (
+    define,
+    field,
+    fields,
+)
 
 from floris.core import (
-    average_velocity,
     BaseModel,
     Farm,
     FlowField,
     FlowFieldPlanarGrid,
-    Grid,
     PointsGrid,
-    thrust_coefficient,
     TurbineGrid,
 )
-from floris.core.wake_velocity.gauss import gaussian_function
-from floris.core.wake_velocity.turboparkgauss import TurboparkgaussVelocityDeficit
 from floris.core.wake_model import BaseWakeModel
+from floris.core.wake_model.gauss import gaussian_function
+
 
 NUM_EPS = fields(BaseModel).NUM_EPS.default
 
 @define
-class TurboparkGauss(BaseWakeModel):
+class TurbOParkGauss(BaseWakeModel):
     """
-    TurboparkGauss wake model with Gaussian wake profile.
-
     Model based on TurbOPark with Gaussian wake profile (Pedersen et al. 2020).
+
     Uses:
-    - Frandsen turbulence-dependent wake expansion
     - SOSFS combination (sum of squares freestream superposition)
     - No deflection model (yaw not supported)
-    - No turbulence model (ambient turbulence only)
+    - No turbulence model (built into Frandsen-based wake width calculation)
 
     References:
         Pedersen J G, Svensen E, Poulsen L, and Nygaard N G. "Turbulence Optimized
@@ -94,8 +87,8 @@ class TurboparkGauss(BaseWakeModel):
         using sum of squares.
 
         Args:
-            u_field (np.array): The base flow field.
-            u_wake (np.array): The wake to apply to the base flow field.
+            wake_field (np.array): The velocity deficits from the wake.
+            velocity_field (np.array): The base flow field.
 
         Returns:
             np.array: The resulting flow field after applying the wake to the
@@ -113,7 +106,7 @@ class TurboparkGauss(BaseWakeModel):
         wake_field = np.zeros_like(flow_field.u_initial_sorted)
 
         # Expand input turbulence intensity to 4d for (n_turbines, grid, grid)
-        turbine_turbulence_intensity = np.repeat(
+        ambient_turbulence_intensities = np.repeat(
             flow_field.turbulence_intensities[:, None, None, None],
             farm.n_turbines,
             axis=1
@@ -128,11 +121,10 @@ class TurboparkGauss(BaseWakeModel):
             # Turbine quantities
             self.set_turbine_i(grid, farm, i)
             thrust_coefficient_i = self.turbine_thrust_coefficient(grid, farm, flow_field, i)
-            turbulence_intensity_i = flow_field.turbulence_intensities[:, None, None, None]
 
             # Model calculations
             velocity_deficit = self.velocity_deficit(
-                turbulence_intensity_i,
+                ambient_turbulence_intensities[:, i:i+1, :, :],
                 thrust_coefficient_i,
                 grid.x_sorted,
                 grid.y_sorted,
@@ -144,19 +136,12 @@ class TurboparkGauss(BaseWakeModel):
                 velocity_deficit * flow_field.u_initial_sorted
             )
 
-            # Calculate wake overlap for wake-added turbulence (WAT)
-            area_overlap = (
-                np.sum(velocity_deficit * flow_field.u_initial_sorted > 0.05, axis=(2, 3))
-                / (grid.grid_resolution * grid.grid_resolution)
-            )
-            area_overlap = area_overlap[:, :, None, None]
-
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
 
         # Copy background turbulence intensity to flow field
-        flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
+        flow_field.turbulence_intensity_field_sorted = ambient_turbulence_intensities
         flow_field.turbulence_intensity_field_sorted_avg = np.mean(
-            turbine_turbulence_intensity,
+            ambient_turbulence_intensities,
             axis=(2,3),
             keepdims=True
         )
@@ -165,109 +150,55 @@ class TurboparkGauss(BaseWakeModel):
         self,
         farm: Farm,
         flow_field: FlowField,
-        grid: Grid,
+        grid: FlowFieldPlanarGrid | PointsGrid,
     ) -> None:
-        """
-        Solve for visualization grid using TurboparkGauss model.
-        
-        Runs the same sequential deficit calculation on the full grid
-        to get the visualization/output grid velocity field.
-        """
-        # Create velocity deficit model instance
-        velocity_model = TurboparkgaussVelocityDeficit(A=self.A, include_mirror_wake=self.include_mirror_wake)
-        
-        # Prepare function arguments
-        deficit_model_args = velocity_model.prepare_function(grid, flow_field)
 
-        # Initialize wake state
+        # Get the flow quantities and turbine performance
+        (
+            turbine_grid_farm,
+            turbine_grid_flow_field,
+            turbine_grid
+        ) = self.generate_turbine_grid_objects(farm, flow_field)
+
+        self.turbine_solve(turbine_grid_farm, turbine_grid_flow_field, turbine_grid)
+
         wake_field = np.zeros_like(flow_field.u_initial_sorted)
-        v_wake = np.zeros_like(flow_field.v_initial_sorted)
-        w_wake = np.zeros_like(flow_field.w_initial_sorted)
 
-        # Set up turbulence intensity arrays
-        turbine_turbulence_intensity = flow_field.turbulence_intensities[:, None, None, None]
-        turbine_turbulence_intensity = np.repeat(
-            turbine_turbulence_intensity, farm.n_turbines, axis=1
-        )
+        # Initialize the turbulence intensity field over the entire flow field grid
+        n_points = grid.x_sorted.shape[1]
+        ambient_turbulence_intensities = flow_field.turbulence_intensities[:, None, None, None]
+        ambient_turbulence_intensities = np.repeat(ambient_turbulence_intensities, n_points, axis=1)
 
-        # Get turbine yaw angles and power setpoints from unsorted arrays to avoid sorted_indices issues
-        yaw_angles_unsorted = farm.yaw_angles
-        power_setpoints_unsorted = farm.power_setpoints
-        awc_modes_unsorted = farm.awc_modes
-        awc_amplitudes_unsorted = farm.awc_amplitudes
+        # Calculate the velocity deficit in the full grid sequentially from upstream to
+        # downstream turbines
+        for i in range(grid.n_turbines):
 
-        # Calculate velocity deficit sequentially from upstream to downstream turbines
-        for i in range(farm.n_turbines):
-            
-            # Get the current turbine position
-            x_i = farm.coordinates[i, 0:1, None, None]
-            y_i = farm.coordinates[i, 1:2, None, None]
-            z_i = farm.hub_heights[i:i+1, None, None]
-            hub_height_i = farm.hub_heights[i:i+1, None, None, None]
-
-            # Get rotor diameter for this turbine
-            rotor_diameter_i = farm.rotor_diameters[i:i+1, None, None, None]
-
-            # Get yaw angle for this turbine
-            yaw_angle_i = yaw_angles_unsorted[:, i:i+1, None, None]
-            
-            # For thrust coefficient, we need to compute on the current sorted flow field
-            # But we can't use sorted properties. Instead, we recompute using unsorted arrays
-            # Use defaults for grid properties that may not exist on all grid types
-            avg_method = getattr(grid, 'average_method', 'max')
-            cub_weights = getattr(grid, 'cubature_weights', None)
-            
-            ct_all = thrust_coefficient(
-                turbines=farm.turbines,
-                velocities=flow_field.u_sorted,
-                turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
-                air_density=flow_field.air_density,
-                yaw_angles=yaw_angles_unsorted,
-                power_setpoints=power_setpoints_unsorted,
-                awc_modes=awc_modes_unsorted,
-                awc_amplitudes=awc_amplitudes_unsorted,
-                turbine_type_map=np.broadcast_to(
-                    np.array([t.turbine_type for t in farm.turbines]),
-                    (flow_field.u_sorted.shape[0], farm.n_turbines)
-                ),
-                average_method=avg_method,
-                cubature_weights=cub_weights,
-                multidim_condition=flow_field.multidim_conditions,
-            )
-            ct_i = ct_all[:, i:i+1, None, None]
-
-            # Get turbulence intensity for this turbine
-            turbulence_intensity_i = turbine_turbulence_intensity[:, i:i+1]
-
-            # Compute velocity deficit using TurboparkGauss velocity deficit model
-            velocity_deficit = velocity_model.function(
-                x_i,
-                y_i,
-                z_i,
-                np.zeros_like(ct_i),  # axial_induction_i (not used)
-                np.zeros_like(flow_field.u_initial_sorted),  # deflection_field_i (not used)
-                np.zeros_like(x_i),  # yaw_angle_i (not used)
-                turbulence_intensity_i,
-                ct_i,
-                hub_height_i,
-                rotor_diameter_i,
-                **deficit_model_args,
+            # Get the current turbine quantities
+            self.set_turbine_i(turbine_grid, turbine_grid_farm, i)
+            thrust_coefficient_i = self.turbine_thrust_coefficient(
+                turbine_grid,
+                turbine_grid_farm,
+                turbine_grid_flow_field,
+                i
             )
 
-            # Combine with existing wake field using SOSFS (hypot)
-            wake_field = np.hypot(
-                wake_field, velocity_deficit * flow_field.u_initial_sorted
+            # Model calculations
+            velocity_deficit = self.velocity_deficit(
+                ambient_turbulence_intensities[:, i:i+1, :, :],
+                thrust_coefficient_i,
+                grid.x_sorted,
+                grid.y_sorted,
+                grid.z_sorted
             )
 
-            # Update flow field
+            wake_field = self.combination(
+                wake_field,
+                velocity_deficit * flow_field.u_initial_sorted
+            )
+
             flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
-            flow_field.v_sorted += v_wake
-            flow_field.w_sorted += w_wake
 
-        flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
-        flow_field.turbulence_intensity_field_sorted_avg = np.mean(
-            turbine_turbulence_intensity, axis=(2, 3), keepdims=True
-        )
+        flow_field.turbulence_intensity_field_sorted = ambient_turbulence_intensities
 
 
 def characteristic_wake_width(x_D, ambient_TI, Cts, A):
