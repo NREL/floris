@@ -14,16 +14,14 @@ from floris.par_floris_model import ParFlorisModel
 
 
 DEBUG = False
-VELOCITY_MODEL = "gauss"
-DEFLECTION_MODEL = "gauss"
+WAKE_MODEL = "gauss"
 
 def test_None_interface(sample_inputs_fixture):
     """
     With interface=None, the ParFlorisModel should behave exactly like the FlorisModel.
     (ParFlorisModel.run() simply calls the parent FlorisModel.run()).
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel = ParFlorisModel(
@@ -45,8 +43,7 @@ def test_multiprocessing_interface(sample_inputs_fixture):
     With interface="multiprocessing", the ParFlorisModel should return the same powers
     as the FlorisModel.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel = ParFlorisModel(
@@ -68,8 +65,7 @@ def test_pathos_interface(sample_inputs_fixture):
     With interface="pathos", the ParFlorisModel should return the same powers
     as the FlorisModel.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel = ParFlorisModel(
@@ -104,8 +100,7 @@ def test_concurrent_interface(sample_inputs_fixture):
     With interface="concurrent", the ParFlorisModel should return the same powers
     as the FlorisModel.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel = ParFlorisModel(
@@ -140,8 +135,7 @@ def test_return_turbine_powers_only(sample_inputs_fixture):
     With return_turbine_powers_only=True, the ParFlorisModel should return only the
     turbine powers, not the full results.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel = ParFlorisModel(
@@ -163,8 +157,7 @@ def test_run_error(sample_inputs_fixture, caplog):
     """
     Check that an error is raised if an output is requested before calling run().
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     pfmodel = ParFlorisModel(
         sample_inputs_fixture.core,
@@ -190,8 +183,7 @@ def test_configuration_compatibility(sample_inputs_fixture, caplog):
     UncertainFlorisModel configurations.
     """
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
 
@@ -215,8 +207,7 @@ def test_wind_data_objects(sample_inputs_fixture):
     Check that the ParFlorisModel is compatible with WindData objects.
     """
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel = ParFlorisModel(sample_inputs_fixture.core, max_workers=2)
@@ -267,8 +258,7 @@ def test_control_setpoints(sample_inputs_fixture):
     Check that the ParFlorisModel is compatible with control set points.
     """
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel = ParFlorisModel(sample_inputs_fixture.core, n_wind_condition_splits=2)
@@ -346,8 +336,7 @@ def test_control_setpoints(sample_inputs_fixture):
 
 def test_sample_flow_at_points(sample_inputs_fixture):
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
 
@@ -372,9 +361,7 @@ def test_sample_flow_at_points(sample_inputs_fixture):
 
 def test_sample_ti_at_points(sample_inputs_fixture):
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["turbulence_model"] = "crespo_hernandez"
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
 
@@ -402,8 +389,7 @@ def test_copy(sample_inputs_fixture):
     Check that the ParFlorisModel copies correctly as a ParFlorisModel.
     """
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     pfmodel = ParFlorisModel(sample_inputs_fixture.core, max_workers=2)
     pfmodel_copy = pfmodel.copy()
@@ -488,8 +474,7 @@ def test_multidim_conditions(sample_inputs_fixture):
     Check that the ParFlorisModel works with multidim_conditions set in the TimeSeries object.
     """
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     fmodel.set(turbine_type=[sample_inputs_fixture.turbine_multi_dim])

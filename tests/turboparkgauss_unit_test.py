@@ -15,14 +15,9 @@ def test_row_of_turbines():
 
     # Configure as turboparkgauss
     fmodel_dict = fmodel.core.as_dict()
-    fmodel_dict["wake"]["model_strings"]["velocity_model"] = "turboparkgauss"
-    fmodel_dict["wake"]["model_strings"]["turbulence_model"] = "none"
-    fmodel_dict["wake"]["model_strings"]["deflection_model"] = "none"
-    fmodel_dict["wake"]["model_strings"]["combination_model"] = "sosfs"
-    fmodel_dict["wake"]["enable_secondary_steering"] = False
-    fmodel_dict["wake"]["enable_yaw_added_recovery"] = False
-    fmodel_dict["wake"]["enable_active_wake_mixing"] = False
-    fmodel_dict["wake"]["enable_transverse_velocities"] = False
+    fmodel_dict["wake"]["model"] = "turboparkgauss"
+    fmodel_dict["wake"]["parameters"] = {"A": 0.04, "include_mirror_wake": True}
+    fmodel_dict["wake"]["combination_model"] = "sosfs"
     fmodel_dict["solver"]["type"] = "turbine_cubature_grid"
     fmodel_dict["solver"]["turbine_grid_points"] = 6
     fmodel = FlorisModel(configuration=fmodel_dict)

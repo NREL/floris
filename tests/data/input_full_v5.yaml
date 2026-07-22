@@ -8,11 +8,9 @@ logging:
   file:
     enable: false
     level: WARNING
-
 solver:
   type: turbine_grid
   turbine_grid_points: 3
-
 farm:
   layout_x:
   - 0.0
@@ -20,7 +18,6 @@ farm:
   - 0.0
   turbine_type:
   - nrel_5MW
-
 flow_field:
   air_density: 1.225
   reference_wind_height: 90.0
@@ -32,7 +29,6 @@ flow_field:
   wind_speeds:
   - 8.0
   wind_veer: 0.0
-
 wake:
   model: gauss
   parameters:

@@ -82,14 +82,17 @@ class WakeModelManager(BaseClass):
     """
     model: str | BaseWakeModel = field()
     parameters: dict = field(converter=dict)
-    combination_model: str | BaseModel = field(default="sosfs")
+    combination_model: str | BaseModel | None = field(default="sosfs")
 
     def __attrs_post_init__(self) -> None:
 
         self.model = _wake_model_converter(self.model, self.parameters)
 
         if isinstance(self.combination_model, str):
-            self.combination_model = MODEL_MAP["combination_model"][self.combination_model]()
+            if self.combination_model == "none":
+                self.combination_model = None
+            else:
+                self.combination_model = MODEL_MAP["combination_model"][self.combination_model]()
         elif isinstance(self.combination_model, BaseModel):
             pass
 

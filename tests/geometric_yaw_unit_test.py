@@ -9,8 +9,7 @@ from floris.optimization.yaw_optimization.yaw_optimizer_geometric import (
 
 
 DEBUG = False
-VELOCITY_MODEL = "gauss"
-DEFLECTION_MODEL = "gauss"
+WAKE_MODEL = "gauss"
 
 # Inputs for basic yaw optimizations
 WIND_DIRECTIONS = [0.0, 90.0, 180.0, 270.0]
@@ -25,8 +24,7 @@ def test_basic_optimization(sample_inputs_fixture):
     The Serial Refine (SR) method optimizes yaw angles based on a sequential, iterative yaw
     optimization scheme. This test checks basic properties of the optimization result.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
 
@@ -72,8 +70,8 @@ def test_disabled_turbines(sample_inputs_fixture):
     is not too large.
     """
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
 

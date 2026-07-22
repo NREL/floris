@@ -11,8 +11,7 @@ from tests.conftest import (
 
 
 DEBUG = False
-VELOCITY_MODEL = "gauss"
-DEFLECTION_MODEL = "gauss"
+WAKE_MODEL = "gauss"
 
 baseline = np.array(
     [
@@ -35,8 +34,8 @@ def test_scipy_layout_opt(sample_inputs_fixture):
     compares the optimization results from the SciPy layout optimization for a simple farm with a
     simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     opt_options = {
         "maxiter": 5,
@@ -80,8 +79,8 @@ def test_scipy_layout_opt_value(sample_inputs_fixture):
     the value is much higher when the wind is from the north or south, the turbines are staggered to
     avoid wake interactions for northerly and southerly winds.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     opt_options = {
         "maxiter": 5,

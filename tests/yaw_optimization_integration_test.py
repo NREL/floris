@@ -6,8 +6,7 @@ from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizatio
 
 
 DEBUG = False
-VELOCITY_MODEL = "gauss"
-DEFLECTION_MODEL = "gauss"
+WAKE_MODEL = "gauss"
 
 def test_yaw_optimization_limits(sample_inputs_fixture):
     """
@@ -15,8 +14,7 @@ def test_yaw_optimization_limits(sample_inputs_fixture):
     optimization scheme. This test compares the optimization results from the SR method for
     a simple farm with a simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0.0, 360.0, 90.0)

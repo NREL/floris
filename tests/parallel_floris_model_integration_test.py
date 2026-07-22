@@ -16,15 +16,14 @@ from tests.conftest import (
 
 
 DEBUG = False
-VELOCITY_MODEL = "gauss"
-DEFLECTION_MODEL = "gauss"
+WAKE_MODEL = "gauss"
 
 def test_raise_deprecation_warning(sample_inputs_fixture, caplog):
     """
     Test that a warning is raised when instantiating the ParallelFlorisModel.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
 
@@ -48,8 +47,8 @@ def test_parallel_turbine_powers(sample_inputs_fixture):
     the serial floris interface. The expected result is that the turbine powers should be
     exactly the same.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     pfmodel_input = copy.deepcopy(fmodel)
@@ -75,8 +74,8 @@ def test_parallel_turbine_powers(sample_inputs_fixture):
 
 def test_parallel_get_AEP(sample_inputs_fixture):
 
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     freq=np.linspace(0, 1, 16)/8
 
@@ -102,8 +101,8 @@ def test_parallel_uncertain_error(sample_inputs_fixture):
     """
 
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     ufmodel = UncertainFlorisModel(
         sample_inputs_fixture.core,
