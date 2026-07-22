@@ -22,12 +22,12 @@ from floris.core import (
 from floris.core.rotor_velocity import (
     average_velocity,
 )
-from floris.core.wake_deflection.gauss import (
+from floris.core.wake_model import BaseWakeModel
+from floris.core.wake_model.gch_components import (
     calculate_transverse_velocity,
     wake_added_yaw,
     yaw_added_turbulence_mixing,
 )
-from floris.core.wake_model import BaseWakeModel
 from floris.utilities import (
     cosd,
     tand,

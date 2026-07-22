@@ -11,20 +11,14 @@ from floris import logging_manager
 from floris.core import (
     BaseClass,
     BaseLibrary,
-    cc_solver,
     Farm,
     FlowField,
     FlowFieldPlanarGrid,
-    full_flow_cc_solver,
-    full_flow_sequential_solver,
-    full_flow_turbopark_solver,
     Grid,
     PointsGrid,
-    sequential_solver,
     State,
     TurbineCubatureGrid,
     TurbineGrid,
-    turbopark_solver,
     WakeModelManager,
 )
 from floris.core.wake_model import (
@@ -170,15 +164,8 @@ class Core(BaseClass):
             model = CumulativeCurl(**model_parameters)
             model.turbine_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="turbopark":
-            self.logger.warning(
-                "The turbopark model has been superseded by the turboparkgauss model. We " +
-                "recommend using `velocity_model: turboparkgauss` instead."
-            )
-            turbopark_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
+            raise ValueError(
+                "The turbopark model is no longer supported. Please use turboparkgauss."
             )
         elif vel_model=="turboparkgauss":
             model = TurbOParkGauss(**model_parameters)
@@ -195,13 +182,6 @@ class Core(BaseClass):
         elif vel_model=="none":
             model = NoneWake(**model_parameters)
             model.turbine_solve(self.farm, self.flow_field, self.grid)
-        else:
-            sequential_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
 
         self.finalize()
 
@@ -223,7 +203,9 @@ class Core(BaseClass):
             model = CumulativeCurl(**model_parameters)
             model.point_solve(self.farm, self.flow_field, self.grid)
         elif vel_model=="turbopark":
-            full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
+            raise ValueError(
+                "The turbopark model is no longer supported. Please use turboparkgauss."
+            )
         elif vel_model=="turboparkgauss":
             model = TurbOParkGauss(**model_parameters)
             model.point_solve(self.farm, self.flow_field, self.grid)
@@ -240,7 +222,7 @@ class Core(BaseClass):
             model = NoneWake(**model_parameters)
             model.point_solve(self.farm, self.flow_field, self.grid)
         else:
-            full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+            raise ValueError(f"Velocity model {vel_model} is not known.")
 
     def solve_for_points(self, x, y, z):
         # Do the calculation with the TurbineGrid for a single wind speed
@@ -273,7 +255,9 @@ class Core(BaseClass):
             model = CumulativeCurl(**model_parameters)
             model.point_solve(self.farm, self.flow_field, field_grid)
         elif vel_model=="turbopark":
-            full_flow_turbopark_solver(self.farm, self.flow_field, field_grid, self.wake)
+            raise ValueError(
+                "The turbopark model is no longer supported. Please use turboparkgauss."
+            )
         elif vel_model=="turboparkgauss":
             model = TurbOParkGauss(**model_parameters)
             model.point_solve(self.farm, self.flow_field, field_grid)
@@ -290,8 +274,7 @@ class Core(BaseClass):
             model = NoneWake(**model_parameters)
             model.point_solve(self.farm, self.flow_field, field_grid)
         else:
-            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
-
+            raise ValueError(f"Velocity model {vel_model} is not known.")
         return self.flow_field.u_sorted[:,:,0,0] # Remove turbine grid dimensions
 
     def solve_for_velocity_deficit_profiles(
