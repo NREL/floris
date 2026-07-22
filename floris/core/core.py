@@ -133,14 +133,8 @@ class Core(BaseClass):
         """Perform the steady-state wind farm wake calculations. Note that
         initialize_domain() is required to be called before this function."""
 
-        if self.wake.user_defined_wake_model is not None:
-            vel_model = "user_defined"
-        else:
-            vel_model = self.wake.model_strings["velocity_model"]
-        model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
-
-        if vel_model not in ["empirical_gauss", "user_defined"] and \
-            any(t.correct_cp_ct_for_tilt for t in self.farm.turbines):
+        if (self.wake.model_strings["velocity_model"] not in ["empirical_gauss", "user_defined"]
+            and any(t.correct_cp_ct_for_tilt for t in self.farm.turbines)):
             self.logger.warning(
                 "The current model does not account for vertical wake deflection due to " +
                 "tilt. Corrections to power and thrust coefficient can be included, but no " +
@@ -151,37 +145,19 @@ class Core(BaseClass):
         for t in self.farm.turbines:
             if t.operation_model == "awc":
                 operation_model_awc = True
-        if vel_model != "empirical_gauss" and operation_model_awc:
+        if self.wake.model_strings["velocity_model"] != "empirical_gauss" and operation_model_awc:
             self.logger.warning(
-                f"The current model `{vel_model}` does not account for additional wake mixing " +
+                f"The current model `{self.wake.model_strings["velocity_model"]}` does not " +
+                "account for additional wake mixing " +
                 "due to active wake control. Corrections to power and thrust coefficient can " +
                 "be included, but no enhanced wake recovery will occur."
             )
 
+        # TODO: Unify these be overwriting wake.model with user_defined version
         if self.wake.user_defined_wake_model is not None:
             self.wake.user_defined_wake_model.turbine_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="cc":
-            model = CumulativeCurl(**model_parameters)
-            model.turbine_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="turbopark":
-            raise ValueError(
-                "The turbopark model is no longer supported. Please use turboparkgauss."
-            )
-        elif vel_model=="turboparkgauss":
-            model = TurbOParkGauss(**model_parameters)
-            model.turbine_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="empirical_gauss":
-            model = EmpiricalGauss(**model_parameters)
-            model.turbine_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="jensen":
-            model = JensenJimenez(**model_parameters)
-            model.turbine_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="gauss":
-            model = Gauss(**model_parameters)
-            model.turbine_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="none":
-            model = NoneWake(**model_parameters)
-            model.turbine_solve(self.farm, self.flow_field, self.grid)
+        else:
+            self.wake.model.turbine_solve(self.farm, self.flow_field, self.grid)
 
         self.finalize()
 
@@ -194,35 +170,11 @@ class Core(BaseClass):
 
         self.flow_field.initialize_velocity_field(self.grid)
 
-        vel_model = self.wake.model_strings["velocity_model"]
-        model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
-
+        # TODO: Unify these be overwriting wake.model with user_defined version
         if self.wake.user_defined_wake_model is not None:
             self.wake.user_defined_wake_model.point_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="cc":
-            model = CumulativeCurl(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="turbopark":
-            raise ValueError(
-                "The turbopark model is no longer supported. Please use turboparkgauss."
-            )
-        elif vel_model=="turboparkgauss":
-            model = TurbOParkGauss(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="empirical_gauss":
-            model = EmpiricalGauss(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="jensen":
-            model = JensenJimenez(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="gauss":
-            model = Gauss(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, self.grid)
-        elif vel_model=="none":
-            model = NoneWake(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, self.grid)
         else:
-            raise ValueError(f"Velocity model {vel_model} is not known.")
+            self.wake.model.point_solve(self.farm, self.flow_field, self.grid)
 
     def solve_for_points(self, x, y, z):
         # Do the calculation with the TurbineGrid for a single wind speed
@@ -246,35 +198,12 @@ class Core(BaseClass):
 
         self.flow_field.initialize_velocity_field(field_grid)
 
-        vel_model = self.wake.model_strings["velocity_model"]
-        model_parameters = _temp_create_single_wake_model_dict(self.wake, vel_model)
-
+        # TODO: Unify these be overwriting wake.model with user_defined version
         if self.wake.user_defined_wake_model is not None:
             self.wake.user_defined_wake_model.point_solve(self.farm, self.flow_field, field_grid)
-        elif vel_model=="cc":
-            model = CumulativeCurl(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, field_grid)
-        elif vel_model=="turbopark":
-            raise ValueError(
-                "The turbopark model is no longer supported. Please use turboparkgauss."
-            )
-        elif vel_model=="turboparkgauss":
-            model = TurbOParkGauss(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, field_grid)
-        elif vel_model=="empirical_gauss":
-            model = EmpiricalGauss(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, field_grid)
-        elif vel_model=="jensen":
-            model = JensenJimenez(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, field_grid)
-        elif vel_model=="gauss":
-            model = Gauss(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, field_grid)
-        elif vel_model=="none":
-            model = NoneWake(**model_parameters)
-            model.point_solve(self.farm, self.flow_field, field_grid)
         else:
-            raise ValueError(f"Velocity model {vel_model} is not known.")
+            self.wake.model.point_solve(self.farm, self.flow_field, field_grid)
+
         return self.flow_field.u_sorted[:,:,0,0] # Remove turbine grid dimensions
 
     def solve_for_velocity_deficit_profiles(
@@ -428,43 +357,3 @@ def check_input_file_for_v3_keys(input_dict) -> None:
             + "velocity_model to gauss. "
             + v3_deprecation_msg
         )
-
-def _temp_create_single_wake_model_dict(wake, vel_model):
-    """
-    This is a temporary function until wake model parametrization is unified on the
-    input dictionary. However, we may use it going forward for back compatibility with
-    v4. In that case, checks should be made to ensure compatible deficit/deflection/turbulence
-    models are being used together.
-    """
-    if vel_model == "gauss":
-        model_parameters = wake.wake_velocity_parameters["gauss"] | \
-            wake.wake_deflection_parameters["gauss"] | \
-            wake.wake_turbulence_parameters["crespo_hernandez"]
-        model_parameters["enable_transverse_velocities"] = wake.enable_transverse_velocities
-        model_parameters["enable_yaw_added_recovery"] = wake.enable_yaw_added_recovery
-        model_parameters["enable_secondary_steering"] = wake.enable_secondary_steering
-    elif vel_model == "cc":
-        model_parameters = wake.wake_velocity_parameters["cc"] | \
-            wake.wake_deflection_parameters["gauss"] | \
-            wake.wake_turbulence_parameters["crespo_hernandez"]
-        model_parameters["enable_transverse_velocities"] = wake.enable_transverse_velocities
-        model_parameters["enable_yaw_added_recovery"] = wake.enable_yaw_added_recovery
-        model_parameters["enable_secondary_steering"] = wake.enable_secondary_steering
-    elif vel_model == "jensen":
-        model_parameters = wake.wake_velocity_parameters["jensen"] | \
-            wake.wake_deflection_parameters["jimenez"] | \
-            wake.wake_turbulence_parameters["crespo_hernandez"]
-    elif vel_model == "turboparkgauss":
-        model_parameters = wake.wake_velocity_parameters["turboparkgauss"]
-    elif vel_model == "empirical_gauss":
-        model_parameters = wake.wake_velocity_parameters["empirical_gauss"] | \
-            wake.wake_deflection_parameters["empirical_gauss"] | \
-            wake.wake_turbulence_parameters["wake_induced_mixing"]
-        model_parameters["enable_yaw_added_recovery"] = wake.enable_yaw_added_recovery
-        model_parameters["enable_active_wake_mixing"] = wake.enable_active_wake_mixing
-    elif vel_model == "none":
-        model_parameters = {}
-    else:
-        model_parameters = None
-
-    return model_parameters

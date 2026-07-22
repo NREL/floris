@@ -4,7 +4,6 @@ from attrs import define, field
 
 from floris.core import (
     BaseClass,
-    BaseLibrary,
     BaseModel,
 )
 from floris.core.wake_combination import (
@@ -64,21 +63,20 @@ class WakeModelManager(BaseClass):
 
     # TODO: How should I handle combination models going forward?
     combination_model: BaseModel = field(init=False)
-    velocity_model: BaseLibrary = field(init=False)
+    model: BaseWakeModel = field(init=False)
     user_defined_wake_model: BaseWakeModel | None = field(default=None)
 
     def __attrs_post_init__(self) -> None:
         velocity_model_string = self.model_strings["velocity_model"].lower()
         if velocity_model_string == "none":
-            self.velocity_model = NoneWake()
+            self.model = NoneWake()
         else:
-            self.velocity_model = MODEL_MAP["velocity_model"][velocity_model_string](
-                self.wake_velocity_parameters[velocity_model_string]
-            )
+            model_parameters = self._temp_create_single_wake_model_dict()
+            self.model = MODEL_MAP["velocity_model"][velocity_model_string](**model_parameters)
 
         combination_model_string = self.model_strings["combination_model"].lower()
-        model: BaseModel = MODEL_MAP["combination_model"][combination_model_string]
-        self.combination_model = model()
+        combination_model: BaseModel = MODEL_MAP["combination_model"][combination_model_string]
+        self.combination_model = combination_model()
 
     def assign_user_defined_wake_model(self, wake_model: BaseWakeModel):
         self.user_defined_wake_model = wake_model
@@ -104,18 +102,43 @@ class WakeModelManager(BaseClass):
                     f"Required inputs are: {', '.join(required_strings)}"
                 ))
 
-    @property
-    def deflection_function(self):
-        return self.deflection_model.function
+    def _temp_create_single_wake_model_dict(self):
+        """
+        This is a temporary function until wake model parametrization is unified on the
+        input dictionary. However, we may use it going forward for back compatibility with
+        v4. In that case, checks should be made to ensure compatible deficit/deflection/turbulence
+        models are being used together.
+        """
+        vel_model = self.model_strings["velocity_model"].lower()
+        if vel_model == "gauss":
+            model_parameters = self.wake_velocity_parameters["gauss"] | \
+                self.wake_deflection_parameters["gauss"] | \
+                self.wake_turbulence_parameters["crespo_hernandez"]
+            model_parameters["enable_transverse_velocities"] = self.enable_transverse_velocities
+            model_parameters["enable_yaw_added_recovery"] = self.enable_yaw_added_recovery
+            model_parameters["enable_secondary_steering"] = self.enable_secondary_steering
+        elif vel_model == "cc":
+            model_parameters = self.wake_velocity_parameters["cc"] | \
+                self.wake_deflection_parameters["gauss"] | \
+                self.wake_turbulence_parameters["crespo_hernandez"]
+            model_parameters["enable_transverse_velocities"] = self.enable_transverse_velocities
+            model_parameters["enable_yaw_added_recovery"] = self.enable_yaw_added_recovery
+            model_parameters["enable_secondary_steering"] = self.enable_secondary_steering
+        elif vel_model == "jensen":
+            model_parameters = self.wake_velocity_parameters["jensen"] | \
+                self.wake_deflection_parameters["jimenez"] | \
+                self.wake_turbulence_parameters["crespo_hernandez"]
+        elif vel_model == "turboparkgauss":
+            model_parameters = self.wake_velocity_parameters["turboparkgauss"]
+        elif vel_model == "empirical_gauss":
+            model_parameters = self.wake_velocity_parameters["empirical_gauss"] | \
+                self.wake_deflection_parameters["empirical_gauss"] | \
+                self.wake_turbulence_parameters["wake_induced_mixing"]
+            model_parameters["enable_yaw_added_recovery"] = self.enable_yaw_added_recovery
+            model_parameters["enable_active_wake_mixing"] = self.enable_active_wake_mixing
+        elif vel_model == "none":
+            model_parameters = {}
+        else:
+            model_parameters = {}
 
-    @property
-    def velocity_function(self):
-        return self.velocity_model.function
-
-    @property
-    def turbulence_function(self):
-        return self.turbulence_model.function
-
-    @property
-    def combination_function(self):
-        return self.combination_model.function
+        return model_parameters
