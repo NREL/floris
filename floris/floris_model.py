@@ -1627,15 +1627,15 @@ class FlorisModel(LoggingManager):
         """
         return self.__class__(self.core.as_dict(), **self.secondary_init_kwargs)
 
-    def get_param(
+    def get_wake_parameter(
         self,
-        param: List[str],
-        param_idx: Optional[int] = None
+        parameter: str,
+        parameter_idx: Optional[int] = None
     ) -> Any:
         """Get a parameter from a FlorisModel object.
 
         Args:
-            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            parameter (str): The name of the wake parameter to get.
             param_idx (Optional[int], optional): The index to get the value at. Defaults to None.
                 If None, the entire parameter is returned.
 
@@ -1644,26 +1644,26 @@ class FlorisModel(LoggingManager):
         """
         fm_dict = self.core.as_dict()
 
-        if param_idx is None:
-            return nested_get(fm_dict, param)
+        if parameter_idx is None:
+            return nested_get(fm_dict, ["wake", "parameters", parameter])
         else:
-            return nested_get(fm_dict, param)[param_idx]
+            return nested_get(fm_dict, ["wake", "parameters", parameter])[parameter_idx]
 
-    def set_param(
+    def set_wake_parameter(
         self,
-        param: List[str],
+        parameter: str,
         value: Any,
-        param_idx: Optional[int] = None
+        parameter_idx: Optional[int] = None
     ):
         """Set a parameter in a FlorisModel object.
 
         Args:
-            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            parameter (str): The name of the wake parameter to set.
             value (Any): The value to set.
             param_idx (Optional[int], optional): The index to set the value at. Defaults to None.
         """
         fm_dict_mod = self.core.as_dict()
-        nested_set(fm_dict_mod, param, value, param_idx)
+        nested_set(fm_dict_mod, ["wake", "parameters", parameter], value, parameter_idx)
         self.__init__(fm_dict_mod, **self.secondary_init_kwargs)
 
     def get_turbine_layout(self, z=False):
