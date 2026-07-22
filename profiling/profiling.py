@@ -30,11 +30,10 @@ if __name__=="__main__":
 
     sample_inputs = SampleInputs()
 
-    sample_inputs.core["wake"]["model_strings"]["velocity_model"] = "gauss"
-    sample_inputs.core["wake"]["model_strings"]["deflection_model"] = "gauss"
-    sample_inputs.core["wake"]["enable_secondary_steering"] = True
-    sample_inputs.core["wake"]["enable_yaw_added_recovery"] = True
-    sample_inputs.core["wake"]["enable_transverse_velocities"] = True
+    sample_inputs.switch_wake_model("gauss")
+    sample_inputs.core["wake"]["parameters"]["enable_secondary_steering"] = True
+    sample_inputs.core["wake"]["parameters"]["enable_yaw_added_recovery"] = True
+    sample_inputs.core["wake"]["parameters"]["enable_transverse_velocities"] = True
 
     N_TURBINES = 100
     N_FINDEX = 72 * 25  # Size of a characteristic wind rose
