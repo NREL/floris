@@ -12,6 +12,7 @@ import floris.flow_visualization as flowviz
 from floris import FlorisModel, TimeSeries
 from floris.turbine_library import build_cosine_loss_turbine_dict
 
+
 ### Build a constant CT turbine model for use in comparisons (not realistic)
 const_CT_turb = build_cosine_loss_turbine_dict(
     turbine_data_dict={
