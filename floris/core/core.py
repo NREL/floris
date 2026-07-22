@@ -147,7 +147,7 @@ class Core(BaseClass):
                 operation_model_awc = True
         if self.wake.model_strings["velocity_model"] != "empirical_gauss" and operation_model_awc:
             self.logger.warning(
-                f"The current model `{self.wake.model_strings["velocity_model"]}` does not " +
+                f"The current model {self.wake.model_strings['velocity_model']} does not " +
                 "account for additional wake mixing " +
                 "due to active wake control. Corrections to power and thrust coefficient can " +
                 "be included, but no enhanced wake recovery will occur."
