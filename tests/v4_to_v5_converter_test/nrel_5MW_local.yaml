@@ -1,0 +1,299 @@
+# NREL 5MW reference wind turbine.
+# Data based on:
+# https://github.com/NREL/turbine-models/blob/master/Offshore/NREL_5MW_126_RWT_corrected.csv
+# Note: Small power variations above rated removed. Rotor diameter includes coning angle.
+# Note: generator efficiency of 94.4% is assumed for the NREL 5MW turbine.
+
+###
+# An ID for this type of turbine definition.
+# This is used to uniquely identify different turbines in the simulation, so should be different
+# for each different turbine definition being used in the same simulation.
+# String type.
+turbine_type: 'nrel_5MW'
+
+###
+# Turbine hub height in meters. Float type.
+hub_height: 90.0
+
+###
+# Turbine rotor diameter in meters. Float type.
+rotor_diameter: 125.88
+
+###
+# Nominal wind turbine tip-speed ratio for below-rated operation. Only used in some wake models.
+# Float type.
+TSR: 8.0
+
+###
+# Model for power and thrust curve interpretation. See floris.core.turbine.operation_models for
+# details. String type.
+operation_model: 'cosine-loss'
+
+###
+# Group of parameters needed to evaluate the power and thrust produced by the turbine.
+power_thrust_table:
+  ###
+  # Air density at which the power and thrust_coefficient curves are defined (kg / m^3). Float type.
+  ref_air_density: 1.225
+  ###
+  # Tilt angle at which the power and thrust_coefficient curves are defined (degrees).
+  # Used to capture the effects of a floating platform on a turbine's power and wake.
+  # Float type.
+  ref_tilt: 5.0
+  ###
+  # Cosine exponent for power loss due to tilt. Float type.
+  cosine_loss_exponent_tilt: 1.88
+  ###
+  # Cosine exponent for power loss due to yaw misalignment. Float type.
+  cosine_loss_exponent_yaw: 1.88
+  ###
+  # Helix parameter a. See documentation for details. Float type.
+  helix_a: 1.802
+  ###
+  # Helix parameter b for power calculation. See documentation for details. Float type.
+  helix_power_b: 4.568e-03
+  ###
+  # Helix parameter c for power calculation. See documentation for details. Float type.
+  helix_power_c: 1.629e-10
+  ###
+  # Helix parameter b for thrust calculation. See documentation for details. Float type.
+  helix_thrust_b: 1.027e-03
+  ###
+  # Helix parameter c for thrust calculation. See documentation for details. Float type.
+  helix_thrust_c: 1.378e-06
+  ###
+  # Fraction of peak thrust by which to reduce (specified as a decimal). Float type.
+  peak_shaving_fraction: 0.2
+  ###
+  # Threshold turbulence intensity above which to apply peak shaving (specified as a decimal).
+  # Float tpe.
+  peak_shaving_TI_threshold: 0.1
+
+  ###
+  # Parameters for the 'controller-dependenter-dependent' operation model. See
+  # floris.core.turbine.controller_dependent_operation_model and documentation for details.
+  controller_dependent_turbine_parameters:
+    rated_rpm: 12.1
+    rotor_solidity: 0.05132
+    generator_efficiency: 0.944
+    rated_power: 5000.0
+    rotor_diameter: 126
+    beta: -0.45891
+    cd:  0.0040638
+    cl_alfa: 4.275049
+    cp_ct_data_file: "demo_cp_ct_surfaces/nrel_5MW_demo_cp_ct_surface.npz"
+
+  ###
+  # Wind speeds for look-up tables of power and thrust_coefficient. List of float type.
+  wind_speed:
+    - 0.0
+    - 2.9
+    - 3.0
+    - 4.0
+    - 5.0
+    - 6.0
+    - 7.0
+    - 7.1
+    - 7.2
+    - 7.3
+    - 7.4
+    - 7.5
+    - 7.6
+    - 7.7
+    - 7.8
+    - 7.9
+    - 8.0
+    - 9.0
+    - 10.0
+    - 10.1
+    - 10.2
+    - 10.3
+    - 10.4
+    - 10.5
+    - 10.6
+    - 10.7
+    - 10.8
+    - 10.9
+    - 11.0
+    - 11.1
+    - 11.2
+    - 11.3
+    - 11.4
+    - 11.5
+    - 11.6
+    - 11.7
+    - 11.8
+    - 11.9
+    - 12.0
+    - 13.0
+    - 14.0
+    - 15.0
+    - 16.0
+    - 17.0
+    - 18.0
+    - 19.0
+    - 20.0
+    - 21.0
+    - 22.0
+    - 23.0
+    - 24.0
+    - 25.0
+    - 25.1
+    - 50.0
+  ###
+  # Power values (specified in kW) for lookup by wind speed. List of float type.
+  power:
+    - 0.0
+    - 0.0
+    - 40.518011517569214
+    - 177.67162506419703
+    - 403.900880943964
+    - 737.5889584824021
+    - 1187.1774030611875
+    - 1239.245945375778
+    - 1292.5184293723503
+    - 1347.3213147477102
+    - 1403.2573725578948
+    - 1460.7011898730707
+    - 1519.6419125979983
+    - 1580.174365096404
+    - 1642.1103166918167
+    - 1705.758292831
+    - 1771.1659528893977
+    - 2518.553107505315
+    - 3448.381605840943
+    - 3552.140809000129
+    - 3657.9545431794127
+    - 3765.121299313842
+    - 3873.928844315059
+    - 3984.4800226955504
+    - 4096.582833096852
+    - 4210.721306623712
+    - 4326.154305853405
+    - 4443.395565353604
+    - 4562.497934188341
+    - 4683.419890251577
+    - 4806.164748311019
+    - 4929.931918769215
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 5000.00
+    - 0.0
+    - 0.0
+  ###
+  # Thrust coefficient values (unitless) for lookup by wind speed. List of float type.
+  thrust_coefficient:
+    - 0.0
+    - 0.0
+    - 1.132034888
+    - 0.999470963
+    - 0.917697381
+    - 0.860849503
+    - 0.815371198
+    - 0.811614904
+    - 0.807939328
+    - 0.80443352
+    - 0.800993851
+    - 0.79768116
+    - 0.794529244
+    - 0.791495834
+    - 0.788560434
+    - 0.787217182
+    - 0.787127977
+    - 0.785839257
+    - 0.783812219
+    - 0.783568108
+    - 0.783328285
+    - 0.781194418
+    - 0.777292539
+    - 0.773464375
+    - 0.769690236
+    - 0.766001924
+    - 0.762348072
+    - 0.758760824
+    - 0.755242872
+    - 0.751792927
+    - 0.748434131
+    - 0.745113997
+    - 0.717806682
+    - 0.672204789
+    - 0.63831272
+    - 0.610176496
+    - 0.585456847
+    - 0.563222111
+    - 0.542912273
+    - 0.399312061
+    - 0.310517829
+    - 0.248633226
+    - 0.203543725
+    - 0.169616419
+    - 0.143478955
+    - 0.122938861
+    - 0.106515296
+    - 0.093026095
+    - 0.081648606
+    - 0.072197368
+    - 0.064388275
+    - 0.057782745
+    - 0.0
+    - 0.0
+
+###
+# Boolean flag used when the user wants FLORIS to use the user-supplied multi-dimensional
+# power/thrust coefficient information information. Boolean type.
+multi_dimensional_cp_ct: False
+
+###
+# Path to the .csv file that contains the multi-dimensional power/thrust coefficient data.
+# The format of this file is such that any external conditions, such as wave height or wave period,
+# that the power/thrust data is dependent on come first, in column format. The last three columns
+# of the .csv file must be ``ws``, ``power``, and ``thrust_coefficient``, in that order. An example
+# of fictional data is given in ``floris/turbine_library/iea_15MW_multi_dim_Tp_Hs.csv``.
+# String type.
+power_thrust_data_file: '../floris/turbine_library/iea_15MW_multi_dim_Tp_Hs.csv'
+
+###
+# Group of parameters needed to evaluate the tilt angle of a floating turbine across wind speeds.
+floating_tilt_table:
+  ###
+  # Wind speeds at which steady tilt angles are defined (m/s). List of float type.
+  wind_speed:
+    - 4.0
+    - 6.0
+    - 8.0
+    - 10.0
+    - 12.0
+    - 14.0
+    - 16.0
+  ###
+  # Tilt angle for each wind speed (degrees, positive "tilted back"). List of float type.
+  tilt:
+    - 5.0
+    - 5.0
+    - 5.0
+    - 5.0
+    - 5.0
+    - 5.0
+    - 5.0
+
+###
+# Flag for whether to apply the floating tilt table to correct turbine power and thrust curves.
+# Boolean type.
+correct_cp_ct_for_tilt: false
