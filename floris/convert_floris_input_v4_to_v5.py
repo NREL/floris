@@ -113,22 +113,36 @@ if __name__ == "__main__":
     velocity_model_parameters_v4 = (
         wake_v4["wake_velocity_parameters"]
         [wake_v4["model_strings"]["velocity_model"]]
-    )
+    ) or {}
     deflection_model_parameters_v4 = (
         wake_v4["wake_deflection_parameters"]
         [wake_v4["model_strings"]["deflection_model"]]
-    )
+    ) or {}
     turbulence_model_parameters_v4 = (
         wake_v4["wake_turbulence_parameters"]
         [wake_v4["model_strings"]["turbulence_model"]]
-    )
+    ) or {}
+    if wake_v4["model_strings"]["velocity_model"] in ["gauss", "cc"]:
+        enable_parameters_v4 = {
+            "enable_secondary_steering": wake_v4["enable_secondary_steering"],
+            "enable_yaw_added_recovery": wake_v4["enable_yaw_added_recovery"],
+            "enable_transverse_velocities": wake_v4["enable_transverse_velocities"],
+        }
+    elif wake_v4["model_strings"]["velocity_model"] in ["empirical_gauss"]:
+        enable_parameters_v4 = {
+            "enable_yaw_added_recovery": wake_v4["enable_yaw_added_recovery"],
+            "enable_active_wake_mixing": wake_v4["enable_active_wake_mixing"]
+        }
+    else:
+        enable_parameters_v4 = {}
 
     wake_v5 = {
         "model": wake_v4["model_strings"]["velocity_model"],
         "parameters": (
             turbulence_model_parameters_v4 |
             deflection_model_parameters_v4 |
-            velocity_model_parameters_v4
+            velocity_model_parameters_v4 |
+            enable_parameters_v4
         ),
         "combination_model": wake_v4["model_strings"]["combination_model"],
     }
