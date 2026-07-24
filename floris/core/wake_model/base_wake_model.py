@@ -1,5 +1,6 @@
 import copy
 from abc import abstractmethod
+from typing import Callable
 
 import numpy as np
 from attrs import (
@@ -33,6 +34,9 @@ class BaseWakeModel(BaseLibrary): # Inherit instead from BaseLibrary
     rotor_diameter_i: np.ndarray = field(init=False, default=None)
     TSR_i: np.ndarray = field(init=False, default=None)
 
+    # Combination model
+    combination_function: Callable = field(init=False, default=None)
+
     def set_turbine_i(self, grid, farm, i):
 
         # Get the current turbine quantities
@@ -44,6 +48,9 @@ class BaseWakeModel(BaseLibrary): # Inherit instead from BaseLibrary
         self.hub_height_i = farm.hub_heights_sorted[:, i:i+1, None, None]
         self.rotor_diameter_i = farm.rotor_diameters_sorted[:, i:i+1, None, None]
         self.TSR_i = farm.TSRs_sorted[:, i:i+1, None, None]
+
+    def assign_combination_function(self, combination_function):
+        self.combination_function = combination_function
 
     @staticmethod
     def turbine_thrust_coefficient(grid, farm, flow_field, i):

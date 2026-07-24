@@ -384,6 +384,13 @@ class CumulativeCurl(BaseWakeModel):
         """
         Solve for turbines using the cumulative curl model.
         """
+        # Check not assigned a working combination_function
+        if self.combination_function(0,0) is not None:
+            self.logger.warning(
+                "CumulativeCurl model does not use a combination model. "
+                "Suggest setting combination_model to `none`."
+            )
+
         # Initialize wake state
         v_wake = np.zeros_like(flow_field.v_initial_sorted)
         w_wake = np.zeros_like(flow_field.w_initial_sorted)

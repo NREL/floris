@@ -24,10 +24,8 @@ class TurbOParkGauss(BaseWakeModel):
     """
     Model based on TurbOPark with Gaussian wake profile (Pedersen et al. 2020).
 
-    Uses:
-    - SOSFS combination (sum of squares freestream superposition)
-    - No deflection model (yaw not supported)
-    - No turbulence model (built into Frandsen-based wake width calculation)
+    Does not use a deflection model (yaw not supported) or turbulence model
+    (built into Frandsen-based wake width calculation)
 
     References:
         Pedersen J G, Svensen E, Poulsen L, and Nygaard N G. "Turbulence Optimized
@@ -81,21 +79,6 @@ class TurbOParkGauss(BaseWakeModel):
 
         return velocity_deficit
 
-    def combination(self, wake_field: np.ndarray, velocity_field: np.ndarray):
-        """
-        Combines the base flow field with the velocity deficits
-        using sum of squares.
-
-        Args:
-            wake_field (np.array): The velocity deficits from the wake.
-            velocity_field (np.array): The base flow field.
-
-        Returns:
-            np.array: The resulting flow field after applying the wake to the
-                base.
-        """
-        return np.hypot(wake_field, velocity_field)
-
     def turbine_solve(
         self,
         farm: Farm,
@@ -131,7 +114,7 @@ class TurbOParkGauss(BaseWakeModel):
                 grid.z_sorted
             )
 
-            wake_field = self.combination(
+            wake_field = self.combination_function(
                 wake_field,
                 velocity_deficit * flow_field.u_initial_sorted
             )
@@ -191,7 +174,7 @@ class TurbOParkGauss(BaseWakeModel):
                 grid.z_sorted
             )
 
-            wake_field = self.combination(
+            wake_field = self.combination_function(
                 wake_field,
                 velocity_deficit * flow_field.u_initial_sorted
             )

@@ -1,18 +1,12 @@
 
-import inspect
+from typing import Callable
 
-import attrs
 from attrs import define, field
 
 from floris.core import (
     BaseClass,
     BaseLibrary,
     BaseModel,
-)
-from floris.core.wake_combination import (
-    FLS,
-    MAX,
-    SOSFS,
 )
 from floris.core.wake_model import (
     BaseWakeModel,
@@ -23,22 +17,28 @@ from floris.core.wake_model import (
     NoneWake,
     TurbOParkGauss,
 )
+from floris.core.wake_model.wake_combination import (
+    fls,
+    maximum,
+    none_combination,
+    sosfs,
+)
 
 
 MODEL_MAP = {
-    "combination_model": {
-        "fls": FLS,
-        "max": MAX,
-        "sosfs": SOSFS
-    },
-    "velocity_model": {
-        "none": NoneWake,
-        "cc": CumulativeCurl,
-        "gauss": Gauss,
-        "jensen": JensenJimenez,
-        "empirical_gauss": EmpiricalGauss,
-        "turboparkgauss": TurbOParkGauss,
-    },
+    "none": NoneWake,
+    "cc": CumulativeCurl,
+    "gauss": Gauss,
+    "jensen": JensenJimenez,
+    "empirical_gauss": EmpiricalGauss,
+    "turboparkgauss": TurbOParkGauss,
+}
+
+COMBINATION_MAP = {
+    "none": none_combination,
+    "fls": fls,
+    "max": maximum,
+    "sosfs": sosfs,
 }
 
 def _wake_model_converter(model, model_parameters):
@@ -50,14 +50,14 @@ def _wake_model_converter(model, model_parameters):
     elif isinstance(model, str):
         if model == "none":
             return NoneWake()
-        elif model not in MODEL_MAP["velocity_model"]:
-            valid_models = list(MODEL_MAP["velocity_model"].keys())
+        elif model not in MODEL_MAP:
+            valid_models = list(MODEL_MAP.keys())
             raise ValueError(
                 f"Unknown velocity model '{model}'. "
                 f"Expected one of {valid_models}."
             )
         else:
-            return MODEL_MAP["velocity_model"][model](**model_parameters)
+            return MODEL_MAP[model](**model_parameters)
 
     # Handle dict representation of a wake model
     elif isinstance(model, dict):
@@ -82,19 +82,15 @@ class WakeModelManager(BaseClass):
     """
     model: str | BaseWakeModel = field()
     parameters: dict = field(converter=dict)
-    combination_model: str | BaseModel | None = field(default="sosfs")
+    combination_model: str | Callable = field(default="sosfs")
 
     def __attrs_post_init__(self) -> None:
 
         self.model = _wake_model_converter(self.model, self.parameters)
 
         if isinstance(self.combination_model, str):
-            if self.combination_model == "none":
-                self.combination_model = None
-            else:
-                self.combination_model = MODEL_MAP["combination_model"][self.combination_model]()
-        elif isinstance(self.combination_model, BaseModel):
-            pass
+            self.combination_model = COMBINATION_MAP[self.combination_model]
+        self.model.assign_combination_function(self.combination_model)
 
     def assign_user_defined_wake_model(self, wake_model: BaseWakeModel):
         self.model = wake_model

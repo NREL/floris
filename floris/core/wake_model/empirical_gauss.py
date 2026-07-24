@@ -196,21 +196,6 @@ class EmpiricalGauss(BaseWakeModel):
 
         return deflection_y, deflection_z
 
-    def combination(self, wake_field: np.ndarray, velocity_field: np.ndarray):
-        """
-        Combines the base flow field with the velocity deficits
-        using sum of squares.
-
-        Args:
-            u_field (np.array): The base flow field.
-            u_wake (np.array): The wake to apply to the base flow field.
-
-        Returns:
-            np.array: The resulting flow field after applying the wake to the
-                base.
-        """
-        return np.hypot(wake_field, velocity_field)
-
     def mixing(
         self,
         axial_induction_i: np.ndarray,
@@ -327,7 +312,7 @@ class EmpiricalGauss(BaseWakeModel):
                 grid.z_sorted
             )
 
-            wake_field = self.combination(
+            wake_field = self.combination_function(
                 wake_field,
                 velocity_deficit * flow_field.u_initial_sorted
             )
@@ -436,7 +421,7 @@ class EmpiricalGauss(BaseWakeModel):
                 grid.z_sorted
             )
 
-            wake_field = self.combination(
+            wake_field = self.combination_function(
                 wake_field,
                 velocity_deficit * flow_field.u_initial_sorted
             )
