@@ -23,6 +23,7 @@ from floris.core.rotor_velocity import (
     average_velocity,
 )
 from floris.core.wake_model import BaseWakeModel
+from floris.core.wake_model.gauss import Gauss
 from floris.core.wake_model.gch_components import (
     calculate_transverse_velocity,
     wake_added_yaw,
@@ -93,6 +94,9 @@ class CumulativeCurl(BaseWakeModel):
     dm: float = field(converter=float, default=1.0)
     eps_gain: float = field(converter=float, default=0.2)
     use_secondary_steering: bool = field(converter=bool, default=True)
+
+    # Borrow deflection model from Gauss class
+    deflection = Gauss.deflection
 
     # Crespo-Hernandez turbulence model parameters
     initial: float = field(converter=float, default=0.1)
@@ -232,97 +236,6 @@ class CumulativeCurl(BaseWakeModel):
 
         self.turb_u_wake = self.turb_u_wake + turb_avg_vels * velDef
         return (self.turb_u_wake, self.Ctmp)
-
-    def deflection(
-        self,
-        turbulence_intensity_i: np.ndarray,
-        ct_i: np.ndarray,
-        x: np.ndarray,
-        x_i: np.ndarray | None = None,
-        freestream_velocity: np.ndarray | None = None,
-    ) -> np.ndarray:
-        """
-        Gauss deflection model.
-        """
-        # Use provided x_i or fall back to instance variable (set in turbine_solve)
-        if x_i is None:
-            x_i = self.x_i
-        if freestream_velocity is None:
-            freestream_velocity = self.freestream_velocity
-
-        # Opposite sign convention
-        yaw_i = -1 * self.effective_yaw_i
-
-        # initial velocity deficits
-        uR = (
-            freestream_velocity
-            * ct_i
-            * cosd(0.0)
-            * cosd(yaw_i)
-            / (2.0 * (1 - np.sqrt(1 - (ct_i * cosd(0.0) * cosd(yaw_i)))))
-        )
-        u0 = freestream_velocity * np.sqrt(1 - ct_i)
-
-        # length of near wake
-        x0 = (
-            self.rotor_diameter_i
-            * (cosd(yaw_i) * (1 + np.sqrt(1 - ct_i * cosd(yaw_i))))
-            / (np.sqrt(2) * (
-                4 * self.alpha * turbulence_intensity_i + 2 * self.beta * (1 - np.sqrt(1 - ct_i))
-            )) + x_i
-        )
-
-        # wake expansion parameters
-        ky = self.ka * turbulence_intensity_i + self.kb
-        kz = self.ka * turbulence_intensity_i + self.kb
-
-        C0 = 1 - u0 / freestream_velocity
-        M0 = C0 * (2 - C0)
-        E0 = ne.evaluate("C0 ** 2 - 3 * exp(1.0 / 12.0) * C0 + 3 * exp(1.0 / 3.0)")
-
-        # initial Gaussian wake expansion
-        freestream_velocity_local = freestream_velocity
-        rotor_diameter_i = self.rotor_diameter_i
-        sigma_z0 = ne.evaluate(
-            "rotor_diameter_i * 0.5 * sqrt(uR / (freestream_velocity_local + u0))"
-        )
-        sigma_y0 = sigma_z0 * cosd(yaw_i) * cosd(self.wind_veer)
-
-        xR = x_i
-
-        # yaw parameters (skew angle and distance from centerline)
-        theta_c0 = self.dm * (0.3 * np.radians(yaw_i) / cosd(yaw_i))
-        theta_c0 *= (1 - np.sqrt(1 - ct_i * cosd(yaw_i)))
-        delta0 = np.tan(theta_c0) * (x0 - x_i)
-
-        # deflection in the near wake
-        delta_near_wake = ((x - xR) / (x0 - xR)) * delta0 + (self.ad + self.bd * (x - x_i))
-        delta_near_wake *= (x >= xR) & (x <= x0)
-
-        # deflection in the far wake
-        sigma_y = ky * (x - x0) + sigma_y0
-        sigma_z = kz * (x - x0) + sigma_z0
-        sigma_y = sigma_y * (x >= x0) + sigma_y0 * (x < x0)
-        sigma_z = sigma_z * (x >= x0) + sigma_z0 * (x < x0)
-
-        M0_sqrt = np.sqrt(M0)
-        middle_term = np.sqrt(sigma_y * sigma_z / (sigma_y0 * sigma_z0))
-        ln_deltaNum = (1.6 + M0_sqrt) * (1.6 * middle_term - M0_sqrt)
-        ln_deltaDen = (1.6 - M0_sqrt) * (1.6 * middle_term + M0_sqrt)
-
-        middle_term = ne.evaluate(
-            "theta_c0"
-            " * E0"
-            " / 5.2"
-            " * sqrt(sigma_y0 * sigma_z0 / (ky * kz * M0))"
-            " * log(ln_deltaNum / ln_deltaDen)"
-        )
-        delta_far_wake = delta0 + middle_term + (self.ad + self.bd * (x - x_i))
-
-        delta_far_wake = delta_far_wake * (x > x0)
-        deflection = delta_near_wake + delta_far_wake
-
-        return deflection
 
     def turbulence(
         self,
@@ -642,6 +555,9 @@ class CumulativeCurl(BaseWakeModel):
         ambient_turbulence_intensities = np.repeat(ambient_turbulence_intensities, n_points, axis=1)
         turbulence_intensity_field = ambient_turbulence_intensities.copy()
 
+        # Extract freestream velocity for deficit, deflection calculations
+        self.freestream_velocity = flow_field.u_initial_sorted
+
         shape = (farm.n_turbines,) + np.shape(flow_field.u_initial_sorted)
         Ctmp = np.zeros((shape))
 
@@ -710,8 +626,6 @@ class CumulativeCurl(BaseWakeModel):
                 turbulence_intensity_i,
                 turb_Cts_i[:, i:i+1],
                 grid.x_sorted,
-                self.x_i,
-                flow_field.u_initial_sorted,
             )
 
             if self.enable_transverse_velocities:
