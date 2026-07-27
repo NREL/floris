@@ -564,13 +564,6 @@ class FlorisModel(LoggingManager):
         if (self.core.flow_field.u < 0.0).any():
             self.logger.warning("Some velocities at the rotor are negative.")
 
-        # Check that powers are no longer NaNs, i.e., that they have been computed during
-        # a model turbine_solve routine.
-        if np.isnan(self.core.farm.turbine_powers).any():
-            raise RuntimeError(
-                "Turbine powers contain NaN values. Check model configuration and implementation."
-            )
-
         return self.core.farm.turbine_powers
 
 
@@ -1019,21 +1012,9 @@ class FlorisModel(LoggingManager):
         ) * hours_per_year
 
     def get_turbine_axial_induction_factors(self) -> NDArrayFloat:
-        if np.isnan(self.core.farm.turbine_powers).any():
-            raise RuntimeError(
-                "Turbine axial induction factors contain NaN values. "
-                "Check model configuration and implementation."
-            )
-
         return self.core.farm.turbine_axial_inductions
 
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
-        if np.isnan(self.core.farm.turbine_powers).any():
-            raise RuntimeError(
-                "Turbine thrust coefficients contain NaN values. "
-                "Check model configuration and implementation."
-            )
-
         return self.core.farm.turbine_thrust_coefficients
 
     def get_turbine_TIs(self) -> NDArrayFloat:
