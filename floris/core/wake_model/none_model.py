@@ -35,6 +35,7 @@ class NoneWake(BaseWakeModel):
 
         # None wake model does not calculate any velocity deficits, so simply set the flow field
         flow_field.u_sorted = flow_field.u_initial_sorted.copy()
+        print("I WAS HERE")
 
     def point_solve(
         self,

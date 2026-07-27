@@ -259,8 +259,10 @@ class EmpiricalGauss(BaseWakeModel):
 
             # Turbine quantities
             self.set_turbine_i(grid, farm, i)
-            thrust_coefficient_i = self.turbine_thrust_coefficient(grid, farm, flow_field, i)
-            axial_induction_i = self.turbine_axial_induction(grid, farm, flow_field, i)
+            thrust_coefficient_i = self.evaluate_turbine_thrust_coefficient(
+                grid, farm, flow_field, i
+            )
+            axial_induction_i = self.evaluate_turbine_axial_induction(grid, farm, flow_field, i)
 
             # Compute the tilt angle of the ith turbine
             average_velocities = average_velocity(
@@ -343,6 +345,9 @@ class EmpiricalGauss(BaseWakeModel):
         # Store for use in point_solve
         self.mixing_factor = mixing_factor
 
+        # Compute turbine powers based on final flow field
+        self.evaluate_turbine_power(grid, farm, flow_field)
+
     def point_solve(
         self,
         farm: Farm,
@@ -377,13 +382,7 @@ class EmpiricalGauss(BaseWakeModel):
 
             # Get the current turbine quantities
             self.set_turbine_i(turbine_grid, turbine_grid_farm, i)
-            thrust_coefficient_i = self.turbine_thrust_coefficient(
-                turbine_grid,
-                turbine_grid_farm,
-                turbine_grid_flow_field,
-                i
-            )
-            axial_induction_i = self.turbine_axial_induction(
+            thrust_coefficient_i = self.evaluate_turbine_thrust_coefficient(
                 turbine_grid,
                 turbine_grid_farm,
                 turbine_grid_flow_field,

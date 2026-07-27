@@ -516,6 +516,9 @@ class CumulativeCurl(BaseWakeModel):
             keepdims=True
         )
 
+        # Compute turbine powers based on final flow field
+        self.evaluate_turbine_power(grid, farm, flow_field)
+
     def point_solve(
         self,
         farm: Farm,

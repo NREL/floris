@@ -530,6 +530,17 @@ class FlorisModel(LoggingManager):
         # Initialize solution space
         self.core.initialize_domain()
 
+        # Evaluate turbine quantities without wake effects
+        self.core.wake.model.evaluate_turbine_thrust_coefficient(
+            self.core.grid, self.core.farm, self.core.flow_field
+        )
+        self.core.wake.model.evaluate_turbine_axial_induction(
+            self.core.grid, self.core.farm, self.core.flow_field
+        )
+        self.core.wake.model.evaluate_turbine_power(
+            self.core.grid, self.core.farm, self.core.flow_field
+        )
+
         # Finalize values to user-supplied order
         self.core.finalize()
 
@@ -553,21 +564,14 @@ class FlorisModel(LoggingManager):
         if (self.core.flow_field.u < 0.0).any():
             self.logger.warning("Some velocities at the rotor are negative.")
 
-        if not np.isnan(self.core.farm.turbine_powers).any():
-            return self.core.farm.turbine_powers
-        turbine_powers = power(
-            turbines=self.core.farm.turbines,
-            velocities=self.core.flow_field.u,
-            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
-            air_density=self.core.flow_field.air_density,
-            yaw_angles=self.core.farm.yaw_angles,
-            power_setpoints=self.core.farm.power_setpoints,
-            awc_modes = self.core.farm.awc_modes,
-            awc_amplitudes=self.core.farm.awc_amplitudes,
-            turbine_type_map=self.core.farm.turbine_type_map,
-            multidim_condition=self.core.flow_field.multidim_conditions,
-        )
-        return turbine_powers
+        # Check that powers are no longer NaNs, i.e., that they have been computed during
+        # a model turbine_solve routine.
+        if np.isnan(self.core.farm.turbine_powers).any():
+            raise RuntimeError(
+                "Turbine powers contain NaN values. Check model configuration and implementation."
+            )
+
+        return self.core.farm.turbine_powers
 
 
     def get_turbine_powers(self):
@@ -1015,38 +1019,22 @@ class FlorisModel(LoggingManager):
         ) * hours_per_year
 
     def get_turbine_axial_induction_factors(self) -> NDArrayFloat:
-        turbine_ais = axial_induction(
-            turbines=self.core.farm.turbines,
-            velocities=self.core.flow_field.u,
-            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
-            air_density=self.core.flow_field.air_density,
-            yaw_angles=self.core.farm.yaw_angles,
-            power_setpoints=self.core.farm.power_setpoints,
-            awc_modes = self.core.farm.awc_modes,
-            awc_amplitudes=self.core.farm.awc_amplitudes,
-            turbine_type_map=self.core.farm.turbine_type_map,
-            average_method=self.core.grid.average_method,
-            cubature_weights=self.core.grid.cubature_weights,
-            multidim_condition=self.core.flow_field.multidim_conditions,
-        )
-        return turbine_ais
+        if np.isnan(self.core.farm.turbine_powers).any():
+            raise RuntimeError(
+                "Turbine axial induction factors contain NaN values. "
+                "Check model configuration and implementation."
+            )
+
+        return self.core.farm.turbine_axial_inductions
 
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
-        turbine_thrust_coefficients = thrust_coefficient(
-            turbines=self.core.farm.turbines,
-            velocities=self.core.flow_field.u,
-            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
-            air_density=self.core.flow_field.air_density,
-            yaw_angles=self.core.farm.yaw_angles,
-            power_setpoints=self.core.farm.power_setpoints,
-            awc_modes = self.core.farm.awc_modes,
-            awc_amplitudes=self.core.farm.awc_amplitudes,
-            turbine_type_map=self.core.farm.turbine_type_map,
-            average_method=self.core.grid.average_method,
-            cubature_weights=self.core.grid.cubature_weights,
-            multidim_condition=self.core.flow_field.multidim_conditions,
-        )
-        return turbine_thrust_coefficients
+        if np.isnan(self.core.farm.turbine_powers).any():
+            raise RuntimeError(
+                "Turbine thrust coefficients contain NaN values. "
+                "Check model configuration and implementation."
+            )
+
+        return self.core.farm.turbine_thrust_coefficients
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.core.flow_field.turbulence_intensity_field
@@ -1616,7 +1604,6 @@ class FlorisModel(LoggingManager):
             wake_model (BaseWakeModel): The wake model to set.
         """
         self.core.wake.assign_user_defined_wake_model(wake_model)
-        # TODO: Won't be kept through a new .set() operation; will need to handle that.
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object

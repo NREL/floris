@@ -16,6 +16,7 @@ from floris.core import (
     FlowField,
     FlowFieldPlanarGrid,
     PointsGrid,
+    power,
     thrust_coefficient,
     TurbineGrid,
 )
@@ -52,29 +53,6 @@ class BaseWakeModel(BaseLibrary): # Inherit instead from BaseLibrary
     def assign_combination_function(self, combination_function):
         self.combination_function = combination_function
 
-    @staticmethod
-    def turbine_thrust_coefficient(grid, farm, flow_field, i):
-        # TODO: consider just calling the appropriate method on the operation model,
-        # instead?
-        ct_i = thrust_coefficient(
-            turbines=farm.turbines,
-            velocities=flow_field.u_sorted,
-            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
-            air_density=flow_field.air_density,
-            yaw_angles=farm.yaw_angles_sorted,
-            power_setpoints=farm.power_setpoints_sorted,
-            awc_modes=farm.awc_modes_sorted,
-            awc_amplitudes=farm.awc_amplitudes_sorted,
-            turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
-            average_method=grid.average_method,
-            cubature_weights=grid.cubature_weights,
-            multidim_condition=flow_field.multidim_conditions
-        )
-        # Since we are filtering for the i'th turbine in the thrust coefficient function,
-        # get the first index here (0:1)
-        return ct_i[:, 0:1, None, None]
-
     @abstractmethod
     def turbine_solve(
         self,
@@ -98,10 +76,10 @@ class BaseWakeModel(BaseLibrary): # Inherit instead from BaseLibrary
         )
 
     @staticmethod
-    def turbine_axial_induction(grid, farm, flow_field, i):
+    def evaluate_turbine_axial_induction(grid, farm, flow_field, i: int | None=None):
         # TODO: consider just calling the appropriate method on the operation model,
         # instead?
-        axial_induction_i = axial_induction(
+        axial_induction_ = axial_induction(
             turbines=farm.turbines,
             velocities=flow_field.u_sorted,
             turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
@@ -111,13 +89,71 @@ class BaseWakeModel(BaseLibrary): # Inherit instead from BaseLibrary
             awc_modes=farm.awc_modes_sorted,
             awc_amplitudes=farm.awc_amplitudes_sorted,
             turbine_type_map=farm.turbine_type_map_sorted,
-            ix_filter=[i],
+            ix_filter=[i] if i is not None else None,
             average_method=grid.average_method,
             cubature_weights=grid.cubature_weights,
             multidim_condition=flow_field.multidim_conditions
         )
 
-        return axial_induction_i[:, 0:1, None, None]
+        # Save output onto farm for later post-analysis
+        if i is None:
+            farm.turbine_axial_inductions_sorted = axial_induction_
+        else:
+            farm.turbine_axial_inductions_sorted[:, i:i+1] = axial_induction_
+
+        return axial_induction_[:, :, None, None]
+
+    @staticmethod
+    def evaluate_turbine_thrust_coefficient(grid, farm, flow_field, i: int | None=None):
+        thrust_coefficient_ = thrust_coefficient(
+            turbines=farm.turbines,
+            velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
+            air_density=flow_field.air_density,
+            yaw_angles=farm.yaw_angles_sorted,
+            power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
+            turbine_type_map=farm.turbine_type_map_sorted,
+            ix_filter=[i] if i is not None else None,
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions
+        )
+
+        # Save output onto farm for later post-analysis
+        if i is None:
+            farm.turbine_thrust_coefficients_sorted = thrust_coefficient_
+        else:
+            farm.turbine_thrust_coefficients_sorted[:, i:i+1] = thrust_coefficient_
+
+        return thrust_coefficient_[:, :, None, None]
+
+    @staticmethod
+    def evaluate_turbine_power(grid, farm, flow_field, i: int | None=None):
+        power_ = power(
+            turbines=farm.turbines,
+            velocities=flow_field.u_sorted,
+            turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
+            air_density=flow_field.air_density,
+            yaw_angles=farm.yaw_angles_sorted,
+            power_setpoints=farm.power_setpoints_sorted,
+            awc_modes=farm.awc_modes_sorted,
+            awc_amplitudes=farm.awc_amplitudes_sorted,
+            turbine_type_map=farm.turbine_type_map_sorted,
+            ix_filter=[i] if i is not None else None,
+            average_method=grid.average_method,
+            cubature_weights=grid.cubature_weights,
+            multidim_condition=flow_field.multidim_conditions,
+        )
+
+        # Save output onto farm for later post-analysis
+        if i is None:
+            farm.turbine_powers_sorted = power_
+        else:
+            farm.turbine_powers_sorted[:, i:i+1] = power_
+
+        return power_[:, :, None, None]
 
     @staticmethod
     def generate_turbine_grid_objects(

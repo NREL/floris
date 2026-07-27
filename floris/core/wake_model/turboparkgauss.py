@@ -103,7 +103,9 @@ class TurbOParkGauss(BaseWakeModel):
 
             # Turbine quantities
             self.set_turbine_i(grid, farm, i)
-            thrust_coefficient_i = self.turbine_thrust_coefficient(grid, farm, flow_field, i)
+            thrust_coefficient_i = self.evaluate_turbine_thrust_coefficient(
+                grid, farm, flow_field, i
+            )
 
             # Model calculations
             velocity_deficit = self.velocity_deficit(
@@ -128,6 +130,10 @@ class TurbOParkGauss(BaseWakeModel):
             axis=(2,3),
             keepdims=True
         )
+
+        # Compute turbine powers, axial inductions based on final flow field
+        self.evaluate_turbine_power(grid, farm, flow_field)
+        self.evaluate_turbine_axial_induction(grid, farm, flow_field)
 
     def point_solve(
         self,
@@ -158,7 +164,7 @@ class TurbOParkGauss(BaseWakeModel):
 
             # Get the current turbine quantities
             self.set_turbine_i(turbine_grid, turbine_grid_farm, i)
-            thrust_coefficient_i = self.turbine_thrust_coefficient(
+            thrust_coefficient_i = self.evaluate_turbine_thrust_coefficient(
                 turbine_grid,
                 turbine_grid_farm,
                 turbine_grid_flow_field,
