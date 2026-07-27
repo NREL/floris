@@ -97,10 +97,10 @@ class Farm(BaseClass):
     rotor_diameters: NDArrayFloat = field(init=False, factory=list)
 
     # Post-turbine solve attributes
-    turbine_powers: NDArrayFloat = field(init=False, factory=list)
-    turbine_thrust_coefficients: NDArrayFloat = field(init=False, factory=list)
-    turbine_axial_inductions: NDArrayFloat = field(init=False, factory=list)
-    turbine_rotor_average_velocities: NDArrayFloat = field(init=False, factory=list)
+    turbine_powers_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_thrust_coefficients_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_axial_inductions_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_rotor_average_velocities_sorted: NDArrayFloat = field(init=False, factory=list)
 
     # Private attributes
     # Private attributes.
@@ -231,14 +231,16 @@ class Farm(BaseClass):
                 "before it can be used. Please call Farm.set_sorted_indices() first."
             )
 
-        self.turbine_powers = np.full((self._sorted_indices.shape[0], self.n_turbines), np.nan)
-        self.turbine_thrust_coefficients = np.full(
+        self.turbine_powers_sorted = np.full(
             (self._sorted_indices.shape[0], self.n_turbines), np.nan
         )
-        self.turbine_axial_inductions = np.full(
+        self.turbine_thrust_coefficients_sorted = np.full(
             (self._sorted_indices.shape[0], self.n_turbines), np.nan
         )
-        self.turbine_rotor_average_velocities = np.full(
+        self.turbine_axial_inductions_sorted = np.full(
+            (self._sorted_indices.shape[0], self.n_turbines), np.nan
+        )
+        self.turbine_rotor_average_velocities_sorted = np.full(
             (self._sorted_indices.shape[0], self.n_turbines), np.nan
         )
 
@@ -311,7 +313,7 @@ class Farm(BaseClass):
         self.set_awc_frequencies_to_ref_freq(n_findex)
 
     def finalize(self):
-        self.state.USED
+        self.state = State.USED
 
     @property
     def coordinates(self):
@@ -366,6 +368,52 @@ class Farm(BaseClass):
             (self._sorted_indices.shape[0], self.n_turbines)
         )
 
+    @property
+    def turbine_powers(self):
+        return _unsort_by_coord_indices(self.turbine_powers_sorted, self._sorted_indices)
+
+    @property
+    def turbine_thrust_coefficients(self):
+        return _unsort_by_coord_indices(
+            self.turbine_thrust_coefficients_sorted, self._sorted_indices
+        )
+
+    @property
+    def turbine_axial_inductions(self):
+        return _unsort_by_coord_indices(self.turbine_axial_inductions_sorted, self._sorted_indices)
+
+    @property
+    def turbine_rotor_average_velocities(self):
+        return _unsort_by_coord_indices(
+            self.turbine_rotor_average_velocities_sorted, self._sorted_indices
+        )
+
+    def set_turbine_outputs_by_original_ordering(
+        self,
+        powers: NDArrayFloat | None = None,
+        thrust_coefficients: NDArrayFloat | None = None,
+        axial_inductions: NDArrayFloat | None = None,
+        rotor_average_velocities: NDArrayFloat | None = None
+    ):
+        if powers is not None:
+            self.turbine_powers_sorted = _sort_by_coord_indices(powers, self._sorted_indices)
+
+        if thrust_coefficients is not None:
+            self.turbine_thrust_coefficients_sorted = _sort_by_coord_indices(
+                thrust_coefficients, self._sorted_indices
+            )
+
+        if axial_inductions is not None:
+            self.turbine_axial_inductions_sorted = _sort_by_coord_indices(
+                axial_inductions, self._sorted_indices
+            )
+
+        if rotor_average_velocities is not None:
+            self.turbine_rotor_average_velocities_sorted = _sort_by_coord_indices(
+                rotor_average_velocities, self._sorted_indices
+            )
+
+
 def _sort_by_coord_indices(array, sorted_indices):
     if array.ndim != 2:
         template_shape = np.ones_like(sorted_indices)
@@ -382,3 +430,8 @@ def _sort_by_coord_indices(array, sorted_indices):
         )
     else:
         raise ValueError("Array must be 1-dimensional or 2-dimensional to sort.")
+
+def _unsort_by_coord_indices(array, sorted_indices):
+    temp = np.zeros_like(array)
+    np.put_along_axis(temp, sorted_indices, array, axis=1)
+    return temp

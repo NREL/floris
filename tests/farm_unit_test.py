@@ -206,3 +206,36 @@ def test_farm_external_library(sample_inputs_fixture: SampleInputs):
     farm_data["turbine_type"] = ["FAKE_TURBINE"] * N_TURBINES
     with pytest.raises(FileNotFoundError):
         Farm.from_dict(farm_data)
+
+def test_turbine_outputs():
+    farm_data = SampleInputs().farm
+    turbine_data = SampleInputs().turbine
+
+    layout_x = farm_data["layout_x"]
+    layout_y = farm_data["layout_y"]
+
+    farm = Farm(
+        layout_x=layout_x,
+        layout_y=layout_y,
+        turbine_type=[turbine_data]
+    )
+
+    # "normal" order; switched order
+    powers_orig = np.array([[100, 200, 300], [100, 200, 300]])
+    sorted_indices = np.array([[0, 1, 2], [1, 2, 0]])
+    farm.set_sorted_indices(sorted_indices)
+    farm.initialize()
+
+    assert farm.turbine_powers_sorted.shape == sorted_indices.shape
+
+    # First, set powers in sorted order and return "unsorted"
+    powers_test = np.take_along_axis(powers_orig, sorted_indices, axis=1)
+    farm.turbine_powers_sorted = powers_test
+
+    assert (farm.turbine_powers == powers_orig).all()
+
+    # Now, use built-in method to set the "unsorted" turbine powers
+    farm.turbine_powers_sorted = np.full(powers_orig.shape, np.nan)
+    farm.set_turbine_outputs_by_original_ordering(powers=powers_orig)
+    assert (farm.turbine_powers == powers_orig).all()
+    assert (farm.turbine_powers_sorted == powers_test).all()
