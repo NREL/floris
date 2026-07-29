@@ -547,8 +547,6 @@ def power(
             turbine_dict[turb_type].correct_cp_ct_for_tilt
         )
         if "power" in turbine_dict[turb_type].power_thrust_table: # Not multidimensional
-            # TODO: consider saving power_thrust_table as an attribute of the Op Model, so we
-            # don't need to pass it.
             power_model_kwargs["power_thrust_table"] = turbine_dict[turb_type].power_thrust_table
             p += (
                 turbine_dict[turb_type].operation_model.power(**power_model_kwargs)

@@ -367,8 +367,9 @@ class CumulativeCurl(BaseWakeModel):
             )
             self.turb_Cts = self.turb_Cts[:, :, None, None]
 
-            # Compute axial induction for current turbine
-            turb_aIs = axial_induction(
+            # Compute axial induction for current turbine (uses turb_avg_vels)
+            # TODO: different velocities from call below?
+            aIs_i_avgvel = axial_induction(
                 turbines=farm.turbines,
                 velocities=turb_avg_vels,
                 turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
@@ -383,28 +384,13 @@ class CumulativeCurl(BaseWakeModel):
                 cubature_weights=grid.cubature_weights,
                 multidim_condition=flow_field.multidim_conditions,
             )
-            turb_aIs = turb_aIs[:, :, None, None]
+            aIs_i_avgvel = aIs_i_avgvel[:, :, None, None]
 
             u_i = self.turb_inflow_field[:, i:i+1]
             v_i = flow_field.v_sorted[:, i:i+1]
 
-            # Axial induction for current turbine
-            axial_induction_i = axial_induction(
-                turbines=farm.turbines,
-                velocities=flow_field.u_sorted,
-                turbulence_intensities=flow_field.turbulence_intensity_field_sorted,
-                air_density=flow_field.air_density,
-                yaw_angles=farm.yaw_angles_sorted,
-                power_setpoints=farm.power_setpoints_sorted,
-                awc_modes=farm.awc_modes_sorted,
-                awc_amplitudes=farm.awc_amplitudes_sorted,
-                turbine_type_map=farm.turbine_type_map_sorted,
-                ix_filter=[i],
-                average_method=grid.average_method,
-                cubature_weights=grid.cubature_weights,
-                multidim_condition=flow_field.multidim_conditions,
-            )
-            axial_induction_i = axial_induction_i[:, :, None, None]
+            # Axial induction for current turbine (uses flow_field.u_sorted)
+            axial_induction_i = self.evaluate_turbine_axial_induction(grid, farm, flow_field, i)
 
             turbulence_intensity_i = turbine_turbulence_intensity[:, i:i+1]
             yaw_angle_i = farm.yaw_angles_sorted[:, i:i+1, None, None]
@@ -495,7 +481,7 @@ class CumulativeCurl(BaseWakeModel):
                 self.ambient_turbulence_intensities,
                 grid.x_sorted,
                 grid.y_sorted,
-                turb_aIs,
+                aIs_i_avgvel,
                 area_overlap,
             )
 
@@ -582,22 +568,9 @@ class CumulativeCurl(BaseWakeModel):
             turb_Cts_i = self.turb_Cts
 
             # Axial induction
-            axial_induction_i = axial_induction(
-                turbines=farm.turbines,
-                velocities=turbine_grid_flow_field.u_sorted,
-                turbulence_intensities=turbine_grid_flow_field.turbulence_intensity_field_sorted,
-                air_density=turbine_grid_flow_field.air_density,
-                yaw_angles=turbine_grid_farm.yaw_angles_sorted,
-                power_setpoints=turbine_grid_farm.power_setpoints_sorted,
-                awc_modes=turbine_grid_farm.awc_modes_sorted,
-                awc_amplitudes=turbine_grid_farm.awc_amplitudes_sorted,
-                turbine_type_map=turbine_grid_farm.turbine_type_map_sorted,
-                ix_filter=[i],
-                average_method=turbine_grid.average_method,
-                cubature_weights=turbine_grid.cubature_weights,
-                multidim_condition=turbine_grid_flow_field.multidim_conditions,
+            axial_induction_i = self.evaluate_turbine_axial_induction(
+                turbine_grid, turbine_grid_farm, turbine_grid_flow_field, i
             )
-            axial_induction_i = axial_induction_i[:, :, None, None]
 
             turbulence_intensity_i = \
                 turbine_grid_flow_field.turbulence_intensity_field_sorted_avg[:, i:i+1]

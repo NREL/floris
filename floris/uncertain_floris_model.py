@@ -993,7 +993,6 @@ class UncertainFlorisModel(LoggingManager):
         turbine_dicts = [t.as_dict() for t in self.fmodel_unexpanded.core.farm.turbines]
 
         for tindex in range(self.fmodel_unexpanded.core.farm.n_turbines):
-            # TODO: Can we get rid of this renaming business? Is it still needed?
             turbine_dicts[tindex]["turbine_type"] = (
                 turbine_dicts[tindex]["turbine_type"] + "_" + operation_model[tindex]
             )

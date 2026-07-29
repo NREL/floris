@@ -77,8 +77,6 @@ class BaseWakeModel(BaseLibrary): # Inherit instead from BaseLibrary
 
     @staticmethod
     def evaluate_turbine_axial_induction(grid, farm, flow_field, i: int | None=None):
-        # TODO: consider just calling the appropriate method on the operation model,
-        # instead?
         axial_induction_ = axial_induction(
             turbines=farm.turbines,
             velocities=flow_field.u_sorted,
