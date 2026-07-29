@@ -42,12 +42,8 @@ COMBINATION_MAP = {
 }
 
 def _wake_model_converter(model, model_parameters):
-    # If wake_model is an instantiated class, return it
-    if isinstance(model, BaseWakeModel):
-        return model.__class__(**model_parameters)
-
-    # If model is a string, instantiate from MODEL_MAP
-    elif isinstance(model, str):
+    # If model is a string, instantiate from MODEL_MAP using model_parameters
+    if isinstance(model, str):
         if model == "none":
             return NoneWake()
         elif model not in MODEL_MAP:
@@ -59,14 +55,15 @@ def _wake_model_converter(model, model_parameters):
         else:
             return MODEL_MAP[model](**model_parameters)
 
-    # Handle dict representation of a wake model
+    # Handle dict representation of a wake model (use existing parameters on model)
     elif isinstance(model, dict):
-        return BaseLibrary.from_dict(model).__class__(**model_parameters)
+        return BaseLibrary.from_dict(model)
 
     # Otherwise, raise an error
     else:
         raise TypeError(
-            "model must be a BaseWakeModel subclass, or a valid velocity-model string."
+            "model must be a BaseWakeModel subclass (in dict representation), "
+            "or a valid velocity-model string."
         )
 
 @define
