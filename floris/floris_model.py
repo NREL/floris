@@ -1585,6 +1585,8 @@ class FlorisModel(LoggingManager):
             wake_model (BaseWakeModel): The wake model to set.
         """
         self.core.wake.assign_user_defined_wake_model(wake_model)
+        # Run top-level reinitialization routine
+        self.set()
 
     def copy(self):
         """Create an independent copy of the current FlorisModel object
