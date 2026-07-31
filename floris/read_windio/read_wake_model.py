@@ -26,10 +26,19 @@ def _get_default_config() -> Dict[str, Any]:
     return _DEFAULT_CONFIG
 
 # Mapping from windIO model names to FLORIS model names and parameters
-# WindIO model not implemented in FLORIS are mapped to None
+# WindIO model not implemented in FLORIS are not mapped (so that warning is raised by TrackedDict)
 # parameter= {windio_name : floris_name}
 # "none" refers to no model selected in FLORIS
-    
+
+# NOTE: on expansion coefficients (WindIO)
+#    k_a:
+#       title: Wake expansion coefficient
+#       type: number # (default 0.04)
+#    k_b:
+#       title: Factor to multiply TI
+#       type: number # (default 0)
+
+
 WAKE_MODEL_MAPPING = {
     "wind_deficit_model": {
         "None": {
@@ -39,49 +48,33 @@ WAKE_MODEL_MAPPING = {
         "Jensen": {
             "floris_name": "jensen",
             "parameters": {
-                # wake_expansion_coefficient maps to 'we' in FLORIS Jensen model
+                # wake_expansion_coefficient maps to 'we_ka' and 'we_kb' in FLORIS Jensen model
                 "wake_expansion_coefficient": {
-                    "k_a": None,  # Not used in Jensen
-                    "k_b": "we",  
-                    "free_stream_ti": None,  # Not used in Jensen
+                    "k_a": "we",  # Baseline expansion
                 },
-                "use_effective_ws": None,  # Not used in FLORIS Jensen
             }
         },
         "Bastankhah2014": {
-            "floris_name": "gauss",
-            "parameters": {
-                # wake_expansion_coefficient parameters
-                "wake_expansion_coefficient": {
-                    "k_a": "ka",
-                    "k_b": "kb",
-                    "free_stream_ti": None,  # Not implemented in FLORIS
-                },
-                "ceps": None,  # Not used in Bastankhah2014
-                "use_effective_ws": None,  # Not implemented in FLORIS
-            }
+            "floris_name": None,
+            "parameters": {}
         },
         "Bastankhah2016": {
             "floris_name": None,  # Not directly implemented in FLORIS
             "parameters": {
                 "wake_expansion_coefficient": {
-                    "k_a": "ka",
-                    "k_b": "kb",
-                    "free_stream_ti": None,
+                    "k_a": "kb",
+                    "k_b": "ka",
+                # NOTE: WindIO switches ka and kb compared to FLORIS for Bastankhah2016
                 },
                 "ceps": "ceps",  # c_epsilon factor for Bastankhah2016
-                "use_effective_ws": None,
             }
         },
         "TurbOPark": {
             "floris_name": "turboparkgauss",
             "parameters": {
                 "wake_expansion_coefficient": {
-                    "k_a": None,  
                     "k_b": "A",
-                    "free_stream_ti": None,
                 },
-                "use_effective_ws": None,
             }
         },
         "SuperGaussian": {
@@ -111,8 +104,9 @@ WAKE_MODEL_MAPPING = {
                 "ad": "ad",
                 "bd": "bd",
                 "dm": "dm",
-                "ka": "ka",
-                "kb": "kb",
+                "ka": "kb",
+                "kb": "ka",
+                # NOTE: WindIO switches ka and kb compared to FLORIS for Bastankhah2016
             }
         }
     },
@@ -213,7 +207,7 @@ def _extract_model_parameters(
                         # Parameter exists in windIO but not in FLORIS
                         if nested_windio_param in nested_dict:
                             _ = nested_dict[nested_windio_param]  # Mark as visited
-                            print(f"Warning: windIO parameter '{nested_windio_param}' has no FLORIS equivalent and will be ignored.")
+                            print(f"Warning: windIO parameter '{nested_windio_param} = {nested_dict[nested_windio_param]}' has no FLORIS equivalent and will be ignored.")
                         continue
                     
                     if nested_windio_param in nested_dict:
@@ -228,7 +222,7 @@ def _extract_model_parameters(
                 # Parameter exists in windIO but not in FLORIS
                 if windio_param in model_dict:
                     _ = model_dict[windio_param]  # Mark as visited
-                    print(f"Warning: windIO parameter '{windio_param}' has no FLORIS equivalent and will be ignored.")
+                    print(f"Warning: windIO parameter '{windio_param} = {model_dict[windio_param]}' has no FLORIS equivalent and will be ignored.")
                 continue
             
             if windio_param in model_dict:
