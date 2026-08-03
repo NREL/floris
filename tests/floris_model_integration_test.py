@@ -728,21 +728,12 @@ def test_get_powers_with_wind_data():
 
     assert np.allclose(farm_power_weighted, fmodel.get_turbine_powers()[:,:,:-1].sum(axis=2))
 
-def test_get_and_set_param():
+def test_get_and_set_wake_parameter():
     fmodel = FlorisModel(configuration=YAML_INPUT)
 
-    # Get the wind speed
-    wind_speeds = fmodel.get_param(['flow_field', 'wind_speeds'])
-    assert wind_speeds[0] == 8.0
-
-    # Set the wind speed
-    fmodel.set_param(['flow_field', 'wind_speeds'], 10.0, param_idx=0)
-    wind_speed = fmodel.get_param(['flow_field', 'wind_speeds'], param_idx=0  )
-    assert wind_speed == 10.0
-
-    # Repeat with wake parameter
-    fmodel.set_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'], 0.1)
-    alpha = fmodel.get_param(['wake', 'wake_velocity_parameters', 'gauss', 'alpha'])
+    # Wake parameter
+    fmodel.set_wake_parameter("alpha", 0.1)
+    alpha = fmodel.get_wake_parameter("alpha")
     assert alpha == 0.1
 
 def test_get_operation_model():

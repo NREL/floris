@@ -441,90 +441,107 @@ class SampleInputs:
             "reference_wind_height": self.turbine["hub_height"],
         }
 
-        self.wake = {
-            "model_strings": {
-                "velocity_model": "jensen",
-                "deflection_model": "jimenez",
-                "combination_model": "sosfs",
-                "turbulence_model": "crespo_hernandez",
+        self._wake_gauss = {
+            "model": "gauss",
+            "parameters": {
+                "ad": 0.0,
+                "alpha": 0.58,
+                "bd": 0.0,
+                "beta": 0.077,
+                "dm": 1.0,
+                "ka": 0.38,
+                "kb": 0.004,
+                "initial": 0.1,
+                "constant": 0.5,
+                "ai": 0.8,
+                "downstream": -0.32,
+                "enable_secondary_steering": False,
+                "enable_yaw_added_recovery": False,
+                "enable_transverse_velocities": False,
             },
-            "wake_deflection_parameters": {
-                "gauss": {
-                    "ad": 0.0,
-                    "alpha": 0.58,
-                    "bd": 0.0,
-                    "beta": 0.077,
-                    "dm": 1.0,
-                    "ka": 0.38,
-                    "kb": 0.004
-                },
-                "jimenez": {
-                    "ad": 0.0,
-                    "bd": 0.0,
-                    "kd": 0.05,
-                },
-                "empirical_gauss": {
-                   "horizontal_deflection_gain_D": 3.0,
-                   "vertical_deflection_gain_D": -1,
-                   "deflection_rate": 22,
-                   "mixing_gain_deflection": 0.0,
-                   "yaw_added_mixing_gain": 0.0
-                },
-            },
-            "wake_velocity_parameters": {
-                "gauss": {
-                    "alpha": 0.58,
-                    "beta": 0.077,
-                    "ka": 0.38,
-                    "kb": 0.004
-                },
-                "jensen": {
-                    "we": 0.05,
-                },
-                "cc": {
-                    "a_s": 0.179367259,
-                    "b_s": 0.0118889215,
-                    "c_s1": 0.0563691592,
-                    "c_s2": 0.13290157,
-                    "a_f": 3.11,
-                    "b_f": -0.68,
-                    "c_f": 2.41,
-                    "alpha_mod": 1.0
-                },
-                "turbopark": {
-                    "A": 0.04,
-                    "sigma_max_rel": 4.0
-                },
-                "turboparkgauss": {
-                    "A": 0.04,
-                    "include_mirror_wake": True
-                },
-                "empirical_gauss": {
-                    "wake_expansion_rates": [0.023, 0.008],
-                    "breakpoints_D": [10],
-                    "sigma_0_D": 0.28,
-                    "smoothing_length_D": 2.0,
-                    "mixing_gain_velocity": 2.0,
-                    "awc_wake_exp": 1.2,
-                    "awc_wake_denominator": 400
-                },
-            },
-            "wake_turbulence_parameters": {
-                "crespo_hernandez": {
-                    "initial": 0.1,
-                    "constant": 0.5,
-                    "ai": 0.8,
-                    "downstream": -0.32
-                },
-                "wake_induced_mixing": {
-                    "atmospheric_ti_gain": 0.0
-                }
-            },
-            "enable_secondary_steering": False,
-            "enable_yaw_added_recovery": False,
-            "enable_active_wake_mixing": False,
-            "enable_transverse_velocities": False,
+            "combination_model": "sosfs",
         }
+
+        self._wake_jensen = {
+            "model": "jensen",
+            "parameters": {
+                "initial": 0.01,
+                "constant": 0.9,
+                "ai": 0.83,
+                "downstream": -0.25,
+                "we": 0.05,
+                "ad": 0.0,
+                "bd": 0.0,
+            },
+            "combination_model": "sosfs",
+        }
+
+        self._wake_empirical_gauss = {
+            "model": "empirical_gauss",
+            "parameters": {
+                "wake_expansion_rates": [0.023, 0.008],
+                "breakpoints_D": [10],
+                "sigma_0_D": 0.28,
+                "smoothing_length_D": 2.0,
+                "mixing_gain_velocity": 2.0,
+                "awc_wake_exp": 1.2,
+                "awc_wake_denominator": 400,
+                "horizontal_deflection_gain_D": 3.0,
+                "vertical_deflection_gain_D": -1,
+                "deflection_rate": 22,
+                "mixing_gain_deflection": 0.0,
+                "yaw_added_mixing_gain": 0.0,
+                "enable_active_wake_mixing": False,
+                "enable_yaw_added_recovery": False,
+            },
+            "combination_model": "sosfs",
+        }
+
+        self._wake_cc = {
+            "model": "cc",
+            "parameters": {
+                "a_s": 0.179367259,
+                "b_s": 0.0118889215,
+                "c_s1": 0.0563691592,
+                "c_s2": 0.13290157,
+                "a_f": 3.11,
+                "b_f": -0.68,
+                "c_f": 2.41,
+                "alpha_mod": 1.0,
+                "ad": 0.0,
+                "alpha": 0.58,
+                "bd": 0.0,
+                "beta": 0.077,
+                "dm": 1.0,
+                "ka": 0.38,
+                "kb": 0.004,
+                "initial": 0.1,
+                "constant": 0.5,
+                "ai": 0.8,
+                "downstream": -0.32,
+                "enable_secondary_steering": False,
+                "enable_yaw_added_recovery": False,
+                "enable_transverse_velocities": False,
+            },
+            "combination_model": "none",
+        }
+
+        self._wake_turboparkgauss = {
+            "model": "turboparkgauss",
+            "parameters": {
+                "A": 0.04,
+                "include_mirror_wake": True,
+            },
+            "combination_model": "sosfs",
+        }
+
+        self._wake_none = {
+            "model": "none",
+            "parameters": {},
+            "combination_model": "none",
+        }
+
+        self.wake = self._wake_gauss
 
         self.core = {
             "farm": self.farm,
@@ -725,3 +742,25 @@ class SampleInputs:
                 ],
             },
         }
+
+    def switch_wake_model(self, model_name: str):
+        if model_name == "gauss":
+            self.wake = self._wake_gauss
+            self.core["wake"] = self.wake
+        elif model_name == "jensen":
+            self.wake = self._wake_jensen
+            self.core["wake"] = self.wake
+        elif model_name == "empirical_gauss":
+            self.wake = self._wake_empirical_gauss
+            self.core["wake"] = self.wake
+        elif model_name == "cc":
+            self.wake = self._wake_cc
+            self.core["wake"] = self.wake
+        elif model_name == "turboparkgauss":
+            self.wake = self._wake_turboparkgauss
+            self.core["wake"] = self.wake
+        elif model_name == "none":
+            self.wake = self._wake_none
+            self.core["wake"] = self.wake
+        else:
+            raise ValueError(f"Unknown wake model: {model_name}")

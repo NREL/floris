@@ -1,63 +1,70 @@
 
-import attrs
+from typing import Callable
+
 from attrs import define, field
 
-from floris.core import BaseClass, BaseModel
-from floris.core.wake_combination import (
-    FLS,
-    MAX,
-    SOSFS,
+from floris.core import (
+    BaseClass,
+    BaseLibrary,
+    BaseModel,
 )
-from floris.core.wake_deflection import (
-    EmpiricalGaussVelocityDeflection,
-    GaussVelocityDeflection,
-    JimenezVelocityDeflection,
-    NoneVelocityDeflection,
+from floris.core.wake_model import (
+    BaseWakeModel,
+    CumulativeCurl,
+    EmpiricalGauss,
+    Gauss,
+    JensenJimenez,
+    NoneWake,
+    TurbOParkGauss,
 )
-from floris.core.wake_turbulence import (
-    CrespoHernandez,
-    NoneWakeTurbulence,
-    WakeInducedMixing,
-)
-from floris.core.wake_velocity import (
-    CumulativeGaussCurlVelocityDeficit,
-    EmpiricalGaussVelocityDeficit,
-    GaussVelocityDeficit,
-    JensenVelocityDeficit,
-    NoneVelocityDeficit,
-    TurboparkgaussVelocityDeficit,
-    TurbOParkVelocityDeficit,
+from floris.core.wake_model.wake_combination import (
+    fls,
+    maximum,
+    none_combination,
+    sosfs,
 )
 
 
 MODEL_MAP = {
-    "combination_model": {
-        "fls": FLS,
-        "max": MAX,
-        "sosfs": SOSFS
-    },
-    "deflection_model": {
-        "jimenez": JimenezVelocityDeflection,
-        "gauss": GaussVelocityDeflection,
-        "none": NoneVelocityDeflection,
-        "empirical_gauss": EmpiricalGaussVelocityDeflection
-    },
-    "turbulence_model": {
-        "none": NoneWakeTurbulence,
-        "crespo_hernandez": CrespoHernandez,
-        "wake_induced_mixing": WakeInducedMixing
-    },
-    "velocity_model": {
-        "none": NoneVelocityDeficit,
-        "cc": CumulativeGaussCurlVelocityDeficit,
-        "gauss": GaussVelocityDeficit,
-        "jensen": JensenVelocityDeficit,
-        "turbopark": TurbOParkVelocityDeficit,
-        "empirical_gauss": EmpiricalGaussVelocityDeficit,
-        "turboparkgauss": TurboparkgaussVelocityDeficit,
-    },
+    "none": NoneWake,
+    "cc": CumulativeCurl,
+    "gauss": Gauss,
+    "jensen": JensenJimenez,
+    "empirical_gauss": EmpiricalGauss,
+    "turboparkgauss": TurbOParkGauss,
 }
 
+COMBINATION_MAP = {
+    "none": none_combination,
+    "fls": fls,
+    "max": maximum,
+    "sosfs": sosfs,
+}
+
+def _wake_model_converter(model, model_parameters):
+    # If model is a string, instantiate from MODEL_MAP using model_parameters
+    if isinstance(model, str):
+        if model == "none":
+            return NoneWake()
+        elif model not in MODEL_MAP:
+            valid_models = list(MODEL_MAP.keys())
+            raise ValueError(
+                f"Unknown velocity model '{model}'. "
+                f"Expected one of {valid_models}."
+            )
+        else:
+            return MODEL_MAP[model](**model_parameters)
+
+    # Handle dict representation of a wake model (use existing parameters on model)
+    elif isinstance(model, dict):
+        return BaseLibrary.from_dict(model)
+
+    # Otherwise, raise an error
+    else:
+        raise TypeError(
+            "model must be a BaseWakeModel subclass (in dict representation), "
+            "or a valid velocity-model string."
+        )
 
 @define
 class WakeModelManager(BaseClass):
@@ -68,97 +75,19 @@ class WakeModelManager(BaseClass):
     Args:
         wake (:obj:`dict`): The wake's properties input dictionary
             - velocity_model (str): The name of the velocity model to be instantiated.
-            - turbulence_model (str): The name of the turbulence model to be instantiated.
-            - deflection_model (str): The name of the deflection model to be instantiated.
             - combination_model (str): The name of the combination model to be instantiated.
     """
-    model_strings: dict = field(converter=dict)
-    enable_secondary_steering: bool = field(converter=bool)
-    enable_yaw_added_recovery: bool = field(converter=bool)
-    enable_active_wake_mixing: bool = field(converter=bool)
-    enable_transverse_velocities: bool = field(converter=bool)
-
-    wake_deflection_parameters: dict = field(converter=dict)
-    wake_turbulence_parameters: dict = field(converter=dict)
-    wake_velocity_parameters: dict = field(converter=dict, factory=dict)
-
-    combination_model: BaseModel = field(init=False)
-    deflection_model: BaseModel = field(init=False)
-    turbulence_model: BaseModel = field(init=False)
-    velocity_model: BaseModel = field(init=False)
+    model: str | BaseWakeModel = field()
+    parameters: dict = field(converter=dict)
+    combination_model: str | Callable = field(default="sosfs")
 
     def __attrs_post_init__(self) -> None:
-        velocity_model_string = self.model_strings["velocity_model"].lower()
-        model: BaseModel = MODEL_MAP["velocity_model"][velocity_model_string]
-        if velocity_model_string == "none":
-            model_parameters = None
-        else:
-            model_parameters = self.wake_velocity_parameters[velocity_model_string]
-        if model_parameters is None:
-            # Use model defaults
-            self.velocity_model = model()
-        else:
-            self.velocity_model = model.from_dict(model_parameters)
 
-        deflection_model_string = self.model_strings["deflection_model"].lower()
-        model: BaseModel = MODEL_MAP["deflection_model"][deflection_model_string]
-        if deflection_model_string == "none":
-            model_parameters = None
-        else:
-            model_parameters = self.wake_deflection_parameters[deflection_model_string]
-        if model_parameters is None:
-            self.deflection_model = model()
-        else:
-            self.deflection_model = model.from_dict(model_parameters)
+        self.model = _wake_model_converter(self.model, self.parameters)
 
-        turbulence_model_string = self.model_strings["turbulence_model"].lower()
-        model: BaseModel = MODEL_MAP["turbulence_model"][turbulence_model_string]
-        if turbulence_model_string == "none":
-            model_parameters = None
-        else:
-            model_parameters = self.wake_turbulence_parameters[turbulence_model_string]
-        if model_parameters is None:
-            self.turbulence_model = model()
-        else:
-            self.turbulence_model = model.from_dict(model_parameters)
+        if isinstance(self.combination_model, str):
+            self.combination_model = COMBINATION_MAP[self.combination_model]
+        self.model.assign_combination_function(self.combination_model)
 
-        combination_model_string = self.model_strings["combination_model"].lower()
-        model: BaseModel = MODEL_MAP["combination_model"][combination_model_string]
-        self.combination_model = model()
-
-    @model_strings.validator
-    def validate_model_strings(self, instance: attrs.Attribute, value: dict) -> None:
-        required_strings = [
-            "velocity_model",
-            "deflection_model",
-            "combination_model",
-            "turbulence_model"
-        ]
-        # Check that all required strings are given
-        for s in required_strings:
-            if s not in value.keys():
-                raise KeyError(f"Wake: '{s}' not provided in the input but it is required.")
-
-        # Check that no other strings are given
-        for k in value.keys():
-            if k not in required_strings:
-                raise KeyError((
-                    f"Wake: '{k}' was given as input but it is not a valid option."
-                    f"Required inputs are: {', '.join(required_strings)}"
-                ))
-
-    @property
-    def deflection_function(self):
-        return self.deflection_model.function
-
-    @property
-    def velocity_function(self):
-        return self.velocity_model.function
-
-    @property
-    def turbulence_function(self):
-        return self.turbulence_model.function
-
-    @property
-    def combination_function(self):
-        return self.combination_model.function
+    def assign_user_defined_wake_model(self, wake_model: BaseWakeModel):
+        self.model = wake_model

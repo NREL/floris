@@ -277,8 +277,7 @@ class WindRose(WindDataBase):
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
         # using the dictionary
         if heterogeneous_inflow_config_by_wd is not None:
-            # TODO: In future, add deprecation warning for this parameter here
-
+            # TODO: Remove before v5 release
             self.heterogeneous_map = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
 
         # Else if heterogeneous_map is not None
@@ -1278,7 +1277,7 @@ class WindTIRose(WindDataBase):
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
         # using the dictionary
         if heterogeneous_inflow_config_by_wd is not None:
-            # TODO: In future, add deprectation warning for this parameter here
+            # TODO: Remove before v5 release
 
             self.heterogeneous_map = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
 
@@ -2332,7 +2331,7 @@ class TimeSeries(WindDataBase):
         # If heterogeneous_inflow_config_by_wd is not None, then create a HeterogeneousMap object
         # using the dictionary
         if heterogeneous_inflow_config_by_wd is not None:
-            # TODO: In future, add deprecation warning for this parameter here
+            # TODO: Remove before v5 release
 
             self.heterogeneous_map = HeterogeneousMap(**heterogeneous_inflow_config_by_wd)
 

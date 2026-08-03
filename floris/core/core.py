@@ -10,23 +10,24 @@ from attrs import define, field
 from floris import logging_manager
 from floris.core import (
     BaseClass,
-    cc_solver,
-    empirical_gauss_solver,
+    BaseLibrary,
     Farm,
     FlowField,
     FlowFieldPlanarGrid,
-    full_flow_cc_solver,
-    full_flow_empirical_gauss_solver,
-    full_flow_sequential_solver,
-    full_flow_turbopark_solver,
     Grid,
     PointsGrid,
-    sequential_solver,
     State,
     TurbineCubatureGrid,
     TurbineGrid,
-    turbopark_solver,
     WakeModelManager,
+)
+from floris.core.wake_model import (
+    CumulativeCurl,
+    EmpiricalGauss,
+    Gauss,
+    JensenJimenez,
+    NoneWake,
+    TurbOParkGauss,
 )
 from floris.type_dec import NDArrayFloat
 from floris.utilities import (
@@ -55,7 +56,9 @@ class Core(BaseClass):
     description: str = field(converter=str)
     floris_version: str = field(converter=str)
 
-    grid: Grid = field(init=False)
+    grid: Grid | TurbineGrid | TurbineCubatureGrid | FlowFieldPlanarGrid | PointsGrid = field(
+        init=False
+    )
 
     def __attrs_post_init__(self) -> None:
 
@@ -108,6 +111,9 @@ class Core(BaseClass):
             self.farm.set_sorted_indices(self.grid.sorted_coord_indices)
             self.farm.construct_turbine_type_map()
 
+        if isinstance(self.wake.model, dict):
+            self.wake.model = BaseLibrary.from_dict(self.wake.model)
+
     def initialize_domain(self):
         """Initialize solution space prior to wake calculations"""
 
@@ -121,64 +127,11 @@ class Core(BaseClass):
 
         self.state.INITIALIZED
 
-    def steady_state_atmospheric_condition(self):
+    def solve_for_turbines(self):
         """Perform the steady-state wind farm wake calculations. Note that
         initialize_domain() is required to be called before this function."""
 
-        vel_model = self.wake.model_strings["velocity_model"]
-
-        if vel_model not in ["empirical_gauss"] and \
-            any(t.correct_cp_ct_for_tilt for t in self.farm.turbines):
-            self.logger.warning(
-                "The current model does not account for vertical wake deflection due to " +
-                "tilt. Corrections to power and thrust coefficient can be included, but no " +
-                "vertical wake deflection will occur."
-            )
-
-        operation_model_awc = False
-        for t in self.farm.turbines:
-            if t.operation_model == "awc":
-                operation_model_awc = True
-        if vel_model != "empirical_gauss" and operation_model_awc:
-            self.logger.warning(
-                f"The current model `{vel_model}` does not account for additional wake mixing " +
-                "due to active wake control. Corrections to power and thrust coefficient can " +
-                "be included, but no enhanced wake recovery will occur."
-            )
-
-        if vel_model=="cc":
-            cc_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
-        elif vel_model=="turbopark":
-            self.logger.warning(
-                "The turbopark model has been superseded by the turboparkgauss model. We " +
-                "recommend using `velocity_model: turboparkgauss` instead."
-            )
-            turbopark_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
-        elif vel_model=="empirical_gauss":
-            empirical_gauss_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
-        else:
-            sequential_solver(
-                self.farm,
-                self.flow_field,
-                self.grid,
-                self.wake
-            )
-
+        self.wake.model.turbine_solve(self.farm, self.flow_field, self.grid)
         self.finalize()
 
     def solve_for_viz(self):
@@ -190,16 +143,8 @@ class Core(BaseClass):
 
         self.flow_field.initialize_velocity_field(self.grid)
 
-        vel_model = self.wake.model_strings["velocity_model"]
-
-        if vel_model=="cc":
-            full_flow_cc_solver(self.farm, self.flow_field, self.grid, self.wake)
-        elif vel_model=="turbopark":
-            full_flow_turbopark_solver(self.farm, self.flow_field, self.grid, self.wake)
-        elif vel_model=="empirical_gauss":
-            full_flow_empirical_gauss_solver(self.farm, self.flow_field, self.grid, self.wake)
-        else:
-            full_flow_sequential_solver(self.farm, self.flow_field, self.grid, self.wake)
+        # Solve wake at visualization points
+        self.wake.model.point_solve(self.farm, self.flow_field, self.grid)
 
     def solve_for_points(self, x, y, z):
         # Do the calculation with the TurbineGrid for a single wind speed
@@ -223,19 +168,8 @@ class Core(BaseClass):
 
         self.flow_field.initialize_velocity_field(field_grid)
 
-        vel_model = self.wake.model_strings["velocity_model"]
-
-        if vel_model == "turbopark":
-            raise NotImplementedError(
-                "solve_for_points is not available for the legacy \'turbopark\' model. "
-                "However, it is available for \'turboparkgauss\'."
-            )
-        elif vel_model == "empirical_gauss":
-            full_flow_empirical_gauss_solver(self.farm, self.flow_field, field_grid, self.wake)
-        elif vel_model == "cc":
-            full_flow_cc_solver(self.farm, self.flow_field, field_grid, self.wake)
-        else:
-            full_flow_sequential_solver(self.farm, self.flow_field, field_grid, self.wake)
+        # Solve wake at specified points
+        self.wake.model.point_solve(self.farm, self.flow_field, field_grid)
 
         return self.flow_field.u_sorted[:,:,0,0] # Remove turbine grid dimensions
 
@@ -340,7 +274,7 @@ class Core(BaseClass):
             Floris: The class object instance.
         """
         input_dict = load_yaml(Path(input_file_path).resolve())
-        check_input_file_for_v3_keys(input_dict)
+        check_input_file_for_retired_keys(input_dict)
         return Core.from_dict(input_dict)
 
     def to_file(self, output_file_path: str) -> None:
@@ -357,36 +291,22 @@ class Core(BaseClass):
                 default_flow_style=False
             )
 
-def check_input_file_for_v3_keys(input_dict) -> None:
+def check_input_file_for_retired_keys(input_dict) -> None:
     """
-    Checks if any FLORIS v3 keys are present in the input file and raises special errors if
-    the extra keys belong to a v3 definition of the input_dct.
-    and raises special errors if the extra arguments belong to a v3 definition of the class.
+    Checks if any FLORIS v4 keys are present in the input file and raises special errors if
+    the extra keys belong to a v4 definition of the input_dct.
 
     Args:
         input_dict (dict): The input dictionary to be checked for v3 keys.
     """
-    v3_deprecation_msg = (
-        "Consider using the convert_floris_input_v3_to_v4.py utility in floris/tools "
-        "to convert from a FLORIS v3 input file to FLORIS v4. "
-        "See https://natlabrockies.github.io/floris/upgrade_guides/v3_to_v4.html "
+    v4_deprecation_msg = (
+        "Consider using the floris/convert_floris_input_v4_to_v5.py utility "
+        "to convert from a FLORIS v4 input file to FLORIS v5. "
+        "See https://natlabrockies.github.io/floris/upgrade_guides/v4_to_v5.html "
         "for more information."
     )
-    if "turbulence_intensity" in input_dict["flow_field"]:
+    if "model_strings" in input_dict["wake"]:
         raise AttributeError(
-            "turbulence_intensity has been updated to turbulence_intensities in FLORIS v4. "
-            + v3_deprecation_msg
-        )
-    elif not hasattr(input_dict["flow_field"]["turbulence_intensities"], "__len__"):
-        raise AttributeError(
-            "turbulence_intensities must be a list of floats in FLORIS v4. "
-            + v3_deprecation_msg
-        )
-
-    if input_dict["wake"]["model_strings"]["velocity_model"] == "multidim_cp_ct":
-        raise AttributeError(
-            "Dedicated 'multidim_cp_ct' velocity model has been removed in FLORIS v4 in favor of "
-            + "supporting all available wake models. To recover previous operation, set "
-            + "velocity_model to gauss. "
-            + v3_deprecation_msg
+            "The wake model specification has changed substantially in FLORIS v5. "
+            + v4_deprecation_msg
         )

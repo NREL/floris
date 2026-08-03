@@ -24,17 +24,16 @@ if __name__=="__main__":
     # floris.farm.flow_field.calculate_wake()
 
     # start = time.time()
-    # cProfile.run('re.compile("floris.steady_state_atmospheric_condition()")')
+    # cProfile.run('re.compile("floris.solve_for_turbines()")')
     # end = time.time()
     # print(start, end, end - start)
 
     sample_inputs = SampleInputs()
 
-    sample_inputs.core["wake"]["model_strings"]["velocity_model"] = "gauss"
-    sample_inputs.core["wake"]["model_strings"]["deflection_model"] = "gauss"
-    sample_inputs.core["wake"]["enable_secondary_steering"] = True
-    sample_inputs.core["wake"]["enable_yaw_added_recovery"] = True
-    sample_inputs.core["wake"]["enable_transverse_velocities"] = True
+    sample_inputs.switch_wake_model("gauss")
+    sample_inputs.core["wake"]["parameters"]["enable_secondary_steering"] = True
+    sample_inputs.core["wake"]["parameters"]["enable_yaw_added_recovery"] = True
+    sample_inputs.core["wake"]["parameters"]["enable_transverse_velocities"] = True
 
     N_TURBINES = 100
     N_FINDEX = 72 * 25  # Size of a characteristic wind rose
@@ -51,4 +50,4 @@ if __name__=="__main__":
     for i in range(N):
         core = Core.from_dict(copy.deepcopy(sample_inputs.core))
         core.initialize_domain()
-        core.steady_state_atmospheric_condition()
+        core.solve_for_turbines()

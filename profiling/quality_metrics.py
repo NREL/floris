@@ -35,7 +35,7 @@ def run_floris(input_dict):
         start = time.perf_counter()
         core = Core.from_dict(copy.deepcopy(input_dict.core))
         core.initialize_domain()
-        core.steady_state_atmospheric_condition()
+        core.solve_for_turbines()
         end = time.perf_counter()
         return end - start
     except KeyError:
@@ -57,29 +57,25 @@ def time_profile(input_dict):
 
 
 def test_time_jensen_jimenez(sample_inputs_fixture):
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "jensen"
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "jimenez"
+    sample_inputs_fixture.switch_wake_model("jensen")
     return time_profile(sample_inputs_fixture)
 
 
 def test_time_gauss(sample_inputs_fixture):
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "gauss"
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "gauss"
+    sample_inputs_fixture.switch_wake_model("gauss")
     return time_profile(sample_inputs_fixture)
 
 
 def test_time_gch(sample_inputs_fixture):
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "gauss"
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "gauss"
-    sample_inputs_fixture.core["wake"]["enable_transverse_velocities"] = True
-    sample_inputs_fixture.core["wake"]["enable_secondary_steering"] = True
-    sample_inputs_fixture.core["wake"]["enable_yaw_added_recovery"] = True
+    sample_inputs_fixture.switch_wake_model("gauss")
+    sample_inputs_fixture.core["wake"]["parameters"]["enable_transverse_velocities"] = True
+    sample_inputs_fixture.core["wake"]["parameters"]["enable_secondary_steering"] = True
+    sample_inputs_fixture.core["wake"]["parameters"]["enable_yaw_added_recovery"] = True
     return time_profile(sample_inputs_fixture)
 
 
 def test_time_cumulative(sample_inputs_fixture):
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "cc"
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "gauss"
+    sample_inputs_fixture.switch_wake_model("cc")
     return time_profile(sample_inputs_fixture)
 
 
@@ -87,13 +83,13 @@ def memory_profile(input_dict):
     # Run once to initialize Python and memory
     core = Core.from_dict(copy.deepcopy(input_dict.core))
     core.initialize_domain()
-    core.steady_state_atmospheric_condition()
+    core.solve_for_turbines()
 
     with perf():
         for i in range(N_ITERATIONS):
             core = Core.from_dict(copy.deepcopy(input_dict.core))
             core.initialize_domain()
-            core.steady_state_atmospheric_condition()
+            core.solve_for_turbines()
 
     print(
         "Size of one data array: "
@@ -102,8 +98,7 @@ def memory_profile(input_dict):
 
 
 def test_mem_jensen_jimenez(sample_inputs_fixture):
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = "jensen"
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = "jimenez"
+    sample_inputs_fixture.switch_wake_model("jensen")
     memory_profile(sample_inputs_fixture)
 
 

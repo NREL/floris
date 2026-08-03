@@ -22,6 +22,7 @@ from floris.core.turbine.turbine import (
     power,
     thrust_coefficient,
 )
+from floris.core.wake_model import BaseWakeModel
 from floris.cut_plane import CutPlane
 from floris.logging_manager import LoggingManager
 from floris.type_dec import (
@@ -517,7 +518,7 @@ class FlorisModel(LoggingManager):
         self.core.initialize_domain()
 
         # Perform the wake calculations
-        self.core.steady_state_atmospheric_condition()
+        self.core.solve_for_turbines()
 
     def run_no_wake(self) -> None:
         """
@@ -528,6 +529,17 @@ class FlorisModel(LoggingManager):
 
         # Initialize solution space
         self.core.initialize_domain()
+
+        # Evaluate turbine quantities without wake effects
+        self.core.wake.model.evaluate_turbine_thrust_coefficient(
+            self.core.grid, self.core.farm, self.core.flow_field
+        )
+        self.core.wake.model.evaluate_turbine_axial_induction(
+            self.core.grid, self.core.farm, self.core.flow_field
+        )
+        self.core.wake.model.evaluate_turbine_power(
+            self.core.grid, self.core.farm, self.core.flow_field
+        )
 
         # Finalize values to user-supplied order
         self.core.finalize()
@@ -552,19 +564,7 @@ class FlorisModel(LoggingManager):
         if (self.core.flow_field.u < 0.0).any():
             self.logger.warning("Some velocities at the rotor are negative.")
 
-        turbine_powers = power(
-            turbines=self.core.farm.turbines,
-            velocities=self.core.flow_field.u,
-            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
-            air_density=self.core.flow_field.air_density,
-            yaw_angles=self.core.farm.yaw_angles,
-            power_setpoints=self.core.farm.power_setpoints,
-            awc_modes = self.core.farm.awc_modes,
-            awc_amplitudes=self.core.farm.awc_amplitudes,
-            turbine_type_map=self.core.farm.turbine_type_map,
-            multidim_condition=self.core.flow_field.multidim_conditions,
-        )
-        return turbine_powers
+        return self.core.farm.turbine_powers
 
 
     def get_turbine_powers(self):
@@ -1012,38 +1012,10 @@ class FlorisModel(LoggingManager):
         ) * hours_per_year
 
     def get_turbine_axial_induction_factors(self) -> NDArrayFloat:
-        turbine_ais = axial_induction(
-            turbines=self.core.farm.turbines,
-            velocities=self.core.flow_field.u,
-            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
-            air_density=self.core.flow_field.air_density,
-            yaw_angles=self.core.farm.yaw_angles,
-            power_setpoints=self.core.farm.power_setpoints,
-            awc_modes = self.core.farm.awc_modes,
-            awc_amplitudes=self.core.farm.awc_amplitudes,
-            turbine_type_map=self.core.farm.turbine_type_map,
-            average_method=self.core.grid.average_method,
-            cubature_weights=self.core.grid.cubature_weights,
-            multidim_condition=self.core.flow_field.multidim_conditions,
-        )
-        return turbine_ais
+        return self.core.farm.turbine_axial_inductions
 
     def get_turbine_thrust_coefficients(self) -> NDArrayFloat:
-        turbine_thrust_coefficients = thrust_coefficient(
-            turbines=self.core.farm.turbines,
-            velocities=self.core.flow_field.u,
-            turbulence_intensities=self.core.flow_field.turbulence_intensity_field[:,:,None,None],
-            air_density=self.core.flow_field.air_density,
-            yaw_angles=self.core.farm.yaw_angles,
-            power_setpoints=self.core.farm.power_setpoints,
-            awc_modes = self.core.farm.awc_modes,
-            awc_amplitudes=self.core.farm.awc_amplitudes,
-            turbine_type_map=self.core.farm.turbine_type_map,
-            average_method=self.core.grid.average_method,
-            cubature_weights=self.core.grid.cubature_weights,
-            multidim_condition=self.core.flow_field.multidim_conditions,
-        )
-        return turbine_thrust_coefficients
+        return self.core.farm.turbine_thrust_coefficients
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.core.flow_field.turbulence_intensity_field
@@ -1606,6 +1578,16 @@ class FlorisModel(LoggingManager):
             reference_wind_height=self.reference_wind_height
         )
 
+    def set_wake_model(self, wake_model: BaseWakeModel):
+        """Set the wake model.
+
+        Args:
+            wake_model (BaseWakeModel): The wake model to set.
+        """
+        self.core.wake.assign_user_defined_wake_model(wake_model)
+        # Run top-level reinitialization routine
+        self.set()
+
     def copy(self):
         """Create an independent copy of the current FlorisModel object
 
@@ -1615,15 +1597,15 @@ class FlorisModel(LoggingManager):
         """
         return self.__class__(self.core.as_dict(), **self.secondary_init_kwargs)
 
-    def get_param(
+    def get_wake_parameter(
         self,
-        param: List[str],
-        param_idx: Optional[int] = None
+        parameter: str,
+        parameter_idx: Optional[int] = None
     ) -> Any:
         """Get a parameter from a FlorisModel object.
 
         Args:
-            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            parameter (str): The name of the wake parameter to get.
             param_idx (Optional[int], optional): The index to get the value at. Defaults to None.
                 If None, the entire parameter is returned.
 
@@ -1632,26 +1614,26 @@ class FlorisModel(LoggingManager):
         """
         fm_dict = self.core.as_dict()
 
-        if param_idx is None:
-            return nested_get(fm_dict, param)
+        if parameter_idx is None:
+            return nested_get(fm_dict, ["wake", "parameters", parameter])
         else:
-            return nested_get(fm_dict, param)[param_idx]
+            return nested_get(fm_dict, ["wake", "parameters", parameter])[parameter_idx]
 
-    def set_param(
+    def set_wake_parameter(
         self,
-        param: List[str],
+        parameter: str,
         value: Any,
-        param_idx: Optional[int] = None
+        parameter_idx: Optional[int] = None
     ):
         """Set a parameter in a FlorisModel object.
 
         Args:
-            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            parameter (str): The name of the wake parameter to set.
             value (Any): The value to set.
             param_idx (Optional[int], optional): The index to set the value at. Defaults to None.
         """
         fm_dict_mod = self.core.as_dict()
-        nested_set(fm_dict_mod, param, value, param_idx)
+        nested_set(fm_dict_mod, ["wake", "parameters", parameter], value, parameter_idx)
         self.__init__(fm_dict_mod, **self.secondary_init_kwargs)
 
     def get_turbine_layout(self, z=False):

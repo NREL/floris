@@ -96,6 +96,13 @@ class Farm(BaseClass):
     hub_heights: NDArrayFloat = field(init=False)
     rotor_diameters: NDArrayFloat = field(init=False, factory=list)
 
+    # Post-turbine solve attributes
+    turbine_powers_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_thrust_coefficients_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_axial_inductions_sorted: NDArrayFloat = field(init=False, factory=list)
+    turbine_rotor_average_velocities_sorted: NDArrayFloat = field(init=False, factory=list)
+
+    # Private attributes
     # Private attributes.
     _turbine_types: List = field(init=False, validator=iter_validator(list, str), factory=list)
     _turbine_definition_cache: dict = field(init=False, factory=dict)
@@ -188,10 +195,6 @@ class Farm(BaseClass):
         if len(self._turbine_types) == 1:
             self._turbine_types *= self.n_turbines
 
-        # Check that turbine definitions contain any v3 keys
-        for _, v in self._turbine_definition_cache.items():
-            check_turbine_definition_for_v3_keys(v)
-
         self.construct_turbines()
 
     @layout_x.validator
@@ -221,13 +224,27 @@ class Farm(BaseClass):
             raise FileExistsError(f"The input file path: {str(value)} is not a valid directory.")
 
     def initialize(self):
-        if hasattr(self, "_sorted_indices"):
-            self.state = State.INITIALIZED
-        else:
+        # Create structures for storing the turbine outputs
+        if not hasattr(self, "_sorted_indices"):
             raise ValueError(
                 "The Farm object must be initialized with the sorted indices from a Grid object "
                 "before it can be used. Please call Farm.set_sorted_indices() first."
             )
+
+        self.turbine_powers_sorted = np.full(
+            (self._sorted_indices.shape[0], self.n_turbines), np.nan
+        )
+        self.turbine_thrust_coefficients_sorted = np.full(
+            (self._sorted_indices.shape[0], self.n_turbines), np.nan
+        )
+        self.turbine_axial_inductions_sorted = np.full(
+            (self._sorted_indices.shape[0], self.n_turbines), np.nan
+        )
+        self.turbine_rotor_average_velocities_sorted = np.full(
+            (self._sorted_indices.shape[0], self.n_turbines), np.nan
+        )
+
+        self.state = State.INITIALIZED
 
     def construct_turbines(self):
         turbines_unique = {
@@ -296,7 +313,7 @@ class Farm(BaseClass):
         self.set_awc_frequencies_to_ref_freq(n_findex)
 
     def finalize(self):
-        self.state.USED
+        self.state = State.USED
 
     @property
     def coordinates(self):
@@ -351,40 +368,51 @@ class Farm(BaseClass):
             (self._sorted_indices.shape[0], self.n_turbines)
         )
 
-def check_turbine_definition_for_v3_keys(turbine_definition: dict):
-    """Check that the turbine definition does not contain any v3 keys."""
-    v3_deprecation_msg = (
-        "Consider using the convert_turbine_v3_to_v4.py utility in floris/tools "
-        + "to convert from a FLORIS v3 turbine definition to FLORIS v4. "
-        + "See https://natlabrockies.github.io/floris/v3_to_v4.html for more information."
-    )
-    if "generator_efficiency" in turbine_definition:
-        raise ValueError(
-            "generator_efficiency is no longer supported as power is specified in absolute terms "
-            + "in FLORIS v4. "
-            + v3_deprecation_msg
+    @property
+    def turbine_powers(self):
+        return _unsort_by_coord_indices(self.turbine_powers_sorted, self._sorted_indices)
+
+    @property
+    def turbine_thrust_coefficients(self):
+        return _unsort_by_coord_indices(
+            self.turbine_thrust_coefficients_sorted, self._sorted_indices
         )
 
-    v3_renamed_keys = ["pP", "pT", "ref_density_cp_ct", "ref_tilt_cp_ct"]
-    if any(k in turbine_definition for k in v3_renamed_keys):
-        v3_list_keys = ", ".join(map(str,v3_renamed_keys[:-1]))+", and "+v3_renamed_keys[-1]
-        v4_versions = (
-            "cosine_loss_exponent_yaw, cosine_loss_exponent_tilt, ref_air_density, and ref_tilt"
-        )
-        raise ValueError(
-            v3_list_keys
-            + " have been renamed to "
-            + v4_versions
-            + ", respectively, and placed under the power_thrust_table field in FLORIS v4. "
-            + v3_deprecation_msg
+    @property
+    def turbine_axial_inductions(self):
+        return _unsort_by_coord_indices(self.turbine_axial_inductions_sorted, self._sorted_indices)
+
+    @property
+    def turbine_rotor_average_velocities(self):
+        return _unsort_by_coord_indices(
+            self.turbine_rotor_average_velocities_sorted, self._sorted_indices
         )
 
-    if "thrust" in turbine_definition["power_thrust_table"]:
-        raise ValueError(
-            "thrust has been renamed thrust_coefficient in FLORIS v4 (and power is now specified "
-            "in absolute terms with units kW, rather than as a coefficient). "
-            + v3_deprecation_msg
-        )
+    def set_turbine_outputs_by_original_ordering(
+        self,
+        powers: NDArrayFloat | None = None,
+        thrust_coefficients: NDArrayFloat | None = None,
+        axial_inductions: NDArrayFloat | None = None,
+        rotor_average_velocities: NDArrayFloat | None = None
+    ):
+        if powers is not None:
+            self.turbine_powers_sorted = _sort_by_coord_indices(powers, self._sorted_indices)
+
+        if thrust_coefficients is not None:
+            self.turbine_thrust_coefficients_sorted = _sort_by_coord_indices(
+                thrust_coefficients, self._sorted_indices
+            )
+
+        if axial_inductions is not None:
+            self.turbine_axial_inductions_sorted = _sort_by_coord_indices(
+                axial_inductions, self._sorted_indices
+            )
+
+        if rotor_average_velocities is not None:
+            self.turbine_rotor_average_velocities_sorted = _sort_by_coord_indices(
+                rotor_average_velocities, self._sorted_indices
+            )
+
 
 def _sort_by_coord_indices(array, sorted_indices):
     if array.ndim != 2:
@@ -402,3 +430,8 @@ def _sort_by_coord_indices(array, sorted_indices):
         )
     else:
         raise ValueError("Array must be 1-dimensional or 2-dimensional to sort.")
+
+def _unsort_by_coord_indices(array, sorted_indices):
+    temp = np.zeros_like(array)
+    np.put_along_axis(temp, sorted_indices, array, axis=1)
+    return temp

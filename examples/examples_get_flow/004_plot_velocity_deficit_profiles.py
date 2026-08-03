@@ -99,7 +99,17 @@ if __name__ == "__main__":
     # Change velocity model to jensen, get the velocity deficit profiles,
     # and add them to the figure.
     floris_dict = fmodel.core.as_dict()
-    floris_dict["wake"]["model_strings"]["velocity_model"] = "jensen"
+    floris_dict["wake"]["model"] = "jensen"
+    floris_dict["wake"]["parameters"] = {
+        "initial": 0.1,
+        "constant": 0.5,
+        "ai": 0.8,
+        "downstream": -0.32,
+        "ad": 0.0,
+        "bd": 0.0,
+        "kd": 0.05,
+        "we": 0.05,
+    }
     fmodel = FlorisModel(floris_dict)
     profiles = fmodel.sample_velocity_deficit_profiles(
         direction="cross-stream",
@@ -129,7 +139,23 @@ if __name__ == "__main__":
     wind_direction = 315.0  # Try to change this
     downstream_dists = D * np.array([3, 5])
     floris_dict = fmodel.core.as_dict()
-    floris_dict["wake"]["model_strings"]["velocity_model"] = "gauss"
+    floris_dict["wake"]["model"] = "gauss"
+    floris_dict["wake"]["parameters"] = {
+        "enable_secondary_steering": True,
+        "enable_yaw_added_recovery": True,
+        "enable_transverse_velocities": True,
+        "ad": 0.0,
+        "alpha": 0.58,
+        "bd": 0.0,
+        "beta": 0.077,
+        "dm": 1.0,
+        "ka": 0.38,
+        "kb": 0.004,
+        "initial": 0.1,
+        "constant": 0.5,
+        "ai": 0.8,
+        "downstream": -0.32,
+    }
     fmodel = FlorisModel(floris_dict)
     # Let (x_t1, y_t1) be the location of the second turbine
     x_t1 = 2 * D

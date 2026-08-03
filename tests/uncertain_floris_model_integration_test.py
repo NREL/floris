@@ -420,18 +420,16 @@ def test_expected_farm_value_regression():
     assert np.allclose(expected_farm_value, 75108001.05154414, atol=1e-1)
 
 
-def test_get_and_set_param():
+def test_get_and_set_wake_parameter():
     ufmodel = UncertainFlorisModel(configuration=YAML_INPUT)
 
     # Set the wake parameter
-    ufmodel.set_param(["wake", "wake_velocity_parameters", "gauss", "alpha"], 0.1)
-    alpha = ufmodel.get_param(["wake", "wake_velocity_parameters", "gauss", "alpha"])
+    ufmodel.set_wake_parameter("alpha", 0.1)
+    alpha = ufmodel.get_wake_parameter("alpha")
     assert alpha == 0.1
 
     # Confirm also correct in expanded floris model
-    alpha_e = ufmodel.fmodel_expanded.get_param(
-        ["wake", "wake_velocity_parameters", "gauss", "alpha"]
-    )
+    alpha_e = ufmodel.fmodel_expanded.get_wake_parameter("alpha")
     assert alpha_e == 0.1
 
 

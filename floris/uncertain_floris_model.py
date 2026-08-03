@@ -993,7 +993,6 @@ class UncertainFlorisModel(LoggingManager):
         turbine_dicts = [t.as_dict() for t in self.fmodel_unexpanded.core.farm.turbines]
 
         for tindex in range(self.fmodel_unexpanded.core.farm.n_turbines):
-            # TODO: Can we get rid of this renaming business? Is it still needed?
             turbine_dicts[tindex]["turbine_type"] = (
                 turbine_dicts[tindex]["turbine_type"] + "_" + operation_model[tindex]
             )
@@ -1014,34 +1013,35 @@ class UncertainFlorisModel(LoggingManager):
         """
         return self.__class__(self.fmodel_unexpanded.copy(), **self.secondary_init_kwargs)
 
-    def get_param(self, param: List[str], param_idx: Optional[int] = None) -> Any:
+    def get_wake_parameter(self, parameter: str, parameter_idx: Optional[int] = None) -> Any:
         """Get a parameter from a FlorisModel object.
 
         Args:
-            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
-            param_idx (Optional[int], optional): The index to get the value at. Defaults to None.
-                If None, the entire parameter is returned.
+            parameter (str): The wake parameter to get.
+            parameter_idx (Optional[int], optional): The index to get the value at.
+                Defaults to None. If None, the entire parameter is returned.
 
         Returns:
             Any: The value of the parameter.
         """
         fm_dict = self.fmodel_unexpanded.core.as_dict()
 
-        if param_idx is None:
-            return nested_get(fm_dict, param)
+        if parameter_idx is None:
+            return nested_get(fm_dict, ["wake", "parameters", parameter])
         else:
-            return nested_get(fm_dict, param)[param_idx]
+            return nested_get(fm_dict, ["wake", "parameters", parameter])[parameter_idx]
 
-    def set_param(self, param: List[str], value: Any, param_idx: Optional[int] = None):
+    def set_wake_parameter(self, parameter: str, value: Any, parameter_idx: Optional[int] = None):
         """Set a parameter in a FlorisModel object.
 
         Args:
-            param (List[str]): A list of keys to traverse the FlorisModel dictionary.
+            parameter (str): The wake parameter to set.
             value (Any): The value to set.
-            param_idx (Optional[int], optional): The index to set the value at. Defaults to None.
+            parameter_idx (Optional[int], optional): The index to set the value at.
+                Defaults to None.
         """
         fm_dict_mod = self.fmodel_unexpanded.core.as_dict()
-        nested_set(fm_dict_mod, param, value, param_idx)
+        nested_set(fm_dict_mod, ["wake", "parameters", parameter], value, parameter_idx)
         self.fmodel_unexpanded.__init__(fm_dict_mod, **self.fmodel_unexpanded.secondary_init_kwargs)
         self.set()
 

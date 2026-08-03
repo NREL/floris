@@ -7,6 +7,7 @@ import numpy as np
 from floris.core import State
 from floris.floris_model import FlorisModel
 from floris.type_dec import (
+    floris_float_type,
     NDArrayFloat,
 )
 from floris.utilities import is_all_scalar_dict
@@ -351,34 +352,73 @@ class ParFlorisModel(FlorisModel):
         if self.return_turbine_powers_only:
             self._stored_turbine_powers = np.vstack(self._turbine_powers_split)
         else:
-            # Ensure fields to set have correct dimensions
-            self.core.flow_field.u = self._fmodels_split[0].core.flow_field.u
-            self.core.flow_field.v = self._fmodels_split[0].core.flow_field.v
-            self.core.flow_field.w = self._fmodels_split[0].core.flow_field.w
-            self.core.flow_field.turbulence_intensity_field = \
-                self._fmodels_split[0].core.flow_field.turbulence_intensity_field
+            # Reconstruct full flow_field object
+            g_1, g_2 = self._fmodels_split[0].core.flow_field.u.shape[2:]
+            u_temp = np.empty((0, self.n_turbines, g_1, g_2), floris_float_type)
+            v_temp = np.empty((0, self.n_turbines, g_1, g_2), floris_float_type)
+            w_temp = np.empty((0, self.n_turbines, g_1, g_2), floris_float_type)
+            ti_temp = np.empty((0, self.n_turbines), floris_float_type)
 
-            for fm in self._fmodels_split[1:]:
-                self.core.flow_field.u = np.append(
-                    self.core.flow_field.u,
+            for fm in self._fmodels_split:
+                u_temp = np.append(
+                    u_temp,
                     fm.core.flow_field.u,
                     axis=0
                 )
-                self.core.flow_field.v = np.append(
-                    self.core.flow_field.v,
+                v_temp = np.append(
+                    v_temp,
                     fm.core.flow_field.v,
                     axis=0
                 )
-                self.core.flow_field.w = np.append(
-                    self.core.flow_field.w,
+                w_temp = np.append(
+                    w_temp,
                     fm.core.flow_field.w,
                     axis=0
                 )
-                self.core.flow_field.turbulence_intensity_field = np.append(
-                    self.core.flow_field.turbulence_intensity_field,
+                ti_temp = np.append(
+                    ti_temp,
                     fm.core.flow_field.turbulence_intensity_field,
                     axis=0
                 )
+            self.core.flow_field.u = u_temp
+            self.core.flow_field.v = v_temp
+            self.core.flow_field.w = w_temp
+            self.core.flow_field.turbulence_intensity_field = ti_temp
+
+            # Reconstruct full farm object
+            powers_temp = np.empty((0, self.n_turbines), floris_float_type)
+            cts_temp = np.empty((0, self.n_turbines), floris_float_type)
+            ais_temp = np.empty((0, self.n_turbines), floris_float_type)
+            ravs_temp = np.empty((0, self.n_turbines), floris_float_type)
+
+            for fm in self._fmodels_split:
+                powers_temp = np.append(
+                    powers_temp,
+                    fm.core.farm.turbine_powers,
+                    axis=0
+                )
+                cts_temp = np.append(
+                    cts_temp,
+                    fm.core.farm.turbine_thrust_coefficients,
+                    axis=0
+                )
+                ais_temp = np.append(
+                    ais_temp,
+                    fm.core.farm.turbine_axial_inductions,
+                    axis=0
+                )
+                ravs_temp = np.append(
+                    ravs_temp,
+                    fm.core.farm.turbine_rotor_average_velocities,
+                    axis=0
+                )
+
+            self.core.farm.set_turbine_outputs_by_original_ordering(
+                powers=powers_temp,
+                thrust_coefficients=cts_temp,
+                axial_inductions=ais_temp,
+                rotor_average_velocities=ravs_temp
+            )
 
     def _print_timings(self, t0, t1, t2, t3):
         """

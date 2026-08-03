@@ -128,10 +128,7 @@ if show_flow_cuts:
 
 # Increase the base recovery rate
 fmodel_dict_mod = copy.deepcopy(fmodel_dict)
-fmodel_dict_mod["wake"]["wake_velocity_parameters"]["empirical_gauss"]["wake_expansion_rates"] = [
-    0.03,
-    0.015,
-]
+fmodel_dict_mod["wake"]["parameters"]["wake_expansion_rates"] = [0.03, 0.015]
 fmodel = FlorisModel(fmodel_dict_mod)
 fmodel.set(wind_speeds=[8.0], wind_directions=[270.0])
 
@@ -149,11 +146,10 @@ if show_flow_cuts:
 
 # Add new expansion rate
 fmodel_dict_mod = copy.deepcopy(fmodel_dict)
-fmodel_dict_mod["wake"]["wake_velocity_parameters"]["empirical_gauss"]["wake_expansion_rates"] = (
-    fmodel_dict["wake"]["wake_velocity_parameters"]["empirical_gauss"]["wake_expansion_rates"]
-    + [0.0]
+fmodel_dict_mod["wake"]["parameters"]["wake_expansion_rates"] = (
+    fmodel_dict["wake"]["parameters"]["wake_expansion_rates"] + [0.0]
 )
-fmodel_dict_mod["wake"]["wake_velocity_parameters"]["empirical_gauss"]["breakpoints_D"] = [5, 10]
+fmodel_dict_mod["wake"]["parameters"]["breakpoints_D"] = [5, 10]
 
 fmodel = FlorisModel(fmodel_dict_mod)
 fmodel.set(wind_speeds=[8.0], wind_directions=[270.0])
@@ -172,7 +168,7 @@ if show_flow_cuts:
 
 # Increase the wake-induced mixing gain
 fmodel_dict_mod = copy.deepcopy(fmodel_dict)
-fmodel_dict_mod["wake"]["wake_velocity_parameters"]["empirical_gauss"]["mixing_gain_velocity"] = 3.0
+fmodel_dict_mod["wake"]["parameters"]["mixing_gain_velocity"] = 3.0
 fmodel = FlorisModel(fmodel_dict_mod)
 fmodel.set(wind_speeds=[8.0], wind_directions=[270.0])
 

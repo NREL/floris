@@ -11,8 +11,7 @@ from floris.optimization.yaw_optimization.yaw_optimizer_sr import YawOptimizatio
 
 
 DEBUG = False
-VELOCITY_MODEL = "gauss"
-DEFLECTION_MODEL = "gauss"
+WAKE_MODEL = "gauss"
 
 # These inputs and baseline power are common for all optimization methods
 WIND_DIRECTIONS = [0.0, 90.0, 180.0, 270.0]
@@ -77,8 +76,8 @@ def test_serial_refine(sample_inputs_fixture):
     optimization scheme. This test compares the optimization results from the SR method for
     a simple farm with a simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0.0, 360.0, 90.0)
@@ -110,8 +109,8 @@ def test_geometric_yaw(sample_inputs_fixture):
     optimal yaw relationships. This test compares the optimization results from the Geometric Yaw
     optimization for a simple farm with a simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     fmodel = FlorisModel(sample_inputs_fixture.core)
     wd_array = np.arange(0.0, 360.0, 90.0)
@@ -152,8 +151,8 @@ def test_scipy_yaw_opt(sample_inputs_fixture):
     compares the optimization results from the SciPy yaw optimization for a simple farm with a
     simple wind rose to stored baseline results.
     """
-    sample_inputs_fixture.core["wake"]["model_strings"]["velocity_model"] = VELOCITY_MODEL
-    sample_inputs_fixture.core["wake"]["model_strings"]["deflection_model"] = DEFLECTION_MODEL
+    sample_inputs_fixture.switch_wake_model(WAKE_MODEL)
+
 
     opt_options = {
         "maxiter": 5,

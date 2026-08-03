@@ -157,87 +157,29 @@ flow_field:
 wake:
 
   ###
-  # Group for selecting the model elements for the simulation.
+  # Wake model to use. String type.
   # See :py:mod:`~.wake` for a list of available models and their descriptions.
-  model_strings:
-
-    ###
-    # Wake combination model. String type..
-    combination_model: sosfs
-
-    ###
-    # Wake deflection model. String type.
-    deflection_model: gauss
-
-    ###
-    # Wake turbulence model. String type..
-    turbulence_model: crespo_hernandez
-
-    ###
-    # Wake velocity deficit model. String type.
-    velocity_model: gauss
+  model: gauss
 
   ###
-  # Flag to include secondary steering effects. Only used in some models. Boolean type.
-  enable_secondary_steering: true
-
-  ###
-  # Flag to include yaw added recovery effects. Only used in some models. Boolean type.
-  enable_yaw_added_recovery: true
-
-  ###
-  # Flag to include active wake mixing effects. Only used in Empirical Guassian model. Boolean type.
-  enable_active_wake_mixing: false
-
-  ###
-  # Flag to compute transverse velocities across turbine rotors. Only used in some models.
-  # Boolean type.
-  enable_transverse_velocities: true
-
-  ###
-  # Parameters for the wake deflection model. See model descriptions and implementations for
+  # Parameters for the wake model. See model descriptions and implementations for
   # details of each parameter and its use.
-  wake_deflection_parameters:
-    gauss:
-      ad: 0.0
-      alpha: 0.58
-      bd: 0.0
-      beta: 0.077
-      dm: 1.0
-      ka: 0.38
-      kb: 0.004
-    jimenez:
-      ad: 0.0
-      bd: 0.0
-      kd: 0.05
+  parameters:
+    enable_secondary_steering: true
+    enable_yaw_added_recovery: true
+    enable_transverse_velocities: true
+    ad: 0.0
+    alpha: 0.58
+    bd: 0.0
+    beta: 0.077
+    dm: 1.0
+    ka: 0.38
+    kb: 0.004
+    initial: 0.1
+    constant: 0.5
+    ai: 0.8
+    downstream: -0.32
 
   ###
-  # Parameters for the wake velocity deficit model. See model descriptions and implementations for
-  # details of each parameter and its use.
-  wake_velocity_parameters:
-    cc:
-      a_s: 0.179367259
-      b_s: 0.0118889215
-      c_s1: 0.0563691592
-      c_s2: 0.13290157
-      a_f: 3.11
-      b_f: -0.68
-      c_f: 2.41
-      alpha_mod: 1.0
-    gauss:
-      alpha: 0.58
-      beta: 0.077
-      ka: 0.38
-      kb: 0.004
-    jensen:
-      we: 0.05
-
-  ###
-  # Parameters for the wake turbulence model. See model descriptions and implementations for
-  # details of each parameter and its use.
-  wake_turbulence_parameters:
-    crespo_hernandez:
-      initial: 0.1
-      constant: 0.5
-      ai: 0.8
-      downstream: -0.32
+  # Wake combination model to use. String type.
+  combination_model: sosfs
