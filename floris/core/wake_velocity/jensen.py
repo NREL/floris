@@ -29,7 +29,14 @@ class JensenVelocityDeficit(BaseModel):
     -   **we** (*float*): The linear wake decay constant that
         defines the cone boundary for the wake as well as the
         velocity deficit. D/2 +/- we*x is the cone boundary for the
-        wake.
+        wake. Used when we_kb=0 (constant expansion mode).
+
+    -   **we_ka** (*float*): Baseline wake expansion coefficient (k_a).
+        When we_kb is non-zero, effective we = we_ka + we_kb * TI.
+        Default is 0.0.
+
+    -   **we_kb** (*float*): TI-dependent wake expansion coefficient (k_b).
+        When non-zero, enables TI-dependent expansion. Default is 0.0.
 
     References:
         .. bibliography:: /references.bib
@@ -39,6 +46,9 @@ class JensenVelocityDeficit(BaseModel):
     """
 
     we: float = field(converter=float, default=0.05)
+    we_ka: float = field(converter=float, default=0.0)
+    we_kb: float = field(converter=float, default=0.0)
+    use_ambient_ti: bool = field(default=False)
 
     def prepare_function(
         self,
@@ -101,11 +111,18 @@ class JensenVelocityDeficit(BaseModel):
         dy = ne.evaluate("y - y_i - deflection_field_i")
         dz = ne.evaluate("z - z_i")
 
-        we = self.we
+        # Compute effective wake expansion: we_eff = we_ka + we_kb * TI
+        # If we_kb=0, fall back to constant we
 
+        if (self.we_kb != 0.0) or (self.we_ka != 0.0):
+            we = self.we_ka + self.we_kb * turbulence_intensity_i
+            # print(f"Using TI-dependent wake expansion: we = {self.we_ka} + {self.we_kb} * TI = {we}")
+        else:
+            we = self.we
+            # print(f"Using constant wake expansion: we = {we}")
+            
         # Construct a boolean mask to include all points downstream of the turbine
         downstream_mask = ne.evaluate("dx > 0 + NUM_EPS")
-
         # Construct a boolean mask to include all points within the wake boundary
         # as defined by the Jensen model. This is a linear wake expansion that makes
         # a shape like a cone and starts at the turbine disc.
