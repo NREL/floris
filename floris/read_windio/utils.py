@@ -94,6 +94,23 @@ class TrackedDict(UserDict, LoggingManager):
         else:
             raise KeyError(f"Key '{key}' not found in '{self._context}'")
 
+    def warn_unmapped(self, key: str, message: str = None):
+        """Mark a key as read and warn that it has no FLORIS equivalent.
+
+        Use this for a windIO parameter that was read but could not be
+        mapped onto a FLORIS setting, so that ``close()`` does not also
+        flag it as an unread key.
+
+        Args:
+            key: The windIO key that has no FLORIS mapping.
+            message: Optional extra context appended to the warning.
+        """
+        value = self.get(key)
+        msg = f"windIO parameter '{self._context}.{key} = {value}' has no FLORIS equivalent and will be ignored."
+        if message:
+            msg += f" {message}"
+        self.logger.warning(msg)
+
     def untrack(self, key: str):
         """Detach a nested TrackedDict from tracking."""
         if (key in self.tracked_keys) and (key in self._nested_dicts):
