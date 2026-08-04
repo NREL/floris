@@ -95,6 +95,7 @@ class Core(BaseClass):
                 turbine_diameters=self.farm.rotor_diameters,
                 wind_directions=self.flow_field.wind_directions,
                 grid_resolution=self.solver["turbine_grid_points"],
+                average_method=self.solver.get("average_method", "cubic-mean"),
             )
         elif self.solver["type"] == "turbine_cubature_grid":
             self.grid = TurbineCubatureGrid(

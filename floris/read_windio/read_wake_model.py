@@ -369,8 +369,14 @@ def read_wake_model(windio_dict: Dict[str, Any]) -> Dict[str, Any]:
 
         wake_floris['enable_active_wake_mixing'] = False
         print('WARNING: Setting enable_active_wake_mixing to False by default.')
-        
-    return {"wake": wake_floris}
+
+        # Extract rotor averaging (optional, defaults to FLORIS's own default solver settings)
+        result = {"wake": wake_floris}
+        solver = _extract_rotor_averaging(analysis)
+        if solver:
+            result["solver"] = solver
+
+    return result
 
 def _extract_superposition_model(analysis: TrackedDict) -> Dict[str, Any]:
     """
@@ -400,3 +406,94 @@ def _extract_superposition_model(analysis: TrackedDict) -> Dict[str, Any]:
         raise ValueError(f"Superposition model '{ws_model_name}' is not implemented in FLORIS.")
     
     return {"model_strings": {"combination_model": floris_name}}
+
+
+def _extract_rotor_averaging(analysis: TrackedDict) -> Dict[str, Any]:
+    """
+    Extract rotor averaging settings from windIO analysis section.
+
+    windIO separates ``background_averaging`` (ambient WS/TI over the rotor)
+    from ``wake_averaging`` (wake deficit/TI over the rotor), with grid size
+    given by ``grid``/``n_x_grid_points``/``n_y_grid_points``. FLORIS only
+    exposes a single ``solver.turbine_grid_points`` grid shared by ambient and
+    wake quantities, so ``background_averaging`` is ignored whenever it
+    differs from ``wake_averaging``. FLORIS's turbine grid also always
+    averages wind speed with a fixed cubic exponent (3), so a warning is
+    printed whenever a different exponent is requested with more than one
+    grid point.
+
+    Returns:
+        Dictionary with FLORIS ``solver`` settings, or empty if not specified.
+    """
+    if "rotor_averaging" not in analysis:
+        return {}
+
+    rotor_averaging = analysis["rotor_averaging"]
+
+    # Averaging type: "center" (single point) or "grid" (multiple points)
+    background_averaging = (
+        rotor_averaging.get("background_averaging") if "background_averaging" in rotor_averaging else "center"
+    )
+    
+    wake_averaging = rotor_averaging.get("wake_averaging") if ("wake_averaging" in rotor_averaging) else "center"
+    
+    if (background_averaging != wake_averaging) and ("background_averaging" in rotor_averaging):
+        rotor_averaging.warn_unmapped(
+            "background_averaging",
+            "FLORIS uses a single rotor grid for both ambient and wake quantities; "
+            f"using wake_averaging='{wake_averaging}' for both.",
+        )
+
+    # Grid size (only used if wake_averaging == "grid")
+    if wake_averaging in ("center", "centre", None):
+        solver_type = "turbine_grid"
+        turbine_grid_points = 1
+        
+    elif wake_averaging == "grid":        
+        grid = rotor_averaging.get("grid", None)
+        
+        nx = rotor_averaging.get("n_x_grid_points")
+        ny = rotor_averaging.get("n_y_grid_points", None)
+    
+        # grid/n_x_grid_points/n_y_grid_points are only required in grid mode
+        if (nx is None):
+            raise ValueError(
+                f"Grid '{grid}': n_x_grid_points must be specified for wake_averaging='grid'"
+            )
+            
+        if (nx is not None) and (ny is not None) and (nx != ny):
+            raise NotImplementedError(
+                f"Grid '{grid}': FLORIS only supports n_x_grid_points == n_y_grid_points, "
+                f"got n_x_grid_points={nx}, n_y_grid_points={ny}"
+            )
+        
+        solver_type = "turbine_grid"
+        turbine_grid_points = nx
+
+    else:
+        raise NotImplementedError(
+            f"Rotor averaging (wake_averaging) '{wake_averaging}' is not supported"
+        )
+
+    # FLORIS's turbine_cubature_grid always averages wind speed with a fixed
+    # linear (exponent=1) cubature weighting, not configurable via windIO.
+    wse_message = (
+        "FLORIS uses a fixed linear (exponent=1) wind speed averaging for its "
+        "turbine_cubature_grid."
+    )
+    expected_wse = 1
+    if "wind_speed_exponent_for_power" in rotor_averaging:
+        wse_power = rotor_averaging["wind_speed_exponent_for_power"]
+        if (turbine_grid_points > 1) and (wse_power != expected_wse):
+            rotor_averaging.warn_unmapped("wind_speed_exponent_for_power", wse_message)
+            
+    if "wind_speed_exponent_for_ct" in rotor_averaging:
+        wse_ct = rotor_averaging["wind_speed_exponent_for_ct"]
+        if (turbine_grid_points > 1) and (wse_ct != expected_wse):
+            rotor_averaging.warn_unmapped("wind_speed_exponent_for_ct", wse_message)
+
+    return {
+        "type": solver_type,
+        "turbine_grid_points": turbine_grid_points,
+        "average_method": "simple-mean",
+    }

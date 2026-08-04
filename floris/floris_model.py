@@ -570,6 +570,8 @@ class FlorisModel(LoggingManager):
             turbine_power_thrust_tables=self.core.farm.turbine_power_thrust_tables,
             correct_cp_ct_for_tilt=self.core.farm.correct_cp_ct_for_tilt,
             multidim_condition=self.core.flow_field.multidim_conditions,
+            average_method=self.core.grid.average_method,
+            cubature_weights=self.core.grid.cubature_weights,
         )
         return turbine_powers
 
