@@ -378,8 +378,7 @@ class FlowField(BaseClass):
             (self.n_findex, n_turbines, 4)
         )
         for i in range(n_turbines):
-            # TIs = self.turbulence_intensity_field_grid[:, i]
-            TIs = self.turbulence_wake_mixing_sorted[:, i]
+            TIs = self.turbulence_wake_mixing[:, i]
 
             # simple average
             self.SATI[:, i, 0] = np.mean(TIs[:, :, -1], axis=1)     # Up
