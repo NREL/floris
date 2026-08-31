@@ -241,6 +241,7 @@ class FlowField(BaseClass):
         )
 
         self.turbulence_intensity_field_sorted = self.turbulence_intensity_field.copy()
+        self.turbulence_wake_mixing_sorted = self.turbulence_intensity_field.copy()
 
     def finalize(self, unsorted_indices):
         self.u = np.take_along_axis(self.u_sorted, unsorted_indices, axis=1)
