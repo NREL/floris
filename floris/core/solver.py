@@ -69,12 +69,13 @@ def sequential_solver(
     # Expand input turbulence intensity to 4d for (n_turbines, grid, grid)
     turbine_turbulence_intensity = flow_field.turbulence_intensities[:, None, None, None]
     turbine_turbulence_intensity = np.repeat(turbine_turbulence_intensity, farm.n_turbines, axis=1)
-    turbine_turbulence_intensity = np.repeat(
-        turbine_turbulence_intensity, grid.grid_resolution, axis=2
-    )
-    turbine_turbulence_intensity = np.repeat(
-        turbine_turbulence_intensity, grid.grid_resolution, axis=3
-    )
+    if model_manager.enable_turbine_turbulence_grid:
+        turbine_turbulence_intensity = np.repeat(
+            turbine_turbulence_intensity, grid.grid_resolution, axis=2
+        )
+        turbine_turbulence_intensity = np.repeat(
+            turbine_turbulence_intensity, grid.grid_resolution, axis=3
+        )
 
     # Ambient turbulent intensity should be a copy of n_findex-long turbulence_intensity
     # with dimensions expanded for (n_turbines, grid, grid)
@@ -201,6 +202,7 @@ def sequential_solver(
                 flow_field.w_sorted[:, i:i+1],
                 v_wake[:, i:i+1],
                 w_wake[:, i:i+1],
+                model_manager.enable_turbine_turbulence_grid,
             )
             gch_gain = 2
             turbine_turbulence_intensity[:, i:i+1] = turbulence_intensity_i + gch_gain * I_mixing
