@@ -257,15 +257,15 @@ def sequential_solver(
             np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbine_turbulence_intensity
         )
 
-        flow_field.turbulence_wake_mixing_sorted = (
-            turbine_turbulence_intensity * flow_field.u_initial_sorted / flow_field.u_sorted
-        )
-
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
 
     flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
+    if model_manager.enable_turbine_turbulence_grid:
+        flow_field.turbulence_wake_mixing_sorted = (
+            turbine_turbulence_intensity * flow_field.u_initial_sorted / flow_field.u_sorted
+        )
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
         turbine_turbulence_intensity,
         axis=(2,3)
@@ -706,15 +706,15 @@ def cc_solver(
             np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbine_turbulence_intensity
         )
 
-        flow_field.turbulence_wake_mixing_sorted = (
-            turbine_turbulence_intensity * flow_field.u_initial_sorted / flow_field.u_sorted
-        )
-
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
     flow_field.u_sorted = turb_inflow_field
 
     flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
+    if model_manager.enable_turbine_turbulence_grid:
+        flow_field.turbulence_wake_mixing_sorted = (
+            turbine_turbulence_intensity * flow_field.u_initial_sorted / flow_field.u_sorted
+        )
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
         turbine_turbulence_intensity,
         axis=(2,3)
@@ -1145,15 +1145,15 @@ def turbopark_solver(
             np.sqrt(ti_added**2 + ambient_turbulence_intensities**2), turbine_turbulence_intensity
         )
 
-        flow_field.turbulence_wake_mixing_sorted = (
-            turbine_turbulence_intensity * flow_field.u_initial_sorted / flow_field.u_sorted
-        )
-
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
 
     flow_field.turbulence_intensity_field_sorted = turbine_turbulence_intensity
+    if model_manager.enable_turbine_turbulence_grid:
+        flow_field.turbulence_wake_mixing_sorted = (
+            turbine_turbulence_intensity * flow_field.u_initial_sorted / flow_field.u_sorted
+        )
     flow_field.turbulence_intensity_field_sorted_avg = np.mean(
         turbine_turbulence_intensity,
         axis=(2, 3)
@@ -1384,13 +1384,14 @@ def empirical_gauss_solver(
                 model_manager.deflection_model.yaw_added_mixing_gain
             )
 
-        flow_field.turbulence_wake_mixing_sorted = (
-            np.nan * flow_field.u_initial_sorted / flow_field.u_sorted
-        )
-
         flow_field.u_sorted = flow_field.u_initial_sorted - wake_field
         flow_field.v_sorted += v_wake
         flow_field.w_sorted += w_wake
+
+    if model_manager.enable_turbine_turbulence_grid:
+        flow_field.turbulence_wake_mixing_sorted = (
+            np.nan * flow_field.u_initial_sorted / flow_field.u_sorted
+        )
 
     return mixing_factor
 
