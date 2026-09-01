@@ -606,6 +606,26 @@ class FlorisModel(LoggingManager):
 
         return turbine_powers
 
+    def get_turbine_powers_percent(self):
+        """
+        Calculates the percent power at each turbine in the wind farm, relative to the requested
+            power setpoint.
+
+        Returns:
+            NDArrayFloat: Percent power at each turbine.
+        """
+        turbine_max_powers = np.array(
+            [
+                np.max(self.core.farm.turbine_map[i].power_thrust_table["power"])
+                for i
+                in range(self.core.farm.n_turbines)
+            ]
+        ) * 1000
+
+        turbine_powers_percent = (self.core.farm.power_setpoints / turbine_max_powers) * 100.0
+
+        return np.clip(turbine_powers_percent, 0, 100)
+
     def get_expected_turbine_powers(self, freq=None):
         """
         Compute the expected (mean) power of each turbine.
@@ -1058,6 +1078,30 @@ class FlorisModel(LoggingManager):
 
     def get_turbine_TIs(self) -> NDArrayFloat:
         return self.core.flow_field.turbulence_intensity_field
+
+    def get_turbine_grid_TIs(self) -> NDArrayFloat:
+        if not self.core.wake.enable_turbine_turbulence_grid:
+            raise ValueError(
+                "Grid TI quantities are only available if FLORIS "
+                "is run with enable_turbine_turbulence_grid = True."
+            )
+        return self.core.flow_field.get_turbine_grid_TIs(self.core.grid.unsorted_indices)
+
+    def get_turbine_sector_average_wind_speed(self) -> NDArrayFloat:
+        if not self.core.wake.enable_turbine_turbulence_grid:
+            raise ValueError(
+                "Sector-averaged quantities are only available if FLORIS "
+                "is run with enable_turbine_turbulence_grid = True."
+            )
+        return self.core.flow_field.get_sector_averaged_turbine_wind_speeds()
+
+    def get_turbine_sector_average_TI(self) -> NDArrayFloat:
+        if not self.core.wake.enable_turbine_turbulence_grid:
+            raise ValueError(
+                "Sector-averaged quantities are only available if FLORIS "
+                "is run with enable_turbine_turbulence_grid = True."
+            )
+        return self.core.flow_field.get_sector_averaged_turbine_TIs(self.core.grid.unsorted_indices)
 
 
     ### Methods for sampling and visualization
