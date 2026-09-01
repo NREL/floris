@@ -60,9 +60,6 @@ class FlowField(BaseClass):
     turbulence_wake_mixing: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
     turbulence_wake_mixing_sorted: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
 
-    SAWS: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-    SATI: NDArrayFloat = field(init=False, factory=lambda: np.array([]))
-
     @turbulence_intensities.validator
     def turbulence_intensities_validator(
         self, instance: attrs.Attribute, value: NDArrayFloat
@@ -267,9 +264,6 @@ class FlowField(BaseClass):
             axis=1
         )
 
-        self._get_sector_averaged_turbine_wind_speeds()
-        self._get_sector_averaged_turbine_TIs()
-
     def calculate_speed_ups(self, het_map, x, y, z=None):
         if z is not None:
             # Calculate the 3-dimensional speed ups; squeeze is needed as the generator
@@ -347,17 +341,17 @@ class FlowField(BaseClass):
 
         self.het_map = interps_f
 
-    def _get_sector_averaged_turbine_wind_speeds(self) -> NDArrayFloat:
+    def get_sector_averaged_turbine_wind_speeds(self) -> NDArrayFloat:
         n_turbines = np.shape(self.u)[1]
-        self.SAWS = np.zeros((self.n_findex, n_turbines, 4))
+        sector_average_ws = np.zeros((self.n_findex, n_turbines, 4))
         for i in range(n_turbines):
             vels = self.u[:, i]
 
             # simple average
-            self.SAWS[:, i, 0] = np.mean(vels[:, :, -1], axis=1)    # Up
-            self.SAWS[:, i, 3] = np.mean(vels[:, -1, :], axis=1)    # Right
-            self.SAWS[:, i, 2] = np.mean(vels[:, :, 0], axis=1)     # Down
-            self.SAWS[:, i, 1] = np.mean(vels[:, 0, :], axis=1)     # Left
+            sector_average_ws[:, i, 0] = np.mean(vels[:, :, -1], axis=1)    # Up
+            sector_average_ws[:, i, 3] = np.mean(vels[:, -1, :], axis=1)    # Right
+            sector_average_ws[:, i, 2] = np.mean(vels[:, :, 0], axis=1)     # Down
+            sector_average_ws[:, i, 1] = np.mean(vels[:, 0, :], axis=1)     # Left
 
             # weighted average
             # self.core.flow_field.SAWS[:, i, 0] = (
@@ -372,6 +366,8 @@ class FlowField(BaseClass):
             # self.core.flow_field.SAWS[:, i, 3] = (
             #     0.5 * vels[0, 0, 0] + vels[0, 1, 0] + 0.5 * vels[0, 2, 0]
             # ) / 2
+
+        return sector_average_ws
 
     def _get_sector_averaged_turbine_TIs(self) -> NDArrayFloat:
         n_turbines = np.shape(self.u)[1]

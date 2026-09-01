@@ -1062,11 +1062,11 @@ class FlorisModel(LoggingManager):
     def get_turbine_grid_TIs(self) -> NDArrayFloat:
         return self.core.flow_field.turbulence_intensity_field_grid
 
-    def get_turbine_SAWS(self) -> NDArrayFloat:
-        return self.core.flow_field.SAWS
+    def get_turbine_sector_average_wind_speed(self) -> NDArrayFloat:
+        return self.core.flow_field.get_sector_averaged_turbine_wind_speeds()
 
-    def get_turbine_SATI(self) -> NDArrayFloat:
-        return self.core.flow_field.SATI
+    def get_turbine_sector_average_TI(self) -> NDArrayFloat:
+        return self.core.flow_field.get_sector_averaged_turbine_TIs()
 
 
     ### Methods for sampling and visualization
