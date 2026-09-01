@@ -369,19 +369,19 @@ class FlowField(BaseClass):
 
         return sector_average_ws
 
-    def _get_sector_averaged_turbine_TIs(self) -> NDArrayFloat:
+    def get_sector_averaged_turbine_TIs(self) -> NDArrayFloat:
         n_turbines = np.shape(self.u)[1]
-        self.SATI = np.zeros(
+        sector_average_TI = np.zeros(
             (self.n_findex, n_turbines, 4)
         )
         for i in range(n_turbines):
             TIs = self.turbulence_wake_mixing[:, i]
 
             # simple average
-            self.SATI[:, i, 0] = np.mean(TIs[:, :, -1], axis=1)     # Up
-            self.SATI[:, i, 3] = np.mean(TIs[:, -1, :], axis=1)     # Right
-            self.SATI[:, i, 2] = np.mean(TIs[:, :, 0], axis=1)      # Down
-            self.SATI[:, i, 1] = np.mean(TIs[:, 0, :], axis=1)      # Left
+            sector_average_TI[:, i, 0] = np.mean(TIs[:, :, -1], axis=1)     # Up
+            sector_average_TI[:, i, 3] = np.mean(TIs[:, -1, :], axis=1)     # Right
+            sector_average_TI[:, i, 2] = np.mean(TIs[:, :, 0], axis=1)      # Down
+            sector_average_TI[:, i, 1] = np.mean(TIs[:, 0, :], axis=1)      # Left
 
             # weighted average
             # self.core.flow_field.SATI[:, i, 0] = (
@@ -397,7 +397,7 @@ class FlowField(BaseClass):
             #     0.5 * TIs[0, 0, 0] + TIs[0, 1, 0] + 0.5 * TIs[0, 2, 0]
             # ) / 2
 
-
+        return sector_average_TI
 
     @staticmethod
     def interpolate_multiplier_xy(x: NDArrayFloat,
