@@ -17,7 +17,7 @@ from tests.conftest import (
 )
 
 
-DEBUG = True
+DEBUG = False
 VELOCITY_MODEL = "turboparkgauss"
 DEFLECTION_MODEL = "gauss"
 COMBINATION_MODEL = "sosfs"
