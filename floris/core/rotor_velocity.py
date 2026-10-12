@@ -1,6 +1,3 @@
-
-from __future__ import annotations
-
 import copy
 from collections.abc import Iterable
 
@@ -47,11 +44,11 @@ def rotor_velocity_tilt_cosine_correction(
     tilt_angles = np.where(correct_cp_ct_for_tilt, tilt_angles, old_tilt_angle)
 
     # Compute the rotor effective velocity adjusting for tilt
-    relative_tilt = tilt_angles - ref_tilt
     rotor_effective_velocities = (
         rotor_effective_velocities
-        * cosd(relative_tilt) ** (cosine_loss_exponent_tilt / 3.0)
+        * (cosd(tilt_angles) / cosd(ref_tilt)) ** (cosine_loss_exponent_tilt / 3.0)
     )
+
     return rotor_effective_velocities
 
 def simple_mean(array, axis=0):
@@ -155,7 +152,7 @@ def compute_tilt_angles_for_floating_turbines_map(
 
 def compute_tilt_angles_for_floating_turbines(
     tilt_angles: NDArrayFloat,
-    tilt_interp: dict[str, interp1d],
+    tilt_interp: interp1d | None,
     rotor_effective_velocities: NDArrayFloat,
 ) -> NDArrayFloat:
     # Loop over each turbine type given to get tilt angles for all turbines
