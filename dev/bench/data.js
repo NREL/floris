@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782406660850,
+  "lastUpdate": 1791902378254,
   "repoUrl": "https://github.com/NatLabRockies/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -5648,6 +5648,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0003551565520574668",
             "extra": "mean: 8.297574960516542 msec\nrounds: 76"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "12664940+bayc@users.noreply.github.com",
+            "name": "Chris Bay",
+            "username": "bayc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ebe292785ec721f480e98b811a3642d165a4baad",
+          "message": "Calculate sector-averaged rotor quantities (wind speed, turbulence intensity) (#1202)\n\n* initial implementation for SAWS and SATI and turbine power percent\n\n* fix bug in SATI calculation\n\n* correction in SAWS calculation\n\n* bug fix in SAWS calculation\n\n* WIP: calculating TI for loads surrogate model\n\n* updating turbine power percent calculation\n\n* fixing bug with SATI calculation\n\n* add selection case for modeling turbine TI as a heterogenous grid\n\n* updates to other wake solvers\n\n* add copy for TI wake mixing sorted to pass no_wake calculation\n\n* formatting\n\n* Switch SAWS, SETI to on-demand computations\n\n* Missed a piece...\n\n* Minimize new attributes on FlowField\n\n* remove clipping for more explicit values ot be returned\n\n* remove commented code\n\n* Add comments about turbulence_wake_mixing_sorted\n\n* Update comment about modeling turbulence as a grid on the turbine rotor\n\n* added tests\n\n* ruff formating\n\n* remove turbine power percentage calculation\n\n---------\n\nCo-authored-by: misi9170 <michael.sinner@nlr.gov>",
+          "timestamp": "2026-10-13T08:15:06-06:00",
+          "tree_id": "18842f10584658ba2fd7e2ffc63fe07032c89c03",
+          "url": "https://github.com/NatLabRockies/floris/commit/ebe292785ec721f480e98b811a3642d165a4baad"
+        },
+        "date": 1791902376460,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 42.246608196053344,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00047157226160139145",
+            "extra": "mean: 23.670539309553835 msec\nrounds: 42"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 52.29244025779597,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00032786557279287947",
+            "extra": "mean: 19.123223071444176 msec\nrounds: 28"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 26.63519083177138,
+            "unit": "iter/sec",
+            "range": "stddev: 0.001019995097364788",
+            "extra": "mean: 37.544315199993434 msec\nrounds: 25"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.28822801810007354,
+            "unit": "iter/sec",
+            "range": "stddev: 0.021137031232636157",
+            "extra": "mean: 3.4694753361999573 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 36.90928914735753,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00031786196795001193",
+            "extra": "mean: 27.09345054052859 msec\nrounds: 37"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 119.55531418134794,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00012711707778969515",
+            "extra": "mean: 8.364329154646745 msec\nrounds: 97"
           }
         ]
       }
