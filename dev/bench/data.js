@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791902378254,
+  "lastUpdate": 1791913567426,
   "repoUrl": "https://github.com/NatLabRockies/floris",
   "entries": {
     "Python Benchmark with pytest-benchmark": [
@@ -5714,6 +5714,72 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00012711707778969515",
             "extra": "mean: 8.364329154646745 msec\nrounds: 97"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "39596329+misi9170@users.noreply.github.com",
+            "name": "misi9170",
+            "username": "misi9170"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "576262c3a6ed21cf79f8da78214edc12237c895f",
+          "message": "[BUGFIX] TurbOParkGauss mirror wakes geometry (#1206)\n\n* Bugfix in turboparkgauss mirror wake geometry, and added test\n\n* Update regression test values\n\n* Reset DEBUG to False in turboparkgauss test\n\nCo-authored-by: Copilot Autofix powered by AI <175728472+Copilot@users.noreply.github.com>\n\n---------\n\nCo-authored-by: Copilot Autofix powered by AI <175728472+Copilot@users.noreply.github.com>",
+          "timestamp": "2026-10-13T11:21:43-06:00",
+          "tree_id": "ab6fb6f0a2759cdc1267dc85eb79cf6c73042411",
+          "url": "https://github.com/NatLabRockies/floris/commit/576262c3a6ed21cf79f8da78214edc12237c895f"
+        },
+        "date": 1791913564723,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_set",
+            "value": 40.94183942109557,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00037204084225840345",
+            "extra": "mean: 24.424891849992036 msec\nrounds: 40"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_small_farm_run",
+            "value": 51.225623023232345,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0004935598643182969",
+            "extra": "mean: 19.521480481486194 msec\nrounds: 27"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_set",
+            "value": 24.78452264138708,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0015736809669884618",
+            "extra": "mean: 40.34776116002831 msec\nrounds: 25"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_large_farm_run",
+            "value": 0.278083424893542,
+            "unit": "iter/sec",
+            "range": "stddev: 0.01269429492135545",
+            "extra": "mean: 3.596043167200014 sec\nrounds: 5"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_set",
+            "value": 35.119953148217014,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003195692353102393",
+            "extra": "mean: 28.47384208571384 msec\nrounds: 35"
+          },
+          {
+            "name": "benchmarks/bench.py::test_timing_het_run",
+            "value": 117.41860509864685,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00010102028605321129",
+            "extra": "mean: 8.51653789584598 msec\nrounds: 96"
           }
         ]
       }
